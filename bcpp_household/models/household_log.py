@@ -1,7 +1,7 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
-from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_crypto.fields import EncryptedTextField
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_lib.bhp_crypto.fields import EncryptedTextField
 from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from bcpp_household.managers import HouseholdLogManager, HouseholdLogEntryManager
 from household_structure import HouseholdStructure

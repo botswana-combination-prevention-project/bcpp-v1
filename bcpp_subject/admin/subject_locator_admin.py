@@ -1,7 +1,7 @@
 from django.contrib import admin
-from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import SubjectLocator
 from bcpp_subject.forms import SubjectLocatorForm
+from subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class SubjectLocatorAdmin(SubjectVisitModelAdmin):

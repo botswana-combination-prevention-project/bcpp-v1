@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
-from base_scheduled_visit_model import BaseScheduledVisitModel
 from bcpp_list.models import PartnerResidency
 from bcpp.choices import SEXDAYS_CHOICE, LASTSEX_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, FIRSTRELATIONSHIP_CHOICE, FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE
+from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class BaseSexualPartner (BaseScheduledVisitModel):

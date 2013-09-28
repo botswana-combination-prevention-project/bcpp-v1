@@ -1,5 +1,5 @@
 from django import forms
-from bhp_map.classes import site_mappers
+from edc_lib.bhp_map.classes import site_mappers
 
 
 class SurveyForm(forms.Form):

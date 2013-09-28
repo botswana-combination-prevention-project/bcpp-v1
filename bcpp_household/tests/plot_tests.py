@@ -1,5 +1,5 @@
 from django.test import TestCase
-from bhp_map.classes import site_mappers
+from edc_lib.bhp_map.classes import site_mappers
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_household.classes  import PlotIdentifier
 from bcpp_household.models import PlotIdentifierHistory

@@ -1,29 +1,29 @@
 from django.db import models
-from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
 from django.core.validators import MaxValueValidator, MinValueValidator
-from audit_trail.audit import AuditTrail
-from bhp_base_model.validators import eligible_if_yes
-from bhp_common.choices import YES_NO, YES_NO_REFUSED
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_lib.bhp_base_model.validators import eligible_if_yes
+from edc_lib.bhp_common.choices import YES_NO, YES_NO_REFUSED
+from edc_lib.bhp_registration.models import BaseRegisteredSubjectModel
 from bcpp_subject.choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
-from bhp_registration.models import BaseRegisteredSubjectModel
 
 
 class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
 
     """CE003"""
-    
+
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
         validators=[datetime_not_before_study_start, datetime_not_future],
         )
-    
+
     citizen = models.CharField(
         verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
         help_text="",
         )
-    
+
     legal_marriage = models.CharField(
         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
         max_length=3,
@@ -33,7 +33,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         validators=[eligible_if_yes, ],
         help_text=" if 'NO,' STOP participant cannot be enrolled",
         )
- 
+
     marriage_certificate = models.CharField(
         verbose_name=("Has the participant produced the marriage certificate, as proof? "),
         max_length=3,
@@ -43,7 +43,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         validators=[eligible_if_yes, ],
         help_text=" if 'NO,' STOP participant cannot be enrolled",
         )
-    
+
     marriage_certificate_no = models.CharField(
         verbose_name=("What is the marriage certificate number?"),
         max_length=9,
@@ -109,4 +109,3 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         app_label = "bcpp_subject"
         verbose_name = "CEA Enrolment Checklist"
         verbose_name_plural = "CEA Enrolment Checklist"
-

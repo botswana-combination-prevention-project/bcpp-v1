@@ -1,20 +1,7 @@
-import pprint
 from django.test import TestCase
-from django.core import serializers
-from bhp_crypto.classes import FieldCryptor
-
 from django.db.models import get_app, get_models
-from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_sync.classes import SerializeToTransaction
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_registration.models import RegisteredSubject
-from bhp_consent.tests.factories import ConsentCatalogueFactory
-from bhp_appointment.models import Appointment
-from bhp_appointment.tests.factories import ConfigurationFactory
-from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_content_type_map.models import ContentTypeMap
-                                              
+
+
 class NaturalKeyTests(TestCase):
 
     def test_p1(self):

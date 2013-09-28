@@ -1,1 +1,0 @@
-from subject_configuration import SubjectConfiguration

@@ -1,6 +1,6 @@
 from django import forms
-from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import Cd4History
+from base_subject_model_form import BaseSubjectModelForm
 
 
 class Cd4HistoryForm (BaseSubjectModelForm):

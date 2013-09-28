@@ -1,13 +1,12 @@
 from django import forms
-from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import ResidencyMobility
+from base_subject_model_form import BaseSubjectModelForm
 
 
 #ResidencyMobility
 class ResidencyMobilityForm (BaseSubjectModelForm):
 
     def clean(self):
-
         cleaned_data = super(ResidencyMobilityForm, self).clean()
         #validating if other community, you specify
         if cleaned_data.get('cattle_postlands') == 'Other community' and not cleaned_data.get('cattle_postlands_other'):

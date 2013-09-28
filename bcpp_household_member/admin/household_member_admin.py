@@ -1,6 +1,6 @@
 from django.contrib import admin
-from bhp_base_admin.admin import BaseTabularInline, BaseModelAdmin
-from bhp_export_data.actions import export_as_csv_action
+from edc_lib.bhp_base_admin.admin import BaseTabularInline, BaseModelAdmin
+from edc_lib.bhp_export_data.actions import export_as_csv_action
 from bcpp_household.models import HouseholdStructure
 from bcpp_household_member.models import HouseholdMember
 from bcpp_household_member.forms import HouseholdMemberForm

@@ -3,24 +3,20 @@ from datetime import datetime
 from django.db import IntegrityError
 from django.contrib import admin
 from django.test import TestCase
-from django.db.models import get_model
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from bhp_common.utils import convert_from_camel
-from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_appointment.tests.factories import ConfigurationFactory
-from bhp_consent.tests.factories import ConsentCatalogueFactory
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_content_type_map.models import ContentTypeMap
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
-from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory
+from edc_lib.bhp_lab_tracker.classes import site_lab_tracker
+from edc_lib.bhp_appointment.tests.factories import ConfigurationFactory
+from edc_lib.bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc_lib.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc_lib.bhp_content_type_map.models import ContentTypeMap
+from edc_lib.bhp_content_type_map.classes import ContentTypeMapHelper
+from bcpp_household.tests.factories import HouseholdStructureFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household.models import HouseholdStructure, Household
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent
 from bhp_map.classes import site_mappers
-from bcpp_household.tests.factories import PlotFactory, HouseholdFactory
+from bcpp_household.tests.factories import PlotFactory
 
 
 class HouseholdCompositionTests(TestCase):

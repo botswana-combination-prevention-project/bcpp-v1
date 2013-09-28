@@ -1,7 +1,6 @@
 from django.contrib import admin
 from bcpp_household.models import Household
 from bcpp_household.forms import HouseholdForm
-from bcpp_household.actions import process_dispatch
 from base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -27,6 +26,5 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     radio_fields = {
         'status': admin.VERTICAL,
         }
-    #actions = [process_dispatch, ]
 
 admin.site.register(Household, HouseholdAdmin)

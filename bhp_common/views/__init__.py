@@ -1,1 +1,0 @@
-from show_url_patterns import show_url_patterns

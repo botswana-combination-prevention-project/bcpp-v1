@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
+from edc_lib.audit_trail.audit import AuditTrail
 from bcpp.choices import YES_NO, YES_NO_DONT_ANSWER, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 from bcpp_subject.choices import YES_NO_RECORD_REFUSAL
 from base_scheduled_visit_model import BaseScheduledVisitModel

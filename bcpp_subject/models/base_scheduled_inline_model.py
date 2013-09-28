@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
-from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_consent.models import BaseConsentedUuidModel
+from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_lib.bhp_consent.models import BaseConsentedUuidModel
 from bcpp_household.models import Plot
 from subject_visit import SubjectVisit
 

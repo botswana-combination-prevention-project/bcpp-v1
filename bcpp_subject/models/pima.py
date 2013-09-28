@@ -1,18 +1,18 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MaxValueValidator, MinValueValidator
-from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import OtherCharField
-from bhp_common.choices import YES_NO
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.fields import OtherCharField
+from edc_lib.bhp_common.choices import YES_NO
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Pima (BaseScheduledVisitModel):
 
     """CS002 - Used for PIMA cd4 count recording"""
-    
+
     pima_id = models.CharField(
-        verbose_name="What is the pima ID?", 
+        verbose_name="What is the pima ID?",
         max_length=9,
         help_text="type this id directly from the machine as labeled")
 

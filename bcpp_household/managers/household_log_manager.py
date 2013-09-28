@@ -1,6 +1,6 @@
-from django.db import models
 import dateutil.parser
 from datetime import timedelta
+from django.db import models
 
 
 class HouseholdLogManager(models.Manager):

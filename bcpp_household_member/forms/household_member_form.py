@@ -1,4 +1,4 @@
-from bhp_household_member.forms import BaseHouseholdMemberForm
+from edc_lib.bhp_household_member.forms import BaseHouseholdMemberForm
 from bcpp_household_member.models import HouseholdMember
 
 

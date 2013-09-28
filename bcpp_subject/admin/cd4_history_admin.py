@@ -1,7 +1,7 @@
 from django.contrib import admin
-from subject_visit_model_admin import SubjectVisitModelAdmin
-from bcpp_subject.models import Cd4History
-from bcpp_subject.forms import Cd4HistoryForm
+from ..models import Cd4History
+from ..forms import Cd4HistoryForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class Cd4HistoryAdmin(SubjectVisitModelAdmin):
@@ -13,5 +13,5 @@ class Cd4HistoryAdmin(SubjectVisitModelAdmin):
         'last_cd4_count',
         'last_cd4_drawn_date',)
     radio_fields = {
-        'record_available': admin.VERTICAL,}
+        'record_available': admin.VERTICAL}
 admin.site.register(Cd4History, Cd4HistoryAdmin)

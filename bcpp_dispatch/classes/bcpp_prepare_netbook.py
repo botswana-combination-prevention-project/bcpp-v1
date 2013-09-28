@@ -1,6 +1,6 @@
 import logging
-from bhp_base_model.models import BaseUuidModel, BaseModel
-from bhp_dispatch.classes import PrepareDevice
+from edc_lib.bhp_base_model.models import BaseUuidModel, BaseModel
+from edc_lib.bhp_dispatch.classes import PrepareDevice
 
 
 logger = logging.getLogger(__name__)
@@ -22,4 +22,3 @@ class BcppPrepareNetbook(PrepareDevice):
 
     def pre_prepare(self):
         pass
-

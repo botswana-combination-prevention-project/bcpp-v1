@@ -1,8 +1,8 @@
 from django.contrib import admin
-from bhp_base_admin.admin import BaseTabularInline
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from edc_lib.bhp_base_admin.admin import BaseTabularInline
 from bcpp_subject.models import  LabourMarketWages, Grant
 from bcpp_subject.forms import LabourMarketWagesForm
+from subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class GrantInlineAdmin(BaseTabularInline):

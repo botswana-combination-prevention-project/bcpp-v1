@@ -1,6 +1,6 @@
 from django import forms
-from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import Education
+from base_subject_model_form import BaseSubjectModelForm
 
 
 class EducationForm (BaseSubjectModelForm):
@@ -21,7 +21,6 @@ class EducationForm (BaseSubjectModelForm):
         #student/apprentice/volunteer
         if cleaned_data.get('reason_unemployed', None) == 'student' and not cleaned_data.get('monthly_income', None):
             raise forms.ValidationError('If participant is student/apprentice/volunteer, how much payment is received monthly?')
-        
         # validating for those employed
         if cleaned_data.get('working', None) == 'Yes' and cleaned_data.get('reason_unemployed', None):
             raise forms.ValidationError('You have provided unemployment details yet have indicated that participant is working')

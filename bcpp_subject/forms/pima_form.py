@@ -1,10 +1,10 @@
 from django import forms
-from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import Pima
+from base_subject_model_form import BaseSubjectModelForm
 
 
 class PimaForm (BaseSubjectModelForm):
-    
+
     def clean(self):
 
         cleaned_data = super(PimaForm, self).clean()

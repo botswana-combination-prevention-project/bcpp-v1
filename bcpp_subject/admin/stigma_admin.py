@@ -1,12 +1,13 @@
 from django.contrib import admin
-from bhp_supplemental_fields.classes import SupplementalFields
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from edc_lib.bhp_supplemental_fields.classes import SupplementalFields
 from bcpp_subject.models import Stigma, StigmaOpinion, PositiveParticipant
 from bcpp_subject.forms import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
+from subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 """Stigma [ST]: 10% in pretest. In BHS, it differs according to reported HIV status:
     9% on ST1-ST12 for reported negative; 18% on ST1-ST19 for reported positive."""
+
 
 class StigmaAdmin(SubjectVisitModelAdmin):
 
@@ -16,7 +17,7 @@ class StigmaAdmin(SubjectVisitModelAdmin):
         'enacted_shame_stigma',
         'saliva_stigma',
         'teacher_stigma',
-        'children_stigma'),p=0.09, group='ST')
+        'children_stigma'), p=0.09, group='ST')
     fields = (
         "subject_visit",
         'anticipate_stigma',
@@ -53,7 +54,7 @@ class StigmaOpinionAdmin(SubjectVisitModelAdmin):
         'enacted_verbal_stigma',
         'enacted_phyical_stigma',
         'enacted_family_stigma',
-        'fear_stigma'),p=0.09, group='ST')
+        'fear_stigma'), p=0.09, group='ST')
     fields = (
         "subject_visit",
         'test_community_stigma',
@@ -88,7 +89,7 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
         'family_stigma',
         'enacted_talk_stigma',
         'enacted_respect_stigma',
-        'enacted_jobs_tigma'),p=0.18, group='ST')
+        'enacted_jobs_tigma'), p=0.18, group='ST')
     fields = (
         "subject_visit",
         'internalize_stigma',

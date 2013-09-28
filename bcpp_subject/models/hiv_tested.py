@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import OtherCharField
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.fields import OtherCharField
 from bcpp.choices import WHEREHIVTEST_CHOICE, WHYHIVTEST_CHOICE
 from hiv_testing_supplemental import HivTestingSupplemental
 
