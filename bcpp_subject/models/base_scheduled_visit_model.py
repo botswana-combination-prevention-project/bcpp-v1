@@ -1,7 +1,8 @@
 from datetime import datetime
 from django.db import models
-from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_consent.models import BaseConsentedUuidModel
+from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_lib.bhp_consent.models import BaseConsentedUuidModel
+from edc_lib.audit_trail.audit import AuditTrail
 from bcpp_household.models import Plot
 from bcpp_subject.managers import ScheduledModelManager
 from subject_visit import SubjectVisit
@@ -22,6 +23,8 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
         )
 
     objects = ScheduledModelManager()
+
+    history = AuditTrail()
 
     def natural_key(self):
         return self.get_visit().natural_key()

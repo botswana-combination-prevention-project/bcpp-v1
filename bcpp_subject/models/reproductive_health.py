@@ -1,9 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-# from bhp_common.choices import YES_NO, YES_NO_UNSURE
-from bcpp.choices import YES_NO, YES_NO_UNSURE
-from bhp_base_model.fields import OtherCharField
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_common.choices import YES_NO, YES_NO_UNSURE
+from edc_lib.bhp_base_model.fields import OtherCharField
 from bcpp_list.models import FamilyPlanning
 from base_scheduled_visit_model import BaseScheduledVisitModel
 

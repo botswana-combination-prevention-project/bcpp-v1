@@ -1,4 +1,4 @@
-from bhp_visit_tracking.admin import BaseVisitTrackingModelAdmin
+from edc_lib.bhp_visit_tracking.admin import BaseVisitTrackingModelAdmin
 from bcpp_subject.models import SubjectVisit
 
 

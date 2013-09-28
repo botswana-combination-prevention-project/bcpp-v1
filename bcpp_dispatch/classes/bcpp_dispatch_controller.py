@@ -1,19 +1,19 @@
 import logging
-from bhp_base_model.models import BaseListModel
 from datetime import datetime
 from django.db.models import get_model, get_models, get_app, ForeignKey
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import signals
-from bhp_subject.models import base_subject_get_or_create_registered_subject_on_post_save
-from bhp_dispatch.classes import DispatchController
-from bhp_dispatch.exceptions import DispatchError
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_lib.bhp_base_model.models import BaseListModel
+from edc_lib.bhp_subject.models import base_subject_get_or_create_registered_subject_on_post_save
+from edc_lib.bhp_dispatch.classes import DispatchController
+from edc_lib.bhp_dispatch.exceptions import DispatchError
+from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_lib.bhp_registration.models import RegisteredSubject
 from bcpp_subject.models import  BaseMemberStatusModel
 from bcpp_household_member.models import household_member_on_pre_save, household_member_on_post_save, base_household_member_consent_on_post_save
 from bcpp_household.models import create_household_on_post_save, create_household_structure_on_post_save, household_structure_on_post_save, \
                                   check_for_survey_on_pre_save
 from bcpp_survey.models import Survey
-from bhp_registration.models import RegisteredSubject
 
 logger = logging.getLogger(__name__)
 

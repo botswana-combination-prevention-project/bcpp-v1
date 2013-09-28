@@ -1,7 +1,7 @@
 import re
 from django.db import models
-from bhp_identifier.exceptions import IdentifierError
-from bhp_botswana.models import BaseBwConsent
+from edc_lib.bhp_identifier.exceptions import IdentifierError
+from edc_lib.bhp_botswana.models import BaseBwConsent
 from bcpp_household_member.models import HouseholdMember
 from bcpp_survey.models import Survey
 from bhp_appointment_helper.models import BaseAppointmentMixin

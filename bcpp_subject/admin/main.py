@@ -1,5 +1,4 @@
 from django.contrib import admin
-from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                                  HospitalAdmission, HivHealthCareCosts,
                                  HivMedicalCare, HeartAttack, Cancer, Sti,
@@ -11,6 +10,7 @@ from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, Outp
                                 HeartAttackForm, CancerForm, StiForm,
                                 TubercolosisForm, SubstanceUseForm,
                                 HivResultDocumentationForm)
+from subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):

@@ -1,7 +1,7 @@
 from django.contrib import admin
-from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import RecentPartner, SecondPartner, ThirdPartner
 from bcpp_subject.forms import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
+from subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class RecentPartnerAdmin(SubjectVisitModelAdmin):

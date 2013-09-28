@@ -1,5 +1,5 @@
 from django.db import models
-from bhp_base_model.models import BaseListModel
+from edc_lib.bhp_base_model.models import BaseListModel
 from bcpp_household.managers import GpsDeviceManager
 
 

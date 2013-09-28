@@ -1,12 +1,12 @@
 from django import forms
-from base_subject_model_form import BaseSubjectModelForm
 from bcpp_subject.models import Pregnancy
+from base_subject_model_form import BaseSubjectModelForm
 
 
 class PregnancyForm (BaseSubjectModelForm):
     def clean(self):
         cleaned_data = super(PregnancyForm, self).clean()
-        #pregnancy and antenal registration
+        # pregnancy and antenatal registration
         if cleaned_data.get('current_pregnant') == 'Yes' and not cleaned_data.get('anc_reg'):
             raise forms.ValidationError('If participant currently pregnant, have they registered for antenatal care?')
         #if currently pregnant when was the last lnmp

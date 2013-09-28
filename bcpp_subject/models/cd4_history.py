@@ -1,22 +1,22 @@
 from django.db import models
-from bhp_base_model.validators import datetime_not_future
 from django.core.validators import MaxValueValidator, MinValueValidator
-from audit_trail.audit import AuditTrail
-from bhp_common.choices import YES_NO
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.validators import datetime_not_future
+from edc_lib.bhp_common.choices import YES_NO
 from base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Cd4History (BaseScheduledVisitModel):
 
     """CS002 - used to collect participant CD4 History"""
-    
+
     record_available = models.CharField(
         verbose_name="Is record of last CD4 count available?",
         max_length=3,
         choices=YES_NO,
         help_text="",
         )
-    
+
     last_cd4_count = models.DecimalField(
         verbose_name="What is the value of the last 'CD4' test recorded?",
         max_digits=6,

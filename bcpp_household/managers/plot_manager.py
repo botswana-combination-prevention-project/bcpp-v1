@@ -1,8 +1,4 @@
-import socket
 from django.db import models
-from django.db.models import Max
-from bhp_variables.models import StudySpecific
-from bhp_netbook.models import Netbook
 
 
 class PlotManager(models.Manager):

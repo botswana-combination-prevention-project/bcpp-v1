@@ -1,4 +1,4 @@
-from audit_trail.audit import AuditTrail
+from edc_lib.audit_trail.audit import AuditTrail
 from base_sexual_partner import BaseSexualPartner
 
 

@@ -1,6 +1,6 @@
 import factory
-from datetime import date, datetime
-from bhp_base_model.tests.factories import BaseUuidModelFactory
+from datetime import date
+from edc_lib.bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_household.models import GpsDevice
 
 

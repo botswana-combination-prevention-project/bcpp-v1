@@ -3,8 +3,8 @@ from datetime import datetime, date
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.template.loader import render_to_string
-from bhp_dashboard.classes import Dashboard
-from bhp_registration.models import RegisteredSubject
+from edc_lib.bhp_dashboard.classes import Dashboard
+from edc_lib.bhp_registration.models import RegisteredSubject
 from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
 from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from bcpp_survey.models import Survey

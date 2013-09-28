@@ -1,16 +1,16 @@
 from django.db import models
 from django.db.models import get_model
 from django.utils.translation import ugettext as _
-from bhp_base_model.fields import OtherCharField
-from audit_trail.audit import AuditTrail
-from bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
-from bhp_registration.models import RegisteredSubject
+from edc_lib.bhp_base_model.fields import OtherCharField
+from edc_lib.audit_trail.audit import AuditTrail
+from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_lib.bhp_registration.models import RegisteredSubject
 from bcpp_list.models import ElectricalAppliances, TransportMode
 from bcpp_household.models import HouseholdStructure
-from household_member import HouseholdMember
 from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 from bcpp_household_member.managers import HouseholdInfoManager
+from household_member import HouseholdMember
 
 
 class HouseholdInfo(BaseDispatchSyncUuidModel):

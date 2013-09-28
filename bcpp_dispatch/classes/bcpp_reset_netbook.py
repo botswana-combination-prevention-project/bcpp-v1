@@ -1,6 +1,6 @@
 import logging
 from django.db.models import get_model
-from bhp_dispatch.classes import PrepareDevice, DispatchController
+from edc_lib.bhp_dispatch.classes import PrepareDevice, DispatchController
 
 
 logger = logging.getLogger(__name__)
@@ -19,15 +19,15 @@ class BcppResetNetbook(PrepareDevice):
         kwargs.update({'lab_app_name': 'bcpp_survey_lab'})
         identifier_field_name = 'household_identifier'
         dispatch_url = '/bcpp_survey/dashboard/household/'
-        self.helper = DispatchController(using_source, using_destination, app_name, model_name, identifier_field_name, dispatch_url,**kwargs)
+        self.helper = DispatchController(using_source, using_destination, app_name, model_name, identifier_field_name, dispatch_url, **kwargs)
         super(BcppResetNetbook, self).__init__(using_source, using_destination, **kwargs)
 
     def post_prepare(self):
         self.update_registered_subjects()
-    
+
     def update_registered_subjects(self):
         logger.info("Updating the registered subject table...")
-        self.update_model(('bhp_registration', 'registeredsubject'))    
+        self.update_model(('edc_lib.bhp_registration', 'registeredsubject'))
 
     def reset_scheduled_labs(self):
         pass

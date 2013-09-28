@@ -1,4 +1,4 @@
-from bhp_base_form.forms import BaseModelForm
+from edc_lib.bhp_base_form.forms import BaseModelForm
 from bcpp_household.models import HouseholdLog, HouseholdLogEntry
 
 

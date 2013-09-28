@@ -1,10 +1,10 @@
 from django.conf import settings
-from bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
-from bhp_map.classes import site_mappers
+from edc_lib.bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
+from edc_lib.bhp_map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
-from models import Household, Plot
-from forms import CommunityForm
 from bcpp_household.forms.current_gps_form import CurrentGpsForm
+from .models import Household, Plot
+from .forms import CommunityForm
 
 
 site_mappers.autodiscover()
@@ -17,8 +17,7 @@ class SectionHouseholdView(BaseSectionForDashboardView):
     section_display_index = 20
     section_template = 'section_bcpp_household.html'
     dashboard_url_name = 'household_dashboard_url'
-    
-    
+
     def contribute_to_context(self, context, request, *args, **kwargs):
         current_survey = None
         if 'CURRENT_SURVEY' in dir(settings):

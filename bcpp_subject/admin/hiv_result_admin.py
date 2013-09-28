@@ -1,7 +1,7 @@
 from django.contrib import admin
-from subject_visit_model_admin import SubjectVisitModelAdmin
 from bcpp_subject.models import HivResult
 from bcpp_subject.forms import HivResultForm
+from subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class HivResultAdmin (SubjectVisitModelAdmin):
