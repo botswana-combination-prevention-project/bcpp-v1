@@ -1,9 +1,9 @@
 from django.contrib import admin
-from lab_packing.admin import BasePackingListAdmin, BasePackingListItemAdmin
-from bcpp_lab.classes import SubjectRequisitionModelAdmin
-from bcpp_lab.models import SubjectRequisition
-from bcpp_lab.models import PackingList, PackingListItem
-from bcpp_lab.forms import SubjectRequisitionForm, PackingListForm, PackingListItemForm
+from edc_lab.lab_packing.admin import BasePackingListAdmin, BasePackingListItemAdmin
+from ..classes import SubjectRequisitionModelAdmin
+from ..models import SubjectRequisition
+from ..models import PackingList, PackingListItem
+from ..forms import SubjectRequisitionForm, PackingListForm, PackingListItemForm
 
 
 class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):

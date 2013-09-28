@@ -1,4 +1,5 @@
 
+
 def set_inspectors_as_confirmed(modeladmin, request, queryset):
     """ set inspectors as confirmed"""
     for qs in queryset:
