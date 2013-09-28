@@ -1,6 +1,6 @@
-from lab_requisition.forms import BaseRequisitionForm
-from lab_packing.forms import BasePackingListForm, BasePackingListItemForm
-from bcpp_lab.models import SubjectRequisition, PackingList, PackingListItem
+from edc_lab.lab_requisition.forms import BaseRequisitionForm
+from edc_lab.lab_packing.forms import BasePackingListForm, BasePackingListItemForm
+from ..models import SubjectRequisition, PackingList, PackingListItem
 
 
 class SubjectRequisitionForm(BaseRequisitionForm):
@@ -33,7 +33,6 @@ class PackingListForm (BasePackingListForm):
         model = PackingList
 
 
-# PackingList
 class PackingListItemForm (BasePackingListItemForm):
 
     def clean(self):

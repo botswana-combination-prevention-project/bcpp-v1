@@ -1,1 +1,1 @@
-from survey_factory import SurveyFactory
+from .survey_factory import SurveyFactory

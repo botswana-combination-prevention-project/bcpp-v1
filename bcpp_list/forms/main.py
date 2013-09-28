@@ -1,12 +1,11 @@
-from bhp_base_form.forms import BaseModelForm
-from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith, 
-                              NeighbourhoodProblems, CircumcisionBenefits, 
-                              FamilyPlanning, MedicalCareAccess, PartnerResidency, 
+from edc_core.bhp_base_form.forms import BaseModelForm
+from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
+                              NeighbourhoodProblems, CircumcisionBenefits,
+                              FamilyPlanning, MedicalCareAccess, PartnerResidency,
                               HeartDisease, Diagnoses, Religion, EthnicGroups,
                               ReferredTo, ReferredFor)
 
 
-# ElectricalAppliances
 class ElectricalAppliancesForm (BaseModelForm):
 
     def clean(self):
@@ -18,7 +17,6 @@ class ElectricalAppliancesForm (BaseModelForm):
         model = ElectricalAppliances
 
 
-# TransportMode
 class TransportModeForm (BaseModelForm):
 
     def clean(self):
@@ -31,7 +29,6 @@ class TransportModeForm (BaseModelForm):
         model = TransportMode
 
 
-# LiveWith
 class LiveWithForm (BaseModelForm):
 
     def clean(self):
@@ -101,15 +98,6 @@ class PartnerResidencyForm (BaseModelForm):
     class Meta:
         model = PartnerResidency
 
-#HouseholdSurveyCode
-#HouseholdSurveyReason
-#HouseholdSurveySource
-#SurveyGroup
-#HouseholdStructureRelation
-#HouseholdSurveyStatus
-#SubjectAbsenteeReason
-#SubjectMovedReason
-#SubjectUndecidedReason
 
 class HeartDiseaseForm (BaseModelForm):
 
@@ -142,7 +130,7 @@ class ReligionForm (BaseModelForm):
 
     class Meta:
         model = Religion
-        
+
 
 class EthnicGroupsForm (BaseModelForm):
 
@@ -155,12 +143,11 @@ class EthnicGroupsForm (BaseModelForm):
         model = EthnicGroups
 
 
-
 class ReferredForForm (BaseModelForm):
 
     class Meta:
         model = ReferredFor
-        
+
 
 class ReferredToForm (BaseModelForm):
 

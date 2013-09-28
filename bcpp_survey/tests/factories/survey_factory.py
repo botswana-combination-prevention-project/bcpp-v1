@@ -1,7 +1,7 @@
 import factory
 from datetime import datetime, timedelta
-from bhp_base_model.tests.factories import BaseUuidModelFactory
-from bcpp_survey.models import Survey
+from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from ...models import Survey
 
 
 class SurveyFactory(BaseUuidModelFactory):

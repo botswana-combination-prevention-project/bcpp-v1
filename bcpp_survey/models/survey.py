@@ -1,9 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.core.validators import RegexValidator
-from bhp_sync.models import BaseSyncUuidModel
-#from bcpp_list.models import SurveyGroup
-from bcpp_survey.managers import SurveyManager
+from edc_core.bhp_sync.models import BaseSyncUuidModel
+from ..managers import SurveyManager
 
 
 class Survey (BaseSyncUuidModel):

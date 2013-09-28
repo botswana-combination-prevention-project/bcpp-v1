@@ -1,5 +1,5 @@
 from django import forms
-from bcpp_survey.models import Survey
+from ..models import Survey
 
 
 class SurveyForm(forms.Form):

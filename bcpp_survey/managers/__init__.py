@@ -1,1 +1,1 @@
-from survey_manager import SurveyManager
+from .survey_manager import SurveyManager

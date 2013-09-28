@@ -1,2 +1,2 @@
-from survey_form import SurveyForm
-from main import *
+from .survey_form import SurveyForm
+from .main import *

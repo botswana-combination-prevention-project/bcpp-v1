@@ -1,6 +1,6 @@
 from django.contrib import admin
-from bhp_base_admin.admin import BaseModelAdmin
-from bcpp_survey.models import Survey
+from edc_core.bhp_base_admin.admin import BaseModelAdmin
+from ..models import Survey
 
 
 class SurveyAdmin (BaseModelAdmin):

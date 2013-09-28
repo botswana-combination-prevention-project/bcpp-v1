@@ -1,10 +1,11 @@
 from django.contrib import admin
-from bhp_inspector.admin import BaseInspectorAdmin
-from bcpp_inspector.models import SubjectRequisitionInspector
-from bcpp_inspector.actions import set_inspectors_as_confirmed
+from edc_core.bhp_inspector.admin import BaseInspectorAdmin
+from ..models import SubjectRequisitionInspector
+from ..actions import set_inspectors_as_confirmed
+
 
 class RequisitionInspectorAdmin(BaseInspectorAdmin):
-    
+
     list_display = ['subject_identifier', 'requisition_datetime', 'is_confirmed', 'aliquot_type', 'requisition_identifier', 'specimen_identifier', 'device_id']
     list_filter = ['subject_identifier', 'requisition_datetime', 'is_confirmed', 'aliquot_type', 'requisition_identifier', 'specimen_identifier', 'device_id']
     search_fields = ['subject_identifier', 'requisition_datetime', 'is_confirmed', 'aliquot_type', 'requisition_identifier', 'specimen_identifier', 'device_id']
