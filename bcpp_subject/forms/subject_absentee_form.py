@@ -1,5 +1,5 @@
-from bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
-from base_membership_form import BaseMembershipForm
+from ..models import SubjectAbsentee, SubjectAbsenteeEntry
+from .base_membership_form import BaseMembershipForm
 
 
 class SubjectAbsenteeEntryForm(BaseMembershipForm):

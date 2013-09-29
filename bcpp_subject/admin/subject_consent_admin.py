@@ -1,9 +1,9 @@
 from django.contrib import admin
-from edc_lib.bhp_consent.admin import BaseConsentModelAdmin
-from edc_lib.bhp_registration.models import RegisteredSubject
+from edc_core.bhp_consent.admin import BaseConsentModelAdmin
+from edc_core.bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.models import SubjectConsent  # YearOneForm, SubjectConsentYearTwoForm, SubjectConsentYearThreeForm, SubjectConsentYearFourForm, SubjectConsentYearFiveForm
-from bcpp_subject.forms import SubjectConsentForm  # YearOne, SubjectConsentYearTwo, SubjectConsentYearThree, SubjectConsentYearFour, SubjectConsentYearFive
+from ..models import SubjectConsent
+from ..forms import SubjectConsentForm
 
 
 class SubjectConsentAdmin(BaseConsentModelAdmin):

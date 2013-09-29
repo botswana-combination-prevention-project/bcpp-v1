@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_supplemental_fields.classes import SupplementalFields
+from edc_core.bhp_supplemental_fields.classes import SupplementalFields
 from bcpp_subject.models import AccessToCare
 from bcpp_subject.forms import AccessToCareForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 #Access to Care [AC]: 10% in pretest, 9% in BHS and all follow-up

@@ -1,6 +1,6 @@
 from django import forms
-from bcpp_subject.models import ResidencyMobility
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import ResidencyMobility
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 #ResidencyMobility

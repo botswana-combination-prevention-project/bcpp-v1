@@ -2,12 +2,12 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.core.validators import MinValueValidator, MaxValueValidator
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
-from bcpp_household.managers import HouseholdStructureManager
-from household import Household
-from plot import Plot
+from ..managers import HouseholdStructureManager
+from .household import Household
+from .plot import Plot
 
 
 class HouseholdStructure(BaseDispatchSyncUuidModel):

@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
+from edc_core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.models import SubjectRefusal
-from bcpp_subject.forms import SubjectRefusalForm
+from ..models import SubjectRefusal
+from ..forms import SubjectRefusalForm
 
 
 class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):

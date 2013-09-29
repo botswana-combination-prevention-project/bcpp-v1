@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bcpp_subject.models import Education
-from bcpp_subject.forms import EducationForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from ..models import Education
+from ..forms import EducationForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class EducationAdmin(SubjectVisitModelAdmin):

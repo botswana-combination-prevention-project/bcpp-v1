@@ -3,16 +3,16 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc_lib.bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
-from edc_lib.bhp_device.classes import Device
-from edc_lib.bhp_map.classes import site_mappers
-from edc_lib.bhp_map.exceptions import MapperError
-from edc_lib.bhp_identifier.exceptions import IdentifierError
-from bcpp_household.managers import PlotManager
-from bcpp_household.classes import PlotIdentifier
-from bcpp_household.choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc_core.bhp_device.classes import Device
+from edc_core.bhp_map.classes import site_mappers
+from edc_core.bhp_map.exceptions import MapperError
+from edc_core.bhp_identifier.exceptions import IdentifierError
+from ..managers import PlotManager
+from ..classes import PlotIdentifier
+from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
 
 
 def is_valid_community(self, value):

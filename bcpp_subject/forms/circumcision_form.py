@@ -1,6 +1,6 @@
 from django import forms
-from bcpp_subject.models import Circumcision, Uncircumcised, Circumcised
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import Circumcision, Uncircumcised, Circumcised
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class CircumcisionForm (BaseSubjectModelForm):

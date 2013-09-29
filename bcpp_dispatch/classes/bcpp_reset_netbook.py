@@ -1,6 +1,6 @@
 import logging
 from django.db.models import get_model
-from edc_lib.bhp_dispatch.classes import PrepareDevice, DispatchController
+from edc_core.bhp_dispatch.classes import PrepareDevice, DispatchController
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class BcppResetNetbook(PrepareDevice):
 
     def update_registered_subjects(self):
         logger.info("Updating the registered subject table...")
-        self.update_model(('edc_lib.bhp_registration', 'registeredsubject'))
+        self.update_model(('edc_core.bhp_registration', 'registeredsubject'))
 
     def reset_scheduled_labs(self):
         pass

@@ -1,8 +1,8 @@
 import socket
 from django.db import models
 from django.db.models import Max
-from edc_lib.bhp_variables.models import StudySpecific
-from edc_lib.bhp_netbook.models import Netbook
+from edc_core.bhp_variables.models import StudySpecific
+from edc_core.bhp_netbook.models import Netbook
 
 
 class HouseholdManager(models.Manager):

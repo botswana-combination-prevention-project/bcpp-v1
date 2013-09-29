@@ -1,2 +1,2 @@
-from otse import *
-from mochudi import *
+from .otse import *
+from .mochudi import *

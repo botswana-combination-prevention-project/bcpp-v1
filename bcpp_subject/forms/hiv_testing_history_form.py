@@ -1,6 +1,6 @@
 from django import forms
-from bcpp_subject.models import HivTestingHistory
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import HivTestingHistory
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class HivTestingHistoryForm (BaseSubjectModelForm):

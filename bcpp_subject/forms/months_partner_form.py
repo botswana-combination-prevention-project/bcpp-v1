@@ -1,7 +1,7 @@
 from django import forms
-from bcpp_subject.models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
 from bcpp.choices import FIRSTPARTNERHIV_CHOICE, YES_NO_UNSURE
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class BaseMonthsPartnerForm (BaseSubjectModelForm):

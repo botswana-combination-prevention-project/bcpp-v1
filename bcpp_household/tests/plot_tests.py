@@ -1,9 +1,9 @@
 from django.test import TestCase
-from edc_lib.bhp_map.classes import site_mappers
+from edc_core.bhp_map.classes import site_mappers
 from bcpp_survey.tests.factories import SurveyFactory
-from bcpp_household.classes  import PlotIdentifier
-from bcpp_household.models import PlotIdentifierHistory
-from factories import PlotFactory
+from ..classes  import PlotIdentifier
+from ..models import PlotIdentifierHistory
+from .factories import PlotFactory
 
 
 class PlotTests(TestCase):

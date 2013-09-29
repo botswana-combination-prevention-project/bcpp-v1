@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bcpp_subject.models import Demographics
-from bcpp_subject.forms import DemographicsForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from ..models import Demographics
+from ..forms import DemographicsForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class DemographicsAdmin(SubjectVisitModelAdmin):
