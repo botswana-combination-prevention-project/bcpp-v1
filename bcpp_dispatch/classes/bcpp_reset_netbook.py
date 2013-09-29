@@ -27,7 +27,7 @@ class BcppResetNetbook(PrepareDevice):
 
     def update_registered_subjects(self):
         logger.info("Updating the registered subject table...")
-        self.update_model(('edc_core.bhp_registration', 'registeredsubject'))
+        self.update_model(('bhp_registration', 'registeredsubject'))
 
     def reset_scheduled_labs(self):
         pass
