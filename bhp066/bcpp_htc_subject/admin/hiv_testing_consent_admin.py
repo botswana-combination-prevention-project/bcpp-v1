@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc_subject.models import HivTestingConsent
-from bcpp_htc_subject.forms import HivTestingConsentForm
+from ..models import HivTestingConsent
+from ..forms import HivTestingConsentForm
 
 
 class HivTestingConsentAdmin(HtcSubjectVisitModelAdmin):

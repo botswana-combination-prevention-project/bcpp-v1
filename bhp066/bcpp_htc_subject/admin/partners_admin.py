@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc_subject.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
-from bcpp_htc_subject.forms import HtcRecentPartnerForm, HtcSecondPartnerForm, HtcThirdPartnerForm
+from ..models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
+from ..forms import HtcRecentPartnerForm, HtcSecondPartnerForm, HtcThirdPartnerForm
 
 
 class HtcRecentPartnerAdmin(HtcSubjectVisitModelAdmin):

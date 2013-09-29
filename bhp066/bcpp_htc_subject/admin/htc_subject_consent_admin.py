@@ -2,8 +2,8 @@ from django.contrib import admin
 from bhp_consent.admin import BaseConsentModelAdmin
 from bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
-from bcpp_htc_subject.models import HtcSubjectConsent
-from bcpp_htc_subject.forms import HtcSubjectConsentForm
+from ..models import HtcSubjectConsent
+from ..forms import HtcSubjectConsentForm
 
 
 class HtcSubjectConsentAdmin(BaseConsentModelAdmin):

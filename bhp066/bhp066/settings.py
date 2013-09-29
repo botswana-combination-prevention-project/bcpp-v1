@@ -1,4 +1,5 @@
 # Django settings for bhp project.
+from unipath import Path
 import os
 import platform
 import sys
@@ -12,9 +13,17 @@ ADMINS = (
     ('erikvw', 'ew@2789@gmail.com'),
 )
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "./"))
-sys.path.append(os.path.join(PROJECT_ROOT, 'edc_core'))
-sys.path.append(os.path.join(PROJECT_ROOT, 'edc_lab'))
+# Path
+PROJECT_DIR = Path(__file__).ancestor(2)
+MEDIA_ROOT = PROJECT_DIR.child('media')
+STATIC_ROOT = PROJECT_DIR.child('static')
+TEMPLATE_DIRS = (
+    PROJECT_DIR.child('templates'),
+    )
+STATICFILES_DIRS = ()
+CONFIG_DIR = PROJECT_DIR.child('bhp066')
+KEY_PATH = CONFIG_DIR.child('keys')
+MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -150,7 +159,7 @@ LANGUAGES = (
     ('en', 'English'),
 )
 
-LOCALE_PATHS = (os.path.join(PROJECT_ROOT, 'locale'), )
+LOCALE_PATHS = PROJECT_DIR.child('locale')
 
 LANGUAGE_CODE = 'en'
 
@@ -166,7 +175,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+#MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -175,7 +184,7 @@ MEDIA_URL = '/media/'
 
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+#STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # URL that handles the static files served from STATIC_ROOT.
 # Example: "http://media.lawrence.com/static/"
@@ -234,13 +243,6 @@ ROOT_URLCONF = 'bhp066.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'bhp066.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-#     os.path.join(PROJECT_ROOT, 'bhp_templates'),
-    os.path.join(PROJECT_ROOT, 'templates'),
-)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -256,96 +258,96 @@ INSTALLED_APPS = (
     'dajaxice',
     'dajax',
     'south',
-    'audit_trail',
-    'bhp_templates',
-    'bhp_static',
-    'bhp_crypto',
-    'bhp_string',
-    'bhp_lock',
-    'bhp_appointment',
-    'bhp_appointment_helper',
-    'bhp_userprofile',
-    'bhp_poll_mysql',
-    'bhp_model_selector',
-    'bhp_templatetags',
-    'bhp_base_model',
-    'bhp_base_test',
-    'bhp_variables',
-    'bhp_actg_reference',
-    'bhp_adverse',
-    'bhp_map',
-    'bhp_code_lists',
-    'bhp_common',
-    'bhp_identifier',
-    'bhp_content_type_map',
-    'bhp_search',
-    'bhp_section',
-    'bhp_consent',
-    'bhp_locator',
-    'bhp_off_study',
-    'bhp_registration',
-    'bhp_botswana',
-    'bhp_data_manager',
-    'bhp_base_admin',
-    'bhp_base_form',
-    'bhp_supplemental_fields',
-    'bhp_variables',
-    'bhp_site_edc',
-    'bhp_research_protocol',
-    'bhp_sync',
-    'bhp_device',
-    'bhp_lab_tracker',
-    'bhp_visit',
-    'bhp_visit_tracking',
-    'bhp_appointment',
-    'bhp_subject',
-    'bhp_subject_config',
-    'bhp_supplemental_fields',
-    'bhp_nmap',
-    'bhp_data_manager',
-    'bhp_entry',
-    'bhp_lab_entry',
-    'bhp_context',
-    'bhp_using',
-    'bhp_contact',
-    'bhp_dashboard',
-    'bhp_dashboard_registered_subject',
-    'bhp_export_data',
-    'bhp_model_describer',
-    'bhp_subject_summary',
-    'bhp_entry_rules',
-    'bhp_dispatch',
-    'bhp_inspector',
-    'bhp_netbook',
-    'bhp_household',
-    'bhp_household_member',
-    'bhp_inspector',
-    'lab_common',
-    'lab_import',
-    'lab_import_lis',
-    'lab_import_dmis',
-    'lab_flag',
-    'lab_grading',
-    'lab_reference',
-    'lab_requisition',
-    'lab_aliquot_list',
-    'lab_base_model',
-    'lab_panel',
-    'lab_test_code',
-    'lab_account',
-    'lab_patient',
-    'lab_receive',
-    'lab_aliquot',
-    'lab_order',
-    'lab_result',
-    'lab_result_item',
-    'lab_barcode',
-    'lab_clinic_api',
-    'lab_clinic_reference',
-    'lab_export',
-    'lab_result_report',
-    'lab_packing',
-    'lab_base_model',
+    'edc_core.audit_trail',
+    'edc_core.bhp_templates',
+    'edc_core.bhp_static',
+    'edc_core.bhp_crypto',
+    'edc_core.bhp_string',
+    'edc_core.bhp_lock',
+    'edc_core.bhp_appointment',
+    'edc_core.bhp_appointment_helper',
+    'edc_core.bhp_userprofile',
+    'edc_core.bhp_poll_mysql',
+    'edc_core.bhp_model_selector',
+    'edc_core.bhp_templatetags',
+    'edc_core.bhp_base_model',
+    'edc_core.bhp_base_test',
+    'edc_core.bhp_variables',
+    'edc_core.bhp_actg_reference',
+    'edc_core.bhp_adverse',
+    'edc_core.bhp_map',
+    'edc_core.bhp_code_lists',
+    'edc_core.bhp_common',
+    'edc_core.bhp_identifier',
+    'edc_core.bhp_content_type_map',
+    'edc_core.bhp_search',
+    'edc_core.bhp_section',
+    'edc_core.bhp_consent',
+    'edc_core.bhp_locator',
+    'edc_core.bhp_off_study',
+    'edc_core.bhp_registration',
+    'edc_core.bhp_botswana',
+    'edc_core.bhp_data_manager',
+    'edc_core.bhp_base_admin',
+    'edc_core.bhp_base_form',
+    'edc_core.bhp_supplemental_fields',
+    'edc_core.bhp_variables',
+    'edc_core.bhp_site_edc',
+    'edc_core.bhp_research_protocol',
+    'edc_core.bhp_sync',
+    'edc_core.bhp_device',
+    'edc_core.bhp_lab_tracker',
+    'edc_core.bhp_visit',
+    'edc_core.bhp_visit_tracking',
+    'edc_core.bhp_appointment',
+    'edc_core.bhp_subject',
+    'edc_core.bhp_subject_config',
+    'edc_core.bhp_supplemental_fields',
+    'edc_core.bhp_nmap',
+    'edc_core.bhp_data_manager',
+    'edc_core.bhp_entry',
+    'edc_core.bhp_lab_entry',
+    'edc_core.bhp_context',
+    'edc_core.bhp_using',
+    'edc_core.bhp_contact',
+    'edc_core.bhp_dashboard',
+    'edc_core.bhp_dashboard_registered_subject',
+    'edc_core.bhp_export_data',
+    'edc_core.bhp_model_describer',
+    'edc_core.bhp_subject_summary',
+    'edc_core.bhp_entry_rules',
+    'edc_core.bhp_dispatch',
+    'edc_core.bhp_inspector',
+    'edc_core.bhp_netbook',
+    'edc_core.bhp_household',
+    'edc_core.bhp_household_member',
+    'edc_core.bhp_inspector',
+    'edc_lab.lab_common',
+    'edc_lab.lab_import',
+    'edc_lab.lab_import_lis',
+    'edc_lab.lab_import_dmis',
+    'edc_lab.lab_flag',
+    'edc_lab.lab_grading',
+    'edc_lab.lab_reference',
+    'edc_lab.lab_requisition',
+    'edc_lab.lab_aliquot_list',
+    'edc_lab.lab_base_model',
+    'edc_lab.lab_panel',
+    'edc_lab.lab_test_code',
+    'edc_lab.lab_account',
+    'edc_lab.lab_patient',
+    'edc_lab.lab_receive',
+    'edc_lab.lab_aliquot',
+    'edc_lab.lab_order',
+    'edc_lab.lab_result',
+    'edc_lab.lab_result_item',
+    'edc_lab.lab_barcode',
+    'edc_lab.lab_clinic_api',
+    'edc_lab.lab_clinic_reference',
+    'edc_lab.lab_export',
+    'edc_lab.lab_result_report',
+    'edc_lab.lab_packing',
+    'edc_lab.lab_base_model',
     'bcpp',
     'bcpp_lab',
     'bcpp_list',
@@ -359,8 +361,6 @@ INSTALLED_APPS = (
     'bcpp_inspector',
     'bcpp_dispatch',
     #'tastypie',
-#     'bcpp_survey_dashboard',
-#     'bcpp_survey_lab',
 )
 
 # email settings
@@ -408,21 +408,10 @@ APPOINTMENTS_DAYS_FORWARD = 15
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_htc_subject']
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
-#Reports settings
-REPORTS_TEMPLATES_PATH = os.path.join(PROJECT_ROOT)
-REPORTS_JAR_PATH = os.path.join(PROJECT_ROOT, 'birtreport_generator.jar')
-REPORTS_OUTPUT_PATH = os.path.join(PROJECT_ROOT, 'bhp_birt_reports/templates/')
 
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-MAP_DIR = os.path.join(PROJECT_ROOT, 'static/img/')
-
-if platform.system() == 'Darwin':
-    #KEY_PATH = '/Volumes/bhp066/keys'
-    KEY_PATH = os.path.join(PROJECT_ROOT, 'keys')
-else:
-    KEY_PATH = os.path.join(PROJECT_ROOT, 'keys')
 
 GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
 VERIFY_GPS = False

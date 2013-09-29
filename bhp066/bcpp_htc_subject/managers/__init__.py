@@ -1,1 +1,1 @@
-from scheduled_model_manager import ScheduledModelManager
+from .scheduled_model_manager import ScheduledModelManager

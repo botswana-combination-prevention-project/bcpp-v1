@@ -1,8 +1,8 @@
 import factory
-from datetime import date, datetime
-from bhp_base_model.tests.factories import BaseUuidModelFactory
-from bcpp_htc_subject.models import CircumcisionAppointment
-from htc_subject_visit_factory import HtcSubjectVisitFactory
+from datetime import datetime
+from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from ...models import CircumcisionAppointment
+from .htc_subject_visit_factory import HtcSubjectVisitFactory
 
 
 class CircumcisionAppointmentFactory(BaseUuidModelFactory):

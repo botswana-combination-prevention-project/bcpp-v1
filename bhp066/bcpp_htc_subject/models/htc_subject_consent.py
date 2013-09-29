@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bhp_common.choices import YES_NO
-from subject_off_study_mixin import SubjectOffStudyMixin
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_common.choices import YES_NO
 from bcpp_household_member.models import BaseHouseholdMemberConsent
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
 class HtcSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):

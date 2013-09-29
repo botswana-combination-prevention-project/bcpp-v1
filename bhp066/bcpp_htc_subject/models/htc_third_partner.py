@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bcpp_htc_subject.choices import RELATIONSHIP_TYPE
-from base_partner import BasePartner
+from edc_core.audit_trail.audit import AuditTrail
+from ..choices import RELATIONSHIP_TYPE
+from .base_partner import BasePartner
 
 
 class HtcThirdPartner (BasePartner):

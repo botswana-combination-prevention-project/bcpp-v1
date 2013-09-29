@@ -1,7 +1,7 @@
 import factory
 from datetime import date, datetime
 from bhp_base_model.tests.factories import BaseUuidModelFactory
-from bcpp_htc_subject.models import HtcSubjectVisit
+from ..models import HtcSubjectVisit
 from bhp_appointment.tests.factories import AppointmentFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 

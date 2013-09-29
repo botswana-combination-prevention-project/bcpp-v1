@@ -1,6 +1,6 @@
 from django.contrib import admin
-from bcpp_htc_subject.models import HtcSubjectLocator
-from bcpp_htc_subject.forms import HtcSubjectLocatorForm
+from ..models import HtcSubjectLocator
+from ..forms import HtcSubjectLocatorForm
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 
 

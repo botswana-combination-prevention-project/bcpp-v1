@@ -1,5 +1,5 @@
 from bhp_visit_tracking.admin import BaseVisitTrackingModelAdmin
-from bcpp_htc_subject.models import HtcSubjectVisit
+from ..models import HtcSubjectVisit
 
 
 class HtcSubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):

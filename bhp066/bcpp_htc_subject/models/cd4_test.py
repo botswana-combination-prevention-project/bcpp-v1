@@ -1,9 +1,9 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from base_scheduled_model import BaseScheduledModel
-from bhp_base_model.validators import date_not_future
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import date_not_future
+from .base_scheduled_model import BaseScheduledModel
 
 
 class Cd4Test(BaseScheduledModel):

@@ -1,8 +1,8 @@
 import factory
 from datetime import date, datetime
-from bhp_base_model.tests.factories import BaseUuidModelFactory
-from bcpp_htc_subject.models import Cd4Test
-from htc_subject_visit_factory import HtcSubjectVisitFactory
+from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from ...models import Cd4Test
+from .htc_subject_visit_factory import HtcSubjectVisitFactory
 
 
 class Cd4TestFactory(BaseUuidModelFactory):

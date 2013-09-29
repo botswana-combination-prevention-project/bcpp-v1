@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc_subject.models import LastHivRecord
-from bcpp_htc_subject.forms import LastHivRecordForm
+from ..models import LastHivRecord
+from ..forms import LastHivRecordForm
 
 
 class LastHivRecordAdmin(HtcSubjectVisitModelAdmin):
