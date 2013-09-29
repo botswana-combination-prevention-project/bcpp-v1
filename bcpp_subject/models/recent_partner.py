@@ -1,5 +1,5 @@
-from edc_lib.audit_trail.audit import AuditTrail
-from detailed_sexual_history import DetailedSexualHistory
+from edc_core.audit_trail.audit import AuditTrail
+from .detailed_sexual_history import DetailedSexualHistory
 
 
 class RecentPartner (DetailedSexualHistory):

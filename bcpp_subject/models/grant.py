@@ -1,11 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from bhp_base_model.fields import OtherCharField
-from edc_lib.audit_trail.audit import AuditTrail
-from bcpp_subject.managers import GrantManager
-from bcpp_subject.choices import GRANT_TYPE
-from base_scheduled_inline_model import BaseScheduledInlineModel
-from labour_market_wages import LabourMarketWages
+from edc_core.bhp_base_model.fields import OtherCharField
+from edc_core.audit_trail.audit import AuditTrail
+from ..managers import GrantManager
+from ..choices import GRANT_TYPE
+from .base_scheduled_inline_model import BaseScheduledInlineModel
+from .labour_market_wages import LabourMarketWages
 
 
 class Grant(BaseScheduledInlineModel):

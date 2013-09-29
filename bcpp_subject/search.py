@@ -1,6 +1,6 @@
-from bhp_search.classes import BaseSearchByWord, site_search
-from models import SubjectConsent
-from section import SectionSubjectView
+from edc_core.bhp_search.classes import BaseSearchByWord, site_search
+from .models import SubjectConsent
+from .section import SectionSubjectView
 
 
 class SubjectSearchByWord(BaseSearchByWord):

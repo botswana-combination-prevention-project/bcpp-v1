@@ -1,11 +1,11 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
-from bhp_base_model.fields import OtherCharField
-from bhp_base_model.validators import datetime_is_future
-from bhp_common.choices import YES_NO
-from bhp_appointment_helper.models import BaseAppointmentMixin
-from bcpp_subject.choices import REFERRAL_REASONS
-from base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.fields import OtherCharField
+from edc_core.bhp_base_model.validators import datetime_is_future
+from edc_core.bhp_common.choices import YES_NO
+from edc_core.bhp_appointment_helper.models import BaseAppointmentMixin
+from ..choices import REFERRAL_REASONS
+from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
 
 class SubjectReferral(BaseRegisteredHouseholdMemberModel, BaseAppointmentMixin):

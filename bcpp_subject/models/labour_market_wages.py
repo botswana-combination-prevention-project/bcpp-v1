@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_base_model.fields import OtherCharField
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.fields import OtherCharField
 from bcpp.choices import YES_NO_REFUSED
-from bcpp_subject.choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from ..choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class LabourMarketWages (BaseScheduledVisitModel):

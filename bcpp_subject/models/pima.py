@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MaxValueValidator, MinValueValidator
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_base_model.fields import OtherCharField
-from edc_lib.bhp_common.choices import YES_NO
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.fields import OtherCharField
+from edc_core.bhp_common.choices import YES_NO
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Pima (BaseScheduledVisitModel):

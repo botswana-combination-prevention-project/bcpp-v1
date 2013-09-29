@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bcpp_subject.choices import STI_DX
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from edc_core.audit_trail.audit import AuditTrail
+from ..choices import STI_DX
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Sti (BaseScheduledVisitModel):

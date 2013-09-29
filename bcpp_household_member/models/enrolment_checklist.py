@@ -1,19 +1,19 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_base_model.validators import eligible_if_yes
-from edc_lib.bhp_common.choices import YES_NO, YES_NO_REFUSED
-from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc_lib.bhp_registration.models import RegisteredSubject
-from edc_lib.bhp_crypto.fields import EncryptedCharField
-from edc_lib.bhp_botswana.fields import EncryptedOmangField
-from edc_lib.bhp_base_model.fields import IsDateEstimatedField
-from edc_lib.bhp_base_model.validators import dob_not_future, MinConsentAge, MaxConsentAge
-from edc_lib.bhp_common.choices import GENDER_UNDETERMINED
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import eligible_if_yes
+from edc_core.bhp_common.choices import YES_NO, YES_NO_REFUSED
+from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.bhp_registration.models import RegisteredSubject
+from edc_core.bhp_crypto.fields import EncryptedCharField
+from edc_core.bhp_botswana.fields import EncryptedOmangField
+from edc_core.bhp_base_model.fields import IsDateEstimatedField
+from edc_core.bhp_base_model.validators import dob_not_future, MinConsentAge, MaxConsentAge
+from edc_core.bhp_common.choices import GENDER_UNDETERMINED
 from bcpp_household.models import Plot
-from bcpp_household_member.managers import EnrolmentChecklistManager
-from household_member import HouseholdMember
+from ..managers import EnrolmentChecklistManager
+from .household_member import HouseholdMember
 
 
 class EnrolmentChecklist (BaseDispatchSyncUuidModel):

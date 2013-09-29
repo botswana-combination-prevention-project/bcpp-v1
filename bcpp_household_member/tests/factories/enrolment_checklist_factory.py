@@ -1,9 +1,9 @@
 import factory
 from datetime import datetime
-from edc_lib.bhp_base_model.tests.factories import BaseUuidModelFactory
-from edc_lib.bhp_registration.tests.factories import RegisteredSubjectFactory
-from bcpp_household_member.models import EnrolmentChecklist
-from bcpp_household_member.tests.factories import HouseholdMemberFactory
+from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc_core.bhp_registration.tests.factories import RegisteredSubjectFactory
+from ...models import EnrolmentChecklist
+from household_member_factory import HouseholdMemberFactory
 
 
 class EnrolmentChecklistFactory(BaseUuidModelFactory):

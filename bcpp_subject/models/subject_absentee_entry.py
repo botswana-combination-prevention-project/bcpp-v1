@@ -1,9 +1,9 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
-from bcpp_subject.models import SubjectAbsentee
-from bcpp_subject.choices import ABSENTEE_REASON
-from base_subject_entry import BaseSubjectEntry
-from bcpp_subject.managers import SubjectAbsenteeEntryManager
+from edc_core.audit_trail.audit import AuditTrail
+from ..models import SubjectAbsentee
+from ..choices import ABSENTEE_REASON
+from ..managers import SubjectAbsenteeEntryManager
+from .base_subject_entry import BaseSubjectEntry
 
 
 class SubjectAbsenteeEntry(BaseSubjectEntry):

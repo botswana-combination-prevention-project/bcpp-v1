@@ -1,8 +1,8 @@
 from django.db import models
-from bhp_consent.models import BaseConsentHistory
+from edc_core.bhp_consent.models import BaseConsentHistory
 from bcpp_household_member.models import HouseholdMember
 from bcpp_survey.models import Survey
-from bcpp_subject.managers import ConsentHistoryManager
+from ..managers import ConsentHistoryManager
 
 
 class SubjectConsentHistory(BaseConsentHistory):
@@ -12,7 +12,7 @@ class SubjectConsentHistory(BaseConsentHistory):
     household_member = models.ForeignKey(HouseholdMember)
 
     objects = ConsentHistoryManager()
-    
+
     def natural_key(self):
         if not self.registered_subject:
             raise AttributeError("registered_subject cannot be None for pk='\{0}\'".format(self.pk))

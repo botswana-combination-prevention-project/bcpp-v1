@@ -1,5 +1,5 @@
 from django.db.models import get_models, get_app
-from base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
+from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
 
 class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):

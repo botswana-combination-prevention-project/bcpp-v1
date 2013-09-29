@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_lib.bhp_base_model.fields import OtherCharField
-from edc_lib.bhp_common.choices import GENDER, YES_NO_REFUSED, POS_NEG_UNKNOWN, YES_NO_DONT_KNOW
-from bcpp_subject.choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from edc_core.bhp_base_model.fields import OtherCharField
+from edc_core.bhp_common.choices import GENDER, YES_NO_REFUSED, POS_NEG_UNKNOWN, YES_NO_DONT_KNOW
+from ..choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class DetailedSexualHistory (BaseScheduledVisitModel):
