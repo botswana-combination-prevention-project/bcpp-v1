@@ -1,6 +1,6 @@
 from django.test import TestCase
-from bcpp_household.mappers import MochudiHouseholdMapper
-from bcpp_household.models import Plot
+from ..mappers import MochudiHouseholdMapper
+from ..models import Plot
 
 
 class HouseholdMapperTests(TestCase):

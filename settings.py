@@ -12,6 +12,10 @@ ADMINS = (
     ('erikvw', 'ew@2789@gmail.com'),
 )
 
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "./"))
+sys.path.append(os.path.join(PROJECT_ROOT, 'edc_core'))
+sys.path.append(os.path.join(PROJECT_ROOT, 'edc_lab'))
+
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
@@ -142,7 +146,7 @@ LANGUAGES = (
     ('en', 'English'),
 )
 
-LOCALE_PATHS = (os.path.join(DIRNAME, 'locale'), )
+LOCALE_PATHS = (os.path.join(PROJECT_ROOT, 'locale'), )
 
 LANGUAGE_CODE = 'en'
 SITE_ID = 1
@@ -157,7 +161,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(DIRNAME, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -166,7 +170,7 @@ MEDIA_URL = '/media/'
 
 # Absolute path to the directory that holds static files.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(DIRNAME, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # URL that handles the static files served from STATIC_ROOT.
 # Example: "http://media.lawrence.com/static/"
@@ -225,7 +229,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(DIRNAME, 'bhp_templates'),
+    os.path.join(PROJECT_ROOT, 'bhp_templates'),
+    os.path.join(PROJECT_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -242,13 +247,20 @@ INSTALLED_APPS = (
     'dajaxice',
     'dajax',
     'south',
-    'edc_core',
-    'edc_lab',
+    'edc_core.bhp_variables',
+    'edc_core.bhp_registration',
+    'edc_core.bhp_appointment',
+    'edc_core.bhp_visit',
+    'edc_core.bhp_content_type_map',
+    'edc_core.bhp_adverse',
+    'edc_core.bhp_sync',
+    'edc_core.bhp_dispatch',
+    'edc_lab.lab_clinic_api',
     'bcpp',
     'bcpp_lab',
     'bcpp_list',
     'bcpp_subject',
-    'bcpp_htc_subject',
+    #'bcpp_htc_subject',
     'bcpp_dashboard',
     'bcpp_stats',
     'bcpp_household',
@@ -307,20 +319,20 @@ SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_htc_subject']
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
 #Reports settings
-REPORTS_TEMPLATES_PATH = os.path.join(DIRNAME)
-REPORTS_JAR_PATH = os.path.join(DIRNAME, 'birtreport_generator.jar')
-REPORTS_OUTPUT_PATH = os.path.join(DIRNAME, 'bhp_birt_reports/templates/')
+REPORTS_TEMPLATES_PATH = os.path.join(PROJECT_ROOT)
+REPORTS_JAR_PATH = os.path.join(PROJECT_ROOT, 'birtreport_generator.jar')
+REPORTS_OUTPUT_PATH = os.path.join(PROJECT_ROOT, 'bhp_birt_reports/templates/')
 
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
-MAP_DIR = os.path.join(DIRNAME, 'static/img/')
+MAP_DIR = os.path.join(PROJECT_ROOT, 'static/img/')
 
 if platform.system() == 'Darwin':
     #KEY_PATH = '/Volumes/bhp066/keys'
-    KEY_PATH = os.path.join(DIRNAME, 'keys')
+    KEY_PATH = os.path.join(PROJECT_ROOT, 'keys')
 else:
-    KEY_PATH = os.path.join(DIRNAME, 'keys')
+    KEY_PATH = os.path.join(PROJECT_ROOT, 'keys')
 
 GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
 VERIFY_GPS = False

@@ -1,10 +1,10 @@
-from bcpp_subject.models import (SubjectDeath, QualityOfLife,
+from ..models import (SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
                                  HivMedicalCare, HeartAttack, Cancer, Tubercolosis,
                                  Sti, SubstanceUse,
                                  HivResultDocumentation)
-from base_subject_model_form import BaseSubjectModelForm
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class SubjectDeathForm (BaseSubjectModelForm):

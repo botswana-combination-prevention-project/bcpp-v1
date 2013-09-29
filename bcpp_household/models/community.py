@@ -1,6 +1,6 @@
 from django.db import models
-from edc_lib.bhp_base_model.models import BaseModel
-from bcpp_household.managers import CommunityManager
+from edc_core.bhp_base_model.models import BaseModel
+from ..managers import CommunityManager
 
 
 class Community(BaseModel):

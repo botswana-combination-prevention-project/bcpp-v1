@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bcpp_household.models import Household
 from bcpp_household.forms import HouseholdForm
-from base_household_model_admin import BaseHouseholdModelAdmin
+from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
 class HouseholdAdmin(BaseHouseholdModelAdmin):

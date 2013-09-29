@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
+from edc_core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.models import SubjectReferral
-from bcpp_subject.forms import SubjectReferralForm
+from ..models import SubjectReferral
+from ..forms import SubjectReferralForm
 
 
 class SubjectReferralAdmin(BaseRegisteredSubjectModelAdmin):

@@ -1,5 +1,5 @@
-from bcpp_subject.models import SubjectReferral
-from base_membership_form import BaseMembershipForm
+from ..models import SubjectReferral
+from .base_membership_form import BaseMembershipForm
 
 
 class SubjectReferralForm(BaseMembershipForm):

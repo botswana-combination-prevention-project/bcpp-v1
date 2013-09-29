@@ -1,9 +1,9 @@
 from django.contrib import admin
-from edc_lib.bhp_appointment.admin import BaseAppointmentModelAdmin
+from edc_core.bhp_appointment.admin import BaseAppointmentModelAdmin
 from bcpp_lab.models import SubjectRequisition
-from bcpp_subject.models import SubjectVisit
-from bcpp_subject.forms import SubjectVisitForm
 from bcpp_household_member.models import HouseholdMember
+from ..models import SubjectVisit
+from ..forms import SubjectVisitForm
 
 
 class SubjectVisitAdmin(BaseAppointmentModelAdmin):

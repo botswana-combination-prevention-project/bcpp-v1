@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_supplemental_fields.classes import SupplementalFields
-from bcpp_subject.models import Stigma, StigmaOpinion, PositiveParticipant
-from bcpp_subject.forms import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from edc_core.bhp_supplemental_fields.classes import SupplementalFields
+from ..models import Stigma, StigmaOpinion, PositiveParticipant
+from ..forms import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 """Stigma [ST]: 10% in pretest. In BHS, it differs according to reported HIV status:

@@ -1,5 +1,5 @@
-from edc_lib.bhp_consent.forms import BaseConsentedModelForm
-from bcpp_subject.models import SubjectVisit
+from edc_core.bhp_consent.forms import BaseConsentedModelForm
+from ..models import SubjectVisit
 
 
 class SubjectVisitForm (BaseConsentedModelForm):

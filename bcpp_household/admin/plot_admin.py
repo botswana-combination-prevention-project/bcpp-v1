@@ -1,8 +1,8 @@
 from django.contrib import admin
-from base_household_model_admin import BaseHouseholdModelAdmin
 from bcpp_household.forms import PlotForm
 from bcpp_household.actions import process_dispatch
 from bcpp_household.models import Plot
+from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
 class PlotAdmin(BaseHouseholdModelAdmin):

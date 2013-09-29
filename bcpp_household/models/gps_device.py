@@ -1,6 +1,6 @@
 from django.db import models
-from edc_lib.bhp_base_model.models import BaseListModel
-from bcpp_household.managers import GpsDeviceManager
+from edc_core.bhp_base_model.models import BaseListModel
+from ..managers import GpsDeviceManager
 
 
 class GpsDevice(BaseListModel):

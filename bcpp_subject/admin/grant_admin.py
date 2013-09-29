@@ -1,6 +1,6 @@
 from django.contrib import admin
-from edc_lib.bhp_base_admin.admin import BaseModelAdmin
-from bcpp_subject.models import Grant
+from edc_core.bhp_base_admin.admin import BaseModelAdmin
+from ..models import Grant
 
 
 class GrantAdmin(BaseModelAdmin):

@@ -1,3 +1,3 @@
-from otse_household_mapper import OtseHouseholdMapper
-from mochudi_household_mapper import MochudiHouseholdMapper
-from gaborone_household_mapper import GaboroneHouseholdMapper
+from .otse_household_mapper import OtseHouseholdMapper
+from .mochudi_household_mapper import MochudiHouseholdMapper
+from .gaborone_household_mapper import GaboroneHouseholdMapper

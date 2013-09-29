@@ -1,5 +1,5 @@
-from bcpp_subject.models import CommunityEngagement
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import CommunityEngagement
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class CommunityEngagementForm (BaseSubjectModelForm):

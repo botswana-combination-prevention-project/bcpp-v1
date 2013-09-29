@@ -1,5 +1,5 @@
-from bcpp_subject.models import Demographics
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import Demographics
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class DemographicsForm (BaseSubjectModelForm):

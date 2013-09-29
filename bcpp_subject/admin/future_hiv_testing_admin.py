@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_supplemental_fields.classes import SupplementalFields
-from bcpp_subject.models import FutureHivTesting
-from bcpp_subject.forms import FutureHivTestingForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from edc_core.bhp_supplemental_fields.classes import SupplementalFields
+from ..models import FutureHivTesting
+from ..forms import FutureHivTestingForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 #HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up

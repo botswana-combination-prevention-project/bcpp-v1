@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bcpp_subject.models import CommunityEngagement
-from bcpp_subject.forms import CommunityEngagementForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from ..models import CommunityEngagement
+from ..forms import CommunityEngagementForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class CommunityEngagementAdmin(SubjectVisitModelAdmin):

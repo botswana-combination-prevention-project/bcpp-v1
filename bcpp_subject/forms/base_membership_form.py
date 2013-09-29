@@ -1,6 +1,6 @@
 from django import forms
-from edc_lib.bhp_base_form.forms import BaseModelForm
-from bcpp_subject.models import SubjectConsent
+from edc_core.bhp_base_form.forms import BaseModelForm
+from ..models import SubjectConsent
 
 
 class BaseMembershipForm(BaseModelForm):

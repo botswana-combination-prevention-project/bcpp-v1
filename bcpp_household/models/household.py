@@ -1,15 +1,15 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ImproperlyConfigured
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc_lib.bhp_device.classes import Device
-from edc_lib.bhp_identifier.exceptions import IdentifierError
-from edc_lib.bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
-from bcpp_household.managers import HouseholdManager
-from bcpp_household.classes import HouseholdIdentifier
-from bcpp_household.choices import HOUSEHOLD_STATUS
-from plot import Plot
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.bhp_device.classes import Device
+from edc_core.bhp_identifier.exceptions import IdentifierError
+from edc_core.bhp_crypto.fields import (EncryptedTextField, EncryptedDecimalField)
+from ..managers import HouseholdManager
+from ..classes import HouseholdIdentifier
+from ..choices import HOUSEHOLD_STATUS
+from .plot import Plot
 
 
 class Household(BaseDispatchSyncUuidModel):

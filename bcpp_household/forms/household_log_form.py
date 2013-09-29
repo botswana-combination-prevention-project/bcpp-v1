@@ -1,5 +1,5 @@
-from edc_lib.bhp_base_form.forms import BaseModelForm
-from bcpp_household.models import HouseholdLog, HouseholdLogEntry
+from edc_core.bhp_base_form.forms import BaseModelForm
+from ..models import HouseholdLog, HouseholdLogEntry
 
 
 class HouseholdLogForm(BaseModelForm):

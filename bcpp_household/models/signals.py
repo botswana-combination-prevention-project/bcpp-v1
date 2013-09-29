@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from household import Plot, Household
-from household_structure import HouseholdStructure
+from .household import Plot, Household
+from .household_structure import HouseholdStructure
 
 
 @receiver(pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")

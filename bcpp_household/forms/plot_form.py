@@ -1,5 +1,5 @@
-from edc_lib.bhp_base_form.forms import BaseModelForm
-from bcpp_household.models import Plot
+from edc_core.bhp_base_form.forms import BaseModelForm
+from ..models import Plot
 
 
 class PlotForm(BaseModelForm):
