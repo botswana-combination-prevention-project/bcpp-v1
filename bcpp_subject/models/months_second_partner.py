@@ -1,5 +1,5 @@
-from edc_lib.audit_trail.audit import AuditTrail
-from base_sexual_partner import BaseSexualPartner
+from edc_core.audit_trail.audit import AuditTrail
+from .base_sexual_partner import BaseSexualPartner
 
 
 class MonthsSecondPartner (BaseSexualPartner):

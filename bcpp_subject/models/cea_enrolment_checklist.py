@@ -1,11 +1,11 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_lib.bhp_base_model.validators import eligible_if_yes
-from edc_lib.bhp_common.choices import YES_NO, YES_NO_REFUSED
-from edc_lib.bhp_registration.models import BaseRegisteredSubjectModel
-from bcpp_subject.choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_core.bhp_base_model.validators import eligible_if_yes
+from edc_core.bhp_common.choices import YES_NO, YES_NO_REFUSED
+from edc_core.bhp_registration.models import BaseRegisteredSubjectModel
+from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
 
 
 class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):

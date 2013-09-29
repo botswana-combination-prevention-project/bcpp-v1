@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_lib.audit_trail.audit import AuditTrail
+from edc_core.audit_trail.audit import AuditTrail
 from bcpp.choices import RECORDEDHIVRESULT_CHOICE
-from bcpp_subject.choices import HIV_DOC_TYPE
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from ..choices import HIV_DOC_TYPE
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivResultDocumentation (BaseScheduledVisitModel):

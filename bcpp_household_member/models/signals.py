@@ -1,9 +1,9 @@
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from household_member import HouseholdMember
-from base_household_member_consent import BaseHouseholdMemberConsent
-from base_member_status_model import BaseMemberStatusModel
-from base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
+from .household_member import HouseholdMember
+from .base_household_member_consent import BaseHouseholdMemberConsent
+from .base_member_status_model import BaseMemberStatusModel
+from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
 
 @receiver(pre_save, weak=False, dispatch_uid="household_member_on_pre_save")

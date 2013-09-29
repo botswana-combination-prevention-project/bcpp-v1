@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_base_model.fields import OtherCharField
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.fields import OtherCharField
 from bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE
-from base_circumcision import BaseCircumcision
+from .base_circumcision import BaseCircumcision
 
 
 class Circumcised (BaseCircumcision):

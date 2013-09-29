@@ -1,7 +1,7 @@
 from django.contrib import admin
-from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc_subject.models import Cd4Test
-from bcpp_htc_subject.forms import Cd4TestForm
+from ..models import Cd4Test
+from ..forms import Cd4TestForm
+from .htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
 
 
 class Cd4TestAdmin(HtcSubjectVisitModelAdmin):

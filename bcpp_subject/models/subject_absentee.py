@@ -1,12 +1,12 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
-from bhp_base_model.validators import datetime_is_future
-from bhp_crypto.fields import EncryptedCharField
-from bhp_base_model.fields import OtherCharField
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import datetime_is_future
+from edc_core.bhp_crypto.fields import EncryptedCharField
+from edc_core.bhp_base_model.fields import OtherCharField
 from bcpp_list.models import SubjectAbsenteeReason
-from bcpp_subject.choices import NEXT_APPOINTMENT_SOURCE, ABSENTEE_STATUS
 from bcpp_household_member.models import BaseMemberStatusModel
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from ..choices import NEXT_APPOINTMENT_SOURCE, ABSENTEE_STATUS
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class SubjectAbsentee(BaseMemberStatusModel):

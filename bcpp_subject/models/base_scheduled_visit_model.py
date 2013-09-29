@@ -1,12 +1,12 @@
 from datetime import datetime
 from django.db import models
-from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_lib.bhp_consent.models import BaseConsentedUuidModel
-from edc_lib.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_core.bhp_consent.models import BaseConsentedUuidModel
+from edc_core.audit_trail.audit import AuditTrail
 from bcpp_household.models import Plot
-from bcpp_subject.managers import ScheduledModelManager
-from subject_visit import SubjectVisit
-from subject_off_study_mixin import SubjectOffStudyMixin
+from ..managers import ScheduledModelManager
+from .subject_visit import SubjectVisit
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
 class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):

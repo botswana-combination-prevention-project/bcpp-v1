@@ -1,6 +1,6 @@
-from bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, AdditionalDataRule, Logic
-from bhp_registration.models import RegisteredSubject
-from models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
+from edc_core.bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, Logic
+from edc_core.bhp_registration.models import RegisteredSubject
+from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses)
 

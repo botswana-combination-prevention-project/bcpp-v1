@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_lib.audit_trail.audit import AuditTrail
+from edc_core.audit_trail.audit import AuditTrail
 from bcpp_list.models import Diagnoses
 from bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class MedicalDiagnoses (BaseScheduledVisitModel):
