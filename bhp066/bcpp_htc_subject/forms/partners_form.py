@@ -1,4 +1,4 @@
-from bcpp_htc_subject.models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
+from ..models import HtcRecentPartner, HtcSecondPartner, HtcThirdPartner
 from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 

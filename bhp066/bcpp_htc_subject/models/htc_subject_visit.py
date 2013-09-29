@@ -1,8 +1,8 @@
 from django.db import models
-from audit_trail.audit import AuditTrail
-from bhp_visit_tracking.models import BaseVisitTracking
-from bcpp_subject.choices import VISIT_UNSCHEDULED_REASON
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_visit_tracking.models import BaseVisitTracking
 from bcpp_household_member.models import HouseholdMember
+from bcpp_subject.choices import VISIT_UNSCHEDULED_REASON
 
 
 class HtcSubjectVisit(BaseVisitTracking):

@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bhp_common.choices import YES_NO
-from bcpp_htc_subject.choices import REASON_NOT_TESTING
-from base_scheduled_model import BaseScheduledModel
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_common.choices import YES_NO
+from ..choices import REASON_NOT_TESTING
+from .base_scheduled_model import BaseScheduledModel
 
 
 class HivTestingConsent(BaseScheduledModel):

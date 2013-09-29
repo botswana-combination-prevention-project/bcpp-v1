@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import date_not_future
 from bcpp.choices import YES_NO
-from base_scheduled_model import BaseScheduledModel
-from bhp_base_model.validators import date_not_future
+from .base_scheduled_model import BaseScheduledModel
 
 
 class CircumcisionAppointment (BaseScheduledModel):

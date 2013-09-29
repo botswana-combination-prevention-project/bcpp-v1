@@ -1,14 +1,14 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
-from bhp_locator.models import BaseLocator
-from bhp_common.choices import YES_NO
-from bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
-from bhp_crypto.fields import EncryptedCharField
-from bcpp_subject.managers import ScheduledModelManager
-from subject_off_study_mixin import SubjectOffStudyMixin
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_locator.models import BaseLocator
+from edc_core.bhp_common.choices import YES_NO
+from edc_core.bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
+from edc_core.bhp_crypto.fields import EncryptedCharField
 from bcpp_household.models  import Household
-from htc_subject_visit import HtcSubjectVisit
+from bcpp_subject.managers import ScheduledModelManager
+from .subject_off_study_mixin import SubjectOffStudyMixin
+from .htc_subject_visit import HtcSubjectVisit
 
 
 class HtcSubjectLocator(SubjectOffStudyMixin, BaseLocator):

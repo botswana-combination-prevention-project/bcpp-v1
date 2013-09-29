@@ -20,7 +20,7 @@ rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
 site_mappers.autodiscover()
-# admin.autodiscover()
+admin.autodiscover()
 site_sections.autodiscover()
 
 APP_NAME = settings.APP_NAME
@@ -46,21 +46,22 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    (r'^bhp_sync/', include('bhp_sync.urls')),
+    (r'^bhp_sync/', include('edc_core.bhp_sync.urls')),
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME), include('audit_trail.urls'), name="section_url_name"),
+    url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
+        include('edc_core.audit_trail.urls'), name="section_url_name"),
 )
 
-urlpatterns += patterns('',
-    url(r'^{app_name}/(?P<section_name>statistics)/'.format(app_name=APP_NAME),
-        include('{app_name}_stats.urls'.format(app_name=APP_NAME)), name="section_url_name"),
-)
+# urlpatterns += patterns('',
+#     url(r'^{app_name}/(?P<section_name>statistics)/'.format(app_name=APP_NAME),
+#         include('{app_name}_stats.urls'.format(app_name=APP_NAME)), name="section_url_name"),
+# )
 
 urlpatterns += patterns('',
     url(r'^{app_name}/(?P<section_name>specimens)/'.format(app_name=APP_NAME),
-        include('lab_clinic_api.urls'), name="section_url_name"),
+        include('edc_lab.lab_clinic_api.urls'), name="section_url_name"),
 )
 
 urlpatterns += patterns('',
@@ -68,9 +69,9 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('bhp_sync.urls')),
-    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('bhp_dispatch.urls')),
-    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('bhp_map.urls')),
+    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('edc_core.bhp_sync.urls')),
+    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('edc_core.bhp_dispatch.urls')),
+    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('edc_core.bhp_map.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',
@@ -92,7 +93,7 @@ urlpatterns += patterns('',
         name='password_change_done'.format(app_name=APP_NAME)),
 )
 urlpatterns += patterns('',
-    url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('bhp_section.urls'), name='section'),
+    url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('edc_core.bhp_section.urls'), name='section'),
 )
 
 urlpatterns += patterns('',

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc_subject.models import DemographicsRisk
-from bcpp_htc_subject.forms import DemographicsRiskForm
+from ..models import DemographicsRisk
+from ..forms import DemographicsRiskForm
 
 
 class DemographicsRiskAdmin(HtcSubjectVisitModelAdmin):
