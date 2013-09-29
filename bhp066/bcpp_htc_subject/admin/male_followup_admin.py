@@ -1,7 +1,7 @@
 from django.contrib import admin
 from htc_subject_visit_model_admin import HtcSubjectVisitModelAdmin
-from bcpp_htc_subject.models import MaleFollowup
-from bcpp_htc_subject.forms import MaleFollowupForm
+from ..models import MaleFollowup
+from ..forms import MaleFollowupForm
 
 
 class MaleFollowupAdmin(HtcSubjectVisitModelAdmin):

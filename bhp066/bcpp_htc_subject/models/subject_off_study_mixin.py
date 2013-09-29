@@ -1,5 +1,5 @@
-from bhp_off_study.mixins import OffStudyMixin
-from htc_subject_off_study import HtcSubjectOffStudy
+from edc_core.bhp_off_study.mixins import OffStudyMixin
+from .htc_subject_off_study import HtcSubjectOffStudy
 
 
 class SubjectOffStudyMixin(OffStudyMixin):

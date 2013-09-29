@@ -1,6 +1,6 @@
 # from bhp_consent.forms import BaseConsentedModelForm
 from bhp_base_form.forms import BaseModelForm
-from bcpp_htc_subject.models import HtcSubjectVisit
+from ..models import HtcSubjectVisit
 
 
 class BaseHtcScheduledModelForm(BaseModelForm):

@@ -1,5 +1,5 @@
 from django import forms
-from bcpp_htc_subject.models import HtcRegistration
+from ..models import HtcRegistration
 from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 

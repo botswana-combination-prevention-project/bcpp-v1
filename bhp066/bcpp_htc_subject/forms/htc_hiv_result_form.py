@@ -1,5 +1,5 @@
 from django import forms
-from bcpp_htc_subject.models import HtcHivResult
+from ..models import HtcHivResult
 from base_htc_scheduled_model_form import BaseHtcScheduledModelForm
 
 
