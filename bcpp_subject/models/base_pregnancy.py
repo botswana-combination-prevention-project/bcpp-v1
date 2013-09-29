@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from bcpp.choices import YES_NO_DONT_ANSWER, PREGARV_CHOICE, YES_NO_UNSURE
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class BasePregnancy (BaseScheduledVisitModel):
