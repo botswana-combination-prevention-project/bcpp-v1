@@ -1,6 +1,6 @@
 from django import forms
-from bcpp_subject.models import SexualBehaviour
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import SexualBehaviour
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class SexualBehaviourForm (BaseSubjectModelForm):

@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_supplemental_fields.classes import SupplementalFields
-from bcpp_subject.models import Circumcision, Circumcised, Uncircumcised
-from bcpp_subject.forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from edc_core.bhp_supplemental_fields.classes import SupplementalFields
+from ..models import Circumcision, Circumcised, Uncircumcised
+from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 # Circumcision [MC]: 20% in pretest, 18% in BHS and all follow-up

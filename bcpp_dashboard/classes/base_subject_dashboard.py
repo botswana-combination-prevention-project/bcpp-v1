@@ -1,6 +1,6 @@
 import re
-from edc_lib.bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
-from edc_lib.bhp_registration.models import RegisteredSubject
+from edc_core.bhp_dashboard_registered_subject.classes import RegisteredSubjectDashboard
+from edc_core.bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
 
 

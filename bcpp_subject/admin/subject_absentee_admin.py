@@ -1,9 +1,9 @@
 from django.contrib import admin
-from edc_lib.bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
-from edc_lib.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
+from edc_core.bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
+from edc_core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.forms import SubjectAbsenteeEntryForm
-from bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
+from ..forms import SubjectAbsenteeEntryForm
+from ..models import SubjectAbsentee, SubjectAbsenteeEntry
 
 
 class SubjectAbsenteeEntryAdmin(BaseModelAdmin):

@@ -1,12 +1,12 @@
 from django.db import models
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_lib.bhp_crypto.fields import EncryptedTextField
-from bcpp_household.choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
-from bcpp_household.managers import HouseholdLogManager, HouseholdLogEntryManager
-from household_structure import HouseholdStructure
-from plot import Plot
-from bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.bhp_crypto.fields import EncryptedTextField
+from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
+from ..managers import HouseholdLogManager, HouseholdLogEntryManager
+from .household_structure import HouseholdStructure
+from .plot import Plot
 
 
 class HouseholdLog(BaseDispatchSyncUuidModel):

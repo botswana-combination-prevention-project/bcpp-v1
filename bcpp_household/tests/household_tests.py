@@ -1,10 +1,10 @@
 from django.test import TestCase
-from edc_lib.bhp_map.classes import site_mappers
-from edc_lib.bhp_identifier.exceptions import IdentifierError
-from bcpp_household.classes  import HouseholdIdentifier
-from bcpp_household.models import HouseholdIdentifierHistory, Household, HouseholdStructure
+from edc_core.bhp_map.classes import site_mappers
+from edc_core.bhp_identifier.exceptions import IdentifierError
 from bcpp_survey.tests.factories import SurveyFactory
-from factories import PlotFactory, HouseholdFactory
+from ..classes  import HouseholdIdentifier
+from ..models import HouseholdIdentifierHistory, Household, HouseholdStructure
+from .factories import PlotFactory, HouseholdFactory
 
 
 class HouseholdTests(TestCase):

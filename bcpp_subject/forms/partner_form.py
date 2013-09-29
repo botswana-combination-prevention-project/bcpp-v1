@@ -1,5 +1,5 @@
-from bcpp_subject.models import RecentPartner, SecondPartner, ThirdPartner
-from base_subject_model_form import BaseSubjectModelForm
+from ..models import RecentPartner, SecondPartner, ThirdPartner
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class RecentPartnerForm (BaseSubjectModelForm):

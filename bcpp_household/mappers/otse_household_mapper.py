@@ -1,6 +1,6 @@
-from edc_lib.bhp_map.classes import site_mappers
-from base_household_mapper import BaseHouseholdMapper
-from choices import OTSE_SECTIONS, OTSE_SUB_SECTIONS, OTSE_LANDMARKS
+from edc_core.bhp_map.classes import site_mappers
+from .base_household_mapper import BaseHouseholdMapper
+from .choices import OTSE_SECTIONS, OTSE_SUB_SECTIONS, OTSE_LANDMARKS
 
 
 class OtseHouseholdMapper(BaseHouseholdMapper):

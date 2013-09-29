@@ -1,8 +1,8 @@
 from django.conf import settings
-from edc_lib.bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
-from edc_lib.bhp_map.classes import site_mappers
+from edc_core.bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
+from edc_core.bhp_map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
-from bcpp_household.forms.current_gps_form import CurrentGpsForm
+from .forms.current_gps_form import CurrentGpsForm
 from .models import Household, Plot
 from .forms import CommunityForm
 

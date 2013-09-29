@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bcpp_subject.models import SubjectDeath
-from bcpp_subject.forms import SubjectDeathForm
-from registered_subject_model_admin import RegisteredSubjectModelAdmin
+from ..models import SubjectDeath
+from ..forms import SubjectDeathForm
+from .registered_subject_model_admin import RegisteredSubjectModelAdmin
 
 
 class SubjectDeathAdmin(RegisteredSubjectModelAdmin):

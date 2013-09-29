@@ -1,4 +1,4 @@
-from edc_lib.bhp_sync.management.commands.consume import Command as BaseCommand
+from edc_core.bhp_sync.management.commands.consume import Command as BaseCommand
 from bcpp_dispatch.classes import BcppConsumer
 
 

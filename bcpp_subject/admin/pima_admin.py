@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bcpp_subject.models import Pima
-from bcpp_subject.forms import PimaForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from ..models import Pima
+from ..forms import PimaForm
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class PimaAdmin(SubjectVisitModelAdmin):

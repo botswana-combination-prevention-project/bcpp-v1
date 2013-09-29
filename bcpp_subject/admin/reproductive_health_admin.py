@@ -1,7 +1,7 @@
 from django.contrib import admin
-from bcpp_subject.models import ReproductiveHealth
-from bcpp_subject.forms import ReproductiveHealthForm
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from ..models import ReproductiveHealth
+from ..forms import ReproductiveHealthForm
+from . import SubjectVisitModelAdmin
 
 
 class ReproductiveHealthAdmin(SubjectVisitModelAdmin):

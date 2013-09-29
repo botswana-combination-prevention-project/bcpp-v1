@@ -1,4 +1,4 @@
-from edc_lib.bhp_identifier.models import BaseIdentifierModel
+from edc_core.bhp_identifier.models import BaseIdentifierModel
 
 
 class HouseholdIdentifierHistory(BaseIdentifierModel):

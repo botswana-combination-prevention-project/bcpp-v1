@@ -1,9 +1,9 @@
 from django import forms
 from django.conf import settings
-from edc_lib.bhp_base_form.forms import BaseModelForm
-from edc_lib.bhp_map.classes import site_mappers
-from edc_lib.bhp_map.exceptions import MapperError
-from bcpp_household.models import Household
+from edc_core.bhp_base_form.forms import BaseModelForm
+from edc_core.bhp_map.classes import site_mappers
+from edc_core.bhp_map.exceptions import MapperError
+from ..models import Household
 
 
 def get_mapper():

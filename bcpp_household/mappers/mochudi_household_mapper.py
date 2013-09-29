@@ -1,6 +1,6 @@
-from edc_lib.bhp_map.classes import site_mappers
-from base_household_mapper import BaseHouseholdMapper
-from choices import MOCHUDI_SECTIONS, MOCHUDI_SUB_SECTIONS, MOCHUDI_LANDMARKS
+from edc_core.bhp_map.classes import site_mappers
+from .base_household_mapper import BaseHouseholdMapper
+from .choices import MOCHUDI_SECTIONS, MOCHUDI_SUB_SECTIONS, MOCHUDI_LANDMARKS
 
 
 class MochudiHouseholdMapper(BaseHouseholdMapper):

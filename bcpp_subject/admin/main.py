@@ -1,16 +1,16 @@
 from django.contrib import admin
-from bcpp_subject.models import (QualityOfLife, ResourceUtilization, OutpatientCare,
-                                 HospitalAdmission, HivHealthCareCosts,
-                                 HivMedicalCare, HeartAttack, Cancer, Sti,
-                                 Tubercolosis, SubstanceUse,
-                                 HivResultDocumentation)
-from bcpp_subject.forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
-                                HospitalAdmissionForm, HivHealthCareCostsForm,
-                                HivMedicalCareForm,
-                                HeartAttackForm, CancerForm, StiForm,
-                                TubercolosisForm, SubstanceUseForm,
-                                HivResultDocumentationForm)
-from subject_visit_model_admin import SubjectVisitModelAdmin
+from ..models import (QualityOfLife, ResourceUtilization, OutpatientCare,
+                      HospitalAdmission, HivHealthCareCosts,
+                      HivMedicalCare, HeartAttack, Cancer, Sti,
+                      Tubercolosis, SubstanceUse,
+                      HivResultDocumentation)
+from ..forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
+                     HospitalAdmissionForm, HivHealthCareCostsForm,
+                     HivMedicalCareForm,
+                     HeartAttackForm, CancerForm, StiForm,
+                     TubercolosisForm, SubstanceUseForm,
+                     HivResultDocumentationForm)
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):
