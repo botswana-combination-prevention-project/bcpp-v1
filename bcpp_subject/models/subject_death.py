@@ -1,10 +1,10 @@
 from datetime import datetime, time
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from bhp_base_model.validators import eligible_if_yes
-from bhp_common.choices import YES_NO, YES_NO_UNSURE
-from audit_trail.audit import AuditTrail
-from bhp_adverse.models import BaseBaseDeath
+from edc_core.bhp_base_model.validators import eligible_if_yes
+from edc_core.bhp_common.choices import YES_NO, YES_NO_UNSURE
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_adverse.models import BaseBaseDeath
 
 
 class SubjectDeath(BaseBaseDeath):

@@ -1,11 +1,11 @@
 import re
 from django.db import models
-from edc_lib.bhp_identifier.exceptions import IdentifierError
-from edc_lib.bhp_botswana.models import BaseBwConsent
-from bcpp_household_member.models import HouseholdMember
+from edc_core.bhp_identifier.exceptions import IdentifierError
+from edc_core.bhp_botswana.models import BaseBwConsent
+from edc_core.bhp_appointment_helper.models import BaseAppointmentMixin
+from edc_core.bhp_registration.models import RegisteredSubject
 from bcpp_survey.models import Survey
-from bhp_appointment_helper.models import BaseAppointmentMixin
-from bhp_registration.models import RegisteredSubject
+from ..models import HouseholdMember
 
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):

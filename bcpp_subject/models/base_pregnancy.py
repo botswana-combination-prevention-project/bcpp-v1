@@ -10,7 +10,7 @@ class BasePregnancy (BaseScheduledVisitModel):
 
     last_birth = models.DateField(
         verbose_name=_("When did you last (most recently) give birth?"),
-        null=True, 
+        null=True,
         blank=True,
         help_text="",
         )
@@ -19,7 +19,7 @@ class BasePregnancy (BaseScheduledVisitModel):
         verbose_name=_("During your last pregnancy (not current pregnancy) did you go for antenatal care?"),
         max_length=25,
         choices=YES_NO_DONT_ANSWER,
-        null=True, 
+        null=True,
         blank=True,
         help_text="",
         )

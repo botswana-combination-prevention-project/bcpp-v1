@@ -1,7 +1,7 @@
 import factory
-from edc_lib.bhp_base_model.tests.factories import BaseUuidModelFactory
-from bcpp_household_member.models import HouseholdMember
+from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_household.tests.factories import HouseholdStructureFactory
+from ...models import HouseholdMember
 
 
 class HouseholdMemberFactory(BaseUuidModelFactory):

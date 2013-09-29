@@ -1,8 +1,8 @@
 from django.contrib import admin
-from edc_lib.bhp_base_admin.admin import BaseModelAdmin
+from edc_core.bhp_base_admin.admin import BaseModelAdmin
 from bcpp_household.models import HouseholdStructure
-from bcpp_household_member.models import EnrolmentChecklist, HouseholdMember
-from bcpp_household_member.forms import EnrolmentChecklistForm
+from ..models import EnrolmentChecklist, HouseholdMember
+from ..forms import EnrolmentChecklistForm
 
 
 class EnrolmentChecklistAdmin(BaseModelAdmin):

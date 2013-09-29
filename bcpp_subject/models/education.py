@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_lib.audit_trail.audit import AuditTrail
-from edc_lib.bhp_common.choices import YES_NO
+from edc_core.audit_trail.audit import AuditTrail
+from edc_core.bhp_common.choices import YES_NO
 from bcpp.choices import EDUCATION_CHOICE
-from bcpp_subject.choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from ..choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Education (BaseScheduledVisitModel):

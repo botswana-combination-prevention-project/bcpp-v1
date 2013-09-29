@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext as _
-from audit_trail.audit import AuditTrail
+from edc_core.audit_trail.audit import AuditTrail
 from bcpp.choices import AGREE_STRONGLY
-from base_scheduled_visit_model import BaseScheduledVisitModel
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Stigma (BaseScheduledVisitModel):

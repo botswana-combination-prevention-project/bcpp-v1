@@ -1,12 +1,12 @@
 from datetime import datetime
 from django.db import models
-from edc_lib.bhp_registration.models import RegisteredSubject
-from edc_lib.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_lib.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc_core.bhp_registration.models import RegisteredSubject
+from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from bcpp_household.models import Plot
 from bcpp_household_member.models import HouseholdMember
-from bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
+from ..managers import BaseRegisteredHouseholdMemberModelManager
 
 
 class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):

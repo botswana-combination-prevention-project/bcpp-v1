@@ -1,6 +1,6 @@
-from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_lab_tracker.classes import HivLabTracker
-from models import HivTestReview, HivResult
+from edc_core.bhp_lab_tracker.classes import site_lab_tracker
+from edc_core.bhp_lab_tracker.classes import HivLabTracker
+from .models import HivTestReview, HivResult
 
 
 class SubjectHivLabTracker(HivLabTracker):
