@@ -128,6 +128,10 @@ else:
 #         },
     }
 
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = []
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -149,6 +153,7 @@ LANGUAGES = (
 LOCALE_PATHS = (os.path.join(PROJECT_ROOT, 'locale'), )
 
 LANGUAGE_CODE = 'en'
+
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -212,6 +217,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -223,13 +229,16 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.request",
                                "django.contrib.messages.context_processors.messages")
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'bhp066.urls'
+
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'bhp066.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, 'bhp_templates'),
+#     os.path.join(PROJECT_ROOT, 'bhp_templates'),
     os.path.join(PROJECT_ROOT, 'templates'),
 )
 
@@ -297,7 +306,6 @@ INSTALLED_APPS = (
     'bhp_entry',
     'bhp_lab_entry',
     'bhp_context',
-    'bhp_birt_reports',
     'bhp_using',
     'bhp_contact',
     'bhp_dashboard',
