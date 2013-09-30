@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_core.bhp_supplemental_fields.classes import SupplementalFields
+from edc.core.bhp_supplemental_fields.classes import SupplementalFields
 from ..models import Circumcision, Circumcised, Uncircumcised
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin

@@ -1,6 +1,6 @@
 from django.db.models import signals
-from edc_core.bhp_sync.classes import Consumer
-from edc_core.bhp_subject.models import base_subject_get_or_create_registered_subject_on_post_save
+from edc.core.bhp_sync.classes import Consumer
+from edc.core.bhp_subject.models import base_subject_get_or_create_registered_subject_on_post_save
 from bcpp_household_member.models import base_household_member_consent_on_post_save, household_member_on_post_save, household_member_on_pre_save
 from bcpp_household.models import household_structure_on_post_save, create_household_structure_on_post_save, check_for_survey_on_pre_save, \
                                    create_household_on_post_save

@@ -1,5 +1,5 @@
 from django.db import models
-from edc_core.bhp_inspector.models import BaseInspector
+from edc.core.bhp_inspector.models import BaseInspector
 
 
 class SubjectRequisitionInspector(BaseInspector):

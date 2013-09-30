@@ -1,11 +1,11 @@
 from django.db import models
-from edc_core.bhp_base_model.validators import (datetime_not_before_study_start, datetime_not_future)
-from edc_core.bhp_common.choices import YES_NO, YES_NO_DONT_KNOW
-from edc_core.bhp_registration.models import RegisteredSubject
-from edc_core.bhp_appointment_helper.models import BaseAppointmentMixin
-from edc_core.bhp_botswana.models import BaseBwConsent
-from edc_core.bhp_botswana.fields import EncryptedOmangField
-from edc_core.audit_trail.audit import AuditTrail
+from edc.core.bhp_base_model.validators import (datetime_not_before_study_start, datetime_not_future)
+from edc.core.bhp_common.choices import YES_NO, YES_NO_DONT_KNOW
+from edc.core.bhp_registration.models import RegisteredSubject
+from edc.core.bhp_appointment_helper.models import BaseAppointmentMixin
+from edc.core.bhp_botswana.models import BaseBwConsent
+from edc.core.bhp_botswana.fields import EncryptedOmangField
+from edc.core.audit_trail.audit import AuditTrail
 from bcpp_household_member.models import HouseholdMember
 from bcpp.choices import COMMUNITIES
 from bcpp_subject.choices import COUNSELING_SITE

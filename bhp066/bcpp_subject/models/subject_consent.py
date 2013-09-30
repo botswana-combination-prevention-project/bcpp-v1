@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_common.choices import YES_NO
-from edc_core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_common.choices import YES_NO
+from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from bcpp_household_member.models import BaseHouseholdMemberConsent
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent_history import SubjectConsentHistory

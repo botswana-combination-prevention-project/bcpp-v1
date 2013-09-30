@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.db import models
-from edc_core.bhp_registration.models import RegisteredSubject
-from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.bhp_registration.models import RegisteredSubject
+from edc.core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
 from bcpp_household.models import Plot

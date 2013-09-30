@@ -1,8 +1,8 @@
 from django.db import models
-from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_core.bhp_crypto.fields import EncryptedCharField
-from edc_core.bhp_base_model.fields import OtherCharField
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.core.bhp_crypto.fields import EncryptedCharField
+from edc.core.bhp_base_model.fields import OtherCharField
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_household.models import Plot
 from bcpp_household_member.models import BaseMemberStatusModel
 from ..choices import NEXT_APPOINTMENT_SOURCE

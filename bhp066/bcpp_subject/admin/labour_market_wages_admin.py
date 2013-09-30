@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_core.bhp_base_admin.admin import BaseTabularInline
+from edc.core.bhp_base_admin.admin import BaseTabularInline
 from ..models import  LabourMarketWages, Grant
 from ..forms import LabourMarketWagesForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin

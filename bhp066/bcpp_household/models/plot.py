@@ -3,13 +3,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc_core.bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
-from edc_core.bhp_device.classes import Device
-from edc_core.bhp_map.classes import site_mappers
-from edc_core.bhp_map.exceptions import MapperError
-from edc_core.bhp_identifier.exceptions import IdentifierError
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc.core.bhp_device.classes import Device
+from edc.core.bhp_map.classes import site_mappers
+from edc.core.bhp_map.exceptions import MapperError
+from edc.core.bhp_identifier.exceptions import IdentifierError
 from ..managers import PlotManager
 from ..classes import PlotIdentifier
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_core.audit_trail.audit import AuditTrail
+from edc.core.audit_trail.audit import AuditTrail
 from ..choices import EDUCATION, EMPLOYMENT, MARITAL_STATUS, ALCOHOL_INTAKE
 from .base_scheduled_model import BaseScheduledModel
 

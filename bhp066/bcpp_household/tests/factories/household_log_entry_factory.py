@@ -1,6 +1,6 @@
 import factory
 from datetime import datetime
-from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.core.bhp_base_model.tests.factories import BaseUuidModelFactory
 from ...models import HouseholdLogEntry
 from household_log_factory import HouseholdLogFactory
 

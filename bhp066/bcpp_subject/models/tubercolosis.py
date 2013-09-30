@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_core.audit_trail.audit import AuditTrail
+from edc.core.audit_trail.audit import AuditTrail
 from bcpp.choices import DXTB_CHOICE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

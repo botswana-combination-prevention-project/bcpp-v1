@@ -1,6 +1,6 @@
 from django.test import TestCase
-from edc_core.bhp_map.classes import site_mappers
-from edc_core.bhp_identifier.exceptions import IdentifierError
+from edc.core.bhp_map.classes import site_mappers
+from edc.core.bhp_identifier.exceptions import IdentifierError
 from bcpp_survey.tests.factories import SurveyFactory
 from ..classes  import HouseholdIdentifier
 from ..models import HouseholdIdentifierHistory, Household, HouseholdStructure

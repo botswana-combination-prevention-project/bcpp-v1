@@ -1,4 +1,4 @@
-from edc_core.bhp_identifier.classes import BaseIdentifier
+from edc.core.bhp_identifier.classes import BaseIdentifier
 
 
 class PlotIdentifier(BaseIdentifier):

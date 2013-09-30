@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_base_model.fields import OtherCharField
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_base_model.fields import OtherCharField
 from bcpp.choices import REASONCIRC_CHOICE, YES_NO_UNSURE, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE, YES_NO_DONT_ANSWER
 from .base_circumcision import BaseCircumcision
 

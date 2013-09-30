@@ -1,11 +1,11 @@
 from django.db import models
 from django.db.models import get_model
 from django.utils.translation import ugettext as _
-from edc_core.bhp_base_model.fields import OtherCharField
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc_core.bhp_registration.models import RegisteredSubject
+from edc.core.bhp_base_model.fields import OtherCharField
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.bhp_registration.models import RegisteredSubject
 from bcpp_list.models import ElectricalAppliances, TransportMode
 from bcpp_household.models import HouseholdStructure
 from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
