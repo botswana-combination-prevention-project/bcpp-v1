@@ -1,5 +1,5 @@
-from edc_core.bhp_lab_tracker.classes import site_lab_tracker
-from edc_core.bhp_lab_tracker.classes import HivLabTracker
+from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_lab_tracker.classes import HivLabTracker
 from .models import HivTestReview, HivResult
 
 

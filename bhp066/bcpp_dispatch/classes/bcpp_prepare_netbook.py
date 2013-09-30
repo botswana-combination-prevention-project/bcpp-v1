@@ -1,6 +1,6 @@
 import logging
-from edc_core.bhp_base_model.models import BaseUuidModel, BaseModel
-from edc_core.bhp_dispatch.classes import PrepareDevice
+from edc.core.bhp_base_model.models import BaseUuidModel, BaseModel
+from edc.core.bhp_dispatch.classes import PrepareDevice
 
 
 logger = logging.getLogger(__name__)

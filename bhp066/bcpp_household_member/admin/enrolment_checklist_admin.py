@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_core.bhp_base_admin.admin import BaseModelAdmin
+from edc.core.bhp_base_admin.admin import BaseModelAdmin
 from bcpp_household.models import HouseholdStructure
 from ..models import EnrolmentChecklist, HouseholdMember
 from ..forms import EnrolmentChecklistForm

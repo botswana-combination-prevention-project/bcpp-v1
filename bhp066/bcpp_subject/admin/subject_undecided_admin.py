@@ -1,6 +1,6 @@
 from django.contrib import admin
-from edc_core.bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
-from edc_core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
+from edc.core.bhp_base_admin.admin import BaseModelAdmin, BaseTabularInline
+from edc.core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
 from bcpp_household_member.models import HouseholdMember
 from ..models import SubjectUndecided, SubjectUndecidedEntry
 from ..forms import SubjectUndecidedForm, SubjectUndecidedEntryForm

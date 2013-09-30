@@ -1,4 +1,4 @@
-from edc_core.bhp_consent.forms import BaseConsentedModelForm
+from edc.core.bhp_consent.forms import BaseConsentedModelForm
 from ..models import SubjectVisit
 
 

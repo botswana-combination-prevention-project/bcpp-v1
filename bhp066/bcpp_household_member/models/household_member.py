@@ -3,13 +3,13 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.core.urlresolvers import reverse
 from django.db.models.signals import Signal, post_save
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_crypto.utils import mask_encrypted
-from edc_core.bhp_registration.models import RegisteredSubject
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc_core.bhp_crypto.fields import EncryptedFirstnameField
-from edc_core.bhp_common.choices import YES_NO, GENDER
-from edc_core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_crypto.utils import mask_encrypted
+from edc.core.bhp_registration.models import RegisteredSubject
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.bhp_crypto.fields import EncryptedFirstnameField
+from edc.core.bhp_common.choices import YES_NO, GENDER
+from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from bcpp_survey.models import Survey
 from bcpp_household.choices import RELATIONS
 from bcpp_household.models import Household, Plot

@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from edc_core.bhp_common.choices import YES_NO
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.bhp_common.choices import YES_NO
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_household.choices import INFO_PROVIDER, STATUS
 from ..managers import ContactLogManager, ContactLogItemManager
 

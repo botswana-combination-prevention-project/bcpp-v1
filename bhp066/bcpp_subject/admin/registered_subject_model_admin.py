@@ -1,4 +1,4 @@
-from edc_core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
+from edc.core.bhp_registration.admin import BaseRegisteredSubjectModelAdmin
 
 
 class RegisteredSubjectModelAdmin (BaseRegisteredSubjectModelAdmin):

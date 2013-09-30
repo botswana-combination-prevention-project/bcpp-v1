@@ -1,6 +1,6 @@
 import factory
 from datetime import date
-from edc_core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.core.bhp_base_model.tests.factories import BaseUuidModelFactory
 from ...models import GpsDevice
 
 

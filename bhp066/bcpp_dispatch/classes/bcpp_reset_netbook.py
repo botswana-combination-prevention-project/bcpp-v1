@@ -1,6 +1,6 @@
 import logging
 from django.db.models import get_model
-from edc_core.bhp_dispatch.classes import PrepareDevice, DispatchController
+from edc.core.bhp_dispatch.classes import PrepareDevice, DispatchController
 
 
 logger = logging.getLogger(__name__)

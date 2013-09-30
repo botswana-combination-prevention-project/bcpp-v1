@@ -1,4 +1,4 @@
-from edc_core.bhp_off_study.mixins import OffStudyMixin
+from edc.core.bhp_off_study.mixins import OffStudyMixin
 from .subject_off_study import SubjectOffStudy
 
 

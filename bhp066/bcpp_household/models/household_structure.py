@@ -2,8 +2,8 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.core.validators import MinValueValidator, MaxValueValidator
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from ..managers import HouseholdStructureManager
 from .household import Household
