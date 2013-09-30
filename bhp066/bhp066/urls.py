@@ -65,7 +65,7 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
+    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
 )
 
 urlpatterns += patterns('',
@@ -75,7 +75,7 @@ urlpatterns += patterns('',
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',
-    url(r'^dispatch/', include('bcpp_dispatch.urls')),
+    url(r'^dispatch/', include('apps.bcpp_dispatch.urls')),
 )
 
 urlpatterns += patterns('',
