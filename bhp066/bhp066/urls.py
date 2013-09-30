@@ -11,7 +11,7 @@ from dajaxice.core import dajaxice_autodiscover
 
 from edc.map.classes import site_mappers
 from edc.subject.rule_groups.classes import rule_groups
-from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.core.bhp_section.classes import site_sections
 

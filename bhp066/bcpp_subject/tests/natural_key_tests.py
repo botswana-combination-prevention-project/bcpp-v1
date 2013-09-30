@@ -6,7 +6,7 @@ from django.core import serializers
 
 from django.db.models import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType
-from edc.core.crypto.classes import FieldCryptor
+from edc.core.crypto_fields.classes import FieldCryptor
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.appointment.tests.factories import AppointmentFactory

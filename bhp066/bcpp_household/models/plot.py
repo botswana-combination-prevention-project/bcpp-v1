@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.device.device.classes import Device
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError

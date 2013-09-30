@@ -1,5 +1,5 @@
 from edc.audit.audit_trail import AuditTrail
-from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from bcpp_household_member.models import BaseHouseholdMemberConsent
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin

@@ -5,7 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.device.classes import Device
 from edc.core.identifier.exceptions import IdentifierError
-from edc.core.crypto.fields import (EncryptedTextField, EncryptedDecimalField)
+from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from ..managers import HouseholdManager
 from ..classes import HouseholdIdentifier
 from ..choices import HOUSEHOLD_STATUS
