@@ -1,6 +1,6 @@
 from django.db import models
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
-from edc.core.bhp_common.choices import YES_NO, YES_NO_DONT_KNOW
+from edc.choices.common import YES_NO, YES_NO_DONT_KNOW
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.local.bw.models import BaseBwConsent

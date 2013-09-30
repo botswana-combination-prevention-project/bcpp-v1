@@ -2,9 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ImproperlyConfigured
 from edc.audit.audit_trail import AuditTrail
-from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.bhp_device.classes import Device
-from edc.core.bhp_identifier.exceptions import IdentifierError
+from edc.core.identifier.exceptions import IdentifierError
 from edc.core.crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from ..managers import HouseholdManager
 from ..classes import HouseholdIdentifier

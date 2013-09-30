@@ -1,6 +1,6 @@
 from django.conf import settings
 from edc.core.bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
-from edc.core.bhp_map.classes import site_mappers
+from edc.map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
 from .forms.current_gps_form import CurrentGpsForm
 from .models import Household, Plot

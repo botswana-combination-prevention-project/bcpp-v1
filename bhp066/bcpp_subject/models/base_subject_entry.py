@@ -2,7 +2,7 @@ from django.db import models
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.core.crypto.fields import EncryptedCharField
 from edc.base.model.fields import OtherCharField
-from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_household.models import Plot
 from bcpp_household_member.models import BaseMemberStatusModel
 from ..choices import NEXT_APPOINTMENT_SOURCE

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
-from edc.core.bhp_common.choices import YES_NO, POS_NEG, YES_NO_DONT_KNOW
+from edc.choices.common import YES_NO, POS_NEG, YES_NO_DONT_KNOW
 from ..choices import SYMPTOMS
 from .base_scheduled_model import BaseScheduledModel
 

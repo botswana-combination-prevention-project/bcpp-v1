@@ -1,5 +1,5 @@
 from django import forms
-from edc.core.bhp_map.classes import site_mappers
+from edc.map.classes import site_mappers
 
 
 class CommunityForm(forms.Form):

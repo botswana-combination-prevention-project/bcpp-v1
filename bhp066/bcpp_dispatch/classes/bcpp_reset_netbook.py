@@ -1,6 +1,6 @@
 import logging
 from django.db.models import get_model
-from edc.core.bhp_dispatch.classes import PrepareDevice, DispatchController
+from edc.device.dispatch.classes import PrepareDevice, DispatchController
 
 
 logger = logging.getLogger(__name__)
@@ -34,11 +34,11 @@ class BcppResetNetbook(PrepareDevice):
 
     def pre_prepare(self):
         """We should probably take a snapshot of the database before reseting the netbook
-        
+
         Should also delete all transactions (which should all have been consumed)?
         """
         pass
-        
+
     def reset_scheduled_forms(self):
         """ Deletes all instances of scheduled forms that were dispatched to the device"""
         scheduled_models = self.helper.get_scheduled_models('bcpp_subject')
@@ -46,29 +46,29 @@ class BcppResetNetbook(PrepareDevice):
             scheduled_models.reverse()
             for scheduled_model in scheduled_models:
                 self.reset_model(scheduled_model)
-            
+
     def reset_membership_forms(self):
         """ Deletes all instances of membership forms that were dispatched to the device"""
         for membershipform_model in self.helper.get_membershipform_models():
             self.reset_model(membershipform_model)
-    
+
     def reset(self, **kwargs):
         """Clears all dispatched data needed for an EDC installation.
 
         Keywords:
             step: if specified skip to the numbered step. default(0)
-        """  
+        """
         if self.has_outgoing_transactions():
             raise self.exception("Destination has outgoing transactions. Please sync and try again.")
 
         Household = get_model('bcpp_household', 'household')
         HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
         HouseholdMember = get_model('bcpp_household', 'HouseholdMember')
-        Appointment = get_model('bhp_appointment', 'Appointment')
+        Appointment = get_model('appointment', 'Appointment')
         Visit = get_model('bcpp_subject', 'SubjectVisit')
         SubjectRequisition = get_model('bcpp_survey_lab', 'SubjectRequisition')
         inlines = [('bcpp_subject', 'SubjectAbsenteeEntry'), ('bcpp_subject', 'SubjectUndecidedEntry')]
-        
+
         step = int(kwargs.get('step', 0))
         logger.info('Starting at step {0}'.format(step))
         if not step > 1:
@@ -79,9 +79,9 @@ class BcppResetNetbook(PrepareDevice):
             self.timer()
             logger.info("2a. Removing all inlines for membership forms")
             self.reset_listed_models(inlines)
-            
+
             logger.info("2b. Removing all membership forms")
-            self.reset_membership_forms() 
+            self.reset_membership_forms()
 
         if not step > 3:
             self.timer()
@@ -106,7 +106,7 @@ class BcppResetNetbook(PrepareDevice):
         if not step > 7:
             self.timer()
             logger.info("7. Removing Household")
-            self.reset_model(Household)                        
+            self.reset_model(Household)
 
         if not step > 8:
             self.timer()

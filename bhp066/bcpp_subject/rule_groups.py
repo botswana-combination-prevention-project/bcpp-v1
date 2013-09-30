@@ -1,4 +1,4 @@
-from edc.core.bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, Logic
+from edc.subject.rule_groups.classes import RuleGroup, rule_groups, ScheduledDataRule, Logic
 from edc.subject.registration.models import RegisteredSubject
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,

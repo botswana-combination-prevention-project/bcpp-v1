@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bhp_appointment.admin import BaseAppointmentModelAdmin
+from edc.subject.appointment.admin import BaseAppointmentModelAdmin
 from bcpp_lab.models import SubjectRequisition
 from ..models import HtcSubjectVisit
 from ..forms import HtcVisitForm

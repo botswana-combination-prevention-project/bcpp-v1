@@ -1,4 +1,4 @@
-from edc.core.bhp_map.classes import site_mappers
+from edc.map.classes import site_mappers
 from .choices.gaborone import GABORONE_SECTIONS, GABORONE_SUB_SECTIONS, GABORONE_LANDMARKS
 from .base_household_mapper import BaseHouseholdMapper
 

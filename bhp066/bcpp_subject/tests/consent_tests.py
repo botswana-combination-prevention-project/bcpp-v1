@@ -7,7 +7,7 @@ from bcpp_subject.forms import AccessToCareForm
 from datetime import datetime, timedelta
 from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_registration.models import RegisteredSubject
-from bhp_appointment.tests.factories import ConfigurationFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
 from bhp_identifier.exceptions import IdentifierError
 
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
@@ -19,7 +19,7 @@ from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_survey.models import Survey
 from bcpp_household.tests.factories import PlotFactory, HouseholdFactory
-from bhp_map.classes import site_mappers
+from edc.map.classes import site_mappers
 from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory, PlotFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household_member.models import HouseholdMember
