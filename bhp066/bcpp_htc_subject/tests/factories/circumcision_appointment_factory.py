@@ -1,6 +1,6 @@
 import factory
 from datetime import datetime
-from edc.core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
 from ...models import CircumcisionAppointment
 from .htc_subject_visit_factory import HtcSubjectVisitFactory
 

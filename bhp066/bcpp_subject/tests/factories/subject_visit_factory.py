@@ -1,9 +1,9 @@
 import factory
 from datetime import datetime
+from edc.subject.visit_tracking.tests.factories import BaseVisitTrackingFactory
+from edc.subject.appointment.tests.factories import AppointmentFactory
 from bcpp_subject.models import SubjectVisit
-from bhp_appointment.tests.factories import AppointmentFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bhp_visit_tracking.tests.factories import BaseVisitTrackingFactory
 
 
 class SubjectVisitFactory(BaseVisitTrackingFactory):

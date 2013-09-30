@@ -7,10 +7,10 @@ from django.contrib.contenttypes.models import ContentType
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_map.classes import site_mappers
-from edc.core.bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
+from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_appointment.models import Configuration
-from edc.core.bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.appointment.models import Configuration
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household.models import HouseholdStructure, Household
 from bcpp_household.tests.factories import HouseholdFactory, PlotFactory

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_base_model.fields import OtherCharField
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import OtherCharField
 from bcpp.choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
 from bcpp_list.models import MedicalCareAccess
 from .base_scheduled_visit_model import BaseScheduledVisitModel

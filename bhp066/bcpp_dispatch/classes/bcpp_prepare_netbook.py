@@ -1,5 +1,5 @@
 import logging
-from edc.core.bhp_base_model.models import BaseUuidModel, BaseModel
+from edc.base.model.models import BaseUuidModel, BaseModel
 from edc.core.bhp_dispatch.classes import PrepareDevice
 
 

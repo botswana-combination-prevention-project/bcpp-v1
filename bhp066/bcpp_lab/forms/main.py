@@ -1,5 +1,5 @@
-from edc_lab.lab_requisition.forms import BaseRequisitionForm
-from edc_lab.lab_packing.forms import BasePackingListForm, BasePackingListItemForm
+from edc.lab.lab_requisition.forms import BaseRequisitionForm
+from edc.lab.lab_packing.forms import BasePackingListForm, BasePackingListItemForm
 from ..models import SubjectRequisition, PackingList, PackingListItem
 
 

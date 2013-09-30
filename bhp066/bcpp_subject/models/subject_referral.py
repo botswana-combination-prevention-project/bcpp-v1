@@ -1,9 +1,9 @@
 from django.db import models
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_base_model.fields import OtherCharField
-from edc.core.bhp_base_model.validators import datetime_is_future
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import OtherCharField
+from edc.base.model.validators import datetime_is_future
 from edc.core.bhp_common.choices import YES_NO
-from edc.core.bhp_appointment_helper.models import BaseAppointmentMixin
+from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from ..choices import REFERRAL_REASONS
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 

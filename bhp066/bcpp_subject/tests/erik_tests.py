@@ -4,7 +4,7 @@ from bcpp_subject.forms import AccessToCareForm
 from datetime import datetime
 from bhp_lab_tracker.classes import lab_tracker
 from bhp_appointment.tests.factories import ConfigurationFactory
-from bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_content_type_map.classes import ContentTypeMapHelper

@@ -1,7 +1,7 @@
 from django.db import models
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_crypto.fields import EncryptedTextField
-from edc.core.bhp_base_model.validators import date_not_future, date_not_before_study_start
+from edc.audit.audit_trail import AuditTrail
+from edc.core.crypto.fields import EncryptedTextField
+from edc.base.model.validators import date_not_future, date_not_before_study_start
 from bcpp_household_member.models import BaseMemberStatusModel
 from ..choices import MOVED_REASON, PLACE_SUBJECT_MOVED
 

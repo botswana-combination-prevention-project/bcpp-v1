@@ -1,5 +1,5 @@
 import factory
-from edc.core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
 from bcpp_household.tests.factories import HouseholdStructureFactory
 from ...models import HouseholdMember
 

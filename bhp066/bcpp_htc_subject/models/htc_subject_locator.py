@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from edc.core.bhp_locator.models import BaseLocator
 from edc.core.bhp_common.choices import YES_NO
-from edc.core.bhp_base_model.validators import BWCellNumber, BWTelephoneNumber
-from edc.core.bhp_crypto.fields import EncryptedCharField
+from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
+from edc.core.crypto.fields import EncryptedCharField
 from bcpp_household.models  import Household
 from bcpp_subject.managers import ScheduledModelManager
 from .subject_off_study_mixin import SubjectOffStudyMixin

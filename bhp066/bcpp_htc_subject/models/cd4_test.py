@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext as _
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_base_model.validators import date_not_future
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import date_not_future
 from .base_scheduled_model import BaseScheduledModel
 
 

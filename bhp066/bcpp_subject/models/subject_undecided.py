@@ -1,4 +1,4 @@
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from bcpp_household_member.models import BaseMemberStatusModel
 
 

@@ -1,8 +1,8 @@
 from datetime import datetime
 from django.db import models
-from edc.core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.core.bhp_consent.models import BaseConsentedUuidModel
-from edc.core.audit_trail.audit import AuditTrail
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.subject.consent.models import BaseConsentedUuidModel
+from edc.audit.audit_trail import AuditTrail
 from bcpp_household.models import Plot
 from ..managers import ScheduledModelManager
 from .subject_visit import SubjectVisit

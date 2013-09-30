@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from bcpp.choices import YES_NO_DONT_ANSWER, ALCOHOL_SEX
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

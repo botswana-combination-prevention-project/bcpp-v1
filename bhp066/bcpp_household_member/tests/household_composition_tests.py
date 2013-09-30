@@ -4,8 +4,8 @@ from django.contrib import admin
 from django.test import TestCase
 from django.contrib.auth.models import User
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
-from edc.core.bhp_appointment.tests.factories import ConfigurationFactory
-from edc.core.bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper

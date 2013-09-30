@@ -1,4 +1,3 @@
-# from bhp_consent.forms import BaseConsentedModelForm
 from bhp_base_form.forms import BaseModelForm
 from ..models import HtcSubjectVisit
 
