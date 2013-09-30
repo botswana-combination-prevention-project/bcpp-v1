@@ -2,7 +2,7 @@ import socket
 from django.db import models
 from django.db.models import Max
 from edc.core.bhp_variables.models import StudySpecific
-from edc.core.bhp_netbook.models import Netbook
+from edc.device.netbook.models import Netbook
 
 
 class HouseholdManager(models.Manager):

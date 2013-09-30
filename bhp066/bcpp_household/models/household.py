@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from django.core.exceptions import ImproperlyConfigured
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.bhp_device.classes import Device
+from edc.device.device.classes import Device
 from edc.core.identifier.exceptions import IdentifierError
 from edc.core.crypto.fields import (EncryptedTextField, EncryptedDecimalField)
 from ..managers import HouseholdManager
