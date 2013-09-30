@@ -4038,7 +4038,7 @@ msgid "Date of Birth"
 msgstr "Letsatsi la matsalo"
 
 #: bhp_base_model/fields/custom/custom_fields.py:64
-#: bhp_netbook/models/netbook_user.py:18 bhp_subject/models/base_subject.py:77
+#: netbook/models/netbook_user.py:18 bhp_subject/models/base_subject.py:77
 #: lab_patient/models/patient.py:39
 msgid "Format is YYYY-MM-DD"
 msgstr "Format is YYYY-MM-DD"
@@ -4266,31 +4266,31 @@ msgstr "Sample storage after closure?"
 msgid "Subject agrees for samples to be stored after the study closure"
 msgstr "Subject agrees for samples to be stored after the study closure"
 
-#: bhp_netbook/models/netbook.py:9
+#: netbook/models/netbook.py:9
 msgid "Netbook Name"
 msgstr "Netbook Name"
 
-#: bhp_netbook/models/netbook.py:19
+#: netbook/models/netbook.py:19
 msgid "Database Name"
 msgstr "Database Name"
 
-#: bhp_netbook/models/netbook.py:33
+#: netbook/models/netbook.py:33
 msgid "Date Purchased"
 msgstr "Date Purchased"
 
-#: bhp_netbook/models/netbook.py:37
+#: netbook/models/netbook.py:37
 msgid "Make"
 msgstr "Make"
 
-#: bhp_netbook/models/netbook.py:41
+#: netbook/models/netbook.py:41
 msgid "Model"
 msgstr "Model"
 
-#: bhp_netbook/models/netbook.py:45
+#: netbook/models/netbook.py:45
 msgid "Serial Number"
 msgstr "Serial Number"
 
-#: bhp_netbook/models/netbook_user.py:23
+#: netbook/models/netbook_user.py:23
 msgid "Leave blank if in use. Format is YYYY-MM-DD"
 msgstr "Leave blank if in use. Format is YYYY-MM-DD"
 
