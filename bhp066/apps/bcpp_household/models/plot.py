@@ -277,7 +277,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return 'plot_identifier'
 
     def dispatch_container_lookup(self):
-        dispatch_container = models.get_model('bhp_dispatch', 'DispatchContainerRegister')
+        dispatch_container = models.get_model('dispatch', 'DispatchContainerRegister')
         if dispatch_container.objects.filter(container_identifier=self.plot_identifier, is_dispatched=True).exists():
             return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
         return None

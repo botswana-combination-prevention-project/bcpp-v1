@@ -8,7 +8,7 @@ class HtcSubjectOffStudy(BaseOffStudy):
     history = AuditTrail()
 
     def dispatch_container_lookup(self, using=None):
-        HtcRegistration = get_model('bcpp_htc', 'HtcRegistration')
+        HtcRegistration = get_model('bcpp_htc_subject', 'HtcRegistration')
         return (HtcRegistration, 'registered_subject__subject_identifier')
 
     class Meta:
