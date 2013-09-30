@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from edc.base.model.fields import OtherCharField
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from bcpp_list.models import ElectricalAppliances, TransportMode
 from bcpp_household.models import HouseholdStructure

@@ -4,8 +4,8 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-from bhp_map.classes import site_mappers
-from bhp_dispatch.exceptions import AlreadyDispatchedItem
+from edc.map.classes import site_mappers
+from edc.device.dispatch.exceptions import AlreadyDispatchedItem
 from bcpp_household.classes import PlotIdentifier
 
 site_mappers.autodiscover()
@@ -15,7 +15,7 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         """Write your forwards methods here.
-        from bhp_map.classes import site_mappers
+        from edc.map.classes import site_mappers
         site_mappers.autodiscover()
         for hh in Household.objects.all():
             if not hh.plot:

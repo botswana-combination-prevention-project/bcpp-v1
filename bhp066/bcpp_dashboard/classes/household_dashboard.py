@@ -3,7 +3,7 @@ from datetime import datetime, date
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.template.loader import render_to_string
-from edc.core.bhp_dashboard.classes import Dashboard
+from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 from bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
 from bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo

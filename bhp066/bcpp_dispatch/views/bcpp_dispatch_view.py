@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-from edc.core.bhp_dispatch.views import dispatch
+from edc.device.dispatch.views import dispatch
 from bcpp_dispatch.classes import BcppDispatchController
 from bcpp_dispatch.forms import BcppDispatchForm
 

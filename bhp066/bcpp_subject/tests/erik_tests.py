@@ -3,7 +3,7 @@ from django.test import TestCase
 from bcpp_subject.forms import AccessToCareForm
 from datetime import datetime
 from bhp_lab_tracker.classes import lab_tracker
-from bhp_appointment.tests.factories import ConfigurationFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.models import ContentTypeMap

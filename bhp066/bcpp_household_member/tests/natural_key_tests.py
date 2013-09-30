@@ -5,7 +5,7 @@ from django.core import serializers
 from django.db.models import get_app, get_models
 from edc.core.crypto.classes import FieldCryptor
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
-from edc.core.bhp_sync.classes import SerializeToTransaction
+from edc.device.sync.classes import SerializeToTransaction
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory

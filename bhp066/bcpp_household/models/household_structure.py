@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import get_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from edc.audit.audit_trail import AuditTrail
-from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_survey.models import Survey
 from ..managers import HouseholdStructureManager
 from .household import Household
