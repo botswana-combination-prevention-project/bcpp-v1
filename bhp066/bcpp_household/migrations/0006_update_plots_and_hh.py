@@ -403,7 +403,7 @@ class Migration(DataMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bhp_base_model.testmanytomany': {
-            'Meta': {'object_name': 'TestManyToMany'},
+            'Meta': {'object_name': 'TestM2m'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -512,7 +512,7 @@ class Migration(DataMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'test_container': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_dispatch.TestContainer']"}),
             'test_item_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '35'}),
-            'test_many_to_many': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bhp_base_model.TestManyToMany']", 'symmetrical': 'False'}),
+            'test_many_to_many': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bhp_base_model.TestM2m']", 'symmetrical': 'False'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
@@ -546,7 +546,7 @@ class Migration(DataMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'test_container': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_dispatch.TestContainer']"}),
             'test_item_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '35'}),
-            'test_many_to_many': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bhp_base_model.TestManyToMany']", 'symmetrical': 'False'}),
+            'test_many_to_many': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bhp_base_model.TestM2m']", 'symmetrical': 'False'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
