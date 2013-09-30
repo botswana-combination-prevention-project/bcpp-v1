@@ -6,7 +6,7 @@ from django.conf import settings
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
-from edc.core.bhp_device.classes import Device
+from edc.device.device.classes import Device
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 from edc.core.identifier.exceptions import IdentifierError
