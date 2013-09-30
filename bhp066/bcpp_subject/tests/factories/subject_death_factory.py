@@ -1,6 +1,6 @@
 import factory
 from datetime import date, datetime
-from bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import SubjectDeath
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.subject.adverse_event.tests.factories import DeathCauseInfoFactory

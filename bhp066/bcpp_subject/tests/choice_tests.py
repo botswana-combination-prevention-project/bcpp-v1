@@ -3,7 +3,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.db.models import get_model
 from django.utils import translation
-from bhp_base_model.models import BaseModel
+from edc.base.model.models import BaseModel
 from bcpp_subject import choices
 from bcpp_subject import models
 

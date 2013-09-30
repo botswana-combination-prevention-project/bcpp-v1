@@ -2,12 +2,12 @@ from django import forms
 from django.test import TestCase
 from bcpp_subject.forms import AccessToCareForm
 from datetime import datetime
-from bhp_lab_tracker.classes import lab_tracker
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_content_type_map.models import ContentTypeMap
-from bhp_content_type_map.classes import ContentTypeMapHelper
 from bcpp_subject.models import SubjectConsent
 
 
@@ -16,7 +16,7 @@ class ErikTests(TestCase):
     app_label = 'bcpp_subject'
 
     def test_p1(self):
-        lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         study_specific = StudySpecificFactory()
         StudySiteFactory()
         ConfigurationFactory()
