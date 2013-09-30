@@ -1,11 +1,11 @@
 from django.db import models
 from django.db.models import get_model
 from django.utils.translation import ugettext as _
-from edc.core.bhp_base_model.fields import OtherCharField
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_base_model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.base.model.fields import OtherCharField
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.bhp_registration.models import RegisteredSubject
+from edc.subject.registration.models import RegisteredSubject
 from bcpp_list.models import ElectricalAppliances, TransportMode
 from bcpp_household.models import HouseholdStructure
 from bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
@@ -137,7 +137,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         if not self.household_structure:
             raise AttributeError("household_structure cannot be None for household_info with pk='\{0}\'".format(self.pk))
         return self.household_structure.natural_key()
-    natural_key.dependencies = ['bcpp_household.household_structure', 'bcpp_household.household_member', 'bhp_registration.registered_subject']
+    natural_key.dependencies = ['bcpp_household.household_structure', 'bcpp_household.household_member', 'registration.registered_subject']
 
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__plot__plot_identifier')

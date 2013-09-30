@@ -1,6 +1,6 @@
 from django.db.models import get_model
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_off_study.models import BaseOffStudy
+from edc.audit.audit_trail import AuditTrail
+from edc.subject.off_study.models import BaseOffStudy
 
 
 class HtcSubjectOffStudy(BaseOffStudy):

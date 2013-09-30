@@ -3,13 +3,13 @@ from django.test import TestCase
 from django.db.models import signals
 from django.core import serializers
 from django.db.models import get_app, get_models
-from edc.core.bhp_crypto.classes import FieldCryptor
+from edc.core.crypto.classes import FieldCryptor
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_sync.classes import SerializeToTransaction
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from edc.core.bhp_registration.models import RegisteredSubject
-from edc.core.bhp_consent.tests.factories import ConsentCatalogueFactory
-from edc.core.bhp_appointment.tests.factories import ConfigurationFactory
+from edc.subject.registration.models import RegisteredSubject
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from bcpp_survey.models import Survey

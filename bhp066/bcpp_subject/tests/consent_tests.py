@@ -10,7 +10,7 @@ from bhp_registration.models import RegisteredSubject
 from bhp_appointment.tests.factories import ConfigurationFactory
 from bhp_identifier.exceptions import IdentifierError
 
-from bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_content_type_map.classes import ContentTypeMapHelper

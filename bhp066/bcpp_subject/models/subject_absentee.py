@@ -1,8 +1,8 @@
 from django.db import models
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_base_model.validators import datetime_is_future
-from edc.core.bhp_crypto.fields import EncryptedCharField
-from edc.core.bhp_base_model.fields import OtherCharField
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import datetime_is_future
+from edc.core.crypto.fields import EncryptedCharField
+from edc.base.model.fields import OtherCharField
 from bcpp_list.models import SubjectAbsenteeReason
 from bcpp_household_member.models import BaseMemberStatusModel
 from ..choices import NEXT_APPOINTMENT_SOURCE, ABSENTEE_STATUS

@@ -3,11 +3,11 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.core.urlresolvers import reverse
 from django.db.models.signals import Signal, post_save
-from edc.core.audit_trail.audit import AuditTrail
-from edc.core.bhp_crypto.utils import mask_encrypted
-from edc.core.bhp_registration.models import RegisteredSubject
+from edc.audit.audit_trail import AuditTrail
+from edc.core.crypto.utils import mask_encrypted
+from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.bhp_crypto.fields import EncryptedFirstnameField
+from edc.core.crypto.fields import EncryptedFirstnameField
 from edc.core.bhp_common.choices import YES_NO, GENDER
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from bcpp_survey.models import Survey
@@ -126,7 +126,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if not self.registered_subject:
             raise AttributeError("member.registered_subject cannot be None for pk='\{0}\'".format(self.pk))
         return self.household_structure.natural_key() + self.registered_subject.natural_key()
-    natural_key.dependencies = ['bcpp_household.householdstructure', 'bhp_registration.registeredsubject']
+    natural_key.dependencies = ['bcpp_household.householdstructure', 'registration.registeredsubject']
 
     def __unicode__(self):
         return '{0} of {1} ({2}{3}) {4}'.format(
@@ -138,7 +138,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def is_consented(self):
-        from bhp_consent.models import BaseConsent
+        from edc.subject.consent.models import BaseConsent
         retval = False
         for model in models.get_models():
             if issubclass(model, BaseConsent):

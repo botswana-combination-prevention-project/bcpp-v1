@@ -1,5 +1,5 @@
 from django import forms
-from edc.core.bhp_base_form.forms import BaseModelForm
+from edc.base.form.forms import BaseModelForm
 
 
 class BaseSubjectEntryForm(BaseModelForm):

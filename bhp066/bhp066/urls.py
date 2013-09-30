@@ -51,7 +51,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
-        include('edc.core.audit_trail.urls'), name="section_url_name"),
+        include('edc.audit.urls'), name="section_url_name"),
 )
 
 # urlpatterns += patterns('',
@@ -61,7 +61,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
     url(r'^{app_name}/(?P<section_name>specimens)/'.format(app_name=APP_NAME),
-        include('edc_lab.lab_clinic_api.urls'), name="section_url_name"),
+        include('edc.lab.lab_clinic_api.urls'), name="section_url_name"),
 )
 
 urlpatterns += patterns('',

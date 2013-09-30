@@ -6,12 +6,12 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from edc.core.bhp_common.utils import convert_from_camel
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
-from edc.core.bhp_appointment.tests.factories import ConfigurationFactory
-from edc.core.bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
+from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from edc.core.bhp_map.classes import site_mappers
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent

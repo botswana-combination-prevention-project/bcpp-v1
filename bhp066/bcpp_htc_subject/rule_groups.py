@@ -1,5 +1,5 @@
 from edc.core.bhp_entry_rules.classes import RuleGroup, rule_groups, ScheduledDataRule, Logic
-from edc.core.bhp_registration.models import RegisteredSubject
+from edc.subject.registration.models import RegisteredSubject
 from .models import HtcSubjectVisit, HtcHivTestingHistory, HtcHivResult, HivTestingConsent
 
 

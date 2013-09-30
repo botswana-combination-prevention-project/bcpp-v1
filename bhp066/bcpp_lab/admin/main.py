@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_lab.lab_packing.admin import BasePackingListAdmin, BasePackingListItemAdmin
+from edc.lab.lab_packing.admin import BasePackingListAdmin, BasePackingListItemAdmin
 from ..classes import SubjectRequisitionModelAdmin
 from ..models import SubjectRequisition
 from ..models import PackingList, PackingListItem

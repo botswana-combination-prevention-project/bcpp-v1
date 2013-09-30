@@ -1,4 +1,4 @@
-from bhp_consent.forms import BaseSubjectConsentForm
+from edc.subject.consent.forms import BaseSubjectConsentForm
 from ..models import HtcSubjectConsent
 
 

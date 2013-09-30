@@ -1,4 +1,4 @@
-from edc.core.bhp_base_form.forms import BaseModelForm
+from edc.base.form.forms import BaseModelForm
 from bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
                               NeighbourhoodProblems, CircumcisionBenefits,
                               FamilyPlanning, MedicalCareAccess, PartnerResidency,

@@ -1,10 +1,10 @@
 import factory
-from datetime import date, datetime
-from bhp_base_model.tests.factories import BaseUuidModelFactory
-from ..models import HtcRegistration
-from bhp_variables.tests.factories import StudySiteFactory
+from datetime import datetime
+from edc.base.model.tests.factories import BaseUuidModelFactory
+from ...models import HtcRegistration
+from edc.core.bhp_variables.tests.factories import StudySiteFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bhp_registration.tests.factories import RegisteredSubjectFactory
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
 
 class HtcRegistrationFactory(BaseUuidModelFactory):

@@ -2,9 +2,9 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
 from edc.core.bhp_common.utils import check_initials_field
-from edc.core.bhp_consent.forms import BaseSubjectConsentForm
+from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.core.bhp_variables.models import StudySpecific
-from edc.core.bhp_registration.models import RegisteredSubject
+from edc.subject.registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
 from ..models import SubjectConsent
 

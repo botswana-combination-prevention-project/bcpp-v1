@@ -1,7 +1,7 @@
 from datetime import datetime
 from django import forms
 from django.conf import settings
-from edc.core.bhp_base_form.forms import BaseModelForm
+from edc.base.form.forms import BaseModelForm
 from ..models import HouseholdStructure
 
 
