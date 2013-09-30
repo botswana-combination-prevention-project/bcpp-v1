@@ -1,26 +1,19 @@
-import factory
-import pprint
 from datetime import datetime, timedelta
 from django.test import TestCase
 from django.core import serializers
-
-from django.db.models import get_app, get_models, get_model
+from django.db.models import get_app, get_models
 from django.contrib.contenttypes.models import ContentType
 from edc.core.crypto_fields.classes import FieldCryptor
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.appointment.tests.factories import AppointmentFactory
 from edc.subject.appointment.tests.factories import ConfigurationFactory
-from edc.subject.appointment.models import Appointment
-from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_sync.classes import SerializeToTransaction
-from bhp_visit.models import VisitDefinition
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_visit.tests.factories import VisitDefinitionFactory
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.device.sync.classes import SerializeToTransaction
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory
 from edc.map.classes import site_mappers
-from bhp_content_type_map.tests.factories import ContentTypeMapFactory
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.core.bhp_content_type_map.models import ContentTypeMap
 
 from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, \
@@ -29,7 +22,7 @@ from bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, Labo
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.models import Survey
 from bcpp_household.models import Household, HouseholdStructure
-from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
+from bcpp_household.tests.factories import PlotFactory
 
 
 class NaturalKeyTests(TestCase):

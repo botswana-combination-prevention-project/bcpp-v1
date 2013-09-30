@@ -1,5 +1,5 @@
 import factory
-from bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
 from subject_visit_factory import SubjectVisitFactory
 
 

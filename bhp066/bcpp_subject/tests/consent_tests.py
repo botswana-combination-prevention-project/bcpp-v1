@@ -11,9 +11,9 @@ from edc.subject.appointment.tests.factories import ConfigurationFactory
 from bhp_identifier.exceptions import IdentifierError
 
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_content_type_map.models import ContentTypeMap
-from bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from bcpp_subject.models import SubjectConsent
 from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_survey.tests.factories import SurveyFactory
