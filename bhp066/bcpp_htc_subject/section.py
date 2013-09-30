@@ -1,4 +1,4 @@
-from edc.core.bhp_section.classes import BaseSectionForDashboardView, site_sections
+from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sections
 
 
 class SectionHtcSubjectView(BaseSectionForDashboardView):

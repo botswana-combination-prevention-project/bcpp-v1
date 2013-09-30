@@ -1,4 +1,4 @@
-from edc.core.bhp_search.classes import BaseSearchByWord, site_search
+from edc.dashboard.search.classes import BaseSearchByWord, site_search
 from .section import SectionHouseholdView, SectionPlotView
 from .models import Household, Plot
 
