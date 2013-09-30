@@ -1,6 +1,6 @@
 from django.db import models
-from edc.core.bhp_registration.models import RegisteredSubject
-from edc_lab.lab_packing.models import BasePackingListItem
+from edc.subject.registration.models import RegisteredSubject
+from edc.lab.lab_packing.models import BasePackingListItem
 from packing_list import PackingList
 from subject_requisition import SubjectRequisition
 

@@ -1,4 +1,4 @@
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from bcpp_household_member.models import BaseHouseholdMemberConsent
 from .subject_consent_history import SubjectConsentHistory

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from edc.core.bhp_common.choices import POS_NEG_ONLY
 from ..choices import YES_NO_DECLINED
 from .base_scheduled_model import BaseScheduledModel

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.core.bhp_base_model.fields import OtherCharField
+from edc.base.model.fields import OtherCharField
 from edc.core.bhp_common.choices import GENDER, YES_NO_REFUSED, POS_NEG_UNKNOWN, YES_NO_DONT_KNOW
 from ..choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
 from .base_scheduled_visit_model import BaseScheduledVisitModel

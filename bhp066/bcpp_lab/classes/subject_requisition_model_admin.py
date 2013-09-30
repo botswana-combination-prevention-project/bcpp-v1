@@ -1,4 +1,4 @@
-from edc_lab.lab_requisition.admin import BaseRequisitionModelAdmin
+from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
 from bcpp_subject.models import SubjectVisit
 
 

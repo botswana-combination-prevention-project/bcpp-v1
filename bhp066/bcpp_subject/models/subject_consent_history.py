@@ -1,5 +1,5 @@
 from django.db import models
-from edc.core.bhp_consent.models import BaseConsentHistory
+from edc.subject.consent.models import BaseConsentHistory
 from bcpp_household_member.models import HouseholdMember
 from bcpp_survey.models import Survey
 from ..managers import ConsentHistoryManager
@@ -17,7 +17,7 @@ class SubjectConsentHistory(BaseConsentHistory):
         if not self.registered_subject:
             raise AttributeError("registered_subject cannot be None for pk='\{0}\'".format(self.pk))
         return self.consent_datetime + self.survey + self.registered_subject.natural_key()
-    natural_key.dependencies = ['bhp_registration.registered_subject']
+    natural_key.dependencies = ['registration.registered_subject']
 
     class Meta:
         app_label = 'bcpp_subject'

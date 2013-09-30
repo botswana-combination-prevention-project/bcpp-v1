@@ -1,5 +1,5 @@
 import factory
-from edc.core.bhp_base_model.tests.factories import BaseUuidModelFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
 from bcpp_survey.tests.factories import SurveyFactory
 from ...models import HouseholdStructure
 from .household_factory import HouseholdFactory

@@ -4226,13 +4226,13 @@ msgstr ""
 "uppercase separated by a comma"
 
 #: bhp_consent/models/base_consent.py:45
-#: bhp_registration/models/registered_subject.py:62
+#: registration/models/registered_subject.py:62
 #: lab_patient/models/simple_consent.py:29
 msgid "Sample storage"
 msgstr "Sample storage"
 
 #: bhp_consent/models/base_consent.py:48
-#: bhp_registration/models/registered_subject.py:66
+#: registration/models/registered_subject.py:66
 #: lab_patient/models/simple_consent.py:32
 msgid "Does the subject agree to have samples stored after the study has ended"
 msgstr ""

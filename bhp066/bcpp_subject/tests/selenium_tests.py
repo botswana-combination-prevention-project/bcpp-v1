@@ -11,13 +11,13 @@ from django.contrib.auth.models import User
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
 from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_consent.models import ConsentCatalogue
+from edc.subject.consent.models import ConsentCatalogue
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_variables.models import StudySpecific
 from bhp_sync.models import Producer
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from bhp_visit.models import VisitDefinition, ScheduleGroup, MembershipForm
-from bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.tests.factories import ContentTypeMapFactory
 from bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory

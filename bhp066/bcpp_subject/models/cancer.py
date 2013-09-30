@@ -1,5 +1,5 @@
 from django.db import models
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from bcpp.choices import DXCANCER_CHOICE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

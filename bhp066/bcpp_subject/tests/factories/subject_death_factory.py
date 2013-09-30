@@ -2,9 +2,9 @@ import factory
 from datetime import date, datetime
 from bhp_base_model.tests.factories import BaseUuidModelFactory
 from bcpp_subject.models import SubjectDeath
-from bhp_registration.tests.factories import RegisteredSubjectFactory
-from bhp_adverse.tests.factories import DeathCauseInfoFactory
-from bhp_adverse.tests.factories import DeathCauseCategoryFactory
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+from edc.subject.adverse_event.tests.factories import DeathCauseInfoFactory
+from edc.subject.adverse_event.tests.factories import DeathCauseCategoryFactory
 
 
 class SubjectDeathFactory(BaseUuidModelFactory):

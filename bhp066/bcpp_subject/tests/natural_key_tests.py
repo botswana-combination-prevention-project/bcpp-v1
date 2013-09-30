@@ -1,34 +1,35 @@
 import factory
 import pprint
+from datetime import datetime, timedelta
 from django.test import TestCase
 from django.core import serializers
-from bhp_crypto.classes import FieldCryptor
 
 from django.db.models import get_app, get_models, get_model
 from django.contrib.contenttypes.models import ContentType
+from edc.core.crypto.classes import FieldCryptor
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.appointment.tests.factories import AppointmentFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
+from edc.subject.appointment.models import Appointment
 from bhp_lab_tracker.classes import site_lab_tracker
 from bhp_sync.classes import SerializeToTransaction
+from bhp_visit.models import VisitDefinition
+from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from bhp_visit.tests.factories import VisitDefinitionFactory
+from bhp_map.classes import site_mappers
+from bhp_content_type_map.tests.factories import ContentTypeMapFactory
+from bhp_content_type_map.classes import ContentTypeMapHelper
+from bhp_content_type_map.models import ContentTypeMap
+
 from bcpp_subject.tests.factories import SubjectConsentFactory
 from bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, \
                                          SubjectAbsenteeEntryFactory, SubjectDeathFactory, SubjectUndecidedEntryFactory, \
                                          SubjectRefusalFactory, SubjectReferralFactory, SubjectMovedFactory
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_registration.models import RegisteredSubject
-from bhp_consent.tests.factories import ConsentCatalogueFactory
-from bhp_appointment.tests.factories import AppointmentFactory
-from bhp_visit.tests.factories import VisitDefinitionFactory
-from bhp_content_type_map.tests.factories import ContentTypeMapFactory
-from bhp_appointment.models import Appointment
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bhp_appointment.tests.factories import ConfigurationFactory
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from bhp_content_type_map.models import ContentTypeMap
-from datetime import datetime, timedelta
 from bcpp_survey.models import Survey
-from bhp_visit.models import VisitDefinition
 from bcpp_household.models import Household, HouseholdStructure
 from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
-from bhp_map.classes import site_mappers
 
 
 class NaturalKeyTests(TestCase):

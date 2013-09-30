@@ -3,9 +3,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from edc.core.audit_trail.audit import AuditTrail
+from edc.audit.audit_trail import AuditTrail
 from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.bhp_crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc.core.crypto.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.bhp_device.classes import Device
 from edc.core.bhp_map.classes import site_mappers
 from edc.core.bhp_map.exceptions import MapperError

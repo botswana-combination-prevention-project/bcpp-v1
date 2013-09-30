@@ -1,7 +1,7 @@
 import factory
 from datetime import datetime
-from edc.core.bhp_base_model.tests.factories import BaseUuidModelFactory
-from edc.core.bhp_registration.tests.factories import RegisteredSubjectFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from bcpp_household_member.models import HouseholdInfo
 from bcpp_household.tests.factories import HouseholdStructureFactory
 from household_member_factory import HouseholdMemberFactory

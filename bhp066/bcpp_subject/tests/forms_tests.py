@@ -7,10 +7,10 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from bhp_common.utils import convert_from_camel
 from bhp_lab_tracker.classes import lab_tracker
-from bhp_registration.models import RegisteredSubject
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from bhp_appointment.models import Appointment
 from bhp_appointment.tests.factories import ConfigurationFactory
-from bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_content_type_map.models import ContentTypeMap
 from bhp_content_type_map.classes import ContentTypeMapHelper

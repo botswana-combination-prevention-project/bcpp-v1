@@ -1,13 +1,13 @@
 from datetime import timedelta
 from django.db.models import get_model
-from edc.core.bhp_consent.managers import BaseConsentHistoryManager
+from edc.subject.consent.managers import BaseConsentHistoryManager
 
 
 class ConsentHistoryManager(BaseConsentHistoryManager):
 
     def get_by_natural_key(self, consent_datetime, survey_name, subject_identifier_as_pk):
         margin = timedelta(minutes=5)
-        RegisteredSubject = get_model('edc.core.bhp_registration', 'RegisteredSubject')
+        RegisteredSubject = get_model('edc.subject.registration', 'RegisteredSubject')
         Survey = get_model('bcpp_survey', 'Survey')
         survey = Survey.objects.get_by_natural_key(survey_name)
         registered_subject = RegisteredSubject.objects.get_by_natural_key(subject_identifier_as_pk)
