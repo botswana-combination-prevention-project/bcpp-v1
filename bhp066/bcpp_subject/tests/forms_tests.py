@@ -2,24 +2,20 @@ from __future__ import print_function
 from datetime import datetime
 from django.contrib import admin
 from django.test import TestCase
-from django.db.models import get_model
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from bhp_common.utils import convert_from_camel
-from bhp_lab_tracker.classes import lab_tracker
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+from edc.core.bhp_common.utils import convert_from_camel
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from bhp_content_type_map.models import ContentTypeMap
-from bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.subject.appointment.tests.factories import AppointmentFactory
-from bhp_visit.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from bcpp_household.tests.factories import HouseholdFactory, HouseholdStructureFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_survey.tests.factories import SurveyFactory
-from bcpp_subject.models import SubjectConsent
 from bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory, CeaEnrolmentChecklistFactory as EnrolmentChecklistFactory
 from bcpp_subject.models import BaseScheduledVisitModel
 
@@ -31,7 +27,7 @@ class FormsTests(TestCase):
     app_label = 'bcpp_subject'
 
     def test_all_forms(self):
-        lab_tracker.autodiscover()
+        site_lab_tracker.autodiscover()
         study_specific = StudySpecificFactory()
         StudySiteFactory()
         ConfigurationFactory()

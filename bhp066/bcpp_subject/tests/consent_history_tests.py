@@ -4,7 +4,7 @@ from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.subject.consent.models import BaseConsentHistory
 from edc.map.classes import site_mappers
 from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.subject.appointment.models import Configuration
 from bcpp_household.models import Household, HouseholdStructure
 from bcpp_household.tests.factories import HouseholdFactory, PlotFactory
