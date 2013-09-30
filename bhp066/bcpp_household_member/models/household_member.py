@@ -4,12 +4,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.core.urlresolvers import reverse
 from django.db.models.signals import Signal, post_save
 from edc.audit.audit_trail import AuditTrail
-from edc.core.crypto.utils import mask_encrypted
+from edc.core.crypto_fields.utils import mask_encrypted
 from edc.subject.registration.models import RegisteredSubject
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto.fields import EncryptedFirstnameField
+from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.choices.common import YES_NO, GENDER
-from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from bcpp_survey.models import Survey
 from bcpp_household.choices import RELATIONS
 from bcpp_household.models import Household, Plot

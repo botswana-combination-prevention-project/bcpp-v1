@@ -6,7 +6,7 @@ from edc.choices.common import YES_NO, YES_NO_REFUSED
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
-from edc.core.crypto.fields import EncryptedCharField
+from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.subject.local.bw.fields import EncryptedOmangField
 from edc.base.model.fields import IsDateEstimatedField
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
