@@ -22,7 +22,8 @@ TEMPLATE_DIRS = (
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-KEY_PATH = CONFIG_DIR.child('keys')
+KEY_PATH = PROJECT_DIR.child('keys')
+KEY_PATH = '/Volumes/bhp066/keys/'
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS

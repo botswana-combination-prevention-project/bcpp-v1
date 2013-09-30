@@ -11,6 +11,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.device.sync.classes import SerializeToTransaction
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory
+from edc.subject.registration.models import RegisteredSubject
 from edc.map.classes import site_mappers
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
