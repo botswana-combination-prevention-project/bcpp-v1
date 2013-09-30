@@ -96,7 +96,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_migrated',
+            'NAME': 'bhp066_reorg',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -113,28 +113,6 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-        'mpp15-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066_survey',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.36',
-            'PORT': '3306',
-        },
-#         'mpp83': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'OPTIONS': {
-#                 'init_command': 'SET storage_engine=INNODB',
-#             },
-#             'NAME': 'bhp066_survey',
-#             'USER': 'root',
-#             'PASSWORD': 'cc3721b',
-#             'HOST': '192.168.1.22',
-#             'PORT': '3306',
-#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -265,9 +243,7 @@ INSTALLED_APPS = (
     'edc.core.bhp_lock',
     'edc.core.bhp_userprofile',
     'edc.core.bhp_poll_mysql',
-    'edc.core.bhp_model_selector',
     'edc.core.bhp_templatetags',
-    #'edc.core.bhp_base_test',
     'edc.core.bhp_variables',
     'edc.core.bhp_common',
     'edc.core.identifier',
@@ -285,7 +261,8 @@ INSTALLED_APPS = (
     'edc.core.bhp_context',
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
-    'edc.core.bhp_model_describer',
+    'edc.core.model_describer',
+    'edc.core.model_selector',
     'edc.core.bhp_household',
     'edc.core.bhp_household_member',
 
@@ -303,6 +280,8 @@ INSTALLED_APPS = (
     'edc.dashboard.subject',
 
     'edc.map',
+
+    'edc.testing',
 
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
