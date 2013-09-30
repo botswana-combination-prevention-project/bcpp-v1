@@ -3,15 +3,15 @@ from django.test import TestCase
 from django.db.models import signals
 from django.core import serializers
 from django.db.models import get_app, get_models
-from edc_core.bhp_crypto.classes import FieldCryptor
-from edc_core.bhp_lab_tracker.classes import site_lab_tracker
-from edc_core.bhp_sync.classes import SerializeToTransaction
-from edc_core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from edc_core.bhp_registration.models import RegisteredSubject
-from edc_core.bhp_consent.tests.factories import ConsentCatalogueFactory
-from edc_core.bhp_appointment.tests.factories import ConfigurationFactory
-from edc_core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc_core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_crypto.classes import FieldCryptor
+from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_sync.classes import SerializeToTransaction
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.core.bhp_registration.models import RegisteredSubject
+from edc.core.bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.core.bhp_appointment.tests.factories import ConfigurationFactory
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.core.bhp_content_type_map.models import ContentTypeMap
 from bcpp_survey.models import Survey
 from bcpp_household.tests.factories import HouseholdStructureFactory
 from bcpp_household.models import create_household_structure_on_post_save

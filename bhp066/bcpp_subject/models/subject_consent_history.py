@@ -1,5 +1,5 @@
 from django.db import models
-from edc_core.bhp_consent.models import BaseConsentHistory
+from edc.core.bhp_consent.models import BaseConsentHistory
 from bcpp_household_member.models import HouseholdMember
 from bcpp_survey.models import Survey
 from ..managers import ConsentHistoryManager

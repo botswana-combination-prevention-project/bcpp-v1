@@ -4,13 +4,13 @@ from datetime import datetime
 from django.test import TestCase
 from django.db import IntegrityError
 from django.contrib.contenttypes.models import ContentType
-from edc_core.bhp_content_type_map.models import ContentTypeMap
-from edc_core.bhp_lab_tracker.classes import site_lab_tracker
-from edc_core.bhp_map.classes import site_mappers
-from edc_core.bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
-from edc_core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc_core.bhp_appointment.models import Configuration
-from edc_core.bhp_consent.tests.factories import ConsentCatalogueFactory
+from edc.core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_map.classes import site_mappers
+from edc.core.bhp_visit.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.core.bhp_appointment.models import Configuration
+from edc.core.bhp_consent.tests.factories import ConsentCatalogueFactory
 from bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bcpp_household.models import HouseholdStructure, Household
 from bcpp_household.tests.factories import HouseholdFactory, PlotFactory

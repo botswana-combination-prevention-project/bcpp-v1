@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc_core.bhp_inspector.admin import BaseInspectorAdmin
+from edc.core.bhp_inspector.admin import BaseInspectorAdmin
 from ..models import SubjectRequisitionInspector
 from ..actions import set_inspectors_as_confirmed
 

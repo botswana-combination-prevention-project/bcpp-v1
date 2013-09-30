@@ -9,11 +9,11 @@ from django.db.models import get_models
 import django_databrowse
 from dajaxice.core import dajaxice_autodiscover
 
-from edc_core.bhp_map.classes import site_mappers
-from edc_core.bhp_entry_rules.classes import rule_groups
-from edc_core.bhp_lab_tracker.classes import site_lab_tracker
-from edc_core.bhp_data_manager.classes import data_manager
-from edc_core.bhp_section.classes import site_sections
+from edc.core.bhp_map.classes import site_mappers
+from edc.core.bhp_entry_rules.classes import rule_groups
+from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_data_manager.classes import data_manager
+from edc.core.bhp_section.classes import site_sections
 
 dajaxice_autodiscover()
 rule_groups.autodiscover()
@@ -46,12 +46,12 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    (r'^bhp_sync/', include('edc_core.bhp_sync.urls')),
+    (r'^bhp_sync/', include('edc.core.bhp_sync.urls')),
 )
 
 urlpatterns += patterns('',
     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
-        include('edc_core.audit_trail.urls'), name="section_url_name"),
+        include('edc.core.audit_trail.urls'), name="section_url_name"),
 )
 
 # urlpatterns += patterns('',
@@ -69,9 +69,9 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('edc_core.bhp_sync.urls')),
-    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('edc_core.bhp_dispatch.urls')),
-    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('edc_core.bhp_map.urls')),
+    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('edc.core.bhp_sync.urls')),
+    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('edc.core.bhp_dispatch.urls')),
+    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('edc.core.bhp_map.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',
@@ -93,7 +93,7 @@ urlpatterns += patterns('',
         name='password_change_done'.format(app_name=APP_NAME)),
 )
 urlpatterns += patterns('',
-    url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('edc_core.bhp_section.urls'), name='section'),
+    url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('edc.core.bhp_section.urls'), name='section'),
 )
 
 urlpatterns += patterns('',

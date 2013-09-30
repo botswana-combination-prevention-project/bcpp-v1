@@ -1,10 +1,10 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
-from edc_core.bhp_common.utils import check_initials_field
-from edc_core.bhp_consent.forms import BaseSubjectConsentForm
-from edc_core.bhp_variables.models import StudySpecific
-from edc_core.bhp_registration.models import RegisteredSubject
+from edc.core.bhp_common.utils import check_initials_field
+from edc.core.bhp_consent.forms import BaseSubjectConsentForm
+from edc.core.bhp_variables.models import StudySpecific
+from edc.core.bhp_registration.models import RegisteredSubject
 from bcpp_household_member.models import HouseholdMember
 from ..models import SubjectConsent
 
@@ -23,7 +23,7 @@ class SubjectConsentForm(BaseSubjectConsentForm):
             try:
                 obj = StudySpecific.objects.all()[0]
             except IndexError:
-                raise TypeError("Please add your edc_core.bhp_variables site specifics")
+                raise TypeError("Please add your edc.core.bhp_variables site specifics")
             if cleaned_data.get('consent_datetime', None):
                 consent_datetime = cleaned_data.get('consent_datetime').date()
             else:

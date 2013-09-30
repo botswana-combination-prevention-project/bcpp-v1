@@ -1,9 +1,9 @@
 from django.db import models
-from edc_core.audit_trail.audit import AuditTrail
-from edc_core.bhp_common.choices import GENDER
-from edc_core.bhp_base_model.fields import OtherCharField
-from edc_core.bhp_crypto.fields import EncryptedCharField, EncryptedDecimalField
-from edc_core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.audit_trail.audit import AuditTrail
+from edc.core.bhp_common.choices import GENDER
+from edc.core.bhp_base_model.fields import OtherCharField
+from edc.core.bhp_crypto.fields import EncryptedCharField, EncryptedDecimalField
+from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
 from bcpp.choices import YES_NO
 from ..choices import RELATION
 from .base_scheduled_visit_model import BaseScheduledVisitModel

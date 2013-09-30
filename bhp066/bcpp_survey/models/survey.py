@@ -1,7 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.core.validators import RegexValidator
-from edc_core.bhp_sync.models import BaseSyncUuidModel
+from edc.core.bhp_sync.models import BaseSyncUuidModel
 from ..managers import SurveyManager
 
 

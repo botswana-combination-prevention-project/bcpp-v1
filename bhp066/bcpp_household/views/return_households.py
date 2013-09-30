@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from edc_core.bhp_dispatch.models import DispatchContainerRegister
+from edc.core.bhp_dispatch.models import DispatchContainerRegister
 from ..models import Household
 
 

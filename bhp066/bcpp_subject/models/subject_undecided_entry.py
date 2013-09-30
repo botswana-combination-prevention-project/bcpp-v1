@@ -1,5 +1,5 @@
 from django.db import models
-from edc_core.audit_trail.audit import AuditTrail
+from edc.core.audit_trail.audit import AuditTrail
 from bcpp_subject.models import SubjectUndecided
 from bcpp_subject.choices import UNDECIDED_REASON
 from bcpp_subject.managers import SubjectUndecidedEntryManager
