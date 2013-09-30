@@ -2,7 +2,7 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_is_future
-from edc.core.bhp_common.choices import YES_NO
+from edc.choices.common import YES_NO
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from ..choices import REFERRAL_REASONS
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel

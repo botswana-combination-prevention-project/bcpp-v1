@@ -1,5 +1,5 @@
-from edc.core.bhp_map.classes import Mapper
-from edc.core.bhp_map.choices import ICONS, OTHER_ICONS
+from edc.map.classes import Mapper
+from edc.map.choices import ICONS, OTHER_ICONS
 from bcpp_household.models import Plot
 
 

@@ -1,8 +1,8 @@
 from django import forms
 from django.conf import settings
 from edc.base.form.forms import BaseModelForm
-from edc.core.bhp_map.classes import site_mappers
-from edc.core.bhp_map.exceptions import MapperError
+from edc.map.classes import site_mappers
+from edc.map.exceptions import MapperError
 from ..models import Household
 
 

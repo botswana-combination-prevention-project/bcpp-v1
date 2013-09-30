@@ -1,6 +1,6 @@
 import re
 from django.db import models
-from edc.core.bhp_identifier.exceptions import IdentifierError
+from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.local.bw.models import BaseBwConsent
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject

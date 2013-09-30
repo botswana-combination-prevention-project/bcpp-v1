@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from edc.core.bhp_common.choices import YES_NO
+from edc.choices.common import YES_NO
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

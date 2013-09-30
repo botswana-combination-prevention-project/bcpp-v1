@@ -17,7 +17,7 @@ from bhp_sync.classes import SerializeToTransaction
 from bhp_visit.models import VisitDefinition
 from bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from bhp_visit.tests.factories import VisitDefinitionFactory
-from bhp_map.classes import site_mappers
+from edc.map.classes import site_mappers
 from bhp_content_type_map.tests.factories import ContentTypeMapFactory
 from bhp_content_type_map.classes import ContentTypeMapHelper
 from bhp_content_type_map.models import ContentTypeMap

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.core.bhp_locator.models import BaseLocator
-from edc.core.bhp_common.choices import YES_NO
+from edc.choices.common import YES_NO
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
 from edc.core.crypto.fields import EncryptedCharField
 from bcpp_household.models  import Household

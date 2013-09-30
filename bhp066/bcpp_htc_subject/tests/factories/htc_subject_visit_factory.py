@@ -1,9 +1,9 @@
 import factory
-from datetime import date, datetime
-from bhp_base_model.tests.factories import BaseUuidModelFactory
-from ..models import HtcSubjectVisit
-from bhp_appointment.tests.factories import AppointmentFactory
-from bcpp_household_member.tests.factories import HouseholdMemberFactory
+from datetime import datetime
+from edc.subject.appointment.tests.factories import AppointmentFactory
+from edc.base.model.tests.factories import BaseUuidModelFactory
+from edc.subject.appointmentfrom bcpp_household_member.tests.factories import HouseholdMemberFactory
+from ...models import HtcSubjectVisit
 
 
 class HtcSubjectVisitFactory(BaseUuidModelFactory):

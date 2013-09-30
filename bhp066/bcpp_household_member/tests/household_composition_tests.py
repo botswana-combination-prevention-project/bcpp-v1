@@ -9,7 +9,7 @@ from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_map.classes import site_mappers
+from edc.map.classes import site_mappers
 from bcpp_survey.tests.factories import SurveyFactory
 from bcpp_subject.models import SubjectConsent
 from bcpp_household.tests.factories import HouseholdStructureFactory, PlotFactory, HouseholdFactory

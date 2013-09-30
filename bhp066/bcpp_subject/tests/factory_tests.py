@@ -1,7 +1,7 @@
 import sys
 import inspect
 from django.test import TestCase
-from bhp_appointment.tests.factories import ConfigurationFactory
+from edc.subject.appointment.tests.factories import ConfigurationFactory
 
 
 class FactoryTests(TestCase):

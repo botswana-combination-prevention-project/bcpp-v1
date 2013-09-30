@@ -9,8 +9,8 @@ from django.db.models import get_models
 import django_databrowse
 from dajaxice.core import dajaxice_autodiscover
 
-from edc.core.bhp_map.classes import site_mappers
-from edc.core.bhp_entry_rules.classes import rule_groups
+from edc.map.classes import site_mappers
+from edc.subject.rule_groups.classes import rule_groups
 from edc.core.bhp_lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.core.bhp_section.classes import site_sections
@@ -46,7 +46,7 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    (r'^bhp_sync/', include('edc.core.bhp_sync.urls')),
+    (r'^bhp_sync/', include('edc.device.sync.urls')),
 )
 
 urlpatterns += patterns('',
@@ -69,9 +69,9 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('edc.core.bhp_sync.urls')),
-    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('edc.core.bhp_dispatch.urls')),
-    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('edc.core.bhp_map.urls')),
+    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('edc.device.sync.urls')),
+    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('edc.device.dispatch.urls')),
+    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('edc.map.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',

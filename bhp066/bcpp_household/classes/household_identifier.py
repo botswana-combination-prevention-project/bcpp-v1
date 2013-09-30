@@ -1,4 +1,4 @@
-from edc.core.bhp_identifier.classes import BaseIdentifier
+from edc.core.identifier.classes import BaseIdentifier
 
 
 class HouseholdIdentifier(BaseIdentifier):

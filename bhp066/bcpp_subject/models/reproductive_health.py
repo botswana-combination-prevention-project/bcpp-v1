@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
-from edc.core.bhp_common.choices import YES_NO, YES_NO_UNSURE
+from edc.choices.common import YES_NO, YES_NO_UNSURE
 from edc.base.model.fields import OtherCharField
 from bcpp_list.models import FamilyPlanning
 from .base_scheduled_visit_model import BaseScheduledVisitModel

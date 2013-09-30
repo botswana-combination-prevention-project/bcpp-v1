@@ -2,15 +2,15 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
-from edc.core.bhp_common.choices import YES_NO, YES_NO_REFUSED
+from edc.choices.common import YES_NO, YES_NO_REFUSED
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.crypto.fields import EncryptedCharField
 from edc.subject.local.bw.fields import EncryptedOmangField
 from edc.base.model.fields import IsDateEstimatedField
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
-from edc.core.bhp_common.choices import GENDER_UNDETERMINED
+from edc.choices.common import GENDER_UNDETERMINED
 from bcpp_household.models import Plot
 from ..managers import EnrolmentChecklistManager
 from .household_member import HouseholdMember

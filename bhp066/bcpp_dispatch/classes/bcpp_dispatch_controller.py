@@ -5,9 +5,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import signals
 from edc.base.model.models import BaseListModel
 from edc.subject.subject.models import base_subject_get_or_create_registered_subject_on_post_save
-from edc.core.bhp_dispatch.classes import DispatchController
-from edc.core.bhp_dispatch.exceptions import DispatchError
-from edc.core.bhp_dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.classes import DispatchController
+from edc.device.dispatch.exceptions import DispatchError
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from bcpp_subject.models import  BaseMemberStatusModel
 from bcpp_household_member.models import household_member_on_pre_save, household_member_on_post_save, base_household_member_consent_on_post_save
