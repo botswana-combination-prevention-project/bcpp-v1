@@ -1,5 +1,5 @@
 from django.conf import settings
-from edc.core.bhp_section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
+from edc.dashboard.section.classes import BaseSectionView, BaseSectionForDashboardView, site_sections
 from edc.map.classes import site_mappers
 from bcpp_survey.forms import SurveyForm
 from .forms.current_gps_form import CurrentGpsForm
