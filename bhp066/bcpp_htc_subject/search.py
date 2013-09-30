@@ -1,4 +1,4 @@
-from edc.core.bhp_search.classes import BaseSearchByWord, site_search
+from edc.dashboard.search.classes import BaseSearchByWord, site_search
 from .models import HtcRegistration
 from .section import SectionHtcSubjectView
 

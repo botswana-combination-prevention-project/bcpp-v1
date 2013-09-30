@@ -241,6 +241,8 @@ INSTALLED_APPS = (
     'edc.core.crypto_fields',
     'edc.core.model_describer',
     'edc.core.model_selector',
+    'edc.core.admin_supplemental_fields',
+
     'edc.core.bhp_templates',
     'edc.core.bhp_static',
     'edc.core.bhp_string',
@@ -248,16 +250,12 @@ INSTALLED_APPS = (
     'edc.core.bhp_userprofile',
     'edc.core.bhp_poll_mysql',
     'edc.core.bhp_templatetags',
-    'edc.core.bhp_variables',
     'edc.core.bhp_common',
     'edc.core.bhp_content_type_map',
-    'edc.core.bhp_search',
-    'edc.core.bhp_section',
     'edc.core.bhp_data_manager',
     'edc.core.bhp_variables',
     'edc.core.bhp_site_edc',
     'edc.core.bhp_research_protocol',
-    'edc.core.bhp_supplemental_fields',
     'edc.core.bhp_nmap',
     'edc.core.bhp_data_manager',
     'edc.core.bhp_context',
@@ -278,7 +276,9 @@ INSTALLED_APPS = (
     'edc.device.sync',
 
     'edc.dashboard.base',
+    'edc.dashboard.search',
     'edc.dashboard.subject',
+    'edc.dashboard.section',
 
     'edc.map',
 

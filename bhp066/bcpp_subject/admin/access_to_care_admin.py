@@ -1,5 +1,5 @@
 from django.contrib import admin
-from edc.core.bhp_supplemental_fields.classes import SupplementalFields
+from edc.core.admin_supplemental_fields.classes import SupplementalFields
 from bcpp_subject.models import AccessToCare
 from bcpp_subject.forms import AccessToCareForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin

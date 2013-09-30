@@ -13,7 +13,7 @@ from edc.map.classes import site_mappers
 from edc.subject.rule_groups.classes import rule_groups
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_data_manager.classes import data_manager
-from edc.core.bhp_section.classes import site_sections
+from edc.dashboard.section.classes import site_sections
 
 dajaxice_autodiscover()
 rule_groups.autodiscover()
@@ -93,7 +93,7 @@ urlpatterns += patterns('',
         name='password_change_done'.format(app_name=APP_NAME)),
 )
 urlpatterns += patterns('',
-    url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('edc.core.bhp_section.urls'), name='section'),
+    url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('edc.dashboard.section.urls'), name='section'),
 )
 
 urlpatterns += patterns('',
