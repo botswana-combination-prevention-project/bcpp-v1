@@ -1,6 +1,6 @@
 from django.db import models
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.core.crypto.fields import EncryptedCharField
+from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.base.model.fields import OtherCharField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from bcpp_household.models import Plot

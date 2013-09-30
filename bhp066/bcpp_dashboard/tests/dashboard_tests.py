@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.db import IntegrityError
 from django.contrib.contenttypes.models import ContentType
 from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers
 from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper

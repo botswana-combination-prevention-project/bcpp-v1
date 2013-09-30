@@ -2,7 +2,7 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto.fields import EncryptedTextField
+from edc.core.crypto_fields.fields import EncryptedTextField
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 from .household_structure import HouseholdStructure

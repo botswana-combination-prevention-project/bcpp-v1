@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.contrib import admin
 from django.test import TestCase
 from django.contrib.auth.models import User
-from edc.core.bhp_lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
