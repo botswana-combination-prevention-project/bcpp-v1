@@ -8,5 +8,5 @@ keys
 south.log
 *.bz2
 .DS_Store
-edc.core
-edc.lab
+bhp066/edc
+
