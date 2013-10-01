@@ -1,7 +1,0 @@
-Installation
-============
-
-Prepare Device
-++++++++++++++
-
-

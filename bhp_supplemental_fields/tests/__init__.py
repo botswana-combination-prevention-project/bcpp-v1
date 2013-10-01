@@ -1,1 +1,0 @@
-from test_supplemental_fields import TestSupplementalFields
