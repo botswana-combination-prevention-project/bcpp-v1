@@ -1,1 +1,0 @@
-from main import NetbookAdmin, NetbookUserAdmin
