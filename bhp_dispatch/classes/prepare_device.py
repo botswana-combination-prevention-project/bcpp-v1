@@ -87,10 +87,10 @@ class PrepareDevice(BasePrepareDevice):
 #             self.timer()
 #             logger.info("3. Updating auth...")
 #             self.update_auth()
-#         if not step > 4:
-#             self.timer()
-#             logger.info("4. Updating api keys...")
-#             self.update_model(ApiKey, [Model])
+# #         if not step > 4:
+# #             self.timer()
+# #             logger.info("4. Updating api keys...")
+# #             self.update_model(ApiKey, [Model])
 #         if not step > 5:
 #             self.timer()
 #             logger.info("5. Updating lists...")
@@ -111,11 +111,11 @@ class PrepareDevice(BasePrepareDevice):
 #             self.timer()
 #             logger.info("8. Updating appointment configuration...")
 #             self.update_model(("bhp_appointment", "Configuration"), [BaseSyncUuidModel])
-        if not step > 9:
-            self.timer()
-            logger.info("9. Updating the Crypt table...")
-            self.update_model(('bhp_crypto', 'crypt'), [Crypt])
-            #logger.info('   Warning, skipping. use mysqldump for the Crypt table, bhp_crypto_crypt')
+#         if not step > 9:
+#             self.timer()
+#             logger.info("9. Updating the Crypt table...")
+#             self.update_model(('bhp_crypto', 'crypt'), [Crypt])
+#             #logger.info('   Warning, skipping. use mysqldump for the Crypt table, bhp_crypto_crypt')
 #         if not step > 10:
 #             self.timer()
 #             logger.info("10. Updating the visit definitions...")
