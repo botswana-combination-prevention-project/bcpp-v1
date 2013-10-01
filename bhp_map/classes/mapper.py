@@ -423,22 +423,22 @@ class Mapper(object):
         """
         center_lat = center_lat or self.get_gps_center_lat()
         center_lon = center_lon or self.get_gps_center_lon()
+        if not lat:
+            raise MapperError("The value of latitude cannot be None. Got {0} :".format(lat))
+        if not lon:
+            raise MapperError("The value of longitude cannot be None. Got {0} :".format(lon))
         radius = radius or self.get_radius()
         pt1 = Point(float(lat), float(lon))
         pt2 = Point(float(center_lat), float(center_lon))
         dist = distance.distance(pt1, pt2).km
         return dist
 
-    def deg_to_dms(self, deg):
+    def deg_to_dm(self, deg):
         """Convert a latitude or longitude into degree minute GPS format
         """
-        d = int(deg)
-        md = (deg - d) * 60
-        m = round(md, 3)
-        if d < 0 and m < 0:
-            d = -d
-            m = -m
-        return [d, m]
+        dd = abs(deg)
+        degrees, minutes = divmod(dd * 60, 60)
+        return [degrees, minutes]
 
     def get_cardinal_point_direction(self, start_lat, start_lon, end_lat, end_lon):
         """Calculates the angle/Bearing of direction between two points on the earth and returns the distance between two points and the cardinal points direction.
@@ -446,7 +446,7 @@ class Mapper(object):
         This method is for the initial bearing which if followed in a straight line
         along a great-circle arc will take you from the start point to the end point.
         """
-        dist = self.distance_between_points(start_lat, start_lon, end_lat, end_lon)
+        dist = self.gps_distance_between_points(start_lat, start_lon, end_lat, end_lon)
         dlon = math.radians(end_lon - start_lon)
         start_lat = math.radians(start_lat)
         end_lat = math.radians(end_lat)
