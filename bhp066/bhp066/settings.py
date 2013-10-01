@@ -97,7 +97,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_reorg',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -236,6 +236,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'dajax',
     'south',
+
     'edc.audit',
 
     'edc.core.identifier',
