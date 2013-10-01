@@ -9,6 +9,11 @@ LOGGING = {
             'format': '%(message)s'
         },
     },
+    'filters': {
+         'require_debug_false': {
+             '()': 'django.utils.log.RequireDebugFalse'
+         }
+     },
     'handlers': {
         'null': {
             'level': 'DEBUG',
@@ -19,16 +24,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        #'debug_console': {
-        #    'level': 'DEBUG',
-        #    'class': 'logging.StreamHandler',
-        #    'formatter': 'simple',
-        #},
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'verbose',
-            #'filters': ['special']
+            'filters': ['require_debug_false'],
         }
     },
    'loggers': {
