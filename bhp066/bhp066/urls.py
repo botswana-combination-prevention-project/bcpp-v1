@@ -42,7 +42,8 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    (r'^databrowse/(.*)', login_required(django_databrowse.site.root)),
+    url(r'^databrowse/(.*)', login_required(django_databrowse.site.root)),
+    #url(r'^databrowse/(?P<app_label>.*)/(?P<model_name>.*)/objects/(?P<pk>.*)/$', login_required(django_databrowse.site.root), name='databrowse'),
 )
 
 urlpatterns += patterns('',
