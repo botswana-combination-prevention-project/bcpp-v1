@@ -1,5 +1,7 @@
 from urllib import urlretrieve
+import urllib2
 from time import sleep
+from operator import itemgetter
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from bhp_map.classes import site_mappers
@@ -23,22 +25,36 @@ class Command(BaseCommand):
             raise MapperError('Mapper class \'{0}\' is not registered.'.format(mapper_name))
         else:
             m = site_mappers.get_registry(mapper_name)()
-            
-            #NOT YET COMPLETE: TODO
-            
-            
+            letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+                    "O", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
             items = m.get_item_model_cls().objects.filter(**{m.map_area_field_attr: mapper_name})
-            idnt = m.get_identifier_field_attr()
+            landmarks = m.get_landmarks()
+            url_str = ''
+            count = 0
             for item in items:
-                name = item.m.get_identifier_field_attr()
-                print name
-                urls = ''
+                url_str = 'http://maps.google.com/maps/api/staticmap?size=640x600&maptype=satellite&scale:2&format=png32&zoom=18&center='
+                url_str += str(getattr(item, m.target_gps_lat_field_attr)) + ',' + str(getattr(item, m.target_gps_lon_field_attr)) + '&'
+                lmarks = []
+                for mark in landmarks:
+                    lat = getattr(item, m.target_gps_lat_field_attr)
+                    lon = getattr(item, m.target_gps_lon_field_attr)
+                    dist = m.gps_distance_between_points(lat, lon, mark[1], mark[2])
+                    lmarks.append([dist, landmarks[0], mark[1], mark[2]])
+                lmark = sorted(lmarks,key=itemgetter(0))
+                markers_l = m.make_dictionary(letters, lmark)
+                markers_str = ''
+                for key, value in markers_l.iteritems():
+                    if key:
+                        markers_str += 'markers=color:blue%7Clabel:' + key + '%7C' + str(value[2]) + ',' + str(value[3]) + '&'
+                url_str += markers_str
+                url_str += 'markers=color:red%7C' + str(getattr(item, m.target_gps_lat_field_attr)) + ',' + str(getattr(item, m.target_gps_lon_field_attr)) + '&sensor=false'
+                name = getattr(item, m.get_identifier_field_attr())
                 folder = settings.MEDIA_ROOT
-                print folder
-#                 count = 0
-#                 for src in urls:
-#                     count += 1
-#                     file_name = folder + name + '.jpg'
-#                     urlretrieve(src, file_name)
-#                     print str((count/float(len(urls)))*100) + ' percent done! only ' + str(len(urls) - count) + ' more pictures to download'
-#                     sleep(5)
+                count += 1
+                file_name = folder + '/' + name + '.jpg'
+                urlretrieve(url_str, file_name)
+                print str((count/float(len(items)))*100) + ' percent done! only ' + str(len(items) - count) + ' more pictures to download'
+                sleep(5)
+
+
+
