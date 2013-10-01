@@ -69,9 +69,9 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/bhp_sync/'.format(app_name=APP_NAME), include('edc.device.sync.urls')),
-    url(r'^{app_name}/bhp_dispatch/'.format(app_name=APP_NAME), include('edc.device.dispatch.urls')),
-    url(r'^{app_name}/bhp_map/'.format(app_name=APP_NAME), include('edc.map.urls')),
+    url(r'^{app_name}/sync/'.format(app_name=APP_NAME), include('edc.device.sync.urls')),
+    url(r'^{app_name}/dispatch/'.format(app_name=APP_NAME), include('edc.device.dispatch.urls')),
+    url(r'^{app_name}/map/'.format(app_name=APP_NAME), include('edc.map.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',
