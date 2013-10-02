@@ -1,4 +1,4 @@
-from ._utils import sqlite_base_config, customize
+from ._utils import sqlite_base_config, DBConfig, env
 from ._edc_apps import EDC_APPS
 from ._lis_apps import LIS_APPS
 from .common import *
@@ -6,12 +6,11 @@ from .common import *
 
 SOUTH_TESTS_MIGRATE = False
 
-db_pass = env('TEST_DB_PASSWORD')
-sqlite_config = customize(sqlite_base_config, PASSWORD=db_pass)
+sqlite_db = DBConfig(sqlite_base_config, PASSWORD=env('DEV_DB_PASSWORD'))
 
 DATABASES = {
-    'default': customize(sqlite_config, NAME='lab'),
-    'dispatch_destination': customize(sqlite_config, NAME='producer'),
+    'default': sqlite_db(NAME='lab'),
+    'dispatch_destination': sqlite_db(NAME='producer'),
 }
 
 INSTALLED_APPS += ('django_jenkins')
