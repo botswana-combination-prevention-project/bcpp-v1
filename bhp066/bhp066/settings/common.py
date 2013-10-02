@@ -1,5 +1,5 @@
 """Common settings to all settings files"""
-import logger
+#import logger
 import platform
 
 from unipath import Path
@@ -16,6 +16,7 @@ MEDIA_ROOT = PROJECT_DIR.child("media")
 STATIC_ROOT = PROJECT_DIR.child("static")
 MAP_DIR = STATIC_ROOT.child('img')
 LOCALE_PATHS = PROJECT_DIR.child("locale")
+CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
 TIME_ZONE = 'Africa/Gaborone'
 
@@ -60,6 +61,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -74,8 +76,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 ROOT_URLCONF = 'bhp066.urls'
 
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'bhp066.wsgi.application'
+
 TEMPLATE_DIRS = (
-    PROJECT_DIR.child('bhp_templates'),
+    PROJECT_DIR.child('templates'),
 )
 
 DJANGO_APPS = (
@@ -95,7 +100,6 @@ THIRD_PARTY_APPS = (
     'south',
     'dajaxice',
     'dajax',
-    'audit_trail',
 )
 
 BCPP_APPS = (
@@ -183,7 +187,7 @@ else:
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
-LOGGING = logger.LOGGING
+#LOGGING = logger.LOGGING
 CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'baseline'
 

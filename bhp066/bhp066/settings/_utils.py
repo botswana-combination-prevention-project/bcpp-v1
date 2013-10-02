@@ -43,7 +43,7 @@ class DBConfig(object):
         self.dbconfig = dbconfig.copy()
         self.dbconfig.update(kwargs)
 
-    def __method__(self, **kwargs):
+    def __call__(self, **kwargs):
         result = self.dbconfig.copy()
         result.update(kwargs)
         return result
