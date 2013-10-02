@@ -1,11 +1,10 @@
 from .common import *
-from ._utils import mysql_base_config
+from ._utils import mysql_base_config, DBConfig, env
 
 
-db_pass = env('TEST_DB_PASSWORD')
-mysql_config = customize(mysql_base_config, PASSWORD=db_pass)
+mysql_db = DBConfig(mysql_base_config, PASSWORD=env('DEV_DB_PASSWORD'))
 
 DATABASES = {
-    'default': customize(mysql_config, NAME='test_default'),
-    'dispatch_destination': customize(mysql_config, NAME='test_destination'),
+    'default': mysql_db(NAME='test_default'),
+    'dispatch_destination': mysql_db(NAME='test_destination'),
 }
