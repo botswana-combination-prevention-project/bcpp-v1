@@ -1,19 +1,17 @@
-from ._utils import mysql_base_config, customize
+from ._utils import mysql_base_config, DBConfig, env
 from .dev import *
 
 #Erik's custom settings. To be modified only by him.
 #To use this as your main settings file, on any shell session that you use type:
 # $export DJANGO_SETTINGS_MODULE=appname.settings.dev_erik
 
-db_pass = env('DEV_DB_PASSWORD')
-mysql_config = customize(mysql_base_config, PASSWORD=db_pass)
+mysql_db = DBConfig(mysql_base_config, PASSWORD=env('DEV_DB_PASSWORD'))
 
 DATABASES = {
-    'default': customize(mysql_config, NAME='bhp066_migrated'),
-    'lab_api': customize(mysql_config, NAME='lab', HOST='192.168.1.50'),
-    'mpp15-bhp066': customize(mysql_config, NAME='bhp066_survey', HOST='192.168.1.36'),
+    'default': mysql_db(NAME='bhp066_migrated'),
+    'lab_api': mysql_db(NAME='lab', HOST='192.168.1.50'),
+    'mpp15-bhp066': mysql_db(NAME='bhp066_survey', HOST='192.168.1.36'),
 }
-
 
 
 #Things to put in your .bashrc or .bash_profile file. If you don't the app will blow up
