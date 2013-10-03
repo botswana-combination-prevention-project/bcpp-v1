@@ -4,6 +4,7 @@
 .project
 .pydevproject
 .settings
+.ropeproject
 keys
 south.log
 *.bz2
