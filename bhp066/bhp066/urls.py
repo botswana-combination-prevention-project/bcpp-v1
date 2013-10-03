@@ -76,7 +76,7 @@ urlpatterns += patterns('',
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += patterns('',
-    url(r'^dispatch/', include('apps.bcpp_dispatch.urls')),
+    url(r'^dispatch/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_dispatch.urls')),
 )
 
 urlpatterns += patterns('',
