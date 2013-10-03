@@ -1,1 +1,0 @@
-from mapper_methods_tests import MapperTests
