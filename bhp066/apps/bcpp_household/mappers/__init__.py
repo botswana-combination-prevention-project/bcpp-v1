@@ -1,3 +1,4 @@
-from .otse_household_mapper import OtseHouseholdMapper
-from .mochudi_household_mapper import MochudiHouseholdMapper
-from .gaborone_household_mapper import GaboroneHouseholdMapper
+from .otse_plot_mapper import OtsePlotMapper
+from .digawana_plot_mapper import DigawanaPlotMapper
+from .molapowabojang_plot_mapper import MolapowabojangPlotMapper
+from .ranaka_plot_mapper import RanakaPlotMapper
