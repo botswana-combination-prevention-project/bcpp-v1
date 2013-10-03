@@ -1,5 +1,5 @@
 from edc.device.sync.management.commands.consume import Command as BaseCommand
-from apps.bcpp_dispatch.classes import BcppConsumer
+from ...classes import BcppConsumer
 
 
 class Command(BaseCommand):
