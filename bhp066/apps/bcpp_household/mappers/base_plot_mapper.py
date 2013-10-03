@@ -3,7 +3,7 @@ from edc.map.choices import ICONS, OTHER_ICONS
 from apps.bcpp_household.models import Plot
 
 
-class BaseHouseholdMapper(Mapper):
+class BasePlotMapper(Mapper):
 
     item_model = Plot
     item_model_cls = Plot
