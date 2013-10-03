@@ -18,6 +18,8 @@ MAP_DIR = STATIC_ROOT.child('img')
 LOCALE_PATHS = PROJECT_DIR.child("locale")
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
+ALLOWED_HOSTS = []
+
 TIME_ZONE = 'Africa/Gaborone'
 
 # Language code for this installation. All choices can be found here:
