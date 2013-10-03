@@ -18,7 +18,8 @@ DATABASES = {
 # export TEST_DB_PASSWORD=cc3721b
 # export DEV_DB_PASSWORD='cc3721b'
 # export PROD_DB_PASSWORD=cc3721b
-# export SECRET_KEY=0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51
-# exportEMAIL_HOST_PASSWORD=paeH#ie9
+# export SECRET_KEY='0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51'
+# export EMAIL_HOST_PASSWORD=paeH#ie9
 
-# alias='export DJANGO_SETTINGS_MODULE=bhp066; python manage.py test'
+#To source/make effective the environment variables you just added
+# run $source ~/.bashrc   or $source ~/.bash_profile
