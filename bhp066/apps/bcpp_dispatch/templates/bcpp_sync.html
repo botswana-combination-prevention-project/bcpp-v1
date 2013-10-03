@@ -1,0 +1,15 @@
+{% extends "sync.html"%}
+
+{% block app_map %}
+<p><A href="/mochudi_map/">View map</A></p>
+{% endblock %}
+
+{% block consume_link %}
+<td><A href="/bhp_sync/consume/{{ producer.name }}/">synchronize with server</A></td>
+{% endblock consume_link %}
+
+{% block play_transactions %}
+<form action=/dispatch/bcpp/play_transactions/">
+	<input type="submit" value="Play Transactions">
+</form>
+{% endblock %}
