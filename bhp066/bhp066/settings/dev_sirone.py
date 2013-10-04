@@ -13,7 +13,8 @@ DATABASES = {
     'mpp15-bhp066': mysql_db(NAME='bhp066_survey', HOST='192.168.1.36'),
 }
 
-
+# EMAIL_HOST_USER = 'edcdev'
+# EMAIL_HOST_PASSWORD = 'cc3721b'
 #Things to put in your .bashrc or .bash_profile file. If you don't the app will blow up
 # export TEST_DB_PASSWORD=cc3721b
 # export DEV_DB_PASSWORD=cc3721b

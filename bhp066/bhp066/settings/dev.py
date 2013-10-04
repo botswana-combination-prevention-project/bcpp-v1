@@ -1,4 +1,5 @@
 from .common import *
+from .email_settings import *
 
 
 DEBUG = True
