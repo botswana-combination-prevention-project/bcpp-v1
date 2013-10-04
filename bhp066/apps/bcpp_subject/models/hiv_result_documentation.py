@@ -1,7 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import datetime_not_future
+
 from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
+
 from ..choices import HIV_DOC_TYPE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -10,8 +14,9 @@ class HivResultDocumentation (BaseScheduledVisitModel):
 
     """CS002 - for usage only and if only patient has other result for HIV"""
 
-    result_date = models.DateField(
+    result_date = models.DateField(                         
         verbose_name=_("What is the recorded date of the HIV test?"),
+        validators = [datetime_not_future], 
         help_text="",
         )
 
