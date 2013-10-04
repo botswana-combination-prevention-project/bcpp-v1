@@ -110,6 +110,7 @@ COMMUNITIES = (
         ('Shoshong', _('Shoshong')),
         ('Tati Siding', _('Tati Siding')),
         ('Tsetsebjwe', _('Tsetsebjwe')),
+        ('OTHER', _('Other non study community')),
     )
 
 # REASONAWAY_CHOICE = (
