@@ -125,6 +125,14 @@ class HivTestReviewRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+    
+    #This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
+    if_recorded_result_not_positive = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'ne', 'POS'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivresult',])
 
     class Meta:
         app_label = 'bcpp_subject'
