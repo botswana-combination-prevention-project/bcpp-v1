@@ -1,8 +1,12 @@
 from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext as _
+
+from edc.base.model.validators import datetime_not_future
 from edc.audit.audit_trail import AuditTrail
+
 from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -10,6 +14,7 @@ class HivTestReview (BaseScheduledVisitModel):
 
     hiv_test_date = models.DateField(
         verbose_name=_("What was the recorded date of the last HIV test?"),
+        validators = [datetime_not_future], 
         help_text="Obtain this information from the card the participant presents to you.",
         )
 
