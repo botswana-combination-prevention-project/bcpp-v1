@@ -261,9 +261,6 @@ INSTALLED_APPS = (
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
 
-    'survey.household',
-    'survey.household_member',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
