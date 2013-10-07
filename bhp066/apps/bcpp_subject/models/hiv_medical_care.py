@@ -1,4 +1,5 @@
 from django.db import models
+from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from apps.bcpp.choices import LOWESTCD4_CHOICE
@@ -13,7 +14,10 @@ class HivMedicalCare (BaseScheduledVisitModel):
         verbose_name=_("When did you first receive HIV-related medical care "
                        "for such things as a CD4 count (masole), IDCC/ PMTCT"
                        "registration, additional clinic-based counseling?"),
+        validators = [datetime_not_future], 
         max_length=25,
+        null=True,
+        blank=True,
         help_text=("Note: If participant does not want to answer, leave blank.  "
                    "If participant is unable to estimate date, leave blank."),
         )
@@ -22,7 +26,10 @@ class HivMedicalCare (BaseScheduledVisitModel):
         verbose_name=_("When did you last (most recently) receive HIV-related"
                       "medical care for such things as a CD4 count (masole), "
                       "IDCC/ PMTCT registration, additional clinic-based counseling?"),
+        validators = [datetime_not_future], 
         max_length=25,
+        null=True,
+        blank=True,
         help_text=("Note: If participant does not want to answer,leave blank. "
                    "If participant is unable to estimate date, leave blank."),
         )

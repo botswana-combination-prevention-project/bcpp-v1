@@ -1,8 +1,11 @@
 from django.db import models
+from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from apps.bcpp.choices import YES_NO_DONT_ANSWER, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE, ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE
+from apps.bcpp.choices import (YES_NO_DONT_ANSWER, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE, 
+                               ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE, 
+                               YES_NO)
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -14,6 +17,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     first_positive = models.DateField(
         verbose_name=_("When was your first positive HIV test result?"),
+        validators = [datetime_not_future], 
         null=True,
         blank=True,
         help_text=("Note: If participant does not want to answer, leave blank. "
@@ -72,6 +76,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     first_arv = models.DateField(
         verbose_name=_("When did you first start taking antiretroviral therapy (ARVs)?"),
+        validators = [datetime_not_future], 
         null=True,
         blank=True,
         help_text=("Note: If participant does not want to answer,leave blank.  "
@@ -86,6 +91,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         )
     arv_stop_date = models.DateField(
         verbose_name=_("When did you stop taking ARV\'s?"),
+        validators = [datetime_not_future], 
         null=True,
         blank=True,
         help_text="",
@@ -119,6 +125,14 @@ class HivCareAdherence (BaseScheduledVisitModel):
         blank=True,
         choices=ADHERENCE4WK_CHOICE,
         help_text="",
+        )
+    
+    therapy_evidence = models.CharField(
+        verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
+        choices=YES_NO, 
+        null=True,
+        blank=True,
+        max_length=3,
         )
 
     history = AuditTrail()
