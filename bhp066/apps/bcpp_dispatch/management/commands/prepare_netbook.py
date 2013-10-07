@@ -36,8 +36,8 @@ class Command(BaseCommand):
         step = 0
         if len(args) == 3:
             step = args[2]
-        prepare_netbook = BcppPrepareNetbook(source, 
-                                                destination, 
-                                                exception=CommandError, 
+        prepare_netbook = BcppPrepareNetbook(source,
+                                                destination,
+                                                exception=CommandError,
                                                 preparing_netbook=True)
         prepare_netbook.prepare(step=step)
