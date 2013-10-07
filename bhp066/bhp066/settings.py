@@ -3,7 +3,7 @@ from unipath import Path
 import os
 import platform
 import sys
-import logger
+from .logger import LOGGING
 
 
 DEBUG = True
@@ -415,7 +415,7 @@ else:
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
-LOGGING = logger.LOGGING
+
 CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'year-one'
 
