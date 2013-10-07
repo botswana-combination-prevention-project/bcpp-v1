@@ -1,5 +1,6 @@
 """Common settings to all settings files"""
 #import logger
+import os
 import platform
 
 from unipath import Path
@@ -11,12 +12,19 @@ from ._lis_apps import LIS_APPS
 ADMINS = (('erikw', 'ew2789@gmail.com'),)
 MANAGERS = ADMINS
 
-PROJECT_DIR = Path(__file__).ancestor(3)
-MEDIA_ROOT = PROJECT_DIR.child("media")
-STATIC_ROOT = PROJECT_DIR.child("static")
-MAP_DIR = STATIC_ROOT.child('img')
-LOCALE_PATHS = PROJECT_DIR.child("locale")
-CONFIG_DIR = PROJECT_DIR.child('bhp066')
+#PROJECT_DIR = Path(__file__).ancestor(3)
+FILE_DIR = os.path.dirname(__file__)
+PROJECT_DIR = os.path.normpath(os.path.join(FILE_DIR, "../../../bhp066"))
+#MEDIA_ROOT = PROJECT_DIR.child("media")
+MEDIA_ROOT = os.path.join(PROJECT_DIR, "media")
+STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
+#STATIC_ROOT = PROJECT_DIR.child("static")
+#MAP_DIR = STATIC_ROOT.child('img')
+MAP_DIR = os.path.join(STATIC_ROOT, 'img')
+#LOCALE_PATHS = PROJECT_DIR.child("locale")
+LOCALE_PATHS = os.path.join(PROJECT_DIR, "locale")
+#CONFIG_DIR = PROJECT_DIR.child('bhp066')
+CONFIG_DIR = os.path.join(PROJECT_DIR, 'bhp066')
 
 ALLOWED_HOSTS = []
 
@@ -82,7 +90,8 @@ ROOT_URLCONF = 'bhp066.urls'
 WSGI_APPLICATION = 'bhp066.wsgi.application'
 
 TEMPLATE_DIRS = (
-    PROJECT_DIR.child('templates'),
+    #PROJECT_DIR.child('templates'),
+    os.path.join(PROJECT_DIR, 'templates'),
 )
 
 DJANGO_APPS = (
@@ -127,7 +136,8 @@ EMAIL_HOST_USER = 'django'
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
-SOUTH_LOGGING_FILE = Path(PROJECT_DIR, "south.log")
+#SOUTH_LOGGING_FILE = Path(PROJECT_DIR, "south.log")
+SOUTH_LOGGING_FILE = os.path.join(PROJECT_DIR, "south.log")
 SOUTH_LOGGING_ON = True
 AUTH_PROFILE_MODULE = "bhp_userprofile.userprofile"
 # https://bitbucket.org/tyrion/django-autocomplete
@@ -166,8 +176,10 @@ DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bc
 
 #Reports settings
 REPORTS_TEMPLATES_PATH = PROJECT_DIR
-REPORTS_JAR_PATH = Path(PROJECT_DIR, 'birtreport_generator.jar')
-REPORTS_OUTPUT_PATH = PROJECT_DIR.child('bhp_birt_reports', 'templates')
+#REPORTS_JAR_PATH = Path(PROJECT_DIR, 'birtreport_generator.jar')
+REPORTS_JAR_PATH = os.path.join(PROJECT_DIR, 'birtreport_generator.jar')
+#REPORTS_OUTPUT_PATH = PROJECT_DIR.child('bhp_birt_reports', 'templates')
+REPORTS_OUTPUT_PATH = os.path.join(PROJECT_DIR, 'bhp_birt_reports/templates')
 
 #BHP_CRYPTO_SETTINGS
 IS_SECURE_DEVICE = False
