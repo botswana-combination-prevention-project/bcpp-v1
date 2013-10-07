@@ -1,4 +1,5 @@
 from django import forms
+from datetime import date
 from ..models import HivCareAdherence
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -7,6 +8,7 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = super(HivCareAdherenceForm, self).clean()
+        
         #if no medical care, explain why not
         if cleaned_data.get('medical_care', None) == 'No' and not cleaned_data.get('no_medical_care'):
             raise forms.ValidationError('If participant has not received any medical care, please give reason why not')
@@ -29,7 +31,16 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant is currently taking ARV\'s, how well has he/she been taking the medication this past week?')
         if cleaned_data.get('arv_stop', None) == 'Other' and not cleaned_data.get('arv_stop_other'):
             raise forms.ValidationError('If participant reason for stopping ARV\'s is \'OTHER\', specify reason why stopped taking ARV\'s?')
-
+        
+        #first HIV result cannot be received today
+        if cleaned_data.get('first_positive'):
+            if cleaned_data.get('first_positive') == date.today():
+                raise forms.ValidationError('Date first received HIV positive result CANNOT be today. Please correct.')
+        # confirming that evidence seen
+        if cleaned_data.get('on_arv') == 'Yes' and not cleaned_data.get('therapy_evidence'):
+            raise forms.ValidationError('If participant is on ARV, have you made this confirmation, seen any form of evidence?')
+        
+        
         return cleaned_data
 
     class Meta:
