@@ -1,18 +1,10 @@
 from django.db import models
-from django.core.urlresolvers import reverse
-from edc.audit.audit_trail import AuditTrail
+from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from edc.base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO, YES_NO_REFUSED
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.choices.common import YES_NO, YES_NO_DWTA, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.subject.registration.models import RegisteredSubject
-from edc.core.crypto_fields.fields import EncryptedCharField
-from edc.subject.local.bw.fields import EncryptedOmangField
-from edc.base.model.fields import IsDateEstimatedField
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
-from edc.choices.common import GENDER_UNDETERMINED
-from apps.bcpp_household.models import Plot
-from ..managers import EnrolmentChecklistManager
+from edc.choices.common import GENDER
 from .household_member import HouseholdMember
 
 
@@ -20,16 +12,13 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
 
     household_member = models.OneToOneField(HouseholdMember)
 
-    registered_subject = models.OneToOneField(RegisteredSubject)
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report Date/Time",
-        validators=[datetime_not_before_study_start, datetime_not_future],
-        )
-
-    eligible = models.BooleanField(default=False, editable=False)
-
-    reason_not_eligible = EncryptedCharField(null=True, editable=False)
+    initials = models.CharField('Initials',
+        max_length=3,
+        validators=[
+            MinLengthValidator(2),
+            MaxLengthValidator(3),
+            RegexValidator("^[A-Za-z]{1,3}$", "Must be 2 or 3 letters. No spaces or numbers allowed.")],
+        db_index=True)
 
     dob = models.DateField(
         verbose_name="Date of birth",
@@ -40,57 +29,52 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             ],
         null=True,
         blank=False,
-        help_text="Format is YYYY-MM-DD. (Data will not be saved if ineligible)",
-        )
-
-    is_dob_estimated = IsDateEstimatedField(
-        verbose_name="Is date of birth estimated?",
-        null=True,
-        blank=False,
+        help_text="Format is YYYY-MM-DD. (Data will not be saved)",
         )
 
     gender = models.CharField(
         verbose_name="Gender",
-        choices=GENDER_UNDETERMINED,
+        choices=GENDER,
         max_length=1,
         null=True,
         blank=False,
         )
 
-    omang = EncryptedOmangField(
-        verbose_name="Identity number (OMANG, etc)",
-        unique=True,
-        help_text="Use Omang, Passport number, driver's license number or Omang receipt number (Data will not be saved if ineligible)"
+    has_identity = models.CharField(
+        verbose_name="[Interviewer] Has the subject presented a valid OMANG or other identity document?",
+        max_length=10,
+        choices=YES_NO,
+        validators=[eligible_if_yes, ],
+        help_text="Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO', STOP participant cannot be enrolled"
         )
 
     citizen = models.CharField(
-        verbose_name="[Interviewer] Is the prospective participant a Botswana citizen? ",
+        verbose_name="Are you a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
-#         validators=[eligible_if_yes, ],
         help_text="",
         )
-    
+
     legal_marriage = models.CharField(
         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
         max_length=3,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         null=True,
-        blank=True,
-        validators=[eligible_if_yes, ],
-        help_text=" if 'NO,' STOP participant cannot be enrolled",
+        blank=False,
+        default='N/A',
+        help_text="If 'NO', STOP participant cannot be enrolled",
         )
- 
+
     marriage_certificate = models.CharField(
-        verbose_name=("Has the participant produced the marriage certificate, as proof? "),
+        verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
         max_length=3,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         null=True,
-        blank=True,
-        validators=[eligible_if_yes, ],
-        help_text=" if 'NO,' STOP participant cannot be enrolled",
+        blank=False,
+        default='N/A',
+        help_text="If 'NO', STOP participant cannot be enrolled",
         )
-    
+
     marriage_certificate_no = models.CharField(
         verbose_name=("What is the marriage certificate number?"),
         max_length=9,
@@ -99,57 +83,25 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text="e.g. 000/YYYY",
         )
 
-    community_resident = models.CharField(
-        verbose_name=("[Participant] In the past 12 months, have you typically spent 3 or"
-                      " more nights per month in [name of study community]? [If moved into the"
-                      " community in the past 12 months, then since moving in have you typically"
-                      " spent more than 3 nights per month in this community] "),
+    study_resident = models.CharField(
+        verbose_name=("In the past 12 months, have you typically spent 3 or"
+                      " more nights per month in this community? "),
         max_length=17,
-        choices=YES_NO_REFUSED,
+        choices=YES_NO_DWTA,
         validators=[eligible_if_yes, ],
-        help_text="if 'NO (or don't want to answer)' STOP participant cannot be enrolled.",
+        help_text=("If participant has moved into the "
+                  "community in the past 12 months, then "
+                  "since moving in has the participant typically "
+                  "spent more than 3 nights per month in this community. "
+                  "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
         )
 
-    history = AuditTrail()
-
-    objects = EnrolmentChecklistManager()
-
-    def __unicode__(self):
-        if self.eligible:
-            return 'Eligible'
-        else:
-            return 'Not Eligible'
+    objects = models.Manager()
 
     def save(self, *args, **kwargs):
-        self.registered_subject = self.household_member.registered_subject
-        self.validate_or_clear()
-        super(EnrolmentChecklist, self).save(*args, **kwargs)
-
-    def natural_key(self):
-        if not self.household_member:
-            raise AttributeError("household_member cannot be None for pk='\{0}\'".format(self.pk))
-        return self.household_member.natural_key()
-    natural_key.dependencies = ['bcpp_household_member.household_member']
-
-    def validate_or_clear(self):
-        """Checks if eligible and if not clears PII fields."""
-        self.eligible = True
-        #self.reason_not_eligible = 'bad dog'
-        #self.dob = None
-        #self.gender = None
-        #self.omang = uuid4()  # use a dummy value to maintain unique constraint
-        #self.is_dob_estimated = None
-
-    def get_report_datetime(self):
-        return self.report_datetime
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_member__household_structure__plot__plot_identifier')
-
-    def composition(self):
-        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'dashboard_model': 'household_structure', 'dashboard_id': self.household_member.household_structure.pk})
-        return """<a href="{url}" />composition</a>""".format(url=url)
-    composition.allow_tags = True
+        """Does not save anything, note no call to super."""
+        self.household_member.is_eligible_subject = True
+        self.household_member.save()
 
     class Meta:
         app_label = "bcpp_household_member"
