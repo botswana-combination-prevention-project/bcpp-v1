@@ -20,8 +20,7 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
                              "Male circumcision is [enter site specific word] when "
                              "the foreskin of the man's penis has been cut off. "
                              "I would like to ask you a few questions regarding "
-                             "male circumcision. Here is a diagram to clarify what "
-                             "a circumcised and uncircumcised man looks like.")]
+                             "male circumcision.")]
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
