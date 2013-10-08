@@ -3,7 +3,7 @@ from unipath import Path
 import os
 import platform
 import sys
-import logger
+from .logger import LOGGING
 
 
 DEBUG = True
@@ -23,7 +23,7 @@ TEMPLATE_DIRS = (
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 KEY_PATH = PROJECT_DIR.child('keys')
-KEY_PATH = '/Volumes/bhp066/keys/'
+#KEY_PATH = '/Volumes/bhp066/keys/'
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
@@ -261,9 +261,6 @@ INSTALLED_APPS = (
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
 
-    'edc.survey.household',
-    'edc.survey.household_member',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
@@ -415,7 +412,7 @@ else:
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
-LOGGING = logger.LOGGING
+
 CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'year-one'
 
