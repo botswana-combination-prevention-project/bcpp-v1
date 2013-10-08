@@ -175,7 +175,7 @@ class Household(BaseDispatchSyncUuidModel):
             self.device_id = device.device_id
             if not self.household_identifier:
                 raise IdentifierError('Expected a value for household_identifier. Got None')
-        self.action = self.get_action()
+        self.action = self.plot.get_action()
         super(Household, self).save(*args, **kwargs)
 
     def check_for_survey_on_pre_save(self, **kwargs):
@@ -190,17 +190,6 @@ class Household(BaseDispatchSyncUuidModel):
         for survey in Survey.objects.all():  # create a household_structure for each survey defined
             if not HouseholdStructure.objects.filter(household=self, survey=survey):
                 HouseholdStructure.objects.create(household=self, survey=survey)
-
-    def get_action(self):
-        if not self.gps_lon and not self.gps_lat:
-            retval = 'unconfirmed'
-        elif self.status == 'occupied':
-            retval = 'confirmed'
-        elif self.status == 'vacant' or self.status == 'invalid':
-            retval = 'confirmed'
-        else:
-            retval = 'unconfirmed'
-        return retval
 
     def get_subject_identifier(self):
         return self.household_identifier
