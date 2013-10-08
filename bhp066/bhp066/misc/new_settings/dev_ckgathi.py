@@ -4,7 +4,6 @@ from .dev import *
 # Coulson's custom settings. To be modified only by him.
 #To use this as your main settings file, on any shell session that you use type:
 # $export DJANGO_SETTINGS_MODULE=bhp066.settings.dev_ckgathi
-
 mysql_db = DBConfig(mysql_base_config, PASSWORD=env('DEV_DB_PASSWORD'))
 
 DATABASES = {
