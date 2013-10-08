@@ -62,7 +62,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        if not HouseholdLog.objects.filter(household_structure=self):
+        if not HouseholdLog.objects.filter(household_structure__pk=self.pk):
             HouseholdLog.objects.create(household_structure=self)
 
     def fetch_and_count_members_on_post_save(self, **kwargs):
@@ -74,7 +74,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             self.__class__.objects.fetch_household_members(self, using)
         # recount members, may be greater but not less than the actual number of members
         household_member = get_model(app_label="bcpp_household_member", model_name="householdmember")
-        current_member_count = household_member.objects.filter(household_structure=self).count()
+        current_member_count = household_member.objects.filter(household_structure__pk=self.pk).count()
         self.member_count = self.member_count or 0
         if self.member_count < current_member_count:
             self.member_count = current_member_count
