@@ -1,7 +1,10 @@
 {% extends "sync.html"%}
 
-{% block app_map %}
-{% endblock %}
+{% block usb_sync %}
+<form action="/bhp_sync/usb_consume/bcpp/">
+	<input type="submit" value="Synchronize from USB device">
+</form>
+{% endblock usb_sync %}
 
 {% block consume_link %}
 <td><A href="/bhp_sync/consume/{{ producer.name }}/">synchronize with server</A></td>
@@ -12,7 +15,7 @@
 {% endblock consuming_app %}
     
 {% block play_transactions %}
-<form action=/dispatch/bcpp/play_transactions/">
+<form action="/dispatch/bcpp/play_transactions/">
 	<input type="submit" value="Play Transactions">
 </form>
 {% endblock %}
