@@ -31,3 +31,5 @@ from .community_engagement_form import CommunityEngagementForm
 from .medical_diagnoses_form import MedicalDiagnosesForm
 from .cea_enrolment_checklist_form import CeaEnrolmentChecklistForm
 from .stigma_form import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
+from .hiv_result_documentation_form import HivResultDocumentationForm
+from .hiv_medical_care_form import HivMedicalCareForm

@@ -22,7 +22,8 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'arv_stop_date',
         'arv_stop_other',
         'adherence_4_day',
-        'adherence_4_wk',)
+        'adherence_4_wk',
+        'therapy_evidence')
     radio_fields = {
         "medical_care": admin.VERTICAL,
         "no_medical_care": admin.VERTICAL,
@@ -32,7 +33,8 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         "on_arv": admin.VERTICAL,
         "arv_stop": admin.VERTICAL,
         "adherence_4_day": admin.VERTICAL,
-        "adherence_4_wk": admin.VERTICAL, }
+        "adherence_4_wk": admin.VERTICAL, 
+        "therapy_evidence": admin.VERTICAL}
     instructions = [("Note to Interviewer: This section is only to be"
                              " completed by HIV-positive participants who knew"
                              " that they were HIV-positive before today."
