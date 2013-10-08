@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .household import Plot, Household
+from .household import Household
+from .plot import Plot
 from .household_structure import HouseholdStructure
 
 

@@ -10,3 +10,7 @@ south.log
 .DS_Store
 bhp066/edc
 bhp066/lis
+htmlcov
+.coverage
+xkeys
+keys
