@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.db import models
+from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
@@ -17,6 +18,7 @@ class HivResult (BaseScheduledVisitModel):
 
     hiv_result_datetime = models.DateTimeField(
         verbose_name=_("Today\'s HIV test result date and time"),
+        validators = [datetime_not_future], 
         )
 
     why_not_tested = models.CharField(
