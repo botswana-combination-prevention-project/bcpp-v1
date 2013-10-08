@@ -154,9 +154,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.age_in_years,
             self.gender)
 
+    @property
     def survey(self):
-        return self.household_structure.survey.survey_name
-    survey.allow_tags = True
+        return self.household_structure.survey
 
     def is_minor(self):
         return (self.age_in_years >= 16 and self.age_in_years <= 17)
@@ -347,29 +347,19 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 hiv_history = site_lab_tracker.get_history_as_string('HIV', self.registered_subject.subject_identifier, self.registered_subject.subject_type)
         return hiv_history
 
-#     def consent(self):
-# 
-#         """ Gets the consent model instance else return None.
-# 
-#         The consent model is not known until an instance exists
-#         since this model is related to all consent models but the instance
-#         is only related to consent model instance.
-# 
-#         For the consent model, i decided not to use the "proxy" design
-#         as implemented for other "registration" models. This method
-#         helps get around that decision.
-#         """
-# 
-#         # determine related consent models
-#         related_object_names = [related_object.name for related_object in self._meta.get_all_related_objects() if 'consent' in related_object.name and 'audit' not in related_object.name]
-#         consent_models = [models.get_model(related_object_name.split(':')[0], related_object_name.split(':')[1]) for related_object_name in related_object_names]
-#         # search models
-#         consent_instance = None
-#         for consent_model in consent_models:
-#             if consent_model.objects.filter(household_member=self):
-#                 consent_instance = consent_model.objects.get(household_member=self.pk)
-#                 break
-#         return consent_instance
+    def consent(self):
+
+        """ Gets the consent model instance else return None."""
+        # determine related consent models
+        related_object_names = [related_object.name for related_object in self._meta.get_all_related_objects() if 'consent' in related_object.name and 'audit' not in related_object.name]
+        consent_models = [models.get_model(related_object_name.split(':')[0], related_object_name.split(':')[1]) for related_object_name in related_object_names]
+        # search models
+        consent_instance = None
+        for consent_model in consent_models:
+            if consent_model.objects.filter(household_member=self):
+                consent_instance = consent_model.objects.get(household_member=self.pk)
+                break
+        return consent_instance
 #
 #
 #     def enrolment_checklist(self):
