@@ -188,7 +188,7 @@ class Household(BaseDispatchSyncUuidModel):
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         Survey = models.get_model('bcpp_survey', 'Survey')  # checked for on pre-save
         for survey in Survey.objects.all():  # create a household_structure for each survey defined
-            if not HouseholdStructure.objects.filter(household=self, survey=survey):
+            if not HouseholdStructure.objects.filter(household__pk=self.pk, survey=survey):
                 HouseholdStructure.objects.create(household=self, survey=survey)
 
     def get_action(self):

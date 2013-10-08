@@ -23,24 +23,25 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
         return super(HouseholdMemberAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    fields = ('household_structure', 'first_name', 'initials', 'gender', 'age_in_years', 'present', 'nights_out', 'relation', 'lives_in_household')
+    fields = ('household_structure', 'first_name', 'initials', 'gender', 'age_in_years', 'present_today', 'study_resident', 'relation')
 
     radio_fields = {
         "gender": admin.VERTICAL,
         "relation": admin.VERTICAL,
-        "present": admin.VERTICAL,
-        "lives_in_household": admin.VERTICAL,
+        "present_today": admin.VERTICAL,
+        "study_resident": admin.VERTICAL,
         }
 
-    list_display = ('subject',
+    list_display = ('first_name', 'initials',
                     'household_structure',
                     'survey',
                     'to_locator',
                     'hiv_history',
-                    'resident',
+                    'study_resident',
                     'relation',
-                    'present',
-                    'is_eligible_member',
+                    'present_today',
+                    'eligible_member',
+                    'eligible_subject',
                     'member_status',
                     'created',
                     'hostname_created')
@@ -54,8 +55,8 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__plot__id',
         'relation', 'id']
 
-    list_filter = ('survey__survey_name', "present", 'member_status', 'modified',
-                   'is_eligible_member', 'target', 'hiv_history',
-                   'hostname_created')
+    list_filter = ('household_structure__survey__survey_name', "present_today", 'study_resident', 'member_status',
+                   'eligible_member', 'eligible_subject', 'target', 'hiv_history',
+                    'modified', 'hostname_created')
     list_per_page = 15
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)
