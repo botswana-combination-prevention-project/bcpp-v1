@@ -45,7 +45,7 @@
     {% else %}            
         {{ household_member.first_name|encrypted }}        
     {% endif %} 
-    {% if not household_member.present == 'Yes' and not household_member.present == 'No'%}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
+    {% if not household_member.present_today == 'Yes' and not household_member.present_today == 'No'%}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
     </td>
         
     <td>{{ household_member.initials }}</td>
@@ -79,7 +79,7 @@
     {% else %}
      {% if not household_member.enrolment_checklist %}
         <span style="color:white;background-color:red;">&nbsp;</span>
-        <A title="Add an enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Enrolment Checklist</A>
+        <A title="Complete the enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Enrolment Checklist</A>
      {% else %}
         {% if not household_member.consent %}
             <A title="Edit the enrolment checklist if not yet consented" href="{% url enrolment_checklist_meta|admin_urlname:'change' household_member.enrolment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">{{ household_member.enrolment_checklist }}</A>{% if not household_member.enrolment_checklist.eligible %}&nbsp;<i>(Not eligible)</i>{%endif%}
