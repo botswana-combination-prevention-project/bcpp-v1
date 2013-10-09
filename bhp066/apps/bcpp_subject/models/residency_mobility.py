@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
-from apps.bcpp.choices import LENGTHRESIDENCE_CHOICE, YES_NO_DONT_ANSWER, YES_NO_UNSURE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
+from edc.choices import YES_NO_DWTA, YES_NO_UNSURE
+
+from apps.bcpp.choices import LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -16,14 +19,16 @@ class ResidencyMobility (BaseScheduledVisitModel):
         help_text="",
         )
 
-    forteen_nights = models.CharField(
-        verbose_name=_("In the past 12 months, have you typically spent 14 or more nights per month"
-                      " in this community? [If moved into the community in the past 12 months, "
-                      "then since moving in have you typically spent 14 or more nights per month"
-                      " in this community?]"),
-        max_length=25,
-        choices=YES_NO_DONT_ANSWER,
-        help_text="",
+    permanent_resident = models.CharField(
+        verbose_name=("In the past 12 months, have you typically spent 14 or"
+                      " more nights per month in this community? "),
+        max_length=10,
+        choices=YES_NO_DWTA,
+        help_text=("If participant has moved into the "
+                  "community in the past 12 months, then "
+                  "since moving in has the participant typically "
+                  "spent more than 14 nights per month in this community. "
+                  "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
         )
 
     intend_residency = models.CharField(
