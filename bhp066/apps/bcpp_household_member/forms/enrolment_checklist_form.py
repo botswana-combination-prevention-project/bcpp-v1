@@ -7,19 +7,33 @@ class EnrolmentChecklistForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        household_structure = cleaned_data.get('household_structure', None)
-        if household_structure:
-            if household_structure.is_dispatched_as_item():
-                raise forms.ValidationError("Household is currently dispatched. Data may not be changed.")
-        #If not a citizen, are they legall married to a Botswana citizen
-        if cleaned_data.get('citizen') == 'No' and not cleaned_data.get('legal_marriage'):
-            raise forms.ValidationError('if participant is not a citizen, is he/she married to a Botswana Citizen?')
-        #if legally married, do they have a marriage certificate
-        if cleaned_data.get('legal_marriage') == 'Yes' and not cleaned_data.get('marriage_certificate'):
-            raise forms.ValidationError('if participant is legally married to a Botswana Citizen, Where is the marriage certificate?')
-        #if there is a certificate what is the marriage certificate number
-        if cleaned_data.get('marriage_certificate') == 'Yes' and not cleaned_data.get('marriage_certificate_no'):
-            raise forms.ValidationError('if participant is legally married an has a marriage certificate, What is the marriage certificate no?')
+        if cleaned_data.get('citizen') == 'Yes':
+            if not cleaned_data.get('legal_marriage') == 'N/A':
+                raise forms.ValidationError('Marital status is not applicable, Participant is a citizen.')
+            if not cleaned_data.get('marriage_certificate') == 'N/A':
+                raise forms.ValidationError('Marriage Certificate is not applicable, Participant is a citizen.')
+            if not cleaned_data.get('marriage_certificate_no') == '':
+                raise forms.ValidationError('Marriage Certificate Number is not required, Participant is a citizen.')
+        if cleaned_data.get('citizen') == 'No':
+            if cleaned_data.get('legal_marriage') == 'N/A':
+                raise forms.ValidationError('Participant is not a citizen, indicate if he/she is legally married to a Botswana citizen.')
+            if cleaned_data.get('legal_marriage') == 'No':
+                raise forms.ValidationError('Participant is not a citizen and not legally married to a Botswana citizen. Participant is not eligible')
+            if cleaned_data.get('legal_marriage') == 'N/A':
+                raise forms.ValidationError('Participant is not a citizen, indicate if he/she is legally married to a Botswana citizen.')
+            if cleaned_data.get('legal_marriage') == 'Yes' and (cleaned_data.get('marriage_certificate') == 'N/A' or cleaned_data.get('marriage_certificate') == ''):
+                raise forms.ValidationError('Participant is legally married to a Botswana citizen, please provide the marriage certificate as proof?')
+            if cleaned_data.get('legal_marriage') == 'Yes' and cleaned_data.get('marriage_certificate') == 'No':
+                raise forms.ValidationError('Participant says he/she is married to a Botswana citizen but cannot produce the certificate as proof. Participant is not eligible.')
+            if cleaned_data.get('legal_marriage') == 'Yes' and cleaned_data.get('marriage_certificate') == 'Yes' and (cleaned_data.get('marriage_certificate_no') == ''):
+                raise forms.ValidationError('Participant is legally married to a Botswana citizen, please provide the marriage certificate number?')
+        if cleaned_data.get('household_member') and cleaned_data.get('gender'):
+            if not cleaned_data.get('gender') == cleaned_data.get('household_member').gender:
+                raise forms.ValidationError('Gender does not match with household member ({0})'.format(cleaned_data.get('household_member').first_name))
+        if cleaned_data.get('household_member') and cleaned_data.get('initials'):
+            if not cleaned_data.get('initials') == cleaned_data.get('household_member').initials:
+                raise forms.ValidationError('Initials do not match with household member ({0}). Expected {1}.'.format(cleaned_data.get('household_member').first_name, cleaned_data.get('household_member').initials))
+
         return cleaned_data
 
     class Meta:

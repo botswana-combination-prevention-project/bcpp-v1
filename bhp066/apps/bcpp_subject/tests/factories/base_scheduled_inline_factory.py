@@ -1,8 +1,8 @@
 import factory
 from datetime import datetime
 from subject_visit_factory import SubjectVisitFactory
-from apps.bcpp_subject.models import BaseScheduledInlineModel
 from edc.base.model.tests.factories import BaseUuidModelFactory
+from ...models import BaseScheduledInlineModel
 
 
 class BaseScheduledInlineModelFactory(BaseUuidModelFactory):

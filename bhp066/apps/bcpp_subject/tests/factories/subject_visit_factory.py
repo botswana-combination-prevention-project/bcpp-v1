@@ -2,7 +2,7 @@ import factory
 from datetime import datetime
 from edc.subject.visit_tracking.tests.factories import BaseVisitTrackingFactory
 from edc.subject.appointment.tests.factories import AppointmentFactory
-from apps.bcpp_subject.models import SubjectVisit
+from ...models import SubjectVisit
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 
 
