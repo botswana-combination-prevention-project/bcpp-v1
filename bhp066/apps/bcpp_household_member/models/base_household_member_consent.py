@@ -29,8 +29,11 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
         return self.consent_datetime
 
     def save(self, *args, **kwargs):
-        self.survey = self.household_member.survey
-        self.registered_subject = self.household_member.registered_subject
+        if not self.id:
+            if not self.survey:
+                self.survey = self.household_member.household_structure.survey
+            if not self.registered_subject:
+                self.registered_subject = self.household_member.registered_subject
         super(BaseHouseholdMemberConsent, self).save(*args, **kwargs)
 
     def _check_if_duplicate_subject_identifier(self, using):
@@ -59,8 +62,9 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
     def post_save_update_hm_status(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
-        self.household_member.member_status = 'CONSENTED'
-        self.household_member.save(using=using)
+        # no longer updating member status to consented, see participation view 
+#         self.household_member.member_status = 'CONSENTED'
+#         self.household_member.save(using=using)
         # since member is now consented, registered_subject gets a subject identifier, if not already set
         if re_pk.match(self.registered_subject.subject_identifier):
             self.registered_subject.subject_identifier = self.subject_identifier

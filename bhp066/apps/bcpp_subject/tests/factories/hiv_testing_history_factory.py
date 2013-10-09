@@ -1,7 +1,7 @@
 import factory
 from datetime import date, datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_subject.models import HivTestingHistory
+from ...models import HivTestingHistory
 
 
 class HivTestingHistoryFactory(BaseUuidModelFactory):

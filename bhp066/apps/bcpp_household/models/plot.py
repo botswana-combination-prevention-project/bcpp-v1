@@ -188,14 +188,11 @@ class Plot(BaseDispatchSyncUuidModel):
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
-        if not self.id:
-#             device = Device()
-#             self.device_id = device.device_id
+        if not self.plot_identifier:
             plot_identifier = PlotIdentifier(community=mapper.get_map_code())
             self.plot_identifier = plot_identifier.get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
-#             self.hh_int = re.search('\d+', self.plot_identifier).group(0)
         if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
             self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
             self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
@@ -216,32 +213,33 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise IdentifierError('Maximum number of Households for on plot is 9.')
         return sequence
 
-    def post_save_create_household(self, created):
+    def post_save_create_household(self, instance, created):
         """Creates one household for this plot but only if none exist."""
-        Household = models.get_model('bcpp_household', 'Household')
-        if Household.objects.filter(gps_target_lat=self.gps_target_lat, gps_target_lon=self.gps_target_lon).count() == 0:
-            Household.objects.create(**{'plot': self,
-                                        'gps_target_lat': self.gps_target_lat,
-                                        'gps_target_lon': self.gps_target_lon,
-                                        'gps_lat': self.gps_lat,
-                                        'gps_lon': self.gps_lon,
-                                        'gps_degrees_e': self.gps_degrees_e,
-                                        'gps_degrees_s': self.gps_degrees_s,
-                                        'gps_minutes_e': self.gps_minutes_e,
-                                        'gps_minutes_s': self.gps_minutes_s,
-                                        })
-        else:
-            # update all HH with new gps data
-            for household in Household.objects.filter(plot=self):
-                household.gps_target_lat = self.gps_target_lat
-                household.gps_target_lon = self.gps_target_lon
-                household.gps_lat = self.gps_lat
-                household.gps_lon = self.gps_lon
-                household.gps_degrees_e = self.gps_degrees_e
-                household.gps_degrees_s = self.gps_degrees_s
-                household.gps_minutes_e = self.gps_minutes_e
-                household.gps_minutes_s = self.gps_minutes_s
-                household.save()
+        if created:
+            Household = models.get_model('bcpp_household', 'Household')
+            if Household.objects.filter(plot__pk=instance.pk).count() == 0:
+                Household.objects.create(**{'plot': instance,
+                                            'gps_target_lat': instance.gps_target_lat,
+                                            'gps_target_lon': instance.gps_target_lon,
+                                            'gps_lat': instance.gps_lat,
+                                            'gps_lon': instance.gps_lon,
+                                            'gps_degrees_e': instance.gps_degrees_e,
+                                            'gps_degrees_s': instance.gps_degrees_s,
+                                            'gps_minutes_e': instance.gps_minutes_e,
+                                            'gps_minutes_s': instance.gps_minutes_s,
+                                            })
+            else:
+                # update all HH with new gps data
+                for household in Household.objects.filter(plot__pk=instance.pk):
+                    household.gps_target_lat = instance.gps_target_lat
+                    household.gps_target_lon = instance.gps_target_lon
+                    household.gps_lat = instance.gps_lat
+                    household.gps_lon = instance.gps_lon
+                    household.gps_degrees_e = instance.gps_degrees_e
+                    household.gps_degrees_s = instance.gps_degrees_s
+                    household.gps_minutes_e = instance.gps_minutes_e
+                    household.gps_minutes_s = instance.gps_minutes_s
+                    household.save()
 
     def get_action(self):
         if not self.gps_lon and not self.gps_lat:

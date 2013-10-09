@@ -5,16 +5,15 @@ from django.test import TestCase
 from django.db import IntegrityError
 from apps.bcpp_subject.forms import AccessToCareForm
 from datetime import datetime, timedelta
-from bhp_lab_tracker.classes import site_lab_tracker
-from bhp_registration.models import RegisteredSubject
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.registration.models import RegisteredSubject
 from edc.subject.appointment.tests.factories import ConfigurationFactory
-from bhp_identifier.exceptions import IdentifierError
+from edc.core.identifier.exceptions import IdentifierError
 
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
 from apps.bcpp_survey.models import Survey
@@ -26,6 +25,7 @@ from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household.models import HouseholdStructure, Household
 from apps.bcpp_dashboard.classes import HouseholdDashboard, SubjectDashboard, HtcSubjectDashboard
 from apps.bcpp_dashboard.tests.dashboard_tests import setup_dashboard
+from ..models import SubjectConsent
 
 
 class ConsentTests(TestCase):

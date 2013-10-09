@@ -11,9 +11,6 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     initials = factory.Sequence(lambda n: 'initials{0}'.format(n))
     gender = (('M', 'Male'), ('F', 'Female'))[0][0]
     age_in_years = 2
-    present = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    lives_in_household = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    is_eligible_member = True
+    present_today = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     target = 2
     household_structure = factory.SubFactory(HouseholdStructureFactory)
-    nights_out = 2
