@@ -21,7 +21,7 @@ from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.tests.factories import ContentTypeMapFactory
 from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
-from apps.bcpp_subject.models import SubjectConsent
+from ..models import SubjectConsent
 
 
 class SeleniumTests(LiveServerTestCase):

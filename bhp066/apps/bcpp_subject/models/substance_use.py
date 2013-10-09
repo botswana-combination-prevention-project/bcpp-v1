@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
-from apps.bcpp.choices import ALCOHOL_CHOICE, YES_NO_DONT_ANSWER
+from edc.choices import YES_NO_DWTA
+
+from apps.bcpp.choices import ALCOHOL_CHOICE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -18,7 +21,7 @@ class SubstanceUse (BaseScheduledVisitModel):
         verbose_name=_("Do you currently smoke any tobacco products, such as"
                       " cigarettes, cigars, or pipes?"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
 

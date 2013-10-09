@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from edc.core.bhp_common.utils import convert_from_camel
+from edc.subject.registration.models import RegisteredSubject
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
 from edc.subject.appointment.tests.factories import ConfigurationFactory
@@ -17,7 +18,7 @@ from apps.bcpp_household.tests.factories import HouseholdFactory, HouseholdStruc
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory, CeaEnrolmentChecklistFactory as EnrolmentChecklistFactory
-from apps.bcpp_subject.models import BaseScheduledVisitModel
+from ..models import BaseScheduledVisitModel
 
 admin.autodiscover()
 

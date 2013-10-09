@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 from edc.audit.audit_trail import AuditTrail
-from apps.bcpp.choices import YES_NO_DONT_ANSWER, ALCOHOL_SEX
+from edc.choices import YES_NO_DWTA
+
+from apps.bcpp.choices import ALCOHOL_SEX
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -14,7 +16,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         verbose_name=_("In your lifetime, have you ever had sex with anyone"
                       " (including your spouse, friends, or someone you have just met)?"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
 
@@ -48,7 +50,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
 
@@ -68,7 +70,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
 
