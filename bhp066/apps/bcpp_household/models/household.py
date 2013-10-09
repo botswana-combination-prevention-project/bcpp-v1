@@ -14,19 +14,20 @@ from .plot import Plot
 
 class Household(BaseDispatchSyncUuidModel):
 
-    plot = models.ForeignKey(Plot, null=True)
+    plot = models.ForeignKey(Plot, null=True)  # TODO: field should not be nullable.
 
     household_identifier = models.CharField(
         verbose_name='Household Identifier',
         max_length=25,
         unique=True,
         help_text=_("Household identifier"),
+        null=True,
         editable=False,
-        db_index=True,
         )
 
     household_sequence = models.IntegerField(
         editable=False,
+        null=True,
         help_text='is 1 for first household in plot, 2 for second, 3, etc. Embedded in household identifier.'
         )
 
@@ -123,6 +124,7 @@ class Household(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
+        null=True,
         editable=False,
         )
 
@@ -140,10 +142,6 @@ class Household(BaseDispatchSyncUuidModel):
         blank=True,
         )
 
-    is_randomised = models.BooleanField(
-            verbose_name='Is_randomised',
-            editable=False)
-
     action = models.CharField(
         max_length=25,
         null=True,
@@ -151,6 +149,7 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False)
 
     objects = HouseholdManager()
+
     history = AuditTrail()
 
     @property
@@ -165,31 +164,32 @@ class Household(BaseDispatchSyncUuidModel):
     natural_key.dependencies = ['bcpp_household.plot', ]
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            self.community = self.plot.community
-            device = Device()
-            self.household_sequence = self.plot.get_next_household_sequence()
-            household_identifier = HouseholdIdentifier(plot_identifier=self.plot.plot_identifier,
-                                                       household_sequence=self.household_sequence)
-            self.household_identifier = household_identifier.get_identifier()
-            self.device_id = device.device_id
-            if not self.household_identifier:
-                raise IdentifierError('Expected a value for household_identifier. Got None')
+#             if not self.household_identifier:
+#                 raise IdentifierError('Expected a value for household_identifier. Got None')
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
-    def check_for_survey_on_pre_save(self, **kwargs):
-        Survey = models.get_model('bcpp_survey', 'Survey')
-        if Survey.objects.all().count() == 0:
-            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before creating a Household.')
+    def post_save_update_identifier(self, instance, created):
+        """Updates the identifier field if this is a new instance."""
+        if created:
+            instance.community = instance.plot.community
+            device = Device()
+            instance.household_sequence = instance.plot.get_next_household_sequence()
+            household_identifier = HouseholdIdentifier(
+                plot_identifier=instance.plot.plot_identifier,
+                household_sequence=instance.household_sequence)
+            instance.household_identifier = household_identifier.get_identifier()
+            instance.device_id = device.device_id
+            instance.save()
 
-    def create_household_structure_on_post_save(self, **kwargs):
+    def post_save_create_household_structure(self, instance, created):
         """Creates, for each defined survey, a household structure(s) for this household."""
-        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
-        Survey = models.get_model('bcpp_survey', 'Survey')  # checked for on pre-save
-        for survey in Survey.objects.all():  # create a household_structure for each survey defined
-            if not HouseholdStructure.objects.filter(household__pk=self.pk, survey=survey):
-                HouseholdStructure.objects.create(household=self, survey=survey)
+        if created:
+            HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+            Survey = models.get_model('bcpp_survey', 'Survey')  # checked for on pre-save
+            for survey in Survey.objects.all():  # create a household_structure for each survey defined
+                if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
+                    HouseholdStructure.objects.create(household=instance, survey=survey)
 
     def get_action(self):
         if not self.gps_lon and not self.gps_lat:
@@ -210,9 +210,6 @@ class Household(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
-
-#     def is_dispatched_as_container(self, using=None):
-#         return False
 
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))
