@@ -22,7 +22,7 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         default='-',
         choices=YES_NO,
         help_text='Subject is a minor if aged 16-17. A guardian must be present for consent. HIV status may NOT be revealed in the household.')
-    
+
     consent_signature = models.CharField(
         verbose_name=("The client has signed the consent form?"),
         max_length=3,

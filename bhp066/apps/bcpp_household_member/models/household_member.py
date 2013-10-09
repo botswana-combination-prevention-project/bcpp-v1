@@ -12,6 +12,7 @@ from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.crypto_fields.fields import EncryptedCharField
+from edc.subject.consent.models import BaseConsent
 
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.choices import RELATIONS
@@ -88,7 +89,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         null=True,
         editable=False,
         default='NOT_REPORTED',
-        help_text='CONSENTED, ABSENT, REFUSED, MOVED',
+        help_text='RESEARCH, ABSENT, REFUSED, MOVED',
         db_index=True)
 
     hiv_history = models.CharField(max_length=25, null=True, editable=False)
@@ -175,18 +176,19 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def is_consented(self):
-        from edc.subject.consent.models import BaseConsent
-        retval = False
-        for model in models.get_models():
-            if issubclass(model, BaseConsent):
-                if 'household_member' in dir(model):
-                    if model.objects.filter(household_member=self, household_member__household_structure__survey=self.survey):
-                        retval = True
+        "Returns True or False based on search for a consent instance related to this household member"
+        has_consent_instance = False
+        for any_model_cls in models.get_models():
+            if issubclass(any_model_cls, BaseConsent):
+                consent_model_cls = any_model_cls
+                if 'household_member' in dir(consent_model_cls):
+                    if consent_model_cls.objects.filter(household_member__pk=self.pk, household_member__household_structure__survey__pk=self.household_structure.survey.pk):
+                        has_consent_instance = True
                         break
-        return retval
+        return has_consent_instance
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_structure__plot__plot_identifier')
+        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     def update_hiv_history_on_pre_save(self, **kwargs):
         """Updates from lab_tracker."""
@@ -247,9 +249,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.member_status = 'NOT_REPORTED'
         return ParticipationForm(initial={'status': self.member_status,
                                           'household_member': self.pk,
-                                          'dashboard_id': self.pk,
+                                          'dashboard_id': self.household_structure.pk,
                                           'dashboard_model': 'household_structure',
-                                          'dashboard_type': 'plot'})
+                                          'dashboard_type': 'household'})
 
     def _get_form_url(self, model_name):
         url = ''
