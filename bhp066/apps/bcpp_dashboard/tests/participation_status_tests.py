@@ -87,13 +87,13 @@ class ParticipationStatusTests(TestCase):
         self.assertEqual(self.household_member.member_status, 'REFUSED')
 
     def test_change_from_research2(self):
-        """change from research with consent to something else, should not clear eligible_subject nd not change."""
+        """change from research with consent to something else, should not clear eligible_subject and not change."""
         signals.post_save.disconnect(prepare_appointments_on_post_save, weak=False, dispatch_uid='prepare_appointments_on_post_save')
         self.household_member.eligible_subject = True
         self.household_member.member_status = 'RESEARCH'
         self.household_member.save()
         self.assertTrue(self.household_member.eligible_subject)
-        SubjectConsent.objects.create(
+        SubjectConsent.objects.create(  # TODO: replace with factory
             household_member=self.household_member,
             registered_subject=self.household_member.registered_subject,
             survey=self.household_member.household_structure.survey,
