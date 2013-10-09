@@ -16,8 +16,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     household = models.ForeignKey(Household)
 
-    plot = models.ForeignKey(Plot, null=True, editable=False, help_text='helper field')
-
     survey = models.ForeignKey(Survey)
 
     progress = models.CharField(
@@ -44,21 +42,15 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def __unicode__(self):
         return unicode(self.household)
 
-    def save(self, *args, **kwargs):
-        if not self.plot:
-            self.plot = self.household.plot
-        super(HouseholdStructure, self).save(*args, **kwargs)
-
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()
     natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey']
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'plot__plot_identifier')
+        return (Plot, 'household__plot__plot_identifier')
 
     def get_subject_identifier(self):
-        #subject_identifier = self.household.household_identifier
-        return self.plot.plot_identifier
+        return self.household.plot.plot_identifier
 
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
@@ -81,9 +73,14 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             # count has changed or was incorrect, so update
             self.save(using=using)
 
+    def plot(self):
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))
+        return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.household.plot.plot_identifier)
+    plot.allow_tags = True
+
     def house(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='householdstructure'))
-        return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.plot.plot_identifier)
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='household'))
+        return """<a href="{url}?q={q}" />household</a>""".format(url=url, q=self.household.household_identifier)
     house.allow_tags = True
 
     def members(self):
@@ -103,4 +100,4 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household'
-        unique_together = (('household', 'survey'), )
+        #unique_together = (('household', 'survey'), )
