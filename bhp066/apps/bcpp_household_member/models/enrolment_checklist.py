@@ -83,12 +83,11 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text="e.g. 000/YYYY",
         )
 
-    study_resident_3 = models.CharField(
+    part_time_resident = models.CharField(
         verbose_name=("In the past 12 months, have you typically spent 3 or"
                       " more nights per month in this community? "),
-        max_length=17,
+        max_length=10,
         choices=YES_NO_DWTA,
-        validators=[eligible_if_yes, ],
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
@@ -96,12 +95,11 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
                   "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
         )
 
-    study_resident_14 = models.CharField(
+    permanent_resident = models.CharField(
         verbose_name=("In the past 12 months, have you typically spent 14 or"
                       " more nights per month in this community? "),
-        max_length=17,
+        max_length=10,
         choices=YES_NO_DWTA,
-        validators=[eligible_if_yes, ],
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
