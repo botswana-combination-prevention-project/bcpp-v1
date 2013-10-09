@@ -1,7 +1,6 @@
 import factory
-from apps.bcpp_subject.models import Grant
-from apps.bcpp_subject.tests.factories import LabourMarketWagesFactory
-from apps.bcpp_subject.tests.factories import BaseScheduledInlineModelFactory
+from apps.bcpp_subject.tests.factories import BaseScheduledInlineModelFactory, LabourMarketWagesFactory
+from ...models import Grant
 
 
 class GrantFactory(BaseScheduledInlineModelFactory):
