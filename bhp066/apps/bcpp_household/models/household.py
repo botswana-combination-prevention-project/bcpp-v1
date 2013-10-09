@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ImproperlyConfigured
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.device.classes import Device
+from edc.core.identifier.exceptions import IdentifierError
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from ..managers import HouseholdManager
 from ..classes import HouseholdIdentifier
@@ -162,6 +164,8 @@ class Household(BaseDispatchSyncUuidModel):
     natural_key.dependencies = ['bcpp_household.plot', ]
 
     def save(self, *args, **kwargs):
+#             if not self.household_identifier:
+#                 raise IdentifierError('Expected a value for household_identifier. Got None')
         self.action = self.get_action()
         super(Household, self).save(*args, **kwargs)
 
@@ -186,6 +190,17 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
+
+    def get_action(self):
+        if not self.gps_lon and not self.gps_lat:
+            retval = 'unconfirmed'
+        elif self.status == 'occupied':
+            retval = 'confirmed'
+        elif self.status == 'vacant' or self.status == 'invalid':
+            retval = 'confirmed'
+        else:
+            retval = 'unconfirmed'
+        return retval
 
     def get_subject_identifier(self):
         return self.household_identifier
