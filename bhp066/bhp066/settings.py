@@ -350,8 +350,8 @@ INSTALLED_APPS = (
 # email settings
 EMAIL_HOST = '192.168.1.48'
 EMAIL_PORT = '25'
-EMAIL_HOST_USER = 'django'
-EMAIL_HOST_PASSWORD = 'paeH#ie9'
+EMAIL_HOST_USER = 'edcdev'
+EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
 
 SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
