@@ -2,7 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from apps.bcpp.choices import REASONCIRC_CHOICE, YES_NO_UNSURE, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE, YES_NO_DONT_ANSWER
+from edc.choices import YES_NO_DWTA, YES_NO_UNSURE
+
+from apps.bcpp.choices import REASONCIRC_CHOICE, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE
+
 from .base_circumcision import BaseCircumcision
 
 
@@ -15,6 +18,7 @@ class Uncircumcised (BaseCircumcision):
         choices=REASONCIRC_CHOICE,
         help_text="supplemental",
         )
+
     reason_circ_other = OtherCharField(
         null=True,)
 
@@ -38,7 +42,7 @@ class Uncircumcised (BaseCircumcision):
         verbose_name=_("Were you aware that circumcision services are provided "
                         "free of charge at most health facilities?"),
         max_length=35,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         null=True,
         help_text="supplemental",
         )
