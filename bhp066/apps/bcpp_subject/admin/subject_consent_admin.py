@@ -49,7 +49,6 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'identity',
             'identity_type',
             'confirm_identity',
-#             'is_incarcerated',
             'may_store_samples',
             'comment',
             'consent_reviewed',
