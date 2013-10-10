@@ -218,7 +218,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def post_save_create_household(self, created):
         """Creates one household for this plot but only if none exist."""
-        Household = models.get_model('bcpp_household', 'Household')
+        Household = models.get_model('bcpp_household', 'Household')     
         if Household.objects.filter(gps_target_lat=self.gps_target_lat, gps_target_lon=self.gps_target_lon).count() == 0:
             Household.objects.create(**{'plot': self,
                                         'gps_target_lat': self.gps_target_lat,
@@ -244,14 +244,9 @@ class Plot(BaseDispatchSyncUuidModel):
                 household.save()
 
     def get_action(self):
-        if not self.gps_lon and not self.gps_lat:
-            retval = 'unconfirmed'
-        elif self.status == 'occupied':
+        retval = 'unconfirmed'
+        if self.gps_lon and self.gps_lat:
             retval = 'confirmed'
-        elif self.status == 'vacant' or self.status == 'invalid':
-            retval = 'confirmed'
-        else:
-            retval = 'unconfirmed'
         return retval
 
     def gps(self):

@@ -3,7 +3,7 @@ from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 from apps.bcpp_survey.forms import SurveyForm
 from ..forms.current_gps_form import CurrentGpsForm
-from ..models import Plot
+from ..models import Plot, Household
 from ..forms import CommunityForm
 
 
