@@ -33,3 +33,4 @@ from .cea_enrolment_checklist_form import CeaEnrolmentChecklistForm
 from .stigma_form import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
 from .hiv_result_documentation_form import HivResultDocumentationForm
 from .hiv_medical_care_form import HivMedicalCareForm
+from .diagnoses_form import HeartAttackForm, CancerForm, TubercolosisForm, StiForm
