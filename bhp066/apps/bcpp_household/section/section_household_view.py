@@ -70,6 +70,18 @@ class SectionHouseholdView(BaseSectionForDashboardView):
                 request.session['search_result'] = search_result
             else:
                 self.context.update({'gps_search_form': gps_form})
+        elif request.GET.get('plot'):
+            search_result = []
+            lst = []
+            dct = {}
+            dist = 1
+            for household in Household.objects.filter(plot__plot_identifier=request.GET.get('plot')):
+                dct.update({dist: household})
+                lst.append(dist)
+                dist +=1
+            lst.sort()
+            search_result.append(lst)
+            request.session['search_result'] = search_result
         else:
             if request.GET.get('page'):
                 search_result = request.session['search_result']
