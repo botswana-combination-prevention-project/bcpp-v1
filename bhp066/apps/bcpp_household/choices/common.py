@@ -87,7 +87,7 @@ SUB_SECTIONS = (
 
 
 RELATIONS = (
-    ('SELF', 'HOUSEHOLD HEAD'),
+    ('Head', 'HOUSEHOLD HEAD'),
     ('Wife', 'Wife'),
     ('Husband', 'Husband'),
     ('Daughter', 'Daughter'),
