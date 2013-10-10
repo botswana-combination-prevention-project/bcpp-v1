@@ -18,6 +18,8 @@ class HivResult (BaseScheduledVisitModel):
 
     hiv_result_datetime = models.DateTimeField(
         verbose_name=_("Today\'s HIV test result date and time"),
+        null=True,
+        blank=True,
         validators = [datetime_not_future], 
         )
 
@@ -37,7 +39,7 @@ class HivResult (BaseScheduledVisitModel):
         return 'HIV'
 
     def get_result_datetime(self):
-        return datetime(self.hiv_result_datetime.year, self.hiv_result_datetime.month, self.hiv_result_datetime.day)
+        return self.report_datetime
 
     class Meta:
         app_label = "bcpp_subject"
