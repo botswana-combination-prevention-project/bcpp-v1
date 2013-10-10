@@ -242,14 +242,9 @@ class Plot(BaseDispatchSyncUuidModel):
                     household.save()
 
     def get_action(self):
-        if not self.gps_lon and not self.gps_lat:
-            retval = 'unconfirmed'
-        elif self.status == 'occupied':
+        retval = 'unconfirmed'
+        if self.gps_lon and self.gps_lat:
             retval = 'confirmed'
-        elif self.status == 'vacant' or self.status == 'invalid':
-            retval = 'confirmed'
-        else:
-            retval = 'unconfirmed'
         return retval
 
     def gps(self):
