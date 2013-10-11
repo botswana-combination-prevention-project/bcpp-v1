@@ -40,6 +40,8 @@ class SectionPlotView(BaseSectionView):
 
     def get_search_result(self, request, **kwargs):
         search_result = None
+        community = settings.CURRENT_COMMUNITY
+        mapper = site_mappers.get(community)()
         if request.method == 'POST':
             gps_form = CurrentGpsForm(request.POST)
             if gps_form.is_valid():
@@ -48,8 +50,6 @@ class SectionPlotView(BaseSectionView):
                 minutes_s = float('{0}'.format(gps_form.cleaned_data.get('minutes_s')))
                 minutes_e = float('{0}'.format(gps_form.cleaned_data.get('minutes_e')))
                 radius = gps_form.cleaned_data.get('radius') / 1000
-                community = settings.CURRENT_COMMUNITY
-                mapper = site_mappers.get(community)()
                 lat = mapper.get_gps_lat(degrees_s, minutes_s)
                 lon = mapper.get_gps_lon(degrees_e, minutes_e)
                 search_result = []
@@ -69,6 +69,26 @@ class SectionPlotView(BaseSectionView):
                 request.session['search_result'] = search_result
             else:
                 self.context.update({'gps_search_form': gps_form})
+        elif request.GET.get('plot'):
+            search_result = []
+            lst = []
+            dct = {}
+            searched_plot = Plot.objects.filter(plot_identifier=request.GET.get('plot'))
+            lat = searched_plot[0].gps_target_lat
+            lon = searched_plot[0].gps_target_lon
+            radius = 1
+            for plot in searched_plot:
+                dist = mapper.gps_distance_between_points(lat, lon, plot.gps_target_lat, plot.gps_target_lon, radius)
+                if dist <= radius:
+                    plot.relative_distance = dist
+                    while dist in lst:
+                        dist += .0001
+                    lst.append(dist)
+                    dct.update({dist: plot})
+            lst.sort()
+            for dist in lst:
+                search_result.append(dct[dist])
+            request.session['search_result'] = search_result
         else:
             if request.GET.get('page'):
                 search_result = request.session['search_result']
