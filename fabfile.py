@@ -1,12 +1,15 @@
+import os
+
 from fabric.api import *
 from fabric.contrib.files import exists
 from django.contrib.auth.models import User
+from fabric.colors import green, red
 
 
 env.dbname = 'bhp066'
 env.mysql_root_passwd = 'cc3721b'
 
-env.hosts = ['192.168.1.22']
+env.hosts = ['192.168.1.228', '192.168.1.17', '192.168.1.117' ]
 env.user = 'django'
 env.password = 'django'
 
@@ -21,7 +24,10 @@ SETTINGS_DIR = '{projdir}/bhp066'.format(projdir=PROJECT_DIR)
 FILE_WITH_SOUTH = '%s/settings.py' % SETTINGS_DIR
 UNSOUTHED = 'unsouthed'
 
+VIRTUALENVWRAPPER = '/usr/local/bin/virtualenvwrapper.sh'
 WORKON_VIRTUALENV = 'workon {virtualenv}'.format(virtualenv=VIRTUALENV)
+FAB_PIP_CACHE = '~/.pip_fab/cache'
+FAB_WORKON_HOME = '~/.virtualenvs_fab'
 
 GIT_PULL = 'git pull origin master'
 git_clone = 'git clone git@gitserver:{repo}.git'.format
@@ -35,6 +41,7 @@ def deploy2_mysql():
     uncomment_south()
     syncdb()
     fake_migration()
+    execute(prepare_netbook)
 
 
 @task
@@ -46,13 +53,13 @@ def prepare_code():
 
 @task
 def check_for_required_programs():
-    exit_as_not_installed('python')
-    exit_as_not_installed('git')
+    exit_if_not_installed('python')
+    exit_if_not_installed('git')
     if program_not_installed('pip'):
         sudo('easy_install -U pip')
-    exit_as_not_installed('mysql')
-    exit_as_not_installed('swig')
-    print "Success: Required programs are installed"
+    exit_if_not_installed('mysql')
+    exit_if_not_installed('swig')
+    print(green("Success: Required programs are installed on host: ['%s']" % env.host))
 
 
 def checkout_code():
@@ -64,9 +71,9 @@ def checkout_code():
 
 @task
 def clone_code():
-    if not exists(SRC_DIR):
-        mkdir(SRC_DIR)
-    run('rm -rf %s/*' % SRC_DIR)
+    sudo('rm -rf %s/*' % SRC_DIR)
+    mkdir(SRC_DIR)
+    sudo('chmod 777 %s' % SRC_DIR)
     with cd(SRC_DIR):
         run(git_clone(repo='bhp066_project'))
     with cd(PROJECT_DIR):
@@ -104,8 +111,36 @@ def install_virtualenv():
     put('.bash_profile', '.bash_profile')
 
 
-def create_virtualenv():
-    run('mkvirtualenv bhp066_env')
+@task
+def local_setup():
+    env.hosts = ['localhost']
+    env.user = 'twicet'
+
+
+#@task
+#def prepare_local_pip_cache():
+#    fab_venv = 'bcpp_fab'
+#    local('mkdir -p %s' % FAB_WORKON_HOME)
+#    with prefix('export PIP_DOWNLOAD_CACHE=%s WORKON_HOME=%s' % (FAB_PIP_CACHE, FAB_WORKON_HOME)):
+#        if exists(VIRTUALENVWRAPPER):
+#            with prefix('. %s' % VIRTUALENVWRAPPER):
+#                if local(WORKON_VIRTUALENV(fab_venv)).failed:
+#                    create_virtualenv(fab_venv)
+#                    with prefix(WORKON_VIRTUALENV(fab_venv)):
+#                        local('pip install -r ./requirements.txt')
+#                    print(green("successfully created and installed depencies locally"))
+#                else:
+#                    with prefix(WORKON_VIRTUALENV(fab_venv)):
+#                        local('pip_install -r ./requirements.txt')
+#                    print(green("virtualenv was found and dependencies were installed"))
+#
+#        else:
+#        #if local('workon')
+#            pass
+
+
+def create_virtualenv(env_name='bhp066_env'):
+    sudo('mkvirtualenv %s' % env_name)
 
 
 def install_dependencies():
@@ -148,7 +183,6 @@ def comment_out_south():
 
 def uncomment_south():
     with cd(SETTINGS_DIR):
-        #sudo("sed \"s/#'south'/'south'/g\" unsouthed.py >settings.py")
         sudo('rm %s.py' % UNSOUTHED)
 
 
@@ -170,7 +204,7 @@ def mysql_execute(cmd):
 
 
 def mkdir(dirname, as_sudo=True):
-    mkdir_cmd = 'mkdir {dir}'.format(dir=dirname)
+    mkdir_cmd = 'mkdir -p {dir}'.format(dir=dirname)
     if as_sudo:
         sudo(mkdir_cmd)
     else:
@@ -185,15 +219,30 @@ def pip_install(package_name, as_sudo=True):
         run(install_cmd)
 
 
-def exit_as_not_installed(prog_name):
+@task
+def prepare_netbook():
+    hostname = sudo("hostname")
+    producer_name = "%s-%s" % (hostname, env.dbname)
+    manage_py('prepare_netbook default %s' % producer_name)
+
+
+def exit_if_not_installed(prog_name):
     if program_not_installed(prog_name):
-        abort("Please install %s on %s first before continuing" % (prog_name, env.host))
+        print(red("'%s' please install '%s' before continuing" % (env.host, prog_name)))
+        abort("Halted on host:[%s]" % env.host)
 
 
 def program_not_installed(prog_name):
     not_installed = False
     with quiet():
-        if run('which %s' % prog_name).failed:
+        if sudo('which %s' % prog_name).failed:
             print "%s is not installed on %s" % (prog_name, env.host)
             not_installed = True
     return not_installed
+
+
+@task
+def apache_setup():
+    put('./fabric/mac_air/httpd.conf', '/etc/apache2/httpd.conf', use_sudo=True)
+    put('./fabric/mac_air/httpd-vhosts.conf', '/etc/apache2/extra/httpd-vhosts.conf', use_sudo=True)
+    sudo('apachectl -k restart')
