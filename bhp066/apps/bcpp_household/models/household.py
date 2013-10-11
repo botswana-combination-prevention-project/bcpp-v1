@@ -166,7 +166,7 @@ class Household(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
 #             if not self.household_identifier:
 #                 raise IdentifierError('Expected a value for household_identifier. Got None')
-        self.action = self.get_action()
+        self.action = self.plot.get_action()
         super(Household, self).save(*args, **kwargs)
 
     def post_save_update_identifier(self, instance, created):
