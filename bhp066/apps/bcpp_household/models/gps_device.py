@@ -18,8 +18,8 @@ class GpsDevice(BaseListModel):
     def __unicode__(self):
         return "{0} {1} {2}".format(self.name, self.gps_make, self.gps_model)
 
-    def get_absolute_url(self):
-        return "/bcpp_household/gpsdevice/{0}/".format(self.id)
+#     def get_absolute_url(self):
+#         return "/bcpp_household/gpsdevice/{0}/".format(self.id)
 
     def natural_key(self):
         return (self.gps_serial_number, )
