@@ -13,8 +13,7 @@
 <th>Age</th>
 <th>Relation</th>   
 <th>Participation</th>
-<th>Eligibility</th> 
-<th>Dashboard</th>
+<th>Report/Action</th>
 </thead>
 <tbody>
 
@@ -27,7 +26,6 @@
     <td>{{ household_member.age_in_years }}</td>
     <td>{{ household_member.relation }}</td>
     <td>{{ household_member.member_status }}</td>
-    <td>&nbsp;</td>
     <td>&nbsp;</td>
     </tr>
   {% endfor %}
@@ -45,7 +43,7 @@
     {% else %}            
         {{ household_member.first_name|encrypted }}        
     {% endif %} 
-    {% if not household_member.present == 'Yes' and not household_member.present == 'No'%}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
+    {% if not household_member.present_today == 'Yes' and not household_member.present_today == 'No'%}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
     </td>
         
     <td>{{ household_member.initials }}</td>
@@ -71,37 +69,28 @@
             {% endif %}            
         {% endif %}
     </td>
-
-    {% comment %}eligibility / enrolment checklist{% endcomment %}
-    <td>
-    {% if household_member.member_status != 'CONSENT'%}
-     ----
-    {% else %}
-     {% if not household_member.enrolment_checklist %}
-        <span style="color:white;background-color:red;">&nbsp;</span>
-        <A title="Add an enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Enrolment Checklist</A>
-     {% else %}
-        {% if not household_member.consent %}
-            <A title="Edit the enrolment checklist if not yet consented" href="{% url enrolment_checklist_meta|admin_urlname:'change' household_member.enrolment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">{{ household_member.enrolment_checklist }}</A>{% if not household_member.enrolment_checklist.eligible %}&nbsp;<i>(Not eligible)</i>{%endif%}
-        {% else %}
-            {{ household_member.enrolment_checklist }}            
-        {% endif %}
-     {% endif %}
-    {% endif %}
-    </td>
-
  
     {% comment%} dashboard {% endcomment %}
-    <td>
-            {% if 'CONSENT' in household_member.member_status and household_member.enrolment_checklist.eligible %}
-                {% comment%} show a link to the dashboard of this household is not dispatched and subject is consented {% endcomment %}
+    <td>    
+            {% comment %}DEBUG, remove{% endcomment %}
+            {% if household_member.member_status and household_member.member_status not in household_member_actions %}Unknown member status!{%endif%}
+
+            {% if 'RESEARCH' in household_member.member_status and not household_member.eligible_subject %}
+                {% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
+                <span style="color:white;background-color:red;">&nbsp;</span>
+                <A title="Complete the enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+
+            {% elif 'RESEARCH' in household_member.member_status and household_member.eligible_subject %}
+                {% comment %} show link to dashboard/consent {% endcomment %}
             	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
             		dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}
             	{% else %}
-            	    {% if household_member.registered_subject|subject_identifier:'go to consent on dashboard' == 'go to consent on dashboard' %}<span style="color:white;background-color:red;">&nbsp;</span>{% endif %}
-             		<A name="consented-{{household_member.pk}}" href="{% url 'subject_dashboard_url' dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier:'go to consent on dashboard' }}{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}</a>
+            	    {% if household_member.registered_subject|subject_identifier:' go to consent on dashboard' == 'go to consent on dashboard' %}<span style="color:white;background-color:red;">&nbsp;</span>{% endif %}
+             		<B>Subject is Eligible for consent. Complete consent process. After consent is signed</B>&nbsp; 
+             		<A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier:'go to consent on dashboard' }}{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}</a>
             	{% endif %}
-            {% elif household_member.member_status == 'HTC_ONLY' or household_member.member_status == 'CONSENT_BLOOD' or household_member.member_status == 'OTHER' %}
+
+            {% elif household_member.member_status == 'HTC_ONLY' %}
                 <span style="color:white;background-color:red;">option not available</span>
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                {% if household_member.member_status == 'ABSENT' %}

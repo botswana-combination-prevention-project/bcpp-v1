@@ -9,11 +9,11 @@ class PimaAdmin(SubjectVisitModelAdmin):
     form = PimaForm
     fields = (
         "subject_visit",
+        'pima_today',
+        'pima_today_other',
         'pima_id',
         'cd4_value',
-        'draw_time',
-        'is_drawn',
-        'is_drawn_other',)
+        )
     radio_fields = {
-        'is_drawn': admin.VERTICAL}
+        'pima_today': admin.VERTICAL}
 admin.site.register(Pima, PimaAdmin)
