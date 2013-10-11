@@ -51,8 +51,8 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__id',
         'household_structure__household__household_identifier',
         'household_structure__household__id',
-        'household_structure__plot__plot_identifier',
-        'household_structure__plot__id',
+        'household_structure__household__plot__plot_identifier',
+        'household_structure__household__plot__id',
         'relation', 'id']
 
     list_filter = ('household_structure__survey__survey_name', "present_today", 'study_resident', 'member_status',
