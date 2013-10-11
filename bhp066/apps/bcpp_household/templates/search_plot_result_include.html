@@ -15,8 +15,8 @@
 <th>Members</th>
 <th>Community</th>
 <th>Modified</th>           
-<th>Host</th> 
-<th>Map</th>                                  
+<th>Host</th>
+<th>Map</th>                                 
 </thead>  
 
 {% for plot in search_result.object_list %}
@@ -44,25 +44,20 @@
         {% endif %}
         </td>
         <td>{{ plot.get_status_display }}</td>
-        <td><A href="{% url 'section_url' section_name='household' %}?plot={{ plot.plot_identifier }}">{{ plot.num_household }}</A></td>
+        <td><A href="{% url 'section_url' section_name='household' %}?plot={{ plot.plot_identifier }}">{{ plot.num_household|default:'1' }} household(s)</A></td>
         <td>{{ plot.eligible_members }}</td>
       <td>{{ plot.community|encrypted}}</td>
         <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
         <td>{{ plot.user_modified }}</td>
         <td>
-              {% if plot.uploaded_map %}
-          <a href="{{ MEDIA_URL }}{{ plot.uploaded_map }}"/>view saved map</a>
-              {% else %}
-                  {% if plot.gps_lon|default:plot.gps_target_lon and plot.gps_lat|default:plot.gps_target_lat %}
-                  <form action="{% url 'item_map_url' mapper_name=plot.community identifier=plot.plot_identifier lon=plot.gps_lon|default:plot.gps_target_lon lat=plot.gps_lat|default:plot.gps_target_lat %}" method="post">
+          {% if plot.gps_lon|default:plot.gps_target_lon and plot.gps_lat|default:plot.gps_target_lat %}
+          <form action="{% url 'item_map_url' mapper_name=plot.community identifier=plot.plot_identifier lon=plot.gps_lon|default:plot.gps_target_lon lat=plot.gps_lat|default:plot.gps_target_lat %}" method="post">
             {% csrf_token %}
-          <p><input type="submit" value="view google map"></p>
+          	<p><input type="submit" value="view google map"></p>
           </form>
         {% else %}
            <span style="background-color:red;color:white;"> missing lat/lon!</span>
         {% endif %} 
-      {% endif %}
-        
         </td>       
       </tr>
       {% endif %}
