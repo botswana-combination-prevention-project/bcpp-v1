@@ -1,0 +1,29 @@
+{% extends "section.html" %}
+{% load url from future %}
+{% load admin_urls %}
+
+{% block content %}
+	<b>Plot: {{ plot_identifier }}</b>
+	<br />
+	{% if message %}
+		<h3><b><font color="red">{{ message }}!</font></b></h3>
+	{% endif %}
+	
+	<div id="section_navbar">
+    <ul>
+    <li><A href="{% url "add_household_url" plot_identifier %}">Add Household</A></li>
+    </ul>
+    </div>
+	<br /><br />
+
+	<table>
+	<th>Household</th>
+		
+	{% for household in households %}
+		<tr><td>
+		   <A href="{% url household_meta|admin_urlname:'change' household.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household }}</A>
+		</td></tr>
+	{% endfor %} 
+		
+	</table>
+{% endblock content %}

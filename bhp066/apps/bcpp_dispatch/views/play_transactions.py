@@ -1,6 +1,11 @@
+import socket
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ImproperlyConfigured
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.core.mail import send_mail
+from django.conf import settings
 from ..classes import BcppConsumer
 
 
@@ -15,11 +20,9 @@ def play_transactions(request, **kwargs):
         pass
     message = consumer.get_consume_feedback()
     messages.add_message(request, messages.INFO, message)
-    
-    return redirect('/dispatch/bcpp/sync/')
-#     return render_to_response('household_return.html', {
-#                                'queryset': all_containers,
-#                                'producer': ref_container.producer.name
-#                                },
-#                               context_instance=RequestContext(request)
-#                             )
+    if not (settings.EMAIL_HOST or settings.EMAIL_PORT or settings.EMAIL_HOST_USER or settings.EMAIL_HOST_PASSWORD):
+        raise ImproperlyConfigured("Ensure that EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD are set in the email_settings file")
+    send_mail('Consuming status of BCPP incoming transactions;-' + str(socket.gethostname()), message, settings.EMAIL_HOST_USER + '@bhp.org.bw', ['django@bhp.org.bw'], fail_silently=False)
+
+    url = reverse('bccp_sync_url')
+    return redirect(url)

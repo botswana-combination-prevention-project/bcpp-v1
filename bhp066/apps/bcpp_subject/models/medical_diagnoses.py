@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
+from edc.choices import YES_NO_DWTA, YES_NO_UNSURE
+
 from apps.bcpp_list.models import Diagnoses
-from apps.bcpp.choices import YES_NO_UNSURE, YES_NO_DONT_ANSWER
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -22,7 +24,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
 
@@ -32,7 +34,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
 
@@ -52,7 +54,7 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
 

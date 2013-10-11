@@ -1,8 +1,11 @@
 from django.db import models
+from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from apps.bcpp.choices import YES_NO_DONT_ANSWER, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE, ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE
+from edc.choices import YES_NO_DWTA, YES_NO
+from apps.bcpp.choices import (WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
+                               ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -14,6 +17,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     first_positive = models.DateField(
         verbose_name=_("When was your first positive HIV test result?"),
+        validators=[datetime_not_future],
         null=True,
         blank=True,
         help_text=("Note: If participant does not want to answer, leave blank. "
@@ -25,7 +29,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
                       " care, for such things as a CD4 count (masole), IDCC/ PMTCT"
                       " registration, additional clinic-based counseling?"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="if 'YES', answer HIV medical care section",
         )
 
@@ -45,7 +49,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
                         "to treat your HIV infection? [common medicines include: combivir, truvada, "
                         "atripla, nevirapine]"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         null=True,
         blank=True,
         help_text="",
@@ -56,7 +60,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
                         " [For women: Do not include treatment that you took during pregnancy to protect "
                         "your baby from HIV]"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
 
@@ -72,6 +76,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     first_arv = models.DateField(
         verbose_name=_("When did you first start taking antiretroviral therapy (ARVs)?"),
+        validators=[datetime_not_future],
         null=True,
         blank=True,
         help_text=("Note: If participant does not want to answer,leave blank.  "
@@ -81,11 +86,12 @@ class HivCareAdherence (BaseScheduledVisitModel):
     on_arv = models.CharField(
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
     arv_stop_date = models.DateField(
         verbose_name=_("When did you stop taking ARV\'s?"),
+        validators=[datetime_not_future],
         null=True,
         blank=True,
         help_text="",
@@ -119,6 +125,14 @@ class HivCareAdherence (BaseScheduledVisitModel):
         blank=True,
         choices=ADHERENCE4WK_CHOICE,
         help_text="",
+        )
+
+    therapy_evidence = models.CharField(
+        verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
+        choices=YES_NO,
+        null=True,
+        blank=True,
+        max_length=3,
         )
 
     history = AuditTrail()
