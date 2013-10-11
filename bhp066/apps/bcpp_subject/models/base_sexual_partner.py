@@ -63,8 +63,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         null=True,
         blank=True,
         validators=[MinValueValidator(10), MaxValueValidator(64)],
-        help_text=("Note: If participant does not want to answer, leave blank."
-                   " If participant is unable to estimate age, record -4"),
+        help_text=("Note: If participant does not want to answer, leave blank."),
         )
 
     concurrent = models.CharField(
