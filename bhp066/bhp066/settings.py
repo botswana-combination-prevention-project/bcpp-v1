@@ -24,6 +24,7 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
 KEY_PATH = PROJECT_DIR.child('keys')
+
 #KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/bhp066/keys'
@@ -101,7 +102,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_v122',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -288,7 +289,6 @@ INSTALLED_APPS = (
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
     'edc.subject.actg',
-    'edc.subject.lab_aliquot_list',
     'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
