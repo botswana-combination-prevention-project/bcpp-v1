@@ -30,10 +30,8 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            if not self.survey:
-                self.survey = self.household_member.household_structure.survey
-            if not self.registered_subject:
-                self.registered_subject = self.household_member.registered_subject
+            self.survey = self.household_member.household_structure.survey
+            self.registered_subject = self.household_member.registered_subject
         super(BaseHouseholdMemberConsent, self).save(*args, **kwargs)
 
     def _check_if_duplicate_subject_identifier(self, using):
