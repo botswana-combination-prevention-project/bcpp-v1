@@ -16,8 +16,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         for i, item in enumerate(self.fields):
             if item == 'assessment_score':
                 del self.fields[i]
-        self.fields.insert(0, 'household_member')
-        
+
         self.list_filter = [
             'gender',
             'is_verified',
@@ -31,8 +30,10 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'user_created',
             'user_modified',
             'hostname_created']
+
         self.fields = [
             'subject_identifier',
+            'household_member',
             'first_name',
             'last_name',
             'initials',
@@ -48,7 +49,6 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'identity',
             'identity_type',
             'confirm_identity',
-#             'is_incarcerated',
             'may_store_samples',
             'comment',
             'consent_reviewed',
@@ -63,15 +63,14 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             "study_site": admin.VERTICAL,
             "is_dob_estimated": admin.VERTICAL,
             "identity_type": admin.VERTICAL,
-#             "is_incarcerated": admin.VERTICAL,
             "may_store_samples": admin.VERTICAL,
             "consent_reviewed": admin.VERTICAL,
             "study_questions": admin.VERTICAL,
             "assessment_score": admin.VERTICAL,
-            'consent_signature':admin.VERTICAL,
+            'consent_signature': admin.VERTICAL,
             "consent_copy": admin.VERTICAL,
             "is_literate": admin.VERTICAL}
-        
+
         self.search_fields.append('household_member__household_structure__household__household_identifier')
         self.search_fields.append('household_member__household_structure__plot__plot_identifier')
         self.radio_fields.update({"is_minor": admin.VERTICAL})
