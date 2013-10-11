@@ -1,10 +1,10 @@
 import factory
 from datetime import datetime
 from edc.testing.tests.factories.test_consent_factory import BaseConsentFactory
-from apps.bcpp_subject.models import SubjectConsent
 from edc.core.bhp_variables.tests.factories import StudySiteFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
+from ...models import SubjectConsent
 
 
 class SubjectConsentFactory(BaseConsentFactory):

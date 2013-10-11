@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.db.models import get_app, get_models
-from apps.bcpp_subject.models import SubjectConsent, SubjectVisit
+from ..models import SubjectConsent, SubjectVisit
 
 
 class OffStudyTests(TestCase):

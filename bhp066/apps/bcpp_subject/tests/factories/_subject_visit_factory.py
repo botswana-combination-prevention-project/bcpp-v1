@@ -1,5 +1,5 @@
 from edc.subject.visit_tracking.tests.factories import BaseVisitTrackingFactory
-from apps.bcpp_subject.models import SubjectVisit
+from ...models import SubjectVisit
 
 
 class SubjectVisitFactory(BaseVisitTrackingFactory):
