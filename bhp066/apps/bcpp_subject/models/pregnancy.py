@@ -1,4 +1,5 @@
 from django.db import models
+from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from apps.bcpp.choices import ANCREG_CHOICE
@@ -20,6 +21,7 @@ class Pregnancy (BasePregnancy):
 
     lnmp = models.DateField(
         verbose_name=_("When was your last normal menstrual period?"),
+        validators = [datetime_not_future], 
         help_text="",
         )
 

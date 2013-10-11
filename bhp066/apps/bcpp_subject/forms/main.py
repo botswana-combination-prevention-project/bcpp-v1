@@ -1,9 +1,7 @@
 from ..models import (SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
                                  HivHealthCareCosts, LabourMarketWages, Grant,
-                                 HivMedicalCare, HeartAttack, Cancer, Tubercolosis,
-                                 Sti, SubstanceUse,
-                                 HivResultDocumentation)
+                                 SubstanceUse)
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -55,43 +53,7 @@ class GrantForm (BaseSubjectModelForm):
         model = Grant
 
 
-class HivMedicalCareForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = HivMedicalCare
-
-
 class SubstanceUseForm (BaseSubjectModelForm):
 
     class Meta:
         model = SubstanceUse
-
-
-class HeartAttackForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = HeartAttack
-
-
-class CancerForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Cancer
-
-
-class TubercolosisForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Tubercolosis
-
-
-class StiForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Sti
-
-
-class HivResultDocumentationForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = HivResultDocumentation

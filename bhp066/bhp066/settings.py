@@ -3,12 +3,12 @@ from unipath import Path
 import os
 import platform
 import sys
-import logger
+from .logger import LOGGING
 
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-DIRNAME = os.path.dirname(__file__)
+DIRNAME = os.path.dirname(os.path.abspath(__file__))
 ADMINS = (
     ('erikvw', 'ew@2789@gmail.com'),
 )
@@ -22,8 +22,8 @@ TEMPLATE_DIRS = (
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-KEY_PATH = PROJECT_DIR.child('keys')
-KEY_PATH = '/Volumes/bhp066/keys/'
+#KEY_PATH = PROJECT_DIR.child('keys')
+KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
@@ -261,9 +261,6 @@ INSTALLED_APPS = (
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
 
-    'edc.survey.household',
-    'edc.survey.household_member',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
@@ -287,7 +284,7 @@ INSTALLED_APPS = (
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
     'edc.subject.actg',
-    'edc.subject.entry',
+    #'edc.subject.lab_aliquot_list',
     'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
@@ -353,8 +350,8 @@ INSTALLED_APPS = (
 # email settings
 EMAIL_HOST = '192.168.1.48'
 EMAIL_PORT = '25'
-EMAIL_HOST_USER = 'django'
-EMAIL_HOST_PASSWORD = 'paeH#ie9'
+EMAIL_HOST_USER = 'edcdev'
+EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
 
 SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
@@ -415,7 +412,7 @@ else:
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
-LOGGING = logger.LOGGING
+
 CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'year-one'
 
@@ -423,4 +420,4 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 
 #Middleman/node machine configurations
 #MIDDLE_MAN = True
-#MIDDLE_MAN_LIST = ['mpp78']
+MIDDLE_MAN_LIST = ['resourcemac-bhp066']

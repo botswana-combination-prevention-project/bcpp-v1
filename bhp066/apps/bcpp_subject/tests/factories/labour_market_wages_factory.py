@@ -1,8 +1,8 @@
 import factory
 from datetime import date, datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_subject.models import LabourMarketWages
-from subject_visit_factory import SubjectVisitFactory
+from ...models import LabourMarketWages
+from .subject_visit_factory import SubjectVisitFactory
 
 
 class LabourMarketWagesFactory(BaseUuidModelFactory):

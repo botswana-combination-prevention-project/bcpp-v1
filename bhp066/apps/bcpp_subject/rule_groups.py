@@ -125,6 +125,14 @@ class HivTestReviewRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+    
+    #This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
+    if_recorded_result_not_positive = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'ne', 'POS'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivresult',])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -141,6 +149,13 @@ class MedicalCareRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
+#    confirms therapy then requires pima form 
+    therapy_evidence = ScheduledDataRule(
+        logic=Logic(
+            predicate=('therapy_evidence', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -171,6 +186,16 @@ class SexualBehaviourRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['monthsthirdpartner'])
+    
+    #to say that if number of partners is not indicated, meaning that participant 
+    #does not want to answer, then all partner related forms should not be required
+    none_partners = ScheduledDataRule(
+        logic=Logic(
+            predicate=('last_year_partners', 'equals', None),
+            consequence='not_required',
+            alternative='new'),
+         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+
 
     class Meta:
         app_label = 'bcpp_subject'
