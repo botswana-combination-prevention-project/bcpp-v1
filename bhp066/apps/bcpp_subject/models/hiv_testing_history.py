@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
-from apps.bcpp.choices import YES_NO, YES_NO_DONT_ANSWER, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
+from edc.choices import YES_NO_DWTA, YES_NO
+
+from apps.bcpp.choices import WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 from ..choices import YES_NO_RECORD_REFUSAL
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -11,7 +13,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
     has_tested = models.CharField(
         verbose_name=_("Have you ever been tested for HIV before?"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         help_text="",
         )
 

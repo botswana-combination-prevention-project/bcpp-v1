@@ -1,9 +1,10 @@
 from django.test import TestCase
 from datetime import datetime
+from edc.subject.registration.models import RegisteredSubject
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.subject.consent.models import BaseConsentHistory
 from edc.map.classes import site_mappers
-from bhp_lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.subject.appointment.models import Configuration
 from apps.bcpp_household.models import Household, HouseholdStructure
