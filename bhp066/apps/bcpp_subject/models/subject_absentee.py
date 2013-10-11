@@ -37,61 +37,61 @@ class SubjectAbsentee(BaseMemberStatusModel):
         unique_together = ('registered_subject', 'survey',)
 
 
-class SubjectAbsenteeReport(BaseScheduledVisitModel):
-
-    subject_absentee_reason = models.ForeignKey(SubjectAbsenteeReason,
-        verbose_name="Reason for absence?"
-        )
-
-    subject_absentee_reason_other = OtherCharField()
-
-    subject_absentee_status = models.CharField(
-        verbose_name="Absentee status",
-        max_length=25,
-        choices=ABSENTEE_STATUS,
-        help_text=("Change the absentee status from 'absent' to 'no longer absent' "
-                   "if and when the subject is seen"),
-        default='absent',
-        editable=False
-        )
-
-    next_appt_datetime = models.DateTimeField(
-        verbose_name="Follow-up appointment date and time",
-        validators=[datetime_is_future, ],
-        help_text="The date and time to meet with the subject"
-        )
-
-    """ add list of 'times' as morning, afternoon, evening """
-
-    next_appt_datetime_source = models.CharField(
-        verbose_name="With whom did you discuss the appointment date and time?",
-        max_length=25,
-        choices=NEXT_APPOINTMENT_SOURCE,
-        help_text=''
-        )
-
-    contact_details = EncryptedCharField(
-        null=True,
-        blank=True,
-        editable=False,
-        help_text=('Information that can be used to contact someone, '
-                   'preferrably the subject, to confirm the appointment'),
-        )
-
-    comment = models.TextField(
-        verbose_name="Comments",
-        max_length=250,
-        blank=True,
-        help_text=('IMPORTANT: DO NOT include any names or other personally identifying '
-           'information in this comment')
-        )
-
-    history = AuditTrail()
-
-    def __unicode__(self):
-        return unicode(self.subject_visit)
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        verbose_name = "Subject Absentee Report"
-        verbose_name_plural = "Subject Absentee Report"
+# class SubjectAbsenteeReport(BaseScheduledVisitModel):
+# 
+#     subject_absentee_reason = models.ForeignKey(SubjectAbsenteeReason,
+#         verbose_name="Reason for absence?"
+#         )
+# 
+#     subject_absentee_reason_other = OtherCharField()
+# 
+#     subject_absentee_status = models.CharField(
+#         verbose_name="Absentee status",
+#         max_length=25,
+#         choices=ABSENTEE_STATUS,
+#         help_text=("Change the absentee status from 'absent' to 'no longer absent' "
+#                    "if and when the subject is seen"),
+#         default='absent',
+#         editable=False
+#         )
+# 
+#     next_appt_datetime = models.DateTimeField(
+#         verbose_name="Follow-up appointment date and time",
+#         validators=[datetime_is_future, ],
+#         help_text="The date and time to meet with the subject"
+#         )
+# 
+#     """ add list of 'times' as morning, afternoon, evening """
+# 
+#     next_appt_datetime_source = models.CharField(
+#         verbose_name="With whom did you discuss the appointment date and time?",
+#         max_length=25,
+#         choices=NEXT_APPOINTMENT_SOURCE,
+#         help_text=''
+#         )
+# 
+#     contact_details = EncryptedCharField(
+#         null=True,
+#         blank=True,
+#         editable=False,
+#         help_text=('Information that can be used to contact someone, '
+#                    'preferrably the subject, to confirm the appointment'),
+#         )
+# 
+#     comment = models.TextField(
+#         verbose_name="Comments",
+#         max_length=250,
+#         blank=True,
+#         help_text=('IMPORTANT: DO NOT include any names or other personally identifying '
+#            'information in this comment')
+#         )
+# 
+#     history = AuditTrail()
+# 
+#     def __unicode__(self):
+#         return unicode(self.subject_visit)
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         verbose_name = "Subject Absentee Report"
+#         verbose_name_plural = "Subject Absentee Report"

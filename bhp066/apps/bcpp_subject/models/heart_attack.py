@@ -13,9 +13,7 @@ class HeartAttack (BaseScheduledVisitModel):
     date_heart_attack = models.DateField(
         verbose_name="Date of the heart disease or stroke diagnosis:",
         help_text=_("Note: Record date of first day of hospital admission or date the diagnosis "
-                   "was documented in the OPD record. If report not available, then record "
-                   "participant's best knowledge. If participant does not want to answer,leave blank. "
-                   "If unable to estimate date, leave blank"),
+                   "was documented in the OPD record."),
         )
 
     dx_heart_attack = models.ManyToManyField(HeartDisease,

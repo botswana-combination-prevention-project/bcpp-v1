@@ -10,14 +10,14 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'length_residence',
-        'forteen_nights',
+        'permanent_resident',
         'intend_residency',
         'nights_away',
         'cattle_postlands',
         'cattle_postlands_other')
     radio_fields = {
         "length_residence": admin.VERTICAL,
-        "forteen_nights": admin.VERTICAL,
+        "permanent_resident": admin.VERTICAL,
         "intend_residency": admin.VERTICAL,
         "nights_away": admin.VERTICAL,
         "cattle_postlands": admin.VERTICAL}

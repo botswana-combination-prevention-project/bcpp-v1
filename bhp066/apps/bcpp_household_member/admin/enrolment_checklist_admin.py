@@ -8,38 +8,28 @@ from ..forms import EnrolmentChecklistForm
 class EnrolmentChecklistAdmin(BaseModelAdmin):
 
     form = EnrolmentChecklistForm
+
+    instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject. After entering the required items, click SAVE. THE DATA WILL BE EVALUATED BUT NOT SAVED.']
+
     fields = (
         'household_member',
-        "report_datetime",
+        'initials',
         'dob',
-        'is_dob_estimated',
         'gender',
-        'omang',
+        'has_identity',
         "citizen",
         "legal_marriage",
         "marriage_certificate",
         "marriage_certificate_no",
-        "community_resident")
-
-    list_display = (
-        'household_member',
-        'composition',
-        "report_datetime",
-        'eligible',
-        )
-
-    list_filter = [
-        'eligible',
-        "report_datetime",
-        ]
+        "part_time_resident")
 
     radio_fields = {
-        "is_dob_estimated": admin.VERTICAL,
+        'has_identity': admin.VERTICAL,
         "gender": admin.VERTICAL,
         "citizen": admin.VERTICAL,
         "legal_marriage": admin.VERTICAL,
         "marriage_certificate": admin.VERTICAL,
-        "community_resident": admin.VERTICAL, }
+        "part_time_resident": admin.VERTICAL, }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
