@@ -39,10 +39,10 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
     natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_member__household_structure__plot__plot_identifier')
+        return (Plot, 'household_member__household_structure__household__plot__plot_identifier')
 
     def dispatch_item_container_reference(self, using=None):
-        return (('bcpp_household', 'plot'), 'household_structure__plot')
+        return (('bcpp_household', 'plot'), 'household_structure__household__plot')
 
     def is_dispatchable(self):
         return True
