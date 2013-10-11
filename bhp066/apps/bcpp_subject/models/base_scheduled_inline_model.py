@@ -38,10 +38,10 @@ class BaseScheduledInlineModel(BaseConsentedUuidModel):
         return self.subject_visit
 
     def is_dispatched_item_within_container(self, using=None):
-        return (('bcpp_household', 'plot'), 'subject_visit__household_member__household_structure__plot')
+        return (('bcpp_household', 'plot'), 'subject_visit__household_member__household_structure__household__plot')
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'subject_visit__household_member__household_structure__plot__plot_identifier')
+        return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
     class Meta:
         abstract = True

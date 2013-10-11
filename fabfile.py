@@ -1,4 +1,6 @@
 import os
+import time
+import datetime
 
 from fabric.api import *
 from fabric.contrib.files import exists
@@ -9,7 +11,10 @@ from fabric.colors import green, red
 env.dbname = 'bhp066'
 env.mysql_root_passwd = 'cc3721b'
 
-env.hosts = ['192.168.1.228', '192.168.1.17', '192.168.1.117' ]
+host_ids = ['117']
+#host_ids = ['17', '106', '117', '224', '228', '143']
+host_ips = ['192.168.1.' + id for id in host_ids]
+env.hosts = host_ips
 env.user = 'django'
 env.password = 'django'
 
@@ -31,6 +36,16 @@ FAB_WORKON_HOME = '~/.virtualenvs_fab'
 
 GIT_PULL = 'git pull origin master'
 git_clone = 'git clone git@gitserver:{repo}.git'.format
+
+
+@task
+def deploy_alpha():
+    execute(create_db)
+    execute(dump_restore)
+    execute(transfer_pip_cache)
+    execute(prepare_code)
+    execute(install_dependencies)
+    execute(enable_keys)
 
 
 @task
@@ -73,7 +88,7 @@ def checkout_code():
 def clone_code():
     sudo('rm -rf %s/*' % SRC_DIR)
     mkdir(SRC_DIR)
-    sudo('chmod 777 %s' % SRC_DIR)
+    sudo('chmod 755 %s' % SRC_DIR)
     with cd(SRC_DIR):
         run(git_clone(repo='bhp066_project'))
     with cd(PROJECT_DIR):
@@ -108,7 +123,7 @@ def install_virtualenv():
     if not exists(VIRTUALENV_HOME):
         mkdir(VIRTUALENV_HOME)
     pip_install('virtualenvwrapper')
-    put('.bash_profile', '.bash_profile')
+    put('air_profile', '.bash_profile')
 
 
 @task
@@ -186,9 +201,26 @@ def uncomment_south():
         sudo('rm %s.py' % UNSOUTHED)
 
 
+def _timestamp():
+    return datetime.datetime.fromtimestamp(time.time).strftime('%Y%m%d_%H%M%S')
+
+
 @task
 def set_mysql_passwd():
     sudo('mysqladmin -u root password %s' % env.mysql_root_passwd)
+
+
+@task
+def dump_backup():
+    with cd(SRC_DIR):
+        sudo('mysqldump -u root -p%s %s > %s' % (env.mysql_root_passwd, env.dbname, 'backup.sql'))
+
+
+@task
+def dump_restore(restore_sql="restore_dump.sql"):
+    put('./fabric/sql/base_fabric.sql', '%s/restore_dump.sql' % SRC_DIR)
+    with cd(SRC_DIR):
+        sudo('mysql -u root -p%s %s < %s' % (env.mysql_root_passwd, env.dbname, restore_sql))
 
 
 @task
@@ -209,6 +241,7 @@ def mkdir(dirname, as_sudo=True):
         sudo(mkdir_cmd)
     else:
         run(mkdir_cmd)
+    sudo('chown -R Django:staff %s' % dirname)
 
 
 def pip_install(package_name, as_sudo=True):
@@ -217,6 +250,38 @@ def pip_install(package_name, as_sudo=True):
         sudo(install_cmd)
     else:
         run(install_cmd)
+
+
+@task
+def transfer_pip_cache():
+    sudo('rm -rf .pip')
+    put('./fabric/pip_cache.tar.gz', 'cache.tar.gz')
+    mkdir('.pip/cache')
+    sudo('tar -zxvf cache.tar.gz')
+    sudo('mv pip_cache/* .pip/cache')
+    sudo('rm -rf pip_cache cache.tar.gz')
+
+
+@task
+def enable_keys():
+    sudo('rm -f mpp_netbook.zip')
+    sudo('rm -f prep_netbook.zip')
+    sudo('rm -rf mpp_netbook')
+    sudo('rm -rf prep_netbook')
+    sudo('rm -rf __MACOSX')
+    mounted = exists('/Volumes/keys')
+    print(green("Are keys mounted?: %s" % mounted))
+    put('./fabric/keys/mpp_netbook.zip', '~/mpp_netbook.zip')
+    put('./fabric/keys/prep_netbook.zip', '~/prep_netbook.zip')
+    sudo('unzip mpp_netbook.zip')
+    sudo('unzip prep_netbook.zip')
+    sudo('chown -R Django:staff mpp_netbook')
+    sudo('chown -R Django:staff prep_netbook')
+    sudo('chmod -R 755 prep_netbook')
+    put('./fabric/keys/mount_keys.sh', '~/mount_keys.sh')
+    sudo('chmod 755 mount_keys.sh')
+    #sudo('./mount_keys.sh')
+    #mounted = exists('/Volumes/keys')
 
 
 @task

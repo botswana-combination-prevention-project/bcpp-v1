@@ -288,7 +288,7 @@ INSTALLED_APPS = (
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
     'edc.subject.actg',
-    #'edc.subject.lab_aliquot_list',
+    'edc.subject.lab_aliquot_list',
     'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
