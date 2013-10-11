@@ -10,7 +10,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
 
     """CS002"""
 
-    first_hiv_care_pos = models.DateField(
+    first_hiv_care_pos = models.DateTimeField(
         verbose_name=_("When did you first receive HIV-related medical care "
                        "for such things as a CD4 count (masole), IDCC/ PMTCT"
                        "registration, additional clinic-based counseling?"),
@@ -22,7 +22,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
                    "If participant is unable to estimate date, leave blank."),
         )
 
-    last_hiv_care_pos = models.DateField(
+    last_hiv_care_pos = models.DateTimeField(
         verbose_name=_("When did you last (most recently) receive HIV-related"
                       "medical care for such things as a CD4 count (masole), "
                       "IDCC/ PMTCT registration, additional clinic-based counseling?"),
