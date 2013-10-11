@@ -13,8 +13,7 @@
 	<th>Status</th>
 	<th>Community</th>
 	<th>Modified</th>    	    	
-	<th>Host</th> 
-	<th>Map</th> 	    	    		    	    	    	
+	<th>Host</th>	    	    		    	    	    	
 	</thead>	
     {% for household in search_result.object_list %}
         <!-- obj is a Household object -->
@@ -33,7 +32,7 @@
           {% endif %}
         </td>
 
-        <td><A href="">{{ household.plot.plot_identifier }}</A></td>
+        <td>{{ household.plot.plot_identifier }}</td>
         <td>{% if household|is_dispatched %}
                 <div class="warning">{{household.household_identifier}}</div>
             {% else %}
@@ -43,22 +42,7 @@
           <td>{{ household.get_status_display }}</td>
      	  <td>{{ household.community|encrypted}}</td>
       	  <td>{{ household.modified|default:household.created|date:"Y-m-d" }}</td>
-       	  <td>{{ household.user_modified }}</td>
-       	  <td>
-       	        {% if household.uploaded_map %}
-    				<a href="{{ MEDIA_URL }}{{ household.uploaded_map }}"/>view saved map</a>
-                {% else %}
-                    {% if household.gps_lon|default:household.gps_target_lon and household.gps_lat|default:household.gps_target_lat %}
-                	  <form action="{% url 'item_map_url' mapper_name=household.community identifier=household.household_identifier lon=household.gps_lon|default:household.gps_target_lon lat=household.gps_lat|default:household.gps_target_lat %}" method="post">
-					   	{% csrf_token %}
-						<p><input type="submit" value="view google map"></p>
-					  </form>
-					{% else %}
-					   <span style="background-color:red;color:white;"> missing lat/lon!</span>
-					{% endif %}	
-				{% endif %}
-       	  
-       	  </td>   	  
+       	  <td>{{ household.user_modified }}</td>   	  
         </tr>
 
 	{% endfor %}
