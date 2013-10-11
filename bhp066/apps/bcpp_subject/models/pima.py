@@ -20,6 +20,8 @@ class Pima (BaseScheduledVisitModel):
     pima_today_other = models.CharField(
         verbose_name=_("If no PIMA CD4 today, please explain why"),
         max_length=50,
+        null=True,
+        blank=True,
         )
 
     pima_id = models.CharField(

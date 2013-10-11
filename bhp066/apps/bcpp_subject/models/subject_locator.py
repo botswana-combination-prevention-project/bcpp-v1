@@ -79,7 +79,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
     objects = ScheduledModelManager()
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'subject_visit__household_member__household_structure__plot__plot_identifier')
+        return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
