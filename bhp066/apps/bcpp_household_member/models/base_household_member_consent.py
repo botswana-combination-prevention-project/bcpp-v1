@@ -60,7 +60,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
     def post_save_update_hm_status(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
-        # no longer updating member status to consented, see participation view 
+        # no longer updating member status to consented, see participation view
 #         self.household_member.member_status = 'CONSENTED'
 #         self.household_member.save(using=using)
         # since member is now consented, registered_subject gets a subject identifier, if not already set
@@ -72,7 +72,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
             raise TypeError('Subject identifier expected to be same as registered_subject subject_identifier. Got {0} != {1}'.format(self.subject_identifier, self.registered_subject.subject_identifier))
 
     def dispatch_container_lookup(self, using=None):
-        return (('bcpp_household', 'Plot'), 'household_member__household_structure__plot__plot_identifier')
+        return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def deserialize_get_missing_fk(self, attrname):
         if attrname == 'household_member':
