@@ -215,9 +215,21 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def post_save_create_household(self, instance, created):
         """Creates one household for this plot but only if none exist."""
-        if created:
-            Household = models.get_model('bcpp_household', 'Household')
-            if Household.objects.filter(plot__pk=instance.pk).count() == 0:
+        #if created:
+        Household = models.get_model('bcpp_household', 'Household')
+        if Household.objects.filter(plot__pk=instance.pk).count() == 0:
+            Household.objects.create(**{'plot': instance,
+                                        'gps_target_lat': instance.gps_target_lat,
+                                        'gps_target_lon': instance.gps_target_lon,
+                                        'gps_lat': instance.gps_lat,
+                                        'gps_lon': instance.gps_lon,
+                                        'gps_degrees_e': instance.gps_degrees_e,
+                                        'gps_degrees_s': instance.gps_degrees_s,
+                                        'gps_minutes_e': instance.gps_minutes_e,
+                                        'gps_minutes_s': instance.gps_minutes_s,
+                                        })
+        elif Household.objects.filter(plot__pk=instance.pk).count() > 0:
+            while Household.objects.filter(plot__pk=instance.pk).count() < instance.num_household:
                 Household.objects.create(**{'plot': instance,
                                             'gps_target_lat': instance.gps_target_lat,
                                             'gps_target_lon': instance.gps_target_lon,
@@ -228,18 +240,18 @@ class Plot(BaseDispatchSyncUuidModel):
                                             'gps_minutes_e': instance.gps_minutes_e,
                                             'gps_minutes_s': instance.gps_minutes_s,
                                             })
-            else:
-                # update all HH with new gps data
-                for household in Household.objects.filter(plot__pk=instance.pk):
-                    household.gps_target_lat = instance.gps_target_lat
-                    household.gps_target_lon = instance.gps_target_lon
-                    household.gps_lat = instance.gps_lat
-                    household.gps_lon = instance.gps_lon
-                    household.gps_degrees_e = instance.gps_degrees_e
-                    household.gps_degrees_s = instance.gps_degrees_s
-                    household.gps_minutes_e = instance.gps_minutes_e
-                    household.gps_minutes_s = instance.gps_minutes_s
-                    household.save()
+        else:
+            # update all HH with new gps data
+            for household in Household.objects.filter(plot__pk=instance.pk):
+                household.gps_target_lat = instance.gps_target_lat
+                household.gps_target_lon = instance.gps_target_lon
+                household.gps_lat = instance.gps_lat
+                household.gps_lon = instance.gps_lon
+                household.gps_degrees_e = instance.gps_degrees_e
+                household.gps_degrees_s = instance.gps_degrees_s
+                household.gps_minutes_e = instance.gps_minutes_e
+                household.gps_minutes_s = instance.gps_minutes_s
+                household.save()
 
     def get_action(self):
         retval = 'unconfirmed'

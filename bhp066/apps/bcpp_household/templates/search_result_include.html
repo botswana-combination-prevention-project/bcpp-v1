@@ -42,7 +42,8 @@
           <td>{{ household.get_status_display }}</td>
      	  <td>{{ household.community|encrypted}}</td>
       	  <td>{{ household.modified|default:household.created|date:"Y-m-d" }}</td>
-       	  <td>{{ household.user_modified }}</td>   	  
+       	  <td>{{ household.user_modified }}</td> 
+       	     	  
         </tr>
 
 	{% endfor %}
