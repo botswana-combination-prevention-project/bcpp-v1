@@ -9,52 +9,52 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Deleting field 'Pima.is_drawn_other'
-        db.delete_column(u'bcpp_subject_pima', 'is_drawn_other')
- 
-        # Deleting field 'Pima.is_drawn'
-        db.delete_column(u'bcpp_subject_pima', 'is_drawn')
- 
-        # Deleting field 'Pima.draw_time'
-        db.delete_column(u'bcpp_subject_pima', 'draw_time')
- 
-        # Adding field 'Pima.pima_today'
-        db.add_column(u'bcpp_subject_pima', 'pima_today',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
-                      keep_default=False)
- 
-        # Adding field 'Pima.pima_today_other'
-        db.add_column(u'bcpp_subject_pima', 'pima_today_other',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=50),
-                      keep_default=False)
- 
- 
-        # Changing field 'Pima.cd4_value'
-        db.alter_column(u'bcpp_subject_pima', 'cd4_value', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2))
-
-#         # Changing field 'Pima.pima_id'
-#         db.alter_column(u'bcpp_subject_pima', 'pima_id', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True))
-        # Deleting field 'PimaAudit.is_drawn_other'
-        db.delete_column(u'bcpp_subject_pima_audit', 'is_drawn_other')
-
-        # Deleting field 'PimaAudit.is_drawn'
-        db.delete_column(u'bcpp_subject_pima_audit', 'is_drawn')
-
-        # Deleting field 'PimaAudit.draw_time'
-        db.delete_column(u'bcpp_subject_pima_audit', 'draw_time')
- 
-        # Adding field 'PimaAudit.pima_today'
-        db.add_column(u'bcpp_subject_pima_audit', 'pima_today',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
-                      keep_default=False)
- 
-        # Adding field 'PimaAudit.pima_today_other'
-        db.add_column(u'bcpp_subject_pima_audit', 'pima_today_other',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=50),
-                      keep_default=False)
- 
-
-        # Changing field 'PimaAudit.cd4_value'
-        db.alter_column(u'bcpp_subject_pima_audit', 'cd4_value', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2))
+#         db.delete_column(u'bcpp_subject_pima', 'is_drawn_other')
+#  
+#         # Deleting field 'Pima.is_drawn'
+#         db.delete_column(u'bcpp_subject_pima', 'is_drawn')
+#  
+#         # Deleting field 'Pima.draw_time'
+#         db.delete_column(u'bcpp_subject_pima', 'draw_time')
+#  
+#         # Adding field 'Pima.pima_today'
+#         db.add_column(u'bcpp_subject_pima', 'pima_today',
+#                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
+#                       keep_default=False)
+#  
+#         # Adding field 'Pima.pima_today_other'
+#         db.add_column(u'bcpp_subject_pima', 'pima_today_other',
+#                       self.gf('django.db.models.fields.CharField')(default=0, max_length=50),
+#                       keep_default=False)
+#  
+#  
+#         # Changing field 'Pima.cd4_value'
+#         db.alter_column(u'bcpp_subject_pima', 'cd4_value', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2))
+# 
+# #         # Changing field 'Pima.pima_id'
+# #         db.alter_column(u'bcpp_subject_pima', 'pima_id', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True))
+#         # Deleting field 'PimaAudit.is_drawn_other'
+#         db.delete_column(u'bcpp_subject_pima_audit', 'is_drawn_other')
+# 
+#         # Deleting field 'PimaAudit.is_drawn'
+#         db.delete_column(u'bcpp_subject_pima_audit', 'is_drawn')
+# 
+#         # Deleting field 'PimaAudit.draw_time'
+#         db.delete_column(u'bcpp_subject_pima_audit', 'draw_time')
+#  
+#         # Adding field 'PimaAudit.pima_today'
+#         db.add_column(u'bcpp_subject_pima_audit', 'pima_today',
+#                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
+#                       keep_default=False)
+#  
+#         # Adding field 'PimaAudit.pima_today_other'
+#         db.add_column(u'bcpp_subject_pima_audit', 'pima_today_other',
+#                       self.gf('django.db.models.fields.CharField')(default=0, max_length=50),
+#                       keep_default=False)
+#  
+# 
+#         # Changing field 'PimaAudit.cd4_value'
+#         db.alter_column(u'bcpp_subject_pima_audit', 'cd4_value', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2))
 
         # Changing field 'PimaAudit.pima_id'
         db.alter_column(u'bcpp_subject_pima_audit', 'pima_id', self.gf('django.db.models.fields.IntegerField')(max_length=2, null=True))
