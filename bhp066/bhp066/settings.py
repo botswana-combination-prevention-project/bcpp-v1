@@ -24,6 +24,7 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
 KEY_PATH = PROJECT_DIR.child('keys')
+#KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/bhp066/keys'
 
@@ -287,7 +288,7 @@ INSTALLED_APPS = (
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
     'edc.subject.actg',
-    'edc.subject.lab_aliquot_list',
+    #'edc.subject.lab_aliquot_list',
     'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
@@ -386,7 +387,7 @@ LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 SESSION_COOKIE_AGE = 3000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-DEVICE_ID = '99'
+DEVICE_ID = '12'
 SUBJECT_TYPES = ['subject']
 MAX_SUBJECTS = {'subject': 3000}
 APPOINTMENTS_PER_DAY_MAX = 20
@@ -400,7 +401,8 @@ DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bc
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
-GPS_FILE_PATH = '/Volumes/GARMIN/GPX/Current.gpx'
+GPS_FILE_PATH = '/Volumes/GARMIN/GPX/temp.gpx'
+GPX_FNAME = PROJECT_DIR.child('edc', 'map', 'static', 'gpx', 'temp.gpx') 
 VERIFY_GPS = False
 FIELD_MAX_LENGTH = 'migration'
 
@@ -416,7 +418,7 @@ else:
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
 
-CURRENT_COMMUNITY = 'mochudi'
+CURRENT_COMMUNITY = 'gaborone'
 CURRENT_SURVEY = 'year-one'
 
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
