@@ -44,7 +44,7 @@
         {% endif %}
         </td>
         <td>{{ plot.get_status_display }}</td>
-        <td>{{ plot.num_household }}</td>
+        <td><A href="{% url 'section_url' section_name='household' %}?plot={{ plot.plot_identifier }}">{{ plot.num_household }}</A></td>
         <td>{{ plot.eligible_members }}</td>
       <td>{{ plot.community|encrypted}}</td>
         <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>

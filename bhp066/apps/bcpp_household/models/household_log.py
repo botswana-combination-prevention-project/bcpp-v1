@@ -1,8 +1,9 @@
 from django.db import models
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
+from apps.bcpp_survey.validators import date_in_survey
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 from .household_structure import HouseholdStructure
@@ -41,7 +42,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
     household_log = models.ForeignKey(HouseholdLog)
 
     report_datetime = models.DateTimeField("Report date",
-        validators=[datetime_not_before_study_start, datetime_not_future],
+        validators=[datetime_not_before_study_start, datetime_not_future, date_in_survey],
         )
 
     status = models.CharField(

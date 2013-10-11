@@ -4,8 +4,8 @@ from django.test import TestCase
 from django.db.models import get_model
 from django.utils import translation
 from edc.base.model.models import BaseModel
-from bcpp_subject import choices
-from bcpp_subject import models
+from .. import choices
+from .. import models
 
 
 class ChoiceTests(TestCase):

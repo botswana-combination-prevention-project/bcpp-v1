@@ -1,7 +1,7 @@
 import factory
 from datetime import date, datetime, timedelta
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_subject.models import SubjectUndecidedEntry
+from ...models import SubjectUndecidedEntry
 from apps.bcpp_subject.tests.factories import SubjectUndecidedFactory
 
 
