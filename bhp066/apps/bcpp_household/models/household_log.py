@@ -22,7 +22,7 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         return unicode(self.household_structure)
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_structure__plot__plot_identifier')
+        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     def natural_key(self):
         return self.household_structure.natural_key()
