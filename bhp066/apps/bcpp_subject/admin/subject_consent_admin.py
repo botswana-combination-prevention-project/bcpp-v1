@@ -72,7 +72,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             "is_literate": admin.VERTICAL}
 
         self.search_fields.append('household_member__household_structure__household__household_identifier')
-        self.search_fields.append('household_member__household_structure__plot__plot_identifier')
+        self.search_fields.append('household_member__household_structure__household__plot__plot_identifier')
         self.radio_fields.update({"is_minor": admin.VERTICAL})
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
