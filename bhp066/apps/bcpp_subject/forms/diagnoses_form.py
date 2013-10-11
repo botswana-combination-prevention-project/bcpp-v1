@@ -35,7 +35,7 @@ class CancerForm (BaseSubjectModelForm):
 class TubercolosisForm (BaseSubjectModelForm):
     
     def clean(self):
-        cleaned_data = super(CancerForm, self).clean()
+        cleaned_data = super(TubercolosisForm, self).clean()
         # to ensure that ctb diagnosis date is not greater than today
         if cleaned_data.get('date_tb'):
             if cleaned_data.get('date_tb') > date.today():
@@ -49,7 +49,7 @@ class TubercolosisForm (BaseSubjectModelForm):
 class StiForm (BaseSubjectModelForm):
     
     def clean(self):
-        cleaned_data = super(CancerForm, self).clean()
+        cleaned_data = super(StiForm, self).clean()
         # to ensure that STI diagnosis date is not greater than today
         if cleaned_data.get('sti_date'):
             if cleaned_data.get('sti_date') > date.today():
