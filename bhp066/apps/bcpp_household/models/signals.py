@@ -1,20 +1,22 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .household import Plot, Household
+from .household import Household
+from .plot import Plot
 from .household_structure import HouseholdStructure
 
 
 @receiver(pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
 def check_for_survey_on_pre_save(sender, instance, **kwargs):
-    if isinstance(instance, (Plot, Household)):
+    if isinstance(instance, (Plot)):
         instance.check_for_survey_on_pre_save(**kwargs)
 
 
-@receiver(post_save, weak=False, dispatch_uid="create_household_structure_on_post_save")
-def create_household_structure_on_post_save(sender, instance, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid="post_save_on_household")
+def post_save_on_household(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, Household):
-            instance.create_household_structure_on_post_save(**kwargs)
+            instance.post_save_update_identifier(instance, created)
+            instance.post_save_create_household_structure(instance, created)
 
 
 @receiver(post_save, weak=False, dispatch_uid="household_structure_on_post_save")
@@ -29,4 +31,4 @@ def household_structure_on_post_save(sender, instance, **kwargs):
 def create_household_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, Plot):
-            instance.post_save_create_household(created)
+            instance.post_save_create_household(instance, created)

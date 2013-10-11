@@ -33,7 +33,7 @@
           {% endif %}
         </td>
 
-        <td>{{ household.plot.plot_identifier }}</td>
+        <td><A href="">{{ household.plot.plot_identifier }}</A></td>
         <td>{% if household|is_dispatched %}
                 <div class="warning">{{household.household_identifier}}</div>
             {% else %}

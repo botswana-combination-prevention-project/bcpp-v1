@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from apps.bcpp.choices import YES_NO_DONT_ANSWER, PREGARV_CHOICE, YES_NO_UNSURE
+
+from edc.choices import YES_NO_DWTA, YES_NO_UNSURE
+
+from apps.bcpp.choices import PREGARV_CHOICE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -18,7 +21,7 @@ class BasePregnancy (BaseScheduledVisitModel):
     anc_last_pregnancy = models.CharField(
         verbose_name=_("During your last pregnancy (not current pregnancy) did you go for antenatal care?"),
         max_length=25,
-        choices=YES_NO_DONT_ANSWER,
+        choices=YES_NO_DWTA,
         null=True,
         blank=True,
         help_text="",

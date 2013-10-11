@@ -1,7 +1,7 @@
 import factory
 from datetime import date, datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_subject.models import HeartAttack
+from ...models import HeartAttack
 
 
 class HeartAttackFactory(BaseUuidModelFactory):

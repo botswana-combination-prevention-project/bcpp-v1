@@ -1,9 +1,9 @@
 import factory
 from datetime import date, datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_subject.models import SubjectLocator
+from ...models import SubjectLocator
 from subject_visit_factory import SubjectVisitFactory
-from bhp_registration.tests.factories import RegisteredSubjectFactory
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
 
 class SubjectLocatorFactory(BaseUuidModelFactory):

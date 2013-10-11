@@ -8,7 +8,7 @@ from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from apps.bcpp_subject.models import SubjectConsent
+from ..models import SubjectConsent
 
 
 class ErikTests(TestCase):

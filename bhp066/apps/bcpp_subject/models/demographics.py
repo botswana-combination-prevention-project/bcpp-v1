@@ -21,7 +21,7 @@ class Demographics (BaseScheduledVisitModel):
         verbose_name=_("What is your ethnic group?"),
         help_text="Ask for the original ethnic group",
         )
-    other = OtherCharField()
+    ethnic_other = OtherCharField()
 
     marital_status = models.CharField(
         verbose_name=_("What is your current marital status?"),
