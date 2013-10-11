@@ -40,7 +40,6 @@
         {% if not survey %}
         <div id="search_tile">
             <b>Household:&nbsp;</b>{{ household.household_identifier }}
-            <b>Ward:</b> {{ household.ward|encrypted|default:"---" }}
             {% if household.cso_number %}<b>CSO:</b> {{ household.cso_number|encrypted|default:"---"}}{% endif %}
         </div>
             <table>

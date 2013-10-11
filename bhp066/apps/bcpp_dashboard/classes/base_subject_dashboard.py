@@ -73,7 +73,7 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
         return self._household_member
 
     def set_household(self):
-        self._household = self.get_household_member().household
+        self._household = self.get_household_structure().household
 
     def get_household(self):
         if not self._household:
