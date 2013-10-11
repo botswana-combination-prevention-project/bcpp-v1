@@ -23,7 +23,12 @@ TEMPLATE_DIRS = (
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 #KEY_PATH = PROJECT_DIR.child('keys')
+<<<<<<< HEAD
 KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+=======
+#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+KEY_PATH = '/Volumes/bhp066/keys'
+>>>>>>> 70cdf9d02d0c6d5ec54dc69ea6377ebc639d8a9b
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS

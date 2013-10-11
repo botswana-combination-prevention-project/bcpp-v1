@@ -2,7 +2,8 @@ from edc.subject.rule_groups.classes import RuleGroup, rule_groups, ScheduledDat
 from edc.subject.registration.models import RegisteredSubject
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
-                    HivTestReview, ReproductiveHealth, MedicalDiagnoses)
+                    HivTestReview, ReproductiveHealth, MedicalDiagnoses,
+                    HivResult)
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -162,6 +163,22 @@ class MedicalCareRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
 rule_groups.register(MedicalCareRuleGroup)
+
+
+class TodaysHivRuleGroup(RuleGroup):
+#    confirms pima required only when HIV result from today is positive
+    hiv_result = ScheduledDataRule(
+        logic=Logic(
+            predicate=('hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivResult
+rule_groups.register(TodaysHivRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
