@@ -3,7 +3,7 @@ from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sect
 from edc.map.classes import site_mappers
 from apps.bcpp_survey.forms import SurveyForm
 from ..forms.current_gps_form import CurrentGpsForm
-from ..models import Household
+from ..models import Household, Plot
 from ..forms import CommunityForm
 
 
@@ -41,6 +41,8 @@ class SectionHouseholdView(BaseSectionForDashboardView):
 
     def get_search_result(self, request, **kwargs):
         search_result = None
+        community = settings.CURRENT_COMMUNITY
+        mapper = site_mappers.get(community)()
         if request.method == 'POST':
             gps_form = CurrentGpsForm(request.POST)
             if gps_form.is_valid():
@@ -49,8 +51,6 @@ class SectionHouseholdView(BaseSectionForDashboardView):
                 minutes_s = float('{0}'.format(gps_form.cleaned_data.get('minutes_s')))
                 minutes_e = float('{0}'.format(gps_form.cleaned_data.get('minutes_e')))
                 radius = gps_form.cleaned_data.get('radius') / 1000
-                community = settings.CURRENT_COMMUNITY
-                mapper = site_mappers.get(community)()
                 lat = mapper.get_gps_lat(degrees_s, minutes_s)
                 lon = mapper.get_gps_lon(degrees_e, minutes_e)
                 search_result = []
@@ -74,13 +74,21 @@ class SectionHouseholdView(BaseSectionForDashboardView):
             search_result = []
             lst = []
             dct = {}
-            dist = 1
+            plot = Plot.objects.filter(plot_identifier=request.GET.get('plot'))
+            lat = plot[0].gps_target_lat
+            lon = plot[0].gps_target_lon
+            radius = 1
             for household in Household.objects.filter(plot__plot_identifier=request.GET.get('plot')):
-                dct.update({dist: household})
-                lst.append(dist)
-                dist +=1
+                dist = mapper.gps_distance_between_points(lat, lon, household.gps_target_lat, household.gps_target_lon, radius)
+                if dist <= radius:
+                    household.relative_distance = dist
+                    while dist in lst:
+                        dist += .0001
+                    lst.append(dist)
+                    dct.update({dist: household})
             lst.sort()
-            search_result.append(lst)
+            for dist in lst:
+                search_result.append(dct[dist])
             request.session['search_result'] = search_result
         else:
             if request.GET.get('page'):

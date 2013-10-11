@@ -2,3 +2,4 @@ from .otse_plot_mapper import OtsePlotMapper
 from .digawana_plot_mapper import DigawanaPlotMapper
 from .molapowabojang_plot_mapper import MolapowabojangPlotMapper
 from .ranaka_plot_mapper import RanakaPlotMapper
+from .gaborone_plot_mapper import GaboronePlotMapper
