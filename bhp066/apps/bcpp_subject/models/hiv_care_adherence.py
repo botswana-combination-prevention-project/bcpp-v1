@@ -15,7 +15,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     Note to Interviewer: This section is only to be completed by HIV-positive"
     " participants who knew that they were HIV-positive before today."""
 
-    first_positive = models.DateField(
+    first_positive = models.DateTimeField(
         verbose_name=_("When was your first positive HIV test result?"),
         validators=[datetime_not_future],
         null=True,
@@ -74,7 +74,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         )
     why_no_arv_other = OtherCharField()
 
-    first_arv = models.DateField(
+    first_arv = models.DateTimeField(
         verbose_name=_("When did you first start taking antiretroviral therapy (ARVs)?"),
         validators=[datetime_not_future],
         null=True,
@@ -89,7 +89,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="",
         )
-    arv_stop_date = models.DateField(
+    arv_stop_date = models.DateTimeField(
         verbose_name=_("When did you stop taking ARV\'s?"),
         validators=[datetime_not_future],
         null=True,
