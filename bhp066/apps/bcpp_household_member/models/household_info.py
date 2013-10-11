@@ -140,7 +140,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     natural_key.dependencies = ['bcpp_household.household_structure', 'bcpp_household.household_member', 'registration.registered_subject']
 
     def dispatch_container_lookup(self, using=None):
-        return (get_model('bcpp_household', 'Plot'), 'household_structure__plot__plot_identifier')
+        return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject
