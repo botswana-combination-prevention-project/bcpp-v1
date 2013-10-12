@@ -24,6 +24,7 @@ class SubjectConsentForm(BaseSubjectConsentForm):
                 obj = StudySpecific.objects.all()[0]
             except IndexError:
                 raise TypeError("Please add your edc.core.bhp_variables site specifics")
+            # TODO: does this work?
             if cleaned_data.get('consent_datetime', None):
                 consent_datetime = cleaned_data.get('consent_datetime').date()
             else:
