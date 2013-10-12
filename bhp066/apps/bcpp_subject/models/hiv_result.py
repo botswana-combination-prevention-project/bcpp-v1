@@ -20,7 +20,7 @@ class HivResult (BaseScheduledVisitModel):
         verbose_name=_("Today\'s HIV test result date and time"),
         null=True,
         blank=True,
-        validators = [datetime_not_future], 
+        validators=[datetime_not_future],
         )
 
     why_not_tested = models.CharField(

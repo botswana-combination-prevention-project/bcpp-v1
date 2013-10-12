@@ -1,7 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import date_not_future
+
 from apps.bcpp.choices import DXTB_CHOICE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -11,6 +15,7 @@ class Tubercolosis (BaseScheduledVisitModel):
 
     date_tb = models.DateField(
         verbose_name=_("Date of the diagnosis of tuberculosis:"),
+        validators=[date_not_future],
         help_text="",
         )
 
