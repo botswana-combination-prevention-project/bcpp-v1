@@ -1,6 +1,9 @@
 from django.db import models
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import date_not_future
+
 from apps.bcpp.choices import DXCANCER_CHOICE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -10,6 +13,7 @@ class Cancer (BaseScheduledVisitModel):
 
     date_cancer = models.DateField(
         verbose_name="Date of the diagnosis of cancer:",
+        validators=[date_not_future],
         help_text="",
         )
 

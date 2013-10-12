@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import date_not_future
+
 from ..choices import STI_DX
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -11,6 +14,7 @@ class Sti (BaseScheduledVisitModel):
 
     sti_date = models.DateField(
         verbose_name=_("Date of the diagnosis of the STI (Sexually transmitted infection):"),
+        validators=[date_not_future],
         help_text="",
         )
 
