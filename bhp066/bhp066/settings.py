@@ -23,11 +23,11 @@ TEMPLATE_DIRS = (
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
-KEY_PATH = PROJECT_DIR.child('keys')
+#KEY_PATH = PROJECT_DIR.child('keys')
 
 #KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/bhp066/keys'
+KEY_PATH = '/Volumes/bhp066/keys'
 
 MAP_DIR = STATIC_ROOT.child('img')
 
@@ -289,6 +289,7 @@ INSTALLED_APPS = (
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
     'edc.subject.actg',
+    'edc.subject.entry',
     'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
