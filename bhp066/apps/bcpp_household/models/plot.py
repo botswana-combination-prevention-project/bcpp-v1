@@ -1,18 +1,23 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
 from django.utils.translation import ugettext as _
 from django.conf import settings
+
 from edc.audit.audit_trail import AuditTrail
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.device.device.classes import Device
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.core.identifier.exceptions import IdentifierError
+from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
-from edc.core.identifier.exceptions import IdentifierError
+
 from ..managers import PlotManager
 from ..classes import PlotIdentifier
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
+from .household_identifier_history import HouseholdIdentifierHistory
 
 
 def is_valid_community(self, value):
@@ -33,15 +38,14 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     eligible_members = models.IntegerField(
-        verbose_name="Number of Eligible member",
+        verbose_name="Approximate number of age eligible members",
         blank=True,
         null=True,
-        help_text=("Provide the number of people who live in the household who are eligible."),)
+        help_text=("Provide an approximation of the number of people who live in this residence who are age eligible."),)
 
     description = EncryptedTextField(
-        verbose_name="House household description",
+        verbose_name="Description of plot/residence",
         max_length=250,
-        help_text=("You may provide a comment here about the house description, e.g color of the house."),
         blank=True,
         null=True,
         )
@@ -55,20 +59,25 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     num_household = models.IntegerField(
-        verbose_name="Number of Households in a plot.",
+        verbose_name="Number of Households in this plot.",
         blank=True,
         null=True,
-        help_text=("Provide the number of Households in a plot.."),)
+        validators=[MaxValueValidator(9)],
+        help_text=("Provide the number of households in this plot."))
 
-    comment = EncryptedTextField(
-        max_length=250,
-        help_text=("You may provide a comment here or leave BLANK."),
+    time_of_week = models.CharField(
+        verbose_name='Time of week when most of the eligible members will be available',
+        max_length=25,
+        choices=TIME_OF_WEEK,
         blank=True,
         null=True,
         )
 
-    availability_datetime = models.DateTimeField(
-        verbose_name='General Date/Time when most of the household members will be available',
+    time_of_day = models.CharField(
+        verbose_name='Time of day when most of the eligible members will be available',
+        max_length=25,
+        choices=TIME_OF_DAY,
+        blank=True,
         null=True,
         )
 
@@ -149,6 +158,7 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
         validators=[is_valid_community, ],
+        editable=False,
         )
 
     section = models.CharField(
@@ -186,6 +196,8 @@ class Plot(BaseDispatchSyncUuidModel):
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
+        if self.num_household > 9:
+            raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
@@ -199,59 +211,81 @@ class Plot(BaseDispatchSyncUuidModel):
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
+        if self.id:
+            self.num_household = self.create_households(self)
+            if self.num_household > 0:
+                self.status = 'occupied'  # TODO: or maybe cancel the save
+        if (self.num_household == 0 and self.status == 'occupied') or (self.num_household and not self.status == 'occupied'):
+            raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.num_household))
         super(Plot, self).save(*args, **kwargs)
 
-    def get_next_household_sequence(self):
-        """Returns the next sequence number for the next household identifier to use in this plot.
-
-        Default is 1"""
+    def create_household(self, instance):
         Household = models.get_model('bcpp_household', 'Household')
-        sequence = 1
-        for household in Household.objects.filter(plot=self):
-            sequence += 1
-            if sequence >= 10:
-                raise IdentifierError('Maximum number of Households for on plot is 9.')
-        return sequence
+        Household.objects.create(**{
+           'plot': instance,
+            'gps_target_lat': instance.gps_target_lat,
+            'gps_target_lon': instance.gps_target_lon,
+            'gps_lat': instance.gps_lat,
+            'gps_lon': instance.gps_lon,
+            'gps_degrees_e': instance.gps_degrees_e,
+            'gps_degrees_s': instance.gps_degrees_s,
+            'gps_minutes_e': instance.gps_minutes_e,
+            'gps_minutes_s': instance.gps_minutes_s,
+            })
 
-    def post_save_create_household(self, instance, created):
-        """Creates one household for this plot but only if none exist."""
-        #if created:
+    def delete_unused_households(self, instance):
+        """Deletes households and HouseholdStructure if member_count==0 and no log entry."""
         Household = models.get_model('bcpp_household', 'Household')
-        if Household.objects.filter(plot__pk=instance.pk).count() == 0:
-            Household.objects.create(**{'plot': instance,
-                                        'gps_target_lat': instance.gps_target_lat,
-                                        'gps_target_lon': instance.gps_target_lon,
-                                        'gps_lat': instance.gps_lat,
-                                        'gps_lon': instance.gps_lon,
-                                        'gps_degrees_e': instance.gps_degrees_e,
-                                        'gps_degrees_s': instance.gps_degrees_s,
-                                        'gps_minutes_e': instance.gps_minutes_e,
-                                        'gps_minutes_s': instance.gps_minutes_s,
-                                        })
-        elif Household.objects.filter(plot__pk=instance.pk).count() > 0:
+        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
+        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, member_count=0).order_by('-created'):
+            if Household.objects.filter().count() > instance.num_household:
+                try:
+                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure):
+                        HouseholdLog.objects.filter(household_structure=household_structure).delete()
+                        household_pk = unicode(household_structure.household.pk)
+                        household_structure.delete()
+                        for household in Household.objects.filter(pk=household_pk):
+                            HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier).delete
+                            household.delete()
+                except IntegrityError:
+                    pass
+
+    def create_households(self, instance):
+        """Creates or deletes households to try to equal the number of households reported.
+
+        This gets called by a signal on add and on the save method on change.
+
+            * If number is greater than actual household instances, households are created.
+            * If number is less than actual household instances, households are deleted as long as
+              there are no household members and the household log does not have entries."""
+        Household = models.get_model('bcpp_household', 'Household')
+        # check that tuple has not changed and has "occupied"
+        if instance.status not in [item[0] for item in PLOT_STATUS]:
+            raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
+        if instance.status == 'occupied' and not Household.objects.filter(plot__pk=instance.pk).count() == instance.num_household:
             while Household.objects.filter(plot__pk=instance.pk).count() < instance.num_household:
-                Household.objects.create(**{'plot': instance,
-                                            'gps_target_lat': instance.gps_target_lat,
-                                            'gps_target_lon': instance.gps_target_lon,
-                                            'gps_lat': instance.gps_lat,
-                                            'gps_lon': instance.gps_lon,
-                                            'gps_degrees_e': instance.gps_degrees_e,
-                                            'gps_degrees_s': instance.gps_degrees_s,
-                                            'gps_minutes_e': instance.gps_minutes_e,
-                                            'gps_minutes_s': instance.gps_minutes_s,
-                                            })
+                instance.create_household(instance)
+            number_of_households = Household.objects.filter(plot__pk=instance.pk).count()
+            if number_of_households > instance.num_household:
+                instance.delete_unused_households(instance)
         else:
-            # update all HH with new gps data
-            for household in Household.objects.filter(plot__pk=instance.pk):
-                household.gps_target_lat = instance.gps_target_lat
-                household.gps_target_lon = instance.gps_target_lon
-                household.gps_lat = instance.gps_lat
-                household.gps_lon = instance.gps_lon
-                household.gps_degrees_e = instance.gps_degrees_e
-                household.gps_degrees_s = instance.gps_degrees_s
-                household.gps_minutes_e = instance.gps_minutes_e
-                household.gps_minutes_s = instance.gps_minutes_s
-                household.save()
+            self.delete_unused_households(instance)
+        return Household.objects.filter(plot__pk=instance.pk).count()
+
+#         else:
+#             # update all HH with new gps data
+#             for household in Household.objects.filter(plot__pk=instance.pk):
+#                 household.gps_target_lat = instance.gps_target_lat
+#                 household.gps_target_lon = instance.gps_target_lon
+#                 household.gps_lat = instance.gps_lat
+#                 household.gps_lon = instance.gps_lon
+#                 household.gps_degrees_e = instance.gps_degrees_e
+#                 household.gps_degrees_s = instance.gps_degrees_s
+#                 household.gps_minutes_e = instance.gps_minutes_e
+#                 household.gps_minutes_s = instance.gps_minutes_s
+#                 household.save()
 
     def get_action(self):
         retval = 'unconfirmed'

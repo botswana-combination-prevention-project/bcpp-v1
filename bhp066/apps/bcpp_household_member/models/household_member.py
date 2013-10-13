@@ -195,6 +195,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.hiv_history = self.get_hiv_history()
 
     def update_household_member_count_on_post_save(self, **kwargs):
+        """Updates the member count on the household_structure model."""
         using = kwargs.get('using', None)
         self.household_structure.member_count = self.__class__.objects.filter(household_structure=self.household_structure).count()
         self.household_structure.save(using=using)
