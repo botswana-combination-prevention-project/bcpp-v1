@@ -22,7 +22,6 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    # TODO: is this needed??
     household_sequence = models.IntegerField(
         editable=False,
         null=True,
@@ -159,10 +158,7 @@ class Household(BaseDispatchSyncUuidModel):
         if created:
             instance.community = instance.plot.community
             device = Device()
-            instance.household_sequence = instance.plot.get_next_household_sequence()
-            household_identifier = HouseholdIdentifier(
-                plot_identifier=instance.plot.plot_identifier,
-                household_sequence=instance.household_sequence)
+            household_identifier = HouseholdIdentifier(plot_identifier=instance.plot.plot_identifier)
             instance.household_identifier = household_identifier.get_identifier()
             instance.device_id = device.device_id
             instance.save()
