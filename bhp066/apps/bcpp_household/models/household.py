@@ -1,14 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.exceptions import ImproperlyConfigured
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.device.classes import Device
-from edc.core.identifier.exceptions import IdentifierError
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from ..managers import HouseholdManager
 from ..classes import HouseholdIdentifier
-from ..choices import HOUSEHOLD_STATUS
 from .plot import Plot
 
 
@@ -46,13 +43,6 @@ class Household(BaseDispatchSyncUuidModel):
     report_datetime = models.DateTimeField(
         verbose_name='Report Date/Time',
         null=True,
-        )
-
-    status = models.CharField(
-        verbose_name='Household status',
-        max_length=17,
-        null=True,
-        choices=HOUSEHOLD_STATUS,
         )
 
     gps_degrees_s = EncryptedDecimalField(
@@ -163,21 +153,12 @@ class Household(BaseDispatchSyncUuidModel):
         return (self.household_identifier,)
     natural_key.dependencies = ['bcpp_household.plot', ]
 
-    def save(self, *args, **kwargs):
-#             if not self.household_identifier:
-#                 raise IdentifierError('Expected a value for household_identifier. Got None')
-        self.action = self.plot.get_action()
-        super(Household, self).save(*args, **kwargs)
-
     def post_save_update_identifier(self, instance, created):
         """Updates the identifier field if this is a new instance."""
         if created:
             instance.community = instance.plot.community
             device = Device()
-            instance.household_sequence = instance.plot.get_next_household_sequence()
-            household_identifier = HouseholdIdentifier(
-                plot_identifier=instance.plot.plot_identifier,
-                household_sequence=instance.household_sequence)
+            household_identifier = HouseholdIdentifier(plot_identifier=instance.plot.plot_identifier)
             instance.household_identifier = household_identifier.get_identifier()
             instance.device_id = device.device_id
             instance.save()
@@ -190,17 +171,6 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
-
-    def get_action(self):
-        if not self.gps_lon and not self.gps_lat:
-            retval = 'unconfirmed'
-        elif self.status == 'occupied':
-            retval = 'confirmed'
-        elif self.status == 'vacant' or self.status == 'invalid':
-            retval = 'confirmed'
-        else:
-            retval = 'unconfirmed'
-        return retval
 
     def get_subject_identifier(self):
         return self.household_identifier
