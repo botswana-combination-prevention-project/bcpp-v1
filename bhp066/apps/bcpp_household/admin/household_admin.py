@@ -13,18 +13,13 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     fields = (
         'report_datetime',
-        'status',
         'comment')
 
-    list_display = ('household_identifier', 'structure', 'plot', 'action', 'status', 'community', 'created')
+    list_display = ('household_identifier', 'structure', 'plot', 'community', 'created')
 
-    list_filter = ('status', 'created', 'community', 'action')
+    list_filter = ('created', 'community')
 
     search_fields = ('household_identifier', 'community', 'id', 'plot__id')
 
     readonly_fields = ('household_identifier',)
-    radio_fields = {
-        'status': admin.VERTICAL,
-        }
-
 admin.site.register(Household, HouseholdAdmin)
