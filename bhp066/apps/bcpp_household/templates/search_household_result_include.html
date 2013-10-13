@@ -3,7 +3,6 @@
 {% load admin_urls %}
 {% load url from future %}
 {% load common_tags %}
-
 <div class="results">
     <table  cellspacing="0" id="result_list">
 	<thead>
@@ -24,10 +23,10 @@
           {% if household|is_dispatched %}
             <div class="warning">Locked</div>{{ household.action }}
           {% else %}
-            {% if household.action == 'confirmed'%}
+            {% if household.plot.action == 'confirmed'%}
                 <A name="dashboard-{{household.household_identifier}}" href="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=household.pk %}">Composition</A>
             {% else %}
-                {{ household.action }}
+                {{ household.plot.action }}
             {% endif %}
           {% endif %}
         </td>
