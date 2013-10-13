@@ -145,7 +145,6 @@ SOLVEENGAGEMENT_CHOICE = (
         ('No', _('No')),
         ('dont_know', _('Don\'t know')),
         ('not_answering', _('Don\'t want to answer')),
-        ('None', _('No problems')),
     )
 
 RELIGION_CHOICE = (
@@ -160,7 +159,6 @@ RELIGION_CHOICE = (
         ('traditionalist', _('Traditionalist')),
         ('Hindu', _('Hinduism')),
         ('Islam', _('Islam')),
-        ('None', _('None')),
         ('Other', _('Other')),
         ('not_answering', _('Don\'t want to answer')),
     )
@@ -199,7 +197,6 @@ MARITALSTATUS_CHOICE = (
 
 
 EDUCATION_CHOICE = (
-            ('None', _('None')),
             ('Non formal', _('Non formal')),
             ('Primary', _('Primary')),
             ('Junior Secondary', _('Junior Secondary')),
@@ -541,7 +538,6 @@ WHYARVSTOP_CHOICE = (
     )
 
 ADHERENCE4DAY_CHOICE = (
-        ('None', _('None')),
         ('One day', _('One day')),
         ('Two days', _('Two days')),
         ('Three days', _('Three days')),
@@ -903,7 +899,6 @@ OCCUPATIONCOSTS_CHOICE = (
 
 
 WORKINCOMECOSTS_CHOICE = (
-        ('None', _('None')),
         ('1-200 pula', _('1-200 pula')),
         ('200-499 pula', _('200-499 pula')),
         ('500-999 pula', _('500-999 pula')),
@@ -921,7 +916,6 @@ WORKPAIDCOSTS_CHOICE = (
     )
 
 HOUSEHOLDINCOMECOSTS_CHOICE = (
-        ('None', _('None')),
         ('1-200 pula', _('1-200 pula')),
         ('200-499 pula', _('200-499 pula')),
         ('500-999 pula', _('500-999 pula')),

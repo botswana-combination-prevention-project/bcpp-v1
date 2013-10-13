@@ -41,8 +41,8 @@ INFO_PROVIDER = (
 
 PLOT_STATUS = (
     ('occupied', 'Occupied'),
-    ('vacant', 'Vacant'),
-    ('invalid', 'Not a household'),
+    ('vacant', 'Vacant / Uninhabited'),
+    ('non-residential', 'Not a residential plot'),
     )
 
 HOUSEHOLD_STATUS = (
