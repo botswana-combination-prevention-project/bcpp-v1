@@ -2,13 +2,16 @@ from datetime import datetime
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from edc.map.classes import site_mappers, Mapper
 
 from apps.bcpp_survey.tests.factories import SurveyFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_household_member.models import HouseholdMember
 
 from ..classes  import PlotIdentifier
-from ..models import PlotIdentifierHistory, Household, HouseholdLog, HouseholdLogEntry, Plot
+from ..models import PlotIdentifierHistory, Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
 from .factories import PlotFactory
 
 
@@ -62,11 +65,106 @@ class PlotTests(TestCase):
         """if you change a plot by subtracting a household should delete last created household."""
         plot = PlotFactory(community='test_community', num_household=2, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
         for household_log in HouseholdLog.objects.filter(household_structure__household__plot=plot):
             HouseholdLogEntry.objects.create(household_log=household_log, report_datetime=datetime.today())
         plot.num_household = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
+
+    def test_plot_deletes_household3(self):
+        """if you create 3 plots, add log entries for two and change the plot by subtracting two households, should delete one."""
+        #create a plot with 3 households
+        plot = PlotFactory(community='test_community', num_household=3, status='occupied')
+        # assert household, household structure and an empty log are created
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 3)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 3)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 3)
+        # create a log entry for two households
+        for index, household_log in enumerate(HouseholdLog.objects.filter(household_structure__household__plot=plot)):
+            if not index == 0:
+                HouseholdLogEntry.objects.create(household_log=household_log, report_datetime=datetime.today())
+        self.assertEqual(HouseholdLogEntry.objects.filter(household_log__household_structure__household__plot=plot).count(), 2)
+        # change the number of household to 2
+        plot.num_household = 2
+        plot.save()
+        # assert one household was deleted
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
+        plot.num_household = 1
+        plot.save()
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
+
+    def test_plot_deletes_household4(self):
+        """if you create 3 plots, add members for two and change the plot by subtracting two households, should delete one."""
+        #create a plot with 3 households
+        plot = PlotFactory(community='test_community', num_household=3, status='occupied')
+        # assert household, household structure and an empty log are created
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 3)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 3)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 3)
+        for index, household_structure in enumerate(HouseholdStructure.objects.filter(household__plot=plot)):
+            if not index == 0:
+                HouseholdMemberFactory(household_structure=household_structure)
+        self.assertEqual(HouseholdMember.objects.filter(household_structure__household__plot=plot).count(), 2)
+        # change the number of household to 2
+        plot.num_household = 2
+        plot.save()
+        # assert one household was deleted
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
+        plot.num_household = 1
+        plot.save()
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+        self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
+        self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
+
+    def test_plot_add_households(self):
+        """if you add and delete and add back, household identifier should still be unique."""
+        plot = PlotFactory(community='test_community', num_household=1, status='occupied')
+        print plot.plot_identifier
+        plot.num_household = 2
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 3
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 1
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 2
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 3
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 4
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 5
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 6
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 7
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 8
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 9
+        self.assertIsNone(plot.save())
+        print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
+        plot.num_household = 10
+        self.assertRaises(ValidationError, plot.save)
 
     def test_only_occupied_have_households(self):
         self.assertRaises(ValidationError, PlotFactory, community='test_community', num_household=1, status='non-residential')
@@ -82,6 +180,12 @@ class PlotTests(TestCase):
         plot.gps_minutes_s = 22
         plot.save()
         self.assertEqual(Plot.objects.get(pk=plot.pk).action, 'confirmed')
+
+    def test_plot_gets_community(self):
+        """Plot gets community from settings"""
+        current_community = settings.CURRENT_COMMUNITY
+        plot = PlotFactory(num_household=1, status='occupied')
+        
 
 #     def test_plot_creates_household4(self):
 #         """if you change a plot by subtracting a households should try to delete a household without any members or household log."""

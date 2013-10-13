@@ -13,27 +13,29 @@ class PlotAdmin(BaseHouseholdModelAdmin):
     list_max_show_all = 1000
 
     fields = (
-        'availability_datetime',
-        'eligible_members',
-        'description',
-        'num_household',
         'status',
         'gps_degrees_s',
         'gps_minutes_s',
         'gps_degrees_e',
         'gps_minutes_e',
         'cso_number',
-        'comment')
+        'num_household',
+        'eligible_members',
+        'time_of_week',
+        'time_of_day',
+        'description')
 
     list_display = ('plot_identifier', 'action', 'status', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('status', 'created', 'community', 'section', 'sub_section', 'action')
+    list_filter = ('status', 'created', 'community', 'section', 'sub_section', 'action', 'time_of_week', 'time_of_day')
 
     search_fields = ('plot_identifier', 'cso_number', 'community', 'section', 'id')
 
     readonly_fields = ('plot_identifier',)
     radio_fields = {
         'status': admin.VERTICAL,
+        'time_of_week': admin.VERTICAL,
+        'time_of_day': admin.VERTICAL,
         }
     actions = [process_dispatch, ]
 
