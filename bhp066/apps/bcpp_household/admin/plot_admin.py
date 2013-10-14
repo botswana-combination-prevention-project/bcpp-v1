@@ -19,7 +19,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'gps_degrees_e',
         'gps_minutes_e',
         'cso_number',
-        'num_household',
+        'household_count',
         'eligible_members',
         'time_of_week',
         'time_of_day',
