@@ -399,8 +399,8 @@ DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bc
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
-GPS_FILE_PATH = '/Volumes/GARMIN/GPX/temp.gpx'
-GPX_FNAME = PROJECT_DIR.child('edc', 'map', 'static', 'gpx', 'temp.gpx') 
+GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
+GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 FIELD_MAX_LENGTH = 'migration'
 
