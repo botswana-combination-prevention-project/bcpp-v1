@@ -25,7 +25,7 @@ CONFIG_DIR = PROJECT_DIR.child('bhp066')
 #KEY_PATH = PROJECT_DIR.child('keys')
 #KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/bhp066/keys'
+KEY_PATH = '/Volumes/keys'
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
@@ -99,7 +99,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_v122',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -399,8 +399,8 @@ DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bc
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
-GPS_FILE_PATH = '/Volumes/GARMIN/GPX/temp.gpx'
-GPX_FNAME = PROJECT_DIR.child('edc', 'map', 'static', 'gpx', 'temp.gpx') 
+GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
+GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 FIELD_MAX_LENGTH = 'migration'
 
