@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.device.classes import Device
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from ..managers import HouseholdManager
 from ..classes import HouseholdIdentifier
@@ -157,10 +156,8 @@ class Household(BaseDispatchSyncUuidModel):
         """Updates the identifier field if this is a new instance."""
         if created:
             instance.community = instance.plot.community
-            device = Device()
             household_identifier = HouseholdIdentifier(plot_identifier=instance.plot.plot_identifier)
             instance.household_identifier = household_identifier.get_identifier()
-            instance.device_id = device.device_id
             instance.save()
 
     def post_save_create_household_structure(self, instance, created):
