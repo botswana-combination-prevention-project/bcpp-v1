@@ -15,7 +15,7 @@ class GaboronePlotMapper(BasePlotMapper):
 
     gps_center_lat = -24.656095
     gps_center_lon = 25.925404
-    radius = 6
+    radius = 15
     location_boundary = ()
 
 site_mappers.register(GaboronePlotMapper)
