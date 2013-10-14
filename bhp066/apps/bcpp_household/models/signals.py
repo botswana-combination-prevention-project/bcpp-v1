@@ -31,4 +31,4 @@ def household_structure_on_post_save(sender, instance, **kwargs):
 def create_household_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False) and created:
         if isinstance(instance, Plot):
-            instance.create_households(instance)
+            instance.create_or_delete_households(instance)

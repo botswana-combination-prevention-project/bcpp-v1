@@ -91,7 +91,7 @@ class SectionPlotView(BaseSectionView):
             request.session['search_result'] = search_result
         else:
             if request.GET.get('page'):
-                search_result = request.session['search_result']
+                search_result = request.session.get('search_result')
         return search_result
 
 site_sections.register(SectionPlotView)
