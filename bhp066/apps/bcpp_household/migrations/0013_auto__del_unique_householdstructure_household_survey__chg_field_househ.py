@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Removing unique constraint on 'HouseholdStructure', fields ['household', 'survey']
-        db.delete_unique(u'bcpp_household_householdstructure', ['household_id', 'survey_id'])
+#         db.delete_unique(u'bcpp_household_householdstructure', ['household_id', 'survey_id'])
 
 
         # Changing field 'HouseholdAudit.community'
@@ -21,7 +21,7 @@ class Migration(SchemaMigration):
         # Changing field 'HouseholdAudit.household_identifier'
         db.alter_column(u'bcpp_household_household_audit', 'household_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True))
         # Removing index on 'HouseholdAudit', fields ['household_identifier']
-        db.delete_index(u'bcpp_household_household_audit', ['household_identifier'])
+#         db.delete_index(u'bcpp_household_household_audit', ['household_identifier'])
 
 
         # Changing field 'Household.community'
@@ -33,7 +33,7 @@ class Migration(SchemaMigration):
         # Changing field 'Household.household_identifier'
         db.alter_column(u'bcpp_household_household', 'household_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, unique=True, null=True))
         # Removing index on 'Household', fields ['household_identifier']
-        db.delete_index(u'bcpp_household_household', ['household_identifier'])
+#         db.delete_index(u'bcpp_household_household', ['household_identifier'])
 
 
     def backwards(self, orm):
