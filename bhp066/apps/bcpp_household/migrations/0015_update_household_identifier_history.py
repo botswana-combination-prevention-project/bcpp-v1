@@ -11,7 +11,7 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
         HouseholdIdentifierHistory = orm['bcpp_household.HouseholdIdentifierHistory']
-        HouseholdIdentifierHistory.objects.exclude(identifier__startswith='070')
+        HouseholdIdentifierHistory.objects.exclude(identifier__startswith='070').delete()
         for household_identifier_history in HouseholdIdentifierHistory.objects.all():
             household_sequence = household_identifier_history.identifier.split('-')[0][-1:]
             household_identifier_history.household_sequence = household_sequence
