@@ -44,7 +44,7 @@
         {% endif %}
         </td>
         <td>{{ plot.get_status_display }}</td>
-        <td><A href="{% url 'section_url' section_name='household' %}?plot={{ plot.plot_identifier }}">{{ plot.num_household|default:'1' }} household(s)</A></td>
+        <td>{% if plot.household_count %}<A href="{% url 'section_url' section_name='household' %}?plot={{ plot.plot_identifier }}">{{ plot.household_count|default:'0' }} household(s)</A>{% endif %}</td>
         <td>{{ plot.eligible_members }}</td>
       <td>{{ plot.community|encrypted}}</td>
         <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
@@ -62,7 +62,7 @@
       </tr>
       {% endif %}
 {% endfor %}
-  <tr><td colspan="11">{{ search_result.object_list.count|default:0 }} plot structure{{ search_result.object_list|pluralize }}{% if not search_result.object_list.count%}s{%endif%} found.</td></tr>    
+      
 </table>
 
 
