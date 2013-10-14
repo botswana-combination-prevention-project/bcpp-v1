@@ -35,41 +35,46 @@ class PlotTests(TestCase):
         SurveyFactory()
 
     def test_plot_creates_household1(self):
-        """if you create a plot, should create one household."""
+        """if you create a plot as occupied, should create one household."""
 
-        plot = PlotFactory(community='test_community', num_household=1, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
 
     def test_plot_creates_household2(self):
         """if you create a plot with two households should create two households."""
-        plot = PlotFactory(community='test_community', num_household=2, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=2, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
 
     def test_plot_creates_household3(self):
         """if you change a plot by adding a second households should create another household."""
-        plot = PlotFactory(community='test_community', num_household=1, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
-        plot.num_household = 2
+        plot.household_count = 2
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
 
+    def test_plot_creates_household4(self):
+        """if you create a plot as None, should create one household."""
+        plot = PlotFactory(community='test_community', household_count=0, status=None)
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 0)
+
     def test_plot_deletes_household1(self):
         """if you change a plot by subtracting a household should delete last created household."""
-        plot = PlotFactory(community='test_community', num_household=2, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=2, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
-        plot.num_household = 1
+        plot.household_count = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
 
     def test_plot_deletes_household2(self):
         """if you change a plot by subtracting a household should delete last created household."""
-        plot = PlotFactory(community='test_community', num_household=2, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=2, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
         self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
         for household_log in HouseholdLog.objects.filter(household_structure__household__plot=plot):
             HouseholdLogEntry.objects.create(household_log=household_log, report_datetime=datetime.today())
-        plot.num_household = 1
+        plot.household_count = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
@@ -78,7 +83,7 @@ class PlotTests(TestCase):
     def test_plot_deletes_household3(self):
         """if you create 3 plots, add log entries for two and change the plot by subtracting two households, should delete one."""
         #create a plot with 3 households
-        plot = PlotFactory(community='test_community', num_household=3, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=3, status='occupied')
         # assert household, household structure and an empty log are created
         self.assertEqual(Household.objects.filter(plot=plot).count(), 3)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 3)
@@ -89,13 +94,13 @@ class PlotTests(TestCase):
                 HouseholdLogEntry.objects.create(household_log=household_log, report_datetime=datetime.today())
         self.assertEqual(HouseholdLogEntry.objects.filter(household_log__household_structure__household__plot=plot).count(), 2)
         # change the number of household to 2
-        plot.num_household = 2
+        plot.household_count = 2
         plot.save()
         # assert one household was deleted
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
         self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
-        plot.num_household = 1
+        plot.household_count = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
@@ -104,7 +109,7 @@ class PlotTests(TestCase):
     def test_plot_deletes_household4(self):
         """if you create 3 plots, add members for two and change the plot by subtracting two households, should delete one."""
         #create a plot with 3 households
-        plot = PlotFactory(community='test_community', num_household=3, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=3, status='occupied')
         # assert household, household structure and an empty log are created
         self.assertEqual(Household.objects.filter(plot=plot).count(), 3)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 3)
@@ -114,13 +119,13 @@ class PlotTests(TestCase):
                 HouseholdMemberFactory(household_structure=household_structure)
         self.assertEqual(HouseholdMember.objects.filter(household_structure__household__plot=plot).count(), 2)
         # change the number of household to 2
-        plot.num_household = 2
+        plot.household_count = 2
         plot.save()
         # assert one household was deleted
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
         self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
-        plot.num_household = 1
+        plot.household_count = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
@@ -128,51 +133,51 @@ class PlotTests(TestCase):
 
     def test_plot_add_households(self):
         """if you add and delete and add back, household identifier should still be unique."""
-        plot = PlotFactory(community='test_community', num_household=1, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         print plot.plot_identifier
-        plot.num_household = 2
+        plot.household_count = 2
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 3
+        plot.household_count = 3
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 1
+        plot.household_count = 1
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 2
+        plot.household_count = 2
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 3
+        plot.household_count = 3
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 4
+        plot.household_count = 4
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 5
+        plot.household_count = 5
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 6
+        plot.household_count = 6
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 7
+        plot.household_count = 7
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 8
+        plot.household_count = 8
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 9
+        plot.household_count = 9
         self.assertIsNone(plot.save())
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
-        plot.num_household = 10
+        plot.household_count = 10
         self.assertRaises(ValidationError, plot.save)
 
     def test_only_occupied_have_households(self):
-        self.assertRaises(ValidationError, PlotFactory, community='test_community', num_household=1, status='non-residential')
-        self.assertRaises(ValidationError, PlotFactory, community='test_community', num_household=1, status='vacant')
-        self.assertRaises(ValidationError, PlotFactory, community='test_community', num_household=0, status='occupied')
+        self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=1, status='non-residential')
+        self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=1, status='vacant')
+        self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=0, status='occupied')
 
     def test_plot_confirms_plot_and_household(self):
-        plot = PlotFactory(community='test_community', num_household=1, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         self.assertEqual(Household.objects.get(plot=plot).action, 'unconfirmed')
         plot.gps_degrees_e = 22
         plot.gps_degrees_s = 22
@@ -184,15 +189,15 @@ class PlotTests(TestCase):
     def test_plot_gets_community(self):
         """Plot gets community from settings"""
         current_community = settings.CURRENT_COMMUNITY
-        plot = PlotFactory(num_household=1, status='occupied')
+        plot = PlotFactory(household_count=1, status='occupied')
         
 
 #     def test_plot_creates_household4(self):
 #         """if you change a plot by subtracting a households should try to delete a household without any members or household log."""
-#         plot = PlotFactory(community='test_community', num_household=2)
+#         plot = PlotFactory(community='test_community', household_count=2)
 #         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
 #         
-#         plot.num_household = 1
+#         plot.household_count = 1
 #         plot.save()
 #         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
 

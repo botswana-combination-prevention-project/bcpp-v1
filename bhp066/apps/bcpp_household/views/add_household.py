@@ -10,7 +10,7 @@ def add_household(request, **kwargs):
     plot = None
     if Plot.objects.filter(plot_identifier=plot_identifier, action='confirmed'):
         plot = Plot.objects.get(plot_identifier=plot_identifier, action='confirmed')
-        plot.num_household += 1
+        plot.household_count += 1
         plot.save()
     else:
         message = 'Plot {0} has not been confirmed. You cannot add a household to an unconfirmed plot.'.format(plot.plot_identifier)
