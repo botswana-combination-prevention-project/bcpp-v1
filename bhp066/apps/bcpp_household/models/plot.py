@@ -59,8 +59,8 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     num_household = models.IntegerField(
-        verbose_name="Number of Households in this plot.",
-        blank=True,
+        verbose_name="Number of Households on this plot.",
+        default=0,
         null=True,
         validators=[MaxValueValidator(9)],
         help_text=("Provide the number of households in this plot."))
