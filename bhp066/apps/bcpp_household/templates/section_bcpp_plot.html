@@ -1,21 +1,32 @@
 {% extends 'section_household.html' %}
 
-
 {% block gps_search %}
-{{ gps_search_form.errors }}
-<div id="gps_search_tile">
-<form class="gps_search_form" action="" method="post">
-    {% csrf_token %}
-    {# Include the hidden fields #}
-    {% for hidden in form.hidden_fields %}
-    {{ hidden }}
-    {% endfor %}
-    {# Include the visible fields #}
-    {% for field in gps_search_form.visible_fields %}
+    {{ gps_search_form.errors }}
+    <div id="gps_search_tile">
+    <form class="gps_search_form" action="{% url 'section_search_plot_gps_url' section_name 'plot_gps' %}" method="POST">
+        {% csrf_token %}
+        {# Include the hidden fields #}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {# Include the visible fields #}
+        {% for field in gps_search_form.visible_fields %}
             {{ field.errors }}
             {{ field.label_tag }} {{ field }}
-    {% endfor %}
+        {% endfor %}
     <input type="submit" value="Search by GPS">
-</form>
-</div>
+    </form>
+    </div>
+{% endblock %}
+
+{% block search_tile %}
+    <div id="search_tile">
+        <form method="POST" action="{% url 'section_search_plot_word_url' section_name 'plot_word' %}">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        <input class="search_form" type="text" name="search_term" value="{{ search_term }}">&nbsp;<input type="submit" value="Search">
+        </form>
+    </div>
 {% endblock %}
