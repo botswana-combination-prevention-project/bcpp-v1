@@ -400,6 +400,7 @@ IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
+GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 FIELD_MAX_LENGTH = 'migration'
