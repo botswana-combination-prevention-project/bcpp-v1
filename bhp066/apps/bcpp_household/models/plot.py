@@ -213,12 +213,19 @@ class Plot(BaseDispatchSyncUuidModel):
         self.action = self.get_action()
 
         if self.id:
+<<<<<<< HEAD
             self.household_count = self.create_or_delete_households(self)
+=======
+            self.household_count = self.create_households(self)
+>>>>>>> v124
             if self.household_count > 0:
                 self.status = 'occupied'  # TODO: or maybe cancel the save
         if (self.household_count == 0 and self.status == 'occupied') or (self.household_count and not self.status == 'occupied'):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
+<<<<<<< HEAD
 
+=======
+>>>>>>> v124
         super(Plot, self).save(*args, **kwargs)
 
     def create_household(self, instance):
