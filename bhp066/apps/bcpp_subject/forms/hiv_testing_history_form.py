@@ -9,9 +9,11 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
 
         cleaned_data = super(HivTestingHistoryForm, self).clean()
         #validating no prior hiv testing
-        self.validate_prior_hiv_testing('has_record', cleaned_data)
-        self.validate_prior_hiv_testing('other_record', cleaned_data)
         self.validate_prior_hiv_testing('when_hiv_test', cleaned_data)
+        self.validate_prior_hiv_testing('has_record', cleaned_data)
+        self.validate_prior_hiv_testing('verbal_hiv_result', cleaned_data)
+        self.validate_prior_hiv_testing('other_record', cleaned_data)
+
         if cleaned_data.get('has_tested') == 'No' and cleaned_data.get('verbal_hiv_result'):
             raise forms.ValidationError('If participant has NEVER tested, do not provide details about testing results')
         if cleaned_data.get('has_tested') == 'Yes' and not cleaned_data.get('when_hiv_test'):
