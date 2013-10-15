@@ -8,10 +8,10 @@ class PlotForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        if not cleaned_data.get('num_household') and cleaned_data.get('status') == 'occupied':
-            raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('num_household')))
-        if (cleaned_data.get('num_household') == 0 and cleaned_data.get('status') == 'occupied') or (cleaned_data.get('num_household') and not cleaned_data.get('status') == 'occupied'):
-            raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('num_household')))
+        if not cleaned_data.get('household_count') and cleaned_data.get('status') == 'occupied':
+            raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('household_count')))
+        if (cleaned_data.get('household_count') == 0 and cleaned_data.get('status') == 'occupied') or (cleaned_data.get('household_count') and not cleaned_data.get('status') == 'occupied'):
+            raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('household_count')))
         if not cleaned_data.get('status') == 'occupied' and cleaned_data.get('eligible_members') > 0:
             raise forms.ValidationError('If the residence is not occupied, number of eligible members should be 0. Got {0}'.format(cleaned_data.get('eligible_members')))
         if cleaned_data.get('status') == 'occupied' and (not cleaned_data.get('time_of_week') or not cleaned_data.get('time_of_day')):

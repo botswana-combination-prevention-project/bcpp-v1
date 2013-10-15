@@ -4,21 +4,11 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
-        Plot = orm['bcpp_household.Plot']
-        for plot in Plot.objects.filter(community='gaborone').exclude(status='occupied'):
-            plot.household_count = 0
-            #plot.delete_unused_households(plot)
-            plot.status = None
-            plot.save()
-        for plot in Plot.objects.filter(community='gaborone', status='occupied', household_count=0):
-            plot.household_count = 1
-            plot.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
@@ -248,9 +238,9 @@ class Migration(DataMigration):
             'gps_target_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_count': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'num_household': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25', 'db_index': 'True'}),
             'section': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True'}),
@@ -284,9 +274,9 @@ class Migration(DataMigration):
             'gps_target_lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_count': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'num_household': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
             'section': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True'}),
