@@ -22,10 +22,14 @@ TEMPLATE_DIRS = (
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-#KEY_PATH = PROJECT_DIR.child('keys')
+KEY_PATH = 'keys'
 #KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+<<<<<<< HEAD
 KEY_PATH = '/Volumes/bhp066/keys'
+=======
+# KEY_PATH = '/Volumes/keys'
+>>>>>>> 3e63d3c7e3fe2443e4dcde8258a0f6ac97d5cb3f
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
@@ -140,9 +144,9 @@ LANGUAGES = (
     ('en', 'English'),
 )
 
-LOCALE_PATHS = PROJECT_DIR.child('locale')
+LOCALE_PATHS = ('locale', )
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'tn'
 
 SITE_ID = 1
 
@@ -400,6 +404,7 @@ IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
+GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 FIELD_MAX_LENGTH = 'migration'
