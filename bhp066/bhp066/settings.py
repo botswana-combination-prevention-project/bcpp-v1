@@ -22,10 +22,10 @@ TEMPLATE_DIRS = (
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-#KEY_PATH = PROJECT_DIR.child('keys')
+KEY_PATH = 'keys'
 #KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/keys'
+# KEY_PATH = '/Volumes/keys'
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
@@ -140,9 +140,9 @@ LANGUAGES = (
     ('en', 'English'),
 )
 
-LOCALE_PATHS = PROJECT_DIR.child('locale')
+LOCALE_PATHS = ('locale', )
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'tn'
 
 SITE_ID = 1
 
