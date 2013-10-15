@@ -9,6 +9,15 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
+        Plot = orm['bcpp_household.Plot']
+        for plot in Plot.objects.filter(community='gaborone').exclude(status='occupied'):
+            plot.household_count = 0
+            #plot.delete_unused_households(plot)
+            plot.status = None
+            plot.save()
+        for plot in Plot.objects.filter(community='gaborone', status='occupied', household_count=0):
+            plot.household_count = 1
+            plot.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
