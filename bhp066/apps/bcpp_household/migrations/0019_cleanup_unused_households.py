@@ -2,7 +2,8 @@
 import datetime
 from south.db import db
 from south.v2 import DataMigration
-from django.db import models
+from django.db import models, IntegrityError
+
 
 class Migration(DataMigration):
 
@@ -10,11 +11,25 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
         Plot = orm['bcpp_household.Plot']
+        Household = orm['bcpp_household.Household']
+        HouseholdStructure = orm['bcpp_household.HouseholdStructure']
+        HouseholdLog = orm['bcpp_household.HouseholdLog']
+        HouseholdLogEntry = orm['bcpp_household.HouseholdLogEntry']
+        HouseholdIdentifierHistory = orm['bcpp_household.HouseholdIdentifierHistory']
         for plot in Plot.objects.filter(community='gaborone').exclude(status='occupied'):
-            plot.household_count = 0
-            #plot.delete_unused_households(plot)
-            plot.status = None
-            plot.save()
+            for household_structure in HouseholdStructure.objects.filter(household__plot__pk=plot.pk, member_count=0).order_by('-created'):
+                if Household.objects.filter().count() > plot.household_count:
+                    try:
+                        if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure):
+                            HouseholdLog.objects.filter(household_structure=household_structure).delete()
+                            household_pk = unicode(household_structure.household.pk)
+                            household_structure.delete()
+                            for household in Household.objects.filter(pk=household_pk):
+                                HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier).delete
+                                household.delete()
+                    except IntegrityError:
+                        pass
+
         for plot in Plot.objects.filter(community='gaborone', status='occupied', household_count=0):
             plot.household_count = 1
             plot.save()
