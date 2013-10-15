@@ -5,7 +5,7 @@
 {% block gps_search %}
 {{ gps_search_form.errors }}
 <div id="gps_search_tile">
-<form class="gps_search_form" action="" method="post">
+<form class="gps_search_form" action="{% url 'section_search_plot_gps_url' section_name %}" method="post">
     {% csrf_token %}
     {# Include the hidden fields #}
     {% for hidden in form.hidden_fields %}
