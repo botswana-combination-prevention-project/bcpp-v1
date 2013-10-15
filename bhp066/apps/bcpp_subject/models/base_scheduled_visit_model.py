@@ -46,6 +46,12 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
-
+    
+    def deserialize_get_missing_fk(self, attrname):#FIX ME, return subject visit
+        retval = None
+        if attrname == 'subject_visit':
+            return self.subject_visit
+        return retval
+    
     class Meta:
         abstract = True
