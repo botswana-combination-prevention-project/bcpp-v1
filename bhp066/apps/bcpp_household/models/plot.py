@@ -58,7 +58,7 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=("provide the CSO number or leave BLANK."),
         )
 
-    num_household = models.IntegerField(
+    household_count = models.IntegerField(
         verbose_name="Number of Households on this plot.",
         default=0,
         null=True,
@@ -196,7 +196,7 @@ class Plot(BaseDispatchSyncUuidModel):
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
-        if self.num_household > 9:
+        if self.household_count > 9:
             raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
@@ -212,11 +212,11 @@ class Plot(BaseDispatchSyncUuidModel):
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
         if self.id:
-            self.num_household = self.create_households(self)
-            if self.num_household > 0:
+            self.household_count = self.create_households(self)
+            if self.household_count > 0:
                 self.status = 'occupied'  # TODO: or maybe cancel the save
-        if (self.num_household == 0 and self.status == 'occupied') or (self.num_household and not self.status == 'occupied'):
-            raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.num_household))
+        if (self.household_count == 0 and self.status == 'occupied') or (self.household_count and not self.status == 'occupied'):
+            raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
     def create_household(self, instance):
@@ -240,7 +240,7 @@ class Plot(BaseDispatchSyncUuidModel):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
         for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, member_count=0).order_by('-created'):
-            if Household.objects.filter().count() > instance.num_household:
+            if Household.objects.filter().count() > instance.household_count:
                 try:
                     if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure):
                         HouseholdLog.objects.filter(household_structure=household_structure).delete()
@@ -264,11 +264,11 @@ class Plot(BaseDispatchSyncUuidModel):
         # check that tuple has not changed and has "occupied"
         if instance.status not in [item[0] for item in PLOT_STATUS]:
             raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        if instance.status == 'occupied' and not Household.objects.filter(plot__pk=instance.pk).count() == instance.num_household:
-            while Household.objects.filter(plot__pk=instance.pk).count() < instance.num_household:
+        if instance.status == 'occupied' and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
+            while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
                 instance.create_household(instance)
             number_of_households = Household.objects.filter(plot__pk=instance.pk).count()
-            if number_of_households > instance.num_household:
+            if number_of_households > instance.household_count:
                 instance.delete_unused_households(instance)
         else:
             self.delete_unused_households(instance)
