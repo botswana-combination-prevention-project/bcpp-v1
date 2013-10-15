@@ -32,4 +32,3 @@ class PlotForm(BaseModelForm):
 
     class Meta:
         model = Plot
-
