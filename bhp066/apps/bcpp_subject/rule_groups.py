@@ -203,16 +203,6 @@ class SexualBehaviourRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['monthsthirdpartner'])
-    
-    #to say that if number of partners is not indicated, meaning that participant 
-    #does not want to answer, then all partner related forms should not be required
-    none_partners = ScheduledDataRule(
-        logic=Logic(
-            predicate=('last_year_partners', 'equals', None),
-            consequence='not_required',
-            alternative='new'),
-         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
-
 
     class Meta:
         app_label = 'bcpp_subject'
