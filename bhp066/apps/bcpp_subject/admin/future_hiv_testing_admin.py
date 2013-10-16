@@ -16,7 +16,7 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
         'hiv_test_week',
         'hiv_test_week_other',
         'hiv_test_year',
-        'hiv_test_year_other',), p=0.09, group='HT')
+        'hiv_test_year_other'), p=0.09, group='HT')
     fields = (
         "subject_visit",
         'prefer_hivtest',
