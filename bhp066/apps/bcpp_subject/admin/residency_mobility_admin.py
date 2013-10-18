@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from ..models import ResidencyMobility
 from ..forms import ResidencyMobilityForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
@@ -21,7 +23,7 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
         "intend_residency": admin.VERTICAL,
         "nights_away": admin.VERTICAL,
         "cattle_postlands": admin.VERTICAL}
-    instructions = [("Read to Participant: To start, I will be asking"
+    instructions = [_("Read to Participant: To start, I will be asking"
                               " you some questions about yourself, your living"
                               " situation, and about the people that you live with."
                               " Your answers are very important to our research and"
