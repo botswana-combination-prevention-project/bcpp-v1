@@ -3,8 +3,7 @@ from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from edc.choices import YES_NO_DWTA, YES_NO
-from apps.bcpp.choices import (WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
+from apps.bcpp.choices import (YES_NO_DWTA, YES_NO, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
                                ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
