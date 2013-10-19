@@ -1,6 +1,9 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
+from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
+
+from apps.bcpp.choices import GENDER_UNDETERMINED
 from edc.core.bhp_common.utils import check_initials_field
 from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.core.bhp_variables.models import StudySpecific
@@ -10,6 +13,12 @@ from ..models import SubjectConsent
 
 
 class SubjectConsentForm(BaseSubjectConsentForm):
+    
+    gender = forms.ChoiceField(
+        label='Gender',
+        choices=[choice for choice in GENDER_UNDETERMINED],
+        help_text="",
+        widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer))
 
     def clean(self):
 
