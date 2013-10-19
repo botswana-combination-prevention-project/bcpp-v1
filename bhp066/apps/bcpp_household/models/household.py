@@ -183,6 +183,10 @@ class Household(BaseDispatchSyncUuidModel):
         return """<a href="{url}" />structure</a>"""  # .format(url=url)
     structure.allow_tags = True
 
+    def member_count(self):
+        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        return HouseholdMember.objects.filter(household_structure__household__pk=self.pk).count()
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-household_identifier', ]

@@ -8,7 +8,7 @@ from edc.subject.registration.models import RegisteredSubject
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
+from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
 
 
 class HouseholdDashboard(Dashboard):
