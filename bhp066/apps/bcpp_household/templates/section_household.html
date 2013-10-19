@@ -3,52 +3,24 @@
 {% load url from future %}
 {% load map_tags %}
 
-{% block section_tiles %}
-<div id="tile_wrapper">
-
-    {% block selection_tile%}
-
-     <div style="clear:left;">
-
-    {{ current_community }}: {{ current_survey }}
-
-     {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
-    </div>
-
-    {% endblock%}
-    
-    {% if current_survey and current_community%}
-
-    {% block add_model_tile %}
-        <div id="add_model_tile">
-        <form method="GET" action="{% url add_model_opts|admin_urlname:'add' %}">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="section_url">
-        <input type="hidden" name="section_name" value="{{ section_name }}">
-        <input type="submit" value="Add {{ add_model_name }}"  />
-        </form></div>
-    {% endblock %}
-
-    {% endif %}
- 
-    {% block gps_search %}{% endblock %}
- 
-    {% block search_tile %}{% endblock %}
-
-    {% if search_result %}
-        {% block search_result %}
-            <div id="search_result_tile">
-            {% include search_result_include_file %}
-            <small><small>{{ search_result_include_file }}</small></small>
-            </div>
-        {% endblock %}
-    {% endif %}
-    {% if top_result %}
-        {% block top_result %}
-            <div id="search_result_tile">
-            {% include search_result_include_file %}  
-            </div>
-        {% endblock %}
-    {% endif %}    
+{% block search_tile %}
+{{ gps_search_form.errors }}
+<div id="gps_search_tile">
+<form class="gps_search_form" action="{% url 'section_search_gps_url' section_name 'gps' %}" method="post">
+    {% csrf_token %}
+    {# Include the hidden fields #}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+    {# Include the visible fields #}
+    {% for field in gps_search_form.visible_fields %}
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+    {% endfor %}
+    <input type="submit" value="Search by GPS">
+</form>
 </div>
+
+    {{ block.super }}
+
 {% endblock %}
