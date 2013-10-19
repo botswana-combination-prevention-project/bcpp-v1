@@ -14,7 +14,7 @@
     <div class="breadcrumbs">
         <a href="/{{ home }}">Home</a>
         &rsaquo; <a href="{% url 'section_url' section_name='household'%}">Household</a>        
-        &rsaquo; <a href="{% url 'section_url' section_name='household' search_term=household.household_identifier %}">{{household.household_identifier}}</a>        
+        &rsaquo; {{household.household_identifier}}        
         {% if survey %}
             &rsaquo; Household Composition at {{ survey.survey_slug|capfirst }}
         {% endif %}    
