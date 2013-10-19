@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
@@ -15,7 +14,7 @@ from .subject_consent_history import SubjectConsentHistory
 class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     is_minor = models.CharField(
-        verbose_name=_("Is subject a minor?"),
+        verbose_name=("Is subject a minor?"),
         max_length=10,
         null=True,
         blank=False,

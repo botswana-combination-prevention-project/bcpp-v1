@@ -59,10 +59,10 @@ class BaseSexualPartner (BaseScheduledVisitModel):
 
     first_exchange = models.IntegerField(
         verbose_name=_("To the best of your knowledge, how old is this person?"),
-        max_length=2,
+        max_length=3,
         null=True,
         blank=True,
-        validators=[MinValueValidator(10), MaxValueValidator(64)],
+        validators=[MinValueValidator(10), MaxValueValidator(140)],
         help_text=("Note: If participant does not want to answer, leave blank."),
         )
 

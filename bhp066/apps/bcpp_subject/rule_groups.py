@@ -3,7 +3,7 @@ from edc.subject.registration.models import RegisteredSubject
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult)
+                    HivResult, HivResultDocumentation)
 
 
 class ResourceUtilizationRuleGroup(RuleGroup):
@@ -131,8 +131,8 @@ class HivTestReviewRuleGroup(RuleGroup):
     if_recorded_result_not_positive = ScheduledDataRule(
         logic=Logic(
             predicate=('recorded_hiv_result', 'ne', 'POS'),
-            consequence='not_required',
-            alternative='new'),
+            consequence='new',
+            alternative='not_required'),
         target_model=['hivresult',])
 
     class Meta:
@@ -140,6 +140,22 @@ class HivTestReviewRuleGroup(RuleGroup):
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 rule_groups.register(HivTestReviewRuleGroup)
+
+
+class HivDocumentationGroup(RuleGroup):
+#    requires Todays HIV results form when the other HIV result documentation form  recorded result is POS 
+    result_recorded = ScheduledDataRule(
+        logic=Logic(
+            predicate=('result_recorded', 'ne', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivresult'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivResultDocumentation
+rule_groups.register(HivDocumentationGroup)
 
 
 class MedicalCareRuleGroup(RuleGroup):

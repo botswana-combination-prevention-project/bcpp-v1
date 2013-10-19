@@ -26,7 +26,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name=_("If we are unable to contact the person indicated above, is there another"
+        verbose_name=("If we are unable to contact the person indicated above, is there another"
                       " individual (including next of kin) with whom the study team can get"
                       " in contact with?"),
         help_text="",

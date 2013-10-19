@@ -28,7 +28,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         )
 
     has_record = models.CharField(
-        verbose_name=_("Is a record of last HIV test [OPD card, Tebelopele,"
+        verbose_name=_("Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
                       " other] available to review?"),
         max_length=45,
         null=True,
@@ -52,7 +52,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=YES_NO,
-        help_text="",
+        help_text="This documentation refers to: PMTCT prescription, ART, CD4 count record, lab result for.. etc",
         )
 
     history = AuditTrail()
