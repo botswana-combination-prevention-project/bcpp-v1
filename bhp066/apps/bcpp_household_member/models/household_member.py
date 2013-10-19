@@ -20,6 +20,7 @@ from apps.bcpp_household.models import Household, Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
+from ..choices import HOUSEHOLD_MEMBER_ACTION
 from .contact_log import ContactLog
 
 
@@ -86,6 +87,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     member_status = models.CharField(
         max_length=25,
+        choices=HOUSEHOLD_MEMBER_ACTION,
         null=True,
         editable=False,
         default='NOT_REPORTED',
