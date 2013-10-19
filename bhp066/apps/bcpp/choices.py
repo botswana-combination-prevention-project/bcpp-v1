@@ -557,6 +557,7 @@ WHYARVSTOP_CHOICE = (
     )
 
 ADHERENCE4DAY_CHOICE = (
+        ('Zero', _('Zero days')),
         ('One day', _('One day')),
         ('Two days', _('Two days')),
         ('Three days', _('Three days')),
@@ -968,3 +969,8 @@ WHYNOPARTICIPATE_CHOICE = (
         ('OTHER', _('Other, specify:')),
         ('not_answering', _('Don\'t want to answer')),
     )
+
+GENDER_UNDETERMINED = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+)
