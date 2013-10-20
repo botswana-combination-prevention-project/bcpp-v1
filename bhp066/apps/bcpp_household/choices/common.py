@@ -125,15 +125,4 @@ RELATIONS = (
     ('UNKNOWN', 'UNKNOWN'),
     )
 
-
-HOUSEHOLD_MEMBER_ACTION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RESEARCH', 'Research Cohort'),
-    ('HTC_ONLY', 'HTC Only'),
-    ('ABSENT', 'Absentee'),
-    ('REFUSED', 'Refusal'),
-    ('UNDECIDED', 'Undecided'),
-    ('NOT_ELIGIBLE', 'Not Eligible'),
-]
-
 NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'HBC'), ('other', 'Other'))
