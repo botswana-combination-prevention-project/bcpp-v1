@@ -1,9 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO_DWTA, YES_NO
 
-from apps.bcpp.choices import WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
+from apps.bcpp.choices import YES_NO_DWTA, YES_NO, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
+
 from ..choices import YES_NO_RECORD_REFUSAL
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -28,7 +28,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         )
 
     has_record = models.CharField(
-        verbose_name=_("Is a record of last HIV test [OPD card, Tebelopele,"
+        verbose_name=_("Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
                       " other] available to review?"),
         max_length=45,
         null=True,
@@ -52,7 +52,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=YES_NO,
-        help_text="",
+        help_text="This documentation refers to: PMTCT prescription, ART, CD4 count record, lab result for.. etc",
         )
 
     history = AuditTrail()

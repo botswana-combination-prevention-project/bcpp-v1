@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from ..models import SexualBehaviour
 from ..forms import SexualBehaviourForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
@@ -21,7 +23,7 @@ class SexualBehaviourAdmin(SubjectVisitModelAdmin):
         "more_sex": admin.VERTICAL,
         "condom": admin.VERTICAL,
         "alcohol_sex": admin.VERTICAL}
-    instructions = [("Read to Participant: In this part of the interview,"
+    instructions = [_("Read to Participant: In this part of the interview,"
                              " I will be asking you some questions about your"
                              " sexual relationships that you might have had,"
                              " and about sexual practices that you might have"

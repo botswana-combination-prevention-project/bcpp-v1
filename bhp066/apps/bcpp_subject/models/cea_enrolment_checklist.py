@@ -3,7 +3,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO, YES_NO_REFUSED
+
+from apps.bcpp.choices import YES_NO, YES_NO_REFUSED
+
 from edc.subject.registration.models import BaseRegisteredSubjectModel
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
 
