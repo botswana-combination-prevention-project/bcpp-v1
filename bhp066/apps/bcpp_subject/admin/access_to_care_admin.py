@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from edc.core.admin_supplemental_fields.classes import SupplementalFields
 from apps.bcpp_subject.forms import AccessToCareForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
@@ -44,7 +46,7 @@ class AccessToCareAdmin(SubjectVisitModelAdmin):
         "local_hiv_care": admin.VERTICAL}
     filter_horizontal = (
         "medical_care_access",)
-    instructions = [("Read to Participant: Now, I will be asking you "
+    instructions = [_("Read to Participant: Now, I will be asking you "
                              "about your preferences and options for accessing "
                              "health care when you need it.")]
 

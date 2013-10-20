@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from edc.core.admin_supplemental_fields.classes import SupplementalFields
 from ..models import FutureHivTesting
 from ..forms import FutureHivTestingForm
@@ -32,6 +34,6 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
         "hiv_test_week": admin.VERTICAL,
         "hiv_test_year": admin.VERTICAL, }
     instructions = [("Note to Interviewer: This form is only for HIV- (negative) participants"),
-                  ("Read to Participant: The following questions are "
+                  _("Read to Participant: The following questions are "
                   "about how you would like to have HIV testing in the future.")]
 admin.site.register(FutureHivTesting, FutureHivTestingAdmin)
