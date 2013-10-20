@@ -1,6 +1,5 @@
 *.py[cod]
 *.sh
-*.sql
 .project
 .pydevproject
 .settings

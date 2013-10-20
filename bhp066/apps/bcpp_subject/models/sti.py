@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
@@ -13,20 +12,20 @@ class Sti (BaseScheduledVisitModel):
     """CS002 - Medical Diagnoses - Sti"""
 
     sti_date = models.DateField(
-        verbose_name=_("Date of the diagnosis of the STI (Sexually transmitted infection):"),
+        verbose_name=("Date of the diagnosis of the STI (Sexually transmitted infection):"),
         validators=[date_not_future],
         help_text="",
         )
 
     sti_dx = models.CharField(
-        verbose_name=_("[Interviewer:] What is the STI diagnosed as recorded?"),
+        verbose_name=("[Interviewer:] What is the STI diagnosed as recorded?"),
         max_length=65,
         choices=STI_DX,
         help_text="",
         )
 
     comments = models.CharField(
-        verbose_name=_("Comments"),
+        verbose_name=("Comments"),
         max_length=250,
         null=True,
         blank=True,

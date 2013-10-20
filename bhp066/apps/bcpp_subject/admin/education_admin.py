@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from ..models import Education
 from ..forms import EducationForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
@@ -22,7 +24,7 @@ class EducationAdmin(SubjectVisitModelAdmin):
         'reason_unemployed': admin.VERTICAL,
         'job_description': admin.VERTICAL,
         "monthly_income": admin.VERTICAL, }
-    instructions = [("Read to Participant: Next, I will ask you some "
+    instructions = [_("Read to Participant: Next, I will ask you some "
                               "questions about what education and work you "
                               "may have done or are currently doing.")]
 admin.site.register(Education, EducationAdmin)

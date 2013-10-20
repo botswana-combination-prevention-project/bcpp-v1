@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from edc.core.admin_supplemental_fields.classes import SupplementalFields
 from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
 from ..forms import MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
@@ -53,7 +55,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
                              " helpful for respondent to give initials or"
                              " nickname, but DO NOT write down or otherwise"
                              "record this information. "), 
-                             ("Read to Participant: I am now going to ask you"
+                             _("Read to Participant: I am now going to ask you"
                              " about your most recent sexual partners. I will"
                              " start with your last or most recent sexual partner.")]
 admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
@@ -108,7 +110,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
                              " most recent sexual partner. It may be helpful for"
                              " respondent to give initials or nickname, but DO NOT"
                              " write down or otherwise record this information."),
-                             ("Read to Participant: I am now going to ask you about"
+                             _("Read to Participant: I am now going to ask you about"
                              " your second most recent sexual partner in the past"
                              " 12 months, the one before the person we were just"
                              " talking about.")]
@@ -164,7 +166,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
                              " most recent sexual partner. It may be helpful for"
                              " respondent to give initials or nickname, but DO NOT"
                              " write down or otherwise record this information."),
-                             ("Read to Participant: I am now going to ask you about"
+                             _("Read to Participant: I am now going to ask you about"
                              "your second most recent sexual partner in the past"
                              " 12 months, the one before the person we were just"
                              "talking about.")]
