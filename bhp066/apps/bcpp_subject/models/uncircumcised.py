@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from edc.choices import YES_NO_DWTA, YES_NO_UNSURE
 
-from apps.bcpp.choices import REASONCIRC_CHOICE, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE
+from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE
 
 from .base_circumcision import BaseCircumcision
 
