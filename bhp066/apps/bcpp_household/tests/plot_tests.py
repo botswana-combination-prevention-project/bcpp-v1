@@ -35,7 +35,7 @@ class PlotTests(TestCase):
         SurveyFactory()
 
     def test_plot_creates_household1(self):
-        """if you create a plot, should create one household."""
+        """if you create a plot as occupied, should create one household."""
 
         plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
@@ -52,6 +52,11 @@ class PlotTests(TestCase):
         plot.household_count = 2
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
+
+    def test_plot_creates_household4(self):
+        """if you create a plot as None, should create one household."""
+        plot = PlotFactory(community='test_community', household_count=0, status=None)
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 0)
 
     def test_plot_deletes_household1(self):
         """if you change a plot by subtracting a household should delete last created household."""
@@ -185,7 +190,6 @@ class PlotTests(TestCase):
         """Plot gets community from settings"""
         current_community = settings.CURRENT_COMMUNITY
         plot = PlotFactory(household_count=1, status='occupied')
-        
 
 #     def test_plot_creates_household4(self):
 #         """if you change a plot by subtracting a households should try to delete a household without any members or household log."""
