@@ -190,7 +190,6 @@ class PlotTests(TestCase):
         """Plot gets community from settings"""
         current_community = settings.CURRENT_COMMUNITY
         plot = PlotFactory(household_count=1, status='occupied')
-        
 
 #     def test_plot_creates_household4(self):
 #         """if you change a plot by subtracting a households should try to delete a household without any members or household log."""

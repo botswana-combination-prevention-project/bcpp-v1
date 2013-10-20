@@ -22,6 +22,7 @@ data_manager.prepare()
 site_mappers.autodiscover()
 admin.autodiscover()
 site_sections.autodiscover()
+site_sections.update_section_lists()
 
 APP_NAME = settings.APP_NAME
 
