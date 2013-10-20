@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from ..models import ReproductiveHealth
 from ..forms import ReproductiveHealthForm
 from . import SubjectVisitModelAdmin
@@ -21,6 +23,6 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
     filter_horizontal = ("family_planning",)
     instructions = [("Note to Interviewer: This section is to be"
                              " completed by female participants. SKIP for male participants."),
-                             ("Read to Participant: I am now going to ask you questions"
+                             _("Read to Participant: I am now going to ask you questions"
                              " about reproductive health and pregnancy.")]
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)
