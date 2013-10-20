@@ -123,26 +123,26 @@ class BcppDispatchController(DispatchController):
                 for survey in surveys:
                     household_structure = HouseholdStructure.objects.filter(household=household, survey=survey)
                     if household_structure:
-                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id'])
+                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id','household_id'])
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
-                            self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id'])  # FIXME: One, what are the FK referring to
+                            self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])  # FIXME: One, what are the FK referring to
                             if household_log_entries:
-                                self.dispatch_user_items_as_json(household_log_entries, plot)
+                                self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
                         household_members = HouseholdMember.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                         if household_members:
                             missing_rs = [hsm for hsm in household_members if not hsm.registered_subject]
                             if missing_rs:
                                 raise DispatchError('HouseholdMember field registered_subject cannot be None. Got {0}.'.format(missing_rs))
                             registered_subjects = RegisteredSubject.objects.filter(pk__in=[hsm.registered_subject.pk for hsm in household_members])
-                            self.dispatch_user_items_as_json(registered_subjects, plot)
+                            self._dispatch_as_json(registered_subjects, plot, additional_base_model_class=RegisteredSubject)
                             #self.dispatch_user_items_as_json(household_members, plot, ['survey_id'])   # FIXME: One, what is the FK referring to
                             for household_member in household_members:
                                 # dispatch consents
-                                self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
-                                # dispatch membership forms
-                                self.dispatch_membership_forms(household_member.registered_subject, plot)
+                                #self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
+                                # dispatch membership forms + consent
+                                self.dispatch_membership_forms(household_member.registered_subject, plot, fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'])
                                 # dispatch scheduled instances. This will dispatch appointments first
                                 self.dispatch_scheduled_instances(
                                     'bcpp_subject',
@@ -150,6 +150,7 @@ class BcppDispatchController(DispatchController):
                                     plot,
                                     survey.datetime_start,
                                     survey.datetime_end,
+                                    fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
                                     options={}
                                     )
                                 self.dispatch_requisitions('bcpp_lab', household_member.registered_subject, plot)
