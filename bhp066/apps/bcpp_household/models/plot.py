@@ -211,13 +211,18 @@ class Plot(BaseDispatchSyncUuidModel):
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
         self.action = self.get_action()
+
         if self.id:
-            self.household_count = self.create_households(self)
+            self.household_count = self.create_or_delete_households(self)
             if self.household_count > 0:
                 self.status = 'occupied'  # TODO: or maybe cancel the save
         if (self.household_count == 0 and self.status == 'occupied') or (self.household_count and not self.status == 'occupied'):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
+
+    @property
+    def identifier_segment(self):
+        return self.plot_identifier[:-3]
 
     def create_household(self, instance):
         Household = models.get_model('bcpp_household', 'Household')
@@ -252,8 +257,8 @@ class Plot(BaseDispatchSyncUuidModel):
                 except IntegrityError:
                     pass
 
-    def create_households(self, instance):
-        """Creates or deletes households to try to equal the number of households reported.
+    def create_or_delete_households(self, instance):
+        """Creates or deletes households to try to equal the number of households reported on the plot instance.
 
         This gets called by a signal on add and on the save method on change.
 
@@ -262,8 +267,9 @@ class Plot(BaseDispatchSyncUuidModel):
               there are no household members and the household log does not have entries."""
         Household = models.get_model('bcpp_household', 'Household')
         # check that tuple has not changed and has "occupied"
-        if instance.status not in [item[0] for item in PLOT_STATUS]:
-            raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
+        if instance.status:
+            if instance.status not in [item[0] for item in PLOT_STATUS]:
+                raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
         if instance.status == 'occupied' and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
             while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
                 instance.create_household(instance)

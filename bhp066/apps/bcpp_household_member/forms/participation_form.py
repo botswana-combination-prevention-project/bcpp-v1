@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import Select
-from apps.bcpp_household.choices import HOUSEHOLD_MEMBER_ACTION
+from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
 
 
 class ParticipationForm(forms.Form):

@@ -1,7 +1,7 @@
 from django import forms
 
 
-class CurrentGpsForm(forms.Form):
+class GpsSearchForm(forms.Form):
 
     degrees_s = forms.IntegerField(label='S', required=True)
     minutes_s = forms.DecimalField(label='.', required=True)
