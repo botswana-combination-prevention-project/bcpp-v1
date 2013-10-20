@@ -280,19 +280,6 @@ class Plot(BaseDispatchSyncUuidModel):
             self.delete_unused_households(instance)
         return Household.objects.filter(plot__pk=instance.pk).count()
 
-#         else:
-#             # update all HH with new gps data
-#             for household in Household.objects.filter(plot__pk=instance.pk):
-#                 household.gps_target_lat = instance.gps_target_lat
-#                 household.gps_target_lon = instance.gps_target_lon
-#                 household.gps_lat = instance.gps_lat
-#                 household.gps_lon = instance.gps_lon
-#                 household.gps_degrees_e = instance.gps_degrees_e
-#                 household.gps_degrees_s = instance.gps_degrees_s
-#                 household.gps_minutes_e = instance.gps_minutes_e
-#                 household.gps_minutes_s = instance.gps_minutes_s
-#                 household.save()
-
     def get_action(self):
         retval = 'unconfirmed'
         if self.gps_lon and self.gps_lat:
