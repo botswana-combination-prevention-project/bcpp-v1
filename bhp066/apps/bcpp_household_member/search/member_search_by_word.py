@@ -13,7 +13,7 @@ class MemberSearchByWord(BaseSearchByWord):
     name = 'word'
     search_model = HouseholdMember
     order_by = '-modified'
-    template = 'household_member_include.html'
+    template = 'section_member_include.html'
 
     def get_qset_by_search_term_pattern(self):
         qset_filter = Q()
