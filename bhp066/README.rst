@@ -1,4 +1,4 @@
-v1.2.3
+v1.2.6
 
 you will also need to add in bhp066 (where manage.py is) three repos
 
