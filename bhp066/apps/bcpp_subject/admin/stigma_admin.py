@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from edc.core.admin_supplemental_fields.classes import SupplementalFields
 from ..models import Stigma, StigmaOpinion, PositiveParticipant
 from ..forms import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
@@ -33,8 +35,8 @@ class StigmaAdmin(SubjectVisitModelAdmin):
         "children_stigma": admin.VERTICAL, }
     instructions = [("Interviewer Note: The following supplemental "
                              "questions are only asked for respondents NOT known"
-                             " to have HIV. SKIP for respondents with known HIV infection."
-                             " Read to Participant: Different people feel differently about"
+                             " to have HIV. SKIP for respondents with known HIV infection."),
+                             _(" Read to Participant: Different people feel differently about"
                              " people living with HIV. I am going to ask you about issues"
                              " relevant to HIV and AIDS and also people living with HIV."
                              " Some of the questions during the interview will ask for your"
@@ -109,8 +111,8 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
         "enacted_jobs_tigma": admin.VERTICAL, }
     instructions = [("Interviewer Note: The following supplemental questions"
                              " are only asked for respondents with known HIV infection."
-                             " SKIP for respondents without known HIV infection. "
-                             " Read to Participant: You let us know earlier that you"
+                             " SKIP for respondents without known HIV infection. "),
+                             _(" Read to Participant: You let us know earlier that you"
                              " are HIV positive. I would now like to ask you a few"
                              " questions about your experiences living with HIV."
                              " Please remember this interview and your responses"
