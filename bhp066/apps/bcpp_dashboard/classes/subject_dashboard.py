@@ -18,7 +18,6 @@ class SubjectDashboard(BaseSubjectDashboard):
         self.context.add(
             home='bcpp',
             search_name='subject',
-            subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.get_household_dashboard_url(),
             title='Research Subject Dashboard',
             subject_consent=self.get_consent(),
