@@ -1,9 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from edc.choices import YES_NO_DWTA, YES_NO_UNSURE
-
-from apps.bcpp.choices import PREGARV_CHOICE
+from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, PREGARV_CHOICE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

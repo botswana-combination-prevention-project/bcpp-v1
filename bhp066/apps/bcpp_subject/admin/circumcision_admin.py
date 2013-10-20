@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
+
 from edc.core.admin_supplemental_fields.classes import SupplementalFields
 from ..models import Circumcision, Circumcised, Uncircumcised
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
@@ -15,8 +17,8 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
     radio_fields = {
          'circumcised': admin.VERTICAL, }
     instructions = [("Note to Interviewer: This section is to be completed "
-                             "by male participants. SKIP for female participants. "
-                             "Read to Participant: Some men are circumcised. "
+                             "by male participants. SKIP for female participants. "),
+                             _("Read to Participant: Some men are circumcised. "
                              "Male circumcision is [enter site specific word] when "
                              "the foreskin of the man's penis has been cut off. "
                              "I would like to ask you a few questions regarding "
