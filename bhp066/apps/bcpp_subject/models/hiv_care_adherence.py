@@ -1,10 +1,9 @@
 from django.db import models
-from edc.base.model.validators import datetime_not_future
+from edc.base.model.validators import date_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from edc.choices import YES_NO_DWTA, YES_NO
-from apps.bcpp.choices import (WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
+from apps.bcpp.choices import (YES_NO_DWTA, YES_NO, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
                                ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -15,9 +14,9 @@ class HivCareAdherence (BaseScheduledVisitModel):
     Note to Interviewer: This section is only to be completed by HIV-positive"
     " participants who knew that they were HIV-positive before today."""
 
-    first_positive = models.DateTimeField(
+    first_positive = models.DateField(
         verbose_name=_("When was your first positive HIV test result?"),
-        validators=[datetime_not_future],
+        validators=[date_not_future],
         null=True,
         blank=True,
         help_text=("Note: If participant does not want to answer, leave blank. "
@@ -42,6 +41,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         choices=NO_MEDICAL_CARE,
         help_text="",
         )
+    no_medical_care_other = OtherCharField()
 
     ever_recommended_arv = models.CharField(
         verbose_name=_("Have you ever been recommended by a doctor/nurse or other healthcare "
@@ -74,9 +74,9 @@ class HivCareAdherence (BaseScheduledVisitModel):
         )
     why_no_arv_other = OtherCharField()
 
-    first_arv = models.DateTimeField(
+    first_arv = models.DateField(
         verbose_name=_("When did you first start taking antiretroviral therapy (ARVs)?"),
-        validators=[datetime_not_future],
+        validators=[date_not_future],
         null=True,
         blank=True,
         help_text=("Note: If participant does not want to answer,leave blank.  "
@@ -89,9 +89,9 @@ class HivCareAdherence (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="",
         )
-    arv_stop_date = models.DateTimeField(
+    arv_stop_date = models.DateField(
         verbose_name=_("When did you stop taking ARV\'s?"),
-        validators=[datetime_not_future],
+        validators=[date_not_future],
         null=True,
         blank=True,
         help_text="",

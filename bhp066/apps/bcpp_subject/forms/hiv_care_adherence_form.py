@@ -16,13 +16,13 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         if cleaned_data.get('ever_recommended_arv', None) == 'No' and not cleaned_data.get('why_no_arv'):
             raise forms.ValidationError('If participant has not taken any ARV\'s, give the main reason why not')
         if cleaned_data.get('why_no_arv', None) == 'Other' and not cleaned_data.get('why_no_arv_other'):
-            raise forms.ValidationError('If participant NO ARV\'s is \'OTHER\', specify reason why not started ARV\'s?')
+            raise forms.ValidationError('If participant reason for not taking ARV\'s is \'OTHER\', specify reason why not started ARV\'s?')
         # if partipant has taken arv's, give date when these were started
         if cleaned_data.get('ever_recommended_arv', None) == 'Yes' and not cleaned_data.get('first_arv'):
             raise forms.ValidationError('If participant has taken ARV\'s, give the date when these were first started.')
         # if taking arv's have you missed any
         if cleaned_data.get('on_arv', None) == 'Yes' and not cleaned_data.get('adherence_4_day'):
-            raise forms.ValidationError('If participant is taking ARV\'s, have they skipped/ missed taking any? Pleae indicate')
+            raise forms.ValidationError('If participant is taking ARV\'s, have they skipped/ missed taking any? Please indicate')
         # if you are not taking any arv's do not indicate that you have missed taking medication
         if cleaned_data.get('on_arv', None) == 'No' and cleaned_data.get('adherence_4_day'):
             raise forms.ValidationError('You do not have to indicate missed medication because you are not taking any ARV\'s')

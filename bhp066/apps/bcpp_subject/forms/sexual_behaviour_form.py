@@ -21,8 +21,9 @@ class SexualBehaviourForm (BaseSubjectModelForm):
         # This validation is commented out because question can be left blank if participant does not want to answer
         #         if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('last_year_partners'):
         #             raise forms.ValidationError('If participant has had sex at some point in their life, give details about sexual partners')
-        if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('more_sex'):
-            raise forms.ValidationError('If participant has had sex at some point in their life, has participant had sex with anyone outside community?')
+        #If number of sexual partners in past 12months is more than zero, did participant have sex with anyone outside the community 12months ago
+        if cleaned_data.get('last_year_partners')  > 0  and not cleaned_data.get('more_sex'):
+            raise forms.ValidationError('If participant has had sex with anyone in the past 12months, has participant had sex with anyone outside community in the past 12months?')
         # Commented out because on the model its said that this question can be left blank if the participant does not want to answer
         #         if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('first_sex'):
         #             raise forms.ValidationError('If participant has had sex at some point in their life, how old was the participant when he/she first had sex?')
