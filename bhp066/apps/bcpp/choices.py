@@ -6,26 +6,45 @@ YES_NO_DONT_ANSWER = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
+YES_NO_DWTA = (
+    ('Yes', _('Yes')),
+    ('No', _('No')),
+    ('DWTA', _('Don\'t want to answer')),
+)
+
+#oldway
+# YES_NO_UNSURE = (
+#         ('Yes', _('Yes')),
+#         ('No', _('No')),
+#         ('not_sure', _('I am not sure')),
+#         ('not_answering', _('Don\'t want to answer')),
+#     )
 
 YES_NO_UNSURE = (
-        ('Yes', _('Yes')),
-        ('No', _('No')),
-        ('not_sure', _('I am not sure')),
-        ('not_answering', _('Don\'t want to answer')),
-    )
+    ('Yes',  _('Yes')),
+    ('No', _('No')),
+    ('Not Sure', _('Not Sure')),
+)
 
-# for some reason translations not reading this yes no though translation is available.
+YES_NO_DONT_KNOW = (
+    ('Yes', _('Yes')),
+    ('No', _('No')),
+    ('Dont_know', _('Do not Know')),
+)
+
 YES_NO = (
         ('Yes', _('Yes')),
         ('No', _('No')),
     )
-
 
 YES_NO_REFUSED = (
     ('Yes', _('Yes')),
     ('No', _('No')),
     ('Refuse', _('Refused to answer')),
 )
+
+# for some reason translations not reading this yes no though translation is available.
+
 
 AGREE_STRONGLY = (
         ('Strongly disagree', _('Strongly disagree')),
@@ -219,11 +238,11 @@ EMPLOYMENT_CHOICE = (
     )
 
 HIV_RESULT = (
-        ('POS', _('HIV Positive (Reactive)')),
-        ('NEG', _('HIV Negative (Non-reactive)')),
-        ('IND', _('Indeterminate')),
-        ('Declined', _('Participant declined testing')),
-        ('Not performed', _('Test could not be performed (e.g. supply outage, technical problem)')),
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
+        ('IND', 'Indeterminate'),
+        ('Declined', 'Participant declined testing'),
+        ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'),
     )
 
 WHYNOHIVTESTING_CHOICE = (
@@ -241,10 +260,10 @@ WHYNOHIVTESTING_CHOICE = (
     )
 
 RECORDEDHIVRESULT_CHOICE = (
-        ('POS', _('HIV Positive (Reactive)')),
-        ('NEG', _('HIV Negative (Non-reactive)')),
-        ('IND', _('Indeterminate')),
-        ('No result recorded', _('No result recorded')),
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
+        ('IND', 'Indeterminate'),
+        ('No result recorded', 'No result recorded'),
     )
 
 WHENHIVTEST_CHOICE = (
@@ -538,6 +557,7 @@ WHYARVSTOP_CHOICE = (
     )
 
 ADHERENCE4DAY_CHOICE = (
+        ('Zero', _('Zero days')),
         ('One day', _('One day')),
         ('Two days', _('Two days')),
         ('Three days', _('Three days')),
@@ -672,24 +692,24 @@ DXHEARTATTACK_CHOICE = (
 
 
 DXCANCER_CHOICE = (
-        ('Kaposi\'s sarcoma (KS)', _('Kaposi\'s sarcoma (KS)')),
-        ('Cervical cancer', _('Cervical cancer')),
-        ('Breast cancer', _('Breast cancer')),
-        ('Non-Hodgkin\'s lymphoma (NHL)', _('Non-Hodgkin\'s lymphoma (NHL)')),
-        ('Colorectal cancer', _('Colorectal cancer')),
-        ('Prostate cancer', _('Prostate cancer')),
-        ('Cancer of mouth, throat, voice box (larynx)', _('Cancer of mouth, throat, voice box (larynx)')),
-        ('Cancer of oesophagus', _('Cancer of oesophagus')),
-        ('Other', _('Other, specify:')),
-        ('not_answering', _('Don\'t want to answer')),
+        ('Kaposi\'s sarcoma (KS)', 'Kaposi\'s sarcoma (KS)'),
+        ('Cervical cancer', 'Cervical cancer'),
+        ('Breast cancer', 'Breast cancer'),
+        ('Non-Hodgkin\'s lymphoma (NHL)', 'Non-Hodgkin\'s lymphoma (NHL)'),
+        ('Colorectal cancer', 'Colorectal cancer'),
+        ('Prostate cancer', 'Prostate cancer'),
+        ('Cancer of mouth, throat, voice box (larynx)', 'Cancer of mouth, throat, voice box (larynx)'),
+        ('Cancer of oesophagus', 'Cancer of oesophagus'),
+        ('Other', 'Other, specify:'),
+        ('not_answering', 'Don\'t want to answer'),
     )
 
 
 DXTB_CHOICE = (
-        ('Pulmonary tuberculosis', _('Pulmonary tuberculosis')),
-        ('Extrapulmonary (outside the lungs) tuberculosis', _('Extrapulmonary (outside the lungs) tuberculosis')),
-        ('Other', _('Other, specify:')),
-        ('not_answering', _('Don\'t want to answer')),
+        ('Pulmonary tuberculosis', 'Pulmonary tuberculosis'),
+        ('Extrapulmonary (outside the lungs) tuberculosis', 'Extrapulmonary (outside the lungs) tuberculosis'),
+        ('Other', 'Other, specify:'),
+        ('not_answering', 'Don\'t want to answer'),
     )
 
 ALCOHOL_CHOICE = (
@@ -949,3 +969,8 @@ WHYNOPARTICIPATE_CHOICE = (
         ('OTHER', _('Other, specify:')),
         ('not_answering', _('Don\'t want to answer')),
     )
+
+GENDER_UNDETERMINED = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+)
