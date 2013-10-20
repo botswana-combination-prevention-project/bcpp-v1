@@ -1,4 +1,3 @@
-<table>
 {% for srvy in surveys %}
     {% if srvy.0 == survey %}
         <p><b>{{ forloop.counter }}.&nbsp;{{srvy.0.survey_name}}&nbsp;{{ srvy.0.datetime_start}}&nbsp;-&nbsp;{{ srvy.0.datetime_end}}&nbsp;<span style="color:green">(selected)</span></b></p>
@@ -6,4 +5,3 @@
         <tr><td>{{ forloop.counter }}.&nbsp;<A href="{{srvy.1}}">{{srvy.0.survey_name}}</A>&nbsp;{{ srvy.0.datetime_start}}&nbsp;-&nbsp;{{ srvy.0.datetime_end}}</td></tr>                             
     {% endif %}
 {% endfor %}
-</table>

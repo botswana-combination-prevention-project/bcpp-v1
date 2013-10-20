@@ -11,15 +11,14 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.subject.consent.models import BaseConsent
 
-from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.choices import RELATIONS
-from apps.bcpp_household.models import Household, Plot
+from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
+from ..choices import HOUSEHOLD_MEMBER_ACTION
 from .contact_log import ContactLog
 
 
@@ -29,12 +28,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         null=True,
         blank=False)
 
-#     household = models.ForeignKey(Household, null=True, editable=False, help_text='helper field')
-
-#     plot = models.ForeignKey(Plot, null=True, editable=False, help_text='helper field')
-
-#     survey = models.ForeignKey(Survey, editable=False)
-
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)  # will always be set in post_save()
 
     internal_identifier = models.CharField(
@@ -43,7 +36,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         default=None,
         editable=False,
         help_text=('Identifier to track member between surveys, '
-                   'is the pk of the member\'s first appearance in the table.'))
+                   'is the id of the member\'s first appearance in the table.'))
 
     first_name = EncryptedFirstnameField(
         verbose_name='First name',
@@ -78,14 +71,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         choices=YES_NO,
         db_index=True)
 
-#     lives_in_household = models.CharField(
-#         max_length=3,
-#         choices=YES_NO,
-#         verbose_name="Does the subject live in this household?",
-#         help_text="Does the subject live in this household? If not, you will be asked later to get information about the location of their household")
-
     member_status = models.CharField(
         max_length=25,
+        choices=HOUSEHOLD_MEMBER_ACTION,
         null=True,
         editable=False,
         default='NOT_REPORTED',
@@ -129,22 +117,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #         using = kwargs.get('using', None)
         self.eligible_member = self.is_eligible()
         self.initials = self.initials.upper()
-#         if not self.survey_id:
-#             if self.household_structure:
-#                 self.survey = self.household_structure.survey
-#             else:
-#                 self.survey = Survey.objects.using(using).current_survey()
-#         if not self.plot:
-#             self.plot = self.household_structure.plot
-#         if not self.household:
-#             self.household = self.household_structure.household
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
         if not self.household_structure:
-            raise AttributeError("member.household_structure cannot be None for pk='\{0}\'".format(self.pk))
+            raise AttributeError("member.household_structure cannot be None for id='\{0}\'".format(self.id))
         if not self.registered_subject:
-            raise AttributeError("member.registered_subject cannot be None for pk='\{0}\'".format(self.pk))
+            raise AttributeError("member.registered_subject cannot be None for id='\{0}\'".format(self.id))
         return self.household_structure.natural_key() + self.registered_subject.natural_key()
     natural_key.dependencies = ['bcpp_household.householdstructure', 'registration.registeredsubject']
 
@@ -182,7 +161,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             if issubclass(any_model_cls, BaseConsent):
                 consent_model_cls = any_model_cls
                 if 'household_member' in dir(consent_model_cls):
-                    if consent_model_cls.objects.filter(household_member__pk=self.pk, household_member__household_structure__survey__pk=self.household_structure.survey.pk):
+                    if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
                         has_consent_instance = True
                         break
         return has_consent_instance
@@ -203,7 +182,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def update_registered_subject_on_post_save(self, **kwargs):
         using = kwargs.get('using', None)
         if not self.internal_identifier:
-            self.internal_identifier = self.pk
+            self.internal_identifier = self.id
             # decide now, either access an existing registered_subject or create a new one
             if RegisteredSubject.objects.using(using).filter(registration_identifier=self.internal_identifier).exists():
                 registered_subject = RegisteredSubject.objects.using(using).get(registration_identifier=self.internal_identifier)
@@ -251,22 +230,22 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if not self.member_status:
             self.member_status = 'NOT_REPORTED'
         return ParticipationForm(initial={'status': self.member_status,
-                                          'household_member': self.pk,
-                                          'dashboard_id': self.household_structure.pk,
+                                          'household_member': self.id,
+                                          'dashboard_id': self.household_structure.id,
                                           'dashboard_model': 'household_structure',
                                           'dashboard_type': 'household'})
 
     def _get_form_url(self, model_name):
         url = ''
-        pk = None
+        id = None
         app_label = 'bcpp_subject'
         if not self.registered_subject:
             self.save()
         Model = models.get_model(app_label, model_name)
         if Model.objects.filter(household_member=self):
-            pk = Model.objects.get(household_member=self).pk
-        if pk:
-            url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(pk, ))
+            id = Model.objects.get(household_member=self).id
+        if id:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(id, ))
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
         return url
@@ -332,7 +311,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def get_subject_identifier(self):
         """ Uses the hsm internal_identifier to locate the subject identifier in
-        registered_subject OR return the hsm.pk"""
+        registered_subject OR return the hsm.id"""
         if RegisteredSubject.objects.filter(registration_identifier=self.internal_identifier):
             registered_subject = RegisteredSubject.objects.get(registration_identifier=self.internal_identifier)
             subject_identifier = registered_subject.subject_identifier
@@ -340,7 +319,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 subject_identifier = registered_subject.registration_identifier
         else:
             #$ this should not be an option as all hsm's have a registered_subject instance
-            subject_identifier = self.pk
+            subject_identifier = self.id
         return subject_identifier
 
     def get_hiv_history(self):
@@ -362,36 +341,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         consent_instance = None
         for consent_model in consent_models:
             if consent_model.objects.filter(household_member=self):
-                consent_instance = consent_model.objects.get(household_member=self.pk)
+                consent_instance = consent_model.objects.get(household_member=self.id)
                 break
         return consent_instance
-#
-#
-#     def enrolment_checklist(self):
-#         EnrolmentChecklist = models.get_model('bcpp_household_member', 'EnrolmentChecklist')
-#         self.enrolment_checklist = []
-#         if EnrolmentChecklist.objects.filter(household_member=self):
-#             self.enrolment_checklist = EnrolmentChecklist.objects.get(household_member=self)
-#         return self.enrolment_checklist
-#
-#     def is_eligible_label(self):
-#         "Returns if the subject is eligible or ineligible based on age"
-#         if self.is_minor():
-#             return "Eligible Minor"
-#         elif self.is_adult():
-#             return "Eligible Adult"
-#         else:
-#             return "not eligible"
-# 
-#     def resident(self):
-#         if self.nights_out <= 3:
-#             return "permanent (%s)" % self.nights_out
-#         if self.nights_out > 3 and self.nights_out <= 14:
-#             return "partial (%s)" % self.nights_out
-#         if self.nights_out > 14:
-#             return "occasional (%s)" % self.nights_out
-#         else:
-#             return "no (%s)" % self.nights_out
 
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
@@ -412,15 +364,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             if subject_identifier:
                 registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
                 if registered_subject:
-                    if HouseholdMember.objects.filter(pk=registered_subject.registration_identifier).exists():
-                        retval = HouseholdMember.objects.get(pk=registered_subject.registration_identifier).household_structure
+                    if HouseholdMember.objects.filter(id=registered_subject.registration_identifier).exists():
+                        retval = HouseholdMember.objects.get(id=registered_subject.registration_identifier).household_structure
         return retval
-
-#     def member_terse(self):
-#         return mask_encrypted(unicode(self.first_name))
-# 
-#     def subject(self):
-#         return mask_encrypted(unicode(self.first_name))
 
     class Meta:
         ordering = ['-created']

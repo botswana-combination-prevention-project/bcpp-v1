@@ -7,7 +7,7 @@ from .base_subject_dashboard import BaseSubjectDashboard
 class SubjectDashboard(BaseSubjectDashboard):
 
     view = 'subject_dashboard'
-    dashboard_name = 'Subject Dashboard'
+    dashboard_name = 'Participant Dashboard'
 
     def __init__(self, *args, **kwargs):
         kwargs.update({'dashboard_models': {'subject_consent': SubjectConsent}})
