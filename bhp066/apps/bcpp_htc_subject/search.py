@@ -1,4 +1,4 @@
-from edc.dashboard.search.classes import BaseSearchByWord, site_search
+from edc.dashboard.search.classes import BaseSearchByWord
 from .models import HtcRegistration
 from .section import SectionHtcSubjectView
 
@@ -9,5 +9,3 @@ class HtcSubjectSearchByWord(BaseSearchByWord):
     search_model = HtcRegistration
     order_by = '-created'
     template = 'htcregistration_include.html'
-
-#site_search.register(HtcSubjectSearchByWord)
