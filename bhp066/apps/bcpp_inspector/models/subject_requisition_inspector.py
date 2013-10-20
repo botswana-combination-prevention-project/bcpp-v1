@@ -19,7 +19,7 @@ class SubjectRequisitionInspector(BaseInspector):
         )
 
     aliquot_type = models.CharField(
-        max_length=10,
+        max_length=50,
         verbose_name='Aliquot Type'
         )
 
