@@ -10,7 +10,7 @@ class PlotForm(BaseModelForm):
         cleaned_data = self.cleaned_data
 
         if self.instance.id:
-            self.instance.household_count = self.instance.create_or_delete_households(self)
+            self.instance.household_count = self.instance.create_or_delete_households(self.instance)
             if self.instance.household_count > 0:
                 self.cleaned_data['status'] = 'occupied'
 
