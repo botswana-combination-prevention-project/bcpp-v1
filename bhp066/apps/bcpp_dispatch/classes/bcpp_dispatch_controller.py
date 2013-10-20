@@ -61,7 +61,7 @@ class BcppDispatchController(DispatchController):
         signals.post_save.disconnect(base_household_member_consent_on_post_save, weak=False, dispatch_uid="base_household_member_consent_on_post_save")
         signals.post_save.disconnect(create_household_on_post_save, weak=False, dispatch_uid="create_household_on_post_save")
         signals.post_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
-        signals.post_save.disconnect(post_save_on_household, weak=False, dispatch_uid="create_household_structure_on_post_save")
+        signals.post_save.disconnect(post_save_on_household, weak=False, dispatch_uid="post_save_on_household")
         signals.post_save.disconnect(household_structure_on_post_save, weak=False, dispatch_uid="household_structure_on_post_save")
         signals.pre_save.disconnect(check_for_survey_on_pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
 
@@ -72,7 +72,7 @@ class BcppDispatchController(DispatchController):
         signals.post_save.connect(base_household_member_consent_on_post_save, weak=False, dispatch_uid="base_household_member_consent_on_post_save")
         signals.post_save.connect(create_household_on_post_save, weak=False, dispatch_uid="create_household_on_post_save")
         signals.post_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
-        signals.post_save.connect(post_save_on_household, weak=False, dispatch_uid="create_household_structure_on_post_save")
+        signals.post_save.connect(post_save_on_household, weak=False, dispatch_uid="post_save_on_household")
         signals.post_save.connect(household_structure_on_post_save, weak=False, dispatch_uid="household_structure_on_post_save")
         signals.pre_save.connect(check_for_survey_on_pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
 
@@ -137,7 +137,7 @@ class BcppDispatchController(DispatchController):
                                 raise DispatchError('HouseholdMember field registered_subject cannot be None. Got {0}.'.format(missing_rs))
                             registered_subjects = RegisteredSubject.objects.filter(pk__in=[hsm.registered_subject.pk for hsm in household_members])
                             self._dispatch_as_json(registered_subjects, plot, additional_base_model_class=RegisteredSubject)
-                            #self.dispatch_user_items_as_json(household_members, plot, ['survey_id'])   # FIXME: One, what is the FK referring to
+                            self.dispatch_user_items_as_json(household_members, plot, ['household_structure_id'])
                             for household_member in household_members:
                                 # dispatch consents
                                 #self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
