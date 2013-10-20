@@ -6,7 +6,7 @@ from .choices import SECTIONS, SUB_SECTIONS, RANAKA_LANDMARKS
 class RanakaPlotMapper(BasePlotMapper):
 
     map_area = 'ranaka'
-    map_code = '040'
+    map_code = '11'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
