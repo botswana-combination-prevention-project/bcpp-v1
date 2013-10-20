@@ -9,4 +9,4 @@ from apps.bcpp_dispatch.forms import BcppDispatchForm
 @csrf_protect
 def bcpp_dispatch(request, **kwargs):
     """Receives a list of item identifiers and user selects the producer to dispatch to."""
-    return dispatch(request, BcppDispatchController, BcppDispatchForm, **kwargs)
+    return dispatch(request, BcppDispatchController, BcppDispatchForm, app_name='bcpp', **kwargs)
