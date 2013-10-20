@@ -150,6 +150,7 @@ class BcppDispatchController(DispatchController):
                                     plot,
                                     survey.datetime_start,
                                     survey.datetime_end,
+                                    fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
                                     options={}
                                     )
                                 self.dispatch_requisitions('bcpp_lab', household_member.registered_subject, plot)
