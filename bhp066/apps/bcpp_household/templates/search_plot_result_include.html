@@ -8,15 +8,16 @@
 
 <table  cellspacing="0" id="result_list">
 <thead>
-<th>Action</th>
 <th>Plot</th>
+<th>Action</th>
 <th>Status</th>
 <th>Households</th>
 <th>Members</th>
+<th>Map</th>
 <th>Community</th>
 <th>Modified</th>           
 <th>Host</th>
-<th>Map</th>                                 
+                                 
 </thead>  
 
 {% for plot in search_result.object_list %}
@@ -24,14 +25,6 @@
       <!-- obj is a plot object -->
 
       <tr class="{% cycle 'row1' 'row2' %}">
-
-      <td>
-        {% if plot|is_dispatched %}
-          <div class="warning">Locked</div>{{ plot.action }}
-        {% else %}
-              {{ plot.action }}
-        {% endif %}
-      </td>
 
       <td>{% if plot|is_dispatched %}
           <div class="warning">{{plot.plot_identifier}}</div>
@@ -43,26 +36,50 @@
           {% endif %}
         {% endif %}
         </td>
+      <td>
+        {% if plot|is_dispatched %}
+          <div class="warning">Locked</div>{{ plot.action }}
+        {% else %}
+              {{ plot.action }}
+        {% endif %}
+      </td>
         <td>{{ plot.get_status_display }}</td>
-        <td><A href="{% url 'section_url' section_name='household' %}?plot={{ plot.plot_identifier }}">{{ plot.household_count|default:'1' }} household(s)</A></td>
-        <td>{{ plot.eligible_members }}</td>
-      <td>{{ plot.community|encrypted}}</td>
-        <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
-        <td>{{ plot.user_modified }}</td>
+        <td>{% if plot.household_count %}
+
+            <form method="POST" action="{% url 'section_search_word_url' 'household' 'word'  %}">
+            {% csrf_token %}
+            <input type="submit" value="{{ plot.household_count|default:'0' }} Household{{plot.household_count|pluralize}}">
+            <input type="hidden" name="search_term" value="{{ plot.identifier_segment }}">         
+            </form>        
+            {% endif %}
+        </td>
+        <td>
+            {% if plot.eligible_members %}
+                <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
+                {% csrf_token %}
+                <input type="submit" value="{{ plot.eligible_members }} Member{{plot.eligible_members|pluralize}}">
+                <input type="hidden" name="search_term" value="{{ plot.plot_identifier }}">         
+                </form>        
+            {% endif %}
+        </td>
+        
         <td>
           {% if plot.gps_lon|default:plot.gps_target_lon and plot.gps_lat|default:plot.gps_target_lat %}
           <form action="{% url 'item_map_url' mapper_name=plot.community identifier=plot.plot_identifier lon=plot.gps_lon|default:plot.gps_target_lon lat=plot.gps_lat|default:plot.gps_target_lat %}" method="post">
             {% csrf_token %}
-          	<p><input type="submit" value="view google map"></p>
+            <p><input type="submit" value="View Map"></p>
           </form>
         {% else %}
            <span style="background-color:red;color:white;"> missing lat/lon!</span>
         {% endif %} 
         </td>       
+      <td>{{ plot.community|encrypted}}</td>
+        <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
+        <td>{{ plot.user_modified }}</td>
       </tr>
       {% endif %}
 {% endfor %}
-  <tr><td colspan="11">{{ search_result.object_list.count|default:0 }} plot structure{{ search_result.object_list|pluralize }}{% if not search_result.object_list.count%}s{%endif%} found.</td></tr>    
+      
 </table>
 
 
