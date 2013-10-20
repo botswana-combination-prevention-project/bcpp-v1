@@ -22,20 +22,13 @@ TEMPLATE_DIRS = (
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-#KEY_PATH = 'keys'
-#KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
-<<<<<<< HEAD
-#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-<<<<<<< HEAD
+
+# KEY_PATH = 'keys'
+# KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
+# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 KEY_PATH = '/Volumes/bhp066/keys'
-=======
 # KEY_PATH = '/Volumes/keys'
->>>>>>> 3e63d3c7e3fe2443e4dcde8258a0f6ac97d5cb3f
-=======
-##KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
->>>>>>> v124
+
 MAP_DIR = STATIC_ROOT.child('img')
 
 MANAGERS = ADMINS
@@ -109,11 +102,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-<<<<<<< HEAD
-            'NAME': 'bhp066_v123',
-=======
-            'NAME': 'bhp066_v124',
->>>>>>> v124
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
