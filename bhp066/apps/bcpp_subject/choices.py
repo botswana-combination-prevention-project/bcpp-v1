@@ -310,12 +310,12 @@ OTHER_OCCUPATION = (
 
 
 HIV_DOC_TYPE = (
-    ('Tebelopele', _('Tebelopele')),
-    ('Lab result form', _('Lab result form')),
-    ('ART Prescription', _('ART Prescription')),
-    ('PMTCT Prescription', _('PMTCT Prescription')),
-    ('Record of CD4 count', _('Record of CD4 count')),
-    ('OTHER', _('Other OPD card or ANC card documentation')),
+    ('Tebelopele', 'Tebelopele'),
+    ('Lab result form', 'Lab result form'),
+    ('ART Prescription', 'ART Prescription'),
+    ('PMTCT Prescription', 'PMTCT Prescription'),
+    ('Record of CD4 count', 'Record of CD4 count'),
+    ('OTHER', 'Other OPD card or ANC card documentation'),
 )
 
 GRANT_TYPE = (
@@ -490,13 +490,13 @@ YES_NO_RECORD_REFUSAL = (
     )
 
 STI_DX = (
-    ('wasting', _('Severe weight loss (wasting) - more than 10% of body weight')),
-    ('diarrhoea', _('Unexplained diarrhoea for one month')),
-    ('yeast infection', _('Yeast infection of mouth or oesophagus')),
-    ('pneumonia', _('Severe pneumonia or meningitis or sepsis')),
-    ('PCP', _('PCP (Pneumocystis pneumonia)')),
-    ('herpes', _('Herpes infection for more than one month')),
-    ('OTHER', _('Other')),   
+    ('wasting', 'Severe weight loss (wasting) - more than 10% of body weight'),
+    ('diarrhoea', 'Unexplained diarrhoea for one month'),
+    ('yeast infection', 'Yeast infection of mouth or oesophagus'),
+    ('pneumonia', 'Severe pneumonia or meningitis or sepsis'),
+    ('PCP', 'PCP (Pneumocystis pneumonia)'),
+    ('herpes', 'Herpes infection for more than one month'),
+    ('OTHER', 'Other'),   
     )
 
 CHOICES_FROM_BCPPLIST = (
