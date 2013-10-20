@@ -122,27 +122,27 @@ LOGGING = {
             'level': 'WARNING',
             #'filters': ['special']
         },
-       'bhp_sync.classes.base_sync_model': {
+       'sync.classes.base_sync_model': {
             'handlers': ['console', ],
             'level': 'INFO',
             #'filters': ['special']
         },
-       'bhp_dispatch.classes.prepare_device': {
+       'dispatch.classes.prepare_device': {
             'handlers': ['console', ],
             'level': 'INFO',
             #'filters': ['special']
         },
-       'bhp_dispatch.classes.base': {
+       'dispatch.classes.base': {
             'handlers': ['console', ],
             'level': 'INFO',
             #'filters': ['special']
         },
-       'bhp_dispatch.classes.dispatch_controller': {
+       'dispatch.classes.dispatch_controller': {
             'handlers': ['console', ],
             'level': 'INFO',
             #'filters': ['special']
         },
-       'bhp_dispatch.classes.base_dispatch_controller': {
+       'dispatch.classes.base_dispatch_controller': {
             'handlers': ['console', ],
             'level': 'INFO',
             #'filters': ['special']
