@@ -6,7 +6,7 @@ from .choices import SECTIONS, SUB_SECTIONS, OTSE_LANDMARKS
 class OtsePlotMapper(BasePlotMapper):
 
     map_area = 'otse'
-    map_code = '020'
+    map_code = '14'
     regions = SECTIONS
     sections = SUB_SECTIONS
 

@@ -1,10 +1,12 @@
 import factory
 from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import HivResult
 
+from .base_scheduled_model_factory import BaseScheduledModelFactory
 
-class HivResultFactory(BaseUuidModelFactory):
+
+class HivResultFactory(BaseScheduledModelFactory):
     FACTORY_FOR = HivResult
 
     report_datetime = datetime.today()

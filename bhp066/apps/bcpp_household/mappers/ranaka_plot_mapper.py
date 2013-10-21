@@ -1,16 +1,16 @@
 from edc.map.classes import site_mappers
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, MOLAPOWABOJANG_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, RANAKA_LANDMARKS
 
 
 class RanakaPlotMapper(BasePlotMapper):
 
     map_area = 'ranaka'
-    map_code = '040'
+    map_code = '11'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = MOLAPOWABOJANG_LANDMARKS
+    landmarks = RANAKA_LANDMARKS
 
     gps_center_lat = -24.908703
     gps_center_lon = 25.463033
