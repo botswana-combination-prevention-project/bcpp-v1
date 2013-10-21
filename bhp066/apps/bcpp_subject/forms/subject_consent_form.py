@@ -34,6 +34,8 @@ class SubjectConsentForm(BaseSubjectConsentForm):
             raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
         if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
             raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
+        if not cleaned_data.get('consent_datetime'):
+            raise forms.ValidationError('Please indicate the date and time of consent.')
         consent_datetime = cleaned_data.get('consent_datetime').date()
         rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
         if rdelta.years < obj.minimum_age_of_consent:
