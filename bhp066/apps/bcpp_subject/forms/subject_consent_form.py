@@ -28,6 +28,10 @@ class SubjectConsentForm(BaseSubjectConsentForm):
             obj = StudySpecific.objects.all()[0]
         except IndexError:
             raise forms.ValidationError("Please contact your DATA/IT assistant to add your edc.core.bhp_variables site specifics")
+        # check for hm
+        household_member = cleaned_data.get("household_member")
+        if not household_member:
+            raise forms.ValidationError("HouseholdMember cannot be None.")
         if not cleaned_data.get('household_member').eligible_subject == True:
             raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
         if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('guardian_name', None):
@@ -59,10 +63,6 @@ class SubjectConsentForm(BaseSubjectConsentForm):
             raise forms.ValidationError('Identity numbers do not match. Please check both the identity and your confirmation.')
         if not cleaned_data.get('identity_type'):
             raise forms.ValidationError("identity_type cannot be None.")
-        # check for hm
-        household_member = cleaned_data.get("household_member")
-        if not household_member:
-            raise forms.ValidationError("HouseholdMember cannot be None.")
         # check for duplicate identity
         if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).exists():
             if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).count() > 1:
