@@ -1,4 +1,4 @@
-#from forms_tests import FormsTests
+from forms_tests import FormsTests
 #from off_study_tests import OffStudyTests
 from factory_tests import FactoryTests
 from natural_key_tests import NaturalKeyTests
@@ -7,3 +7,4 @@ from consent_history_tests import ConsentHistoryTests
 #from selenium_tests import SeleniumTests
 #from erik_tests import ErikTests
 from consent_tests import ConsentTests
+from .referral_tests import ReferralTests
