@@ -2,14 +2,14 @@ Django==1.5.4
 Fabric==1.8.0
 M2Crypto==0.21.1
 MySQL-python==1.2.4
-South==0.8.1
+South==0.8.2
 Unipath==1.0
 django-autocomplete==0.2
 django-dajax==0.9.2
 django-dajaxice==0.5.5
 django-databrowse==1.2
 django-debug-toolbar==0.9.4
-django-extensions==1.1.1
+django-extensions==1.2.4
 django-tastypie==0.10.0
 geo-utils==0.1
 geopy==0.95.1
