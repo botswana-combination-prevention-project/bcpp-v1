@@ -38,24 +38,24 @@ class SubjectConsentForm(BaseSubjectConsentForm):
             raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
         if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
             raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
-        if not cleaned_data.get('consent_datetime'):
-            raise forms.ValidationError('Please indicate the date and time of consent.')
-        consent_datetime = cleaned_data.get('consent_datetime').date()
-        rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
-        if rdelta.years < obj.minimum_age_of_consent:
-            raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(rdelta.years))
-        if rdelta.years > obj.maximum_age_of_consent:
-            raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(rdelta.years))
-        if cleaned_data.get('is_minor') == 'No':
-            if obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound:
-                raise forms.ValidationError(u'Subject is a minor based on DOB {0} yet you wrote they are not a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
-        if cleaned_data.get('is_minor') == 'Yes':
+
+        if cleaned_data.get('consent_datetime'):
+            consent_datetime = cleaned_data.get('consent_datetime').date()
+            rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
             if rdelta.years < obj.minimum_age_of_consent:
-                raise forms.ValidationError(u'Subject is minor but is too young to consent. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
-            elif rdelta.years >= obj.age_at_adult_lower_bound:
-                raise forms.ValidationError(u'Subject is an adult based on DOB {0} yet you wrote they are a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
-            elif not (obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound):
-                raise forms.ValidationError(u'Subject is not a minor as defined by this protocol. Got {0} years'.format(rdelta.years))
+                raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(rdelta.years))
+            if rdelta.years > obj.maximum_age_of_consent:
+                raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(rdelta.years))
+            if cleaned_data.get('is_minor') == 'No':
+                if obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound:
+                    raise forms.ValidationError(u'Subject is a minor based on DOB {0} yet you wrote they are not a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+            if cleaned_data.get('is_minor') == 'Yes':
+                if rdelta.years < obj.minimum_age_of_consent:
+                    raise forms.ValidationError(u'Subject is minor but is too young to consent. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+                elif rdelta.years >= obj.age_at_adult_lower_bound:
+                    raise forms.ValidationError(u'Subject is an adult based on DOB {0} yet you wrote they are a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+                elif not (obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound):
+                    raise forms.ValidationError(u'Subject is not a minor as defined by this protocol. Got {0} years'.format(rdelta.years))
         # check for identity
         if not cleaned_data.get('identity'):
             raise forms.ValidationError("Identity cannot be None.")
