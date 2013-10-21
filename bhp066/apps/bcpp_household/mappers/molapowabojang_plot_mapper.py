@@ -6,7 +6,7 @@ from .choices import SECTIONS, SUB_SECTIONS, MOLAPOWABOJANG_LANDMARKS
 class MolapowabojangPlotMapper(BasePlotMapper):
 
     map_area = 'molapowabojang'
-    map_code = '030'
+    map_code = '13'
     regions = SECTIONS
     sections = SUB_SECTIONS
 

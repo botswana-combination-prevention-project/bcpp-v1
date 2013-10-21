@@ -24,7 +24,7 @@ class OtsePlotMapper(Mapper):
 site_mappers.register(OtsePlotMapper)
 
 
-class EligibilityChecklistTests(SimpleTestCase):
+class EligibilityTests(SimpleTestCase):
 
     def setUp(self):
         self.survey = SurveyFactory()

@@ -1,6 +1,11 @@
 import re
+
+from django.core.exceptions import ImproperlyConfigured
+
 from edc.dashboard.subject.classes import RegisteredSubjectDashboard
 from edc.subject.registration.models import RegisteredSubject
+from edc.subject.visit_schedule.models import MembershipForm
+
 from apps.bcpp_household_member.models import HouseholdMember
 
 
@@ -37,6 +42,9 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
 
     def set_membership_form_category(self):
         self._membership_form_category = (self.get_survey().survey_slug)
+        if MembershipForm.objects.filter(category=self._membership_form_category).count() == 0:
+            raise ImproperlyConfigured('Cannot find a membership form for category \'{0}\'. '
+                                       'Please correct on visit.MembershipForm.'.format(self._membership_form_category))
 
     def set_survey(self):
         self._survey = self.get_household_member().survey

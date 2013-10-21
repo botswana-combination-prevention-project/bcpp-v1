@@ -32,7 +32,6 @@ class SubjectRequisition(BaseRequisition):
                 subject_identifier=fields.get('subject_identifier'),
                 requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),
                 requisition_identifier=fields.get('requisition_identifier'),
-                aliquot_type=fields.get('aliquot_type')[0],
                 specimen_identifier=fields.get('specimen_identifier'),
                 device_id=settings.DEVICE_ID,
                 app_name='bcpp_lab',
