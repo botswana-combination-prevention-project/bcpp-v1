@@ -1,8 +1,11 @@
 import factory
 from datetime import datetime
+
 from edc.subject.appointment.tests.factories import AppointmentFactory
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+
 from ...models import HtcSubjectVisit
 
 
