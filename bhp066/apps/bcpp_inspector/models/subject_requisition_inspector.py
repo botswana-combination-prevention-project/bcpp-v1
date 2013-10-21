@@ -18,10 +18,10 @@ class SubjectRequisitionInspector(BaseInspector):
         verbose_name='Requisition Identifier'
         )
 
-    aliquot_type = models.CharField(
-        max_length=50,
-        verbose_name='Aliquot Type'
-        )
+#     aliquot_type = models.CharField(
+#         max_length=50,
+#         verbose_name='Aliquot Type'
+#         )
 
     specimen_identifier = models.CharField(
         max_length=50,
