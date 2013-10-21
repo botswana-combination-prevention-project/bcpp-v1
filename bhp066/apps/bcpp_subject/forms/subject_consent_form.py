@@ -1,19 +1,20 @@
-from datetime import date
 from dateutil.relativedelta import relativedelta
+
 from django import forms
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 
-from apps.bcpp.choices import GENDER_UNDETERMINED
 from edc.core.bhp_common.utils import check_initials_field
 from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.core.bhp_variables.models import StudySpecific
 from edc.subject.registration.models import RegisteredSubject
-from apps.bcpp_household_member.models import HouseholdMember
+
+from apps.bcpp.choices import GENDER_UNDETERMINED
+
 from ..models import SubjectConsent
 
 
 class SubjectConsentForm(BaseSubjectConsentForm):
-    
+
     gender = forms.ChoiceField(
         label='Gender',
         choices=[choice for choice in GENDER_UNDETERMINED],
@@ -23,70 +24,68 @@ class SubjectConsentForm(BaseSubjectConsentForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        if 'is_minor' in cleaned_data:
-            if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('guardian_name', None):
-                raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
-            if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
-                raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
-            #repeat validation on dob against is_minor YES/NO
-            try:
-                obj = StudySpecific.objects.all()[0]
-            except IndexError:
-                raise TypeError("Please add your edc.core.bhp_variables site specifics")
-            # TODO: does this work?
-            if cleaned_data.get('consent_datetime', None):
-                consent_datetime = cleaned_data.get('consent_datetime').date()
-            else:
-                consent_datetime = date.today()
-            rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
-            if cleaned_data.get('is_minor') == 'No' and (rdelta.years >= obj.minimum_age_of_consent and rdelta.years < obj.age_at_adult_lower_bound):
-                raise forms.ValidationError(u'Subject is a minor based on DOB {0} yet you wrote they are not a minor. Please correct.'.format(cleaned_data.get('dob')))
-            if cleaned_data.get('is_minor') == 'Yes' and not (rdelta.years >= obj.minimum_age_of_consent and rdelta.years < obj.age_at_adult_lower_bound):
-                raise forms.ValidationError(u'Subject is an adult based on DOB {0} yet you wrote they are a minor. Please correct.'.format(cleaned_data.get('dob')))
-        if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
-            raise forms.ValidationError('Identity numbers do not match. Please check both the identity and your confirmation.')
-        report_datetime = cleaned_data.get('consent_datetime')
-        survey = cleaned_data.get('survey')
+        try:
+            obj = StudySpecific.objects.all()[0]
+        except IndexError:
+            raise forms.ValidationError("Please contact your DATA/IT assistant to add your edc.core.bhp_variables site specifics")
+        # check for hm
         household_member = cleaned_data.get("household_member")
         if not household_member:
             raise forms.ValidationError("HouseholdMember cannot be None.")
-        identity_type = cleaned_data.get('identity_type')
-        if not identity_type:
+        if not cleaned_data.get('household_member').eligible_subject == True:
+            raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
+        if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('guardian_name', None):
+            raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
+        if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
+            raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
+        if not cleaned_data.get('consent_datetime'):
+            raise forms.ValidationError('Please indicate the date and time of consent.')
+        consent_datetime = cleaned_data.get('consent_datetime').date()
+        rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
+        if rdelta.years < obj.minimum_age_of_consent:
+            raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(rdelta.years))
+        if rdelta.years > obj.maximum_age_of_consent:
+            raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(rdelta.years))
+        if cleaned_data.get('is_minor') == 'No':
+            if obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound:
+                raise forms.ValidationError(u'Subject is a minor based on DOB {0} yet you wrote they are not a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+        if cleaned_data.get('is_minor') == 'Yes':
+            if rdelta.years < obj.minimum_age_of_consent:
+                raise forms.ValidationError(u'Subject is minor but is too young to consent. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+            elif rdelta.years >= obj.age_at_adult_lower_bound:
+                raise forms.ValidationError(u'Subject is an adult based on DOB {0} yet you wrote they are a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+            elif not (obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound):
+                raise forms.ValidationError(u'Subject is not a minor as defined by this protocol. Got {0} years'.format(rdelta.years))
+        # check for identity
+        if not cleaned_data.get('identity'):
+            raise forms.ValidationError("Identity cannot be None.")
+        if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
+            raise forms.ValidationError('Identity numbers do not match. Please check both the identity and your confirmation.')
+        if not cleaned_data.get('identity_type'):
             raise forms.ValidationError("identity_type cannot be None.")
-        household_identifier = household_member.household_structure.household.household_identifier
+        # check for duplicate identity
         if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).exists():
             if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).count() > 1:
                 raise forms.ValidationError("More than one subject is using this identity number. Cannot continue.")
-            registered_subject = RegisteredSubject.objects.get(identity=cleaned_data.get('identity'))
-            previous_household_member = HouseholdMember.objects.filter(pk=registered_subject.registration_identifier)
-            if previous_household_member:
-                if not previous_household_member[0].household_structure.household.household_identifier == household_identifier:
-                        raise forms.ValidationError("Subject not found in {0} for this registered subject / omang'.".format(household_identifier))
-        #check date of consent is within survey start and end dates
-        if survey:
-            if not (survey.datetime_start - report_datetime).days >= 0 and not (report_datetime - survey.datetime_end).days <= 0:
-                raise forms.ValidationError('Consent cannot be for survey %s. Survey %s starts on %s and ends on %s. Your wrote %s' % (survey.survey_name, survey.survey_name, survey.datetime_start.date(), survey.datetime_end.date(), report_datetime.date()))
-
-        #check subjectconsent initials with householdstructuremember initials
-        my_initials = cleaned_data.get("initials")
-        my_first_name = cleaned_data.get("first_name")
-        my_last_name = cleaned_data.get("last_name")
-
-        check_initials_field(my_first_name, my_last_name, my_initials)
-
-        #check first name matches householdstructuremember
-        if my_first_name and household_member:
-            if household_member.first_name != my_first_name:
-                raise forms.ValidationError("First name does not match. The first name recorded in the household member's information are '%s' but you wrote '%s'" % (household_member.first_name, my_first_name))
-
+        #check subject consent initials
+        initials = cleaned_data.get("initials")
+        first_name = cleaned_data.get("first_name")
+        last_name = cleaned_data.get("last_name")
+        check_initials_field(first_name, last_name, initials)
+        #check subject consent initials with household member initials
+        if initials != household_member.initials:
+            raise forms.ValidationError('Initials for household member record do not match initials here. Got {0} <> {1}'.format(household_member.initials, initials))
+        #check first name matches household member
+        if first_name and household_member:
+            if household_member.first_name != first_name:
+                raise forms.ValidationError("First name does not match. The first name recorded in the household member's information are '%s' but you wrote '%s'" % (household_member.first_name, first_name))
         #check 1st and last letters of initials match subjects name
-        check_initials_field(my_first_name, my_last_name, my_initials)
-
-        #check subjectconsent gender with householdstructuremember gender
-        my_gender = cleaned_data.get("gender", None)
-        if my_gender and household_member:
-            if household_member.gender != my_gender:
-                raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, my_gender))
+        check_initials_field(first_name, last_name, initials)
+        #check subject consent gender with household member gender
+        gender = cleaned_data.get("gender", None)
+        if gender and household_member:
+            if household_member.gender != gender:
+                raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, gender))
         return super(SubjectConsentForm, self).clean()
 
     class Meta:
