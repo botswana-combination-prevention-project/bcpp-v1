@@ -1,10 +1,14 @@
 import re
 from django.db import models
+from django.core.exceptions import ValidationError
+
 from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.local.bw.models import BaseBwConsent
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject
+
 from apps.bcpp_survey.models import Survey
+
 from ..models import HouseholdMember
 
 
@@ -29,6 +33,8 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
         return self.consent_datetime
 
     def save(self, *args, **kwargs):
+        if not self.household_member.eligible_subject:
+            raise ValidationError('Subject is not eligible or has not been confirmed eligible. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
         if not self.id:
             self.survey = self.household_member.household_structure.survey
             self.registered_subject = self.household_member.registered_subject
@@ -60,10 +66,6 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
     def post_save_update_hm_status(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
-        # no longer updating member status to consented, see participation view
-#         self.household_member.member_status = 'CONSENTED'
-#         self.household_member.save(using=using)
-        # since member is now consented, registered_subject gets a subject identifier, if not already set
         if re_pk.match(self.registered_subject.subject_identifier):
             self.registered_subject.subject_identifier = self.subject_identifier
         self.registered_subject.registration_status = 'CONSENTED'
