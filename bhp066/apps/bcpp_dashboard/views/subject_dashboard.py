@@ -11,7 +11,6 @@ def subject_dashboard(request, **kwargs):
         dashboard_type=kwargs.get('dashboard_type'),
         dashboard_id=kwargs.get('dashboard_id'),
         dashboard_model=kwargs.get('dashboard_model'),
-        dashboard_category=kwargs.get('dashboard_category'),
         registered_subject=kwargs.get('registered_subject'),
         show=kwargs.get('show'),
         dashboard_type_list=['subject'],
