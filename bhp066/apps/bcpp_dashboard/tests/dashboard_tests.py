@@ -27,31 +27,7 @@ class DashboardTests(TestCase):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-#         content_type = ContentType.objects.get(app_label='bcpp_household', model='maternalenrollment')
-#         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
-#         membership_form = MembershipFormFactory(content_type_map=content_type_map, category='maternal')
-#         schedule_group = ScheduleGroupFactory(membership_form=membership_form)
-#         visit_tracking_content_type_map = ContentTypeMap.objects.get(app_label='maikalelo_maternal', model='maternalvisit')
-#         visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=visit_tracking_content_type_map)
-#         visit_definition.schedule_group.add(schedule_group)
-
         Configuration.objects.create()
-#         print 'get a community name from the mapper classes'
-#         community = site_mappers.get_as_list()[0]
-#         print 'create a new survey'
-#         survey1 = SurveyFactory(datetime_start=datetime(2013, 07, 01), datetime_end=datetime(2013,12,01))
-#         survey2 = SurveyFactory(datetime_start=datetime(2014, 01, 01), datetime_end=datetime(2014,07,01))
-#         survey3 = SurveyFactory(datetime_start=datetime(2015, 01, 01), datetime_end=datetime(2015,07,01))
-#         print 'create a new Plot in community {0}.'.format(community)
-#         plot = PlotFactory(community=community)
-#         household = HouseholdFactory(plot=plot)
-#         print household.community
-#         dashboard_type = 'household'
-#         dashboard_model = 'household'
-#         dashboard_id = household.pk
-#         print 'initialize the HH dashboard'
-#         household_dashboard = HouseholdDashboard(dashboard_type, dashboard_id, dashboard_model)
-
         self.setup_dashboard(self)
 
         print 'assert household structure exists for this HH and the three surveys'

@@ -1,8 +1,11 @@
 import factory
 from datetime import date, datetime
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from ..models import HtcHivResult
-from htc_subject_visit_factory import HtcSubjectVisitFactory
+
+from ...models import HtcHivResult
+
+from .htc_subject_visit_factory import HtcSubjectVisitFactory
 
 
 class HtcHivResultFactory(BaseUuidModelFactory):
