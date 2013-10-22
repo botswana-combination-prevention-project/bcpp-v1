@@ -1,7 +1,10 @@
 import factory
 from datetime import datetime
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import CircumcisionAppointment
+
 from .htc_subject_visit_factory import HtcSubjectVisitFactory
 
 
