@@ -25,8 +25,9 @@ CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
 # KEY_PATH = 'keys'
 # KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/keys'
+KEY_PATH = '/Volumes/bhp066/keys'
 
 MAP_DIR = STATIC_ROOT.child('img')
 
@@ -245,7 +246,7 @@ INSTALLED_APPS = (
     'django_databrowse',
     'dajaxice',
     'dajax',
-    #'south',
+    'south',
 
     'edc.audit',
 
