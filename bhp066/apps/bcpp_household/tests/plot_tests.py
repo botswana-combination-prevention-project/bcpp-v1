@@ -1,17 +1,21 @@
 from datetime import datetime
 
-from django.test import TestCase
-from django.core.exceptions import ValidationError
+from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from edc.map.classes import site_mappers, Mapper
+from edc.map.exceptions import MapperError
 
-from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ..classes  import PlotIdentifier
+from ..forms import PlotForm
 from ..models import PlotIdentifierHistory, Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
+
 from .factories import PlotFactory
 
 
@@ -179,26 +183,57 @@ class PlotTests(TestCase):
     def test_plot_confirms_plot_and_household(self):
         plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         self.assertEqual(Household.objects.get(plot=plot).action, 'unconfirmed')
-        plot.gps_degrees_e = 22
-        plot.gps_degrees_s = 22
-        plot.gps_minutes_e = 22
-        plot.gps_minutes_s = 22
+        plot.gps_degrees_e = 25
+        plot.gps_degrees_s = 25
+        plot.gps_minutes_s = .011111 * 60
+        plot.gps_minutes_e = .741111 * 60
         plot.save()
         self.assertEqual(Plot.objects.get(pk=plot.pk).action, 'confirmed')
 
-    def test_plot_gets_community(self):
-        """Plot gets community from settings"""
-        current_community = settings.CURRENT_COMMUNITY
-        plot = PlotFactory(household_count=1, status='occupied')
+    def test_plot_verifies_gps1(self):
+        """accepts gps within community boundary."""
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
+        self.assertEqual(Household.objects.get(plot=plot).action, 'unconfirmed')
+        plot.gps_degrees_e = 25
+        plot.gps_degrees_s = 25
+        plot.gps_minutes_s = .01000 * 60
+        plot.gps_minutes_e = .74000 * 60
+        self.assertIsNone(plot.save())
 
-#     def test_plot_creates_household4(self):
-#         """if you change a plot by subtracting a households should try to delete a household without any members or household log."""
-#         plot = PlotFactory(community='test_community', household_count=2)
-#         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
-#         
-#         plot.household_count = 1
-#         plot.save()
-#         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
+    def test_plot_verifies_gps2(self):
+        """rejects gps not within community boundary."""
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
+        self.assertEqual(Household.objects.get(plot=plot).action, 'unconfirmed')
+        plot.gps_degrees_e = 25
+        plot.gps_degrees_s = 25
+        plot.gps_minutes_e = 22
+        plot.gps_minutes_s = 22
+        self.assertRaisesRegexp(MapperError, 'does not fall within this community', plot.save)
+
+    def test_plot_form_verifies_gps1(self):
+        """plot_form catches error if gps not within community boundary."""
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
+        plot.gps_degrees_e = 25
+        plot.gps_degrees_s = 25
+        plot.gps_minutes_e = 22
+        plot.gps_minutes_s = 22
+        plot_form = PlotForm()
+        plot_form.instance = plot
+        plot_form.cleaned_data = {}
+        self.assertRaisesRegexp(forms.ValidationError, 'does not fall within this community', plot_form.clean)
+
+    def test_plot_gets_community1(self):
+        """Plot DOES NOT get community from settings if None"""
+        self.assertRaisesRegexp(ValidationError, 'Attribute \'community\' may not be None for model', PlotFactory, household_count=1, status='occupied')
+
+    def test_plot_community1(self):
+        """Plot does not save if community is None"""
+        self.assertRaisesRegexp(ValidationError, 'Attribute \'community\' may not be None for model', PlotFactory, household_count=1, status='occupied', community=None)
+
+    def test_plot_community2(self):
+        """Plot does not save if community is not valid community from mapper classes."""
+        self.assertRaisesRegexp(MapperError, 'invalid_community_name is not a valid mapper ', PlotFactory, household_count=1, status='occupied', community='invalid_community_name')
+
 
 #     def test_identifier(self):
 #         print 'create a survey'
