@@ -12,9 +12,9 @@ class PlotForm(BaseModelForm):
         cleaned_data = self.cleaned_data
         if self.instance:
             if not self.instance.community:
-                raise forms.ValidationError('Community may not be blank. Must be one of {1}.'.format(self.instance.community), ', '.join(site_mappers.get_as_list()))
+                raise forms.ValidationError('Community may not be blank. Must be one of {1}.'.format(self.instance.community, ', '.join(site_mappers.get_as_list())))
             if not self.instance.community in site_mappers.get_as_list():
-                raise forms.ValidationError('Unknown community {0}. Must be one of {1}.'.format(self.instance.community), ', '.join(site_mappers.get_as_list()))
+                raise forms.ValidationError('Unknown community {0}. Must be one of {1}.'.format(self.instance.community, ', '.join(site_mappers.get_as_list())))
 
             # verify gps to target before the save() method does
             mapper_cls = site_mappers.get_registry(self.instance.community)
