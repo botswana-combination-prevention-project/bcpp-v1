@@ -263,7 +263,7 @@ RECORDEDHIVRESULT_CHOICE = (
         ('POS', 'HIV Positive (Reactive)'),
         ('NEG', 'HIV Negative (Non-reactive)'),
         ('IND', 'Indeterminate'),
-        ('No result recorded', 'No result recorded'),
+        ('UNK', 'No result recorded'),
     )
 
 WHENHIVTEST_CHOICE = (
