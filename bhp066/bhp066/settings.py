@@ -245,7 +245,7 @@ INSTALLED_APPS = (
     'django_databrowse',
     'dajaxice',
     'dajax',
-    #'south',
+    'south',
 
     'edc.audit',
 
@@ -363,6 +363,7 @@ EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
+EMAIL_AFTER_CONSUME = False
 
 SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
 SOUTH_LOGGING_ON = True
