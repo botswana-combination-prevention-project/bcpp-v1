@@ -96,17 +96,6 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
                   "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
         )
 
-#     permanent_resident = models.CharField(
-#         verbose_name=("In the past 12 months, have you typically spent 14 or"
-#                       " more nights per month in this community? "),
-#         max_length=10,
-#         choices=YES_NO_DWTA,
-#         help_text=("If participant has moved into the "
-#                   "community in the past 12 months, then "
-#                   "since moving in has the participant typically "
-#                   "spent more than 14 nights per month in this community. "
-#                   "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
-#         )
     objects = models.Manager()
 
     def save(self, *args, **kwargs):

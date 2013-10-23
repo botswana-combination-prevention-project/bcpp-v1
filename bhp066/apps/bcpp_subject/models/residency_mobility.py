@@ -60,7 +60,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         choices=COMMUNITIES,
         null=True,
         blank=True,
-        help_text="Other community, specify",
+        help_text="",
         )
 
     history = AuditTrail()
