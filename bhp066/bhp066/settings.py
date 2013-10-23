@@ -25,8 +25,8 @@ CONFIG_DIR = PROJECT_DIR.child('bhp066')
 
 # KEY_PATH = 'keys'
 # KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
-#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/keys'
+KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+#KEY_PATH = '/Volumes/keys'
 
 MAP_DIR = STATIC_ROOT.child('img')
 
@@ -394,7 +394,7 @@ LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 SESSION_COOKIE_AGE = 10000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-DEVICE_ID = '12'
+DEVICE_ID = '99'
 SUBJECT_TYPES = ['subject']
 MAX_SUBJECTS = {'subject': 3000}
 APPOINTMENTS_PER_DAY_MAX = 20
@@ -431,6 +431,6 @@ CURRENT_SURVEY = 'year-one'
 
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
-#Middleman/node machine configurations
+#Middleman/node machine configurations, for Middle_Man, endure DEVICE_ID = 98
 #MIDDLE_MAN = True
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
