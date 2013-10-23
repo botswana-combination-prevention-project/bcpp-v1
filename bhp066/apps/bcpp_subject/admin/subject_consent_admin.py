@@ -22,7 +22,6 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'is_verified',
             'language',
             'may_store_samples',
-            'study_site',
             'is_literate',
             'consent_datetime',
             'created',
@@ -41,7 +40,6 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'is_literate',
             'witness_name',
             'consent_datetime',
-            'study_site',
             'gender',
             'dob',
             'guardian_name',
@@ -60,7 +58,6 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         self.radio_fields = {
             "language": admin.VERTICAL,
             "gender": admin.VERTICAL,
-            "study_site": admin.VERTICAL,
             "is_dob_estimated": admin.VERTICAL,
             "identity_type": admin.VERTICAL,
             "may_store_samples": admin.VERTICAL,

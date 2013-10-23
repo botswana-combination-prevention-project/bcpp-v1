@@ -10,7 +10,7 @@ site_mappers.autodiscover()
 class SectionMemberView(BaseSectionView):
     section_name = 'member'
     section_display_name = 'Members'
-    add_model = HouseholdMember
+    #add_model = HouseholdMember
     section_display_index = 30
     section_template = 'section_member.html'
     search = [MemberSearchByWord]
