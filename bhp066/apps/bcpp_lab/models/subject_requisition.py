@@ -5,6 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.lab.lab_requisition.models import BaseRequisition
 from apps.bcpp_subject.models import SubjectVisit
 from apps.bcpp_inspector.models import SubjectRequisitionInspector
+from apps.bcpp_inspector.managers import SubjectRequisitionInspectorManager
 from ..managers import SubjectRequisitionManager
 from packing_list import PackingList
 
@@ -28,15 +29,17 @@ class SubjectRequisition(BaseRequisition):
         return None
 
     def save_to_inspector(self, fields):
-        SubjectRequisitionInspector.objects.create(
-                subject_identifier=fields.get('subject_identifier'),
-                requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),
-                requisition_identifier=fields.get('requisition_identifier'),
-                specimen_identifier=fields.get('specimen_identifier'),
-                device_id=settings.DEVICE_ID,
-                app_name='bcpp_lab',
-                model_name='SubjectRequisition'
-                )
+        if SubjectRequisitionInspector.objects.filter(subject_identifier=fields.get('subject_identifier'), requisition_identifier=fields.get('requisition_identifier')).count() == 0:
+            host_created = fields.get('hostname_created')
+            SubjectRequisitionInspector.objects.create(
+                    subject_identifier=fields.get('subject_identifier'),
+                    requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),
+                    requisition_identifier=fields.get('requisition_identifier'),
+                    specimen_identifier=fields.get('specimen_identifier'),
+                    device_id=host_created[len(host_created)-2:len(host_created)],
+                    app_name='bcpp_lab',
+                    model_name='SubjectRequisition'
+                    )
 
     def natural_key(self):
         return (self.requisition_identifier,)
