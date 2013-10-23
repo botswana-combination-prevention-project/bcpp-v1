@@ -19,7 +19,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         )
 
     permanent_resident = models.CharField(
-        verbose_name=("In the past 12 months, have you typically spent 14 or"
+        verbose_name=_("In the past 12 months, have you typically spent 14 or"
                       " more nights per month in this community? "),
         max_length=10,
         choices=YES_NO_DWTA,
