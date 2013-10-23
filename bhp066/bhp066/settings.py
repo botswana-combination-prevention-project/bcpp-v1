@@ -14,6 +14,7 @@ ADMINS = (
 )
 
 # Path
+SOURCE_DIR = Path(__file__).ancestor(3)
 PROJECT_DIR = Path(__file__).ancestor(2)
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
