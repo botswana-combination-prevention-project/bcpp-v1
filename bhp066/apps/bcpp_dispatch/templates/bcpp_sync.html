@@ -9,7 +9,11 @@
 {% endblock usb_sync %}
 
 {% block consuming_app %}
-<td><A href="/bhp_sync/consume/{{ producer.name }}/bcpp/">synchronize with server</A></td>
+{% if device_id == '99' or device_id == '98' %}
+	<td><A href="/bhp_sync/consume/{{ producer.name }}/bcpp/">synchronize with server</A></td>
+{% else %}
+	<td>SYNC NOT AVAILABLE IN NETBOOK</td>
+{% endif %}
 {% endblock consuming_app %}
     
 {% block play_transactions %}
