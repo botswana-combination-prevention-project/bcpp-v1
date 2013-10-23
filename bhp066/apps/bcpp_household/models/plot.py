@@ -195,9 +195,11 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
+            # plot data is imported and not entered, so community must be provided on import
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
         if self.household_count > 9:
             raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
+        # if self.community does not get valid mapper, will raise an error that should be caught in forms.py
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
