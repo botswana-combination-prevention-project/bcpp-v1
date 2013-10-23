@@ -4,9 +4,9 @@ from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
 
 
 class ParticipationForm(forms.Form):
-    """A form to select the type of participation for a hoiusehold member.
+    """A form to select the type of participation for a household member.
 
-    ...note:: configured and referenced directly on the household_member.participation_form()"""
+    ...note:: configured and referenced directly on the household_member model via method participation_form()"""
 
     status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_ACTION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
     household_member = forms.CharField(widget=forms.HiddenInput())
