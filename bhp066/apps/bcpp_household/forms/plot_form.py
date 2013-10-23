@@ -19,8 +19,8 @@ class PlotForm(BaseModelForm):
             # verify gps to target before the save() method does
             mapper_cls = site_mappers.get_registry(self.instance.community)
             mapper = mapper_cls()
-            gps_lat = mapper.get_gps_lat(self.instance.gps_degrees_s, self.instance.gps_minutes_s)
-            gps_lon = mapper.get_gps_lon(self.instance.gps_degrees_e, self.instance.gps_minutes_e)
+            gps_lat = mapper.get_gps_lat(cleaned_data.get('gps_degrees_s'), cleaned_data.get('gps_minutes_s'))
+            gps_lon = mapper.get_gps_lon(cleaned_data.get('gps_degrees_e'), cleaned_data.get('gps_minutes_e'))
             mapper.verify_gps_location(gps_lat, gps_lon, forms.ValidationError)
             mapper.verify_gps_to_target(gps_lat, gps_lon, self.instance.gps_target_lat, self.instance.gps_target_lon, self.instance.target_radius, forms.ValidationError)
 
