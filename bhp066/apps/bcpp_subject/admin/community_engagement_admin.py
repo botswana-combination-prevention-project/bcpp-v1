@@ -1,4 +1,6 @@
 from django.contrib import admin
+from edc.core.admin_supplemental_fields.classes import SupplementalFields
+
 from ..models import CommunityEngagement
 from ..forms import CommunityEngagementForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
@@ -7,6 +9,12 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 class CommunityEngagementAdmin(SubjectVisitModelAdmin):
 
     form = CommunityEngagementForm
+    supplemental_fields = SupplementalFields(
+        ('community_engagement',
+        'vote_engagement',
+        'problems_engagement',
+        'problems_engagement_other',
+        'solve_engagement',), p=0.09, group='CE')
     fields = (
         "subject_visit",
         'community_engagement',

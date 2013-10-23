@@ -364,6 +364,7 @@ EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
+EMAIL_AFTER_CONSUME = False
 
 SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
 SOUTH_LOGGING_ON = True
@@ -394,7 +395,7 @@ LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 SESSION_COOKIE_AGE = 10000
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-DEVICE_ID = '12'
+DEVICE_ID = '99'
 SUBJECT_TYPES = ['subject']
 MAX_SUBJECTS = {'subject': 3000}
 APPOINTMENTS_PER_DAY_MAX = 20
@@ -431,6 +432,6 @@ CURRENT_SURVEY = 'year-one'
 
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
-#Middleman/node machine configurations
+#Middleman/node machine configurations, for Middle_Man, endure DEVICE_ID = 98
 #MIDDLE_MAN = True
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
