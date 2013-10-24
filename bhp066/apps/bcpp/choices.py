@@ -276,10 +276,10 @@ WHENHIVTEST_CHOICE = (
     )
 
 VERBALHIVRESULT_CHOICE = (
-        ('POS', _('HIV Positive (Reactive)')),
-        ('NEG', _('HIV Negative (Non-reactive)')),
+        ('POS', _('HIV Positive')),
+        ('NEG', _('HIV Negative')),
         ('IND', _('Indeterminate')),
-        ('not_sure', _('I am not sure')),
+        ('UNK', _('I am not sure')),
         ('not_answering', _('Don\'t want to answer')),
     )
 
