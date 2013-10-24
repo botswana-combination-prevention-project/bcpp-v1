@@ -15,16 +15,16 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
     fields = (
         'subject_visit',
         'report_datetime',
-        'referral_code_list',
+        'referral_codes',
         'urgent_referral',
         'referral_appt_date',
         'referral_clinic',
         'comment'
         )
     radio_fields = {
-        "referral_code_list": admin.VERTICAL,
+        "referral_codes": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
         }
-    readonly_fields = ('referral_code_list', 'urgent_referral')
+    readonly_fields = ('referral_codes', 'urgent_referral')
 
 admin.site.register(SubjectReferral, SubjectReferralAdmin)
