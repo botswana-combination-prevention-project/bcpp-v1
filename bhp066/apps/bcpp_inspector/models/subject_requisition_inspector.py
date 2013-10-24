@@ -1,6 +1,6 @@
 from django.db import models
 from edc.device.inspector.models import BaseInspector
-
+from apps.bcpp_inspector.managers import SubjectRequisitionInspectorManager
 
 class SubjectRequisitionInspector(BaseInspector):
 
@@ -32,7 +32,12 @@ class SubjectRequisitionInspector(BaseInspector):
         max_length=15,
         verbose_name='Device Id'
         )
-
+    
+    #objects = SubjectRequisitionInspectorManager()
+    
+    def natural_key(self):
+        return (self.subject_identifier, self.requisition_identifier)
+    
     class Meta:
         app_label = 'bcpp_inspector'
         verbose_name = 'Subject Requisition Inspector'
