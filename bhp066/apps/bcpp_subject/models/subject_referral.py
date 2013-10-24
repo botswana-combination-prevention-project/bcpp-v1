@@ -5,35 +5,47 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_is_future
+from edc.export.managers import ExportHistoryManager
+from edc.export.models import ExportTrackingFieldsMixin
 
 from apps.bcpp.choices import COMMUNITIES
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .hiv_care_adherence import HivCareAdherence
 
 REFERRAL_CODES = (
     ('CD4', 'POS, need CD4 testing'),
     ('HIV', 'HIV re-test (IND)'),
     ('MASA-HIGH', 'MASA continued care (on ART, high CD4)'),
     ('MASA-LOW', 'MASA continued care (on ART, low CD4)'),
+    ('MASA-DEFAULTER', 'MASA defaulter (was on ART)'),
     ('CCC-HIGH', 'CCC or MASA (not on ART, high CD4)'),
     ('CCC-LOW', 'CCC or MASA (not on ART, low CD4)'),
     ('SMC', 'SMC'),
 )
 
+# TODO: defaulters
 
-class SubjectReferral(BaseScheduledVisitModel):
+
+class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
         default=date.today(),
-        help_text="...or next refill date if on ART."
+        help_text="... or next refill / clinic date if on ART."
         )
 
     referral_clinic = models.CharField(
         max_length=50,
         choices=COMMUNITIES,
         default=settings.CURRENT_COMMUNITY,
+        )
+
+    referral_clinic_other = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
         )
 
     gender = models.CharField(
@@ -62,6 +74,7 @@ class SubjectReferral(BaseScheduledVisitModel):
         default=False,
         null=True,
         editable=False,
+        help_text="from hiv_care_adherence"
         )
 
     cd4_result = models.IntegerField(
@@ -72,6 +85,12 @@ class SubjectReferral(BaseScheduledVisitModel):
     cd4_result_datetime = models.DateTimeField(
          null=True,
          )
+
+    vl_sample_drawn = models.NullBooleanField(
+        default=False,
+        null=True,
+        editable=False,
+        )
 
     pregnant = models.NullBooleanField(
         default=False,
@@ -102,11 +121,11 @@ class SubjectReferral(BaseScheduledVisitModel):
         null=True,
         )
 
-    referral_code_list = models.CharField(
+    referral_codes = models.CharField(
         verbose_name='Referral Code',
         max_length=50,
         choices=REFERRAL_CODES,
-        help_text="list of referral codes updated internally"
+        help_text="list of referral codes updated internally, comma separated."
         )
 
     in_clinic_flag = models.BooleanField(
@@ -123,40 +142,49 @@ class SubjectReferral(BaseScheduledVisitModel):
                    'information in this comment')
         )
 
+    export_history = ExportHistoryManager()
+
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.update_urgent_referral()
+        self.update_on_art()
         self.update_referral_codes()
+        self.update_urgent_referral()
         super(SubjectReferral, self).save(*args, **kwargs)
-
-    def append_to_referral_codes(self, value):
-        codes = []
-        if value:
-            codes = [value]
-            if self.referral_code_list:
-                codes = [x for x in self.referral_code_list.split(',')]
-                codes.extend([item for item in codes if item != value])
-                codes.append(value)
-        self.referral_code_list = ','.join(codes)
 
     def get_next_appt_date(self):
         if self.urgent_referral():
             return date.today()
         return date.today + timedelta(days=7)
 
+    def update_on_art(self):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+            hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
+            self.on_art = hiv_care_adherence.on_art()
+
     def update_urgent_referral(self):
+        """Compares the referral_codes to the "urgent" referrals list and sets to true on a match."""
         urgent_referral = False
-        if self.hiv_result == 'IND':
+        urgent_referral_codes = ['MASA-DEFAULTER', 'CCC-LOW', 'CCC-HIGH', 'HIV', 'CD4']
+        if [code for code in self.get_referral_codes_as_list() if code in urgent_referral_codes]:
             urgent_referral = True
-        elif self.hiv_result == 'POS':
-            if self.on_art == None and self.cd4_result == None:
-                urgent_referral = True
-            elif self.cd4_result <= 350:
-                urgent_referral = True
         self.urgent_referral = urgent_referral
 
+    def get_referral_codes_as_list(self):
+        return [x for x in self.referral_codes.split(',')]
+
+    def append_to_referral_codes(self, value):
+        codes = []
+        if value:
+            codes = [value]
+            if self.referral_codes:
+                codes = self.get_referral_codes_as_list()
+                codes.extend([item for item in codes if item != value])
+                codes.append(value)
+        self.referral_codes = ','.join(codes)
+
     def update_referral_codes(self):
+        """Reviews the conditions for referral and sets to the correct referral code."""
         if self.hiv_result == 'IND':
             self.append_to_referral_codes('HIV')
         elif self.hiv_result == 'NEG' and self.gender == 'F':

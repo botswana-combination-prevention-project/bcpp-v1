@@ -1,18 +1,16 @@
 from django.db import models
-from edc.base.model.validators import date_not_future
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
+from edc.base.model.validators import date_not_future
+
 from apps.bcpp.choices import (YES_NO_DWTA, YES_NO, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
                                ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivCareAdherence (BaseScheduledVisitModel):
-
-    """CS002-
-    Note to Interviewer: This section is only to be completed by HIV-positive"
-    " participants who knew that they were HIV-positive before today."""
 
     first_positive = models.DateField(
         verbose_name=_("When was your first positive HIV test result?"),
@@ -89,6 +87,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="",
         )
+
     arv_stop_date = models.DateField(
         verbose_name=_("When did you stop taking ARV\'s?"),
         validators=[date_not_future],
@@ -105,6 +104,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         blank=True,
         help_text="",
         )
+
     arv_stop_other = OtherCharField()
 
     adherence_4_day = models.CharField(
@@ -127,7 +127,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         help_text="",
         )
 
-    therapy_evidence = models.CharField(
+    arv_evidence = models.CharField(
         verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
         choices=YES_NO,
         null=True,
@@ -136,6 +136,13 @@ class HivCareAdherence (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def defaulter(self):
+        """Returns true if subject is an ARV defaulter."""
+
+    def save(self, *args, **kwargs):
+        
+        super(HivCareAdherence, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bcpp_subject'
