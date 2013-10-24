@@ -207,14 +207,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def get_registered_subject(self):
         return self.registered_subject
 
-    def deserialize_prep(self):
-        #Signal.disconnect(post_save, None, weak=False, dispatch_uid="member_on_post_save")
-        pass
-
-    def deserialize_post(self):
-        #Signal.connect(post_save, None, weak=False, dispatch_uid="member_on_post_save")
-        pass
-
     @property
     def is_moved(self):
         from apps.bcpp_subject.models import SubjectMoved
