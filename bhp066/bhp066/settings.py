@@ -1,19 +1,15 @@
-# Django settings for bhp project.
 from unipath import Path
 import os
 import platform
 import sys
 from .logger import LOGGING
 
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-DIRNAME = os.path.dirname(os.path.abspath(__file__))
-ADMINS = (
-    ('erikvw', 'ew@2789@gmail.com'),
-)
+ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
 # Path
+DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 SOURCE_DIR = Path(__file__).ancestor(3)
 PROJECT_DIR = Path(__file__).ancestor(2)
 MEDIA_ROOT = PROJECT_DIR.child('media')
@@ -23,13 +19,14 @@ TEMPLATE_DIRS = (
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
+MAP_DIR = STATIC_ROOT.child('img')
 
-#KEY_PATH = 'keys'
+# edc.crytpo_fields encryption keys
+# KEY_PATH = 'keys'
 # KEY_PATH = '/Users/ckgathi/source/mappers/bhp066/keys'
 # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/keys'
-
-MAP_DIR = STATIC_ROOT.child('img')
+# KEY_PATH = '/Volumes/keys'
+KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -360,7 +357,13 @@ INSTALLED_APPS = (
     'tastypie',
 )
 
-# email settings
+# django
+SESSION_COOKIE_AGE = 10000
+SHORT_DATE_FORMAT = 'Y-m-d'
+SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# django email settings
 EMAIL_HOST = '192.168.1.48'
 EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
@@ -368,19 +371,10 @@ EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
 EMAIL_AFTER_CONSUME = False
 
-SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
-SOUTH_LOGGING_ON = True
+# django auth
 AUTH_PROFILE_MODULE = "bhp_userprofile.userprofile"
-# https://bitbucket.org/tyrion/django-autocomplete
-AUTOCOMPLETE_MEDIA_PREFIX = '/media/autocomplete/media/'
-DAJAXICE_MEDIA_PREFIX = "dajaxice"
 
-# only for community server
-IS_COMMUNITY_SERVER = True
-ALLOW_DELETE_MODEL_FROM_SERIALIZATION = False
-ALLOW_MODEL_SERIALIZATION = True
-
-# EDC GENERAL SETTINGS
+# general
 APP_NAME = 'bcpp'
 PROJECT_NUMBER = 'BHP066'
 PROJECT_IDENTIFIER_PREFIX = '066'
@@ -388,52 +382,67 @@ PROJECT_IDENTIFIER_MODULUS = 7
 PROJECT_TITLE = 'Botswana Combination Prevention Project'
 PROTOCOL_REVISION = 'V1.0 12 August 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
+
+# admin overrides
 LOGIN_URL = '/{app_name}/login/'.format(app_name=APP_NAME)
 LOGIN_REDIRECT_URL = '/{app_name}/'.format(app_name=APP_NAME)
 LOGOUT_URL = '/{app_name}/logout/'.format(app_name=APP_NAME)
-SHORT_DATE_FORMAT = 'Y-m-d'
-SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
-LAB_LOCK_NAME = 'BHP066'
-LABDB = 'bhplab'
-SESSION_COOKIE_AGE = 10000
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-DEVICE_ID = '99'
-SUBJECT_TYPES = ['subject']
-MAX_SUBJECTS = {'subject': 3000}
+
+# bcpp_household
+CURRENT_COMMUNITY = 'gaborone'
+CURRENT_SURVEY = 'year-one'
+
+# south
+SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
+SOUTH_LOGGING_ON = True
+
+# dajax
+DAJAXICE_MEDIA_PREFIX = "dajaxice"
+
+# edc.subject.appointment
 APPOINTMENTS_PER_DAY_MAX = 20
 APPOINTMENTS_DAYS_FORWARD = 15
 
+# edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_htc_subject']
+SUBJECT_TYPES = ['subject']
+MAX_SUBJECTS = {'subject': 3000}
+
+# edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
-
-#BHP_CRYPTO_SETTINGS
+# edc.crypto_fields
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
+# edc.map
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
+
+# ???
 FIELD_MAX_LENGTH = 'migration'
 
-# LAB REFERENCE AND GRADING
+# edc.lab
+LAB_LOCK_NAME = 'BHP066'
+LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'
 GRADING_LIST = 'DAIDS_2004'
-# for bhp_import_dmis
 if platform.system() == 'Darwin':
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER=/usr/local/lib/libtdsodbc.so;SERVER=192.168.1.141;'
                                   'PORT=1433;UID=sa;PWD=cc3721b;DATABASE=BHPLAB')
 else:
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
                                    'DATABASE=BHPLAB')
-VAR_ROOT = '/var'
-
-CURRENT_COMMUNITY = 'gaborone'
-CURRENT_SURVEY = 'year-one'
-
+# edc.subject.consent
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
-#Middleman/node machine configurations, for Middle_Man, endure DEVICE_ID = 98
-#MIDDLE_MAN = True
+# edc.device.device
+DEVICE_ID = '99'
+
+# edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
+
+# edc.device.sync
+ALLOW_MODEL_SERIALIZATION = True
