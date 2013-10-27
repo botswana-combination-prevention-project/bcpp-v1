@@ -12,435 +12,435 @@ class Migration(SchemaMigration):
         db.add_column(u'bcpp_subject_subjectrefusal', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HeartAttackAudit.revision'
         db.add_column(u'bcpp_subject_heartattack_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'RecentPartnerAudit.revision'
         db.add_column(u'bcpp_subject_recentpartner_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectDeath.revision'
         db.add_column(u'bcpp_subject_subjectdeath', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectAbsentee.revision'
         db.add_column(u'bcpp_subject_subjectabsentee', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HivHealthCareCostsAudit.revision'
         db.add_column(u'bcpp_subject_hivhealthcarecosts_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'PositiveParticipantAudit.revision'
         db.add_column(u'bcpp_subject_positiveparticipant_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Circumcised.revision'
         db.add_column(u'bcpp_subject_circumcised', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'StiAudit.revision'
         db.add_column(u'bcpp_subject_sti_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'OutpatientCareAudit.revision'
         db.add_column(u'bcpp_subject_outpatientcare_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Cd4History.revision'
         db.add_column(u'bcpp_subject_cd4history', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Stigma.revision'
         db.add_column(u'bcpp_subject_stigma', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Pregnancy.revision'
         db.add_column(u'bcpp_subject_pregnancy', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'ThirdPartnerAudit.revision'
         db.add_column(u'bcpp_subject_thirdpartner_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'NonPregnancyAudit.revision'
         db.add_column(u'bcpp_subject_nonpregnancy_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectOffStudyAudit.revision'
         db.add_column(u'bcpp_subject_subjectoffstudy_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectUndecidedEntry.revision'
         db.add_column(u'bcpp_subject_subjectundecidedentry', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectLocator.revision'
         db.add_column(u'bcpp_subject_subjectlocator', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'CommunityEngagement.revision'
         db.add_column(u'bcpp_subject_communityengagement', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectDeathAudit.revision'
         db.add_column(u'bcpp_subject_subjectdeath_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Demographics.revision'
         db.add_column(u'bcpp_subject_demographics', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SecondPartnerAudit.revision'
         db.add_column(u'bcpp_subject_secondpartner_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'LabourMarketWagesAudit.revision'
         db.add_column(u'bcpp_subject_labourmarketwages_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'MonthsRecentPartnerAudit.revision'
         db.add_column(u'bcpp_subject_monthsrecentpartner_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Deleting field 'SubjectReferral.next_appt_datetime'
         db.delete_column(u'bcpp_subject_subjectreferral', 'next_appt_datetime')
-
+ 
         # Deleting field 'SubjectReferral.subject_referral_reason'
         db.delete_column(u'bcpp_subject_subjectreferral', 'subject_referral_reason')
-
+ 
         # Deleting field 'SubjectReferral.survey'
         db.delete_column(u'bcpp_subject_subjectreferral', 'survey_id')
-
+ 
         # Deleting field 'SubjectReferral.in_clinic'
         db.delete_column(u'bcpp_subject_subjectreferral', 'in_clinic')
-
+ 
         # Deleting field 'SubjectReferral.household_member'
         db.delete_column(u'bcpp_subject_subjectreferral', 'household_member_id')
-
+ 
         # Deleting field 'SubjectReferral.referral_result'
         db.delete_column(u'bcpp_subject_subjectreferral', 'referral_result')
-
+ 
         # Deleting field 'SubjectReferral.registered_subject'
         db.delete_column(u'bcpp_subject_subjectreferral', 'registered_subject_id')
-
+ 
         # Deleting field 'SubjectReferral.subject_referral_reason_other'
         db.delete_column(u'bcpp_subject_subjectreferral', 'subject_referral_reason_other')
-
+ 
         # Adding field 'SubjectReferral.revision'
         db.add_column(u'bcpp_subject_subjectreferral', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.subject_visit'
         db.add_column(u'bcpp_subject_subjectreferral', 'subject_visit',
                       self.gf('django.db.models.fields.related.OneToOneField')(default=0, to=orm['bcpp_subject.SubjectVisit'], unique=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.referral_appt_date'
         db.add_column(u'bcpp_subject_subjectreferral', 'referral_appt_date',
                       self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 10, 23, 0, 0)),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.referral_clinic'
         db.add_column(u'bcpp_subject_subjectreferral', 'referral_clinic',
                       self.gf('django.db.models.fields.CharField')(default='gaborone', max_length=50),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.gender'
         db.add_column(u'bcpp_subject_subjectreferral', 'gender',
                       self.gf('django.db.models.fields.CharField')(max_length=10, null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.citizen'
         db.add_column(u'bcpp_subject_subjectreferral', 'citizen',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.hiv_result'
         db.add_column(u'bcpp_subject_subjectreferral', 'hiv_result',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.hiv_result_datetime'
         db.add_column(u'bcpp_subject_subjectreferral', 'hiv_result_datetime',
                       self.gf('django.db.models.fields.DateTimeField')(null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.on_art'
         db.add_column(u'bcpp_subject_subjectreferral', 'on_art',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.cd4_result'
         db.add_column(u'bcpp_subject_subjectreferral', 'cd4_result',
                       self.gf('django.db.models.fields.IntegerField')(null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.cd4_result_datetime'
         db.add_column(u'bcpp_subject_subjectreferral', 'cd4_result_datetime',
                       self.gf('django.db.models.fields.DateTimeField')(null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.pregnant'
         db.add_column(u'bcpp_subject_subjectreferral', 'pregnant',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.circumcised'
         db.add_column(u'bcpp_subject_subjectreferral', 'circumcised',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.permanent_resident'
         db.add_column(u'bcpp_subject_subjectreferral', 'permanent_resident',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.intend_residency'
         db.add_column(u'bcpp_subject_subjectreferral', 'intend_residency',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.urgent_referral'
         db.add_column(u'bcpp_subject_subjectreferral', 'urgent_referral',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.referral_code_list'
         db.add_column(u'bcpp_subject_subjectreferral', 'referral_code_list',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=50),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferral.in_clinic_flag'
         db.add_column(u'bcpp_subject_subjectreferral', 'in_clinic_flag',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
-
+ 
         # Adding field 'QualityOfLife.revision'
         db.add_column(u'bcpp_subject_qualityoflife', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectConsentAudit.revision'
         db.add_column(u'bcpp_subject_subjectconsent_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'CeaEnrolmentChecklist.revision'
         db.add_column(u'bcpp_subject_ceaenrolmentchecklist', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'FutureHivTesting.revision'
         db.add_column(u'bcpp_subject_futurehivtesting', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectUndecidedEntryAudit.revision'
         db.add_column(u'bcpp_subject_subjectundecidedentry_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'PositiveParticipant.revision'
         db.add_column(u'bcpp_subject_positiveparticipant', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'TubercolosisAudit.revision'
         db.add_column(u'bcpp_subject_tubercolosis_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Pima.revision'
         db.add_column(u'bcpp_subject_pima', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Grant.revision'
         db.add_column(u'bcpp_subject_grant', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectConsent.revision'
         db.add_column(u'bcpp_subject_subjectconsent', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Uncircumcised.revision'
         db.add_column(u'bcpp_subject_uncircumcised', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'Cancer.revision'
         db.add_column(u'bcpp_subject_cancer', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectLocatorAudit.revision'
         db.add_column(u'bcpp_subject_subjectlocator_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'ThirdPartner.revision'
         db.add_column(u'bcpp_subject_thirdpartner', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HivTestingHistory.revision'
         db.add_column(u'bcpp_subject_hivtestinghistory', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HivResultAudit.revision'
         db.add_column(u'bcpp_subject_hivresult_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'HivResultDocumentation.revision'
         db.add_column(u'bcpp_subject_hivresultdocumentation', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'MonthsSecondPartnerAudit.revision'
         db.add_column(u'bcpp_subject_monthssecondpartner_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Deleting field 'SubjectReferralAudit.next_appt_datetime'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'next_appt_datetime')
-
+ 
         # Deleting field 'SubjectReferralAudit.subject_referral_reason'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'subject_referral_reason')
-
+ 
         # Deleting field 'SubjectReferralAudit.survey'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'survey_id')
-
+ 
         # Deleting field 'SubjectReferralAudit.in_clinic'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'in_clinic')
-
+ 
         # Deleting field 'SubjectReferralAudit.household_member'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'household_member_id')
-
+ 
         # Deleting field 'SubjectReferralAudit.referral_result'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'referral_result')
-
+ 
         # Deleting field 'SubjectReferralAudit.registered_subject'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'registered_subject_id')
-
+ 
         # Deleting field 'SubjectReferralAudit.subject_referral_reason_other'
         db.delete_column(u'bcpp_subject_subjectreferral_audit', 'subject_referral_reason_other')
-
+ 
         # Adding field 'SubjectReferralAudit.revision'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.referral_appt_date'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'referral_appt_date',
                       self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 10, 23, 0, 0)),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.referral_clinic'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'referral_clinic',
                       self.gf('django.db.models.fields.CharField')(default='gaborone', max_length=50),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.gender'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'gender',
                       self.gf('django.db.models.fields.CharField')(max_length=10, null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.citizen'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'citizen',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.hiv_result'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'hiv_result',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.hiv_result_datetime'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'hiv_result_datetime',
                       self.gf('django.db.models.fields.DateTimeField')(null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.on_art'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'on_art',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.cd4_result'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'cd4_result',
                       self.gf('django.db.models.fields.IntegerField')(null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.cd4_result_datetime'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'cd4_result_datetime',
                       self.gf('django.db.models.fields.DateTimeField')(null=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.pregnant'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'pregnant',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.circumcised'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'circumcised',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.permanent_resident'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'permanent_resident',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.intend_residency'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'intend_residency',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.urgent_referral'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'urgent_referral',
                       self.gf('django.db.models.fields.NullBooleanField')(default=False, null=True, blank=True),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.referral_code_list'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'referral_code_list',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=50),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.in_clinic_flag'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'in_clinic_flag',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
-
+ 
         # Adding field 'SubjectReferralAudit.subject_visit'
         db.add_column(u'bcpp_subject_subjectreferral_audit', 'subject_visit',
                       self.gf('django.db.models.fields.related.ForeignKey')(default=0, related_name='_audit_subjectreferral', to=orm['bcpp_subject.SubjectVisit']),
@@ -813,540 +813,8 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting field 'SubjectRefusal.revision'
-        db.delete_column(u'bcpp_subject_subjectrefusal', 'revision')
-
-        # Deleting field 'HeartAttackAudit.revision'
-        db.delete_column(u'bcpp_subject_heartattack_audit', 'revision')
-
-        # Deleting field 'RecentPartnerAudit.revision'
-        db.delete_column(u'bcpp_subject_recentpartner_audit', 'revision')
-
-        # Deleting field 'SubjectDeath.revision'
-        db.delete_column(u'bcpp_subject_subjectdeath', 'revision')
-
-        # Deleting field 'SubjectAbsentee.revision'
-        db.delete_column(u'bcpp_subject_subjectabsentee', 'revision')
-
-        # Deleting field 'HivHealthCareCostsAudit.revision'
-        db.delete_column(u'bcpp_subject_hivhealthcarecosts_audit', 'revision')
-
-        # Deleting field 'PositiveParticipantAudit.revision'
-        db.delete_column(u'bcpp_subject_positiveparticipant_audit', 'revision')
-
-        # Deleting field 'Circumcised.revision'
-        db.delete_column(u'bcpp_subject_circumcised', 'revision')
-
-        # Deleting field 'StiAudit.revision'
-        db.delete_column(u'bcpp_subject_sti_audit', 'revision')
-
-        # Deleting field 'OutpatientCareAudit.revision'
-        db.delete_column(u'bcpp_subject_outpatientcare_audit', 'revision')
-
-        # Deleting field 'Cd4History.revision'
-        db.delete_column(u'bcpp_subject_cd4history', 'revision')
-
-        # Deleting field 'Stigma.revision'
-        db.delete_column(u'bcpp_subject_stigma', 'revision')
-
-        # Deleting field 'Pregnancy.revision'
-        db.delete_column(u'bcpp_subject_pregnancy', 'revision')
-
-        # Deleting field 'ThirdPartnerAudit.revision'
-        db.delete_column(u'bcpp_subject_thirdpartner_audit', 'revision')
-
-        # Deleting field 'NonPregnancyAudit.revision'
-        db.delete_column(u'bcpp_subject_nonpregnancy_audit', 'revision')
-
-        # Deleting field 'SubjectOffStudyAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectoffstudy_audit', 'revision')
-
-        # Deleting field 'SubjectUndecidedEntry.revision'
-        db.delete_column(u'bcpp_subject_subjectundecidedentry', 'revision')
-
-        # Deleting field 'SubjectLocator.revision'
-        db.delete_column(u'bcpp_subject_subjectlocator', 'revision')
-
-        # Deleting field 'CommunityEngagement.revision'
-        db.delete_column(u'bcpp_subject_communityengagement', 'revision')
-
-        # Deleting field 'SubjectDeathAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectdeath_audit', 'revision')
-
-        # Deleting field 'Demographics.revision'
-        db.delete_column(u'bcpp_subject_demographics', 'revision')
-
-        # Deleting field 'SecondPartnerAudit.revision'
-        db.delete_column(u'bcpp_subject_secondpartner_audit', 'revision')
-
-        # Deleting field 'LabourMarketWagesAudit.revision'
-        db.delete_column(u'bcpp_subject_labourmarketwages_audit', 'revision')
-
-        # Deleting field 'MonthsRecentPartnerAudit.revision'
-        db.delete_column(u'bcpp_subject_monthsrecentpartner_audit', 'revision')
-
-        # Adding field 'SubjectReferral.next_appt_datetime'
-        db.add_column(u'bcpp_subject_subjectreferral', 'next_appt_datetime',
-                      self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.subject_referral_reason'
-        db.add_column(u'bcpp_subject_subjectreferral', 'subject_referral_reason',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=40),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.survey'
-        db.add_column(u'bcpp_subject_subjectreferral', 'survey',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['bcpp_survey.Survey']),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.in_clinic'
-        db.add_column(u'bcpp_subject_subjectreferral', 'in_clinic',
-                      self.gf('django.db.models.fields.CharField')(default='No', max_length=10),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.household_member'
-        db.add_column(u'bcpp_subject_subjectreferral', 'household_member',
-                      self.gf('django.db.models.fields.related.OneToOneField')(default=0, to=orm['bcpp_household_member.HouseholdMember'], unique=True),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.referral_result'
-        db.add_column(u'bcpp_subject_subjectreferral', 'referral_result',
-                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.registered_subject'
-        db.add_column(u'bcpp_subject_subjectreferral', 'registered_subject',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['registration.RegisteredSubject'], null=True),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferral.subject_referral_reason_other'
-        db.add_column(u'bcpp_subject_subjectreferral', 'subject_referral_reason_other',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=35, blank=True),
-                      keep_default=False)
-
-        # Deleting field 'SubjectReferral.revision'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'revision')
-
-        # Deleting field 'SubjectReferral.subject_visit'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'subject_visit_id')
-
-        # Deleting field 'SubjectReferral.referral_appt_date'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'referral_appt_date')
-
-        # Deleting field 'SubjectReferral.referral_clinic'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'referral_clinic')
-
-        # Deleting field 'SubjectReferral.gender'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'gender')
-
-        # Deleting field 'SubjectReferral.citizen'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'citizen')
-
-        # Deleting field 'SubjectReferral.hiv_result'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'hiv_result')
-
-        # Deleting field 'SubjectReferral.hiv_result_datetime'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'hiv_result_datetime')
-
-        # Deleting field 'SubjectReferral.on_art'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'on_art')
-
-        # Deleting field 'SubjectReferral.cd4_result'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'cd4_result')
-
-        # Deleting field 'SubjectReferral.cd4_result_datetime'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'cd4_result_datetime')
-
-        # Deleting field 'SubjectReferral.pregnant'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'pregnant')
-
-        # Deleting field 'SubjectReferral.circumcised'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'circumcised')
-
-        # Deleting field 'SubjectReferral.permanent_resident'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'permanent_resident')
-
-        # Deleting field 'SubjectReferral.intend_residency'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'intend_residency')
-
-        # Deleting field 'SubjectReferral.urgent_referral'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'urgent_referral')
-
-        # Deleting field 'SubjectReferral.referral_code_list'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'referral_code_list')
-
-        # Deleting field 'SubjectReferral.in_clinic_flag'
-        db.delete_column(u'bcpp_subject_subjectreferral', 'in_clinic_flag')
-
-        # Deleting field 'QualityOfLife.revision'
-        db.delete_column(u'bcpp_subject_qualityoflife', 'revision')
-
-        # Deleting field 'SubjectConsentAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectconsent_audit', 'revision')
-
-        # Deleting field 'CeaEnrolmentChecklist.revision'
-        db.delete_column(u'bcpp_subject_ceaenrolmentchecklist', 'revision')
-
-        # Deleting field 'FutureHivTesting.revision'
-        db.delete_column(u'bcpp_subject_futurehivtesting', 'revision')
-
-        # Deleting field 'SubjectUndecidedEntryAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectundecidedentry_audit', 'revision')
-
-        # Deleting field 'PositiveParticipant.revision'
-        db.delete_column(u'bcpp_subject_positiveparticipant', 'revision')
-
-        # Deleting field 'TubercolosisAudit.revision'
-        db.delete_column(u'bcpp_subject_tubercolosis_audit', 'revision')
-
-        # Deleting field 'Pima.revision'
-        db.delete_column(u'bcpp_subject_pima', 'revision')
-
-        # Deleting field 'Grant.revision'
-        db.delete_column(u'bcpp_subject_grant', 'revision')
-
-        # Deleting field 'SubjectConsent.revision'
-        db.delete_column(u'bcpp_subject_subjectconsent', 'revision')
-
-        # Deleting field 'Uncircumcised.revision'
-        db.delete_column(u'bcpp_subject_uncircumcised', 'revision')
-
-        # Deleting field 'Cancer.revision'
-        db.delete_column(u'bcpp_subject_cancer', 'revision')
-
-        # Deleting field 'SubjectLocatorAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectlocator_audit', 'revision')
-
-        # Deleting field 'ThirdPartner.revision'
-        db.delete_column(u'bcpp_subject_thirdpartner', 'revision')
-
-        # Deleting field 'HivTestingHistory.revision'
-        db.delete_column(u'bcpp_subject_hivtestinghistory', 'revision')
-
-        # Deleting field 'HivResultAudit.revision'
-        db.delete_column(u'bcpp_subject_hivresult_audit', 'revision')
-
-        # Deleting field 'HivResultDocumentation.revision'
-        db.delete_column(u'bcpp_subject_hivresultdocumentation', 'revision')
-
-        # Deleting field 'MonthsSecondPartnerAudit.revision'
-        db.delete_column(u'bcpp_subject_monthssecondpartner_audit', 'revision')
-
-        # Adding field 'SubjectReferralAudit.next_appt_datetime'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'next_appt_datetime',
-                      self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.subject_referral_reason'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'subject_referral_reason',
-                      self.gf('django.db.models.fields.CharField')(default=0, max_length=40),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.survey'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'survey',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=0, related_name='_audit_subjectreferral', to=orm['bcpp_survey.Survey']),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.in_clinic'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'in_clinic',
-                      self.gf('django.db.models.fields.CharField')(default='No', max_length=10),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.household_member'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'household_member',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=0, related_name='_audit_subjectreferral', to=orm['bcpp_household_member.HouseholdMember']),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.referral_result'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'referral_result',
-                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.registered_subject'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'registered_subject',
-                      self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectreferral', null=True, to=orm['registration.RegisteredSubject']),
-                      keep_default=False)
-
-        # Adding field 'SubjectReferralAudit.subject_referral_reason_other'
-        db.add_column(u'bcpp_subject_subjectreferral_audit', 'subject_referral_reason_other',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=35, blank=True),
-                      keep_default=False)
-
-        # Deleting field 'SubjectReferralAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'revision')
-
-        # Deleting field 'SubjectReferralAudit.referral_appt_date'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'referral_appt_date')
-
-        # Deleting field 'SubjectReferralAudit.referral_clinic'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'referral_clinic')
-
-        # Deleting field 'SubjectReferralAudit.gender'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'gender')
-
-        # Deleting field 'SubjectReferralAudit.citizen'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'citizen')
-
-        # Deleting field 'SubjectReferralAudit.hiv_result'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'hiv_result')
-
-        # Deleting field 'SubjectReferralAudit.hiv_result_datetime'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'hiv_result_datetime')
-
-        # Deleting field 'SubjectReferralAudit.on_art'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'on_art')
-
-        # Deleting field 'SubjectReferralAudit.cd4_result'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'cd4_result')
-
-        # Deleting field 'SubjectReferralAudit.cd4_result_datetime'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'cd4_result_datetime')
-
-        # Deleting field 'SubjectReferralAudit.pregnant'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'pregnant')
-
-        # Deleting field 'SubjectReferralAudit.circumcised'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'circumcised')
-
-        # Deleting field 'SubjectReferralAudit.permanent_resident'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'permanent_resident')
-
-        # Deleting field 'SubjectReferralAudit.intend_residency'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'intend_residency')
-
-        # Deleting field 'SubjectReferralAudit.urgent_referral'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'urgent_referral')
-
-        # Deleting field 'SubjectReferralAudit.referral_code_list'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'referral_code_list')
-
-        # Deleting field 'SubjectReferralAudit.in_clinic_flag'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'in_clinic_flag')
-
-        # Deleting field 'SubjectReferralAudit.subject_visit'
-        db.delete_column(u'bcpp_subject_subjectreferral_audit', 'subject_visit_id')
-
-        # Deleting field 'ResourceUtilization.revision'
-        db.delete_column(u'bcpp_subject_resourceutilization', 'revision')
-
-        # Deleting field 'PimaAudit.revision'
-        db.delete_column(u'bcpp_subject_pima_audit', 'revision')
-
-        # Deleting field 'HeartAttack.revision'
-        db.delete_column(u'bcpp_subject_heartattack', 'revision')
-
-        # Deleting field 'StigmaOpinionAudit.revision'
-        db.delete_column(u'bcpp_subject_stigmaopinion_audit', 'revision')
-
-        # Deleting field 'HivUntested.revision'
-        db.delete_column(u'bcpp_subject_hivuntested', 'revision')
-
-        # Deleting field 'MonthsThirdPartnerAudit.revision'
-        db.delete_column(u'bcpp_subject_monthsthirdpartner_audit', 'revision')
-
-        # Deleting field 'HivTestReviewAudit.revision'
-        db.delete_column(u'bcpp_subject_hivtestreview_audit', 'revision')
-
-        # Deleting field 'SubjectAbsenteeEntryAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectabsenteeentry_audit', 'revision')
-
-        # Deleting field 'HospitalAdmissionAudit.revision'
-        db.delete_column(u'bcpp_subject_hospitaladmission_audit', 'revision')
-
-        # Deleting field 'SubjectVisitAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectvisit_audit', 'revision')
-
-        # Deleting field 'MonthsThirdPartner.revision'
-        db.delete_column(u'bcpp_subject_monthsthirdpartner', 'revision')
-
-        # Deleting field 'ReproductiveHealth.revision'
-        db.delete_column(u'bcpp_subject_reproductivehealth', 'revision')
-
-        # Deleting field 'FutureHivTestingAudit.revision'
-        db.delete_column(u'bcpp_subject_futurehivtesting_audit', 'revision')
-
-        # Deleting field 'Sti.revision'
-        db.delete_column(u'bcpp_subject_sti', 'revision')
-
-        # Deleting field 'Circumcision.revision'
-        db.delete_column(u'bcpp_subject_circumcision', 'revision')
-
-        # Deleting field 'CircumcisedAudit.revision'
-        db.delete_column(u'bcpp_subject_circumcised_audit', 'revision')
-
-        # Deleting field 'ResidencyMobility.revision'
-        db.delete_column(u'bcpp_subject_residencymobility', 'revision')
-
-        # Deleting field 'ResourceUtilizationAudit.revision'
-        db.delete_column(u'bcpp_subject_resourceutilization_audit', 'revision')
-
-        # Deleting field 'AccessToCareAudit.revision'
-        db.delete_column(u'bcpp_subject_accesstocare_audit', 'revision')
-
-        # Deleting field 'SubjectUndecidedAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectundecided_audit', 'revision')
-
-        # Deleting field 'StigmaAudit.revision'
-        db.delete_column(u'bcpp_subject_stigma_audit', 'revision')
-
-        # Deleting field 'SubjectAbsenteeAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectabsentee_audit', 'revision')
-
-        # Deleting field 'CancerAudit.revision'
-        db.delete_column(u'bcpp_subject_cancer_audit', 'revision')
-
-        # Deleting field 'HivCareAdherence.revision'
-        db.delete_column(u'bcpp_subject_hivcareadherence', 'revision')
-
-        # Deleting field 'HivHealthCareCosts.revision'
-        db.delete_column(u'bcpp_subject_hivhealthcarecosts', 'revision')
-
-        # Deleting field 'MonthsRecentPartner.revision'
-        db.delete_column(u'bcpp_subject_monthsrecentpartner', 'revision')
-
-        # Deleting field 'PregnancyAudit.revision'
-        db.delete_column(u'bcpp_subject_pregnancy_audit', 'revision')
-
-        # Deleting field 'MedicalDiagnoses.revision'
-        db.delete_column(u'bcpp_subject_medicaldiagnoses', 'revision')
-
-        # Deleting field 'CircumcisionAudit.revision'
-        db.delete_column(u'bcpp_subject_circumcision_audit', 'revision')
-
-        # Deleting field 'SubstanceUse.revision'
-        db.delete_column(u'bcpp_subject_substanceuse', 'revision')
-
-        # Deleting field 'SubjectAbsenteeEntry.revision'
-        db.delete_column(u'bcpp_subject_subjectabsenteeentry', 'revision')
-
-        # Deleting field 'NonPregnancy.revision'
-        db.delete_column(u'bcpp_subject_nonpregnancy', 'revision')
-
-        # Deleting field 'ReproductiveHealthAudit.revision'
-        db.delete_column(u'bcpp_subject_reproductivehealth_audit', 'revision')
-
-        # Deleting field 'HivResult.revision'
-        db.delete_column(u'bcpp_subject_hivresult', 'revision')
-
-        # Deleting field 'OutpatientCare.revision'
-        db.delete_column(u'bcpp_subject_outpatientcare', 'revision')
-
-        # Deleting field 'GrantAudit.revision'
-        db.delete_column(u'bcpp_subject_grant_audit', 'revision')
-
-        # Deleting field 'HivTestReview.revision'
-        db.delete_column(u'bcpp_subject_hivtestreview', 'revision')
-
-        # Deleting field 'ResidencyMobilityAudit.revision'
-        db.delete_column(u'bcpp_subject_residencymobility_audit', 'revision')
-
-        # Deleting field 'MonthsSecondPartner.revision'
-        db.delete_column(u'bcpp_subject_monthssecondpartner', 'revision')
-
-        # Deleting field 'SecondPartner.revision'
-        db.delete_column(u'bcpp_subject_secondpartner', 'revision')
-
-        # Deleting field 'SubjectOffStudy.revision'
-        db.delete_column(u'bcpp_subject_subjectoffstudy', 'revision')
-
-        # Deleting field 'SubjectVisit.revision'
-        db.delete_column(u'bcpp_subject_subjectvisit', 'revision')
-
-        # Deleting field 'SubstanceUseAudit.revision'
-        db.delete_column(u'bcpp_subject_substanceuse_audit', 'revision')
-
-        # Deleting field 'HivMedicalCareAudit.revision'
-        db.delete_column(u'bcpp_subject_hivmedicalcare_audit', 'revision')
-
-        # Deleting field 'SubjectConsentHistory.revision'
-        db.delete_column(u'bcpp_subject_subjectconsenthistory', 'revision')
-
-        # Deleting field 'HivCareAdherenceAudit.revision'
-        db.delete_column(u'bcpp_subject_hivcareadherence_audit', 'revision')
-
-        # Deleting field 'Tubercolosis.revision'
-        db.delete_column(u'bcpp_subject_tubercolosis', 'revision')
-
-        # Deleting field 'CommunityEngagementAudit.revision'
-        db.delete_column(u'bcpp_subject_communityengagement_audit', 'revision')
-
-        # Deleting field 'SexualBehaviourAudit.revision'
-        db.delete_column(u'bcpp_subject_sexualbehaviour_audit', 'revision')
-
-        # Deleting field 'CeaEnrolmentChecklistAudit.revision'
-        db.delete_column(u'bcpp_subject_ceaenrolmentchecklist_audit', 'revision')
-
-        # Deleting field 'SubjectMovedAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectmoved_audit', 'revision')
-
-        # Deleting field 'HivMedicalCare.revision'
-        db.delete_column(u'bcpp_subject_hivmedicalcare', 'revision')
-
-        # Deleting field 'StigmaOpinion.revision'
-        db.delete_column(u'bcpp_subject_stigmaopinion', 'revision')
-
-        # Deleting field 'Education.revision'
-        db.delete_column(u'bcpp_subject_education', 'revision')
-
-        # Deleting field 'QualityOfLifeAudit.revision'
-        db.delete_column(u'bcpp_subject_qualityoflife_audit', 'revision')
-
-        # Deleting field 'HivResultDocumentationAudit.revision'
-        db.delete_column(u'bcpp_subject_hivresultdocumentation_audit', 'revision')
-
-        # Deleting field 'SexualBehaviour.revision'
-        db.delete_column(u'bcpp_subject_sexualbehaviour', 'revision')
-
-        # Deleting field 'DemographicsAudit.revision'
-        db.delete_column(u'bcpp_subject_demographics_audit', 'revision')
-
-        # Deleting field 'RecentPartner.revision'
-        db.delete_column(u'bcpp_subject_recentpartner', 'revision')
-
-        # Deleting field 'SubjectUndecided.revision'
-        db.delete_column(u'bcpp_subject_subjectundecided', 'revision')
-
-        # Deleting field 'HivTestingHistoryAudit.revision'
-        db.delete_column(u'bcpp_subject_hivtestinghistory_audit', 'revision')
-
-        # Deleting field 'AccessToCare.revision'
-        db.delete_column(u'bcpp_subject_accesstocare', 'revision')
-
-        # Deleting field 'Cd4HistoryAudit.revision'
-        db.delete_column(u'bcpp_subject_cd4history_audit', 'revision')
-
-        # Deleting field 'HivUntestedAudit.revision'
-        db.delete_column(u'bcpp_subject_hivuntested_audit', 'revision')
-
-        # Deleting field 'HospitalAdmission.revision'
-        db.delete_column(u'bcpp_subject_hospitaladmission', 'revision')
-
-        # Deleting field 'HivTestedAudit.revision'
-        db.delete_column(u'bcpp_subject_hivtested_audit', 'revision')
-
-        # Deleting field 'SubjectMoved.revision'
-        db.delete_column(u'bcpp_subject_subjectmoved', 'revision')
-
-        # Deleting field 'UncircumcisedAudit.revision'
-        db.delete_column(u'bcpp_subject_uncircumcised_audit', 'revision')
-
-        # Deleting field 'SubjectRefusalAudit.revision'
-        db.delete_column(u'bcpp_subject_subjectrefusal_audit', 'revision')
-
-        # Deleting field 'LabourMarketWages.revision'
-        db.delete_column(u'bcpp_subject_labourmarketwages', 'revision')
-
-        # Deleting field 'EducationAudit.revision'
-        db.delete_column(u'bcpp_subject_education_audit', 'revision')
-
-        # Deleting field 'MedicalDiagnosesAudit.revision'
-        db.delete_column(u'bcpp_subject_medicaldiagnoses_audit', 'revision')
-
-        # Deleting field 'HivTested.revision'
-        db.delete_column(u'bcpp_subject_hivtested', 'revision')
-
-
+        pass
+    
     models = {
         'adverse_event.deathcausecategory': {
             'Meta': {'ordering': "['display_index']", 'object_name': 'DeathCauseCategory', 'db_table': "'bhp_adverse_deathcausecategory'"},
