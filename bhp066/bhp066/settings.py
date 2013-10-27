@@ -99,7 +99,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_v124',
+            'NAME': 'base_bcpp',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -373,17 +373,13 @@ PROJECT_NUMBER = 'BHP066'
 PROJECT_IDENTIFIER_PREFIX = '066'
 PROJECT_IDENTIFIER_MODULUS = 7
 PROJECT_TITLE = 'Botswana Combination Prevention Project'
-PROTOCOL_REVISION = 'V1.0 12 August 2013'
+PROTOCOL_REVISION = 'V1.0 24 September 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
 
 # admin overrides
 LOGIN_URL = '/{app_name}/login/'.format(app_name=APP_NAME)
 LOGIN_REDIRECT_URL = '/{app_name}/'.format(app_name=APP_NAME)
 LOGOUT_URL = '/{app_name}/logout/'.format(app_name=APP_NAME)
-
-# bcpp_household
-CURRENT_COMMUNITY = 'gaborone'
-CURRENT_SURVEY = 'year-one'
 
 # south
 SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
@@ -409,6 +405,8 @@ IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
 
 # edc.map
+CURRENT_COMMUNITY = 'otse'
+CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
