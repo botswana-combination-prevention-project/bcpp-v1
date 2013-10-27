@@ -1,13 +1,18 @@
-from django.db import models
 from datetime import datetime
-from django.conf import settings
+
+from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
+from edc.device.device.classes import Device
 from edc.lab.lab_requisition.models import BaseRequisition
-from apps.bcpp_subject.models import SubjectVisit
+from edc.map.classes import site_mappers
+
 from apps.bcpp_inspector.models import SubjectRequisitionInspector
-from apps.bcpp_inspector.managers import SubjectRequisitionInspectorManager
+from apps.bcpp_subject.models import SubjectVisit
+
 from ..managers import SubjectRequisitionManager
-from packing_list import PackingList
+
+from .packing_list import PackingList
 
 
 class SubjectRequisition(BaseRequisition):
@@ -30,13 +35,13 @@ class SubjectRequisition(BaseRequisition):
 
     def save_to_inspector(self, fields):
         if SubjectRequisitionInspector.objects.filter(subject_identifier=fields.get('subject_identifier'), requisition_identifier=fields.get('requisition_identifier')).count() == 0:
-            host_created = fields.get('hostname_created')
+            device = Device()
             SubjectRequisitionInspector.objects.create(
                     subject_identifier=fields.get('subject_identifier'),
-                    requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),
+                    requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),  # FIXME: why strptime this??
                     requisition_identifier=fields.get('requisition_identifier'),
                     specimen_identifier=fields.get('specimen_identifier'),
-                    device_id=host_created[len(host_created)-2:len(host_created)],
+                    device_id=device.get_device_id(),
                     app_name='bcpp_lab',
                     model_name='SubjectRequisition'
                     )
@@ -47,6 +52,9 @@ class SubjectRequisition(BaseRequisition):
     def save(self, *args, **kwargs):
         self.subject_identifier = self.get_visit().get_subject_identifier()
         super(SubjectRequisition, self).save(*args, **kwargs)
+
+    def get_site_code(self):
+        return site_mappers.get_current_mapper().map_code
 
     def get_visit(self):
         return self.subject_visit
