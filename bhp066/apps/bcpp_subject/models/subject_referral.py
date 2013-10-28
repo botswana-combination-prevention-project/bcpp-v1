@@ -12,6 +12,7 @@ from apps.bcpp.choices import COMMUNITIES
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hiv_care_adherence import HivCareAdherence
+from .reproductive_health import ReproductiveHealth
 
 REFERRAL_CODES = (
     ('CD4', 'POS, need CD4 testing'),
@@ -92,10 +93,15 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         editable=False,
         )
 
+    vl_sample_datetime_drawn = models.DateTimeField(
+         null=True,
+         )
+
     pregnant = models.NullBooleanField(
         default=False,
         null=True,
         editable=False,
+        help_text="from ReproductiveHealth.currently_pregnant",
         )
 
     circumcised = models.NullBooleanField(
@@ -147,6 +153,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        self.update_pregnant()
         self.update_on_art()
         self.update_referral_codes()
         self.update_urgent_referral()
@@ -156,6 +163,14 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         if self.urgent_referral():
             return date.today()
         return date.today + timedelta(days=7)
+
+    def update_pregnant(self):
+        if ReproductiveHealth.objects.filter(subject_visit=self.subject_visit):
+            reproductive_health = ReproductiveHealth.objects.get(subject_visit=self.subject_visit)
+            if reproductive_health.currently_pregnant() == 'Yes':
+                self.pregnant = True
+            if reproductive_health.currently_pregnant() == 'No':
+                self.pregnant = False
 
     def update_on_art(self):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):

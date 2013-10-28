@@ -108,25 +108,28 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         decimal_places=4,
         )
-
+    # TODO: need to be encrypted!!!!!
     gps_lon = models.FloatField(
         verbose_name='longitude',
         null=True,
         editable=False,
         )
 
+    # TODO: need to be encrypted!!!!!
     gps_lat = models.FloatField(
         verbose_name='latitude',
         null=True,
         editable=False,
         )
 
+    # TODO: need to be encrypted!!!!!
     gps_target_lon = models.FloatField(
         verbose_name='target waypoint longitude',
         null=True,
         editable=False,
         )
 
+    # TODO: need to be encrypted!!!!!
     gps_target_lat = models.FloatField(
         verbose_name='target waypoint latitude',
         null=True,
