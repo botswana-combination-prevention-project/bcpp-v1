@@ -35,6 +35,40 @@ class ReferralTests(BaseScheduledModelTestCase):
             gender='M')
         self.assertIn('SMC', subject_referral.referral_codes)
 
+    def tests_referred_neg_female_pregnant(self):
+        """if NEG and female, and pregnant"""
+        report_datetime = datetime.today()
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime,
+            hiv_result='NEG',
+            gender='F',
+            pregnant=True)
+        self.assertIn('ANC-NEG', subject_referral.referral_codes)
+
+    def tests_referred_pos_female_pregnant(self):
+        """if POS and female, and pregnant"""
+        report_datetime = datetime.today()
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime,
+            hiv_result='NEG',
+            gender='F',
+            pregnant=True,
+            on_art=True)
+        self.assertIn('ANC-POS', subject_referral.referral_codes)
+
+    def tests_referred_pos_female_pregnant2(self):
+        """if POS and female, and pregnant"""
+        report_datetime = datetime.today()
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime,
+            hiv_result='NEG',
+            gender='F',
+            pregnant=True)
+        self.assertIn('ANC-POS', subject_referral.referral_codes)
+
     def tests_not_referred_neg_female(self):
         """if NEG and female, no referral"""
         report_datetime = datetime.today()

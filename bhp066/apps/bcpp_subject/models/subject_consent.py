@@ -4,6 +4,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.map.classes import site_mappers
 
 from apps.bcpp_household_member.models import BaseHouseholdMemberConsent
 
@@ -34,6 +35,9 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         )
 
     history = AuditTrail()
+
+    def get_site_code(self):
+        return site_mappers.get_current_mapper().map_code
 
     def get_subject_type(self):
         return 'subject'
