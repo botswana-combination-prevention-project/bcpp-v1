@@ -1,7 +1,9 @@
-from unipath import Path
 import os
 import platform
 import sys
+
+from unipath import Path
+
 from .logger import LOGGING
 
 DEBUG = True
