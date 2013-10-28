@@ -64,6 +64,11 @@ STATUS = (
     ("OTHER", 'Other'),
 )
 
+SELECTED = (
+            (1, 'twenty_percent'),
+            (2, 'five_percent'),
+)
+
 SECTIONS = (
     ('A', 'A'),
     ('B', 'B'),
