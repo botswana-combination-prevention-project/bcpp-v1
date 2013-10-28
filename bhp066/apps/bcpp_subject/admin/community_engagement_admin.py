@@ -1,8 +1,10 @@
 from django.contrib import admin
-from edc.core.admin_supplemental_fields.classes import SupplementalFields
 
-from ..models import CommunityEngagement
+from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+
 from ..forms import CommunityEngagementForm
+from ..models import CommunityEngagement
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

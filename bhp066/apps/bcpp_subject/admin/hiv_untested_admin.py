@@ -1,7 +1,10 @@
 from django.contrib import admin
-from edc.core.admin_supplemental_fields.classes import SupplementalFields
-from ..models import HivUntested
+
+from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+
 from ..forms import HivUntestedForm
+from ..models import HivUntested
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
