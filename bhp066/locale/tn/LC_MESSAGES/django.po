@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-23 11:33+0200\n"
-"PO-Revision-Date: 2013-10-23 11:36+0200\n"
+"POT-Creation-Date: 2013-10-25 14:22+0200\n"
+"PO-Revision-Date: 2013-10-25 14:22+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -1000,8 +1000,8 @@ msgstr "Go tsaya lebaka le le leele go fola"
 #: apps/bcpp/choices.py:588
 msgid "It will be hard to not have sex or masturbate for 6 weeks"
 msgstr ""
-"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora bonna"
-"( masturbate) beke tse thatataro"
+"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora "
+"bonna( masturbate) beke tse thatataro"
 
 #: apps/bcpp/choices.py:589
 msgid "Sex might not feel the same"
@@ -1261,8 +1261,8 @@ msgstr "Ke na le bothatanyana bo se kae le go itlhapisa kgotsa go ikapesa"
 #: apps/bcpp/choices.py:756 apps/bcpp_subject/choices.py:71
 msgid "I have moderate problems washing or dressing myself"
 msgstr ""
-"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go ikapesa"
-"(moderate)"
+"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go "
+"ikapesa(moderate)"
 
 #: apps/bcpp/choices.py:757 apps/bcpp_subject/choices.py:72
 msgid "I have severe problems washing or dressing myself"
@@ -4291,8 +4291,8 @@ msgid ""
 "In the past 12 months, did you have sex with somebody living outside of the "
 "community?"
 msgstr ""
-"Mo lebakeng la kgwedi tse di lesome tse di fetileng a okile wa tlhakanela "
-"dikobo le mongwe yo o sa nneng mo motseng o?"
+"Mo lebakeng la kgwedi tse di lesome le bobedi tse di fetileng a okile wa "
+"tlhakanela dikobo le mongwe yo o sa nneng mo motseng o?"
 
 #: apps/bcpp_subject/models/sexual_behaviour.py:58
 msgid ""
@@ -4585,15 +4585,15 @@ msgid ""
 msgstr ""
 "Enter a valid blood pressure measurement. It must be systolic/diastolic."
 
-#: edc/base/model/fields/required/required_fields.py:14
+#: edc/base/model/fields/required/required_fields.py:17
 msgid "UuidAutoField"
 msgstr ""
 
-#: edc/base/model/fields/required/required_fields.py:35
+#: edc/base/model/fields/required/required_fields.py:73
 msgid "Custom field for hostname created"
 msgstr "Custom field for hostname created"
 
-#: edc/base/model/fields/required/required_fields.py:65
+#: edc/base/model/fields/required/required_fields.py:103
 msgid "Custom field for hostname modified"
 msgstr "Custom field for hostname modified"
 
