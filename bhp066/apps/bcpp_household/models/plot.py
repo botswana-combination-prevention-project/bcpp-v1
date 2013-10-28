@@ -16,7 +16,7 @@ from edc.map.exceptions import MapperError
 
 from ..managers import PlotManager
 from ..classes import PlotIdentifier
-from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES
+from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from .household_identifier_history import HouseholdIdentifierHistory
 
 
@@ -134,6 +134,14 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
+    
+    selected = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='selected',
+        choices=SELECTED,
+        editable=False,
+        )
 
     device_id = models.CharField(
         max_length=2,
