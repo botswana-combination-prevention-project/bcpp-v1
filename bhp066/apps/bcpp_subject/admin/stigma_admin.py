@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from edc.core.admin_supplemental_fields.classes import SupplementalFields
-from ..models import Stigma, StigmaOpinion, PositiveParticipant
+from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+
 from ..forms import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
+from ..models import Stigma, StigmaOpinion, PositiveParticipant
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
