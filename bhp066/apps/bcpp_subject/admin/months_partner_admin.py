@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from edc.core.admin_supplemental_fields.classes import SupplementalFields
-from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
+from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+
 from ..forms import MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
+from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

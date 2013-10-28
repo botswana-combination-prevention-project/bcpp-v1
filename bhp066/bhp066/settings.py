@@ -240,14 +240,18 @@ INSTALLED_APPS = (
     'dajax',
     'south',
 
+    'edc.apps.admin_supplemental_fields',
+
     'edc.audit',
+
+    'edc.base.admin',
+    'edc.base.form',
+    'edc.base.model',
 
     'edc.core.identifier',
     'edc.core.crypto_fields',
     'edc.core.model_describer',
     'edc.core.model_selector',
-    'edc.core.admin_supplemental_fields',
-
     'edc.core.bhp_templates',
     'edc.core.bhp_static',
     'edc.core.bhp_string',
@@ -264,12 +268,6 @@ INSTALLED_APPS = (
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
 
-    'edc.export',
-
-    'edc.base.admin',
-    'edc.base.form',
-    'edc.base.model',
-
     'edc.device.inspector',
     'edc.device.dispatch',
     'edc.device.netbook',
@@ -280,6 +278,8 @@ INSTALLED_APPS = (
     'edc.dashboard.search',
     'edc.dashboard.subject',
     'edc.dashboard.section',
+
+    'edc.export',
 
     'edc.map',
 
@@ -439,3 +439,6 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
+
+# admin_supplemental_fields
+IGNORE_SUPPLEMENTAL_FIELDS = True
