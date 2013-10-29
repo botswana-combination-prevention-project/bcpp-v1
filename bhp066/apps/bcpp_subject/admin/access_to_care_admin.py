@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+from edc.core.admin_supplemental_fields.classes import SupplementalFields
 
 from apps.bcpp_subject.forms import AccessToCareForm
 
