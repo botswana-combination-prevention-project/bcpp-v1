@@ -304,7 +304,6 @@ INSTALLED_APPS = (
     'edc.subject.appointment',
     'edc.subject.subject',
     'edc.subject.subject_config',
-    'edc.subject.local.bw',
     'edc.subject.adverse_event',
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
