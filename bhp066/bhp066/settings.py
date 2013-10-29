@@ -26,8 +26,8 @@ MAP_DIR = STATIC_ROOT.child('img')
 # edc.crytpo_fields encryption keys
 # KEY_PATH = 'keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
+# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+KEY_PATH = '/Volumes/keys'
 #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS
@@ -101,7 +101,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_digawana',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
