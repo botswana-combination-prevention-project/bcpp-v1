@@ -1,0 +1,152 @@
+[
+{
+  "pk": "75e95c42-36c4-497d-92f3-6550d6005b55", 
+  "model": "bhp_variables.studysite", 
+  "fields": {
+    "hostname_created": "silverapple", 
+    "site_name": "Ranaka", 
+    "created": "2013-10-29T10:41:42", 
+    "site_code": "040", 
+    "user_modified": "", 
+    "modified": "2013-10-29T10:41:42", 
+    "hostname_modified": "silverapple", 
+    "user_created": "", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+},
+{
+  "pk": "88a58ff8-688f-4b93-8d49-fe1f557d7570", 
+  "model": "bhp_variables.studysite", 
+  "fields": {
+    "hostname_created": "silverapple", 
+    "site_name": "Otse", 
+    "created": "2013-10-29T10:41:16", 
+    "site_code": "020", 
+    "user_modified": "", 
+    "modified": "2013-10-29T10:41:16", 
+    "hostname_modified": "silverapple", 
+    "user_created": "", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+},
+{
+  "pk": "8d5eb275-70fd-4038-bd6a-f1238e21839b", 
+  "model": "bhp_variables.studysite", 
+  "fields": {
+    "hostname_created": "silverapple", 
+    "site_name": "Molapowabojang", 
+    "created": "2013-10-29T10:41:32", 
+    "site_code": "030", 
+    "user_modified": "", 
+    "modified": "2013-10-29T10:41:32", 
+    "hostname_modified": "silverapple", 
+    "user_created": "", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+},
+{
+  "pk": "e1126aea-2ea9-42fd-b622-59762032f059", 
+  "model": "bhp_variables.studysite", 
+  "fields": {
+    "hostname_created": "silverapple", 
+    "site_name": "Digawana", 
+    "created": "2013-10-29T10:41:52", 
+    "site_code": "050", 
+    "user_modified": "", 
+    "modified": "2013-10-29T10:41:52", 
+    "hostname_modified": "silverapple", 
+    "user_created": "", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+},
+{
+  "pk": "ac6f7f62-f6f8-4ca1-979c-8f961d9baa6d", 
+  "model": "bhp_variables.studyspecific", 
+  "fields": {
+    "hostname_created": "silverapple", 
+    "subject_type": "subject", 
+    "hostname_modified": "silverapple", 
+    "user_created": "", 
+    "study_start_datetime": "2013-10-29T10:39:30", 
+    "protocol_number": "BHP066", 
+    "user_modified": "", 
+    "subject_identifier_seed": 10000, 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644", 
+    "subject_identifier_modulus": 7, 
+    "hostname_prefix": "silverapple", 
+    "protocol_title": "BCPP", 
+    "machine_type": "SERVER", 
+    "minimum_age_of_consent": 16, 
+    "maximum_age_of_consent": 64, 
+    "device_id": 0, 
+    "subject_identifier_prefix": "066", 
+    "protocol_code": "066", 
+    "created": "2013-10-29T10:40:36", 
+    "modified": "2013-10-29T10:40:36", 
+    "research_title": "Botswana Combination Prevention Project", 
+    "gender_of_consent": "MF", 
+    "age_at_adult_lower_bound": 18
+  }
+},
+{
+  "pk": "9bfad90d-dbe6-497f-81e2-dbe32e89eafd", 
+  "model": "visit_schedule.membershipform", 
+  "fields": {
+    "category": "bcpp-year-1", 
+    "hostname_created": "silverapple", 
+    "created": "2013-10-29T10:55:25", 
+    "user_modified": "", 
+    "modified": "2013-10-29T10:55:25", 
+    "hostname_modified": "silverapple", 
+    "content_type_map": 626, 
+    "visible": true, 
+    "user_created": "mkewagamang", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+},
+{
+  "pk": "3420a0a5-2726-4c59-bf4c-8c8cfb605e69", 
+  "model": "visit_schedule.schedulegroup", 
+  "fields": {
+    "comment": "", 
+    "hostname_created": "silverapple", 
+    "created": "2013-10-29T10:56:23", 
+    "grouping_key": "", 
+    "user_modified": "", 
+    "modified": "2013-10-29T10:56:23", 
+    "hostname_modified": "silverapple", 
+    "group_name": "baseline", 
+    "membership_form": "9bfad90d-dbe6-497f-81e2-dbe32e89eafd", 
+    "user_created": "mkewagamang", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+},
+{
+  "pk": "d9ea68c9-385b-4109-9c7f-9a34b45a3567", 
+  "model": "visit_schedule.visitdefinition", 
+  "fields": {
+    "hostname_created": "silverapple", 
+    "code": "T0", 
+    "base_interval": 0, 
+    "lower_window_unit": "D", 
+    "created": "2013-10-29T11:09:14", 
+    "instruction": "", 
+    "title": "Baseline", 
+    "user_modified": "", 
+    "modified": "2013-10-29T11:09:15", 
+    "hostname_modified": "silverapple", 
+    "upper_window": 0, 
+    "base_interval_unit": "D", 
+    "time_point": 0, 
+    "user_created": "mkewagamang", 
+    "visit_tracking_content_type_map": 651, 
+    "lower_window": 0, 
+    "grouping": "", 
+    "schedule_group": [
+      "3420a0a5-2726-4c59-bf4c-8c8cfb605e69"
+    ], 
+    "upper_window_unit": "D", 
+    "revision": "master:7fdbe4b06d4895450806dfaaf162638ee92bf644"
+  }
+}
+]
