@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
 from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..forms import FutureHivTestingForm
@@ -10,7 +11,7 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 #HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up
-class FutureHivTestingAdmin(SubjectVisitModelAdmin):
+class FutureHivTestingAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
 
     form = FutureHivTestingForm
     supplemental_fields = SupplementalFields(
@@ -20,7 +21,7 @@ class FutureHivTestingAdmin(SubjectVisitModelAdmin):
         'hiv_test_week',
         'hiv_test_week_other',
         'hiv_test_year',
-        'hiv_test_year_other'), p=0.09, group='HT')
+        'hiv_test_year_other'), p=0.09, group='HT', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'prefer_hivtest',
