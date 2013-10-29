@@ -26,6 +26,7 @@ class BasePlotMapper(Mapper):
     other_identifier_field_label = 'cso'
 
     item_target_field = 'target'
+    item_selected_field = 'selected'
 
     gps_degrees_s_field_attr = 'gps_degrees_s'
     gps_degrees_e_field_attr = 'gps_degrees_e'
