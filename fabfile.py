@@ -559,8 +559,8 @@ def modify_settings(replacements):
 @task
 def apache_setup():
     #prevent mysql from misbehaving
-    with warn_only():
-        sudo('ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/local/lib/libmysqlclient.18.dylib')
+    #with warn_only():
+        #sudo('ln -s /usr/local/mysql/lib/libmysqlclient.18.dylib /usr/local/lib/libmysqlclient.18.dylib')
     #the httpd.conf file
     put(a_file(FAB_APACHE_DIR, 'httpd.conf'), '/etc/apache2/httpd.conf', use_sudo=True)
     #configure the http-vhosts.conf file
@@ -574,14 +574,14 @@ def apache_setup():
     #make required directories
     mkdir('~/Sites/logs')
     mkdir('~/Sites/localhost')
-    mkdir('~/Sites/bcppstudy')
+    mkdir('~/Sites/bcppstudy/static')
     #setup the bcppstudy in hosts
     put(a_file(FAB_APACHE_DIR, 'hosts'), '/etc/hosts', use_sudo=True)
     #put the right permissions on local folder for apache access
     chmod('755', '~/source/bhp066_project/bhp066/bhp066')
     chmod('755', '~/Sites/bcppstudy')
     #set the STATIC_ROOT in the settings file
-    changes = [("STATIC_ROOT = PROJECT_DIR.child('static')", "STATIC_ROOT = '/User/django/Sites/bcppstudy/static/'")]
+    changes = [("STATIC_ROOT = PROJECT_DIR.child('static')", "STATIC_ROOT = '/Users/django/Sites/bcppstudy/static/'")]
     changes += [("MAP_DIR = STATIC_ROOT.child('img')", "MAP_DIR = '/Users/django/Sites/bcppstudy/static/img/'")]
     modify_settings(changes)
     #run collectstatic
