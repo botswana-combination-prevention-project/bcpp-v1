@@ -7,15 +7,15 @@ regex['dashboard_type'] = 'subject'
 regex['dashboard_model'] = 'household_member'
 urlpatterns = SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['subject_visit', ])
 
-regex = {}
-regex['dashboard_type'] = 'htc_subject'
-regex['dashboard_model'] = 'household_member'
-urlpatterns += SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['htc_subject_visit', ])
+# regex = {}
+# regex['dashboard_type'] = 'htc_subject'
+# regex['dashboard_model'] = 'household_member'
+# urlpatterns += SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['htc_subject_visit', ])
 
-regex = {}
-regex['dashboard_type'] = 'htc_subject'
-regex['dashboard_model'] = 'household_member'
-urlpatterns += SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['htc_visit', ])
+# regex = {}
+# regex['dashboard_type'] = 'htc_subject'
+# regex['dashboard_model'] = 'household_member'
+# urlpatterns += SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['htc_visit', ])
 
 regex = {}
 regex['dashboard_type'] = 'household'
