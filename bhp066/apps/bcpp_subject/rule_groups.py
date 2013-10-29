@@ -128,6 +128,22 @@ class HivTestReviewRuleGroup(RuleGroup):
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
     
     #This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
+#     if_recorded_result_not_positive = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('recorded_hiv_result', 'ne', 'POS'),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['hivresult',])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        filter_model = (SubjectVisit, 'subject_visit')
+        source_model = HivTestReview
+rule_groups.register(HivTestReviewRuleGroup)
+
+
+class ReviewNotPositiveRuleGroup(RuleGroup):
+    #This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
     if_recorded_result_not_positive = ScheduledDataRule(
         logic=Logic(
             predicate=('recorded_hiv_result', 'ne', 'POS'),
@@ -139,7 +155,7 @@ class HivTestReviewRuleGroup(RuleGroup):
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
-rule_groups.register(HivTestReviewRuleGroup)
+rule_groups.register(ReviewNotPositiveRuleGroup)
 
 
 class HivDocumentationGroup(RuleGroup):
@@ -167,9 +183,9 @@ class MedicalCareRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivmedicalcare'])
 #    confirms therapy then requires pima form 
-    therapy_evidence = ScheduledDataRule(
+    arv_evidence = ScheduledDataRule(
         logic=Logic(
-            predicate=('therapy_evidence', 'equals', 'Yes'),
+            predicate=('arv_evidence', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
