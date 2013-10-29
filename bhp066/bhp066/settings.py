@@ -240,7 +240,7 @@ INSTALLED_APPS = (
     'dajax',
     'south',
 
-    'edc.core.admin_supplemental_fields',
+    'edc.apps.admin_supplemental_fields',
 
     'edc.audit',
 

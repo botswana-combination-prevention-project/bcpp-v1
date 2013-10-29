@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.core.admin_supplemental_fields.classes import SupplementalFields
+from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..forms import HivTestedForm
 from ..models import HivTested
