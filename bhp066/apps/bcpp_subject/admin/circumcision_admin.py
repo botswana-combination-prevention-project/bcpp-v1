@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
 from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..models import Circumcision, Circumcised, Uncircumcised
@@ -28,7 +29,7 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
-class CircumcisedAdmin(SubjectVisitModelAdmin):
+class CircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
 
     form = CircumcisedForm
     supplemental_fields = SupplementalFields(
@@ -37,7 +38,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         'where_circ',
         'where_circ_other',
         'why_circ',
-        'why_circ_other'), p=0.18, group='MC')
+        'why_circ_other'), p=0.18, group='MC', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         "circumcised",
@@ -56,7 +57,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
 admin.site.register(Circumcised, CircumcisedAdmin)
 
 
-class UncircumcisedAdmin(SubjectVisitModelAdmin):
+class UncircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
 
     form = UncircumcisedForm
     supplemental_fields = SupplementalFields(
@@ -66,7 +67,7 @@ class UncircumcisedAdmin(SubjectVisitModelAdmin):
         'reason_circ_other',
         'future_reasons_smc',
         'service_facilities',
-        'aware_free'), p=0.18, group='MC')
+        'aware_free'), p=0.18, group='MC', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         "circumcised",
