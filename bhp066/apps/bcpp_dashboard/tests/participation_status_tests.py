@@ -21,13 +21,13 @@ from ..views.participation import update_member_status
 
 
 class TestPlotMapper(Mapper):
-    map_area = 'test_community2'
-    map_code = '099'
+    map_area = 'test_community3'
+    map_code = '091'
     regions = []
     sections = []
     landmarks = []
     gps_center_lat = -25.033194
-    gps_center_lon = 25.747132
+    gps_center_lon = 25.747139
     radius = 5.5
     location_boundary = ()
 
@@ -39,7 +39,7 @@ class ParticipationStatusTests(TestCase):
     def setUp(self):
         if Survey.objects.all().count() == 0:
             survey = SurveyFactory()
-            plot = PlotFactory(community='test_community2', household_count=1, status='occupied')
+            plot = PlotFactory(community='test_community3', household_count=1, status='occupied')
             household = Household.objects.get(plot=plot)
             household_structure = HouseholdStructure.objects.get(household=household)
             self.household_member = HouseholdMemberFactory(household_structure=household_structure)
