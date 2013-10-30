@@ -159,6 +159,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         self.update_urgent_referral()
         super(SubjectReferral, self).save(*args, **kwargs)
 
+    def get_referral_identifier(self):
+        return self.id
+
     def get_next_appt_date(self):
         if self.urgent_referral():
             return date.today()
