@@ -1,7 +1,9 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
+
 from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
 from apps.bcpp_household_member.models import BaseMemberStatusModel
 

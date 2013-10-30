@@ -3,8 +3,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc.core.identifier.exceptions import IdentifierError
-from edc.subject.local.bw.models import BaseBwConsent
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
+from edc.subject.consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_survey.models import Survey
@@ -12,7 +12,7 @@ from apps.bcpp_survey.models import Survey
 from ..models import HouseholdMember
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseBwConsent):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     household_member = models.ForeignKey(HouseholdMember,
         help_text='')

@@ -59,7 +59,7 @@ class StigmaOpinionAdmin(SubjectVisitModelAdmin):
         'enacted_verbal_stigma',
         'enacted_phyical_stigma',
         'enacted_family_stigma',
-        'fear_stigma'), p=0.09, group='ST')
+        'fear_stigma'), p=0.09, group='ST', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'test_community_stigma',
@@ -94,7 +94,7 @@ class PositiveParticipantAdmin(SubjectVisitModelAdmin):
         'family_stigma',
         'enacted_talk_stigma',
         'enacted_respect_stigma',
-        'enacted_jobs_tigma'), p=0.18, group='ST')
+        'enacted_jobs_tigma'), p=0.18, group='ST', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'internalize_stigma',

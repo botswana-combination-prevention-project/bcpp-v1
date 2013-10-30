@@ -183,9 +183,9 @@ class MedicalCareRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivmedicalcare'])
 #    confirms therapy then requires pima form 
-    therapy_evidence = ScheduledDataRule(
+    arv_evidence = ScheduledDataRule(
         logic=Logic(
-            predicate=('therapy_evidence', 'equals', 'Yes'),
+            predicate=('arv_evidence', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
