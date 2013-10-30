@@ -152,12 +152,12 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     history = AuditTrail()
 
-#     def save(self, *args, **kwargs):
-#         self.update_pregnant()
-#         self.update_on_art()
-#         self.update_referral_codes()
-#         self.update_urgent_referral()
-#         super(SubjectReferral, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.update_pregnant()
+        self.update_on_art()
+        self.update_referral_codes()
+        self.update_urgent_referral()
+        super(SubjectReferral, self).save(*args, **kwargs)
 
     def get_referral_identifier(self):
         return self.id
@@ -205,7 +205,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         """Reviews the conditions for referral and sets to the correct referral code."""
         if self.hiv_result == 'IND':
             self.append_to_referral_codes('HIV')
-        elif self.hiv_result == 'NEG' and self.gender == 'F':
+        elif self.hiv_result == 'NEG' and self.gender == 'F' and self.pregnant:
+            self.append_to_referral_codes('ANC-NEG')
+        elif self.hiv_result == 'POS' and self.gender == 'F' and self.pregnant:
+            self.append_to_referral_codes('ANC-POS')
+        elif self.hiv_result == 'NEG' and self.gender == 'F' and not self.pregnant:
             self.append_to_referral_codes(None)
         elif self.hiv_result == 'NEG' and self.gender == 'M':
             self.append_to_referral_codes('SMC')
