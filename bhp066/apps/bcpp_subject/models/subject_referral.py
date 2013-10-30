@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 from django.conf import settings
 from django.db import models
@@ -33,7 +33,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        default=date.today(),
+        default=datetime.today(),
         help_text="... or next refill / clinic date if on ART."
         )
 
@@ -152,12 +152,12 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     history = AuditTrail()
 
-    def save(self, *args, **kwargs):
-        self.update_pregnant()
-        self.update_on_art()
-        self.update_referral_codes()
-        self.update_urgent_referral()
-        super(SubjectReferral, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         self.update_pregnant()
+#         self.update_on_art()
+#         self.update_referral_codes()
+#         self.update_urgent_referral()
+#         super(SubjectReferral, self).save(*args, **kwargs)
 
     def get_referral_identifier(self):
         return self.id

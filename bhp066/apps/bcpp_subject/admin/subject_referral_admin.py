@@ -16,7 +16,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'referral_codes',
-        'urgent_referral',
         'referral_appt_date',
         'referral_clinic',
         'comment'
@@ -25,6 +24,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         "referral_codes": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
         }
-    readonly_fields = ('referral_codes', 'urgent_referral')
+#     readonly_fields = ('referral_codes')
 
 admin.site.register(SubjectReferral, SubjectReferralAdmin)
