@@ -37,7 +37,7 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
             if cleaned_data.get('first_positive') == date.today():
                 raise forms.ValidationError('Date first received HIV positive result CANNOT be today. Please correct.')
         # confirming that evidence seen
-        if cleaned_data.get('on_arv') == 'Yes' and not cleaned_data.get('therapy_evidence'):
+        if cleaned_data.get('on_arv') == 'Yes' and not cleaned_data.get('arv_evidence'):
             raise forms.ValidationError('If participant is on ARV, have you made this confirmation, seen any form of evidence?')
 
 
