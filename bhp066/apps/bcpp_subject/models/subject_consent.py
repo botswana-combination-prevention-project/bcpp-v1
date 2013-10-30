@@ -5,14 +5,21 @@ from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers
+from edc.subject.consent.mixins.bw import IdentityFieldsMixin
+from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 
 from apps.bcpp_household_member.models import BaseHouseholdMemberConsent
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent_history import SubjectConsentHistory
 
+# Note below: Mixin fields are added after the abstract class, BaseSubjectConsent, and before
+# the concrete class, SubjectConsent, using the field.contribute_to_class method.
+# Do it this way so both South and AuditTrail are happy.
 
-class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
+
+# declare abstract base class
+class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
@@ -34,7 +41,7 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         help_text="If no, INELIGIBLE",
         )
 
-    history = AuditTrail()
+    # see additional mixin fields below
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
@@ -54,6 +61,24 @@ class SubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         .. note:: more than one table is tracked so the history includes HIV results not performed by our team
                   as well as the results of tests we perform."""
         return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
+
+    class Meta:
+        abstract = True
+
+# add Mixin fields to abstract class
+for field in IdentityFieldsMixin._meta.fields:
+    if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
+        field.contribute_to_class(BaseSubjectConsent, field.name)
+
+for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
+    if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
+        field.contribute_to_class(BaseSubjectConsent, field.name)
+
+
+# declare concrete class
+class SubjectConsent(BaseSubjectConsent):
+
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'

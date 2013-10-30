@@ -1,17 +1,18 @@
 from django.db import models
+
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields.local.bw import EncryptedOmangField
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
 from edc.choices.common import YES_NO, YES_NO_DONT_KNOW
-from edc.subject.registration.models import RegisteredSubject
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc.subject.local.bw.models import BaseBwConsent
-from edc.subject.local.bw.fields import EncryptedOmangField
-from edc.audit.audit_trail import AuditTrail
-from apps.bcpp_household_member.models import HouseholdMember
+from edc.subject.registration.models import RegisteredSubject
+
 from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_subject.choices import COUNSELING_SITE
 
 
-class HtcRegistration (BaseAppointmentMixin, BaseBwConsent):
+class HtcRegistration (BaseAppointmentMixin):
 
     household_member = models.OneToOneField(HouseholdMember)
 

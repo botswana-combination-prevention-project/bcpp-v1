@@ -118,6 +118,17 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
+        'bcpp011-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.155',
+            'PORT': '3306',
+        },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -304,7 +315,6 @@ INSTALLED_APPS = (
     'edc.subject.appointment',
     'edc.subject.subject',
     'edc.subject.subject_config',
-    'edc.subject.local.bw',
     'edc.subject.adverse_event',
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
