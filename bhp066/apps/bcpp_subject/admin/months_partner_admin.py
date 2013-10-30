@@ -71,7 +71,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         ('first_haart',
         'first_disclose',
         'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH')
+        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -127,7 +127,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         ('first_haart',
         'first_disclose',
         'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH')
+        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',
