@@ -20,8 +20,22 @@ bhp066: settings and urls
 
 -erik
 
-check prermissions and content_type are aligned. Anything that prints is bad.
 
-for p in Permission.objects.all():
-    if unicode(p.content_type.model) not in p.codename.split('_'): 
-        print p.content_type.model, p.codename
+permissions
+1. clear the Permission model
+2. edit out south
+3. run syncdb
+4. do the following:
+python manage.py clear_permissions
+python manage.py update_visit_schedule_permissions field_research_assistant --visit_codes all
+python manage.py update_visit_schedule_permissions field_research_assistant --app_label bcpp_household
+python manage.py update_visit_schedule_permissions field_research_assistant --app_label bcpp_household_member
+python manage.py update_visit_schedule_permissions field_research_assistant --app_label bcpp_lab
+python manage.py update_visit_schedule_permissions field_research_assistant --app_label appointment --models appointment
+
+python manage.py update_visit_schedule_permissions clinic_research_assistant --visit_codes all
+python manage.py update_visit_schedule_permissions clinic_research_assistant --app_label bcpp_household
+python manage.py update_visit_schedule_permissions clinic_research_assistant --app_label bcpp_household_member
+python manage.py update_visit_schedule_permissions clinic_research_assistant --app_label bcpp_lab
+python manage.py update_visit_schedule_permissions clinic_research_assistant --app_label appointment --models appointment
+
