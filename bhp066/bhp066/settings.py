@@ -28,7 +28,7 @@ MAP_DIR = STATIC_ROOT.child('img')
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
 # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 KEY_PATH = '/Volumes/keys'
-#KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+# KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -351,7 +351,6 @@ INSTALLED_APPS = (
     'apps.bcpp_lab',
     'apps.bcpp_list',
     'apps.bcpp_subject',
-    #'apps.bcpp_htc_subject',
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
@@ -405,16 +404,17 @@ APPOINTMENTS_PER_DAY_MAX = 20
 APPOINTMENTS_DAYS_FORWARD = 15
 
 # edc.subject.registered_subject
-SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_htc_subject']
+SUBJECT_APP_LIST = ['bcpp_subject']
 SUBJECT_TYPES = ['subject']
 MAX_SUBJECTS = {'subject': 3000}
 
 # edc.device.dispatch
-DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_htc_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
+DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
 MAY_CREATE_NEW_KEYS = True
+FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
 CURRENT_COMMUNITY = 'otse'
@@ -423,9 +423,6 @@ GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
-
-# ???
-FIELD_MAX_LENGTH = 'migration'
 
 # edc.lab
 LAB_LOCK_NAME = 'BHP066'
@@ -449,6 +446,3 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
-
-# admin_supplemental_fields
-IGNORE_SUPPLEMENTAL_FIELDS = True

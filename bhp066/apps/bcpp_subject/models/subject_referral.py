@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 from django.conf import settings
 from django.db import models
@@ -33,7 +33,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        default=date.today(),
+        default=datetime.today(),
         help_text="... or next refill / clinic date if on ART."
         )
 
@@ -205,7 +205,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         """Reviews the conditions for referral and sets to the correct referral code."""
         if self.hiv_result == 'IND':
             self.append_to_referral_codes('HIV')
-        elif self.hiv_result == 'NEG' and self.gender == 'F':
+        elif self.hiv_result == 'NEG' and self.gender == 'F' and self.pregnant:
+            self.append_to_referral_codes('ANC-NEG')
+        elif self.hiv_result == 'POS' and self.gender == 'F' and self.pregnant:
+            self.append_to_referral_codes('ANC-POS')
+        elif self.hiv_result == 'NEG' and self.gender == 'F' and not self.pregnant:
             self.append_to_referral_codes(None)
         elif self.hiv_result == 'NEG' and self.gender == 'M':
             self.append_to_referral_codes('SMC')
