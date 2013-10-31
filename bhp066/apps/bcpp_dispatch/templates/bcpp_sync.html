@@ -1,7 +1,7 @@
 {% extends "sync.html"%}
 
 {% block usb_sync %}
-{% if device_id == '99' %}
+{% if is_server %}
 	<form action="/bhp_sync/usb_consume/bcpp/">
 		<input type="submit" value="Synchronize from USB device">
 	</form>
@@ -9,7 +9,7 @@
 {% endblock usb_sync %}
 
 {% block consuming_app %}
-{% if device_id == '99' or device_id == '98' %}
+{% if is_server or is_middleman %}
 	<td><A href="/bhp_sync/consume/{{ producer.name }}/bcpp/">synchronize with server</A></td>
 {% else %}
 	<td>SYNC NOT AVAILABLE IN NETBOOK</td>
@@ -17,7 +17,7 @@
 {% endblock consuming_app %}
     
 {% block play_transactions %}
-{% if device_id == '99' %}
+{% if is_server %}
 	<form action="/dispatch/bcpp/play_transactions/">
 		<input type="submit" value="Play Transactions">
 	</form>
