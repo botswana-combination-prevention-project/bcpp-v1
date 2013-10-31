@@ -20,14 +20,28 @@ from apps.bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry, Subj
 from ..views.participation import update_member_status
 
 
+class TestPlotMapper(Mapper):
+    map_area = 'test_community3'
+    map_code = '091'
+    regions = []
+    sections = []
+    landmarks = []
+    gps_center_lat = -25.033194
+    gps_center_lon = 25.747139
+    radius = 5.5
+    location_boundary = ()
+
+site_mappers.register(TestPlotMapper)
+
+
 class ParticipationStatusTests(TestCase):
 
     def setUp(self):
         if Survey.objects.all().count() == 0:
             survey = SurveyFactory()
-            plot = PlotFactory()
-            household = HouseholdFactory(plot=plot)
-            household_structure = HouseholdStructureFactory(survey=survey, household=household)
+            plot = PlotFactory(community='test_community3', household_count=1, status='occupied')
+            household = Household.objects.get(plot=plot)
+            household_structure = HouseholdStructure.objects.get(household=household)
             self.household_member = HouseholdMemberFactory(household_structure=household_structure)
 
     def test_new_is_not_reported(self):

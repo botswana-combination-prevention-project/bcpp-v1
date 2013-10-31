@@ -1,7 +1,6 @@
 from datetime import datetime
 from django.test import TestCase
 
-from edc.map.classes import Mapper, site_mappers
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
@@ -20,23 +19,10 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisi
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 
 
-class TestPlotMapper(Mapper):
-    map_area = 'test_community1'
-    map_code = '099'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.033194
-    gps_center_lon = 25.747132
-    radius = 5.5
-    location_boundary = ()
-
-site_mappers.register(TestPlotMapper)
-
-
 class BaseScheduledModelTestCase(TestCase):
 
     app_label = 'bcpp_subject'
+    community = None
 
     def setUp(self):
         self.survey = SurveyFactory()
@@ -61,7 +47,7 @@ class BaseScheduledModelTestCase(TestCase):
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
         visit_definition = VisitDefinitionFactory(code='T0', title='T0', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
-        plot = PlotFactory(community='test_community1', household_count=1, status='occupied')
+        plot = PlotFactory(community=self.community, household_count=1, status='occupied')
         self.assertEqual(Plot.objects.all().count(), 1)
         self.assertEqual(Household.objects.all().count(), 1)
         self.assertEqual(HouseholdStructure.objects.all().count(), 1)
