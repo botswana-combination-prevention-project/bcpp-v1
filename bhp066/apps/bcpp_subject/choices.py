@@ -266,7 +266,7 @@ JOB_DESCRIPTION = (
 )
 
 MONTHLY_INCOME = (
-#     ('None', _('None')),
+    ('None', _('No income')),
     ('1-199 pula', _('1-199 pula')),
     ('200-499 pula', _('200-499 pula')),
     ('500-999 pula', _('500-999 pula')),
