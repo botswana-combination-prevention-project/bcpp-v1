@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 14:22+0200\n"
-"PO-Revision-Date: 2013-10-25 14:22+0200\n"
+"POT-Creation-Date: 2013-10-31 08:43+0200\n"
+"PO-Revision-Date: 2013-10-31 08:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: apps/bcpp/choices.py:443 apps/bcpp/choices.py:483 apps/bcpp/choices.py:658
 #: apps/bcpp/choices.py:669 apps/bcpp_htc_subject/choices.py:73
 #: apps/bcpp_subject/choices.py:486 edc/choices/common.py:268
-#: edc/choices/common.py:279 edc/choices/common.py:285
+#: edc/choices/common.py:285 edc/choices/common.py:291
 #: edc/lab/lab_requisition/filters.py:22
 msgid "Yes"
 msgstr "Ee"
@@ -33,8 +33,8 @@ msgstr "Ee"
 #: apps/bcpp/choices.py:156 apps/bcpp/choices.py:164 apps/bcpp/choices.py:403
 #: apps/bcpp/choices.py:444 apps/bcpp/choices.py:484
 #: apps/bcpp_htc_subject/choices.py:74 apps/bcpp_subject/choices.py:487
-#: edc/choices/common.py:269 edc/choices/common.py:280
-#: edc/choices/common.py:286 edc/lab/lab_requisition/filters.py:23
+#: edc/choices/common.py:269 edc/choices/common.py:286
+#: edc/choices/common.py:292 edc/lab/lab_requisition/filters.py:23
 msgid "No"
 msgstr "Nnya"
 
@@ -81,7 +81,7 @@ msgstr "Nnya"
 #: apps/bcpp_subject/choices.py:338 apps/bcpp_subject/choices.py:352
 #: apps/bcpp_subject/choices.py:364 apps/bcpp_subject/choices.py:379
 #: apps/bcpp_subject/choices.py:388 apps/bcpp_subject/choices.py:488
-#: edc/choices/common.py:287
+#: edc/choices/common.py:293
 msgid "Don't want to answer"
 msgstr "Ga ke eletse go araba"
 
@@ -93,7 +93,7 @@ msgstr "Ga ke tlhomamise"
 msgid "Do not Know"
 msgstr "Ga ke itse"
 
-#: apps/bcpp/choices.py:43 edc/choices/common.py:281
+#: apps/bcpp/choices.py:43 edc/choices/common.py:287
 msgid "Refused to answer"
 msgstr "Ga a eletse go araba"
 
@@ -615,11 +615,13 @@ msgid "more than 12 months ago"
 msgstr "Kwa tlase ga kgwedi tse thataro"
 
 #: apps/bcpp/choices.py:279
-msgid "HIV Positive (Reactive)"
+#, fuzzy
+msgid "HIV Positive"
 msgstr "O na le mogare (positive)"
 
 #: apps/bcpp/choices.py:280
-msgid "HIV Negative (Non-reactive)"
+#, fuzzy
+msgid "HIV Negative"
 msgstr "Ga o na mogare (negative)"
 
 #: apps/bcpp/choices.py:281
@@ -1000,8 +1002,8 @@ msgstr "Go tsaya lebaka le le leele go fola"
 #: apps/bcpp/choices.py:588
 msgid "It will be hard to not have sex or masturbate for 6 weeks"
 msgstr ""
-"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora "
-"bonna( masturbate) beke tse thatataro"
+"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora bonna"
+"( masturbate) beke tse thatataro"
 
 #: apps/bcpp/choices.py:589
 msgid "Sex might not feel the same"
@@ -1261,8 +1263,8 @@ msgstr "Ke na le bothatanyana bo se kae le go itlhapisa kgotsa go ikapesa"
 #: apps/bcpp/choices.py:756 apps/bcpp_subject/choices.py:71
 msgid "I have moderate problems washing or dressing myself"
 msgstr ""
-"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go "
-"ikapesa(moderate)"
+"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go ikapesa"
+"(moderate)"
 
 #: apps/bcpp/choices.py:757 apps/bcpp_subject/choices.py:72
 msgid "I have severe problems washing or dressing myself"
@@ -2063,7 +2065,7 @@ msgstr ""
 
 #: apps/bcpp_htc_subject/models/cd4_test.py:14
 #: apps/bcpp_htc_subject/models/cd4_test.py:34
-#: edc/base/model/fields/custom/custom_fields.py:66
+#: edc/base/model/fields/custom/custom_fields.py:67
 #: edc/device/netbook/models/netbook_user.py:18
 #: edc/subject/subject/models/base_subject.py:68
 #: lis/subject/lab_patient/models/patient.py:39
@@ -2197,7 +2199,7 @@ msgstr "Is subject a minor?"
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:61
 #: apps/bcpp_subject/models/subject_locator.py:20
 #: apps/bcpp_subject/models/subject_locator.py:61
-#: edc/subject/locator/models/base_locator.py:63
+#: edc/subject/locator/models/base_locator.py:65
 msgid "Cell number (alternate)"
 msgstr "Mogala wa letheka (o mongwe)"
 
@@ -2215,20 +2217,20 @@ msgstr "Maina ka botlalo a motho yo o tsayang maikarabelo"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:45
 #: apps/bcpp_subject/models/subject_locator.py:45
-#: edc/subject/locator/models/base_locator.py:121
+#: edc/subject/locator/models/base_locator.py:123
 msgid "Relationship to participant"
 msgstr "Botsalano le motsaya karolo"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:52
 #: apps/bcpp_subject/models/subject_locator.py:52
-#: edc/subject/locator/models/base_locator.py:55
-#: edc/subject/locator/models/base_locator.py:135
+#: edc/subject/locator/models/base_locator.py:57
+#: edc/subject/locator/models/base_locator.py:137
 msgid "Cell number"
 msgstr "Mogala wa letheka (cell phone)"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:70
 #: apps/bcpp_subject/models/subject_locator.py:70
-#: edc/subject/locator/models/base_locator.py:143
+#: edc/subject/locator/models/base_locator.py:145
 msgid "Telephone number"
 msgstr "Mogala"
 
@@ -2461,6 +2463,10 @@ msgstr "Modiri wa botsogo"
 #: apps/bcpp_subject/choices.py:264
 msgid "Other professional"
 msgstr "Professional"
+
+#: apps/bcpp_subject/choices.py:269
+msgid "No income"
+msgstr "Ga ke a amogela sepe"
 
 #: apps/bcpp_subject/choices.py:270
 msgid "1-199 pula"
@@ -2992,7 +2998,7 @@ msgstr "Kara ya ditonki kgotsa ya dikgomo"
 msgid "Donkey/horses"
 msgstr "Ditonki/ dipitse"
 
-#: apps/bcpp_subject/admin/access_to_care_admin.py:49
+#: apps/bcpp_subject/admin/access_to_care_admin.py:52
 msgid ""
 "Read to Participant: Now, I will be asking you about your preferences and "
 "options for accessing health care when you need it."
@@ -3000,7 +3006,7 @@ msgstr ""
 "Read to Participant: Ke tlaa botsa ka dikeletso tsa gago le thato ya gago ya "
 "go amogela di tsa botsogo fa o di tlhoka"
 
-#: apps/bcpp_subject/admin/circumcision_admin.py:21
+#: apps/bcpp_subject/admin/circumcision_admin.py:24
 msgid ""
 "Read to Participant: Some men are circumcised. Male circumcision is [enter "
 "site specific word] when the foreskin of the man's penis has been cut off. I "
@@ -3018,7 +3024,7 @@ msgstr ""
 "amanang le thuto le go bereka mo o ka tswang o go dirile kgotsa e le mo o go "
 "dirang gompieno."
 
-#: apps/bcpp_subject/admin/future_hiv_testing_admin.py:37
+#: apps/bcpp_subject/admin/future_hiv_testing_admin.py:40
 msgid ""
 "Read to Participant: The following questions are about how you would like to "
 "have HIV testing in the future."
@@ -3052,7 +3058,7 @@ msgstr ""
 "a farologanyeng, fa o sa tlhaloganye se ke se buang, tswee tswee, o ka "
 "botsa. O gakologelwe gore dikarabo tsotlhe di tlaa bewa e le sephiri. "
 
-#: apps/bcpp_subject/admin/months_partner_admin.py:58
+#: apps/bcpp_subject/admin/months_partner_admin.py:61
 msgid ""
 "Read to Participant: I am now going to ask you about your most recent sexual "
 "partners. I will start with your last or most recent sexual partner."
@@ -3060,7 +3066,7 @@ msgstr ""
 "Read to Participant: Jaanong ke tsile go go botsa ka mokapelo kgotsa "
 "bakapelo ba gago ba gompieno. Ke tlaa simolola ka wa bohelo."
 
-#: apps/bcpp_subject/admin/months_partner_admin.py:113
+#: apps/bcpp_subject/admin/months_partner_admin.py:116
 msgid ""
 "Read to Participant: I am now going to ask you about your second most recent "
 "sexual partner in the past 12 months, the one before the person we were just "
@@ -3070,7 +3076,7 @@ msgstr ""
 "bobedi mo kgweding tse di lesome le bobedi tse di fetileng, ke raya wa pele "
 "ga o re ntseng re bua ka ene"
 
-#: apps/bcpp_subject/admin/months_partner_admin.py:169
+#: apps/bcpp_subject/admin/months_partner_admin.py:172
 msgid ""
 "Read to Participant: I am now going to ask you aboutyour second most recent "
 "sexual partner in the past 12 months, the one before the person we were "
@@ -3079,6 +3085,24 @@ msgstr ""
 "Read to Participant: Jaanong ke tsile go go botsa ka mokapelo wa gago wa "
 "bobedi mo kgweding tse di lesome le bobedi tse di fetileng, ke raya wa pele "
 "ga o re ntseng re bua ka ene"
+
+#: apps/bcpp_subject/admin/postitive_participant_admin.py:44
+msgid ""
+" Read to Participant: You let us know earlier that you are HIV positive. I "
+"would now like to ask you a few questions about your experiences living with "
+"HIV. Please remember this interview and your responses are private and "
+"confidential.In this section, I'm going to read you statements  about how "
+"you may feel about yourself and your  HIV/AIDS infection. I would like you "
+"to tell me if you strongly agree, agree, disagree or strongly disagree with "
+"each statement?"
+msgstr ""
+"Read to Participant: O setse o re itsisitse gore o na le mogare wa HIV. "
+"Jaanong ke eletsa go go botsa dipotso tse di amanang le go tshela ka "
+"bolwetsi jwa HIV. Tswee tswee, gakolgelwa gore potsolotso e,  le dikarabo "
+"tsa gago di bewa e le sephiri. Mo karolong e, ke tlaa go balela ditsetlana "
+"ka fa o ka tswang o ikutlwa ka teng. Ke tlaa kopa gore o nkitsise gore a o a "
+"dumalana mo go tseneletseng, o a dumalana, ga o dumalane kgotsa ga o "
+"dumalane mo go tseneletseng mo tsetlaneng nngwe le nngwe. "
 
 #: apps/bcpp_subject/admin/reproductive_health_admin.py:26
 msgid ""
@@ -3124,7 +3148,7 @@ msgstr ""
 "tseega sentle, mme re kopa gore o arabe ka boammaruri le gore dikarabo "
 "tsotlhe e tlaabo e le sephiri. "
 
-#: apps/bcpp_subject/admin/stigma_admin.py:39
+#: apps/bcpp_subject/admin/stigma_admin.py:42
 msgid ""
 " Read to Participant: Different people feel differently about people living "
 "with HIV. I am going to ask you about issues relevant to HIV and AIDS and "
@@ -3133,24 +3157,6 @@ msgid ""
 "start, when thinking about yourself, please tell me how  strongly you agree "
 "or disagree with the following statements."
 msgstr "Balela mo tsaya karolo: Batho ba bangwe ba "
-
-#: apps/bcpp_subject/admin/stigma_admin.py:115
-msgid ""
-" Read to Participant: You let us know earlier that you are HIV positive. I "
-"would now like to ask you a few questions about your experiences living with "
-"HIV. Please remember this interview and your responses are private and "
-"confidential.In this section, I'm going to read you statements  about how "
-"you may feel about yourself and your  HIV/AIDS infection. I would like you "
-"to tell me if you strongly agree, agree, disagree or strongly disagree with "
-"each statement?"
-msgstr ""
-"Read to Participant: O setse o re itsisitse gore o na le mogare wa HIV. "
-"Jaanong ke eletsa go go botsa dipotso tse di amanang le go tshela ka "
-"bolwetsi jwa HIV. Tswee tswee, gakolgelwa gore potsolotso e,  le dikarabo "
-"tsa gago di bewa e le sephiri. Mo karolong e, ke tlaa go balela ditsetlana "
-"ka fa o ka tswang o ikutlwa ka teng. Ke tlaa kopa gore o nkitsise gore a o a "
-"dumalana mo go tseneletseng, o a dumalana, ga o dumalane kgotsa ga o "
-"dumalane mo go tseneletseng mo tsetlaneng nngwe le nngwe. "
 
 #: apps/bcpp_subject/models/access_to_care.py:13
 msgid ""
@@ -3560,11 +3566,11 @@ msgstr "Mo lenaneong lengwe le lengwe o amogela di le kae?"
 msgid "Grant name"
 msgstr "Leina la lenaneo"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:18
+#: apps/bcpp_subject/models/hiv_care_adherence.py:16
 msgid "When was your first positive HIV test result?"
 msgstr "Maduo a gago a ntlha a gore o na le mogare wa HIV a ne a le leng?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:27
+#: apps/bcpp_subject/models/hiv_care_adherence.py:25
 msgid ""
 "Have you ever received HIV-related medical or clinical care, for such things "
 "as a CD4 count (masole), IDCC/ PMTCT registration, additional clinic-based "
@@ -3573,7 +3579,7 @@ msgstr ""
 "tlhatlhobo ya masole a mmele, go kwadisa ko IDCC, lenaneo la PMTCT kgotsa go "
 "bona bogakolodi ja tlaleletso kwa kokelong?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:36
+#: apps/bcpp_subject/models/hiv_care_adherence.py:34
 msgid ""
 "What is the main reason you have not received HIV-related medical or "
 "clinical care?"
@@ -3581,7 +3587,7 @@ msgstr ""
 "Ke mabaka a fe gore o bo o sa ise o amogela tlhokomelo ya botsogo ya seemo "
 "sa HIV?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:47
+#: apps/bcpp_subject/models/hiv_care_adherence.py:45
 msgid ""
 "Have you ever been recommended by a doctor/nurse or other healthcare worker "
 "to start antiretroviral therapy (ARVs), a combination of medicines to treat "
@@ -3592,7 +3598,7 @@ msgstr ""
 "go alafa mogare wa HIV? [gantsi go dirisiwa: combivir, truvada, atripla, "
 "nevirapine]"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:59
+#: apps/bcpp_subject/models/hiv_care_adherence.py:57
 msgid ""
 "Have you ever taken any antiretroviral therapy (ARVs) for your HIV "
 "infection? [For women: Do not include treatment that you took during "
@@ -3602,23 +3608,23 @@ msgstr ""
 "[Bomme/basadi: O seka wa akaretsa kalfi e o e tsereng ka nako ya boimana go "
 "sireletsa ngwana wa gago go tsenwa ke HIV]"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:68
+#: apps/bcpp_subject/models/hiv_care_adherence.py:66
 msgid "What was the main reason why you have not started ARVs?"
 msgstr "Lebaka legolo ke eng o sa simolola di-ARV?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:78
+#: apps/bcpp_subject/models/hiv_care_adherence.py:76
 msgid "When did you first start taking antiretroviral therapy (ARVs)?"
 msgstr "O simolotse go tsaya melemo ya diritibatsi(di-ARV) lantlha leng?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:87
+#: apps/bcpp_subject/models/hiv_care_adherence.py:85
 msgid "Are you currently taking antiretroviral therapy (ARVs)?"
 msgstr "A mo bo gompienong o tsaya melemo ya diritibatsi?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:93
+#: apps/bcpp_subject/models/hiv_care_adherence.py:92
 msgid "When did you stop taking ARV's?"
 msgstr "O ne wa emisa leng go tsaya melemo ya diritibatsi (ARV's)?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:101
+#: apps/bcpp_subject/models/hiv_care_adherence.py:100
 msgid "What was the main reason why you stopped taking ARVs?"
 msgstr "Lebaka legolo la go bo o emisitse go tsaya di-ARV ke lefe?"
 
@@ -3738,12 +3744,12 @@ msgstr ""
 "A mokwalo wa tlhatlhobo ya HIV oteng [karata ya sepatela/clinic, karata ya , "
 "Tebelopele,kgotsa sengwe fela] go ka sekwa sekwa?"
 
-#: apps/bcpp_subject/models/hiv_testing_history.py:41
+#: apps/bcpp_subject/models/hiv_testing_history.py:42
 msgid "Please tell me the results of your last [most recent] HIV test?"
 msgstr ""
 "Ke kopa o mpolelele maduo a gago a tlhatlhobo ya gago ya HIV ya bofelo?"
 
-#: apps/bcpp_subject/models/hiv_testing_history.py:50
+#: apps/bcpp_subject/models/hiv_testing_history.py:51
 msgid "Do you have any other available documentation of an HIV result?"
 msgstr "A o na le mokwalo ope gape wa maduo a tlhatlhobo ya HIV?"
 
@@ -4471,15 +4477,15 @@ msgstr "Tse dingwe, tlhalosa"
 msgid "Custom field for date of birth"
 msgstr "Custom field for date of birth"
 
-#: edc/base/model/fields/custom/custom_fields.py:64
+#: edc/base/model/fields/custom/custom_fields.py:65
 msgid "Date of Birth"
 msgstr "Letsatsi la matsalo"
 
-#: edc/base/model/fields/custom/custom_fields.py:86
+#: edc/base/model/fields/custom/custom_fields.py:87
 msgid "Custom field to question if date is estimated"
 msgstr "Custom field to question if date is estimated"
 
-#: edc/base/model/fields/custom/custom_fields.py:92
+#: edc/base/model/fields/custom/custom_fields.py:93
 msgid ""
 "If the exact date is not known, please indicate which part of the date is "
 "estimated."
@@ -4487,91 +4493,91 @@ msgstr ""
 "If the exact date is not known, please indicate which part of the date is "
 "estimated."
 
-#: edc/base/model/fields/custom/custom_fields.py:109
+#: edc/base/model/fields/custom/custom_fields.py:110
 msgid "Custom field for Name of person"
 msgstr "Custom field for Name of person"
 
-#: edc/base/model/fields/custom/custom_fields.py:113
+#: edc/base/model/fields/custom/custom_fields.py:114
 msgid "Name"
 msgstr "Leina"
 
-#: edc/base/model/fields/custom/custom_fields.py:115
+#: edc/base/model/fields/custom/custom_fields.py:116
 msgid "Type only letters, all in uppercase and no spaces"
 msgstr "Type only letters, all in uppercase and no spaces"
 
-#: edc/base/model/fields/custom/custom_fields.py:127
+#: edc/base/model/fields/custom/custom_fields.py:128
 msgid "Enter a valid name, all letters, in uppercase and no spaces."
 msgstr "Enter a valid name, all letters, in uppercase and no spaces."
 
-#: edc/base/model/fields/custom/custom_fields.py:144
+#: edc/base/model/fields/custom/custom_fields.py:145
 msgid "Custom field for a person's initials"
 msgstr "Custom field for a person's initials"
 
-#: edc/base/model/fields/custom/custom_fields.py:148
+#: edc/base/model/fields/custom/custom_fields.py:149
 msgid "Initials"
 msgstr "Initials"
 
-#: edc/base/model/fields/custom/custom_fields.py:150
+#: edc/base/model/fields/custom/custom_fields.py:151
 msgid "Type 2-3 letters, all in uppercase and no spaces"
 msgstr "Type 2-3 letters, all in uppercase and no spaces"
 
-#: edc/base/model/fields/custom/custom_fields.py:162
+#: edc/base/model/fields/custom/custom_fields.py:163
 msgid ""
 "Enter valid initials. Must be 2-3 letters, all in uppercase and no spaces."
 msgstr ""
 "Enter valid initials. Must be 2-3 letters, all in uppercase and no spaces."
 
-#: edc/base/model/fields/custom/custom_fields.py:180
+#: edc/base/model/fields/custom/custom_fields.py:181
 msgid "Custom field for weight"
 msgstr "Custom field for weight"
 
-#: edc/base/model/fields/custom/custom_fields.py:186
+#: edc/base/model/fields/custom/custom_fields.py:187
 msgid "Report in kg. Format is 9.99, 99.99, etc"
 msgstr "Report in kg. Format is 9.99, 99.99, etc"
 
-#: edc/base/model/fields/custom/custom_fields.py:208
+#: edc/base/model/fields/custom/custom_fields.py:209
 msgid "Custom field for Botswana Omang"
 msgstr "Custom field for Botswana Omang"
 
-#: edc/base/model/fields/custom/custom_fields.py:214
+#: edc/base/model/fields/custom/custom_fields.py:215
 msgid "Format is 9999[12]9999"
 msgstr "Format is 9999[12]9999"
 
-#: edc/base/model/fields/custom/custom_fields.py:226
+#: edc/base/model/fields/custom/custom_fields.py:227
 msgid ""
 "Enter a valid Omang. Must be 9 numbers. Note that digit 5 represents gender."
 msgstr ""
 "Enter a valid Omang. Must be 9 numbers. Note that digit 5 represents gender."
 
-#: edc/base/model/fields/custom/custom_fields.py:265
+#: edc/base/model/fields/custom/custom_fields.py:266
 msgid "Custom field for Identity Type"
 msgstr "Custom field for Identity Type"
 
-#: edc/base/model/fields/custom/custom_fields.py:268
+#: edc/base/model/fields/custom/custom_fields.py:269
 msgid "What type of identity number is this?"
 msgstr "What type of identity number is this?"
 
-#: edc/base/model/fields/custom/custom_fields.py:291
+#: edc/base/model/fields/custom/custom_fields.py:292
 msgid "Custom field for Cellphone numuber"
 msgstr "Custom field for Cellphone numuber"
 
-#: edc/base/model/fields/custom/custom_fields.py:294
+#: edc/base/model/fields/custom/custom_fields.py:295
 msgid "Mobile"
 msgstr "Mobile"
 
-#: edc/base/model/fields/custom/custom_fields.py:297
+#: edc/base/model/fields/custom/custom_fields.py:298
 msgid "The format is 99999999"
 msgstr "The format is 99999999"
 
-#: edc/base/model/fields/custom/custom_fields.py:308
+#: edc/base/model/fields/custom/custom_fields.py:309
 msgid "Enter a valid cellphone number. Allowed prefixes are 71-78."
 msgstr "Enter a valid cellphone number. Allowed prefixes are 71-78."
 
-#: edc/base/model/fields/custom/custom_fields.py:329
+#: edc/base/model/fields/custom/custom_fields.py:330
 msgid "Custom field for Blood Pressure"
 msgstr "Custom field for Blood Pressure"
 
-#: edc/base/model/fields/custom/custom_fields.py:334
+#: edc/base/model/fields/custom/custom_fields.py:335
 msgid ""
 "The format is 999/999, but either of the two numbers can be two or three "
 "digits"
@@ -4579,7 +4585,7 @@ msgstr ""
 "The format is 999/999, but either of the two numbers can be two or three "
 "digits"
 
-#: edc/base/model/fields/custom/custom_fields.py:346
+#: edc/base/model/fields/custom/custom_fields.py:347
 msgid ""
 "Enter a valid blood pressure measurement. It must be systolic/diastolic."
 msgstr ""
@@ -4589,11 +4595,15 @@ msgstr ""
 msgid "UuidAutoField"
 msgstr ""
 
-#: edc/base/model/fields/required/required_fields.py:73
+#: edc/base/model/fields/required/required_fields.py:34
+msgid "RevisionField"
+msgstr "RevisionField"
+
+#: edc/base/model/fields/required/required_fields.py:71
 msgid "Custom field for hostname created"
 msgstr "Custom field for hostname created"
 
-#: edc/base/model/fields/required/required_fields.py:103
+#: edc/base/model/fields/required/required_fields.py:101
 msgid "Custom field for hostname modified"
 msgstr "Custom field for hostname modified"
 
@@ -4762,16 +4772,20 @@ msgstr "3. Describe the 'adverse event' and its relation to study activities"
 msgid "Use grading scale 1-5, where 5 is death"
 msgstr "Dirisa sekala sa bongwe go ya botlhano, botlhano e le loso"
 
-#: edc/subject/consent/models/base_consent.py:65
+#: edc/subject/consent/mixins/bw/identity_fields_mixin.py:12
+msgid "Identity number (OMANG, etc)"
+msgstr "OMANG"
+
+#: edc/subject/consent/models/base_consent.py:64
 #: edc/subject/registration/models/registered_subject.py:68
 msgid "Sample storage"
 msgstr "Sample storage"
 
-#: edc/subject/consent/models/base_consent.py:89
+#: edc/subject/consent/models/base_consent.py:88
 msgid "Witness's Last and first name (illiterates only)"
 msgstr "Witness's Last and first name (illiterates only)"
 
-#: edc/subject/consent/models/base_consent.py:95
+#: edc/subject/consent/models/base_consent.py:94
 msgid ""
 "Required only if subject is illiterate. Format is 'LASTNAME, FIRSTNAME'. All "
 "uppercase separated by a comma"
@@ -4799,39 +4813,35 @@ msgstr "Sample storage after closure?"
 msgid "Subject agrees for samples to be stored after the study closure"
 msgstr "Subject agrees for samples to be stored after the study closure"
 
-#: edc/subject/local/bw/models/base_bw_consent.py:12
-msgid "Identity number (OMANG, etc)"
-msgstr "OMANG"
-
-#: edc/subject/locator/models/base_locator.py:31
+#: edc/subject/locator/models/base_locator.py:33
 msgid "Mailing address "
 msgstr "Aterese ya poso"
 
-#: edc/subject/locator/models/base_locator.py:43
+#: edc/subject/locator/models/base_locator.py:45
 msgid "Physical address with detailed description"
 msgstr "Tlhalosa ko o nnang teng ka botlalo"
 
-#: edc/subject/locator/models/base_locator.py:71
+#: edc/subject/locator/models/base_locator.py:73
 msgid "Telephone"
 msgstr "Mogala"
 
-#: edc/subject/locator/models/base_locator.py:79
+#: edc/subject/locator/models/base_locator.py:81
 msgid "Telephone (alternate)"
 msgstr "Mogala (o mongwe)"
 
-#: edc/subject/locator/models/base_locator.py:93
+#: edc/subject/locator/models/base_locator.py:95
 msgid "Name and location of work place"
 msgstr "Leina le lehelo ko o berekang teng"
 
-#: edc/subject/locator/models/base_locator.py:100
+#: edc/subject/locator/models/base_locator.py:102
 msgid "Work telephone number "
 msgstr "Mogala wa ko tirong"
 
-#: edc/subject/locator/models/base_locator.py:114
+#: edc/subject/locator/models/base_locator.py:116
 msgid "Full names of the contact person"
 msgstr "Maina ka botlalo a mongwe o go ka ikopanngwang le ene"
 
-#: edc/subject/locator/models/base_locator.py:128
+#: edc/subject/locator/models/base_locator.py:130
 msgid "Full physical address "
 msgstr "Ko o nnang teng ka botlalo"
 
@@ -4864,6 +4874,12 @@ msgstr "Sefane sa gago"
 #: lis/subject/lab_patient/models/patient.py:43
 msgid "Is the subject's date of birth estimated?"
 msgstr "Is the subject's date of birth estimated?"
+
+#~ msgid "HIV Positive (Reactive)"
+#~ msgstr "O na le mogare (positive)"
+
+#~ msgid "HIV Negative (Non-reactive)"
+#~ msgstr "Ga o na mogare (negative)"
 
 #~ msgid "Custom Uuid field"
 #~ msgstr "Custom Uuid field"
