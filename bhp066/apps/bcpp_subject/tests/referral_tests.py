@@ -1,11 +1,29 @@
 from datetime import datetime
 
+from edc.map.classes import Mapper, site_mappers
+
 from apps.bcpp_subject.tests.factories import SubjectReferralFactory
 
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 
 
+class TestPlotMapper(Mapper):
+    map_area = 'test_community8'
+    map_code = '097'
+    regions = []
+    sections = []
+    landmarks = []
+    gps_center_lat = -25.033192
+    gps_center_lon = 25.747139
+    radius = 5.5
+    location_boundary = ()
+
+site_mappers.register(TestPlotMapper)
+
+
 class ReferralTests(BaseScheduledModelTestCase):
+
+    community = 'test_community8'
 
     def tests_referred_hiv(self):
         """if IND refer for HIV testing"""
@@ -52,7 +70,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
-            hiv_result='NEG',
+            hiv_result='POS',
             gender='F',
             pregnant=True,
             on_art=True)
@@ -64,7 +82,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
-            hiv_result='NEG',
+            hiv_result='POS',
             gender='F',
             pregnant=True)
         self.assertIn('ANC-POS', subject_referral.referral_codes)

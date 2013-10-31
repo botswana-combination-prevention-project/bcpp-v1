@@ -20,3 +20,8 @@ bhp066: settings and urls
 
 -erik
 
+check prermissions and content_type are aligned. Anything that prints is bad.
+
+for p in Permission.objects.all():
+    if unicode(p.content_type.model) not in p.codename.split('_'): 
+        print p.content_type.model, p.codename
