@@ -21,6 +21,7 @@ class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
             "panel",
             "test_code",
             "aliquot_type",
+            "site",
             "item_type",
             "item_count_total",
             "estimated_volume",
