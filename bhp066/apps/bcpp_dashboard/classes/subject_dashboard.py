@@ -1,6 +1,9 @@
 from django.template.loader import render_to_string
-from apps.bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator
+
+from apps.bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral
 from apps.bcpp_lab.models import SubjectRequisition, PackingList
+
+
 from .base_subject_dashboard import BaseSubjectDashboard
 
 
@@ -21,6 +24,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             household_dashboard_url=self.get_household_dashboard_url(),
             title='Research Subject Dashboard',
             subject_consent=self.get_consent(),
+            subject_referral=self.get_subject_referral(),
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
 
@@ -35,6 +39,11 @@ class SubjectDashboard(BaseSubjectDashboard):
         self._consent = None
         if SubjectConsent.objects.filter(subject_identifier=self.get_subject_identifier()):
             self._consent = SubjectConsent.objects.get(subject_identifier=self.get_subject_identifier())
+
+    def get_subject_referral(self):
+        if SubjectReferral.objects.filter(subject_visit=self._get_visit_model_instance()):
+            return SubjectReferral.objects.get(subject_visit=self._get_visit_model_instance())
+        return 'unknown referral'
 
     def get_visit_model(self):
         return SubjectVisit
