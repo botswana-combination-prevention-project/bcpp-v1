@@ -12,6 +12,10 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
 
     search_fields = ['subject_visit__appointment__registered_subject__first_name', 'subject_visit__appointment__registered_subject__subject_identifier']
 
+    list_display = ['referral_codes']
+
+    list_filter = ('referral_codes')
+
     fields = (
         'subject_visit',
         'report_datetime',
