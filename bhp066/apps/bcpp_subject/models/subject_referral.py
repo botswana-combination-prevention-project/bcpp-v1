@@ -23,6 +23,7 @@ REFERRAL_CODES = (
     ('CCC-HIGH', 'CCC or MASA (not on ART, high CD4)'),
     ('CCC-LOW', 'CCC or MASA (not on ART, low CD4)'),
     ('SMC', 'SMC'),
+    ('NOT_REFERED', 'Not referred'),
 )
 
 # TODO: defaulters
@@ -152,6 +153,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     history = AuditTrail()
 
+    def __unicode__(self):
+        return '{0} {1} {2}'.format(self.referral_codes, self.referral_appt_date, self.referral_clinic)
+
     def save(self, *args, **kwargs):
         self.update_pregnant()
         self.update_on_art()
@@ -170,15 +174,15 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     def update_pregnant(self):
         if ReproductiveHealth.objects.filter(subject_visit=self.subject_visit):
             reproductive_health = ReproductiveHealth.objects.get(subject_visit=self.subject_visit)
-            if reproductive_health.currently_pregnant() == 'Yes':
+            if reproductive_health.currently_pregnant == 'Yes':
                 self.pregnant = True
-            if reproductive_health.currently_pregnant() == 'No':
+            if reproductive_health.currently_pregnant == 'No':
                 self.pregnant = False
 
     def update_on_art(self):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
-            self.on_art = hiv_care_adherence.on_art()
+            self.on_art = hiv_care_adherence.on_arv()
 
     def update_urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals list and sets to true on a match."""
@@ -199,6 +203,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                 codes = self.get_referral_codes_as_list()
                 codes.extend([item for item in codes if item != value])
                 codes.append(value)
+        codes.sort()
         self.referral_codes = ','.join(codes)
 
     def update_referral_codes(self):
@@ -226,6 +231,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                     self.append_to_referral_codes('CCC-HIGH')
                 elif self.cd4_result <= 350:
                     self.append_to_referral_codes('CCC-LOW')
+        if not self.referral_codes:
+            self.referral_codes = 'NOT_REFERRED'
 
     class Meta:
         app_label = 'bcpp_subject'

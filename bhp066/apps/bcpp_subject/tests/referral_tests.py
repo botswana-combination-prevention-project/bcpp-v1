@@ -2,7 +2,7 @@ from datetime import datetime
 
 from edc.map.classes import Mapper, site_mappers
 
-from apps.bcpp_subject.tests.factories import SubjectReferralFactory
+from apps.bcpp_subject.tests.factories import SubjectReferralFactory, ReproductiveHealthFactory, HivCareAdherenceFactory
 
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 
@@ -57,7 +57,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and female, and pregnant"""
         report_datetime = datetime.today()
         subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
+            subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
             hiv_result='NEG',
             gender='F',
@@ -67,8 +67,9 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_pos_female_pregnant(self):
         """if POS and female, and pregnant"""
         report_datetime = datetime.today()
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
+            subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
             hiv_result='POS',
             gender='F',
@@ -79,8 +80,9 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_pos_female_pregnant2(self):
         """if POS and female, and pregnant"""
         report_datetime = datetime.today()
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
+            subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
             hiv_result='POS',
             gender='F',
@@ -90,12 +92,25 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_not_referred_neg_female(self):
         """if NEG and female, no referral"""
         report_datetime = datetime.today()
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
             hiv_result='NEG',
             gender='F')
-        self.assertEquals('', subject_referral.referral_codes)
+        self.assertEquals('ANC-NEG', subject_referral.referral_codes)
+
+    def tests_referred_pos_female_pregnant3(self):
+        """if POS and female, and pregnant"""
+        report_datetime = datetime.today()
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime,
+            hiv_result='POS',
+            gender='F',
+            pregnant=True)
+        self.assertIn('ANC-POS', subject_referral.referral_codes)
 
     def tests_referred_cd4(self):
         """if POS but no other data, refer for CD4"""
@@ -160,6 +175,7 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_ccc3(self):
         """if pos, high CD4 and not on art, """
         report_datetime = datetime.today()
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
@@ -172,6 +188,7 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_masa1(self):
         """if pos, low CD4 and not on art, """
         report_datetime = datetime.today()
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
@@ -184,6 +201,7 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_masa1_urgent(self):
         """if pos, low CD4 and not on art, should be urgent"""
         report_datetime = datetime.today()
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
@@ -196,6 +214,7 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_masa2(self):
         """if pos, high CD4 and on art, """
         report_datetime = datetime.today()
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
@@ -208,6 +227,7 @@ class ReferralTests(BaseScheduledModelTestCase):
     def tests_referred_masa3(self):
         """if pos, low CD4 and on art, """
         report_datetime = datetime.today()
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime,
