@@ -23,10 +23,16 @@ bhp066: settings and urls
 
 permissions
 1. clear the Permission model
-2. edit out south
-3. run syncdb
-4. do the following:
+
 python manage.py clear_permissions
+
+2. edit out south in settings.py
+3. run syncdb
+
+python manage.py syncdb
+
+4. do the following:
+
 python manage.py update_visit_schedule_permissions field_research_assistant --visit_codes all
 python manage.py update_visit_schedule_permissions field_research_assistant --app_label bcpp_household
 python manage.py update_visit_schedule_permissions field_research_assistant --app_label bcpp_household_member
