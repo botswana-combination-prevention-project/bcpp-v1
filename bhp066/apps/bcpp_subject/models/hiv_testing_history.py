@@ -37,7 +37,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="if no card available for viewing, proceed to next question",
         )
 
-    # used by admin_supplemental fields for HIV status condition
+    # used by admin_supplemental fields for HIV status condition??
     verbal_hiv_result = models.CharField(
         verbose_name=_("Please tell me the results of your last [most recent] HIV test?"),
         max_length=30,
