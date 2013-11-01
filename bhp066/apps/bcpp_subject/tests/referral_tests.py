@@ -126,7 +126,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if POS, high CD4 and art unknown, """
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=350, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=350, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -136,7 +136,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if POS, low CD4 and art unknown, """
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=349, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -146,7 +146,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if POS, low CD4 and art unknown, urgent referral"""
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=349, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -157,7 +157,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=351, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=351, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -168,7 +168,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=349, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -179,7 +179,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=349, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -190,7 +190,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=351, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=351, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -201,7 +201,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=350, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=350, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
@@ -212,7 +212,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
-        PimaFactory(subject_visit=self.subject_visit_male, hiv_result='POS', cd4_result=350, report_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=350, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
