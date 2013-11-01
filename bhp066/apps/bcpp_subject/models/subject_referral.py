@@ -8,9 +8,9 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
-# from edc.base.model.fields.local.bw import EncryptedOmangField
 
 from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_lab.models import SubjectRequisition
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .circumcision import Circumcision
@@ -94,20 +94,24 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     cd4_result = models.IntegerField(
         null=True,
         editable=False,
+        help_text='from Pima',
         )
 
     cd4_result_datetime = models.DateTimeField(
-         null=True,
-         )
+        null=True,
+        help_text='from Pima',
+        )
 
     vl_sample_drawn = models.NullBooleanField(
         default=False,
         null=True,
         editable=False,
+        help_text='from SubjectRequisition',
         )
 
     vl_sample_datetime_drawn = models.DateTimeField(
-         null=True,
+        null=True,
+        help_text='from SubjectRequisition',
          )
 
     pregnant = models.NullBooleanField(
@@ -123,15 +127,17 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         editable=False,
         )
 
-    permanent_resident = models.BooleanField(
+    permanent_resident = models.NullBooleanField(
         default=False,
         editable=False,
+        null=True,
         help_text='from residence and mobility "permanent_resident"'
         )
 
-    intend_residency = models.BooleanField(
+    intend_residency = models.NullBooleanField(
         default=False,
         editable=False,
+        null=True,
         help_text='from residence and mobility "intend_residency"'
         )
 
@@ -172,6 +178,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         self.update_demographics()
         self.update_hiv()
         self.update_cd4()
+        self.update_vl()
         self.update_residency()
         self.update_pregnant()
         self.update_circumcised()
@@ -213,18 +220,32 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             pima = Pima.objects.get(subject_visit=self.subject_visit)
             self.cd4_result = pima.cd4_value
             self.cd4_result_datetime = pima.report_datetime
-#         elif Cd4History.objects.filter(subject_visit=self.subject_visit, record_available='Yes'):
-#             cd4_history = Cd4History.objects.get(subject_visit=self.subject_visit)
-#             self.cd4_result = cd4_history.last_cd4_count
-#             self.cd4_result_datetime = cd4_history.last_cd4_drawn_date
-#         else:
-#             pass
+        else:
+            self.cd4_result = None
+            self.cd4_result_datetime = None
+
+    def update_vl(self):
+        if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load'):
+            if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').count() > 1:
+                #  FIXME: should not be possible, but dashboard still allows this (more than one req.per visit)
+                subject_requisition = SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').order_by('created')[0]
+            else:
+                subject_requisition = SubjectRequisition.objects.get(subject_visit=self.subject_visit, panel__edc_name='viral load')
+            if subject_requisition.is_drawn == 'Yes':
+                self.vl_sample_drawn = True
+                self.vl_sample_datetime_drawn = subject_requisition.drawn_datetime
+            else:
+                self.vl_sample_drawn = False
+                self.vl_sample_datetime_drawn = None
 
     def update_residency(self):
         if ResidencyMobility.objects.filter(subject_visit=self.subject_visit):
             residency_mobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit)
             self.permanent_resident = residency_mobility.permanent_resident
             self.intend_residency = residency_mobility.intend_residency
+        else:
+            self.permanent_resident = None
+            self.intend_residency = None
 
     def update_circumcised(self):
         if self.gender == 'M':
@@ -250,6 +271,8 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
             self.on_art = hiv_care_adherence.on_art()
+        else:
+            self.on_art = None
 
     def is_defaulter(self):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
@@ -269,15 +292,14 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         return [x for x in self.referral_codes.split(',')]
 
     def append_to_referral_codes(self, value):
-        codes = []
+        referral_codes = []
         if value:
-            codes = [value]
+            referral_codes = [value]
             if self.referral_codes:
-                codes = self.get_referral_codes_as_list()
-                codes.extend([item for item in codes if item != value])
-                codes.append(value)
-        codes.sort()
-        self.referral_codes = ';'.join(codes)
+                referral_codes.extend([item for item in self.get_referral_codes_as_list() if item != value])
+                referral_codes.append(value)
+        referral_codes.sort()
+        self.referral_codes = ';'.join(referral_codes)
 
     def update_referral_codes(self):
         """Reviews the conditions for referral and sets to the correct referral code."""
@@ -303,7 +325,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             elif not self.on_art:
                 if not self.cd4_result:
                     self.append_to_referral_codes('CD4')
-                if self.cd4_result > 350:
+                elif self.cd4_result > 350:
                     self.append_to_referral_codes('CCC-HIGH')
                 elif self.cd4_result <= 350:
                     self.append_to_referral_codes('CCC-LOW')
