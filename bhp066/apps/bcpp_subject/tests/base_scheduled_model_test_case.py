@@ -63,8 +63,9 @@ class BaseScheduledModelTestCase(TestCase):
         self.household_member_male.eligible_subject = True
         self.household_member_female.save()
         self.household_member_male.save()
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female)
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male)
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F')
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M')
+        #FIXME: need this to be fixed, not getting gender right!
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
         appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female)
