@@ -41,7 +41,13 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         help_text="If no, INELIGIBLE",
         )
 
+    community = models.CharField(max_length=25, null=True, editable=False)
+
     # see additional mixin fields below
+
+    def save(self, *args, **kwargs):
+        self.community = self.household_member.household_structure.household.plot.community
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
