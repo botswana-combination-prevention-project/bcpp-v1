@@ -24,6 +24,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'may_store_samples',
             'is_literate',
             'consent_datetime',
+            'community',
             'created',
             'modified',
             'user_created',
