@@ -1,0 +1,19 @@
+{% extends "section.html"%}
+{% load admin_urls %}
+{% load url from future %}
+
+
+{% block section_links%}
+<H3>Reports</H3>
+
+<ul class="list_of_reports">
+<LI><A href="{% url 'model_describer_url_name' %}">Model Description and Data Summary</A>
+<LI>Model Summaries by Site and Gender
+    <UL>
+    <LI><A href="{% url 'model_describer_url_name' app_label='registration' model_name='registered_subject' %}">Registration and Study Status Models</A>
+    <LI><A href="/bcpp/statistics/model_group_describer/subject_visit/">Scheduled Subject Models</A>
+
+    </ul></LI>
+</ul>
+{% endblock%}
+
