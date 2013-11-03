@@ -31,7 +31,7 @@ REFERRAL_CODES = (
     ('CCC-HIGH', 'CCC or MASA (not on ART, high CD4)'),
     ('CCC-LOW', 'CCC or MASA (not on ART, low CD4)'),
     ('SMC', 'SMC'),
-    ('NOT_REFERED', 'Not referred'),
+    ('NOT_REFERRED', 'Not referred'),
 )
 
 

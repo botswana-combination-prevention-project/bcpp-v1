@@ -89,7 +89,7 @@
 {% block referral %}    
     <tr name="bottom right" >
     {%if not subject_referral %}<td>Referral form has not been keyed</td>{% endif %}
-    {% if subject_referral.referral_code == 'NOT_REFERRED' %}
+    {% if subject_referral.referral_codes == 'NOT_REFERRED' %}
         <td>Participant not referred</td>
     {% else %}            
         <td>

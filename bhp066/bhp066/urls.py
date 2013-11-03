@@ -44,7 +44,6 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
     url(r'^databrowse/(.*)', login_required(django_databrowse.site.root)),
-    #url(r'^databrowse/(?P<app_label>.*)/(?P<model_name>.*)/objects/(?P<pk>.*)/$', login_required(django_databrowse.site.root), name='databrowse'),
 )
 
 urlpatterns += patterns('',
@@ -56,15 +55,21 @@ urlpatterns += patterns('',
         include('edc.audit.urls'), name="section_url_name"),
 )
 
+urlpatterns += patterns('',
+    url(r'^model_describer/',
+        include('edc.core.model_describer.urls'), name="model_describer_url_name"),
+)
+
+
 # urlpatterns += patterns('',
 #     url(r'^{app_name}/(?P<section_name>statistics)/'.format(app_name=APP_NAME),
 #         include('{app_name}_stats.urls'.format(app_name=APP_NAME)), name="section_url_name"),
 # )
 
-urlpatterns += patterns('',
-    url(r'^{app_name}/(?P<section_name>specimens)/'.format(app_name=APP_NAME),
-        include('edc.lab.lab_clinic_api.urls'), name="section_url_name"),
-)
+# urlpatterns += patterns('',
+#     url(r'^{app_name}/(?P<section_name>specimens)/'.format(app_name=APP_NAME),
+#         include('edc.lab.lab_clinic_api.urls'), name="section_url_name"),
+# )
 
 urlpatterns += patterns('',
     url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
