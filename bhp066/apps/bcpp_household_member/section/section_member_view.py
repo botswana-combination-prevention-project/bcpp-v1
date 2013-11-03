@@ -1,7 +1,6 @@
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 
-from ..models import HouseholdMember
 from ..search import MemberSearchByWord
 
 site_mappers.autodiscover()
