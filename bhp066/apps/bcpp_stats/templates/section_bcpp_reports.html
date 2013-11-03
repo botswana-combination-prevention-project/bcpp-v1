@@ -8,10 +8,15 @@
 
 <ul class="list_of_reports">
 <LI><A href="{% url 'model_data_inspector_url_name' %}">Model Description and Data Summary</A>
-<LI>Model Summaries by Site and Gender
+<LI>Model Summaries
     <UL>
-        <LI><A href="{% url 'model_data_inspector_url_name' app_label='registration' model_name='registered_subject' %}">Registration and Study Status Models</A>
-        <LI><A href="/bcpp/statistics/model_group_describer/subject_visit/">Scheduled Subject Models</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='bcpp_household' model_name='plot' %}">Plots</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='bcpp_household' model_name='household' %}">Households</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='bcpp_household_member' model_name='household_member' %}">Members</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='registration' model_name='registered_subject' %}">Registrations</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='bcpp_subject' model_name='subject_consent' %}">Consents</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='bcpp_subject' model_name='subject_referral' %}">Referrals</A>
+        <LI><A href="{% url 'model_data_inspector_url_name' app_label='bcpp_lab' model_name='subject_requisition' %}">Requisitions</A>
     </ul>
 </li>
 </ul>
