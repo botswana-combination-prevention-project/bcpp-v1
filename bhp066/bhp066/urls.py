@@ -56,8 +56,8 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/section/reports/model_describer/'.format(app_name=APP_NAME),
-        include('edc.core.model_describer.urls'), name="model_describer_url_name"),
+    url(r'^{app_name}/section/reports/model_data_inspector/'.format(app_name=APP_NAME),
+        include('edc.core.model_data_inspector.urls'), name="model_data_inspector_url_name"),
 )
 
 
