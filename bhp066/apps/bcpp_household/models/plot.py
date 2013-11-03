@@ -14,6 +14,8 @@ from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
+from apps.bcpp.choices import COMMUNITIES
+
 from ..managers import PlotManager
 from ..classes import PlotIdentifier
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -168,6 +170,7 @@ class Plot(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
+        choices=COMMUNITIES,
         validators=[is_valid_community, ],
         editable=False,
         )
