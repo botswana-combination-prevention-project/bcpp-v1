@@ -25,10 +25,12 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'dashboard',
         'referral_codes',
         'referral_appt_date',
+        'exported',
+        'exported_datetime',
         'in_clinic_flag',
         ]
 
-    list_filter = ['in_clinic_flag', SubjectCommunityListFilter, 'referral_codes', 'report_datetime', 'referral_appt_date', 'hostname_created']
+    list_filter = ['exported', 'in_clinic_flag', SubjectCommunityListFilter, 'referral_codes', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
 
     fields = (
         'subject_visit',
