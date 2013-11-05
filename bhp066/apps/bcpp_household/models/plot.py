@@ -351,7 +351,10 @@ class Plot(BaseDispatchSyncUuidModel):
         from apps.bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
-
+    
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+    
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-plot_identifier', ]
