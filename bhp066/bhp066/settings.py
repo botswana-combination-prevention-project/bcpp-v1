@@ -30,6 +30,7 @@ MAP_DIR = STATIC_ROOT.child('img')
 KEY_PATH = '/Volumes/keys'
 # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
+# KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -441,7 +442,7 @@ else:
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
 # edc.device.device
-DEVICE_ID = '99'
+DEVICE_ID = '71'
 
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
