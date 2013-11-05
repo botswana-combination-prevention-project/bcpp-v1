@@ -48,7 +48,7 @@ LANGUAGES = (
     ('en', 'English'),
 )
 
-LOCALE_PATHS = ('locale', )
+#LOCALE_PATHS = ('locale', )
 
 LANGUAGE_CODE = 'tn'
 
