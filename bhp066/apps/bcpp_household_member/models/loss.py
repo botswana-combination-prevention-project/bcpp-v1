@@ -1,10 +1,6 @@
 from django.db import models
-from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
-from edc.base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO, YES_NO_DWTA, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
-from edc.choices.common import GENDER
+from edc.base.model.validators import dob_not_future
 from .household_member import HouseholdMember
 
 
