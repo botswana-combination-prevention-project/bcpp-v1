@@ -8,6 +8,8 @@ DATABASES = {
 
 KEY_PATH = join(SETTINGS_DIR, '..', '..', 'keys')
 
+LOCALE_PATHS = ('locale', )
+
 # edc.device.device
 DEVICE_ID = '99'
 
