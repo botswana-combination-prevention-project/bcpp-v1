@@ -1,6 +1,6 @@
 from django.contrib import admin
 from edc.base.admin.admin import BaseTabularInline, BaseModelAdmin
-from edc.core.bhp_export_data.actions import export_as_csv_action
+from edc.export.actions import export_as_csv_action
 from apps.bcpp_household.models import HouseholdStructure
 from ..models import HouseholdMember
 from ..forms import HouseholdMemberForm
@@ -15,7 +15,10 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
     form = HouseholdMemberForm
     date_hierarchy = 'modified'
-    actions = [export_as_csv_action("Export as csv", fields=[], exclude=['id', ])]
+    actions = [export_as_csv_action("Export as csv", fields=['initials', 'gender', 'age_in_years', 'present_today', 'study_resident', 'relation',
+                                                             'eligible_member',
+                                                             'eligible_subject',
+                                                             'member_status'], extra_fields={'plot_identifier': 'household_structure__household__plot__plot_identifier'})]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
@@ -34,14 +37,12 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
     list_display = ('first_name', 'initials',
                     'household_structure',
-                    'survey',
                     'to_locator',
                     'hiv_history',
-                    'study_resident',
                     'relation',
-                    'present_today',
                     'eligible_member',
                     'eligible_subject',
+                    'is_consented',
                     'member_status',
                     'created',
                     'hostname_created')
