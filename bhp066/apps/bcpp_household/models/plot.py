@@ -14,6 +14,8 @@ from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
+from apps.bcpp.choices import COMMUNITIES
+
 from ..managers import PlotManager
 from ..classes import PlotIdentifier
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -109,31 +111,35 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=4,
         )
     # TODO: need to be encrypted!!!!!
-    gps_lon = models.FloatField(
+    gps_lon = EncryptedDecimalField(
         verbose_name='longitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     # TODO: need to be encrypted!!!!!
-    gps_lat = models.FloatField(
+    gps_lat = EncryptedDecimalField(
         verbose_name='latitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     # TODO: need to be encrypted!!!!!
-    gps_target_lon = models.FloatField(
+    gps_target_lon = EncryptedDecimalField(
         verbose_name='target waypoint longitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     # TODO: need to be encrypted!!!!!
-    gps_target_lat = models.FloatField(
+    gps_target_lat = EncryptedDecimalField(
         verbose_name='target waypoint latitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
@@ -168,6 +174,7 @@ class Plot(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
+        choices=COMMUNITIES,
         validators=[is_valid_community, ],
         editable=False,
         )
