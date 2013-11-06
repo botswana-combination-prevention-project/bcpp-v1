@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-31 08:43+0200\n"
-"PO-Revision-Date: 2013-10-31 08:49+0200\n"
+"POT-Creation-Date: 2013-11-06 17:03+0200\n"
+"PO-Revision-Date: 2013-11-06 17:05+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -1750,7 +1750,7 @@ msgstr "Household identifier"
 msgid "You may provide a comment here or leave BLANK."
 msgstr "You may provide a comment here or leave BLANK."
 
-#: apps/bcpp_household/models/plot.py:35
+#: apps/bcpp_household/models/plot.py:37
 msgid "Plot identifier"
 msgstr "Plot identifier"
 
@@ -3032,7 +3032,7 @@ msgstr ""
 "Read to Participant: Dipotso tse di latelang, ke tsa go itlhatlhobela mogare "
 "wa HIV mo nakong e e latelang."
 
-#: apps/bcpp_subject/admin/hiv_testing_history_admin.py:25
+#: apps/bcpp_subject/admin/hiv_testing_history_admin.py:27
 msgid ""
 "Read to Participant: Many people have had a test to see if they have HIV. I "
 "am going to ask you about whether you have been tested for HIV and whether "
@@ -3157,6 +3157,11 @@ msgid ""
 "start, when thinking about yourself, please tell me how  strongly you agree "
 "or disagree with the following statements."
 msgstr "Balela mo tsaya karolo: Batho ba bangwe ba "
+
+#: apps/bcpp_subject/filters/subject_community_list_filter.py:8
+#, fuzzy
+msgid "community"
+msgstr "Mo motseng o"
 
 #: apps/bcpp_subject/models/access_to_care.py:13
 msgid ""
@@ -3750,8 +3755,10 @@ msgstr ""
 "Ke kopa o mpolelele maduo a gago a tlhatlhobo ya gago ya HIV ya bofelo?"
 
 #: apps/bcpp_subject/models/hiv_testing_history.py:51
-msgid "Do you have any other available documentation of an HIV result?"
-msgstr "A o na le mokwalo ope gape wa maduo a tlhatlhobo ya HIV?"
+msgid "Do you have any other available documentation of positive HIV status?"
+msgstr ""
+"A o na le mokwalo ope gape wa maduo a tlhatlhobo ya HIV a a supang gore o na "
+"le mogare?"
 
 #: apps/bcpp_subject/models/hiv_testing_supplemental.py:13
 msgid ""
