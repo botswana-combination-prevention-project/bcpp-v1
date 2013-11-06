@@ -9,6 +9,7 @@ from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 
 from apps.bcpp_household_member.models import BaseHouseholdMemberConsent
+from apps.bcpp.choices import COMMUNITIES
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent_history import SubjectConsentHistory
@@ -41,7 +42,13 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         help_text="If no, INELIGIBLE",
         )
 
+    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+
     # see additional mixin fields below
+
+    def save(self, *args, **kwargs):
+        self.community = self.household_member.household_structure.household.plot.community
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code

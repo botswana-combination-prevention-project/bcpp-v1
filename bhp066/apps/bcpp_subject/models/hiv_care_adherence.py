@@ -139,10 +139,19 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     def defaulter(self):
         """Returns true if subject is an ARV defaulter."""
+        if self.arv_evidence == 'Yes' and self.on_arv == 'No':
+            return True
+        return None
 
-    def save(self, *args, **kwargs):
-        
-        super(HivCareAdherence, self).save(*args, **kwargs)
+    def on_art(self):
+        if self.on_arv == 'Yes':
+            return True
+        elif self.on_arv == 'No':
+            if self.arv_evidence == 'Yes':
+                return True  # defaulter
+            return False
+        else:
+            return None
 
     class Meta:
         app_label = 'bcpp_subject'

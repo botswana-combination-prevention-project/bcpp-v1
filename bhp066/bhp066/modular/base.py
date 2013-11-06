@@ -1,19 +1,20 @@
-import os
 import platform
 import sys
+from os.path import realpath, abspath, join, dirname
 
 from unipath import Path
 
 from .logger import LOGGING
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+from ._utils import *
+
+
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
 # Path
-DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
-SOURCE_DIR = Path(__file__).ancestor(3)
-PROJECT_DIR = Path(__file__).ancestor(2)
+SETTINGS_DIR = dirname(realpath(__file__))  # needed??
+SOURCE_DIR = Path(__file__).ancestor(4)
+PROJECT_DIR = Path(__file__).ancestor(3)
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
 TEMPLATE_DIRS = (
@@ -23,113 +24,7 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
 
-# edc.crytpo_fields encryption keys
-# KEY_PATH = 'keys'
-#KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
-KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-
 MANAGERS = ADMINS
-testing_db_name = 'sqlite'
-if 'test' in sys.argv:
-    # make tests faster
-    SOUTH_TESTS_MIGRATE = False
-    if testing_db_name == 'sqlite':
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'default',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': ''},
-            'lab_api': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'lab',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-#             'survey': {
-#                 'ENGINE': 'django.db.backends.sqlite3',
-#                 'NAME': 'survey',
-#                 'USER': 'root',
-#                 'PASSWORD': 'cc3721b',
-#                 'HOST': '',
-#                 'PORT': '',
-#             },
-            'dispatch_destination': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'producer',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-        }
-    else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {
-                    'init_command': 'SET storage_engine=INNODB',
-                },
-                'NAME': 'test_default',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-            'dispatch_destination': {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {
-                    'init_command': 'SET storage_engine=INNODB',
-                },
-                'NAME': 'test_destination',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-        }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '',
-            'PORT': '',
-        },
-        'lab_api': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'lab',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.50',
-            'PORT': '3306',
-        },
-        'bcpp011-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.155',
-            'PORT': '3306',
-        },
-    }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -153,7 +48,7 @@ LANGUAGES = (
     ('en', 'English'),
 )
 
-LOCALE_PATHS = ('/Users/django/source/bhp066_project/bhp066/locale', 'locale', )
+#LOCALE_PATHS = ('locale', )
 
 LANGUAGE_CODE = 'tn'
 
@@ -252,13 +147,10 @@ INSTALLED_APPS = (
     'south',
 
     'edc.apps.admin_supplemental_fields',
-
     'edc.audit',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
-
     'edc.core.identifier',
     'edc.core.crypto_fields',
     'edc.core.model_data_inspector',
@@ -278,25 +170,19 @@ INSTALLED_APPS = (
     'edc.core.bhp_context',
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
-
     'edc.device.inspector',
     'edc.device.dispatch',
     'edc.device.netbook',
     'edc.device.device',
     'edc.device.sync',
-
     'edc.dashboard.base',
     'edc.dashboard.search',
     'edc.dashboard.subject',
     'edc.dashboard.section',
-
     'edc.export',
     'edc.import',
-
     'edc.map',
-
     'edc.testing',
-
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
@@ -330,7 +216,6 @@ INSTALLED_APPS = (
     'lis.core.lab_result_report',
     'lis.core.bhp_research_protocol',
     'lis.core.lock',
-
     'lis.specimen.lab_aliquot_list',
     'lis.specimen.lab_panel',
     'lis.specimen.lab_test_code',
@@ -339,10 +224,8 @@ INSTALLED_APPS = (
     'lis.specimen.lab_order',
     'lis.specimen.lab_result',
     'lis.specimen.lab_result_item',
-
     'lis.subject.lab_account',
     'lis.subject.lab_patient',
-
     'lis.exim.lab_export',
     'lis.exim.lab_import',
     'lis.exim.lab_import_lis',
@@ -394,7 +277,7 @@ LOGIN_REDIRECT_URL = '/{app_name}/'.format(app_name=APP_NAME)
 LOGOUT_URL = '/{app_name}/logout/'.format(app_name=APP_NAME)
 
 # south
-SOUTH_LOGGING_FILE = os.path.join(os.path.dirname(__file__), "south.log")
+SOUTH_LOGGING_FILE = join(dirname(__file__), "south.log")
 SOUTH_LOGGING_ON = True
 
 # dajax
@@ -422,7 +305,7 @@ CURRENT_COMMUNITY = 'otse'
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
-GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
+GPX_TEMPLATE = join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 
 # edc.lab
@@ -438,12 +321,3 @@ else:
                                    'DATABASE=BHPLAB')
 # edc.subject.consent
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
-
-# edc.device.device
-DEVICE_ID = '71'
-
-# edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066']
-
-# edc.device.sync
-ALLOW_MODEL_SERIALIZATION = True
