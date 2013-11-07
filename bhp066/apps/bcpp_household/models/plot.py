@@ -111,31 +111,35 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=4,
         )
     # TODO: need to be encrypted!!!!!
-    gps_lon = models.FloatField(
+    gps_lon = EncryptedDecimalField(
         verbose_name='longitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     # TODO: need to be encrypted!!!!!
-    gps_lat = models.FloatField(
+    gps_lat = EncryptedDecimalField(
         verbose_name='latitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     # TODO: need to be encrypted!!!!!
-    gps_target_lon = models.FloatField(
+    gps_target_lon = EncryptedDecimalField(
         verbose_name='target waypoint longitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     # TODO: need to be encrypted!!!!!
-    gps_target_lat = models.FloatField(
+    gps_target_lat = EncryptedDecimalField(
         verbose_name='target waypoint latitude',
+        max_digits=10,
         null=True,
-        editable=False,
+        decimal_places=6,
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
