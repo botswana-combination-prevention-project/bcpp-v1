@@ -9,7 +9,7 @@ from ..forms import SubjectRequisitionForm, PackingListForm, PackingListItemForm
 class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
 
     form = SubjectRequisitionForm
-    
+
     def __init__(self, *args, **kwargs):
         super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
         self.fields = [
@@ -37,6 +37,7 @@ class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
             'requisition_identifier',
             'specimen_identifier',
             'subject',
+            'dashboard',
             'visit',
             "requisition_datetime",
             "panel",
@@ -54,6 +55,7 @@ class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
             'is_labelled',
             'is_packed',
             'is_lis',
+            'community',
             "requisition_datetime",
             'is_receive_datetime',
             'is_labelled_datetime',
