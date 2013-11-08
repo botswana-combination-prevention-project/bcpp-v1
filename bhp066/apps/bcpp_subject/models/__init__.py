@@ -4,9 +4,9 @@ from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
 from .subject_locator import SubjectLocator
 from .subject_death import SubjectDeath
-from .recent_partner import RecentPartner
-from .second_partner import SecondPartner
-from .third_partner import ThirdPartner
+# from .recent_partner import RecentPartner
+# from .second_partner import SecondPartner
+# from .third_partner import ThirdPartner
 from .quality_of_life import QualityOfLife
 from .resource_utilization import ResourceUtilization
 from .outpatient_care import OutpatientCare
