@@ -43,6 +43,7 @@ PLOT_STATUS = (
     ('occupied', 'Occupied'),
     ('vacant', 'Vacant / Uninhabited'),
     ('non-residential', 'Not a residential plot'),
+    ('not-interested', 'Not interested to participate'),
     )
 
 HOUSEHOLD_STATUS = (
