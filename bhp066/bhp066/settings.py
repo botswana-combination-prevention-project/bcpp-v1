@@ -101,7 +101,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_master',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -292,6 +292,7 @@ INSTALLED_APPS = (
 
     'edc.export',
     'edc.import',
+    'edc.entry_meta_data',
 
     'edc.map',
 

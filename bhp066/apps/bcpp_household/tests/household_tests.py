@@ -1,9 +1,13 @@
 from django.test import TestCase
-from edc.map.classes import site_mappers
+
 from edc.core.identifier.exceptions import IdentifierError
+from edc.map.classes import site_mappers
+
 from apps.bcpp_survey.tests.factories import SurveyFactory
+
 from ..classes  import HouseholdIdentifier
 from ..models import HouseholdIdentifierHistory, Household, HouseholdStructure
+
 from .factories import PlotFactory, HouseholdFactory
 
 

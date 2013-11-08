@@ -4,7 +4,7 @@ from base_scheduled_model_factory import BaseScheduledModelFactory
 from base_scheduled_inline_factory import BaseScheduledInlineModelFactory
 from residency_mobility_factory import ResidencyMobilityFactory
 from subject_referral_factory import SubjectReferralFactory
-from second_partner_factory import SecondPartnerFactory
+# from second_partner_factory import SecondPartnerFactory
 from subject_undecided_factory import SubjectUndecidedFactory
 from subject_undecided_entry_factory import SubjectUndecidedEntryFactory
 from stigma_factory import StigmaFactory
@@ -13,7 +13,7 @@ from medical_diagnoses_factory import MedicalDiagnosesFactory
 from subject_consent_factory import SubjectConsentFactory
 from heart_attack_factory import HeartAttackFactory
 from pima_factory import PimaFactory
-from recent_partner_factory import RecentPartnerFactory
+# from recent_partner_factory import RecentPartnerFactory
 from sti_factory import StiFactory
 from subject_locator_factory import SubjectLocatorFactory
 from subject_visit_factory import SubjectVisitFactory
@@ -37,7 +37,7 @@ from hiv_medical_care_factory import HivMedicalCareFactory
 from positive_participant_factory import PositiveParticipantFactory
 from resource_utilization_factory import ResourceUtilizationFactory
 from hiv_testing_history_factory import HivTestingHistoryFactory
-from third_partner_factory import ThirdPartnerFactory
+# from third_partner_factory import ThirdPartnerFactory
 from demographics_factory import DemographicsFactory
 from circumcision_factory import CircumcisionFactory
 from hiv_care_adherence_factory import HivCareAdherenceFactory
