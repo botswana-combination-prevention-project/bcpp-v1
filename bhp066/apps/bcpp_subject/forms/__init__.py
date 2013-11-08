@@ -14,7 +14,7 @@ from .non_pregnancy_form import NonPregnancyForm
 from .demographics_form import DemographicsForm
 from .sexual_behaviour_form import SexualBehaviourForm
 from .hiv_care_adherence_form import HivCareAdherenceForm
-from .partner_form import *
+# from .partner_form import *
 from .hiv_result_form import HivResultForm
 from .hiv_tested_form import HivTestedForm
 from .hiv_untested_form import HivUntestedForm
