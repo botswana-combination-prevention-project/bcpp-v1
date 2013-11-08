@@ -1,13 +1,17 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
-from edc.subject.locator.models import BaseLocator
-from edc.choices.common import YES_NO
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
+from edc.choices.common import YES_NO
 from edc.core.crypto_fields.fields import EncryptedCharField
+from edc.entry_meta_data.managers import EntryMetaDataManager
+from edc.subject.locator.models import BaseLocator
+
 from apps.bcpp_household.models  import Plot
-from ..models import SubjectVisit
+
 from ..managers import ScheduledModelManager
+from ..models import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
@@ -77,6 +81,8 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
     history = AuditTrail()
 
     objects = ScheduledModelManager()
+
+    entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')

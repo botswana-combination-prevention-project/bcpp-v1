@@ -1,5 +1,7 @@
 from django.test import TestCase
+
 from edc.map.classes import Mapper
+
 from ..models import Plot
 
 

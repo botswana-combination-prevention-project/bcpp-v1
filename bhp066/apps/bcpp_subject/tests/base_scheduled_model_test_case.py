@@ -1,22 +1,23 @@
 from datetime import datetime
+
 from django.test import TestCase
 
-from edc.subject.registration.models import RegisteredSubject
-from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.subject.appointment.models import Appointment
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.subject.entry.tests.factories import EntryFactory
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 
-from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household.models import Plot, Household, HouseholdStructure
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
-
+from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
+from apps.bcpp_survey.tests.factories import SurveyFactory
 
 
 class BaseScheduledModelTestCase(TestCase):
@@ -47,6 +48,14 @@ class BaseScheduledModelTestCase(TestCase):
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
         visit_definition = VisitDefinitionFactory(code='T0', title='T0', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
+        
+        # add entries
+        content_type_map = ContentTypeMap.objects.get(app_label='testing', model='testscheduledmodel1')
+        EntryFactory(content_type_map=content_type_map, visit_definition=self.visit_definition, entry_order=100, entry_category='clinic')
+
+        # add requisitions
+        
+        
         plot = PlotFactory(community=self.community, household_count=1, status='occupied')
         self.assertEqual(Plot.objects.all().count(), 1)
         self.assertEqual(Household.objects.all().count(), 1)

@@ -229,14 +229,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def _get_form_url(self, model_name):
         url = ''
-        id = None
+        pk = None
         app_label = 'bcpp_subject'
         if not self.registered_subject:
             self.save()
         Model = models.get_model(app_label, model_name)
         if Model.objects.filter(household_member=self):
-            id = Model.objects.get(household_member=self).id
-        if id:
+            pk = Model.objects.get(household_member=self).id
+        if pk:
             url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(id, ))
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
