@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from apps.bcpp_list.models import PartnerResidency
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, SEXDAYS_CHOICE, LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE
+from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE, LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -99,8 +99,8 @@ class BaseSexualPartner (BaseScheduledVisitModel):
 
     partner_hiv_test = models.CharField(
         verbose_name=_("Has your partner been tested for HIV in last 12 months"),
-        choices=YES_NO_UNSURE,
-        max_length=15,
+        choices=YES_NO_UNSURE_DWTA,
+        max_length=25,
         help_text="",
         )
 

@@ -12,13 +12,12 @@ YES_NO_DWTA = (
     ('DWTA', _('Don\'t want to answer')),
 )
 
-#oldway
-# YES_NO_UNSURE = (
-#         ('Yes', _('Yes')),
-#         ('No', _('No')),
-#         ('not_sure', _('I am not sure')),
-#         ('not_answering', _('Don\'t want to answer')),
-#     )
+YES_NO_UNSURE_DWTA = (
+         ('Yes', _('Yes')),
+         ('No', _('No')),
+         ('not_sure', _('Not Sure')),
+         ('not_answering', _('Don\'t want to answer')),
+     )
 
 YES_NO_UNSURE = (
     ('Yes',  _('Yes')),
