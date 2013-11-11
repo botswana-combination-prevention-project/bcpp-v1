@@ -34,15 +34,15 @@ class SubjectDashboard(BaseSubjectDashboard):
     def set_dashboard_type_list(self):
         self._dashboard_type_list = ['subject']
 
-    def set_consent(self):
+    def set_consent(self, subject_identifier):
         """Sets to the subject consent, if it has been completed."""
         self._consent = None
-        if SubjectConsent.objects.filter(subject_identifier=self.get_subject_identifier()):
-            self._consent = SubjectConsent.objects.get(subject_identifier=self.get_subject_identifier())
+        if SubjectConsent.objects.filter(subject_identifier=subject_identifier):
+            self._consent = SubjectConsent.objects.get(subject_identifier=subject_identifier)
 
     def get_subject_referral(self):
-        if SubjectReferral.objects.filter(subject_visit=self._get_visit_model_instance()):
-            return SubjectReferral.objects.get(subject_visit=self._get_visit_model_instance())
+        if SubjectReferral.objects.filter(subject_visit=self.get_visit_model_instance()):
+            return SubjectReferral.objects.get(subject_visit=self.get_visit_model_instance())
         return 'unknown referral'
 
     def get_visit_model(self):
