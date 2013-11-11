@@ -84,7 +84,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_member = models.BooleanField(default=False, db_index=True, help_text='just based on what is on this form...')
 
-    eligible_subject = models.BooleanField(default=False, editable=False, help_text="updated by the eligibility checklist if completed")
+    eligible_subject = models.NullBooleanField(default=False, editable=False, help_text="updated by the eligibility checklist if completed")
 
     target = models.IntegerField(default=0)
 
