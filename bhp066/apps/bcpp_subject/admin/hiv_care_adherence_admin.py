@@ -7,6 +7,7 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
 
     form = HivCareAdherenceForm
+
     fields = (
         "subject_visit",
         "first_positive",
@@ -44,4 +45,13 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
                              " today. Read to Participant: I am now going to"
                              " ask you some questions about care you may have"
                              " been given for your HIV infection.")]
+    list_display = (
+        'subject_visit',
+        'on_art')
+
+    list_filter = (
+        'on_arv',
+        'arv_evidence')
+
+
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)

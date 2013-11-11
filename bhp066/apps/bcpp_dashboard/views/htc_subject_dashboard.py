@@ -15,6 +15,7 @@ def htc_subject_dashboard(request, **kwargs):
         dashboard_type_list=['htc_subject'],
         #dashboard_models={'subject_consent': SubjectConsent},
         )
+    dashboard.set_context()
     return render_to_response(
         'htc_subject_dashboard.html',
         dashboard.get_context().get(),

@@ -160,7 +160,7 @@ class BcppDispatchController(DispatchController):
                                     plot,
                                     options={})
                                 self.dispatch_lab_tracker_history(household_member.registered_subject, group_name='HIV')
-                                self.dispatch_entry_buckets(household_member.registered_subject)
+                                self.dispatch_entry_meta_data(household_member.registered_subject)
                                 self.dispatch_membership_form_inlines('bcpp_subject', household_member.registered_subject, plot, ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'])
 
     def dispatch_member_status_instances(self, app_label, registered_subject, user_container, **kwargs):

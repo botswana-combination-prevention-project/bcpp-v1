@@ -174,7 +174,7 @@ class HivDocumentationGroup(RuleGroup):
 site_rule_groups.register(HivDocumentationGroup)
 
 
-class MedicalCareRuleGroup(RuleGroup):
+class HivCareAdherenceRuleGroup(RuleGroup):
 
     medical_care = ScheduledDataRule(
         logic=Logic(
@@ -186,15 +186,15 @@ class MedicalCareRuleGroup(RuleGroup):
     arv_evidence = ScheduledDataRule(
         logic=Logic(
             predicate=('arv_evidence', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
+            consequence='not_required',
+            alternative='new'),
         target_model=['pima'])
 
     class Meta:
         app_label = 'bcpp_subject'
         filter_model = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
-site_rule_groups.register(MedicalCareRuleGroup)
+site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
 class TodaysHivRuleGroup(RuleGroup):
