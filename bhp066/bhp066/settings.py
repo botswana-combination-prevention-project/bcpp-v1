@@ -155,7 +155,7 @@ LANGUAGES = (
 
 LOCALE_PATHS = ('/Users/django/source/bhp066_project/bhp066/locale', 'locale', )
 
-LANGUAGE_CODE = 'tn'
+LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 
