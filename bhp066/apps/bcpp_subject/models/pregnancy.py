@@ -20,7 +20,7 @@ class Pregnancy (BasePregnancy):
         )
 
     lnmp = models.DateField(
-        verbose_name=_("When was your last normal menstrual period?"),
+        verbose_name=_("When was the first day of your last normal menstrual period?"),
         validators = [date_not_future], 
         help_text="",
         )
