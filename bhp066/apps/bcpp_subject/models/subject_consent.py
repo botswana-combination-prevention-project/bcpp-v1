@@ -86,7 +86,10 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
-
+    
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+    
     class Meta:
         app_label = 'bcpp_subject'
         unique_together = ('subject_identifier', 'survey')
