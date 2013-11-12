@@ -19,5 +19,5 @@ def subject_dashboard(request, **kwargs):
     dashboard.set_context()
     return render_to_response(
         'subject_dashboard.html',
-        dashboard.get_context().get(),
+        dashboard.context.get(),
         context_instance=RequestContext(request))
