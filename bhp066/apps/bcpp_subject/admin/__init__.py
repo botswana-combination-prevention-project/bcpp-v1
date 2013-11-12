@@ -37,3 +37,4 @@ from .subject_referral_admin import SubjectReferralAdmin
 from .subject_refusal_admin import SubjectRefusalAdmin
 from .subject_undecided_admin import *
 from .subject_visit_admin import SubjectVisitAdmin
+from .hiv_result_documentation_admin import HivResultDocumentationAdmin
