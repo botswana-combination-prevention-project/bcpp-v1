@@ -76,6 +76,7 @@ python manage.py update_visit_schedule_permissions IT_assistant --app_label auth
  
 python manage.py update_visit_schedule_permissions lab_assistant --visit_codes all
 python manage.py update_visit_schedule_permissions lab_assistant --app_label bcpp_lab
+python manage.py update_visit_schedule_permissions lab_assistant --app_label bcpp_inspector
 python manage.py update_visit_schedule_permissions lab_assistant --app_label appointment --models appointment
 python manage.py update_visit_schedule_permissions lab_assistant --app_label lab_clinic_api 
 python manage.py update_visit_schedule_permissions lab_assistant --app_label bcpp_subject --models subjectvisit
