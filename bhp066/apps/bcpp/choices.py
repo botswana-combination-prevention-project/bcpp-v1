@@ -379,7 +379,7 @@ FIRSTPARTNERLIVE_CHOICE = (
 
 FIRSTRELATIONSHIP_CHOICE = (
         ('Long-term partner', _('Long-term partner (>2 years) or spouse')),
-        ('2 years or spouse', _('2 years or spouse')),
+#         ('2 years or spouse', _('2 years or spouse')),
         ('Boyfriend/Girlfriend', _('Boyfriend/Girlfriend')),
         ('Casual (known) partner', _('Casual (known) partner')),
         ('One time partner (previously unknown)', _('One time partner (previously unknown)')),

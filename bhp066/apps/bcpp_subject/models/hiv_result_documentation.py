@@ -14,13 +14,13 @@ class HivResultDocumentation (BaseScheduledVisitModel):
     """CS002 - for usage only and if only patient has other result for HIV"""
 
     result_date = models.DateField(
-        verbose_name=("What is the recorded date of the HIV test?"),
+        verbose_name=("What is the recorded date of this previous HIV test (or of the document that provides supporting evidence of HIV infection)?"),
         validators=[date_not_future],
         help_text="",
         )
 
     result_recorded = models.CharField(
-        verbose_name=("What is the recorded HIV test result?"),
+        verbose_name=("What is the recorded HIV status indicated by this additional document?"),
         max_length=30,
         choices=RECORDEDHIVRESULT_CHOICE,
         help_text="",
