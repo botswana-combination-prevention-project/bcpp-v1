@@ -241,8 +241,12 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def update_residency(self):
         if ResidencyMobility.objects.filter(subject_visit=self.subject_visit):
             residency_mobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit)
-            self.permanent_resident = residency_mobility.permanent_resident
-            self.intend_residency = residency_mobility.intend_residency
+            self.permanent_resident = False
+            if residency_mobility.permanent_resident == 'Yes':
+                self.permanent_resident = True
+            self.intend_residency = False
+            if residency_mobility.intend_residency == 'Yes':
+                self.intend_residency = True
         else:
             self.permanent_resident = None
             self.intend_residency = None
