@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from database_storage import DatabaseStorage 
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.device.classes import Device
@@ -26,7 +27,6 @@ def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""
         if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
-
 
 class Plot(BaseDispatchSyncUuidModel):
 
@@ -164,12 +164,11 @@ class Plot(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
-    uploaded_map = models.CharField(
-        verbose_name="filename of uploaded map",
-        max_length=25,
-        null=True,
-        blank=True,
-        )
+    uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    
+    uploaded_map_17 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    
+    uploaded_map_18 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
 
     community = models.CharField(
         max_length=25,
