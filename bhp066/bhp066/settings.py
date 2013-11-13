@@ -15,7 +15,7 @@ DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 SOURCE_DIR = Path(__file__).ancestor(3)
 PROJECT_DIR = Path(__file__).ancestor(2)
 MEDIA_ROOT = PROJECT_DIR.child('media')
-STATIC_ROOT = PROJECT_DIR.child('static')
+STATIC_ROOT = '/Users/django/Sites/bcppstudy/static/'
 TEMPLATE_DIRS = (
     PROJECT_DIR.child('templates'),
 )
@@ -29,7 +29,7 @@ MAP_DIR = STATIC_ROOT.child('img')
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
 # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
+KEY_PATH = '/Volumes/keys'
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -117,17 +117,6 @@ else:
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '192.168.1.50',
-            'PORT': '3306',
-        },
-        'bcpp011-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.155',
             'PORT': '3306',
         },
     }
