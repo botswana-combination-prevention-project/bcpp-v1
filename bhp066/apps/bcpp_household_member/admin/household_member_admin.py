@@ -56,8 +56,8 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__household__plot__id',
         'relation', 'id']
 
-    list_filter = ('household_structure__survey__survey_name', "present_today", 'study_resident', 'member_status',
-                   'eligible_member', 'eligible_subject', 'target', 'hiv_history',
+    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status',
+                   'eligible_member', 'eligible_subject', 'target', 'hiv_history', 'household_structure__household__community',
                     'modified', 'hostname_created')
     list_per_page = 15
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)

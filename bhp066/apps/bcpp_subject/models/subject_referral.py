@@ -91,9 +91,11 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         help_text="from hiv_care_adherence"
         )
 
-    cd4_result = models.IntegerField(
+    cd4_result = models.DecimalField(
         null=True,
         editable=False,
+        max_digits=6,
+        decimal_places=2,
         help_text='from Pima',
         )
 
