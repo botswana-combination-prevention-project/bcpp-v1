@@ -233,9 +233,9 @@ class Plot(BaseDispatchSyncUuidModel):
 
         if self.id:
             self.household_count = self.create_or_delete_households(self)
-            if self.household_count > 0:
-                self.status = 'occupied'  # TODO: or maybe cancel the save
-        if (self.household_count == 0 and self.status == 'occupied') or (self.household_count and not self.status == 'occupied'):
+            #if self.household_count > 0:
+            #    self.status = 'occupied'  # TODO: or maybe cancel the save
+        if (self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or (self.household_count and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
@@ -289,7 +289,7 @@ class Plot(BaseDispatchSyncUuidModel):
         if instance.status:
             if instance.status not in [item[0] for item in PLOT_STATUS]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        if instance.status == 'occupied' and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
+        if instance.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'] and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
             while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
                 instance.create_household(instance)
             number_of_households = Household.objects.filter(plot__pk=instance.pk).count()
