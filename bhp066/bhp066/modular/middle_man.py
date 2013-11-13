@@ -11,7 +11,7 @@ KEY_PATH = join(SETTINGS_DIR, '..', '..', 'keys')
 LOCALE_PATHS = ('locale', )
 
 # edc.device.device
-DEVICE_ID = '99'
+DEVICE_ID = '98'
 
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
