@@ -2,14 +2,12 @@ from django.contrib import admin
 from ..models import (QualityOfLife, ResourceUtilization, OutpatientCare,
                       HospitalAdmission, HivHealthCareCosts,
                       HivMedicalCare, HeartAttack, Cancer, Sti,
-                      Tubercolosis, SubstanceUse,
-                      HivResultDocumentation)
+                      Tubercolosis, SubstanceUse)
 from ..forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
                      HospitalAdmissionForm, HivHealthCareCostsForm,
                      HivMedicalCareForm,
                      HeartAttackForm, CancerForm, StiForm,
-                     TubercolosisForm, SubstanceUseForm,
-                     HivResultDocumentationForm)
+                     TubercolosisForm, SubstanceUseForm)
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
@@ -224,17 +222,3 @@ admin.site.register(SubstanceUse, SubstanceUseAdmin)
 #     radio_fields = {
 #         "contact": admin.VERTICAL, }
 # admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)
-
-
-class HivResultDocumentationAdmin (SubjectVisitModelAdmin):
-
-    form = HivResultDocumentationForm
-    fields = (
-        'subject_visit',
-        'result_date',
-        'result_recorded',
-        'result_doc_type',)
-    radio_fields = {
-        "result_recorded": admin.VERTICAL,
-        'result_doc_type': admin.VERTICAL, }
-admin.site.register(HivResultDocumentation, HivResultDocumentationAdmin)
