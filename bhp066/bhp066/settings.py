@@ -130,7 +130,7 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-        'bcpp001': {
+        'bcpp001-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -141,7 +141,7 @@ else:
             'HOST': '192.168.1.106',
             'PORT': '3306',
         },
-        'bcpp002': {
+        'bcpp002-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -152,7 +152,7 @@ else:
             'HOST': '192.168.1.239',
             'PORT': '3306',
         },
-        'bcpp014': {
+        'bcpp014-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -163,7 +163,7 @@ else:
             'HOST': '192.168.1.171',
             'PORT': '3306',
         },
-        'bcpp018': {
+        'bcpp018-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -174,7 +174,7 @@ else:
             'HOST': '192.168.1.40',
             'PORT': '3306',
         },
-        'bcpp016': {
+        'bcpp016-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -185,7 +185,7 @@ else:
             'HOST': '192.168.1.143',
             'PORT': '3306',
         },
-        'bcpp007': {
+        'bcpp007-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -196,7 +196,7 @@ else:
             'HOST': '192.168.1.227',
             'PORT': '3306',
         },
-        'bcpp008': {
+        'bcpp008-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -207,7 +207,7 @@ else:
             'HOST': '192.168.1.195',
             'PORT': '3306',
         },
-        'bcpp011': {
+        'bcpp011-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -218,7 +218,7 @@ else:
             'HOST': '192.168.1.135',
             'PORT': '3306',
         },
-        'bcpp012': {
+        'bcpp012-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -229,7 +229,7 @@ else:
             'HOST': '192.168.1.115',
             'PORT': '3306',
         },
-        'bcpp006': {
+        'bcpp006-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -240,7 +240,7 @@ else:
             'HOST': '192.168.1.190',
             'PORT': '3306',
         },
-        'bcpp003': {
+        'bcpp003-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -251,7 +251,7 @@ else:
             'HOST': '192.168.1.253',
             'PORT': '3306',
         },
-        'bcpp004': {
+        'bcpp004-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -262,7 +262,7 @@ else:
             'HOST': '192.168.1.110',
             'PORT': '3306',
         },
-        'bcpp009': {
+        'bcpp009-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -273,7 +273,7 @@ else:
             'HOST': '192.168.1.86',
             'PORT': '3306',
         },
-        'bcpp010': {
+        'bcpp010-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -284,7 +284,7 @@ else:
             'HOST': '192.168.1.22',
             'PORT': '3306',
         },
-        'bcpp017': {
+        'bcpp017-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -295,7 +295,7 @@ else:
             'HOST': '192.168.1.41',
             'PORT': '3306',
         },
-        'bcpp024': {
+        'bcpp024-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -306,7 +306,7 @@ else:
             'HOST': '192.168.1.83',
             'PORT': '3306',
         },
-        'bcpp028': {
+        'bcpp028-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -317,7 +317,7 @@ else:
             'HOST': '192.168.1.201',
             'PORT': '3306',
         },
-        'bcpp037': {
+        'bcpp037-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -328,7 +328,7 @@ else:
             'HOST': '192.168.1.14',
             'PORT': '3306',
         },
-        'bcpp026': {
+        'bcpp026-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -339,7 +339,7 @@ else:
             'HOST': '192.168.1.154',
             'PORT': '3306',
         },
-        'bcpp025': {
+        'bcpp025-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -350,7 +350,7 @@ else:
             'HOST': '192.168.1.139',
             'PORT': '3306',
         },
-        'bcpp032': {
+        'bcpp032-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -361,7 +361,7 @@ else:
             'HOST': '192.168.1.76',
             'PORT': '3306',
         },
-        'bcpp020': {
+        'bcpp020-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -372,7 +372,7 @@ else:
             'HOST': '192.168.1.131',
             'PORT': '3306',
         },
-        'bcpp023': {
+        'bcpp023-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -383,7 +383,7 @@ else:
             'HOST': '192.168.1.243',
             'PORT': '3306',
         },
-        'bcpp030': {
+        'bcpp030-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -394,7 +394,7 @@ else:
             'HOST': '192.168.1.225',
             'PORT': '3306',
         },
-        'bcpp021': {
+        'bcpp021-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -405,7 +405,7 @@ else:
             'HOST': '192.168.1.155',
             'PORT': '3306',
         },
-        'bcpp033': {
+        'bcpp033-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -416,7 +416,7 @@ else:
             'HOST': '192.168.1.133',
             'PORT': '3306',
         },
-        'bcpp019': {
+        'bcpp019-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -427,7 +427,7 @@ else:
             'HOST': '192.168.1.27',
             'PORT': '3306',
         },
-        'bcpp029': {
+        'bcpp029-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -438,7 +438,7 @@ else:
             'HOST': '192.168.1.67',
             'PORT': '3306',
         },
-        'bcpp034': {
+        'bcpp034-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -449,7 +449,7 @@ else:
             'HOST': '192.168.1.49',
             'PORT': '3306',
         },
-        'bcpp027': {
+        'bcpp027-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
