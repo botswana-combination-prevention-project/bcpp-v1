@@ -20,6 +20,11 @@ TEMPLATE_DIRS = (
     PROJECT_DIR.child('templates'),
 )
 STATICFILES_DIRS = ()
+
+DB_FILES = {
+    'table': 'FILES',
+    'base_url': 'http://localhost/dbfiles/'
+}
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 #MAP_DIR = STATIC_ROOT.child('img')
 MAP_DIR = '/Users/django/Sites/bcppstudy/static/img/'
@@ -238,6 +243,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_extensions',
     'django_databrowse',
+    'storages',
     'dajaxice',
     'dajax',
     'south',
