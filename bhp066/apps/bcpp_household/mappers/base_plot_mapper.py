@@ -14,7 +14,7 @@ class BasePlotMapper(Mapper):
     section_field_attr = 'sub_section'
     section_label = 'Sub Section'
     map_area_field_attr = 'community'
-    map_field_attr = 'uploaded_map'
+    map_field_attr = 'uploaded_map_18'
     target_gps_lat_field_attr = 'gps_target_lat'
     target_gps_lon_field_attr = 'gps_target_lon'
     icons = ICONS
