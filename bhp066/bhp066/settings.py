@@ -20,15 +20,21 @@ TEMPLATE_DIRS = (
     PROJECT_DIR.child('templates'),
 )
 STATICFILES_DIRS = ()
+
+DB_FILES = {
+    'table': 'FILES',
+    'base_url': 'http://localhost/dbfiles/'
+}
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-MAP_DIR = STATIC_ROOT.child('img')
+#MAP_DIR = STATIC_ROOT.child('img')
+MAP_DIR = '/Users/django/Sites/bcppstudy/static/img/'
 
 # edc.crytpo_fields encryption keys
 # KEY_PATH = 'keys'
 # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 KEY_PATH = '/Volumes/keys'
 
 DB_FILES = {
@@ -572,6 +578,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_extensions',
     'django_databrowse',
+    'storages',
     'dajaxice',
     'storages',
     'dajax',

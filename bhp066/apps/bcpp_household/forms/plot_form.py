@@ -29,10 +29,10 @@ class PlotForm(BaseModelForm):
             if self.instance.household_count > 0:
                 self.cleaned_data['status'] = 'occupied'
 
-        if not cleaned_data.get('household_count') and cleaned_data.get('status') == 'occupied':
+        if not cleaned_data.get('household_count') and cleaned_data.get('status') in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']:
             raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('household_count')))
 
-        if (cleaned_data.get('household_count') == 0 and cleaned_data.get('status') == 'occupied') or (cleaned_data.get('household_count') and not cleaned_data.get('status') == 'occupied'):
+        if (cleaned_data.get('household_count') == 0 and cleaned_data.get('status') in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or (cleaned_data.get('household_count') and not cleaned_data.get('status') in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']):
             raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('household_count')))
 
         if not cleaned_data.get('status') == 'occupied' and cleaned_data.get('eligible_members') > 0:
