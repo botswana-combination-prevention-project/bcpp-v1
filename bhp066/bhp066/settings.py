@@ -31,6 +31,11 @@ MAP_DIR = STATIC_ROOT.child('img')
 # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 KEY_PATH = '/Volumes/keys'
 
+DB_FILES = {
+    'table': 'FILES',
+    'base_url': 'http://localhost/dbfiles/'
+}
+
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
@@ -117,6 +122,336 @@ else:
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '192.168.1.50',
+            'PORT': '3306',
+        },
+        'bcpp001': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.106',
+            'PORT': '3306',
+        },
+        'bcpp002': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.239',
+            'PORT': '3306',
+        },
+        'bcpp014': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.171',
+            'PORT': '3306',
+        },
+        'bcpp018': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.40',
+            'PORT': '3306',
+        },
+        'bcpp016': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.143',
+            'PORT': '3306',
+        },
+        'bcpp007': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.227',
+            'PORT': '3306',
+        },
+        'bcpp008': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.195',
+            'PORT': '3306',
+        },
+        'bcpp011': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.135',
+            'PORT': '3306',
+        },
+        'bcpp012': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.115',
+            'PORT': '3306',
+        },
+        'bcpp006': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.190',
+            'PORT': '3306',
+        },
+        'bcpp003': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.253',
+            'PORT': '3306',
+        },
+        'bcpp004': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.110',
+            'PORT': '3306',
+        },
+        'bcpp009': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.86',
+            'PORT': '3306',
+        },
+        'bcpp010': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.22',
+            'PORT': '3306',
+        },
+        'bcpp017': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.41',
+            'PORT': '3306',
+        },
+        'bcpp024': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.83',
+            'PORT': '3306',
+        },
+        'bcpp028': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.201',
+            'PORT': '3306',
+        },
+        'bcpp037': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.14',
+            'PORT': '3306',
+        },
+        'bcpp026': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.154',
+            'PORT': '3306',
+        },
+        'bcpp025': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.139',
+            'PORT': '3306',
+        },
+        'bcpp032': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.76',
+            'PORT': '3306',
+        },
+        'bcpp020': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.131',
+            'PORT': '3306',
+        },
+        'bcpp023': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.243',
+            'PORT': '3306',
+        },
+        'bcpp030': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.225',
+            'PORT': '3306',
+        },
+        'bcpp021': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.155',
+            'PORT': '3306',
+        },
+        'bcpp033': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.133',
+            'PORT': '3306',
+        },
+        'bcpp019': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.27',
+            'PORT': '3306',
+        },
+        'bcpp029': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.67',
+            'PORT': '3306',
+        },
+        'bcpp034': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.49',
+            'PORT': '3306',
+        },
+        'bcpp027': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.117',
             'PORT': '3306',
         },
     }
@@ -238,6 +573,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_databrowse',
     'dajaxice',
+    'storages',
     'dajax',
     'south',
 
