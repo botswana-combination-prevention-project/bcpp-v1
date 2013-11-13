@@ -196,7 +196,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     status = models.CharField(
         verbose_name='Plot status',
-        max_length=15,
+        max_length=35,
         null=True,
         choices=PLOT_STATUS,
         )
