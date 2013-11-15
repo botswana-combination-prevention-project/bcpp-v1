@@ -35,7 +35,7 @@ class SubjectRequisition(BaseRequisition):
     objects = SubjectRequisitionManager()
 
     def save(self, *args, **kwargs):
-        self.community = self.household_member.household_structure.household.plot.community
+        self.community = self.subject_visit.household_member.household_structure.household.plot.community
         self.subject_identifier = self.get_visit().get_subject_identifier()
         super(SubjectRequisition, self).save(*args, **kwargs)
 
