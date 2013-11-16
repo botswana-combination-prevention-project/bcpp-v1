@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.core.management import call_command
-from django.db.models import get_app, get_models
 from django.test import TestCase
 
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
@@ -12,16 +10,12 @@ from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.models import Appointment
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.subject.entry.models import Entry
-from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
-from edc.subject.visit_schedule.models import VisitDefinition, MembershipForm, ScheduleGroup
-from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from edc.subject.visit_schedule.classes import site_visit_schedules
-from edc.subject.entry.models import ScheduledEntryMetaData
+from edc.entry_meta_data.models import ScheduledEntryMetaData
 
-from apps.bcpp_household.models import Plot, Household, HouseholdStructure
+from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory

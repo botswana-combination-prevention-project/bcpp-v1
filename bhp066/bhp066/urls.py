@@ -112,8 +112,6 @@ urlpatterns += patterns('',
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     )
 
-#urlpatterns += staticfiles_urlpatterns()
-
 if settings.DEBUG:
     urlpatterns += patterns('django.contrib.staticfiles.views',
         url(r'^static/(?P<path>.*)$', 'serve'),

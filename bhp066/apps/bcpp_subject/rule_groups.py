@@ -81,7 +81,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+        target_model=['hivcareadherence', 'positiveparticipant', ])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -90,12 +90,13 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['futurehivtesting', 'stigma', 'stigmaopinion'])
 
+    # TODO: this looks WRONG!!
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
             consequence='not_required',
             alternative='new'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'futurehivtesting', 'stigma', 'stigmaopinion'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -111,7 +112,7 @@ class HivTestReviewRuleGroup(RuleGroup):
             predicate=('recorded_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages'])
+        target_model=['hivcareadherence', 'positiveparticipant', ])
 
     recorded_hivresult = ScheduledDataRule(
         logic=Logic(
@@ -120,12 +121,13 @@ class HivTestReviewRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['futurehivtesting', 'stigma', 'stigmaopinion'])
 
+    # TODO: this looks WRONG!!
     other_responses = ScheduledDataRule(
         logic=Logic(
             predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'or')),
             consequence='not_required',
             alternative='new'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'hivhealthcarecosts', 'labourmarketwages', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'futurehivtesting', 'stigma', 'stigmaopinion'])
 
     # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
 #     if_recorded_result_not_positive = ScheduledDataRule(
@@ -243,7 +245,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
 site_rule_groups.register(SexualBehaviourRuleGroup)
 
 
-class MaleCircumcisionRuleGroup(RuleGroup):
+class CircumcisionRuleGroup(RuleGroup):
 
     gender = ScheduledDataRule(
         logic=Logic(
@@ -251,15 +253,6 @@ class MaleCircumcisionRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['circumcision', 'circumcised', 'uncircumcised'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = RegisteredSubject
-site_rule_groups.register(MaleCircumcisionRuleGroup)
-
-
-class CircumcisionRuleGroup(RuleGroup):
 
     circumcised = ScheduledDataRule(
         logic=Logic(
@@ -282,7 +275,7 @@ class CircumcisionRuleGroup(RuleGroup):
 site_rule_groups.register(CircumcisionRuleGroup)
 
 
-class FemaleReproductiveRuleGroup(RuleGroup):
+class MenopauseRuleGroup(RuleGroup):
 
     gender = ScheduledDataRule(
         logic=Logic(
@@ -290,15 +283,6 @@ class FemaleReproductiveRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
-        source_model = RegisteredSubject
-site_rule_groups.register(FemaleReproductiveRuleGroup)
-
-
-class MenopauseRuleGroup(RuleGroup):
 
     menopause = ScheduledDataRule(
         logic=Logic(
