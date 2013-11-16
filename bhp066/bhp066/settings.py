@@ -303,7 +303,6 @@ INSTALLED_APPS = (
     'edc.subject.rule_groups',
     'edc.subject.actg',
     'edc.subject.entry',
-    'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
     'edc.subject.locator',
