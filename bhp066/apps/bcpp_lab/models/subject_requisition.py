@@ -12,7 +12,7 @@ from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_inspector.models import SubjectRequisitionInspector
 from apps.bcpp_subject.models import SubjectVisit
 
-from ..managers import SubjectRequisitionManager
+from ..managers import RequisitionManager
 
 from .packing_list import PackingList
 
@@ -32,10 +32,10 @@ class SubjectRequisition(BaseRequisition):
 
     history = AuditTrail()
 
-    objects = SubjectRequisitionManager()
+    entry_meta_data_manager = RequisitionManager(SubjectVisit)
 
     def save(self, *args, **kwargs):
-        self.community = self.household_member.household_structure.household.plot.community
+        self.community = self.subject_visit.household_member.household_structure.household.plot.community
         self.subject_identifier = self.get_visit().get_subject_identifier()
         super(SubjectRequisition, self).save(*args, **kwargs)
 

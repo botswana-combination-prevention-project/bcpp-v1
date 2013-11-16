@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules
+from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, RequisitionTuple
 
 from ..models import SubjectVisit, SubjectConsent
 
@@ -37,6 +37,12 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'visit_tracking_model': SubjectVisit,
             'schedule_group': 'bcpp-year-1',
             'instructions': None,
+            'requisitions': (
+                # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
+                RequisitionTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
+                RequisitionTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'Viral Load', 'TEST', 'WB'),
+                RequisitionTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'Microtube', 'STORAGE', 'WB'),
+                ),
             'entries': (
                 (10L, u'bcpp_subject', u'subjectlocator'),
                 (20L, u'bcpp_subject', u'residencymobility'),
