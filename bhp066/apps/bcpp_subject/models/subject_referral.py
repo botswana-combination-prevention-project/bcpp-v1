@@ -53,7 +53,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     referral_clinic = models.CharField(
         max_length=50,
         choices=COMMUNITIES,
-        default=settings.CURRENT_COMMUNITY,
+        default=settings.CURRENT_MAPPER,
         )
 
     referral_clinic_other = models.CharField(
