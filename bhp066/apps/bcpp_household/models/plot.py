@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from database_storage import DatabaseStorage 
+# from database_storage import DatabaseStorage 
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.device.classes import Device
@@ -164,11 +164,11 @@ class Plot(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
-    uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    #uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
     
-    uploaded_map_17 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    #uploaded_map_17 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
     
-    uploaded_map_18 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    #uploaded_map_18 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
 
     community = models.CharField(
         max_length=25,

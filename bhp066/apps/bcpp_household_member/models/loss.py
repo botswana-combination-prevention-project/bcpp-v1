@@ -1,6 +1,8 @@
 from django.db import models
+
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.base.model.validators import dob_not_future
+
 from .household_member import HouseholdMember
 
 
