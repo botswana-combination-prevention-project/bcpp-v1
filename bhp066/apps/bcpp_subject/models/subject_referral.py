@@ -220,7 +220,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def update_cd4(self):
         if Pima.objects.filter(subject_visit=self.subject_visit, pima_today='Yes'):
             pima = Pima.objects.get(subject_visit=self.subject_visit)
-            self.cd4_result = pima.cd4_value
+            self.cd4_result = int(pima.cd4_value)
             self.cd4_result_datetime = pima.report_datetime
         else:
             self.cd4_result = None
@@ -243,8 +243,8 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def update_residency(self):
         if ResidencyMobility.objects.filter(subject_visit=self.subject_visit):
             residency_mobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit)
-            self.permanent_resident = residency_mobility.permanent_resident
-            self.intend_residency = residency_mobility.intend_residency
+            self.permanent_resident = self.convert_to_nullboolean(residency_mobility.permanent_resident)
+            self.intend_residency = self.convert_to_nullboolean(residency_mobility.intend_residency)
         else:
             self.permanent_resident = None
             self.intend_residency = None
@@ -337,7 +337,15 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def survey(self):
         return self.subject_visit.household_member.household_structure.survey
     survey.allow_tags = True
-
+    
+    def convert_to_nullboolean(self, yes_no_dwta):
+        if yes_no_dwta.lower() == 'no':
+            return False
+        elif yes_no_dwta.lower() == 'yes':
+            return True
+        else:
+            return None
+        
     def dashboard(self):
         url = reverse('subject_dashboard_url',
                       kwargs={'dashboard_type': self.subject_visit.appointment.registered_subject.subject_type.lower(),
