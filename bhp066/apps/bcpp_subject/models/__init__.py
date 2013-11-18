@@ -1,4 +1,4 @@
-from .subject_consent import SubjectConsent
+from .subject_consent import SubjectConsent, SubjectConsentRbd
 from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
@@ -58,3 +58,4 @@ from .subject_referral import SubjectReferral
 from .pima import Pima
 from .cd4_history import Cd4History
 from .subject_consent_history import SubjectConsentHistory
+from .clinic_questionnaire import ClinicQuestionnaire
