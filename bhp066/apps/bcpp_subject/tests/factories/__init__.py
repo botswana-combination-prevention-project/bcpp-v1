@@ -12,6 +12,7 @@ from access_to_care_factory import AccessToCareFactory
 from medical_diagnoses_factory import MedicalDiagnosesFactory
 from subject_consent_factory import SubjectConsentFactory
 from heart_attack_factory import HeartAttackFactory
+from cd4_history_factory import Cd4HistoryFactory
 from pima_factory import PimaFactory
 from recent_partner_factory import RecentPartnerFactory
 from sti_factory import StiFactory
