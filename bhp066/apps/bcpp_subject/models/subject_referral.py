@@ -21,17 +21,21 @@ from .pima import Pima
 from .residency_mobility import ResidencyMobility
 from .reproductive_health import ReproductiveHealth
 from .subject_consent import SubjectConsent
+from .cd4_history import Cd4History
+
 
 REFERRAL_CODES = (
-    ('CD4', 'POS, need CD4 testing'),
-    ('HIV', 'HIV re-test (IND)'),
-    ('MASA-HIGH', 'MASA continued care (on ART, high CD4)'),
-    ('MASA-LOW', 'MASA continued care (on ART, low CD4)'),
-    ('MASA-DEFAULTER', 'MASA defaulter (was on ART)'),
-    ('CCC-HIGH', 'CCC or MASA (not on ART, high CD4)'),
-    ('CCC-LOW', 'CCC or MASA (not on ART, low CD4)'),
-    ('SMC', 'SMC'),
-    ('NOT_REFERRED', 'Not referred'),
+    ('TST-CD4', 'POS, need CD4 testing'),
+    ('HIV-IND', 'HIV re-test (IND)'),
+    ('MASA-HI', 'Known POS, MASA continued care (on ART, high CD4)'),
+    ('MASA-LO', 'Known POS, MASA continued care (on ART, low CD4)'),
+    ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
+    ('MAMO-HI', 'Known POS, not on ART, high CD4)'),
+    ('MAMO-LO', 'Known POS, not on ART, low CD4)'),
+    ('SMC-NEG', 'SMC'),
+    ('POS!-HI', 'New POS, not on ART, high CD4)'),
+    ('POS!-LO', 'New POS, not on ART, low CD4)'),
+    ('NOT-REF', 'Not referred'),
 )
 
 
@@ -69,7 +73,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         )
 
     citizen = models.NullBooleanField(
-        default=False,
+        default=None,
         null=True,
         editable=False,
         )
@@ -84,8 +88,35 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
          null=True,
          )
 
+    new_pos = models.NullBooleanField(
+        default=None,
+        null=True,
+        editable=False,
+        help_text="new POS diagnosis"
+        )
+
+    last_hiv_result = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        )
+
+    last_hiv_test_date = models.DateTimeField(
+         null=True,
+         )
+
+    last_cd4_result = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        )
+
+    last_cd4_test_date = models.DateTimeField(
+         null=True,
+         )
+
     on_art = models.NullBooleanField(
-        default=False,
+        default=None,
         null=True,
         editable=False,
         help_text="from hiv_care_adherence"
@@ -105,7 +136,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         )
 
     vl_sample_drawn = models.NullBooleanField(
-        default=False,
+        default=None,
         null=True,
         editable=False,
         help_text='from SubjectRequisition',
@@ -117,34 +148,40 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
          )
 
     pregnant = models.NullBooleanField(
-        default=False,
+        default=None,
         null=True,
         editable=False,
         help_text="from ReproductiveHealth.currently_pregnant",
         )
 
     circumcised = models.NullBooleanField(
-        default=False,
+        default=None,
         null=True,
         editable=False,
         )
 
     permanent_resident = models.NullBooleanField(
-        default=False,
+        default=None,
         editable=False,
         null=True,
         help_text='from residence and mobility "permanent_resident"'
         )
 
     intend_residency = models.NullBooleanField(
-        default=False,
+        default=None,
         editable=False,
         null=True,
         help_text='from residence and mobility "intend_residency"'
         )
 
+    referred_from_bhs = models.NullBooleanField(
+        default=None,
+        editable=False,
+        null=True,
+        )
+
     urgent_referral = models.NullBooleanField(
-        default=False,
+        default=None,
         null=True,
         )
 
@@ -179,7 +216,9 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def save(self, *args, **kwargs):
         self.update_demographics()
         self.update_hiv()
+        self.update_last_hiv()
         self.update_cd4()
+        self.update_last_cd4()
         self.update_vl()
         self.update_residency()
         self.update_pregnant()
@@ -209,13 +248,19 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             hiv_result = HivResult.objects.get(subject_visit=self.subject_visit)
             self.hiv_result = hiv_result.hiv_result
             self.hiv_result_datetime = hiv_result.hiv_result_datetime
-        elif HivTestReview.objects.filter(subject_visit=self.subject_visit):
-            hiv_test_review = HivTestReview.objects.get(subject_visit=self.subject_visit)
-            self.hiv_result = hiv_test_review.recorded_hiv_result
-            self.hiv_result_datetime = hiv_test_review.hiv_test_date
+            if self.hiv_result == 'POS':
+                self.new_pos = True
+            elif self.hiv_result == 'NEG':
+                self.new_pos = False
+#         elif HivTestReview.objects.filter(subject_visit=self.subject_visit):
+#             hiv_test_review = HivTestReview.objects.get(subject_visit=self.subject_visit)
+#             self.hiv_result = hiv_test_review.recorded_hiv_result
+#             self.hiv_result_datetime = hiv_test_review.hiv_test_date
+#             self.new_pos = None
         else:
             self.hiv_result = None
             self.hiv_result_datetime = None
+            self.new_pos = None
 
     def update_cd4(self):
         if Pima.objects.filter(subject_visit=self.subject_visit, pima_today='Yes'):
@@ -225,6 +270,27 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         else:
             self.cd4_result = None
             self.cd4_result_datetime = None
+
+    def update_last_hiv(self):
+        if HivTestReview.objects.filter(subject_visit=self.subject_visit):
+            hiv_test_review = HivTestReview.objects.get(subject_visit=self.subject_visit)
+            self.last_hiv_result = hiv_test_review.recorded_hiv_result
+            self.last_hiv_test_date = hiv_test_review.hiv_test_date
+            self.new_pos = False
+        else:
+            self.last_hiv_result = None
+            self.last_hiv_test_date = None
+            self.new_pos = None
+
+
+    def update_last_cd4(self):
+        if Cd4History.objects.filter(subject_visit=self.subject_visit):
+            cd4_history = Cd4History.objects.get(subject_visit=self.subject_visit)
+            self.last_cd4_result = cd4_history.last_cd4_count
+            self.last_cd4_test_date = cd4_history.last_cd4_drawn_date
+        else:
+            self.last_cd4_result = None
+            self.last_cd4_test_date = None
 
     def update_vl(self):
         if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load'):
@@ -304,33 +370,59 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         self.referral_codes = ';'.join(referral_codes)
 
     def update_referral_codes(self):
-        """Reviews the conditions for referral and sets to the correct referral code."""
+        """Reviews the conditions for referral and sets to the correct referral code.
+
+        MASA-LO: On ARVs but CD4 is low. Requires action.
+        MASA-HI: On ARVs, CD4 is high.
+        MAMO-LO: Not on ARV, low CD4"""
         self.referral_codes = None
-        if self.hiv_result == 'IND':
-            self.append_to_referral_codes('HIV')
-        elif self.hiv_result == 'NEG' and self.gender == 'F' and self.pregnant:
-            self.append_to_referral_codes('ANC-NEG')
-        elif self.hiv_result == 'POS' and self.gender == 'F' and self.pregnant:
-            self.append_to_referral_codes('ANC-POS')
-        elif self.hiv_result == 'NEG' and self.gender == 'F' and not self.pregnant:
-            self.append_to_referral_codes(None)
-        elif self.hiv_result == 'NEG' and self.gender == 'M':
-            self.append_to_referral_codes('SMC')
-        elif self.hiv_result == 'POS':
-            if self.is_defaulter():
-                self.append_to_referral_codes('MASA-DEFAULTER')
-            elif self.on_art:
-                if self.cd4_result > 350:
-                    self.append_to_referral_codes('MASA-HIGH')
-                elif self.cd4_result <= 350:
-                    self.append_to_referral_codes('MASA-LOW')
-            elif not self.on_art:
-                if not self.cd4_result:
-                    self.append_to_referral_codes('CD4')
-                elif self.cd4_result > 350:
-                    self.append_to_referral_codes('CCC-HIGH')
-                elif self.cd4_result <= 350:
-                    self.append_to_referral_codes('CCC-LOW')
+        if self.hiv_result:
+            if self.hiv_result == 'IND':
+                self.append_to_referral_codes('HIV-IND')
+            elif self.hiv_result == 'NEG' and self.pregnant:
+                self.append_to_referral_codes('ANC-NEG')
+            elif self.hiv_result == 'NEG' and self.gender == 'F' and not self.pregnant:
+                self.append_to_referral_codes(None)
+            elif self.hiv_result == 'POS' and self.pregnant and self.on_art == True:
+                self.append_to_referral_codes('ANC-ARV')
+            elif self.hiv_result == 'POS' and self.pregnant and self.on_art == False:
+                self.append_to_referral_codes('ANC-POS')
+            elif self.hiv_result == 'POS' and self.pregnant and self.on_art == None:
+                self.append_to_referral_codes('ANC-POS')
+            elif self.hiv_result == 'NEG' and self.circumcised == False:
+                self.append_to_referral_codes('SMC-NEG')
+            elif self.hiv_result == 'POS':
+                if self.is_defaulter():
+                    self.append_to_referral_codes('MASA-DF')
+                elif self.on_art:
+                    if self.cd4_result > 350:
+                        self.append_to_referral_codes('MASA-HI')
+                    elif self.cd4_result <= 350:
+                        self.append_to_referral_codes('MASA-LO')
+                elif not self.on_art:
+                    if not self.cd4_result:
+                        self.append_to_referral_codes('TEST-CD4')
+                    elif self.cd4_result > 350:
+                        self.append_to_referral_codes('MAMO-HI')
+                    elif self.cd4_result <= 350:
+                        self.append_to_referral_codes('MAMO-LO')
+        else:
+            if self.last_hiv_result == 'POS':
+                if self.is_defaulter():
+                    self.append_to_referral_codes('MASA-DF')
+                elif self.on_art:
+                    if self.cd4_result > 350:
+                        self.append_to_referral_codes('MASA-HI')
+                    elif self.cd4_result <= 350:
+                        self.append_to_referral_codes('MASA-LO')
+                elif not self.on_art:
+                    if not self.cd4_result:
+                        self.append_to_referral_codes('TEST-CD4')
+                    elif self.cd4_result > 350:
+                        self.append_to_referral_codes('MAMO-HI')
+                    elif self.cd4_result <= 350:
+                        self.append_to_referral_codes('MAMO-LO')
+
         if not self.referral_codes:
             self.append_to_referral_codes('NOT_REFERRED')
 
