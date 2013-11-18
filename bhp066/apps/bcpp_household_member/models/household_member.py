@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.core.urlresolvers import reverse
-from django.db.models.signals import Signal, post_save
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.utils import mask_encrypted
@@ -11,7 +12,6 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.consent.models import BaseConsent
 
 from apps.bcpp_household.choices import RELATIONS
 from apps.bcpp_household.models import Plot
@@ -19,7 +19,6 @@ from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
 from ..choices import HOUSEHOLD_MEMBER_ACTION
-from .contact_log import ContactLog
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -107,14 +106,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                   "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
         )
 
-    contact_log = models.OneToOneField(ContactLog, null=True)
-
     objects = HouseholdMemberManager()
 
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-#         using = kwargs.get('using', None)
         self.eligible_member = self.is_eligible()
         self.initials = self.initials.upper()
         super(HouseholdMember, self).save(*args, **kwargs)
@@ -156,6 +152,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def is_consented(self):
         "Returns True or False based on search for a consent instance related to this household member"
+        from edc.subject.consent.models import BaseConsent
         has_consent_instance = False
         for any_model_cls in models.get_models():
             if issubclass(any_model_cls, BaseConsent):
@@ -209,7 +206,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def is_moved(self):
-        from apps.bcpp_subject.models import SubjectMoved
+        from ..models import SubjectMoved
         retval = False
         if SubjectMoved.objects.filter(household_member=self, survey=self.survey):
             retval = True
@@ -229,36 +226,66 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def _get_form_url(self, model_name):
         url = ''
-        id = None
+        pk = None
         app_label = 'bcpp_subject'
         if not self.registered_subject:
             self.save()
         Model = models.get_model(app_label, model_name)
         if Model.objects.filter(household_member=self):
-            id = Model.objects.get(household_member=self).id
-        if id:
-            url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(id, ))
+            pk = Model.objects.get(household_member=self).id
+        if pk:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(pk, ))
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
         return url
+
+    @property
+    def subject_absentee(self):
+        """Returns the subject absentee instance for this member and creates a subject_absentee if it does not exist."""
+        from ..models import SubjectAbsentee
+        if SubjectAbsentee.objects.filter(household_member=self):
+            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
+        elif self.member_status == 'ABSENT':
+            subject_absentee = SubjectAbsentee.objects.create(
+                report_datetime=datetime.today(),
+                registered_subject=self.registered_subject,
+                household_member=self,
+                survey=self.household_structure.survey,
+                )
+        else:
+            subject_absentee = None
+        return subject_absentee
+
+    def render_absentee_info(self):
+        """Renders the absentee information for the template."""
+        # TODO: model subject absentee should be moved to module bcpp_household_member
+        from ..models import SubjectAbsenteeEntry
+        render = ['<A href="{0}">add another absentee log entry</A>']
+        for subject_absentee_entry, index in enumerate(SubjectAbsenteeEntry(subject_absentee=self.subject_absentee)):
+            url = reverse('admin:bcpp_subject_subjectabsenteeenty_change')
+            render.update('<A href="{0}">{1}</A>'.format(url, subject_absentee_entry))
+        if index < 3:  # not allowed more than three subject absentee entries
+            url = reverse('admin:bcpp_subject_subjectabsenteeenty_add')
+            render.append('<A href="{0}">add another absentee log entry</A>').format(url)
 
     @property
     def absentee_form_url(self):
         """Returns a url to the subjectabsentee if an instance exists."""
         return self._get_form_url('subjectabsentee')
 
-    def absentee_form_label(self):
-        SubjectAbsentee = models.get_model('bcpp_subject', 'subjectabsentee')
-        SubjectAbsenteeEntry = models.get_model('bcpp_subject', 'subjectabsenteeentry')
-        report_datetime = []
-        if SubjectAbsentee.objects.filter(household_member=self):
-            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
-            for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
-                report_datetime.append(subject_absentee_entry.report_datetime.strftime('%Y-%m-%d'))
-        if not report_datetime:
-            report_datetime.append('add new entry')
-        return report_datetime
-    absentee_form_label.allow_tags = True
+#     def absentee_form_label(self):
+#         SubjectAbsenteeEntry = models.get_model('bcpp_subject', 'subjectabsenteeentry')
+#         if self.subject_absentee
+#
+#
+#         if SubjectAbsentee.objects.filter(household_member=self):
+#             subject_absentee = SubjectAbsentee.objects.get(household_member=self)
+#             for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
+#                 report_datetime.append(subject_absentee_entry.report_datetime.strftime('%Y-%m-%d'))
+#         if not report_datetime:
+#             report_datetime.append('add new entry')
+#         return report_datetime
+#     absentee_form_label.allow_tags = True
 
     @property
     def refused_form_url(self):
@@ -282,15 +309,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def moved_form_label(self):
         return self.get_form_label('SubjectMoved')
     moved_form_label.allow_tags = True
-
-#     def cso(self):
-#         return self.household_structure.plot.cso_number
-
-#     def lon(self):
-#         return self.household_structure.plot.gps_lon
-# 
-#     def lat(self):
-#         return self.household_structure.plot.gps_lat
 
     def to_locator(self):
         retval = ''

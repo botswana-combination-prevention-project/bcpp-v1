@@ -7,9 +7,8 @@ from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
 
+from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
-
-from ..models import HouseholdMember
 
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):

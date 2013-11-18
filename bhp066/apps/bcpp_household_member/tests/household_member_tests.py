@@ -1,23 +1,17 @@
-from datetime import datetime, timedelta
-from dateutils import relativedelta
-from uuid import uuid4
-from django.test import TransactionTestCase, TestCase, SimpleTestCase
-from django.db.models import signals
+from django.test import TestCase
 from django.forms import ValidationError
 
 from edc.map.classes import Mapper, site_mappers
-from edc.core.bhp_variables.tests.factories import StudySiteFactory
-from edc.subject.appointment_helper.models import prepare_appointments_on_post_save
-
-from apps.bcpp_survey.tests.factories import SurveyFactory
 from apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household.models import HouseholdStructure, Household, Plot
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry, SubjectConsent
+from apps.bcpp_survey.tests.factories import SurveyFactory
+#from apps.bcpp_subject.models import SubjectConsent
+
+from ..models import SubjectAbsentee
 
 from ..forms import HouseholdMemberForm
+
+from .factories import HouseholdMemberFactory
 
 
 class TestPlotMapper(Mapper):
@@ -34,7 +28,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class HouseholdMemberTests(SimpleTestCase):
+class HouseholdMemberTests(TestCase):
 
     def setUp(self):
         if Survey.objects.all().count() == 0:
@@ -59,3 +53,39 @@ class HouseholdMemberTests(SimpleTestCase):
                                'initials': u'TM'}
         self.assertRaisesRegexp(ValidationError, 'Head of Household ', form.clean)
 
+    def creates_absentee(self):
+        """Test creates an absentee instance if participation changed to absent."""
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 0)
+        self.household_member.member_status = 'ABSENT'
+        self.household_member.save()
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 1)
+
+    def creates_absentee2(self):
+        """Test does not create an absentee instance if already exists."""
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 0)
+        self.household_member.member_status = 'ABSENT'
+        self.household_member.save()
+        self.household_member.member_status = 'NOT_REPORTED'
+        self.household_member.save()
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 1)
+        self.household_member.member_status = 'ABSENT'
+        self.household_member.save()
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 1)
+
+    def creates_absentee3(self):
+        """Test does not create an absentee instance if not absent and returns None."""
+        # never been absent, return None
+        self.household_member.member_status = 'NOT_REPORTED'
+        self.household_member.save()
+        self.assertIsNone(self.household_member.subject_absentee)
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 0)
+        # absent, return instance
+        self.household_member.member_status = 'ABSENT'
+        self.household_member.save()
+        self.assertIsNotNone(self.household_member.subject_absentee)
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 1)
+        # was absent but is no longer, return instance
+        self.household_member.member_status = 'NOT_REPORTED'
+        self.household_member.save()
+        self.assertIsNotNone(self.household_member.subject_absentee)
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=self.household_member).count(), 1)
