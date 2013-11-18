@@ -1,7 +1,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import SubjectReferral
+from ..models import SubjectReferral, SubjectLocator
 
 
 class SubjectLocatorIsReferredListFilter(SimpleListFilter):
@@ -18,9 +18,9 @@ class SubjectLocatorIsReferredListFilter(SimpleListFilter):
         if self.value():
             for qs in queryset:
                 if SubjectReferral.objects.filter(subject_visit__appointment__registered_subject__subject_identifier=qs.get_subject_identifier()).exclude(referral_code__in=['NOT-REF', 'ERROR']):
-                    locators.append(qs)
+                    locators.append(qs.get_subject_identifier())
         if self.value() == False:
             for qs in queryset:
                 if SubjectReferral.objects.filter(subject_visit__appointment__registered_subject__subject_identifier=qs.get_subject_identifier(), referral_code__in=['NOT-REF', 'ERROR']):
-                    locators.append(qs)
-        return locators
+                    locators.append(qs.get_subject_identifier())
+        return SubjectLocator.objects.filter(subject_visit__appointment__registered_subject__subject_identifier__in=locators)
