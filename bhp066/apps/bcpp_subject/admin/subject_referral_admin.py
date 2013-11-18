@@ -56,7 +56,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
                      'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
-                     'gender': self.visit_model_foreign_key + '__appointment__registered_subject__gender',
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
                      'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
