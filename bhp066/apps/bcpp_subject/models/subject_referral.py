@@ -25,16 +25,18 @@ from .cd4_history import Cd4History
 
 
 REFERRAL_CODES = (
-    ('TST-CD4', 'POS, need CD4 testing'),
+    ('TST-CD4', 'POS any, need CD4 testing'),
     ('HIV-IND', 'HIV re-test (IND)'),
-    ('MASA-HI', 'Known POS, MASA continued care (on ART, high CD4)'),
+    ('MASA', 'Known POS, MASA continued care (on ART, high CD4)'),
     ('MASA-LO', 'Known POS, MASA continued care (on ART, low CD4)'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
     ('MAMO-HI', 'Known POS, not on ART, high CD4)'),
     ('MAMO-LO', 'Known POS, not on ART, low CD4)'),
     ('SMC-NEG', 'SMC'),
-    ('POS!-HI', 'New POS, not on ART, high CD4)'),
-    ('POS!-LO', 'New POS, not on ART, low CD4)'),
+    ('NEG!-PR', 'NEG today, Pregnant'),
+    ('POS!-PR', 'POS today, Pregnant'),
+    ('POS!-HI', 'POS today, not on ART, high CD4)'),
+    ('POS!-LO', 'POS today, not on ART, low CD4)'),
     ('NOT-REF', 'Not referred'),
 )
 
@@ -252,11 +254,6 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
                 self.new_pos = True
             elif self.hiv_result == 'NEG':
                 self.new_pos = False
-#         elif HivTestReview.objects.filter(subject_visit=self.subject_visit):
-#             hiv_test_review = HivTestReview.objects.get(subject_visit=self.subject_visit)
-#             self.hiv_result = hiv_test_review.recorded_hiv_result
-#             self.hiv_result_datetime = hiv_test_review.hiv_test_date
-#             self.new_pos = None
         else:
             self.hiv_result = None
             self.hiv_result_datetime = None
@@ -281,7 +278,6 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.last_hiv_result = None
             self.last_hiv_test_date = None
             self.new_pos = None
-
 
     def update_last_cd4(self):
         if Cd4History.objects.filter(subject_visit=self.subject_visit):
@@ -380,51 +376,46 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             if self.hiv_result == 'IND':
                 self.append_to_referral_codes('HIV-IND')
             elif self.hiv_result == 'NEG' and self.pregnant:
-                self.append_to_referral_codes('ANC-NEG')
+                self.append_to_referral_codes('NEG!-PR')
             elif self.hiv_result == 'NEG' and self.gender == 'F' and not self.pregnant:
                 self.append_to_referral_codes(None)
             elif self.hiv_result == 'POS' and self.pregnant and self.on_art == True:
-                self.append_to_referral_codes('ANC-ARV')
+                self.append_to_referral_codes('ERROR')
             elif self.hiv_result == 'POS' and self.pregnant and self.on_art == False:
-                self.append_to_referral_codes('ANC-POS')
+                self.append_to_referral_codes('POS!-PR')
             elif self.hiv_result == 'POS' and self.pregnant and self.on_art == None:
-                self.append_to_referral_codes('ANC-POS')
+                self.append_to_referral_codes('POS!-PR')
             elif self.hiv_result == 'NEG' and self.circumcised == False:
                 self.append_to_referral_codes('SMC-NEG')
             elif self.hiv_result == 'POS':
-                if self.is_defaulter():
-                    self.append_to_referral_codes('MASA-DF')
-                elif self.on_art:
-                    if self.cd4_result > 350:
-                        self.append_to_referral_codes('MASA-HI')
-                    elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('MASA-LO')
-                elif not self.on_art:
+                if self.on_art == True or self.on_art == False:
+                    self.append_to_referral_codes('ERROR')
+                elif self.on_art == None:
                     if not self.cd4_result:
-                        self.append_to_referral_codes('TEST-CD4')
+                        self.append_to_referral_codes('TST-CD4')
                     elif self.cd4_result > 350:
-                        self.append_to_referral_codes('MAMO-HI')
+                        self.append_to_referral_codes('POS!-HI')
                     elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('MAMO-LO')
+                        self.append_to_referral_codes('POS!-LO')
         else:
             if self.last_hiv_result == 'POS':
                 if self.is_defaulter():
                     self.append_to_referral_codes('MASA-DF')
                 elif self.on_art:
                     if self.cd4_result > 350:
-                        self.append_to_referral_codes('MASA-HI')
+                        self.append_to_referral_codes('ERROR')
                     elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('MASA-LO')
+                        self.append_to_referral_codes('ERROR')
                 elif not self.on_art:
                     if not self.cd4_result:
-                        self.append_to_referral_codes('TEST-CD4')
+                        self.append_to_referral_codes('TST-CD4')
                     elif self.cd4_result > 350:
-                        self.append_to_referral_codes('MAMO-HI')
+                        self.append_to_referral_codes('POS#-HI')
                     elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('MAMO-LO')
+                        self.append_to_referral_codes('POS#-LO')
 
         if not self.referral_codes:
-            self.append_to_referral_codes('NOT_REFERRED')
+            self.append_to_referral_codes('NOT-REF')
 
     def survey(self):
         return self.subject_visit.household_member.household_structure.survey
