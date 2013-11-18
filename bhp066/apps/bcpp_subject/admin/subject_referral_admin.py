@@ -23,26 +23,26 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'dashboard',
-        'referral_codes',
+        'referral_code',
         'referral_appt_date',
         'exported',
         'exported_datetime',
         'in_clinic_flag',
         ]
 
-    list_filter = ['exported', 'in_clinic_flag', SubjectCommunityListFilter, 'referral_codes', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
+    list_filter = ['exported', 'in_clinic_flag', SubjectCommunityListFilter, 'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
 
     fields = (
         'subject_visit',
         'report_datetime',
-        'referral_codes',
+        'referral_code',
         'referral_appt_date',
         'referral_clinic',
         'comment'
         )
 
     radio_fields = {
-        "referral_codes": admin.VERTICAL,
+        "referral_code": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
         }
 
