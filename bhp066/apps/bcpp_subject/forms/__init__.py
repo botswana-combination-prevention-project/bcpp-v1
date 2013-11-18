@@ -1,5 +1,5 @@
 from .main import *
-from .subject_consent_form import SubjectConsentForm
+from .subject_consent_form import SubjectConsentForm, SubjectConsentRbdForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_refusal_form import SubjectRefusalForm
 from .subject_absentee_form import SubjectAbsenteeForm, SubjectAbsenteeEntryForm
@@ -34,3 +34,4 @@ from .stigma_form import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
 from .hiv_result_documentation_form import HivResultDocumentationForm
 from .hiv_medical_care_form import HivMedicalCareForm
 from .diagnoses_form import HeartAttackForm, CancerForm, TubercolosisForm, StiForm
+from .clinic_questionnaire_form import ClinicQuestionnaireForm

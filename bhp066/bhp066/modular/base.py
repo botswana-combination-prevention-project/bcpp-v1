@@ -309,8 +309,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-CURRENT_COMMUNITY = 'otse'
-CURRENT_MAPPER = CURRENT_COMMUNITY
+#CURRENT_MAPPER = 'otse'
+CURRENT_MAPPER = 'gaborone'
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = join(STATIC_ROOT, 'gpx/template.gpx')

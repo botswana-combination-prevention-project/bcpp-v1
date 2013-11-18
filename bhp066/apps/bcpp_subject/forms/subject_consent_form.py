@@ -10,10 +10,10 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
 
-from ..models import SubjectConsent
+from ..models import SubjectConsent, SubjectConsentRbd
 
 
-class SubjectConsentForm(BaseSubjectConsentForm):
+class MainConsentForm(BaseSubjectConsentForm):
 
     gender = forms.ChoiceField(
         label='Gender',
@@ -86,7 +86,16 @@ class SubjectConsentForm(BaseSubjectConsentForm):
         if gender and household_member:
             if household_member.gender != gender:
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, gender))
-        return super(SubjectConsentForm, self).clean()
+        return super(MainConsentForm, self).clean()
+
+
+class SubjectConsentForm(MainConsentForm):
 
     class Meta:
         model = SubjectConsent
+
+
+class SubjectConsentRbdForm(MainConsentForm):
+
+    class Meta:
+        model = SubjectConsentRbd
