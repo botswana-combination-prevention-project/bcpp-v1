@@ -19,7 +19,7 @@ class SectionHouseholdView(BaseSectionForDashboardView):
     search = {'word': HouseholdSearchByWord, 'gps': HouseholdSearchByGps}
 
     def contribute_to_context(self, context, request, *args, **kwargs):
-        current_community = settings.CURRENT_COMMUNITY
+        current_community = settings.CURRENT_MAPPER
         context.update({
             'current_survey': Survey.objects.current_survey(),
             'current_community': self.get_current_community(),
@@ -28,6 +28,6 @@ class SectionHouseholdView(BaseSectionForDashboardView):
         return context
 
     def get_current_community(self):
-        return settings.CURRENT_COMMUNITY
+        return settings.CURRENT_MAPPER
 
 site_sections.register(SectionHouseholdView)
