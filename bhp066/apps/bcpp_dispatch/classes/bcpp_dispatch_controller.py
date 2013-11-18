@@ -1,16 +1,19 @@
 import logging
+
 from datetime import datetime
-from django.db.models import get_model, get_models, get_app, ForeignKey
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import get_model, get_models, get_app, ForeignKey
 from django.db.models import signals
+
 from edc.base.model.models import BaseListModel
-from edc.subject.subject.models import base_subject_get_or_create_registered_subject_on_post_save
 from edc.device.dispatch.classes import DispatchController
 from edc.device.dispatch.exceptions import DispatchError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
-from apps.bcpp_subject.models import  BaseMemberStatusModel
-from apps.bcpp_household_member.models import household_member_on_pre_save, household_member_on_post_save, base_household_member_consent_on_post_save
+from edc.subject.subject.models import base_subject_get_or_create_registered_subject_on_post_save
+
+from apps.bcpp_household_member.models import BaseMemberStatusModel, household_member_on_pre_save, household_member_on_post_save, base_household_member_consent_on_post_save
 from apps.bcpp_household.models import (create_household_on_post_save, post_save_on_household, household_structure_on_post_save, check_for_survey_on_pre_save)
 from apps.bcpp_survey.models import Survey
 
@@ -123,7 +126,7 @@ class BcppDispatchController(DispatchController):
                 for survey in surveys:
                     household_structure = HouseholdStructure.objects.filter(household=household, survey=survey)
                     if household_structure:
-                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id','household_id'])
+                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id', 'household_id'])
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
@@ -136,13 +139,25 @@ class BcppDispatchController(DispatchController):
                             if missing_rs:
                                 raise DispatchError('HouseholdMember field registered_subject cannot be None. Got {0}.'.format(missing_rs))
                             registered_subjects = RegisteredSubject.objects.filter(pk__in=[hsm.registered_subject.pk for hsm in household_members])
-                            self._dispatch_as_json(registered_subjects, plot, additional_base_model_class=RegisteredSubject)
-                            self.dispatch_user_items_as_json(household_members, plot, ['household_structure_id'])
+                            self._dispatch_as_json(
+                                registered_subjects,
+                                plot,
+                                additional_base_model_class=RegisteredSubject,
+                                )
+                            self.dispatch_user_items_as_json(
+                                household_members,
+                                plot,
+                                ['household_structure_id'],
+                                )
                             for household_member in household_members:
                                 # dispatch consents
                                 #self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
                                 # dispatch membership forms + consent
-                                self.dispatch_membership_forms(household_member.registered_subject, plot, fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'])
+                                self.dispatch_membership_forms(
+                                    household_member.registered_subject,
+                                    plot,
+                                    fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'],
+                                    )
                                 # dispatch scheduled instances. This will dispatch appointments first
                                 self.dispatch_scheduled_instances(
                                     'bcpp_subject',
@@ -151,17 +166,26 @@ class BcppDispatchController(DispatchController):
                                     survey.datetime_start,
                                     survey.datetime_end,
                                     fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
-                                    options={}
+                                    options={},
                                     )
                                 self.dispatch_requisitions('bcpp_lab', household_member.registered_subject, plot)
                                 self.dispatch_member_status_instances(
-                                    'bcpp_subject',
+                                    'bcpp_household_member',
                                     household_member.registered_subject,
                                     plot,
-                                    options={})
-                                self.dispatch_lab_tracker_history(household_member.registered_subject, group_name='HIV')
+                                    options={},
+                                    )
+                                self.dispatch_lab_tracker_history(
+                                    household_member.registered_subject,
+                                    group_name='HIV',
+                                    )
                                 self.dispatch_entry_buckets(household_member.registered_subject)
-                                self.dispatch_membership_form_inlines('bcpp_subject', household_member.registered_subject, plot, ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'])
+                                self.dispatch_membership_form_inlines(
+                                    'bcpp_household_member',
+                                    household_member.registered_subject,
+                                    plot,
+                                    ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
+                                    )
 
     def dispatch_member_status_instances(self, app_label, registered_subject, user_container, **kwargs):
         """Dispatches all member status for this subject, e.g SubjectAbsentee, SubjectUndecided, ...."""

@@ -8,8 +8,10 @@ from edc.map.classes import site_mappers
 from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 
-from apps.bcpp_household_member.models import BaseHouseholdMemberConsent
+
 from apps.bcpp.choices import COMMUNITIES
+
+from .base_household_member_consent import BaseHouseholdMemberConsent
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent_history import SubjectConsentHistory
