@@ -7,9 +7,9 @@ from ..models import Household
 
 
 # def get_mapper():
-#     mapper = site_mappers.get(settings.CURRENT_COMMUNITY)
+#     mapper = site_mappers.get(settings.CURRENT_MAPPER)
 #     if not mapper:
-#         raise MapperError('Mapper not registered for community {0}.'.format(settings.CURRENT_COMMUNITY))
+#         raise MapperError('Mapper not registered for community {0}.'.format(settings.CURRENT_MAPPER))
 #     return mapper()
 
 
