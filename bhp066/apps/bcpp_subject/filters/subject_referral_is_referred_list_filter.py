@@ -9,7 +9,7 @@ class SubjectReferralIsReferredListFilter(SimpleListFilter):
     parameter_name = 'referred'
 
     def lookups(self, request, model_admin):
-        return tuple(True, False)
+        return ((True, 'Yes'), (False, 'No'), )
 
     def queryset(self, request, queryset):
         if self.value():
