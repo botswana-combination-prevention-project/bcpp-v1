@@ -1,5 +1,6 @@
 from edc.audit.audit_trail import AuditTrail
-from apps.bcpp_household_member.models import BaseMemberStatusModel
+
+from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectUndecided (BaseMemberStatusModel):

@@ -1,9 +1,12 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
-from apps.bcpp_household_member.models import BaseMemberStatusModel
+
 from ..choices import MOVED_REASON, PLACE_SUBJECT_MOVED
+
+from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectMoved(BaseMemberStatusModel):
