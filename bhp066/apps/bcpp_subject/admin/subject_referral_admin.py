@@ -6,7 +6,7 @@ from edc.export.actions import export_as_csv_action
 
 from ..models import SubjectReferral
 from ..forms import SubjectReferralForm
-from ..filters import SubjectCommunityListFilter
+from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
@@ -30,7 +30,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'in_clinic_flag',
         ]
 
-    list_filter = ['exported', 'in_clinic_flag', SubjectCommunityListFilter, 'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
+    list_filter = ['exported', 'in_clinic_flag', SubjectReferralIsReferredListFilter, SubjectCommunityListFilter, 'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
 
     fields = (
         'subject_visit',
