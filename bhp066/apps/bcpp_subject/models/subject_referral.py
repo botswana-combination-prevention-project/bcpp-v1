@@ -27,17 +27,19 @@ from .cd4_history import Cd4History
 REFERRAL_CODES = (
     ('TST-CD4', 'POS any, need CD4 testing'),
     ('HIV-IND', 'HIV re-test (IND)'),
-    ('MASA', 'Known POS, MASA continued care (on ART, high CD4)'),
-    ('MASA-LO', 'Known POS, MASA continued care (on ART, low CD4)'),
+    ('MASA', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
-    ('MAMO-HI', 'Known POS, not on ART, high CD4)'),
-    ('MAMO-LO', 'Known POS, not on ART, low CD4)'),
     ('SMC-NEG', 'SMC'),
     ('NEG!-PR', 'NEG today, Pregnant'),
     ('POS!-PR', 'POS today, Pregnant'),
+    ('POS#-AN', 'Known POS, Pregnant, on ART (ANC)'),
+    ('POS#-PR', 'Known POS, Pregnant, not on ART'),
     ('POS!-HI', 'POS today, not on ART, high CD4)'),
     ('POS!-LO', 'POS today, not on ART, low CD4)'),
+    ('POS#-HI', 'Known POS, not on ART, high CD4)'),
+    ('POS#-LO', 'Known POS, not on ART, low CD4)'),
     ('NOT-REF', 'Not referred'),
+    ('ERROR', 'Error'),
 )
 
 
@@ -187,7 +189,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         null=True,
         )
 
-    referral_codes = models.CharField(
+    referral_code = models.CharField(
         verbose_name='Referral Code',
         max_length=50,
         choices=REFERRAL_CODES,
@@ -213,7 +215,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0} {1} {2}'.format(self.referral_codes, self.referral_appt_date, self.referral_clinic)
+        return '{0} {1} {2}'.format(self.referral_code, self.referral_appt_date, self.referral_clinic)
 
     def save(self, *args, **kwargs):
         self.update_demographics()
@@ -226,7 +228,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         self.update_pregnant()
         self.update_circumcised()
         self.update_on_art()
-        self.update_referral_codes()
+        self.update_referral_code()
         self.update_urgent_referral()
         super(SubjectReferral, self).save(*args, **kwargs)
 
@@ -347,80 +349,87 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def update_urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals list and sets to true on a match."""
         urgent_referral = False
-        urgent_referral_codes = ['MASA-DEFAULTER', 'CCC-LOW', 'CCC-HIGH', 'HIV', 'CD4']
+        urgent_referral_codes = ['MASA-DF', 'POS!-LO', 'POS#-LO']
         if [code for code in self.get_referral_codes_as_list() if code in urgent_referral_codes]:
             urgent_referral = True
         self.urgent_referral = urgent_referral
 
     def get_referral_codes_as_list(self):
-        return [x for x in self.referral_codes.split(',')]
+        return [x for x in self.referral_code.split(',')]
 
-    def append_to_referral_codes(self, value):
+    def append_to_referral_code(self, value):
         referral_codes = []
         if value:
             referral_codes = [value]
-            if self.referral_codes:
+            if self.referral_code:
                 referral_codes.extend([item for item in self.get_referral_codes_as_list() if item != value])
                 referral_codes.append(value)
         referral_codes.sort()
-        self.referral_codes = ';'.join(referral_codes)
+        self.referral_code = ';'.join(referral_codes)
 
-    def update_referral_codes(self):
+    def update_referral_code(self):
         """Reviews the conditions for referral and sets to the correct referral code.
 
         MASA-LO: On ARVs but CD4 is low. Requires action.
         MASA-HI: On ARVs, CD4 is high.
         MAMO-LO: Not on ARV, low CD4"""
-        self.referral_codes = None
+        self.referral_code = None
         if self.hiv_result:
             if self.hiv_result == 'IND':
-                self.append_to_referral_codes('HIV-IND')
+                self.append_to_referral_code('HIV-IND')
             elif self.hiv_result == 'NEG' and self.pregnant:
-                self.append_to_referral_codes('NEG!-PR')
+                self.append_to_referral_code('NEG!-PR')
             elif self.hiv_result == 'NEG' and self.gender == 'F' and not self.pregnant:
-                self.append_to_referral_codes(None)
+                self.append_to_referral_code(None)
             elif self.hiv_result == 'POS' and self.pregnant and self.on_art == True:
-                self.append_to_referral_codes('ERROR')
+                self.append_to_referral_code('ERROR')
             elif self.hiv_result == 'POS' and self.pregnant and self.on_art == False:
-                self.append_to_referral_codes('POS!-PR')
+                self.append_to_referral_code('POS!-PR')
             elif self.hiv_result == 'POS' and self.pregnant and self.on_art == None:
-                self.append_to_referral_codes('POS!-PR')
+                self.append_to_referral_code('POS!-PR')
             elif self.hiv_result == 'NEG' and self.circumcised == False:
-                self.append_to_referral_codes('SMC-NEG')
+                self.append_to_referral_code('SMC-NEG')
             elif self.hiv_result == 'POS':
                 if self.on_art == True or self.on_art == False:
-                    self.append_to_referral_codes('ERROR')
+                    self.append_to_referral_code('ERROR')
                 elif self.on_art == None:
                     if not self.cd4_result:
-                        self.append_to_referral_codes('TST-CD4')
+                        self.append_to_referral_code('TST-CD4')
                     elif self.cd4_result > 350:
-                        self.append_to_referral_codes('POS!-HI')
+                        self.append_to_referral_code('POS!-HI')
                     elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('POS!-LO')
-        else:
-            if self.last_hiv_result == 'POS':
-                if self.is_defaulter():
-                    self.append_to_referral_codes('MASA-DF')
-                elif self.on_art:
-                    if self.cd4_result > 350:
-                        self.append_to_referral_codes('ERROR')
-                    elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('ERROR')
-                elif not self.on_art:
-                    if not self.cd4_result:
-                        self.append_to_referral_codes('TST-CD4')
-                    elif self.cd4_result > 350:
-                        self.append_to_referral_codes('POS#-HI')
-                    elif self.cd4_result <= 350:
-                        self.append_to_referral_codes('POS#-LO')
+                        self.append_to_referral_code('POS!-LO')
+        elif self.last_hiv_result == 'POS':
+            if self.is_defaulter():
+                self.append_to_referral_code('MASA-DF')
+            elif self.on_art:
+                if self.pregnant:
+                    self.append_to_referral_code('POS#-AN')
+                elif not self.cd4_result:
+                    self.append_to_referral_code('MASA')
+                elif self.cd4_result > 350:
+                    self.append_to_referral_code('ERROR')
+                elif self.cd4_result <= 350:
+                    self.append_to_referral_code('ERROR')
+            elif not self.on_art:
+                if self.pregnant:
+                    self.append_to_referral_code('POS#-PR')
+                elif not self.cd4_result:
+                    self.append_to_referral_code('TST-CD4')
+                elif self.cd4_result > 350:
+                    self.append_to_referral_code('POS#-HI')
+                elif self.cd4_result <= 350:
+                    self.append_to_referral_code('POS#-LO')
 
-        if not self.referral_codes:
-            self.append_to_referral_codes('NOT-REF')
+        if not self.referral_code:
+            self.append_to_referral_code('NOT-REF')
+        if self.referral_code not in [item[0] for item in REFERRAL_CODES]:
+            raise TypeError('Expected referral code to be one of {0}. Got {1}'.format([item[0] for item in REFERRAL_CODES], self.referral_code))
 
     def survey(self):
         return self.subject_visit.household_member.household_structure.survey
     survey.allow_tags = True
-    
+
     def convert_to_nullboolean(self, yes_no_dwta):
         if yes_no_dwta.lower() == 'no':
             return False
@@ -428,7 +437,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             return True
         else:
             return None
-        
+
     def dashboard(self):
         url = reverse('subject_dashboard_url',
                       kwargs={'dashboard_type': self.subject_visit.appointment.registered_subject.subject_type.lower(),
