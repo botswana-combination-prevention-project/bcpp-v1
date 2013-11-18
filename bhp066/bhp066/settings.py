@@ -31,11 +31,11 @@ MAP_DIR = '/Users/django/Sites/bcppstudy/static/img/'
 
 # edc.crytpo_fields encryption keys
 # KEY_PATH = 'keys'
-# KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
 #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/keys'
+#KEY_PATH = '/Volumes/keys'
 
 DB_FILES = {
     'table': 'FILES',
@@ -113,7 +113,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_v129',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -578,9 +578,9 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_extensions',
     'django_databrowse',
-    'storages',
+    #'storages',
     'dajaxice',
-    'storages',
+    #'storages',
     'dajax',
     'south',
 
@@ -652,6 +652,7 @@ INSTALLED_APPS = (
     'edc.subject.subject',
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
+
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
@@ -684,16 +685,17 @@ INSTALLED_APPS = (
     'lis.exim.lab_import_dmis',
 
     'apps.bcpp',
-    'apps.bcpp_lab',
     'apps.bcpp_list',
-    'apps.bcpp_subject',
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
+    'apps.bcpp_subject',
     'apps.bcpp_household_member',
+    'apps.bcpp_lab',
     'apps.bcpp_survey',
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
+
     'tastypie',
 )
 

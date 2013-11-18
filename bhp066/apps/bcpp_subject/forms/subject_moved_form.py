@@ -1,5 +1,5 @@
 from ..models import SubjectMoved
-from .base_membership_form import BaseMembershipForm
+from bcpp_household_member.forms import BaseMembershipForm
 
 
 class SubjectMovedForm(BaseMembershipForm):

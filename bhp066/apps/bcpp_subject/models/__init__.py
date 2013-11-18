@@ -48,12 +48,6 @@ from .hiv_result import HivResult
 from .pregnancy import Pregnancy
 from .non_pregnancy import NonPregnancy
 from .hiv_result_documentation import HivResultDocumentation
-from .subject_refusal import SubjectRefusal
-from .subject_absentee import *
-from .subject_absentee_entry import SubjectAbsenteeEntry
-from .subject_moved import SubjectMoved
-from .subject_undecided import SubjectUndecided
-from .subject_undecided_entry import SubjectUndecidedEntry
 from .subject_referral import SubjectReferral
 from .pima import Pima
 from .cd4_history import Cd4History

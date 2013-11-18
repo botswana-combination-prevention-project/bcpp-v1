@@ -1,20 +1,17 @@
 from datetime import datetime, timedelta
-from dateutils import relativedelta
-from uuid import uuid4
-from django.test import TransactionTestCase, TestCase, SimpleTestCase
+from django.test import TestCase
 from django.db.models import signals
-from django.forms import ValidationError
 from edc.map.classes import Mapper, site_mappers
 from edc.core.bhp_variables.tests.factories import StudySiteFactory
 from edc.subject.appointment_helper.models import prepare_appointments_on_post_save
 from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory
+from apps.bcpp_household.tests.factories import PlotFactory
 
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household.models import HouseholdStructure, Household, Plot
+from apps.bcpp_household.models import HouseholdStructure, Household
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry, SubjectConsent
+from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
+from apps.bcpp_subject.models import SubjectConsent
 
 # from apps.bcpp_subject.tests.factories import SubjectAbsenteeEntryFactory
 from ..views.participation import update_member_status

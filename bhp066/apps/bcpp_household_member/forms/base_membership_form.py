@@ -1,12 +1,13 @@
 from django import forms
+from django.db.models import get_model
+
 from edc.base.form.forms import BaseModelForm
-from ..models import SubjectConsent
 
 
 class BaseMembershipForm(BaseModelForm):
 
     def clean(self):
-
+        SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
         cleaned_data = super(BaseMembershipForm, self).clean()
         if cleaned_data:
             household_member = cleaned_data.get('household_member', None)

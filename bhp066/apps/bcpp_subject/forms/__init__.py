@@ -2,7 +2,6 @@ from .main import *
 from .subject_consent_form import SubjectConsentForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_refusal_form import SubjectRefusalForm
-from .subject_absentee_form import SubjectAbsenteeForm, SubjectAbsenteeEntryForm
 from .subject_undecided_form import SubjectUndecidedForm, SubjectUndecidedEntryForm
 from .subject_moved_form import SubjectMovedForm
 from .subject_referral_form import SubjectReferralForm
