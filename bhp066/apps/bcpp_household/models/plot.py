@@ -342,7 +342,7 @@ class Plot(BaseDispatchSyncUuidModel):
         """Sets the community number to use for the plot identifier."""
         community_number = None
         for commun in BCPP_VILLAGES:
-            if commun[1] == (settings.CURRENT_MAPPER).title():
+            if commun[1] == (site_mappers.get_current_mapper().map_area).title():
                 community_number = commun[0]
                 return community_number
         return community_number
