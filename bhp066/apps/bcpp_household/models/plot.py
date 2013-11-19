@@ -164,6 +164,7 @@ class Plot(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
+    # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
     uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
     
     uploaded_map_17 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
