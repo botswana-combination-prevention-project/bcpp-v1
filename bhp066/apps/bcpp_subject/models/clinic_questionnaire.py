@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp.choices import YES_NO_DWTA, YES_NO, VERBALHIVRESULT_CHOICE
@@ -26,7 +27,7 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         choices=VERBALHIVRESULT_CHOICE,
         help_text="",
         )
-    
+
     on_arv = models.CharField(
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
@@ -35,7 +36,7 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="",
         )
-    
+
     arv_evidence = models.CharField(
         verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
         choices=YES_NO,
