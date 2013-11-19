@@ -5,14 +5,6 @@ from edc.base.form.forms import BaseModelForm
 # from edc.map.exceptions import MapperError
 from ..models import Household
 
-
-# def get_mapper():
-#     mapper = site_mappers.get(settings.CURRENT_MAPPER)
-#     if not mapper:
-#         raise MapperError('Mapper not registered for community {0}.'.format(settings.CURRENT_MAPPER))
-#     return mapper()
-
-
 class HouseholdForm(BaseModelForm):
 
     def clean(self):
