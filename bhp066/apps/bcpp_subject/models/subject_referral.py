@@ -12,6 +12,8 @@ from edc.export.models import ExportTrackingFieldsMixin
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_lab.models import SubjectRequisition
 
+from edc.map.classes import site_mappers
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .circumcision import Circumcision
 from .hiv_care_adherence import HivCareAdherence
@@ -23,6 +25,7 @@ from .reproductive_health import ReproductiveHealth
 from .subject_consent import SubjectConsent
 from .cd4_history import Cd4History
 
+site_mappers.autodiscover()
 
 REFERRAL_CODES = (
     ('TST-CD4', 'POS, need CD4 testing'),
@@ -57,7 +60,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     referral_clinic = models.CharField(
         max_length=50,
         choices=COMMUNITIES,
-        default=settings.CURRENT_MAPPER,
+        default=site_mappers.get_current_mapper().map_area,
         )
 
     referral_clinic_other = models.CharField(
