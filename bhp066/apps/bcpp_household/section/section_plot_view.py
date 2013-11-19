@@ -20,7 +20,7 @@ class SectionPlotView(BaseSectionView):
     search = [PlotSearchByWord, PlotSearchByGps]
 
     def contribute_to_context(self, context, request, *args, **kwargs):
-        current_community = settings.CURRENT_MAPPER
+        current_community = site_mappers.get_current_mapper().map_area
         context.update({
             'current_survey': Survey.objects.current_survey(),
             'current_community': self.get_current_community(),
@@ -29,6 +29,6 @@ class SectionPlotView(BaseSectionView):
         return context
 
     def get_current_community(self):
-        return settings.CURRENT_MAPPER
+        return site_mappers.get_current_mapper().map_area
 
 site_sections.register(SectionPlotView)
