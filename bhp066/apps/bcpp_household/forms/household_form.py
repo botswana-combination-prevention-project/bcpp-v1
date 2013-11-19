@@ -1,15 +1,15 @@
 from django import forms
 # from django.conf import settings
 from edc.base.form.forms import BaseModelForm
-# from edc.map.classes import site_mappers
+#from edc.map.classes import site_mappers
 # from edc.map.exceptions import MapperError
 from ..models import Household
 
 
 # def get_mapper():
-#     mapper = site_mappers.get(settings.CURRENT_MAPPER)
+#     mapper = site_mappers.get(site_mappers.get_current_mapper().map_code)
 #     if not mapper:
-#         raise MapperError('Mapper not registered for community {0}.'.format(settings.CURRENT_MAPPER))
+#         raise MapperError('Mapper not registered for community {0}.'.format(site_mappers.get_current_mapper().map_code))
 #     return mapper()
 
 
