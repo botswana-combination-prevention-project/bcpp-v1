@@ -187,7 +187,7 @@ else:
                                    'DATABASE=BHPLAB')
 VAR_ROOT = '/var'
 LOGGING = logger.LOGGING
-CURRENT_MAPPER = 'mochudi'
+CURRENT_COMMUNITY = 'mochudi'
 CURRENT_SURVEY = 'baseline'
 
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
