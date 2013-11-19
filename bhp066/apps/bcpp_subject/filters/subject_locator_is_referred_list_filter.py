@@ -19,8 +19,10 @@ class SubjectLocatorIsReferredListFilter(SimpleListFilter):
             for qs in queryset:
                 if SubjectReferral.objects.filter(subject_visit__appointment__registered_subject__subject_identifier=qs.get_subject_identifier()).exclude(referral_code__in=['NOT-REF', 'ERROR']):
                     locators.append(qs.get_subject_identifier())
+            queryset = SubjectLocator.objects.filter(subject_visit__appointment__registered_subject__subject_identifier__in=locators)
         if self.value() == False:
             for qs in queryset:
                 if SubjectReferral.objects.filter(subject_visit__appointment__registered_subject__subject_identifier=qs.get_subject_identifier(), referral_code__in=['NOT-REF', 'ERROR']):
                     locators.append(qs.get_subject_identifier())
-        return SubjectLocator.objects.filter(subject_visit__appointment__registered_subject__subject_identifier__in=locators)
+            queryset = SubjectLocator.objects.filter(subject_visit__appointment__registered_subject__subject_identifier__in=locators)
+        return queryset
