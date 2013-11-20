@@ -115,6 +115,8 @@ class BcppDispatchController(DispatchController):
         HouseholdMember = get_model('bcpp_household_member', 'householdmember')
         self.dispatch_list_models('bcpp_household')
         self.dispatch_list_models('bcpp_subject')
+        self.dispatch_crypt()
+        self.dispatch_registered_subjects()
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
             #self.dispatch_user_container_as_json(plot)
