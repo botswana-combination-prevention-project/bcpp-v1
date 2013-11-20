@@ -4,7 +4,7 @@ from ._utils import mysql_db
 
 DEBUG = True
 
-DEVICE_ID = '99'
+DEVICE_ID = '32'
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -15,5 +15,6 @@ LOCALE_PATHS = ('locale', )
 DATABASES = {
     'default': mysql_db(NAME='bhp066'),
     'lab_api': mysql_db(NAME='lab', HOST='192.168.1.50'),
-    'bcpp022-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.51'),
+    'bcpp038-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.174'),
+    'bcpp035-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.216'),
 }
