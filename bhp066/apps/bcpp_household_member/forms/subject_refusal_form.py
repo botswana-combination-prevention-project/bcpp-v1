@@ -1,5 +1,5 @@
 from ..models import SubjectRefusal
-from bcpp_household_member.forms import BaseMembershipForm
+from .base_membership_form import BaseMembershipForm
 
 
 class SubjectRefusalForm(BaseMembershipForm):
