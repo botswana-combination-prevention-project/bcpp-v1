@@ -2,7 +2,10 @@ from datetime import datetime
 
 from edc.map.classes import Mapper, site_mappers
 
-from apps.bcpp_subject.tests.factories import SubjectReferralFactory, ReproductiveHealthFactory, HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory, PimaFactory
+from apps.bcpp_subject.tests.factories import (SubjectReferralFactory, ReproductiveHealthFactory,
+                                               HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
+                                               PimaFactory, HivTestingHistoryFactory, HivTestReviewFactory,
+                                               Cd4HistoryFactory)
 
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 
@@ -32,77 +35,112 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('HIV', subject_referral.referral_codes)
+        self.assertIn('HIV-IND', subject_referral.referral_code)
 
-    def tests_referred_hiv_urgent(self):
-        """if IND refer for HIV testing"""
-        report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='IND')
-        subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
-            report_datetime=report_datetime)
-        self.assertTrue(subject_referral.urgent_referral)
-
-    def tests_referred_neg_male(self):
-        """if NEG and male, refer for SMC"""
+    def tests_referred_smc1(self):
+        """if NEG and male and NOT circumcised, refer for SMC"""
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('SMC', subject_referral.referral_codes)
+        self.assertIn('SMC-NEG', subject_referral.referral_code)
+
+    def tests_referred_smc2(self):
+        """if NEG and male and NOT circumcised, do not refer for SMC"""
+        report_datetime = datetime.today()
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertNotIn('SMC-NEG', subject_referral.referral_code)
+
+    def tests_referred_smc3(self):
+        """if new POS and male and NOT circumcised, do not refer for SMC"""
+        report_datetime = datetime.today()
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertNotIn('SMC', subject_referral.referral_code)
 
     def tests_referred_neg_female_pregnant(self):
-        """if NEG and female, and pregnant"""
+        """if NEG and female, and not pregnant, do not refer"""
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='NEG')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='No')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertIn('NOT_REFERRED', subject_referral.referral_codes)
+        self.assertIn('NOT-REF', subject_referral.referral_code)
 
     def tests_referred_pos_female_pregnant(self):
-        """if POS and female, and pregnant"""
+        """if POS and female, pregnant, on-arv, refer ANC-POS"""
         report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS')
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertIn('ANC-POS', subject_referral.referral_codes)
+        self.assertIn('POS#-AN', subject_referral.referral_code)
 
     def tests_referred_pos_female_pregnant2(self):
-        """if POS and female, and pregnant"""
+        """if newly POS and female, and pregnant, refer"""
+        report_datetime = datetime.today()
+        HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS')
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('POS!-PR', subject_referral.referral_code)
+
+    def tests_referred_masa_monitoring1(self):
+        """if known POS, on ART,  Cd4 lo, refer as MASA monitoring low"""
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
+        Cd4HistoryFactory(subject_visit=self.subject_visit_female, last_cd4_count=349)
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('POS#-PR', subject_referral.referral_code)
+
+    def tests_referred_masa_monitoring2(self):
+        """if known POS, on ART,  Cd4 hi, refer as MASA monitoring hi"""
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
+        Cd4HistoryFactory(subject_visit=self.subject_visit_female, last_cd4_count=351)
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('TST-CD4', subject_referral.referral_code)
+
+    def tests_referred_pos_female_pregnant3(self):
+        """if POS and female, and pregnant, refer ANC-POS"""
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertIn('ANC-POS', subject_referral.referral_codes)
+        self.assertIn('POS!-PR', subject_referral.referral_code)
 
     def tests_referred_neg_female(self):
-        """if NEG and female, no referral"""
+        """if NEG and female, refer ANC-NEG"""
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='NEG')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertEquals('ANC-NEG', subject_referral.referral_codes)
-
-    def tests_referred_pos_female_pregnant3(self):
-        """if POS and female, and pregnant"""
-        report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS')
-        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
-        subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_female,
-            report_datetime=report_datetime)
-        self.assertIn('ANC-POS', subject_referral.referral_codes)
+        self.assertEquals('NEG!-PR', subject_referral.referral_code)
 
     def tests_referred_cd4(self):
         """if POS but no other data, refer for CD4"""
@@ -111,41 +149,83 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('CD4', subject_referral.referral_codes)
+        self.assertIn('TST-CD4', subject_referral.referral_code)
 
-    def tests_referred_cd4_urgent(self):
-        """if POS but no other data, refer for CD4"""
+    def tests_referred1(self):
+        """if known POS, high PIMA CD4 and art unknown, """
         report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
+        PimaFactory(subject_visit=self.subject_visit_female, cd4_value=351, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('POS#-HI', subject_referral.referral_code)
+
+    def tests_referred2(self):
+        """if known POS, low PIMA CD4 and art unknown, """
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
+        PimaFactory(subject_visit=self.subject_visit_female, cd4_value=349, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('POS#-LO', subject_referral.referral_code)
+
+    def tests_referred3(self):
+        """if known NEG, high PIMA CD4 and art unknown, female"""
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='NEG')
+        PimaFactory(subject_visit=self.subject_visit_female, cd4_value=351, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('NOT-REF', subject_referral.referral_code)
+
+    def tests_referred4(self):
+        """if new POS, high PIMA CD4 and art unknown, """
+        report_datetime = datetime.today()
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=351, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('POS!-HI', subject_referral.referral_code)
+
+    def tests_referred5(self):
+        """if new POS, low PIMA CD4 and art unknown, """
+        report_datetime = datetime.today()
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('POS!-LO', subject_referral.referral_code)
+
+    def tests_referred_urgent1(self):
+        """if existing POS, low PIMA CD4 and art unknown, urgent referral"""
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='POS')
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertTrue(subject_referral.urgent_referral)
 
-    def tests_referred_ccc1(self):
-        """if POS, high CD4 and art unknown, """
+    def tests_referred_urgent2(self):
+        """if existing POS, low PIMA CD4 and art no, urgent referral"""
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='POS')
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertTrue(subject_referral.urgent_referral)
+
+    def tests_referred_urgent3(self):
+        """if new POS, low PIMA CD4 and art unknown, urgent referral"""
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
-        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=350, report_datetime=datetime.today())
-        subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
-            report_datetime=report_datetime)
-        self.assertIn('CCC', subject_referral.referral_codes)
-
-    def tests_referred_ccc2(self):
-        """if POS, low CD4 and art unknown, """
-        report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
-        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
-        subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
-            report_datetime=report_datetime)
-        self.assertIn('CCC-LOW', subject_referral.referral_codes)
-
-    def tests_referred_ccc2_urgent(self):
-        """if POS, low CD4 and art unknown, urgent referral"""
-        report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
@@ -153,7 +233,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         self.assertTrue(subject_referral.urgent_referral)
 
     def tests_referred_ccc3(self):
-        """if pos, high CD4 and not on art, """
+        """if new pos, high PIMA CD4 and not on art, """
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
@@ -161,10 +241,10 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('CCC-HIGH', subject_referral.referral_codes)
+        self.assertIn('ERROR', subject_referral.referral_code)
 
     def tests_referred_masa1(self):
-        """if pos, low CD4 and not on art, """
+        """if new pos, low PIMA CD4 and not on art, """
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
@@ -172,21 +252,10 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('CCC-LOW', subject_referral.referral_codes)
-
-    def tests_referred_masa1_urgent(self):
-        """if pos, low CD4 and not on art, should be urgent"""
-        report_datetime = datetime.today()
-        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
-        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
-        subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
-            report_datetime=report_datetime)
-        self.assertTrue(subject_referral.urgent_referral)
+        self.assertIn('ERROR', subject_referral.referral_code)
 
     def tests_referred_masa2(self):
-        """if pos, high CD4 and on art, """
+        """if new pos, high PIMA CD4 and on art, """
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
@@ -194,7 +263,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA-HIGH', subject_referral.referral_codes)
+        self.assertIn('ERROR', subject_referral.referral_code)
 
     def tests_referred_masa3(self):
         """if pos, low CD4 and on art, """
@@ -205,10 +274,10 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA-LOW', subject_referral.referral_codes)
+        self.assertIn('ERROR', subject_referral.referral_code)
 
     def tests_referred_masa4(self):
-        """if pos and defaulter """
+        """should not be asking for arv info on unknown status """
         report_datetime = datetime.today()
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
@@ -216,16 +285,14 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA-DEFAULTER', subject_referral.referral_codes)
+        self.assertIn('ERROR', subject_referral.referral_code)
 
-""" If HIV positive on ART
-    - record date of next scheduled refill or clinic visit (should be recorded on OPD card)
-    - record clinic to be attended
-
-If HIV positive not on ART
-- record date of scheduled clinic visit (should be within 1wk if possible and on the next available ART clinic day)
-- record date of clinic to be attended
-
-If HIV negative
-- record date for scheduled counseling regarding SMC
-- record location of referral for SMC counseling"""
+    def tests_referred_masa5(self):
+        """if pos and defaulter """
+        report_datetime = datetime.today()
+        HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No', arv_evidence='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertIn('MASA-DF', subject_referral.referral_code)
