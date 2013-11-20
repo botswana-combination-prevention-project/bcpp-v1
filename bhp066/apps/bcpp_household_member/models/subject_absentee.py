@@ -30,7 +30,7 @@ class SubjectAbsentee(BaseMemberStatusModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        db_table = 'bcpp_subject_subjectabsenteeentry'
+        db_table = 'bcpp_subject_subjectabsentee'
         verbose_name = "Subject Absentee"
         verbose_name_plural = "Subject Absentee"
         unique_together = ('registered_subject', 'survey',)
