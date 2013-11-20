@@ -23,6 +23,7 @@ TEMPLATE_DIRS = (
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
+DEFAULT_FILE_STORAGE = 'database_files.storage.DatabaseStorage'
 
 MANAGERS = ADMINS
 
@@ -88,6 +89,12 @@ STATIC_URL = '/static/'
 # A list of locations of additional static files
 STATICFILES_DIRS = ()
 
+#Map images storage table with blob field
+DB_FILES = {
+    'table': 'FILES',
+    'base_url': 'http://localhost/dbfiles/'
+}
+
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
@@ -142,6 +149,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_extensions',
     'django_databrowse',
+    'storages',
     'dajaxice',
     'dajax',
     'south',
@@ -301,7 +309,7 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-CURRENT_COMMUNITY = 'otse'
+CURRENT_COMMUNITY = 'gaborone'
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'

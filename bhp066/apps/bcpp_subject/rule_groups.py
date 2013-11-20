@@ -184,7 +184,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
-#    confirms therapy then requires pima form
+#   confirms therapy then requires pima form ???????? Or does it mean, on therapy, no pima????
     arv_evidence = ScheduledDataRule(
         logic=Logic(
             predicate=('arv_evidence', 'equals', 'Yes'),
@@ -200,7 +200,7 @@ site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
 class TodaysHivRuleGroup(RuleGroup):
-#    confirms pima required only when HIV result from today is positive
+#   confirms pima required only when HIV result from today is positive
     hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=('hiv_result', 'equals', 'POS'),
