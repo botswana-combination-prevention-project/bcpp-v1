@@ -164,11 +164,12 @@ class Plot(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
-    #uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
-    
-    #uploaded_map_17 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
-    
-    #uploaded_map_18 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
+    uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+
+    uploaded_map_17 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+
+    uploaded_map_18 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
 
     community = models.CharField(
         max_length=25,
@@ -342,7 +343,7 @@ class Plot(BaseDispatchSyncUuidModel):
         """Sets the community number to use for the plot identifier."""
         community_number = None
         for commun in BCPP_VILLAGES:
-            if commun[1] == (settings.CURRENT_COMMUNITY).title():
+            if commun[1] == (site_mappers.get_current_mapper().map_area).title():
                 community_number = commun[0]
                 return community_number
         return community_number
