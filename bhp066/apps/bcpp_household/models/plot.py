@@ -28,6 +28,7 @@ def is_valid_community(self, value):
         if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
+
 class Plot(BaseDispatchSyncUuidModel):
 
     plot_identifier = models.CharField(
@@ -144,6 +145,11 @@ class Plot(BaseDispatchSyncUuidModel):
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
+<<<<<<< HEAD
+=======
+    distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
+
+>>>>>>> master
     selected = models.CharField(
         max_length=25,
         null=True,
@@ -231,11 +237,12 @@ class Plot(BaseDispatchSyncUuidModel):
             self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+            self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
         self.action = self.get_action()
-
         if self.id:
             self.household_count = self.create_or_delete_households(self)
-        if (self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or (self.household_count and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']):
+        if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
+                (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
