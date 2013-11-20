@@ -31,10 +31,10 @@ MAP_DIR = '/Users/django/Sites/bcppstudy/static/img/'
 
 # edc.crytpo_fields encryption keys
 # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-KEY_PATH = 'keys'
+#KEY_PATH = 'keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/keys'
 
 DB_FILES = {
@@ -44,7 +44,7 @@ DB_FILES = {
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
-if 'test' in sys.argv:
+if True:#'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
     if testing_db_name == 'sqlite':
@@ -113,7 +113,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_master',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -582,7 +582,7 @@ INSTALLED_APPS = (
     'dajaxice',
     #'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
 
