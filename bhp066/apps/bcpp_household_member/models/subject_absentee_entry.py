@@ -32,7 +32,7 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        db_table = 'bcpp_subject_subjectentry'
+        db_table = 'bcpp_subject_subjectabsenteeentry'
         verbose_name = "Subject Absentee Entry"
         verbose_name_plural = "Subject Absentee Entry"
         unique_together = ('subject_absentee', 'report_datetime')
