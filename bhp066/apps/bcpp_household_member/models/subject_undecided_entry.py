@@ -28,5 +28,6 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
     natural_key.dependencies = ['bcpp_subject.subjectundecided']
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_household_member'
+        db_table = 'bcpp_subject_subjectundecidedentry'
         unique_together = ('subject_undecided', 'report_datetime')
