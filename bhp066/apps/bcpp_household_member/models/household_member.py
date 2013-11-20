@@ -227,7 +227,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def _get_form_url(self, model_name):
         url = ''
         pk = None
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_household_member'
         if not self.registered_subject:
             self.save()
         Model = models.get_model(app_label, model_name)
