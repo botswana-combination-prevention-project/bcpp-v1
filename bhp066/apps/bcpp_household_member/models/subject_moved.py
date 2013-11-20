@@ -60,7 +60,8 @@ class SubjectMoved(BaseMemberStatusModel):
         super(SubjectMoved, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_household_member'
+        db_table = 'bcpp_subject_subjectmoved'
         verbose_name = "Subject Moved"
         verbose_name_plural = "Subject Moved"
         ordering = ['household_member']
