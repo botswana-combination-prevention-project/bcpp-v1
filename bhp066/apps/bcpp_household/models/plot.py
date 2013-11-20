@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from database_storage import DatabaseStorage 
+from database_storage import DatabaseStorage
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.device.classes import Device
@@ -27,6 +27,7 @@ def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""
         if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
+
 
 class Plot(BaseDispatchSyncUuidModel):
 
@@ -143,7 +144,9 @@ class Plot(BaseDispatchSyncUuidModel):
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
-    
+
+    distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
+
     selected = models.CharField(
         max_length=25,
         null=True,
@@ -166,10 +169,10 @@ class Plot(BaseDispatchSyncUuidModel):
 
     # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
     uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
-    
-    uploaded_map_17 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
-    
-    uploaded_map_18 =  models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+
+    uploaded_map_17 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+
+    uploaded_map_18 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
 
     community = models.CharField(
         max_length=25,
@@ -230,13 +233,14 @@ class Plot(BaseDispatchSyncUuidModel):
             self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+            self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
         self.action = self.get_action()
-
         if self.id:
             self.household_count = self.create_or_delete_households(self)
-            #if self.household_count > 0:
+            # if self.household_count > 0:
             #    self.status = 'occupied'  # TODO: or maybe cancel the save
-        if (self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or (self.household_count and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']):
+        if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
+                (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
@@ -355,11 +359,11 @@ class Plot(BaseDispatchSyncUuidModel):
         from apps.bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
-    
+
     def bypass_for_edit_dispatched_as_item(self):
         return True
-    
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-plot_identifier', ]
-        unique_together = (('gps_target_lat', 'gps_target_lon'), )
+        unique_together = (('gps_target_lat', 'gps_target_lon'),)
