@@ -53,3 +53,4 @@ from .pima import Pima
 from .cd4_history import Cd4History
 from .subject_consent_history import SubjectConsentHistory
 from .clinic_questionnaire import ClinicQuestionnaire
+from .base_household_member_consent import BaseHouseholdMemberConsent
