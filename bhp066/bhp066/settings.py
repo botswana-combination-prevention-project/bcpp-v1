@@ -44,7 +44,7 @@ DB_FILES = {
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
-if True:#'test' in sys.argv:
+if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
     if testing_db_name == 'sqlite':
