@@ -6,7 +6,7 @@ from edc.export.actions import export_as_csv_action
 
 from ..models import SubjectReferral
 from ..forms import SubjectReferralForm
-from ..filters import SubjectCommunityListFilter
+from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
@@ -23,26 +23,26 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'dashboard',
-        'referral_codes',
+        'referral_code',
         'referral_appt_date',
         'exported',
         'exported_datetime',
         'in_clinic_flag',
         ]
 
-    list_filter = ['exported', 'in_clinic_flag', SubjectCommunityListFilter, 'referral_codes', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
+    list_filter = ['exported', 'in_clinic_flag', SubjectReferralIsReferredListFilter, SubjectCommunityListFilter, 'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
 
     fields = (
         'subject_visit',
         'report_datetime',
-        'referral_codes',
+        'referral_code',
         'referral_appt_date',
         'referral_clinic',
         'comment'
         )
 
     radio_fields = {
-        "referral_codes": admin.VERTICAL,
+        "referral_code": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
         }
 
@@ -56,7 +56,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
                      'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
-                     'gender': self.visit_model_foreign_key + '__appointment__registered_subject__gender',
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
                      'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',

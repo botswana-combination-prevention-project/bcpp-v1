@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-12 10:48+0200\n"
-"PO-Revision-Date: 2013-11-12 10:53+0200\n"
+"POT-Creation-Date: 2013-11-18 12:49+0200\n"
+"PO-Revision-Date: 2013-11-18 12:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: tn\n"
@@ -3375,6 +3375,28 @@ msgstr "Lebaka legolo la gore o bo o dirile loara la borre ke lefe?"
 msgid "Are you circumcised?"
 msgstr "A o dirile loaro la borre?"
 
+#: apps/bcpp_subject/models/clinic_questionnaire.py:13
+msgid "Do you know your current HIV status?"
+msgstr "A o itse seemo sa gago sa HIV?"
+
+#: apps/bcpp_subject/models/clinic_questionnaire.py:22
+msgid "Please tell me your current HIV status?"
+msgstr "Ke kopa go itse seemo sa gago sa HIV mo bogompienong?"
+
+#: apps/bcpp_subject/models/clinic_questionnaire.py:31
+#: apps/bcpp_subject/models/hiv_care_adherence.py:85
+msgid "Are you currently taking antiretroviral therapy (ARVs)?"
+msgstr "A mo bo gompienong o tsaya melemo ya diritibatsi?"
+
+#: apps/bcpp_subject/models/clinic_questionnaire.py:40
+#: apps/bcpp_subject/models/hiv_care_adherence.py:131
+msgid ""
+"Is there evidence [OPD card, tablets, masa number] that the participant is "
+"on therapy?"
+msgstr ""
+"A go na le bosupi [OPD card, tablets, masa number] jwa gore mo tsayakarolo o "
+"nwa/tsaya diritibatsi?"
+
 #: apps/bcpp_subject/models/community_engagement.py:15
 msgid ""
 "How active are you in community activities such as burial society, Motshelo, "
@@ -3619,10 +3641,6 @@ msgstr "Lebaka legolo ke eng o sa simolola di-ARV?"
 msgid "When did you first start taking antiretroviral therapy (ARVs)?"
 msgstr "O simolotse go tsaya melemo ya diritibatsi(di-ARV) lantlha leng?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:85
-msgid "Are you currently taking antiretroviral therapy (ARVs)?"
-msgstr "A mo bo gompienong o tsaya melemo ya diritibatsi?"
-
 #: apps/bcpp_subject/models/hiv_care_adherence.py:92
 msgid "When did you stop taking ARV's?"
 msgstr "O ne wa emisa leng go tsaya melemo ya diritibatsi (ARV's)?"
@@ -3646,14 +3664,6 @@ msgid ""
 msgstr ""
 "Fa o akanya ka beke tse nne tse di fetileng, fa o akanyetsa o ka kala "
 "bokgoni jwa gago jang go tsaya melemo ya gago yotlhe jaaka o laetswe?"
-
-#: apps/bcpp_subject/models/hiv_care_adherence.py:131
-msgid ""
-"Is there evidence [OPD card, tablets, masa number] that the participant is "
-"on therapy?"
-msgstr ""
-"A go na le bosupi [OPD card, tablets, masa number] jwa gore mo tsayakarolo o "
-"nwa/tsaya diritibatsi?"
 
 #: apps/bcpp_subject/models/hiv_health_care_costs.py:16
 msgid "Have you ever received HIV related medical/clinical care? "

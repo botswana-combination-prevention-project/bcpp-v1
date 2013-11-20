@@ -95,3 +95,19 @@ class SubjectConsent(BaseSubjectConsent):
     class Meta:
         app_label = 'bcpp_subject'
         unique_together = ('subject_identifier', 'survey')
+
+
+# research blood draw consent
+class SubjectConsentRbd(BaseSubjectConsent):
+
+    history = AuditTrail()
+    
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+    
+    class Meta:
+        app_label = 'bcpp_subject'
+        verbose_name = 'Blood Draw Consent'
+        verbose_name_plural = 'Blood Draw Consent'
+        unique_together = ('subject_identifier', 'survey')
+

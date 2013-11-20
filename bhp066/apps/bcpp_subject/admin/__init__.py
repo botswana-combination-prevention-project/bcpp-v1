@@ -28,7 +28,7 @@ from .residency_mobility_admin import ResidencyMobilityAdmin
 from .sexual_behaviour_admin import SexualBehaviourAdmin
 from .stigma_admin import StigmaAdmin
 from .stigma_opinion_admin import StigmaOpinionAdmin
-from .subject_consent_admin import SubjectConsentAdmin
+from .subject_consent_admin import SubjectConsentAdmin, SubjectConsentRbdAdmin
 from .subject_death_admin import SubjectDeathAdmin
 from .subject_locator_admin import SubjectLocatorAdmin
 from .subject_moved_admin import SubjectMovedAdmin
@@ -37,3 +37,4 @@ from .subject_refusal_admin import SubjectRefusalAdmin
 from .subject_undecided_admin import *
 from .subject_visit_admin import SubjectVisitAdmin
 from .hiv_result_documentation_admin import HivResultDocumentationAdmin
+from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
