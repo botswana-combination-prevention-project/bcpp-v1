@@ -25,3 +25,6 @@ six==1.3.0
 splinter==0.5.4
 wsgiref==0.1.2
 gitpython==0.3.2.RC1
+django-storages==1.1.8
+pil==1.1.7
+django-database-storage==0.1.2
