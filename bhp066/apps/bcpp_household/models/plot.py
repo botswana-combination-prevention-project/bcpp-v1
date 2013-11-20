@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from database_storage import DatabaseStorage
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.device.classes import Device
@@ -26,7 +27,6 @@ def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""
         if value.lower() not in [l.lower() for l in site_mappers.get_as_list()]:
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
-
 
 class Plot(BaseDispatchSyncUuidModel):
 
@@ -164,12 +164,12 @@ class Plot(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
-    uploaded_map = models.CharField(
-        verbose_name="filename of uploaded map",
-        max_length=25,
-        null=True,
-        blank=True,
-        )
+    # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
+    uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+
+    uploaded_map_17 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+
+    uploaded_map_18 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
 
     community = models.CharField(
         max_length=25,
@@ -196,7 +196,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     status = models.CharField(
         verbose_name='Plot status',
-        max_length=15,
+        max_length=35,
         null=True,
         choices=PLOT_STATUS,
         )
@@ -235,11 +235,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
         if self.id:
             self.household_count = self.create_or_delete_households(self)
-            if self.household_count > 0:
-                self.status = 'occupied'  # TODO: or maybe cancel the save
-            #elif self.status == 'occupied' and self.household_count == 0:
-                #self.household_count = 1  # because you might be editing plot before having updated any logs or members.
-        if (self.household_count == 0 and self.status == 'occupied') or (self.household_count and not self.status == 'occupied'):
+        if (self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or (self.household_count and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
@@ -293,7 +289,7 @@ class Plot(BaseDispatchSyncUuidModel):
         if instance.status:
             if instance.status not in [item[0] for item in PLOT_STATUS]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        if instance.status == 'occupied' and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
+        if instance.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'] and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
             while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
                 instance.create_household(instance)
             number_of_households = Household.objects.filter(plot__pk=instance.pk).count()
@@ -346,7 +342,7 @@ class Plot(BaseDispatchSyncUuidModel):
         """Sets the community number to use for the plot identifier."""
         community_number = None
         for commun in BCPP_VILLAGES:
-            if commun[1] == (settings.CURRENT_COMMUNITY).title():
+            if commun[1] == (site_mappers.get_current_mapper().map_area).title():
                 community_number = commun[0]
                 return community_number
         return community_number
@@ -359,7 +355,10 @@ class Plot(BaseDispatchSyncUuidModel):
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-plot_identifier', ]
-        unique_together = (('gps_target_lat', 'gps_target_lon'), )
+        unique_together = (('gps_target_lat', 'gps_target_lon'),)
