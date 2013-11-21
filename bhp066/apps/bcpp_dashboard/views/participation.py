@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from apps.bcpp_dashboard.views import household_dashboard
 from apps.bcpp_household_member.forms import ParticipationForm
 from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_subject.models import SubjectAbsentee, SubjectAbsenteeEntry
+from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
 
 

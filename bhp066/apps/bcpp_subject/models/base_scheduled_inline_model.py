@@ -1,9 +1,13 @@
 from datetime import datetime
+
 from django.db import models
 from django.core.exceptions import ImproperlyConfigured
+
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.subject.consent.models import BaseConsentedUuidModel
+
 from apps.bcpp_household.models import Plot
+
 from .subject_visit import SubjectVisit
 
 

@@ -1,9 +1,12 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
-from apps.bcpp_household_member.models import BaseMemberStatusModel
+
 from ..choices import MOVED_REASON, PLACE_SUBJECT_MOVED
+
+from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectMoved(BaseMemberStatusModel):
@@ -57,7 +60,8 @@ class SubjectMoved(BaseMemberStatusModel):
         super(SubjectMoved, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_household_member'
+        db_table = 'bcpp_subject_subjectmoved'
         verbose_name = "Subject Moved"
         verbose_name_plural = "Subject Moved"
         ordering = ['household_member']
