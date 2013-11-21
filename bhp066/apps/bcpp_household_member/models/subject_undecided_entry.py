@@ -1,7 +1,10 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
-from apps.bcpp_subject.choices import UNDECIDED_REASON
-from apps.bcpp_subject.managers import SubjectUndecidedEntryManager
+
+from ..choices import UNDECIDED_REASON
+from ..managers import SubjectUndecidedEntryManager
+
 from .base_subject_entry import BaseSubjectEntry
 from .subject_undecided import SubjectUndecided
 
@@ -25,5 +28,6 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
     natural_key.dependencies = ['bcpp_subject.subjectundecided']
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_household_member'
+        db_table = 'bcpp_subject_subjectundecidedentry'
         unique_together = ('subject_undecided', 'report_datetime')
