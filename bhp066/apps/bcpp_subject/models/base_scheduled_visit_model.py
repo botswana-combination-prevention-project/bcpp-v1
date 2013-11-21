@@ -1,10 +1,14 @@
 from datetime import datetime
 from django.db import models
+
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.subject.consent.models import BaseConsentedUuidModel
 from edc.audit.audit_trail import AuditTrail
+
 from apps.bcpp_household.models import Plot
+
 from ..managers import ScheduledModelManager
+
 from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
 

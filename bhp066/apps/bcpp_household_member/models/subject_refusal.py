@@ -5,7 +5,8 @@ from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
 
 from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from apps.bcpp_household_member.models import BaseMemberStatusModel
+
+from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectRefusal (BaseMemberStatusModel):
@@ -57,7 +58,8 @@ class SubjectRefusal (BaseMemberStatusModel):
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = "bcpp_subject"
+        app_label = "bcpp_household_member"
+        db_table = 'bcpp_subject_subjectrefusal'
         verbose_name = "Refusal Log"
         verbose_name_plural = "Refusal Log"
         ordering = ['household_member']
