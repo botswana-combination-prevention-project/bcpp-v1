@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.choices.common import YES_NO
-from apps.bcpp_household_member.models import BaseHouseholdMemberConsent
+
+from apps.bcpp_subject.models import BaseHouseholdMemberConsent
+
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
