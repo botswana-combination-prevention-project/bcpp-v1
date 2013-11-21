@@ -104,8 +104,9 @@
                {% if household_member.member_status == 'ABSENT' %}
                Absentee log (attempts to contact)
                    
-                    {% for ansentee in household_member.absentee_form_label%}
-                    <A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><ol>{% for label in household_member.absentee_form_label%}<li>{{ label }}{% endfor %}</ol></A>
+                    {% for ansentee in household_member.absentee_form_label %}
+                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><ol>{% for label in household_member.absentee_form_label %}<li>{{ label }}{% endfor %}</ol></A>
+                    {% endfor %}
                {% elif household_member.member_status == 'REFUSED' %}
                     <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
