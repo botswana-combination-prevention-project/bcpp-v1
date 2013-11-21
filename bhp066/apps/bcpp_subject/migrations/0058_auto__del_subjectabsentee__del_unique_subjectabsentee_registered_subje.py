@@ -8,31 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Removing unique constraint on 'SubjectAbsenteeEntry', fields ['subject_absentee', 'report_datetime']
-        db.delete_unique(u'bcpp_subject_subjectabsenteeentry', ['subject_absentee_id', 'report_datetime'])
-
-        # Removing unique constraint on 'SubjectAbsentee', fields ['registered_subject', 'survey']
-        db.delete_unique(u'bcpp_subject_subjectabsentee', ['registered_subject_id', 'survey_id'])
-
-        # Deleting model 'SubjectAbsentee'
-        db.delete_table(u'bcpp_subject_subjectabsentee')
-
-        # Deleting model 'SubjectAbsenteeEntryAudit'
-        db.delete_table(u'bcpp_subject_subjectabsenteeentry_audit')
-
-        # Deleting model 'SubjectAbsenteeAudit'
-        db.delete_table(u'bcpp_subject_subjectabsentee_audit')
-
-        # Deleting model 'SubjectAbsenteeEntry'
-        db.delete_table(u'bcpp_subject_subjectabsenteeentry')
-
-
-        # Changing field 'SubjectReferral.cd4_result'
-        db.alter_column(u'bcpp_subject_subjectreferral', 'cd4_result', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2))
-
-        # Changing field 'SubjectReferralAudit.cd4_result'
-        db.alter_column(u'bcpp_subject_subjectreferral_audit', 'cd4_result', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2))
-
+        pass
     def backwards(self, orm):
         # Adding model 'SubjectAbsentee'
         db.create_table(u'bcpp_subject_subjectabsentee', (
