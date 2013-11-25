@@ -1,0 +1,93 @@
+{% extends "section.html"%}
+
+{% block breadcrumbs %}
+
+    <div class="breadcrumbs">
+        <a href="/{{ home }}">Home</a>
+        &rsaquo; Operational Report
+    </div>
+    
+{% endblock %}
+
+
+{% block content %}
+
+<form action="/reports/operational/">
+	<table>
+		<tr>
+			<td>
+			Community
+			</td>
+			<td>
+				<select name="community">
+					{% for community in communities%}
+						<option value={{community}}>{{community}}</option> 
+					{% endfor %}
+				</select>
+			</td>
+			<td>
+			Date from:
+			</td>
+			<td>
+				<input name="date_from" value="YYYY/MM/DD" type="date"/>
+			</td>
+			<td>
+			Date to:
+			</td>
+			<td style="margin-right:10px">
+				<input name="date_to" value="YYYY/MM/DD" type="date"/>
+			</td>
+			<td>
+				<input type="submit" value="Filter"/>
+			</td>
+		</tr>	
+	</table>
+</form>
+
+<table border="1">
+<caption><b>Operational Report</b></caption>
+<tbody>
+{% for key, value in values.items %}
+	<tr style="background: LightYellow;">
+		<td>{{key}}</td> 
+		<td>{{value}}</td>     
+    </tr> 
+{% endfor %}
+</tbody>
+</table>
+
+<div id="container">
+	<div id="leftfloater" style="float: left; margin-right:10px">
+		<table border="1">
+		<caption><b>Absentee Report</b></caption>
+		<th>Absentee</th>
+		<th>Attempts made</th>
+		<tbody>
+		{% for member, visits in absentee_tobe_visited %}
+			<tr style="background: LightYellow;">
+		    	<td>{{member}}</td> 
+				<td>{{visits}}</td>
+		    </tr> 
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+	
+	<div id="rightfloater" style="float: left;">
+		<table border="1">
+		<caption><b>Undecided Report</b></caption>
+		<th>Undecided</th>
+		<th>Attempts made</th>
+		<tbody>
+		{% for member, visits in visits_per_undecided %}
+			<tr style="background: LightYellow;">
+		    	<td>{{member}}</td> 
+				<td>{{visits}}</td>
+		    </tr> 
+		{% endfor %}
+		</tbody>
+		</table>
+	</div>
+</div>
+{% endblock content %}
+
