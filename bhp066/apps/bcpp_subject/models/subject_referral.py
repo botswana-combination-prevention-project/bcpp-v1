@@ -434,6 +434,8 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     survey.allow_tags = True
 
     def convert_to_nullboolean(self, yes_no_dwta):
+        if str(yes_no_dwta) in ['True', 'False', 'None']:
+            return yes_no_dwta
         if yes_no_dwta.lower() == 'no':
             return False
         elif yes_no_dwta.lower() == 'yes':
