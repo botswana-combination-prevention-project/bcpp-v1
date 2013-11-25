@@ -206,6 +206,10 @@ class Plot(BaseDispatchSyncUuidModel):
         choices=PLOT_STATUS,
         )
 
+    enrolled = models.NullBooleanField()
+
+    bhs = models.NullBooleanField()
+
     objects = PlotManager()
     history = AuditTrail()
 
