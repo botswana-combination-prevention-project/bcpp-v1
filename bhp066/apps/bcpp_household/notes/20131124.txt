@@ -1,0 +1,26 @@
+
+Update Plots to reflect change in selection list for CDC.
+* Indicate which plots are enrolled (from 20% all with at least one consent)
+* Indicate which are claimed for BHS (all enrolled + all in 5%)
+* 5% is selected = 2
+* 20% is selected = 1
+* 75% is selected = None
+
+Digawana
+--------
+
+flag plots as enrolled::
+
+    for plot in Plot.objects.filter(community='digawana', selected=1):
+        if SubjectConsent.objects.filter(household_member__household_structure__household__plot_id=plot.id):
+            plot.enrolled=True
+            plot.save_base(raw=True)
+
+flag as BHS::
+
+    Plot.objects.filter(selected=2).update(bhs=True)
+    Plot.objects.filter(selected=1, enrolled=True).update(bhs=True)
+
+    # 102 + 47 = 149
+
+    
