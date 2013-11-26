@@ -1,8 +1,11 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+
 from edc.choices.common import YES_NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
 from apps.bcpp_household.choices import INFO_PROVIDER, STATUS
+
 from ..managers import ContactLogManager, ContactLogItemManager
 
 

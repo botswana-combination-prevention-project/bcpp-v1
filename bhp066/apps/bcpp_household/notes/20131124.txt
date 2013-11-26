@@ -24,7 +24,6 @@ flag as BHS::
     # 102 + 47 = 149
 
     
-    
 # total plots
 Plot.objects.count()
 # total by village

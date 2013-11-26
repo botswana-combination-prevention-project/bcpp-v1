@@ -1,9 +1,9 @@
 from django.contrib import admin
 from edc.base.admin.admin import BaseModelAdmin, BaseTabularInline
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
-from apps.bcpp_household_member.models import HouseholdMember
+
 from ..forms import SubjectAbsenteeEntryForm
-from ..models import SubjectAbsentee, SubjectAbsenteeEntry
+from ..models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
 
 
 class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
