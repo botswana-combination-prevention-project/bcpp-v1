@@ -2,14 +2,13 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Pima (BaseScheduledVisitModel):
-
-    """CS002 - Used for PIMA cd4 count recording"""
 
     pima_today = models.CharField(
         verbose_name=("Was a PIMA CD4 done today?"),
@@ -26,15 +25,20 @@ class Pima (BaseScheduledVisitModel):
         )
 
     pima_id = models.CharField(
-        verbose_name="What is the PIMA CD4 ID?",
+        verbose_name="PIMA CD4 machine ID?",
         max_length=9,
         validators=[RegexValidator(regex='\d+', message='PIMA ID must be a two digit number.')],
         null=True,
         blank=True,
         help_text="type this id directly from the machine as labeled")
 
+    cd4_datetime = models.DateTimeField(
+        verbose_name=("PIMA CD4 Date and time"),
+        validators=[datetime_not_future],
+        )
+
     cd4_value = models.DecimalField(
-        verbose_name=("What is the CD4 count of the PIMA machine?"),
+        verbose_name=("PIMA CD4 count"),
         null=True,
         blank=True,
         max_digits=6,
