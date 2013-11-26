@@ -1,25 +1,27 @@
-from django.db import models, IntegrityError
+from database_storage import DatabaseStorage
+
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
+from django.db import models, IntegrityError
 from django.utils.translation import ugettext as _
-from django.conf import settings
-from database_storage import DatabaseStorage
 
 from edc.audit.audit_trail import AuditTrail
+from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
+from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc.core.identifier.exceptions import IdentifierError
 from edc.device.device.classes import Device
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.identifier.exceptions import IdentifierError
-from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
-from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
 from apps.bcpp.choices import COMMUNITIES
 
-from ..managers import PlotManager
-from ..classes import PlotIdentifier
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
+from ..classes import PlotIdentifier
+from ..managers import PlotManager
+
 from .household_identifier_history import HouseholdIdentifierHistory
 
 
@@ -206,6 +208,10 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         choices=PLOT_STATUS,
         )
+
+    enrolled = models.NullBooleanField()
+
+    bhs = models.NullBooleanField()
 
     objects = PlotManager()
 
