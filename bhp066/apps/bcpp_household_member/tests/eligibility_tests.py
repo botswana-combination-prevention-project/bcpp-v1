@@ -3,11 +3,11 @@ from django.test import SimpleTestCase
 from django.forms import ValidationError
 from edc.map.classes import Mapper, site_mappers
 from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_household.tests.factories import PlotFactory
+#from apps.bcpp_household.tests.factories import PlotFactory
 
 from ..forms import EnrolmentChecklistForm
 from ..models import HouseholdMember
-from .factories import HouseholdMemberFactory
+#from .factories import HouseholdMemberFactory
 
 
 class OtsePlotMapper(Mapper):
@@ -21,7 +21,7 @@ class OtsePlotMapper(Mapper):
     radius = 5.5
     location_boundary = ()
 
-site_mappers.register(OtsePlotMapper)
+#site_mappers.register(OtsePlotMapper)
 
 
 class EligibilityTests(SimpleTestCase):

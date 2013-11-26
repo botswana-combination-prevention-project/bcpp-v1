@@ -106,18 +106,18 @@ class NaturalKeyTests(TestCase):
         labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
         grant = GrantFactory(labour_market_wages=labour_market_wages, subject_visit=subject_visit)  # Investigate natural keys further
         # SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
-        from apps.bcpp_subject.tests.factories import SubjectAbsenteeFactory
-        subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
-        from apps.bcpp_subject.tests.factories import SubjectUndecidedFactory
-        subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
-        subject_refusal = SubjectRefusalFactory(household_member=household_member)
+#         from apps.bcpp_subject.tests.factories import SubjectAbsenteeFactory
+#         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
+#         from apps.bcpp_subject.tests.factories import SubjectUndecidedFactory
+#         subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
+#         subject_refusal = SubjectRefusalFactory(household_member=household_member)
         subject_referral = SubjectReferralFactory(household_member=household_member, registered_subject=registered_subject)
-        subject_moved = SubjectMovedFactory(household_member=household_member, registered_subject=registered_subject)
+#         subject_moved = SubjectMovedFactory(household_member=household_member, registered_subject=registered_subject)
         # SubjectAbsenteeEntry : Independent Natural Key
-        subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
-        subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
-        subject_absentee_entry1 = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
-        subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
+#         subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
+#         subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
+#         subject_absentee_entry1 = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
+#         subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
         # SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         # SubjectLocator : Independent Natural Key
@@ -125,17 +125,17 @@ class NaturalKeyTests(TestCase):
         # SubjectOffStudy :
         # subject_off_study =
         instances.append(grant)
-        instances.append(subject_absentee)
-        instances.append(subject_undecided)
-        instances.append(subject_refusal)
+#         instances.append(subject_absentee)
+#         instances.append(subject_undecided)
+#         instances.append(subject_refusal)
         instances.append(subject_referral)
-        instances.append(subject_moved)
+#         instances.append(subject_moved)
         instances.append(subject_death)
         instances.append(subject_locator)
-        instances.append(subject_absentee_entry)
-        instances.append(subject_absentee_entry1)
-        instances.append(subject_undecided_entry)
-        instances.append(subject_undecided_entry1)
+#         instances.append(subject_absentee_entry)
+#         instances.append(subject_absentee_entry1)
+#         instances.append(subject_undecided_entry)
+#         instances.append(subject_undecided_entry1)
 
         print 'INSTANCE: ' + str(instances)
         for obj in instances:

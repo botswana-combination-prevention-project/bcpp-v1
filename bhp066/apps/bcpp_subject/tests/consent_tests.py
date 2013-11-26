@@ -1,8 +1,7 @@
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
-from django.test import TestCase
+from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
+from django.test import TestCase
 
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap

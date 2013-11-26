@@ -14,6 +14,7 @@ def play_transactions(request, **kwargs):
     """ Play all the incoming transactions pending on the server
     """
     consumer = BcppConsumer()
+    # TODO: this should not allow errors to pass!!
     try:
         consumer.consume()
     except:
