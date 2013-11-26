@@ -14,7 +14,7 @@ from apps.bcpp_subject.models import HivResult
 
 
 @login_required
-def operational_report(request, **kwargs):
+def operational_report_view(request, **kwargs):
     values = {}
     utilities = OperatationalReportUtilities()
     community = request.GET.get('community', '')
