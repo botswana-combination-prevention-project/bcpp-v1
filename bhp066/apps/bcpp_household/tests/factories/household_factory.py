@@ -8,3 +8,4 @@ class HouseholdFactory(BaseUuidModelFactory):
     FACTORY_FOR = Household
 
     plot = factory.SubFactory(PlotFactory)
+    household_identifier = factory.Sequence(lambda n: '1400011-08{0}'.format(n))
