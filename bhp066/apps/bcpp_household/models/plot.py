@@ -147,11 +147,8 @@ class Plot(BaseDispatchSyncUuidModel):
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
-<<<<<<< HEAD
-=======
     distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
 
->>>>>>> master
     selected = models.CharField(
         max_length=25,
         null=True,
