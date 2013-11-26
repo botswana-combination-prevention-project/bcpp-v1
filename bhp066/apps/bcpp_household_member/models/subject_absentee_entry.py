@@ -1,9 +1,12 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
-from ..models import SubjectAbsentee
+
 from ..choices import ABSENTEE_REASON
 from ..managers import SubjectAbsenteeEntryManager
+
 from .base_subject_entry import BaseSubjectEntry
+from .subject_absentee import SubjectAbsentee
 
 
 class SubjectAbsenteeEntry(BaseSubjectEntry):
@@ -28,7 +31,8 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
     natural_key.dependencies = ['bcpp_subject.subjectabsentee', ]
 
     class Meta:
-        app_label = 'bcpp_subject'
+        app_label = 'bcpp_household_member'
+        db_table = 'bcpp_subject_subjectabsenteeentry'
         verbose_name = "Subject Absentee Entry"
         verbose_name_plural = "Subject Absentee Entry"
         unique_together = ('subject_absentee', 'report_datetime')
