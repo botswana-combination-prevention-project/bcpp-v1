@@ -14,7 +14,12 @@ class BasePlotMapper(Mapper):
     section_field_attr = 'sub_section'
     section_label = 'Sub Section'
     map_area_field_attr = 'community'
-    map_field_attr = 'uploaded_map_18'
+    
+    #Different map fields, the numbers are the zoom levels
+    map_field_attr_18 = 'uploaded_map_18'
+    map_field_attr_17 = 'uploaded_map_17'
+    map_field_attr_16 = 'uploaded_map_16'
+    
     target_gps_lat_field_attr = 'gps_target_lat'
     target_gps_lon_field_attr = 'gps_target_lon'
     icons = ICONS
