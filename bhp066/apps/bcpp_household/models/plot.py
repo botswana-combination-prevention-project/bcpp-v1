@@ -147,8 +147,9 @@ class Plot(BaseDispatchSyncUuidModel):
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
-    distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
+    #distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
 
+    #20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
     selected = models.CharField(
         max_length=25,
         null=True,
@@ -170,11 +171,11 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False)
 
     # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
-    uploaded_map_16 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16", max_length=25, null=True, blank=True,)
 
-    uploaded_map_17 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    uploaded_map_17 = models.CharField(verbose_name="Map image at zoom level 17", max_length=25, null=True, blank=True,)
 
-    uploaded_map_18 = models.ImageField(upload_to="map_images", storage=DatabaseStorage(settings.DB_FILES), null=True, blank=True)
+    uploaded_map_18 = models.CharField(verbose_name="Map image at zoom level 18", max_length=25, null=True, blank=True,)
 
     community = models.CharField(
         max_length=25,

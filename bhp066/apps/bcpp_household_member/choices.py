@@ -5,6 +5,7 @@ HOUSEHOLD_MEMBER_ACTION = [
     ('RESEARCH', 'Research Cohort'),
     ('HTC_ONLY', 'HTC Only'),
     ('ABSENT', 'Absentee'),
+    ('ABSENTv3', 'Absenteev3'),
     ('REFUSED', 'Refusal'),
     ('UNDECIDED', 'Undecided'),
     ('NOT_ELIGIBLE', 'Not Eligible'),
