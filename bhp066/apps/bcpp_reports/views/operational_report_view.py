@@ -3,6 +3,7 @@ import collections
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.db.models import Q
 
 from edc.core.bhp_birt_reports.classes import OperatationalReportUtilities
 
@@ -43,7 +44,7 @@ def operational_report_view(request, **kwargs):
     age_eligible_htc = members.filter(eligible_member=True, member_status='HTC_ONLY')
     htc = age_eligible_htc.count()
     values['7. Age eligible members that consented for HTC ONLY'] = htc
-    age_eligible_absent = members.filter(eligible_member=True, member_status='ABSENT')
+    age_eligible_absent = members.filter(Q(eligible_member=True) | Q(member_status='ABSENT') | Q(member_status='ABSENTv3'))
     absent = age_eligible_absent.count()
     values['8. Age eligible members that where ABSENT'] = absent
     age_eligible_undecided = members.filter(eligible_member=True, member_status='UNDECIDED')
