@@ -383,10 +383,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
         retval = False
-        if (self.present.lower() == 'yes' or self.present.lower() == 'no'):
-            if self.is_eligible_member and self.member_status:
+        if (self.present_today.lower() == 'yes' or self.present_today.lower() == 'no'):
+            if self.eligible_member and self.member_status:
                 retval = True
-            elif not self.is_eligible_member:
+            elif not self.eligible_member:
                 retval = True
             else:
                 pass
