@@ -102,7 +102,7 @@
             {% elif household_member.member_status == 'HTC_ONLY' %}
                 <span style="color:white;background-color:red;">option not available</span>
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
-               {% if household_member.member_status == 'ABSENT' %}
+               {% if household_member.member_status == 'ABSENT' or household_member.member_status == 'ABSENTv3' %}
                Absentee log (attempts to contact)
                		<ol>
 	                    {% for absentee in household_member.absentee_form_label %}
