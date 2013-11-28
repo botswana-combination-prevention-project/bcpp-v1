@@ -32,30 +32,10 @@ def accrual(request):
     plot_stat = verified_residential.aggregate(Sum('household_count'), Count('pk'))
 
     #Households stats
-    #targeted_households = Household.objects.filter(plot__action='confirmed', plot__status__istartswith='occupied',
-    #                                               community=community1)
-    #visited_households = targeted_households.filter(householdstructure__householdlog__isnull=False)
-
-    #visited_households_count = visited_households.count()
-    #enumerated_households = targeted_households.filter(householdstructure__member_count__gte=1)
-    #enumerated_households_count = enumerated_households.count()
-
-    #eligible_households = targeted_households.filter(householdstructure__householdmember__eligible_member=True).distint()
-    #eligible_households_count = eligible_households.count()
-
-    #actions = [item[0] for item in member_actions]
-    #actions.remove('REFUSED')
-    #all_refused_households = visited_households.exclude(householdstructure__householdmember__member_status__in=actions)
-    #all_refused_count = all_refused_households.count()
-
-    #total_age_eligible = enumerated_households.filter(householdstructure__householdmember__eligible_member=True)
-    #total_age_eligible_count = total_age_eligible.count()
-
-    #average_age_eligible = float(total_age_eligible_count)/enumerated_households_count
+    household_report = HouseholdReportCommand('ranaka')
 
     #HouseholdMember
 
-    household_report = HouseholdReportCommand('ranaka')
     page_context = {'targeted_count': targeted_count, 'plot_stats': plot_stat, 'household_data': household_report}
     return render(request, template, page_context)
 
