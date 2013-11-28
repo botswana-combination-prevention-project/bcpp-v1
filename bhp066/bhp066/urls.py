@@ -39,6 +39,10 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('',
+    (r'^bcpp/section/statistics/', include('apps.bcpp_reports.urls', namespace="reports")),
+)
+
+urlpatterns += patterns('',
     (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 )
 
@@ -59,7 +63,6 @@ urlpatterns += patterns('',
     url(r'^{app_name}/section/reports/model_data_inspector/'.format(app_name=APP_NAME),
         include('edc.core.model_data_inspector.urls'), name="model_data_inspector_url_name"),
 )
-
 
 # urlpatterns += patterns('',
 #     url(r'^{app_name}/(?P<section_name>statistics)/'.format(app_name=APP_NAME),

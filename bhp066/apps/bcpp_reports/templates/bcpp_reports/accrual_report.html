@@ -1,0 +1,73 @@
+{% extends 'bcpp_reports/reports_layout.html' %}
+
+{% block title %} Community Accrual Report{% endblock %}
+
+{% block content %}
+  <div class='pure-g-r'>
+    <div class='pure-u-1-2'>
+      <div class='l-box'>
+        <h3>Ranaka</h3>
+        <table class='pure-table pure-table-bordered'>
+          <thead>
+            <tr>
+              <th>Plots</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Number Targeted</td>
+              <td>{{ targeted_count }}</td>
+            </tr>
+            <tr class="pure-table-odd"> 
+              <td>Verified Residential</td>
+              <td>{{ plot_stats.pk__count }}</td>
+            </tr>
+            <tr>
+              <td>Households on Verified Residential</td>
+              <td>{{ plot_stats.household_count__sum }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Household Data</h3>
+        <table class='pure-table pure-table-bordered'>
+          <thead>
+            <tr>
+              <th>Households Criteria</th>
+              <th>Numbers</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Targeted</td><td>{{ household_data.targeted }}</td>
+            </tr>
+            <tr>
+              <td>Visited at least Once</td><td>{{ household_data.visited}}</td>
+            </tr>
+            <tr>
+              <td>Enumerated</td><td>{{household_data.enumerated}}</td>
+            </tr>
+            <tr>
+              <td>At least 1 member present</td><td>{{household_data.at_least_one_present}}</td>
+            </tr>
+            <tr>
+              <td>All Refused</td><td>{{household_data.all_refused}}</td>
+            </tr>
+            <tr>
+              <td>Age-Eligible total</td><td>{{household_data.total_age_eligible}}</td>
+            </tr>
+            <tr>
+              <td>Average Age-Eligible per Enumerated</td><td>{{household_data.average_age_eligible}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class='pure-u-1-2'>
+      <div class='l-box'>
+      </div>
+    </div>
+  </div>
+{% endblock %}
