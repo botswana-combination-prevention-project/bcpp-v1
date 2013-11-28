@@ -1,0 +1,30 @@
+{% extends "bcpp_reports/reports_layout.html" %}
+
+{% block title %}Reports Page{% endblock %}
+
+{% block content %}
+  <div class='pure-g-r'>
+    <div class='pure-u-1-2'>
+      <div class='l-box'>
+        <h3>{{ page_name }} at {{ now }}</h3>
+        <a href="/bcpp/section/" class='pure-button pure-button-secondary'>Dashboard</a>
+        <div>
+          <a href="{% url 'reports:accrual' %}" class="class">Community Accrual Report</a>
+        </div>
+      </div>
+
+
+    </div>
+    <div class='pure-u-1-2'>
+      <div class='l-box'>
+        <h3>{{ page_name }} at {{ now }}</h3>
+        <a href="/bcpp/section/" class='pure-button pure-button-secondary'>Dashboard</a>
+        <div>
+          <a href="{% url 'reports:accrual' %}" class="class">Community Accrual Report</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+
