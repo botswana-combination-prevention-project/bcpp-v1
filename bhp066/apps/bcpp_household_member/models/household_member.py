@@ -224,19 +224,29 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                                           'dashboard_model': 'household_structure',
                                           'dashboard_type': 'household'})
 
-    def _get_form_url(self, model_name):
+    def _get_form_url(self, model, model_pk=None, add_url=None):
+        #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
         url = ''
         pk = None
         app_label = 'bcpp_household_member'
+        if add_url:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model))
+            return url
         if not self.registered_subject:
             self.save()
-        Model = models.get_model(app_label, model_name)
-        if Model.objects.filter(household_member=self):
-            pk = Model.objects.get(household_member=self).id
-        if pk:
-            url = reverse('admin:{0}_{1}_change'.format(app_label, model_name), args=(pk, ))
+        if not model_pk:#This is a like a SubjectAbsentee
+            model_class = models.get_model(app_label, model)
+            try:
+                instance = model_class.objects.get(household_member=self)
+                pk = instance.id
+            except:
+                pk = None
         else:
-            url = reverse('admin:{0}_{1}_add'.format(app_label, model_name))
+            pk = model_pk
+        if pk:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(pk, ))
+        else:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model))
         return url
 
     @property
@@ -272,20 +282,35 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def absentee_form_url(self):
         """Returns a url to the subjectabsentee if an instance exists."""
         return self._get_form_url('subjectabsentee')
+    
+    @property
+    def absentee_entry_form_urls(self):
+        """Returns a url or urls to the subjectabsenteeentry(s) if an instance(s) exists."""
+        SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
+        SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
+        absentee_entry_urls = {}
+        subject_absentee = SubjectAbsentee.objects.get(household_member=self)
+        for entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
+            absentee_entry_urls[entry.pk] = self._get_form_url('subjectabsenteeentry', entry.pk)
+        add_url_2 = self._get_form_url('subjectabsenteeentry', model_pk=None, add_url=True)
+        absentee_entry_urls['add new entry'] = add_url_2
+        return absentee_entry_urls
 
-#     def absentee_form_label(self):
-#         SubjectAbsenteeEntry = models.get_model('bcpp_subject', 'subjectabsenteeentry')
-#         if self.subject_absentee
-#
-#
-#         if SubjectAbsentee.objects.filter(household_member=self):
-#             subject_absentee = SubjectAbsentee.objects.get(household_member=self)
-#             for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
-#                 report_datetime.append(subject_absentee_entry.report_datetime.strftime('%Y-%m-%d'))
-#         if not report_datetime:
-#             report_datetime.append('add new entry')
-#         return report_datetime
-#     absentee_form_label.allow_tags = True
+    def absentee_form_label(self):
+        SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
+        SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
+        report_datetime = []
+        if SubjectAbsentee.objects.filter(household_member=self):
+            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
+            absentee_count = SubjectAbsenteeEntry.objects.filter(subject_absentee = subject_absentee).count()
+            for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
+                report_datetime.append((subject_absentee_entry.report_datetime.strftime('%Y-%m-%d'),subject_absentee_entry.id))
+            if absentee_count < 3:
+                report_datetime.append(('add new entry', 'add new entry'))
+        if not report_datetime:
+            report_datetime.append(('add new entry', 'add new entry'))
+        return report_datetime
+    absentee_form_label.allow_tags = True
 
     @property
     def refused_form_url(self):
@@ -296,7 +321,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return self._get_form_url('subjectmoved')
 
     def get_form_label(self, model_name):
-        model = models.get_model('bcpp_subject', model_name)
+        model = models.get_model('bcpp_household_member', model_name)
         if model.objects.filter(household_member=self):
             return model.objects.get(household_member=self)
         else:
@@ -358,10 +383,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
         retval = False
-        if (self.present.lower() == 'yes' or self.present.lower() == 'no'):
-            if self.is_eligible_member and self.member_status:
+        if (self.present_today.lower() == 'yes' or self.present_today.lower() == 'no'):
+            if self.eligible_member and self.member_status:
                 retval = True
-            elif not self.is_eligible_member:
+            elif not self.eligible_member:
                 retval = True
             else:
                 pass

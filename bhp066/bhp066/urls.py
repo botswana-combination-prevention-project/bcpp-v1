@@ -58,6 +58,10 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
+    (r'^{app_name}/reports/'.format(app_name=APP_NAME), include('apps.{app_name}_reports.urls'.format(app_name=APP_NAME))),
+)
+
+urlpatterns += patterns('',
     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
         include('edc.audit.urls'), name="section_url_name"),
 )
