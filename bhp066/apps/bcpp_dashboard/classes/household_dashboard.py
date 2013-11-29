@@ -184,7 +184,7 @@ class HouseholdDashboard(Dashboard):
                 household_structure = HouseholdStructure.objects.create(household=self.get_household(), survey=survey)
             else:
                 household_structure = HouseholdStructure.objects.get(household=self.get_household(), survey=survey)
-            url = reverse(self.dashboard_url_name, kwargs={'dashboard_type': self.get_dashboard_type(),
+            url = reverse(self.dashboard_url_name, kwargs={'dashboard_type': self.dashboard_type,
                                                            'dashboard_model': 'household_structure',
                                                            'dashboard_id': household_structure.pk})
             self._surveys.append((survey, url))
