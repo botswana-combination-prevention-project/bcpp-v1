@@ -1,8 +1,12 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.subject.visit_tracking.models import BaseVisitTracking
+
 from apps.bcpp_household_member.models import HouseholdMember
+
 from ..choices import VISIT_UNSCHEDULED_REASON
+
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
@@ -30,18 +34,6 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
 
     def dispatch_container_lookup(self):
         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
-
-#     def post_save_update_appt_status(self):
-#         """Sets the appointment appt_status to 'in progress' as a convenience to the user editing a subject visit."""
-#         dirty = False
-#         if 'C' in self.appointment.visit_definition.code and not self.appointment.appt_status == 'done':
-#             self.appointment.appt_status = 'in_progress'
-#             dirty = True
-#         if self.reason == 'refuse' or self.reason == 'absent' or self.reason == 'undecided':
-#             self.appointment.appt_status = 'done'
-#             dirty = True
-#         if dirty:
-#             self.appointment.save()
 
     class Meta:
         app_label = "bcpp_subject"
