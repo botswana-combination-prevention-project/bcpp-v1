@@ -4,13 +4,12 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django import forms
-from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.tests.factories import ConfigurationFactory
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory

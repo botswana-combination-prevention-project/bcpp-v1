@@ -1,4 +1,4 @@
-from edc.subject.rule_groups.classes import RuleGroup, rule_groups, ScheduledDataRule, Logic
+from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic
 from edc.subject.registration.models import RegisteredSubject
 from .models import HtcSubjectVisit, HtcHivTestingHistory, HtcHivResult, HivTestingConsent
 
@@ -23,7 +23,7 @@ class GenderRuleGroup(RuleGroup):
         app_label = 'bcpp_htc_subject'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = RegisteredSubject
-rule_groups.register(GenderRuleGroup)
+site_rule_groups.register(GenderRuleGroup)
 
 
 class HivTestingHistoryRuleGroup(RuleGroup):
@@ -39,7 +39,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         app_label = 'bcpp_htc_subject'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = HtcHivTestingHistory
-rule_groups.register(HivTestingHistoryRuleGroup)
+site_rule_groups.register(HivTestingHistoryRuleGroup)
 
 
 class HivResultRuleGroup(RuleGroup):
@@ -55,7 +55,7 @@ class HivResultRuleGroup(RuleGroup):
         app_label = 'bcpp_htc_subject'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = HtcHivResult
-rule_groups.register(HivResultRuleGroup)
+site_rule_groups.register(HivResultRuleGroup)
 
 
 class HivTestingConsentRuleGroup(RuleGroup):
@@ -71,4 +71,4 @@ class HivTestingConsentRuleGroup(RuleGroup):
         app_label = 'bcpp_htc_subject'
         filter_model = (HtcSubjectVisit, 'htc_subject_visit')
         source_model = HivTestingConsent
-rule_groups.register(HivTestingConsentRuleGroup)
+site_rule_groups.register(HivTestingConsentRuleGroup)

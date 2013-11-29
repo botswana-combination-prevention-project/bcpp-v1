@@ -1,26 +1,20 @@
-import time
 import os
+
 from datetime import datetime
-from django.contrib import admin
-from django.conf import settings
-from django.test import LiveServerTestCase
-from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
-from django.db.models import CharField, ForeignKey, OneToOneField
-from django.contrib.auth.models import User
+
 from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.common.keys import Keys
+
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import LiveServerTestCase
+
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.subject.consent.models import ConsentCatalogue
 from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_variables.models import StudySpecific
-from edc.device.sync.models import Producer
-from selenium.webdriver.support.ui import Select, WebDriverWait
-from edc.subject.visit_schedule.models import VisitDefinition, ScheduleGroup, MembershipForm
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from edc.core.bhp_content_type_map.tests.factories import ContentTypeMapFactory
-from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory, ScheduleGroupFactory, MembershipFormFactory
+from edc.subject.consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.visit_schedule.models import VisitDefinition
+
 from ..models import SubjectConsent
 
 

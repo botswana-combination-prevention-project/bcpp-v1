@@ -1,14 +1,15 @@
-from django.test import TestCase
 from datetime import datetime
-from edc.subject.registration.models import RegisteredSubject
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
-from edc.subject.consent.models import BaseConsentHistory
-from edc.map.classes import site_mappers
-from edc.subject.lab_tracker.classes import site_lab_tracker
+
+from django.test import TestCase
+
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
+from edc.map.classes import site_mappers
 from edc.subject.appointment.models import Configuration
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.registration.models import RegisteredSubject
+
 from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household.tests.factories import HouseholdFactory, PlotFactory
+from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory

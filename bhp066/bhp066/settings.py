@@ -32,11 +32,11 @@ DB_FILES = {
 }
 
 # edc.crytpo_fields encryption keys
-# KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 #KEY_PATH = 'keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/keys'
 
 DB_FILES = {
@@ -115,23 +115,23 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_master',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
             'PORT': '',
         },
-        'master': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066_master',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.65',
-            'PORT': '3306',
-        },
+        #'master': {
+        #    'ENGINE': 'django.db.backends.mysql',
+        #    'OPTIONS': {
+        #        'init_command': 'SET storage_engine=INNODB',
+        #    },
+        #    'NAME': 'bhp066_master',
+        #    'USER': 'root',
+        #    'PASSWORD': 'cc3721b',
+        #    'HOST': '192.168.1.65',
+        #    'PORT': '3306',
+        #},
         'lab_api': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
@@ -275,7 +275,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
 
@@ -319,6 +319,7 @@ INSTALLED_APPS = (
 
     'edc.export',
     'edc.import',
+    'edc.entry_meta_data',
 
     'edc.data_dictionary',
 
@@ -331,7 +332,6 @@ INSTALLED_APPS = (
     'edc.subject.rule_groups',
     'edc.subject.actg',
     'edc.subject.entry',
-    'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
     'edc.subject.locator',
