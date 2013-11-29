@@ -1,13 +1,17 @@
+from datetime import datetime
+
 from django import forms
 from django.test import TestCase
+
 from apps.bcpp_subject.forms import AccessToCareForm
-from datetime import datetime
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from edc.core.bhp_content_type_map.models import ContentTypeMap
+
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_content_type_map.models import ContentTypeMap
+from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.lab_tracker.classes import site_lab_tracker
+
 from ..models import SubjectConsent
 
 
