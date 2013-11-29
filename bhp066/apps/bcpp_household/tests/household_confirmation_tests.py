@@ -1,9 +1,13 @@
 import datetime
+
 from django.test import TestCase
+
 from edc.map.classes import site_mappers
+
 from apps.bcpp_household.models import Household
 from apps.bcpp_survey.tests.factories import SurveyFactory
-from factories import PlotFactory
+
+from .factories import PlotFactory
 
 
 class HouseholdConfirmTests(TestCase):

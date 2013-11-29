@@ -1,9 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
+
 from apps.bcpp.choices import MARITALSTATUS_CHOICE
+from apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
