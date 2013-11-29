@@ -1,24 +1,24 @@
 from collections import OrderedDict
 
-from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, RequisitionTuple
+from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionTuple
 
 from ..models import SubjectVisit, SubjectConsent
 
 
 class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
 
+    name = 'visit schedule'
     app_label = 'bcpp_subject'
     # membership forms
-    # see edc.subject.visit_schedule.models.membership_forms
+    # (name, model, visible)
     membership_forms = OrderedDict({
-        'bcpp-year-1': ('bcpp-year-1', SubjectConsent, True),
+        'bcpp-year-1': MembershipFormTuple('bcpp-year-1', SubjectConsent, True),
         })
 
     # schedule groups
-    # see edc.subject.visit_schedule.models.schedule_groups
-    # (group_name, membership_form, grouping_key, comment)
+    # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
-        'bcpp-year-1': ('bcpp-year-1', 'bcpp-year-1', None, None),
+        'group-1': ScheduleGroupTuple('group-1', 'bcpp-year-1', None, None),
         })
 
     # visit_schedule
@@ -35,7 +35,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'window_upper_bound_unit': 'D',
             'grouping': None,
             'visit_tracking_model': SubjectVisit,
-            'schedule_group': 'bcpp-year-1',
+            'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
                 # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
@@ -44,42 +44,42 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 RequisitionTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'Microtube', 'STORAGE', 'WB'),
                 ),
             'entries': (
-                (10L, u'bcpp_subject', u'subjectlocator'),
-                (20L, u'bcpp_subject', u'residencymobility'),
-                (30L, u'bcpp_subject', u'communityengagement'),
-                (40L, u'bcpp_subject', u'demographics'),
-                (50L, u'bcpp_subject', u'education'),
-                (60L, u'bcpp_subject', u'hivtestinghistory'),
-                (70L, u'bcpp_subject', u'hivtestreview'),
-                (80L, u'bcpp_subject', u'hivresultdocumentation'),
-                (90L, u'bcpp_subject', u'hivtested'),
-                (100L, u'bcpp_subject', u'hivuntested'),
-                (110L, u'bcpp_subject', u'futurehivtesting'),
-                (120L, u'bcpp_subject', u'sexualbehaviour'),
-                (130L, u'bcpp_subject', u'monthsrecentpartner'),
-                (140L, u'bcpp_subject', u'monthssecondpartner'),
-                (150L, u'bcpp_subject', u'monthsthirdpartner'),
-                (160L, u'bcpp_subject', u'hivcareadherence'),
-                (170L, u'bcpp_subject', u'hivmedicalcare'),
-                (180L, u'bcpp_subject', u'circumcision'),
-                (190L, u'bcpp_subject', u'circumcised'),
-                (200L, u'bcpp_subject', u'uncircumcised'),
-                (210L, u'bcpp_subject', u'reproductivehealth'),
-                (220L, u'bcpp_subject', u'pregnancy'),
-                (230L, u'bcpp_subject', u'nonpregnancy'),
-                (240L, u'bcpp_subject', u'medicaldiagnoses'),
-                (250L, u'bcpp_subject', u'heartattack'),
-                (260L, u'bcpp_subject', u'cancer'),
-                (270L, u'bcpp_subject', u'sti'),
-                (280L, u'bcpp_subject', u'tubercolosis'),
-                (290L, u'bcpp_subject', u'substanceuse'),
-                (300L, u'bcpp_subject', u'stigma'),
-                (310L, u'bcpp_subject', u'stigmaopinion'),
-                (320L, u'bcpp_subject', u'positiveparticipant'),
-                (330L, u'bcpp_subject', u'accesstocare'),
-                (340L, u'bcpp_subject', u'hivresult'),
-                (350L, u'bcpp_subject', u'pima'),
-                (360L, u'bcpp_subject', u'subjectreferral'),
+                EntryTuple(10L, u'bcpp_subject', u'subjectlocator'),
+                EntryTuple(20L, u'bcpp_subject', u'residencymobility'),
+                EntryTuple(30L, u'bcpp_subject', u'communityengagement'),
+                EntryTuple(40L, u'bcpp_subject', u'demographics'),
+                EntryTuple(50L, u'bcpp_subject', u'education'),
+                EntryTuple(60L, u'bcpp_subject', u'hivtestinghistory'),
+                EntryTuple(70L, u'bcpp_subject', u'hivtestreview'),
+                EntryTuple(80L, u'bcpp_subject', u'hivresultdocumentation'),
+                EntryTuple(90L, u'bcpp_subject', u'hivtested'),
+                EntryTuple(100L, u'bcpp_subject', u'hivuntested'),
+                EntryTuple(110L, u'bcpp_subject', u'futurehivtesting'),
+                EntryTuple(120L, u'bcpp_subject', u'sexualbehaviour'),
+                EntryTuple(130L, u'bcpp_subject', u'monthsrecentpartner'),
+                EntryTuple(140L, u'bcpp_subject', u'monthssecondpartner'),
+                EntryTuple(150L, u'bcpp_subject', u'monthsthirdpartner'),
+                EntryTuple(160L, u'bcpp_subject', u'hivcareadherence'),
+                EntryTuple(170L, u'bcpp_subject', u'hivmedicalcare'),
+                EntryTuple(180L, u'bcpp_subject', u'circumcision'),
+                EntryTuple(190L, u'bcpp_subject', u'circumcised'),
+                EntryTuple(200L, u'bcpp_subject', u'uncircumcised'),
+                EntryTuple(210L, u'bcpp_subject', u'reproductivehealth'),
+                EntryTuple(220L, u'bcpp_subject', u'pregnancy'),
+                EntryTuple(230L, u'bcpp_subject', u'nonpregnancy'),
+                EntryTuple(240L, u'bcpp_subject', u'medicaldiagnoses'),
+                EntryTuple(250L, u'bcpp_subject', u'heartattack'),
+                EntryTuple(260L, u'bcpp_subject', u'cancer'),
+                EntryTuple(270L, u'bcpp_subject', u'sti'),
+                EntryTuple(280L, u'bcpp_subject', u'tubercolosis'),
+                EntryTuple(290L, u'bcpp_subject', u'substanceuse'),
+                EntryTuple(300L, u'bcpp_subject', u'stigma'),
+                EntryTuple(310L, u'bcpp_subject', u'stigmaopinion'),
+                EntryTuple(320L, u'bcpp_subject', u'positiveparticipant'),
+                EntryTuple(330L, u'bcpp_subject', u'accesstocare'),
+                EntryTuple(340L, u'bcpp_subject', u'hivresult'),
+                EntryTuple(350L, u'bcpp_subject', u'pima'),
+                EntryTuple(360L, u'bcpp_subject', u'subjectreferral'),
             )}
         }
     )

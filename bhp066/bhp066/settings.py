@@ -115,23 +115,23 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_master',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
             'PORT': '',
         },
-        'master': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066_master',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.65',
-            'PORT': '3306',
-        },
+        #'master': {
+        #    'ENGINE': 'django.db.backends.mysql',
+        #    'OPTIONS': {
+        #        'init_command': 'SET storage_engine=INNODB',
+        #    },
+        #    'NAME': 'bhp066_master',
+        #    'USER': 'root',
+        #    'PASSWORD': 'cc3721b',
+        #    'HOST': '192.168.1.65',
+        #    'PORT': '3306',
+        #},
         'lab_api': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
@@ -275,7 +275,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
 
