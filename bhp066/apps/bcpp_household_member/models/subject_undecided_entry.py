@@ -29,5 +29,5 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        db_table = 'bcpp_subject_subjectundecidedentry'
+#         db_table = 'bcpp_subject_subjectundecidedentry'
         unique_together = ('subject_undecided', 'report_datetime')
