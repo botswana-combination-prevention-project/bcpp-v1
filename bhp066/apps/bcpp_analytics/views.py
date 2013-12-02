@@ -12,7 +12,7 @@ from apps.bcpp_subject.models.hiv_testing_history import HivTestingHistory
 
 @login_required
 def index(request):
-    template = "bcpp_reports/reports_index.html"
+    template = "bcpp_analytics/analytics_index.html"
     now = datetime.datetime.now()
     page_context = {'now': now, 'page_name': 'Reports Index'}
     return render(request, template, page_context)
@@ -20,7 +20,7 @@ def index(request):
 
 @login_required
 def accrual(request):
-    template = "bcpp_reports/accrual_report.html"
+    template = "bcpp_analytics/accrual_report.html"
     community1 = 'ranaka'
 
     #community1
