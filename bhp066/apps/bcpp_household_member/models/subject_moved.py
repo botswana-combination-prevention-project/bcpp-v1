@@ -61,7 +61,7 @@ class SubjectMoved(BaseMemberStatusModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        db_table = 'bcpp_subject_subjectmoved'
+#         db_table = 'bcpp_subject_subjectmoved'
         verbose_name = "Subject Moved"
         verbose_name_plural = "Subject Moved"
         ordering = ['household_member']

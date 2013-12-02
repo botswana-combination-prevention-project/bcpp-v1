@@ -9,7 +9,7 @@ class SubjectRequisitionForm(BaseRequisitionForm):
 
         super(SubjectRequisitionForm, self).__init__(*args, **kwargs)
 
-        self.fields['item_type'].initial = 'dbs'
+        self.fields['item_type'].initial = 'tube'
 
     def clean(self):
 
