@@ -15,21 +15,13 @@ DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 SOURCE_DIR = Path(__file__).ancestor(3)
 PROJECT_DIR = Path(__file__).ancestor(2)
 MEDIA_ROOT = PROJECT_DIR.child('media')
-#STATIC_ROOT = PROJECT_DIR.child('static')
-STATIC_ROOT = '/var/www/bcppstudy/static/'
+STATIC_ROOT = PROJECT_DIR.child('static')
 TEMPLATE_DIRS = (
     PROJECT_DIR.child('templates'),
     )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
-#MAP_DIR = STATIC_ROOT.child('img')
-MAP_DIR = '/var/www/bcppstudy/static/img'
-
-#Map images storage table with blob field
-DB_FILES = {
-    'table': 'FILES',
-    'base_url': 'http://localhost/dbfiles/'
-}
+MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
 KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
@@ -39,10 +31,10 @@ KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/keys'
 
-DB_FILES = {
-    'table': 'FILES',
-    'base_url': 'http://localhost/dbfiles/'
-}
+# DB_FILES = {
+#     'table': 'FILES',
+#     'base_url': 'http://localhost/dbfiles/'
+# }
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -115,7 +107,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_master',
+            'NAME': 'bhp066_test',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -143,17 +135,17 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-        'bcpp011-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.155',
-            'PORT': '3306',
-        },
+#         'bcpp011-bhp066': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'init_command': 'SET storage_engine=INNODB',
+#             },
+#             'NAME': 'bhp066',
+#             'USER': 'root',
+#             'PASSWORD': 'cc3721b',
+#             'HOST': '192.168.1.155',
+#             'PORT': '3306',
+#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
