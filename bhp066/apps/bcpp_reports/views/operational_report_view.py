@@ -41,10 +41,10 @@ def operational_report_view(request, **kwargs):
     age_eligible_research = members.filter(eligible_member=True, member_status='RESEARCH')
     research = age_eligible_research.count()
     values['6. Age eligible members that consented for RESEARCH'] = research
-    age_eligible_htc = members.filter(eligible_member=True, member_status='HTC_ONLY')
+    age_eligible_htc = members.filter(eligible_member=True, member_status='HTC')
     htc = age_eligible_htc.count()
     values['7. Age eligible members that consented for HTC ONLY'] = htc
-    age_eligible_absent = members.filter(Q(eligible_member=True) | Q(member_status='ABSENT') | Q(member_status='ABSENTv3'))
+    age_eligible_absent = members.filter(Q(eligible_member=True) | Q(member_status='ABSENT'))
     absent = age_eligible_absent.count()
     values['8. Age eligible members that where ABSENT'] = absent
     age_eligible_undecided = members.filter(eligible_member=True, member_status='UNDECIDED')
