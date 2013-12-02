@@ -30,16 +30,9 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
         return (self.report_datetime, ) + self.subject_absentee.natural_key()
     natural_key.dependencies = ['bcpp_subject.subjectabsentee', ]
 
-    def save(self, *args, **kwargs):
-        if self.__class__.objects.filter(subject_absentee=self.subject_absentee).count() == 2:
-            household_member = self.subject_absentee.household_member
-            household_member.member_status = 'ABSENTv3'
-            household_member.save()
-        super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
-        
     class Meta:
         app_label = 'bcpp_household_member'
-        db_table = 'bcpp_subject_subjectabsenteeentry'
+#         db_table = 'bcpp_subject_subjectabsenteeentry'
         verbose_name = "Subject Absentee Entry"
         verbose_name_plural = "Subject Absentee Entry"
         unique_together = ('subject_absentee', 'report_datetime')

@@ -35,6 +35,7 @@ class Pima (BaseScheduledVisitModel):
     cd4_datetime = models.DateTimeField(
         verbose_name=("PIMA CD4 Date and time"),
         validators=[datetime_not_future],
+        null=True,  # TODO: remove this after migration
         )
 
     cd4_value = models.DecimalField(
