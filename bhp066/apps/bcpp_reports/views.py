@@ -7,7 +7,8 @@ import datetime
 from apps.bcpp_household.models.plot import Plot
 from apps.bcpp_household.models.household import Household
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
-
+from apps.bcpp_household_member.models.household_member import HouseholdMember
+from apps.bcpp_subject.models.hiv_testing_history import HivTestingHistory
 
 @login_required
 def index(request):
@@ -35,6 +36,15 @@ def accrual(request):
     household_report = HouseholdReportCommand('ranaka')
 
     #HouseholdMember
+    community_members = HouseholdMember.objects.filter(household_structure__household__community=community1)
+    members_refused = community_members.filter(member_status='REFUSED').count()
+
+    first_time_testers = community_members.filter(subjectvisit__hivtestinghistory__has_tested='No')
+    first_or_unknowns = first_time_testers.count()
+
+    members_tested = community_members.exclude(subjectvisit__hivtested=None).count()
+
+
 
     page_context = {'targeted_count': targeted_count, 'plot_stats': plot_stat, 'household_data': household_report}
     return render(request, template, page_context)
