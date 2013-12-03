@@ -1,76 +1,89 @@
-{% extends 'bcpp_analytics/analytics_layout.html' %}
+{% extends 'bcpp_analytics/reports_base.html' %}
 
-{% block title %} Community Accrual Report{% endblock %}
-
-{% block page_heading %} <h2>Community Accrual Report</h2>{% endblock %}
-
+{% block report_title %} Community Accrual Report{% endblock %}
 
 {% block content %}
-  <div class='pure-g-r'>
-    <div class='pure-u-1-2'>
-      <div class='l-box'>
-        <h3>Ranaka</h3>
-        <table class='pure-table pure-table-bordered'>
-          <thead>
-            <tr>
-              <th>Plots</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Number Targeted</td>
-              <td>{{ targeted_count }}</td>
-            </tr>
-            <tr class="pure-table-odd"> 
-              <td>Verified Residential</td>
-              <td>{{ plot_stats.pk__count }}</td>
-            </tr>
-            <tr>
-              <td>Households on Verified Residential</td>
-              <td>{{ plot_stats.household_count__sum }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>Household Data</h3>
-        <table class='pure-table pure-table-bordered'>
-          <thead>
-            <tr>
-              <th>Households Criteria</th>
-              <th>Numbers</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Targeted</td><td>{{ household_data.targeted }}</td>
-            </tr>
-            <tr>
-              <td>Visited at least Once</td><td>{{ household_data.visited}}</td>
-            </tr>
-            <tr>
-              <td>Enumerated</td><td>{{household_data.enumerated}}</td>
-            </tr>
-            <tr>
-              <td>At least 1 member present</td><td>{{household_data.at_least_one_present}}</td>
-            </tr>
-            <tr>
-              <td>All Refused</td><td>{{household_data.all_refused}}</td>
-            </tr>
-            <tr>
-              <td>Age-Eligible total</td><td>{{household_data.total_age_eligible}}</td>
-            </tr>
-            <tr>
-              <td>Average Age-Eligible per Enumerated</td><td>{{household_data.average_age_eligible}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="col-md-7 centered">
+    <form class="form-inline" action="{% url 'analytics:accrual' %}" method="get" role="form">  
+        <div class="form-group">
+          <label for="community1">Community 1</label>
+          <select multiple class="form-control" name="community1">
+            {% for community in communities %}
+            <option>{{ community }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="community2">Community 2</label>
+          <select multiple class="form-control" name="community2">
+            {% for community in communities %}
+            <option>{{ community }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-default">Show Report</button>
+      </form>
     </div>
-    <div class='pure-u-1-2'>
-      <div class='l-box'>
-      </div>
+
+  <div class="col-md-6">
+    <h3 class="text-left">{{ community1 }}</h3>
+    <div class="report-data">
+      <table class='pure-table pure-table-bordered'>
+        <tbody>
+          <tr class="report-section">
+            <th class="text-center" colspan="2">Plots</th>
+          </tr>
+          <tr>
+            <td>Number Targeted</td>
+            <td class="text-right">{{ targeted_count }}</td>
+          </tr>
+          <tr class="pure-table-odd"> 
+            <td>Verified Residential</td>
+            <td class="text-right">{{ plot_stats.pk__count }}</td>
+          </tr>
+          <tr>
+            <td>Households on Verified Residential</td>
+            <td class="text-right">{{ plot_stats.household_count__sum }}</td>
+          </tr>
+          <tr class="report-section">
+            <th class="text-center" colspan="2">Households Criteria</th>
+          </tr>
+          <tr>
+            <td>Targeted</td>
+            <td class="text-right">{{ household_data.targeted }}</td>
+          </tr>
+          <tr class="pure-table-odd">
+            <td>Visited at least Once</td>
+            <td class="text-right">{{ household_data.visited}}</td>
+          </tr>
+          <tr>
+            <td>Enumerated</td>
+            <td class="text-right">{{household_data.enumerated}}</td>
+          </tr>
+          <tr class="pure-table-odd">
+            <td>At least 1 member present</td>
+            <td class="text-right">{{household_data.at_least_one_present}}</td>
+          </tr>
+          <tr>
+            <td>All Refused</td>
+            <td class="text-right">{{household_data.all_refused}}</td>
+          </tr>
+          <tr class="pure-table-odd">
+            <td>Age-Eligible total</td>
+            <td class="text-right">{{household_data.total_age_eligible}}</td>
+          </tr>
+          <tr>
+            <td>Average Age-Eligible per Enumerated</td>
+            <td class="text-right">{{household_data.average_age_eligible}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <h3 class="text-right">{{ community2 }}</h3>
+    <div class="report-data">
+
     </div>
   </div>
 {% endblock %}
