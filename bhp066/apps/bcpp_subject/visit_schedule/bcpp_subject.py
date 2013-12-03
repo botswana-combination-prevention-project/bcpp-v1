@@ -54,7 +54,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(80L, u'bcpp_subject', u'hivresultdocumentation'),
                 EntryTuple(90L, u'bcpp_subject', u'hivtested'),
                 EntryTuple(100L, u'bcpp_subject', u'hivuntested'),
-                EntryTuple(110L, u'bcpp_subject', u'futurehivtesting'),
+#                 EntryTuple(110L, u'bcpp_subject', u'futurehivtesting'),
                 EntryTuple(120L, u'bcpp_subject', u'sexualbehaviour'),
                 EntryTuple(130L, u'bcpp_subject', u'monthsrecentpartner'),
                 EntryTuple(140L, u'bcpp_subject', u'monthssecondpartner'),
