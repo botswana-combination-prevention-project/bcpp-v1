@@ -29,17 +29,8 @@ def accrual(request):
     community1 = request.GET.get("community1") or 'Ranaka'
     community2 = request.GET.get("community2") or 'Digawana'
 
-    #community1
-    plots = Plot.objects.filter(community=community1)
-    targeted_plots = plots.exclude(selected=None)
-    confirmed = targeted_plots.filter(action='confirmed')
-    verified_residential = confirmed.filter(status__istartswith='occupied')
-
-    targeted_count = targeted_plots.count()
-    plot_stat = verified_residential.aggregate(Sum('household_count'), Count('pk'))
-
-    #Households stats
-    household_report = HouseholdReportCommand(community1)
+    plots = (PlotReportQuery(community1), PlotReportQuery(community2))
+    households = (HouseholdReportQuery(community1), HouseholdReportQuery(community2))
 
     #HouseholdMember
     community_members = HouseholdMember.objects.filter(household_structure__household__community=community1)
@@ -51,16 +42,31 @@ def accrual(request):
     members_tested = community_members.exclude(subjectvisit__hivtested=None).count()
 
     page_context = {'communities': communities,
-                    'targeted_count': targeted_count,
-                    'plot_stats': plot_stat,
-                    'household_data': household_report,
-                    'community1': community1,
-                    'community2': community2,
+                    'plots': plots,
+                    'households': households,
                     }
     return render(request, template, page_context)
 
 
-class HouseholdReportCommand(object):
+class PlotReportQuery(object):
+    def __init__(self, community):
+        self.community = community
+        self.plots = Plot.objects.filter(community=community)
+        self.targeted = self.targeted_qs().count()
+        self.household_count = self.plot_stats().get('household_count')
+        self.verified_residential = self.plot_stats().get('verified_count')
+
+    def targeted_qs(self):
+        return self.plots.exclude(selected=None)
+
+    def confirmed_occupied_qs(self):
+        return self.targeted_qs().filter(action='confirmed', status__istartswith='occupied')
+
+    def plot_stats(self):
+        return self.confirmed_occupied_qs().aggregate(household_count=Sum('household_count'), verified_count=Count('pk'))
+
+
+class HouseholdReportQuery(object):
 
     def __init__(self, community):
         self.community = community
