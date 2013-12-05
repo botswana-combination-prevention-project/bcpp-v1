@@ -32,13 +32,16 @@
     {% include "household_log_include.html" %}
 
     <H4>B. Household Composition Dashboard</H4>
-	{% if household.household_identifier|is_dispatched %}
-	<div align="center"><h1>This household is currently <font color="red">dispatched</font> to a netbook. Please do not make any changes to it or it's members.</h1></div>
+    {% if household.is_dispatched and household.is_current_device_server%}
+	<div align="center"><h1>This household is currently <font color="red">dispatched</font> to the netbook. Please do not make any changes to it or it's members.</h1></div>	
+	{% endif %}
+	{% if household.is_dispatched and not household.is_current_device_server%}
+	<div align="center"><h1>This household is currently <font color="red">returned</font> to the server. Please do not make any changes to it or it's members.</h1></div>
 	{% endif %}
     {% block dashboard_marquee %}
         <div id="dashboard_marquee">
             <b>Household:&nbsp;</b>
-            {% if household|is_dispatched %}
+            {% if household.is_dispatched %}
             	{{ household.household_identifier }}
             {% else %}
             	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
