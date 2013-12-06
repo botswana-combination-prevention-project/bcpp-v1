@@ -1,9 +1,12 @@
 from importlib import import_module
+
 from django.conf import settings
-from django.test import TestCase
 from django.db.models import get_model
+from django.test import TestCase
 from django.utils import translation
+
 from edc.base.model.models import BaseModel
+
 from .. import choices
 from .. import models
 

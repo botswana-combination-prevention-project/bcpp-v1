@@ -185,6 +185,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         default=None,
         editable=False,
         null=True,
+        help_text='referred by an RA',
         )
 
     urgent_referral = models.NullBooleanField(
@@ -268,7 +269,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         if Pima.objects.filter(subject_visit=self.subject_visit, pima_today='Yes'):
             pima = Pima.objects.get(subject_visit=self.subject_visit)
             self.cd4_result = int(pima.cd4_value)
-            self.cd4_result_datetime = pima.report_datetime
+            self.cd4_result_datetime = pima.cd4_datetime
         else:
             self.cd4_result = None
             self.cd4_result_datetime = None
