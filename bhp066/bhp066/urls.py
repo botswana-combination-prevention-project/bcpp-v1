@@ -10,13 +10,17 @@ import django_databrowse
 from dajaxice.core import dajaxice_autodiscover
 
 from edc.map.classes import site_mappers
-#from edc.subject.rule_groups.classes import rule_groups
+from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.visit_schedule.classes import site_visit_schedules
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
 
 dajaxice_autodiscover()
 #rule_groups.autodiscover()
+site_visit_schedules.autodiscover()
+site_visit_schedules.build_all()
+site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
 site_mappers.autodiscover()
@@ -116,8 +120,6 @@ urlpatterns += patterns('',
     url(r'^{app_name}/$'.format(app_name=APP_NAME), RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     )
-
-#urlpatterns += staticfiles_urlpatterns()
 
 if settings.DEBUG:
     urlpatterns += patterns('django.contrib.staticfiles.views',

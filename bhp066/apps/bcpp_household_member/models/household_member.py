@@ -85,6 +85,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the eligibility checklist if completed")
 
+    absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
+
     target = models.IntegerField(default=0)
 
     relation = models.CharField(
@@ -234,7 +236,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             return url
         if not self.registered_subject:
             self.save()
-        if not model_pk:#This is a like a SubjectAbsentee
+        if not model_pk:  # This is a like a SubjectAbsentee
             model_class = models.get_model(app_label, model)
             try:
                 instance = model_class.objects.get(household_member=self)
@@ -253,17 +255,17 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def subject_absentee(self):
         """Returns the subject absentee instance for this member and creates a subject_absentee if it does not exist."""
         from ..models import SubjectAbsentee
-        if SubjectAbsentee.objects.filter(household_member=self):
+        subject_absentee = None
+        try:
             subject_absentee = SubjectAbsentee.objects.get(household_member=self)
-        elif self.member_status == 'ABSENT':
-            subject_absentee = SubjectAbsentee.objects.create(
-                report_datetime=datetime.today(),
-                registered_subject=self.registered_subject,
-                household_member=self,
-                survey=self.household_structure.survey,
-                )
-        else:
-            subject_absentee = None
+        except SubjectAbsentee.DoesNotExist:
+            if self.member_status == 'ABSENT':
+                subject_absentee = SubjectAbsentee.objects.create(
+                    report_datetime=datetime.today(),
+                    registered_subject=self.registered_subject,
+                    household_member=self,
+                    survey=self.household_structure.survey,
+                    )
         return subject_absentee
 
     def render_absentee_info(self):
@@ -282,7 +284,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def absentee_form_url(self):
         """Returns a url to the subjectabsentee if an instance exists."""
         return self._get_form_url('subjectabsentee')
-    
+
     @property
     def absentee_entry_form_urls(self):
         """Returns a url or urls to the subjectabsenteeentry(s) if an instance(s) exists."""

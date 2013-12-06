@@ -59,7 +59,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     class Meta:
         app_label = "bcpp_household_member"
-        db_table = 'bcpp_subject_subjectrefusal'
+#         db_table = 'bcpp_subject_subjectrefusal'
         verbose_name = "Refusal Log"
         verbose_name_plural = "Refusal Log"
         ordering = ['household_member']

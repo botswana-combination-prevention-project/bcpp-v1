@@ -2,10 +2,10 @@ from django.utils.translation import ugettext as _
 
 HOUSEHOLD_MEMBER_ACTION = [
     ('NOT_REPORTED', '<not reported>'),
-    ('RESEARCH', 'Research Cohort'),
-    ('HTC_ONLY', 'HTC Only'),
+    ('RESEARCH', 'BHS'),
+    ('HTC', 'HTC'),
+    ('RBD', 'RBD only'),
     ('ABSENT', 'Absentee'),
-    ('ABSENTv3', 'Absenteev3'),
     ('REFUSED', 'Refusal'),
     ('UNDECIDED', 'Undecided'),
     ('NOT_ELIGIBLE', 'Not Eligible'),
