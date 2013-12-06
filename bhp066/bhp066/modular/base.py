@@ -149,16 +149,19 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_extensions',
     'django_databrowse',
-    'storages',
     'dajaxice',
+    'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
+
     'edc.audit',
+
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
+
     'edc.core.identifier',
     'edc.core.crypto_fields',
     'edc.core.model_data_inspector',
@@ -178,25 +181,34 @@ INSTALLED_APPS = (
     'edc.core.bhp_context',
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
+    'edc.core.bhp_birt_reports',
+
     'edc.device.inspector',
     'edc.device.dispatch',
     'edc.device.netbook',
     'edc.device.device',
     'edc.device.sync',
+
     'edc.dashboard.base',
     'edc.dashboard.search',
     'edc.dashboard.subject',
     'edc.dashboard.section',
+
     'edc.export',
     'edc.import',
+    'edc.entry_meta_data',
+
+    'edc.data_dictionary',
+
     'edc.map',
+
     'edc.testing',
+
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
     'edc.subject.actg',
     'edc.subject.entry',
-    'edc.subject.lab_entry',
     'edc.subject.consent',
     'edc.subject.contact',
     'edc.subject.locator',
@@ -211,6 +223,7 @@ INSTALLED_APPS = (
     'edc.subject.subject',
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
+
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
@@ -224,6 +237,7 @@ INSTALLED_APPS = (
     'lis.core.lab_result_report',
     'lis.core.bhp_research_protocol',
     'lis.core.lock',
+
     'lis.specimen.lab_aliquot_list',
     'lis.specimen.lab_panel',
     'lis.specimen.lab_test_code',
@@ -232,24 +246,27 @@ INSTALLED_APPS = (
     'lis.specimen.lab_order',
     'lis.specimen.lab_result',
     'lis.specimen.lab_result_item',
+
     'lis.subject.lab_account',
     'lis.subject.lab_patient',
+
     'lis.exim.lab_export',
     'lis.exim.lab_import',
     'lis.exim.lab_import_lis',
     'lis.exim.lab_import_dmis',
 
     'apps.bcpp',
-    'apps.bcpp_lab',
     'apps.bcpp_list',
-    'apps.bcpp_subject',
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
+    'apps.bcpp_subject',
     'apps.bcpp_household_member',
+    'apps.bcpp_lab',
     'apps.bcpp_survey',
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
+
     'tastypie',
 )
 
@@ -309,7 +326,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-CURRENT_COMMUNITY = 'gaborone'
+CURRENT_COMMUNITY = 'molapowabojang'
+CURRENT_COMMUNITY_CHECK = True 
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
