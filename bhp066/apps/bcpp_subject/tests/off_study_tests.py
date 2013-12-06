@@ -1,5 +1,6 @@
-from django.test import TestCase
 from django.db.models import get_app, get_models
+from django.test import TestCase
+
 from ..models import SubjectConsent, SubjectVisit
 
 

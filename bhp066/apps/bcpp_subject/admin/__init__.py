@@ -19,7 +19,7 @@ from .labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
 from .medical_diagnoses_admin import MedicalDiagnosesAdmin
 from .months_partner_admin import *
 from .non_pregnancy_admin import NonPregnancyAdmin
-from .partner_admin import RecentPartnerAdmin, SecondPartnerAdmin, ThirdPartnerAdmin
+# from .partner_admin import RecentPartnerAdmin, SecondPartnerAdmin, ThirdPartnerAdmin
 from .pima_admin import PimaAdmin
 from .postitive_participant_admin import PositiveParticipantAdmin
 from .pregnancy_admin import PregnancyAdmin

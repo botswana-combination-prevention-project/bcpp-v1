@@ -147,7 +147,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
-    #distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
+    distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
 
     #20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
     selected = models.CharField(
@@ -212,6 +212,7 @@ class Plot(BaseDispatchSyncUuidModel):
     bhs = models.NullBooleanField()
 
     objects = PlotManager()
+
     history = AuditTrail()
 
     def __unicode__(self):
@@ -244,8 +245,6 @@ class Plot(BaseDispatchSyncUuidModel):
         self.action = self.get_action()
         if self.id:
             self.household_count = self.create_or_delete_households(self)
-            # if self.household_count > 0:
-            #    self.status = 'occupied'  # TODO: or maybe cancel the save
         if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
                 (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
             raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
@@ -308,7 +307,7 @@ class Plot(BaseDispatchSyncUuidModel):
             if number_of_households > instance.household_count:
                 instance.delete_unused_households(instance)
         else:
-            self.delete_unused_households(instance)
+            instance.delete_unused_households(instance)
         return Household.objects.filter(plot__pk=instance.pk).count()
 
     def get_action(self):
