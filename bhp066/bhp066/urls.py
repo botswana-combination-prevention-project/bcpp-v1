@@ -10,13 +10,13 @@ import django_databrowse
 from dajaxice.core import dajaxice_autodiscover
 
 from edc.map.classes import site_mappers
-from edc.subject.rule_groups.classes import rule_groups
+#from edc.subject.rule_groups.classes import rule_groups
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
 
 dajaxice_autodiscover()
-rule_groups.autodiscover()
+#rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
 site_mappers.autodiscover()
