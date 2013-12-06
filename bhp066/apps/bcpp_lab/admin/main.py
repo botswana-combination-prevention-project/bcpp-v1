@@ -19,9 +19,7 @@ class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
             "reason_not_drawn",
             "drawn_datetime",
             "panel",
-            "test_code",
             "aliquot_type",
-            "site",
             "item_type",
             "item_count_total",
             "estimated_volume",
@@ -65,7 +63,6 @@ class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
             'specimen_identifier',
             'requisition_identifier',
             'panel__name']
-        self.filter_horizontal = ["test_code", ]
 
 admin.site.register(SubjectRequisition, SubjectRequisitionAdmin)
 

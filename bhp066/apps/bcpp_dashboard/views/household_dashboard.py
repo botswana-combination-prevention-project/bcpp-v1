@@ -14,6 +14,7 @@ def household_dashboard(request, **kwargs):
         show=kwargs.get('show'),
         dashboard_type_list=['household'],
         )
+    dashboard.set_context()
     return render_to_response(
         'householdstructure_dashboard.html',
         dashboard.get_context().get(),
