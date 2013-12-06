@@ -147,7 +147,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
-    #distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
+    distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
 
     #20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
     selected = models.CharField(
