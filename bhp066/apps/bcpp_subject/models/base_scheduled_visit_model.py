@@ -1,7 +1,9 @@
 from datetime import datetime
+
 from django.db import models
 
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.subject.consent.models import BaseConsentedUuidModel
 from edc.audit.audit_trail import AuditTrail
 
@@ -11,6 +13,7 @@ from ..managers import ScheduledModelManager
 
 from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
+from .subject_visit import SubjectVisit
 
 
 class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
@@ -29,6 +32,8 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
     objects = ScheduledModelManager()
 
     history = AuditTrail()
+
+    entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
     def natural_key(self):
         return self.get_visit().natural_key()

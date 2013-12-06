@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django import forms
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -12,9 +11,8 @@ from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ..classes  import PlotIdentifier
 from ..forms import PlotForm
-from ..models import PlotIdentifierHistory, Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
+from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
 
 from .factories import PlotFactory
 
@@ -181,7 +179,7 @@ class PlotTests(TestCase):
         self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=0, status='occupied')
 
     def test_plot_confirms_plot_and_household(self):
-        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
+        plot = PlotFactory(community='test_community', household_count=1, status='occupied', gps_target_lat=-25.011111, gps_target_lon=25.741111)
         self.assertEqual(Household.objects.get(plot=plot).action, 'unconfirmed')
         plot.gps_degrees_e = 25
         plot.gps_degrees_s = 25
@@ -215,8 +213,8 @@ class PlotTests(TestCase):
         plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         plot.gps_degrees_e = 25
         plot.gps_degrees_s = 25
-        plot.gps_minutes_e = 22
-        plot.gps_minutes_s = 22
+        plot.gps_minutes_e = .22
+        plot.gps_minutes_s = .22
         plot_form = PlotForm()
         plot_form.instance = plot
         plot_form.cleaned_data = {}
@@ -234,6 +232,24 @@ class PlotTests(TestCase):
         """Plot does not save if community is not valid community from mapper classes."""
         self.assertRaisesRegexp(MapperError, 'invalid_community_name is not a valid mapper ', PlotFactory, household_count=1, status='occupied', community='invalid_community_name')
 
+    def test_plot_save_on_change(self):
+        """Allows change of occupied plot even though no log entry or members have been added yet."""
+        plot = PlotFactory(status=None, community='test_community')
+        plot.status = 'occupied'
+        plot.household_count = 1
+        self.assertIsNone(plot.save())
+        self.assertIsNone(plot.save())
+
+    def test_plot_save_on_change2(self):
+        """Allows change of occupied plot even though no log entry or members have been added yet."""
+        plot = PlotFactory(status=None, community='test_community')
+        plot.status = 'occupied'
+        plot.household_count = 1
+        self.assertIsNone(plot.save())
+        household = Household.objects.get(plot=plot)
+        HouseholdStructure.objects.filter(household=household).delete()
+        household.delete()
+        self.assertIsNone(plot.save())
 
 #     def test_identifier(self):
 #         print 'create a survey'

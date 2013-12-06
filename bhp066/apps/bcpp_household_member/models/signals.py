@@ -30,3 +30,14 @@ def base_household_member_consent_on_post_save(sender, instance, **kwargs):
         instance.post_save_update_hm_status()  # HM values must either be changed or match that provided on the consent
     if isinstance(instance, BaseRegisteredHouseholdMemberModel):
         instance.confirm_registered_subject_pk_on_post_save()
+
+
+@receiver(post_save, weak=False, dispatch_uid='subject_absentee_entry_on_post_save')
+def subject_absentee_entry_on_post_save(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdMember):
+            household_member = instance.subject_absentee.subject_visit.household_member
+            household_member.absentee = False
+            if sender.objects.filter(registered_subject=instance.registered_subject).count() >= 3:
+                household_member.absentee = True
+            household_member.save()
