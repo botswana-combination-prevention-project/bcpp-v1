@@ -1,28 +1,19 @@
 {% extends "bcpp_analytics/reports_base.html" %}
 
-{% block title %}Reports Page{% endblock %}
+{% block report_title %}Reports Index{% endblock %}
 
 {% block content %}
-  <div class='pure-g-r'>
-    <div class='pure-u-1-2'>
-      <div class='l-box'>
-        <h3>{{ page_name }} at {{ now }}</h3>
-        <div>
-          <a href="{% url 'analytics:accrual' %}" class="class">Community Accrual Report</a>
-        </div>
+  <div class="col-md-6 centered"> 
+    <div class="panel panel-info"> 
+      <div class="panel-heading">
+        <h2 class="panel-title">Reports List</h2>
       </div>
-
-
-    </div>
-    <div class='pure-u-1-2'>
-      <div class='l-box'>
-        <h3>{{ page_name }} at {{ now }}</h3>
-        <a href="/bcpp/section/" class='pure-button pure-button-secondary'>Dashboard</a>
-        <div>
-          <a href="{% url 'analytics:accrual' %}" class="class">Community Accrual Report</a>
-        </div>
+      <div class="panel-body">
+        The links below represent the currently available predefined reports
       </div>
-
+      <div class="list-group">
+        <a href="{% url 'analytics:accrual' %}" class="list-group-item">Community Accrual Report</a>
+      </div>
     </div>
   </div>
 {% endblock %}
