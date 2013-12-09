@@ -17,6 +17,7 @@
         <td>Households on Verified Residential</td>
         <td class="text-right">{{ plot.household_count }}</td>
       </tr>
+
       <tr class="report-section">
         <th class="text-center" colspan="2">Households Criteria</th>
       </tr>
@@ -46,8 +47,53 @@
       </tr>
       <tr>
         <td>Average Age-Eligible per Enumerated</td>
-        <td class="text-right">{{household_data.average_age_eligible}}</td>
+        <td class="text-right">{{household_data.average_age_eligible|floatformat}}</td>
       </tr>
+
+      <tr class='report-section'>
+        <th colspan='2' class='text-center'>Households Members/Residents</th>
+      </tr>
+      <tr>
+        <td>Number Refused</td>
+        <td class='text-right'>{{member.Refused}}</td>
+      </tr>
+      <tr class='pure-table-odd'>
+        <td>First Time Testers</td>
+        <td class='text-right'>{{member.first_time_testers}}</td>
+      </tr>
+      <tr>
+        <td>Eligible Members Tested</td>
+        <td class='text-right'>{{member.tested}}</td>
+      </tr>
+      <tr class='pure-table-odd'>
+        <td>Age-Eligible in Enrolled Households</td>
+        <td class='text-right'>{{member.age_eligible}}</td>
+      </tr>
+      <tr>
+        <td>Study-Eligible in Enrolled Households</td>
+        <td class='text-right'>{{member.study_eligible}}</td>
+      </tr>
+      <tr class='pure-table-odd'>
+        <td>Demographics of residents reached</td>
+        <td class='text-right'>{{member.reached_stats}}</td>
+      </tr>
+      <tr>
+        <td>Demographics of residents Enrolled</td>
+        <td class='text-right'>{{member.enrolled_stats}}</td>
+      </tr>
+      <tr class='pure-table-odd'>
+        <td>Total residents Refused</td>
+        <td class='text-right'>{{member.refused}}</td>
+      </tr>
+      <tr>
+        <td>Unable to be reached after 2 visits</td>
+        <td class='text-right'>{{member.unreached_after_2_visits}}</td>
+      </tr>
+      <tr class='pure-table-odd'>
+        <td>HIV persons in identified Households</td>
+        <td class='text-right'>{{member.hiv_positives}}</td>
+      </tr>
+
     </tbody>
   </table>
 </div>
