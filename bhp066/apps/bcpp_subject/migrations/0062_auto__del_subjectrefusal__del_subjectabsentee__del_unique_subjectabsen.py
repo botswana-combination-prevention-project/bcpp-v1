@@ -10,36 +10,36 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Removing unique constraint on 'SubjectUndecided', fields ['registered_subject', 'survey']
         db.delete_unique(u'bcpp_subject_subjectundecided', ['registered_subject_id', 'survey_id'])
-
+ 
         # Removing unique constraint on 'SubjectAbsenteeEntry', fields ['subject_absentee', 'report_datetime']
         db.delete_unique(u'bcpp_subject_subjectabsenteeentry', ['subject_absentee_id', 'report_datetime'])
-
+ 
         # Removing unique constraint on 'SubjectUndecidedEntry', fields ['subject_undecided', 'report_datetime']
         db.delete_unique(u'bcpp_subject_subjectundecidedentry', ['subject_undecided_id', 'report_datetime'])
-
+ 
         # Removing unique constraint on 'SubjectAbsentee', fields ['registered_subject', 'survey']
         db.delete_unique(u'bcpp_subject_subjectabsentee', ['registered_subject_id', 'survey_id'])
-
+ 
         # Deleting model 'SubjectRefusal'
         db.rename_table('bcpp_subject_subjectrefusal', u'bcpp_subject_subjectrefusal_old')
-
+ 
         # Deleting model 'SubjectAbsentee'
         db.rename_table('bcpp_subject_subjectabsentee', 'bcpp_subject_subjectabsentee_old')
-
+ 
         # Deleting model 'ThirdPartnerAudit'
         db.delete_table(u'bcpp_subject_thirdpartner_audit')
-
+ 
         # Deleting model 'SubjectUndecidedEntry'
         db.rename_table('bcpp_subject_subjectundecidedentry', u'bcpp_subject_subjectundecidedentry_old')
-
+ 
         # Deleting model 'RecentPartnerAudit'
         db.delete_table(u'bcpp_subject_recentpartner_audit')
-
+ 
         # Deleting model 'SecondPartnerAudit'
         db.delete_table(u'bcpp_subject_secondpartner_audit')
 
         # Deleting model 'SubjectUndecidedEntryAudit'
-        db.rename_table('bcpp_subject_subjectundecidedentry', u'bcpp_subject_subjectundecidedentry_audit_old')
+        db.rename_table('bcpp_subject_subjectundecidedentry_audit', u'bcpp_subject_subjectundecidedentry_audit_old')
 
         # Deleting model 'ThirdPartner'
         db.delete_table(u'bcpp_subject_thirdpartner')
