@@ -15,10 +15,13 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.visit_schedule.classes import site_visit_schedules
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
+from apps.bcpp.bcpp_app_configuration.classes import BcppAppConfiguration
 
 dajaxice_autodiscover()
+#rule_groups.autodiscover()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
+BcppAppConfiguration()
 site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
