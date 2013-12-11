@@ -15,6 +15,7 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'refusal_date',
         'why_no_participate',
         'why_no_participate_other',
+        'participant_offered_htc',
         'comment')
 
     radio_fields = {
@@ -23,15 +24,18 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
 
     list_display = (
         'household_member',
-        'why_no_participate')
+        'why_no_participate',
+        'participant_offered_htc')
 
     search_fields = [
         'household_member__first_name',
-        'household_member__household_structure__household__household_identifier']
+        'household_member__household_structure__household__household_identifier',
+        'participant_offered_htc']
 
     list_filter = (
         'survey',
-        'why_no_participate')
+        'why_no_participate',
+        'participant_offered_htc')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

@@ -42,6 +42,8 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment'))
 
+    participant_offered_htc = models.NullBooleanField(verbose_name="Offered HTC", default=None, help_text="has the participant been offered HTC?")
+
     history = AuditTrail()
 
     def get_registration_datetime(self):
