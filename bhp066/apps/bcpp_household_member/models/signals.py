@@ -39,7 +39,7 @@ def subject_absentee_entry_on_post_save(sender, instance, **kwargs):
         if isinstance(instance, SubjectAbsenteeEntry):
             household_member = instance.subject_absentee.household_member
             household_member.absentee = False
-            if sender.objects.filter(registered_subject=instance.registered_subject).count() >= 3:
+            if sender.objects.filter(subject_absentee__registered_subject=instance.subject_absentee.registered_subject).count() >= 3:
                 household_member.absentee = True
             household_member.save()
 
