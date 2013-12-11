@@ -38,9 +38,6 @@ class Migration(SchemaMigration):
         # Deleting model 'SecondPartnerAudit'
         db.delete_table(u'bcpp_subject_secondpartner_audit')
 
-        # Deleting model 'SubjectUndecidedEntryAudit'
-        db.rename_table('bcpp_subject_subjectundecidedentry_audit', u'bcpp_household_member_subjectundecidedentry_audit')
-
         # Deleting model 'ThirdPartner'
         db.delete_table(u'bcpp_subject_thirdpartner')
 
