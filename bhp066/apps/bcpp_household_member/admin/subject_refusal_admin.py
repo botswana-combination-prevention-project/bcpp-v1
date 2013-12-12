@@ -23,7 +23,6 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         }
 
     list_display = (
-        'household_member',
         'why_no_participate',
         'participant_offered_htc')
 
@@ -33,7 +32,6 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'participant_offered_htc']
 
     list_filter = (
-        'survey',
         'why_no_participate',
         'participant_offered_htc')
 
