@@ -21,16 +21,16 @@ class Migration(SchemaMigration):
         db.delete_unique(u'bcpp_subject_subjectabsentee', ['registered_subject_id', 'survey_id'])
  
         # Deleting model 'SubjectRefusal'
-        db.rename_table('bcpp_subject_subjectrefusal', u'bcpp_subject_subjectrefusal_old')
+        db.rename_table('bcpp_subject_subjectrefusal', u'bcpp_household_member_subjectrefusal')
  
         # Deleting model 'SubjectAbsentee'
-        db.rename_table('bcpp_subject_subjectabsentee', 'bcpp_subject_subjectabsentee_old')
+        db.rename_table('bcpp_subject_subjectabsentee', 'bcpp_household_member_subjectabsentee')
  
         # Deleting model 'ThirdPartnerAudit'
         db.delete_table(u'bcpp_subject_thirdpartner_audit')
  
         # Deleting model 'SubjectUndecidedEntry'
-        db.rename_table('bcpp_subject_subjectundecidedentry', u'bcpp_subject_subjectundecidedentry_old')
+        db.rename_table('bcpp_subject_subjectundecidedentry', u'bcpp_household_member_subjectundecidedentry')
  
         # Deleting model 'RecentPartnerAudit'
         db.delete_table(u'bcpp_subject_recentpartner_audit')
@@ -38,41 +38,38 @@ class Migration(SchemaMigration):
         # Deleting model 'SecondPartnerAudit'
         db.delete_table(u'bcpp_subject_secondpartner_audit')
 
-        # Deleting model 'SubjectUndecidedEntryAudit'
-        db.rename_table('bcpp_subject_subjectundecidedentry_audit', u'bcpp_subject_subjectundecidedentry_audit_old')
-
         # Deleting model 'ThirdPartner'
         db.delete_table(u'bcpp_subject_thirdpartner')
 
         # Deleting model 'SubjectAbsenteeEntryAudit'
-        db.rename_table('bcpp_subject_subjectabsenteeentry_audit', u'bcpp_subject_subjectabsenteeentry_audit_old')
+        db.rename_table('bcpp_subject_subjectabsenteeentry_audit', u'bcpp_household_member_subjectabsenteeentry_audit')
 
         # Deleting model 'SubjectUndecidedAudit'
-        db.rename_table('bcpp_subject_subjectundecided_audit', u'bcpp_subject_subjectundecided_audit_old')
+        db.rename_table('bcpp_subject_subjectundecided_audit', u'bcpp_household_member_subjectundecided_audit')
 
         # Deleting model 'SubjectAbsenteeAudit'
-        db.rename_table('bcpp_subject_subjectabsentee_audit', u'bcpp_subject_subjectabsentee_audit_old')
+        db.rename_table('bcpp_subject_subjectabsentee_audit', u'bcpp_household_member_subjectabsentee_audit')
 
         # Deleting model 'SubjectAbsenteeEntry'
-        db.rename_table('bcpp_subject_subjectabsenteeentry', u'bcpp_subject_subjectabsenteeentry_old')
+        db.rename_table('bcpp_subject_subjectabsenteeentry', u'bcpp_household_member_subjectabsenteeentry')
 
         # Deleting model 'SecondPartner'
         db.delete_table(u'bcpp_subject_secondpartner')
 
         # Deleting model 'SubjectMovedAudit'
-        db.rename_table('bcpp_subject_subjectmoved_audit', u'bcpp_subject_subjectmoved_audit_old')
+        db.rename_table('bcpp_subject_subjectmoved_audit', u'bcpp_household_member_subjectmoved_audit')
 
         # Deleting model 'RecentPartner'
         db.delete_table(u'bcpp_subject_recentpartner')
 
         # Deleting model 'SubjectUndecided'
-        db.rename_table('bcpp_subject_subjectundecided', u'bcpp_subject_subjectundecided_old')
+        db.rename_table('bcpp_subject_subjectundecided', u'bcpp_household_member_subjectundecided')
 
         # Deleting model 'SubjectMoved'
-        db.rename_table('bcpp_subject_subjectmoved', u'bcpp_subject_subjectmoved_old')
+        db.rename_table('bcpp_subject_subjectmoved', u'bcpp_household_member_subjectmoved')
 
         # Deleting model 'SubjectRefusalAudit'
-        db.rename_table('bcpp_subject_subjectrefusal_audit', u'bcpp_subject_subjectrefusal_audit_old')
+        db.rename_table('bcpp_subject_subjectrefusal_audit', u'bcpp_household_member_subjectrefusal_audit')
 
 
     def backwards(self, orm):
