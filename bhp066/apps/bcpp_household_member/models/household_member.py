@@ -87,6 +87,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
 
+    absentee_visit_attempts = models.IntegerField(default=0)
+
     target = models.IntegerField(default=0)
 
     relation = models.CharField(
