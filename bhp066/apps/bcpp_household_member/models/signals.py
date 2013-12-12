@@ -2,6 +2,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 from .household_member import HouseholdMember
+from .subject_absentee_entry import SubjectAbsenteeEntry
 from .base_member_status_model import BaseMemberStatusModel
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
@@ -35,9 +36,21 @@ def base_household_member_consent_on_post_save(sender, instance, **kwargs):
 @receiver(post_save, weak=False, dispatch_uid='subject_absentee_entry_on_post_save')
 def subject_absentee_entry_on_post_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
-        if isinstance(instance, HouseholdMember):
-            household_member = instance.subject_absentee.subject_visit.household_member
+        if isinstance(instance, SubjectAbsenteeEntry):
+            household_member = instance.subject_absentee.household_member
             household_member.absentee = False
-            if sender.objects.filter(registered_subject=instance.registered_subject).count() >= 3:
+            if sender.objects.filter(subject_absentee__registered_subject=instance.subject_absentee.registered_subject).count() >= 3:
                 household_member.absentee = True
             household_member.save()
+
+
+@receiver(post_save, weak=False, dispatch_uid='absentee_visit_attempts_on_post_save')
+def absentee_visit_attempts_on_post_save(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, SubjectAbsenteeEntry):
+            household_member = instance.subject_absentee.household_member
+            if household_member.absentee_visit_attempts < 3:
+                household_member.absentee_visit_attempts += 1
+                household_member.save()
+            else:
+                raise TypeError("Cannot have more than three visit attempts for household member")
