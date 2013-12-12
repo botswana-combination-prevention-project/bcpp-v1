@@ -39,28 +39,40 @@ class SubjectAbsenteeEntryInline(BaseTabularInline):
 
 class SubjectAbsenteeAdmin(BaseRegisteredSubjectModelAdmin):
 
+#     def __init__(self, *args, **kwargs):
+#         self.search_fields = ['household_member__first_name',
+#                             'household_member__household_structure__household__household_identifier', ]
+#         self.list_display = ['household_member',
+#                             'survey',
+#                             'subject_absentee_status',
+#                             'report_datetime',]
+#         self.list_filter = ['survey',
+#                             'report_datetime',
+#                             'hostname_created',]
+# 
+#         super(SubjectAbsenteeAdmin, self).__init__(*args, **kwargs)
+
     form = SubjectAbsenteeEntryForm
     inlines = [SubjectAbsenteeEntryInline, ]
 
     dashboard_type = 'subject'
     subject_identifier_attribute = 'registration_identifier'
+
+    search_fields = ['household_member__first_name',
+                    'household_member__household_structure__household__household_identifier', ]
+    list_display = ['household_member',
+                    'survey',
+                    'subject_absentee_status',
+                    'report_datetime',]
+    list_filter = ['survey',
+                    'report_datetime',
+                    'hostname_created',]
     fields = (
         'registered_subject',
         'household_member',
         'report_datetime',
         )
-    list_display = (
-        'household_member',
-        'survey',
-        'subject_absentee_status',
-        'report_datetime',)
-    list_filter = (
-        'survey',
-        'report_datetime',
-        'hostname_created',)
-    search_fields = [
-        'household_member__first_name',
-        'household_member__household_structure__household__household_identifier', ]
+
     readonly_fields = (
         'registered_subject',
         'household_member',
