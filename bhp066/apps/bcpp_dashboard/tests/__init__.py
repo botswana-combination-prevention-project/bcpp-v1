@@ -1,2 +1,2 @@
-#from dashboard_tests import *
-from participation_status_tests import ParticipationStatusTests
+from dashboard_tests import DashboardTests
+#from participation_status_tests import ParticipationStatusTests
