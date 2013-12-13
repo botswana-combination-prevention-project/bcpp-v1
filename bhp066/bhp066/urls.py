@@ -42,6 +42,13 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/logout/$', RedirectView.as_view(url='/{app_name}/logout/'.format(app_name=APP_NAME))),
     (r'^admin/', include(admin.site.urls)),
+    (r'^i18n/', include('django.conf.urls.i18n')),
+)
+
+
+
+urlpatterns += patterns('',
+    (r'^bcpp/section/statistics/', include('apps.bcpp_reports.urls', namespace="reports")),
 )
 
 urlpatterns += patterns('',
@@ -73,7 +80,6 @@ urlpatterns += patterns('',
     url(r'^{app_name}/section/reports/model_data_inspector/'.format(app_name=APP_NAME),
         include('edc.core.model_data_inspector.urls'), name="model_data_inspector_url_name"),
 )
-
 
 # urlpatterns += patterns('',
 #     url(r'^{app_name}/(?P<section_name>statistics)/'.format(app_name=APP_NAME),
