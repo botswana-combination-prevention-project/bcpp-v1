@@ -15,13 +15,13 @@ from edc.core.bhp_content_type_map.models import ContentTypeMap
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import HouseholdStructureFactory
 from apps.bcpp_household.models import post_save_on_household, create_household_on_post_save, household_structure_on_post_save
-from .factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory ,SubjectAbsenteeEntryFactory, \
+from .factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory , SubjectAbsenteeEntryFactory, \
                         SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory
-                        
+
 
 
 class NaturalKeyTests(TestCase):
-    
+
 #     def setup(self):
 #         User.objects.c
 
@@ -73,7 +73,7 @@ class NaturalKeyTests(TestCase):
         household_member = HouseholdMemberFactory(household_structure=household_structure, survey=survey)
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=household_member.registered_subject.subject_identifier)
-        #enrolment_checklist = EnrolmentChecklistFactory(household_member=household_member)
+        # enrolment_checklist = EnrolmentChecklistFactory(household_member=household_member)
         household_info = HouseholdInfoFactory(household_structure=household_structure, household_member=household_member)
         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
         subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
@@ -84,18 +84,18 @@ class NaturalKeyTests(TestCase):
         subject_undecided_entry = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
         subject_absentee_entry1 = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
         subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided)
-        
+
         # contact_log = ContactLogFactory()
         # contact_log_item = ContactLogFactoryItem()
         instances = []
         instances.append(household_member)
         instances.append(registered_subject)
-        #instances.append(enrolment_checklist)
+        # instances.append(enrolment_checklist)
         instances.append(household_structure)
         instances.append(household_info)
         instances.append(subject_refusal)
         instances.append(subject_moved)
-        
+
         instances.append(subject_absentee_entry)
         instances.append(subject_undecided_entry)
         instances.append(subject_absentee_entry1)
