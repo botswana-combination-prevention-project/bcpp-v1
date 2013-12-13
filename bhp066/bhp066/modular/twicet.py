@@ -15,7 +15,7 @@ DATABASES = {
     'lab_api': mysql_db(NAME='lab', HOST='192.168.1.50'),
 }
 
-INSTALLED_APPS += ('debug_toolbar', )
+INSTALLED_APPS += ('debug_toolbar', 'aldjemy')
 
 INTERNAL_IPS = ('127.0.0.1', )
 
