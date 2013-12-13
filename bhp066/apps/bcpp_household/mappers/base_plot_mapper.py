@@ -19,7 +19,7 @@ class BasePlotMapper(Mapper):
     map_field_attr_18 = 'uploaded_map_18'
     map_field_attr_17 = 'uploaded_map_17'
     map_field_attr_16 = 'uploaded_map_16'
-    
+
     target_gps_lat_field_attr = 'gps_target_lat'
     target_gps_lon_field_attr = 'gps_target_lon'
     icons = ICONS
@@ -37,3 +37,11 @@ class BasePlotMapper(Mapper):
     gps_degrees_e_field_attr = 'gps_degrees_e'
     gps_minutes_s_field_attr = 'gps_minutes_s'
     gps_minutes_e_field_attr = 'gps_minutes_e'
+
+    @property
+    def test_location(self):
+        """Decimal Degrees = Degrees + minutes/60 + seconds/3600"""
+        degrees_e, minutes_e = self.deg_to_dms(self.gps_center_lon)
+        degrees_s, minutes_s = self.deg_to_dms(self.gps_center_lat)
+        return (degrees_s, minutes_s, degrees_e, minutes_e)
+
