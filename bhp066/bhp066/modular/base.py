@@ -152,7 +152,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
 
@@ -305,6 +305,7 @@ LOGOUT_URL = '/{app_name}/logout/'.format(app_name=APP_NAME)
 SOUTH_LOGGING_FILE = join(dirname(__file__), "south.log")
 SOUTH_LOGGING_ON = True
 
+DEVICE_ID='99'
 # dajax
 DAJAXICE_MEDIA_PREFIX = "dajaxice"
 
@@ -327,7 +328,7 @@ FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
 CURRENT_COMMUNITY = 'molapowabojang'
-CURRENT_COMMUNITY_CHECK = True       # turn this to true on the netbooks to make a community check is run on netbooks 
+CURRENT_COMMUNITY_CHECK = True       # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
