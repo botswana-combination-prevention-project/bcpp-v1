@@ -22,9 +22,7 @@ from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, \
-                                         SubjectAbsenteeEntryFactory, SubjectDeathFactory, SubjectUndecidedEntryFactory, \
-                                         SubjectRefusalFactory, SubjectReferralFactory, SubjectMovedFactory
+from apps.bcpp_subject.tests.factories import SubjectVisitFactory, GrantFactory, LabourMarketWagesFactory, SubjectLocatorFactory, SubjectDeathFactory, SubjectReferralFactory
 from apps.bcpp_survey.models import Survey
 
 

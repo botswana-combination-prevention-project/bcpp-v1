@@ -7,5 +7,3 @@ from .subject_moved_factory import SubjectMovedFactory
 from .subject_refusal_factory import SubjectRefusalFactory
 from .subject_undecided_factory import SubjectUndecidedFactory
 from .subject_undecided_entry_factory import SubjectUndecidedEntryFactory
-
-

@@ -4,7 +4,7 @@ import sys
 
 from unipath import Path
 
-from .logger import LOGGING
+# from logger import LOGGING
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
