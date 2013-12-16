@@ -137,6 +137,16 @@ class Household(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
+    enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
+
+    complete = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
+
+    enumeration_attempts = models.IntegerField(
+        default=0,
+        editable=False,
+        help_text='Number of attempts to enumerate a plot to determine it\'s status.'
+        )
+
     objects = HouseholdManager()
 
     history = AuditTrail()
