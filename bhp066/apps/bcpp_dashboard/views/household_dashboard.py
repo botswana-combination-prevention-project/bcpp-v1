@@ -16,5 +16,5 @@ def household_dashboard(request, **kwargs):
     dashboard.set_context()
     return render_to_response(
         'householdstructure_dashboard.html',
-        dashboard.get_context().get(),
+        dashboard.context.get(),
         context_instance=RequestContext(request))
