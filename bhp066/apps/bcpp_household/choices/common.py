@@ -41,16 +41,16 @@ INFO_PROVIDER = (
 
 PLOT_STATUS = (
     ('occupied', 'Occupied'),
-    ('occupied_no_residents', 'occupied but no residents'),
-    ('occupied_refused_enumeration', 'occupied but refused enumeration'),
+    # ('occupied_no_residents', 'occupied but no residents'),
+    # ('occupied_refused_enumeration', 'occupied but refused enumeration'),
     ('vacant', 'Vacant / Uninhabited'),
     ('non-residential', 'Not a residential plot'),
+    ('inaccessible', 'Inaccessible'),
     )
 
 HOUSEHOLD_STATUS = (
-    ('occupied', 'Occupied'),
-    ('vacant', 'Vacant'),
-    ('invalid', 'Not a household'),
+    ('enumerated', 'Enumerated'),
+    ('not_enumerated', 'Not Enumerated'),
     )
 
 HOUSEHOLD_COMPLETION_STATUS = (
