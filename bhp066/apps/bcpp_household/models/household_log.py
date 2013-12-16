@@ -80,6 +80,9 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
     def natural_key(self):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
 
