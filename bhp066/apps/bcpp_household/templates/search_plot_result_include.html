@@ -37,7 +37,7 @@
         {% endif %}
         </td>
       <td>
-        {% if plot|is_dispatched %}
+        {% if plot.is_dispatched %}
           <div class="warning">Locked</div>{{ plot.action }}
         {% else %}
               {{ plot.action }}
