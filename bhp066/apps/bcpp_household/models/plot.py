@@ -55,6 +55,13 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         )
 
+    comment = EncryptedTextField(
+        verbose_name="Comment",
+        max_length=250,
+        blank=True,
+        null=True,
+        )
+
     cso_number = EncryptedCharField(
         verbose_name="CSO Number",
         blank=True,
@@ -145,9 +152,17 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
+    status = models.CharField(
+        verbose_name='Plot status',
+        max_length=35,
+        null=True,
+        choices=PLOT_STATUS,
+        help_text='If Inaccessible, update status and comment but not GPS, household count, time_of_week, etc.'
+        )
+
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
-    distance_from_target = models.FloatField(null=True, editable=False, help_text='distance in meters')
+    distance_from_target = models.FloatField(null=True, editable=True, help_text='distance in meters')
 
     #20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
     selected = models.CharField(
@@ -170,12 +185,18 @@ class Plot(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
+    access_attempts = models.IntegerField(
+        default=0,
+        editable=False,
+        help_text='Number of attempts to access a plot to determine it\'s status.'
+        )
+
     # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
-    uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16", max_length=25, null=True, blank=True,)
+    uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16", max_length=25, null=True, blank=True, editable=False)
 
-    uploaded_map_17 = models.CharField(verbose_name="Map image at zoom level 17", max_length=25, null=True, blank=True,)
+    uploaded_map_17 = models.CharField(verbose_name="Map image at zoom level 17", max_length=25, null=True, blank=True, editable=False)
 
-    uploaded_map_18 = models.CharField(verbose_name="Map image at zoom level 18", max_length=25, null=True, blank=True,)
+    uploaded_map_18 = models.CharField(verbose_name="Map image at zoom level 18", max_length=25, null=True, blank=True, editable=False)
 
     community = models.CharField(
         max_length=25,
@@ -190,6 +211,7 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         verbose_name='Section',
         choices=SECTIONS,
+        editable=False,
         )
 
     sub_section = models.CharField(
@@ -198,18 +220,10 @@ class Plot(BaseDispatchSyncUuidModel):
         verbose_name='Sub-section',
         choices=SUB_SECTIONS,
         help_text=u'',
+        editable=False,
         )
 
-    status = models.CharField(
-        verbose_name='Plot status',
-        max_length=35,
-        null=True,
-        choices=PLOT_STATUS,
-        )
-
-    enrolled = models.NullBooleanField()
-
-    bhs = models.NullBooleanField()
+    bhs = models.NullBooleanField(editable=False)
 
     objects = PlotManager()
 
@@ -236,18 +250,23 @@ class Plot(BaseDispatchSyncUuidModel):
             self.plot_identifier = plot_identifier.get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
-        if self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s:
-            self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
-            mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-            mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
-            self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
-        self.action = self.get_action()
-        if self.id:
-            self.household_count = self.create_or_delete_households(self)
-        if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
-                (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
-            raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
+        if self.status == 'inaccessible':
+            # reset any editable fields that the user changed
+            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and field.name not in ['status', 'comment']]:
+                setattr(self, field.name, None)
+        else:
+            if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
+                self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+                self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
+                mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+                mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+                self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
+            self.action = self.get_action()
+            if self.id:
+                self.household_count = self.create_or_delete_households(self)
+            if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
+                    (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
+                raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
     @property
