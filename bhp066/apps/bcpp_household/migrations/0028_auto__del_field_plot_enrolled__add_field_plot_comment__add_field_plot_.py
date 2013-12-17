@@ -11,14 +11,9 @@ class Migration(SchemaMigration):
         # Deleting field 'Plot.enrolled'
         db.delete_column('bcpp_household_plot', 'enrolled')
 
-        # Adding field 'Plot.comment'
+#         # Adding field 'Plot.comment'
         db.add_column('bcpp_household_plot', 'comment',
                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'Plot.distance_from_target'
-        db.add_column('bcpp_household_plot', 'distance_from_target',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
                       keep_default=False)
 
         # Adding field 'Plot.access_attempts'
@@ -64,10 +59,6 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'PlotAudit.distance_from_target'
-        db.add_column('bcpp_household_plot_audit', 'distance_from_target',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
 
         # Adding field 'PlotAudit.access_attempts'
         db.add_column('bcpp_household_plot_audit', 'access_attempts',
