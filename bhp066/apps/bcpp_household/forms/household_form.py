@@ -12,7 +12,7 @@ class HouseholdForm(BaseModelForm):
         cleaned_data = self.cleaned_data
         plot = cleaned_data.get('plot', None)
         if plot:
-            if plot.is_dispatched_as_item():
+            if plot.is_dispatched():
                 raise forms.ValidationError("Plot is currently dispatched. Data may not be changed.")
         return cleaned_data
 
