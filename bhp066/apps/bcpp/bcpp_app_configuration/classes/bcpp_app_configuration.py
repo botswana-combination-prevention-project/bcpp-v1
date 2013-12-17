@@ -6,7 +6,7 @@ from apps.bcpp_survey.models import Survey
 
 
 study_start_datetime = datetime(2013, 10, 29, 10, 30, 00)
-study_end_datetime = datetime(2013, 10, 29, 10, 30, 00)
+study_end_datetime = datetime(2014, 10, 29, 16, 30, 00)
 
 
 class BcppAppConfiguration(BaseAppConfiguration):
@@ -44,7 +44,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,
-                'end_datetime': datetime(2014, 10, 29, 16, 30, 00),
+                'end_datetime': study_end_datetime,
                 'add_for_app': 'bcpp_subject'}
 
     survey_setup = {
