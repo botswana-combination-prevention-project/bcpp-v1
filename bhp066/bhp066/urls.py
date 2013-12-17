@@ -65,9 +65,9 @@ urlpatterns += patterns('',
     (r'^reports/', include('edc.core.bhp_birt_reports.urls')),
 )
 
-#urlpatterns += patterns('',
-#    (r'^{app_name}/reports/'.format(app_name=APP_NAME), include('apps.{app_name}_reports.urls'.format(app_name=APP_NAME))),
-#)
+urlpatterns += patterns('',
+    (r'^{app_name}/reports/'.format(app_name=APP_NAME), include('apps.{app_name}_reports.urls'.format(app_name=APP_NAME))),
+)
 
 urlpatterns += patterns('',
     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
