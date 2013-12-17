@@ -86,6 +86,9 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
 
+    def __unicode__(self):
+        return unicode(self.household_log)+'('+unicode(self.report_datetime)+')'
+
     class Meta:
         app_label = 'bcpp_household'
         unique_together = ('household_log', 'report_datetime')
