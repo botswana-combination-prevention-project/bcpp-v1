@@ -11,7 +11,7 @@ from .plot import Plot
 
 
 class HouseholdLog(BaseDispatchSyncUuidModel):
-
+    #Household
     household_structure = models.OneToOneField(HouseholdStructure)
 
     history = AuditTrail()
