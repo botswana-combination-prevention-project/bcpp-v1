@@ -36,7 +36,6 @@ class AbsenteeVisitAtempts(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        print 'VALUE='+self.value()
         if self.value():
             return queryset.filter(member_status='ABSENT', absentee_visit_attempts=self.value())
         else:
@@ -98,5 +97,5 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'modified', 'hostname_created', AbsenteeVisitAtempts)
 
     #readonly_fields = ('absentee_visit_attempts', )
-    list_per_page = 15
+    list_per_page = 25
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)
