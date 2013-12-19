@@ -10,6 +10,7 @@ from edc.device.dispatch.exceptions import DispatchError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from apps.bcpp_survey.models import Survey
+from .bcpp_signal_manager import BcppSignalManager
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BcppDispatchController(DispatchController):
+class BcppDispatchController(DispatchController, BcppSignalManager):
 
     def __init__(self, using_source, using_destination, dispatch_container_instance, **kwargs):
         dispatch_container_app_label = 'bcpp_household'
