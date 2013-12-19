@@ -1,18 +1,25 @@
 from apps.bcpp_household.models.household import Household
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
+from .data_row import DataRow
 
 
 class HouseholdReportQuery(object):
 
     def __init__(self, community):
         self.community = community
-        self.targeted = self.targeted_qs().count()
-        self.visited = self.visited_qs().count()
-        self.enumerated = self.enumerated_qs().count()
-        self.at_least_one_present = self.eligible_qs().distinct().count()
-        self.all_refused = self.all_refused_qs().count()
-        self.total_age_eligible = self.eligible_qs().count()
-        self.average_age_eligible = float(self.total_age_eligible) / (self.enumerated or 1)
+        self.data = []
+        targeted_count = self.targeted_qs().count()
+        self.data.append(DataRow("Targeted", targeted_count))
+        self.data.append(DataRow("Visited at least Once", self.visited_qs().count()))
+        enumerated = self.enumerated_qs().count()
+        self.data.append(DataRow("Enumerated", enumerated))
+        self.data.append(DataRow("At least 1 member present", self.eligible_qs().distinct().count()))
+        self.data.append(DataRow("All Refused", self.all_refused_qs().count()))
+        total_age_eligible = self.eligible_qs().count()
+        self.data.append(DataRow("Age-eligible", total_age_eligible))
+        average_age_eligible = float(total_age_eligible) / (enumerated or 1)
+        avg = int(average_age_eligible * 100 + 0.5) / 100.0
+        self.data.append(DataRow("Average Age-eligible per Enumerated", avg))
 
     def targeted_qs(self):
         return Household.objects.filter(plot__action='confirmed',
