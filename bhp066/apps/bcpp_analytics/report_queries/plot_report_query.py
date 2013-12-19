@@ -1,14 +1,17 @@
-from apps.bcpp_household.models.plot import Plot
 from django.db.models import Count, Sum
+
+from apps.bcpp_household.models.plot import Plot
+from .data_row import DataRow
 
 
 class PlotReportQuery(object):
     def __init__(self, community):
         self.community = community
         self.plots = Plot.objects.filter(community=community)
-        self.targeted = self.targeted_qs().count()
-        self.household_count = self.plot_stats().get('household_count')
-        self.verified_residential = self.plot_stats().get('verified_count')
+        self.data = []
+        self.data.append(DataRow('Number Targeted', self.targeted_qs().count()))
+        self.data.append(DataRow('Verified Residential', self.plot_stats().get('verified_count')))
+        self.data.append(DataRow('Households on Verified Residential', self.plot_stats().get('household_count')))
 
     def targeted_qs(self):
         return self.plots.exclude(selected=None)
