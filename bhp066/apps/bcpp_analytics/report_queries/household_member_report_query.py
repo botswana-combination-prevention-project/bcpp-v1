@@ -12,20 +12,20 @@ class HouseholdMemberReportQuery(object):
     def __init__(self, community):
         self.community = community
         self.community_members = HouseholdMember.objects.filter(household_structure__household__community=community)
-        self.data = ["Households Members/Residents", ]
-        self.data += DataRow("Absentees stratified by visits", self.absentee_stratified())
-        self.data += DataRow("Number Refused", self.refused_qs().count())
-        self.data += DataRow("First Time Testers", self.first_time_testers_qs().count())
-        self.data += DataRow('Eligible Members Tested', self.tested_qs().count())
-        self.data += DataRow('Age-Eligible in Enrolled Households', self.age_eligible_qs().count())
-        self.data += DataRow('Study-Eligible in Enrolled Households', self.study_eligible_qs())
-        self.data += DataRow('Demographics of Residents Reached', self.reached_stats())
-        self.data += DataRow('Demographics of Residents Enrolled', self.enrolled_stats())
-        self.data += DataRow('Unable to be reached after 2 visits', self.unreached_after_visits_qs(2).count())
-        self.data += DataRow('HIV persons in identified Households', self.hiv_positive_qs().count())
-        self.data += DataRow('New HIV Positives', self.new_infections_qs().count())
-        self.data += DataRow('Already Documented HIV positive', self.already_infected_qs().count())
-        self.data += DataRow('Self Reported as HIV positive', self.self_reported_positive_qs().count())
+        self.data = []
+        self.data.append(DataRow("Absentees stratified by visits", self.absentee_stratified()))
+        self.data.append(DataRow("Number Refused", self.refused_qs().count()))
+        self.data.append(DataRow("First Time Testers", self.first_time_testers_qs().count()))
+        self.data.append(DataRow('Eligible Members Tested', self.tested_qs().count()))
+        self.data.append(DataRow('Age-Eligible in Enrolled Households', self.age_eligible_qs().count()))
+        self.data.append(DataRow('Study-Eligible in Enrolled Households', self.study_eligible_qs()))
+        self.data.append(DataRow('Demographics of Residents Reached', self.reached_stats()))
+        self.data.append(DataRow('Demographics of Residents Enrolled', self.enrolled_stats()))
+        self.data.append(DataRow('Unable to be reached after 2 visits', self.unreached_after_visits_qs(2).count()))
+        self.data.append(DataRow('HIV persons in identified Households', self.hiv_positive_qs().count()))
+        self.data.append(DataRow('New HIV Positives', self.new_infections_qs().count()))
+        self.data.append(DataRow('Already Documented HIV positive', self.already_infected_qs().count()))
+        self.data.append(DataRow('Self Reported as HIV positive', self.self_reported_positive_qs().count()))
 
     def refused_qs(self):
         return self.community_members.filter(member_status='REFUSED')
