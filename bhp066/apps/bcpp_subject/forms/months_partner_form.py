@@ -20,6 +20,16 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
             raise forms.ValidationError('Do not answer this question if partners HIV status is known to be negative')
         if cleaned_data.get('firstpartnerhiv') == 'I am not sure' and cleaned_data.get('firsthaart') in self.yes_no_unsure_options:
             raise forms.ValidationError('If partner status is not known, do not give information about status of ARV\'s')
+        #validating number of months and days
+        if cleaned_data.get('third_last_sex', None) == 'Days' and cleaned_data.get('third_last_sex_calc') > 31:
+            raise forms.ValidationError('if last time of sex is in days, then days cannot exceed 31')
+        if cleaned_data.get('third_last_sex', None) == 'Months' and cleaned_data.get('third_last_sex_calc') > 12:
+            raise forms.ValidationError('if last time of sex is in months, then months in a year cannot exceed 12')
+        #validating number of months and days
+        if cleaned_data.get('first_first_sex', None) == 'Days' and cleaned_data.get('first_first_sex_calc') > 31:
+            raise forms.ValidationError('if first time of sex is in days, then days cannot exceed 31')
+        if cleaned_data.get('first_first_sex', None) == 'Months' and cleaned_data.get('first_first_sex_calc') > 12:
+            raise forms.ValidationError('if first time of sex is in months, then months in a year cannot exceed 12')
         return cleaned_data
 
 

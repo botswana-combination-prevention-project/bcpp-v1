@@ -443,7 +443,7 @@ STI_DX = (
     ('pneumonia', 'Severe pneumonia or meningitis or sepsis'),
     ('PCP', 'PCP (Pneumocystis pneumonia)'),
     ('herpes', 'Herpes infection for more than one month'),
-    ('OTHER', 'Other'),   
+    ('OTHER', 'Other'),
     )
 
 CHOICES_FROM_BCPPLIST = (
