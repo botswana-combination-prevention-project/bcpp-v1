@@ -27,18 +27,20 @@ def index(request):
 @login_required
 def accrual(request):
     template = "bcpp_analytics/accrual_report.html"
-    communities = [item[0] for item in COMMUNITIES]
+    communities_list = [item[0] for item in COMMUNITIES]
     community1 = request.GET.get("community1") or 'Ranaka'
     community2 = request.GET.get("community2") or 'Digawana'
 
     plots = (PlotReportQuery(community1), PlotReportQuery(community2))
     households = (HouseholdReportQuery(community1), HouseholdReportQuery(community2))
     members = (HouseholdMemberReportQuery(community1), HouseholdMemberReportQuery(community2))
+    report_data = [plots, households, members]
+    community1_data = [item[0] for item in report_data]
+    community2_data = [item[1] for item in report_data]
 
-    page_context = {'communities': communities,
-                    'plots': plots,
-                    'households': households,
-                    'members': members,
+    page_context = {'communities_list': communities_list,
+                    'community1_data': community1_data,
+                    'community2_data': community2_data,
                     }
     return render(request, template, page_context)
 
