@@ -6,29 +6,45 @@ from apps.bcpp_household_member.models.household_member import HouseholdMember
 from apps.bcpp_subject.models.subject_consent import SubjectConsent
 from .household_report_query import HouseholdReportQuery
 from .data_row import DataRow
+from .report_query import TwoColumnReportQuery
 
 
-class HouseholdMemberReportQuery(object):
-    def __init__(self, community):
-        self.community = community
-        self.community_members = HouseholdMember.objects.filter(household_structure__household__community=community)
-        self.data = []
-        self.data.append(DataRow("Absentees stratified by visits", self.absentee_stratified()))
-        self.data.append(DataRow("Number Refused", self.refused_qs().count()))
-        self.data.append(DataRow("First Time Testers", self.first_time_testers_qs().count()))
-        self.data.append(DataRow('Eligible Members Tested', self.tested_qs().count()))
-        self.data.append(DataRow('Age-Eligible in Enrolled Households', self.age_eligible_qs().count()))
-        self.data.append(DataRow('Study-Eligible in Enrolled Households', self.study_eligible_qs()))
-        self.data.append(DataRow('Demographics of Residents Reached', self.reached_stats()))
-        self.data.append(DataRow('Demographics of Residents Enrolled', self.enrolled_stats()))
-        self.data.append(DataRow('Unable to be reached after 2 visits', self.unreached_after_visits_qs(2).count()))
-        self.data.append(DataRow('HIV persons in identified Households', self.hiv_positive_qs().count()))
-        self.data.append(DataRow('New HIV Positives', self.new_infections_qs().count()))
-        self.data.append(DataRow('Already Documented HIV positive', self.already_infected_qs().count()))
-        self.data.append(DataRow('Self Reported as HIV positive', self.self_reported_positive_qs().count()))
+class HouseholdMemberReportQuery(TwoColumnReportQuery):
+    def post_init(self, **kwargs):
+        self.community_members_qs = HouseholdMember.objects.filter(household_structure__household__community=self.community)
+        self.refused = self.refused_qs().count()
+        self.first_time_testers = self.first_time_testers_qs().count()
+        self.tested = self.tested_qs().count()
+        self.age_eligibles = self.age_eligible_qs().count()
+        self.study_eligibles = self.study_eligible_qs()
+        self.twice_unreached = self.unreached_after_visits_qs(2).count()
+        self.hiv_positives = self.hiv_positive_qs().count()
+        self.new_infections = self.new_infections_qs().count()
+        self.already_infected = self.already_infected_qs().count()
+        self.acknowledged_positives = self.self_reported_positive_qs().count()
+
+    def display_title(self):
+        return "Households Members/Residents"
+
+    def data_to_display(self):
+        data = []
+        data.append(DataRow("Absentees stratified by visits", self.absentee_stratified()))
+        data.append(DataRow("Number Refused", self.refused))
+        data.append(DataRow("First Time Testers", self.first_time_testers))
+        data.append(DataRow('Eligible Members Tested', self.tested))
+        data.append(DataRow('Age-Eligible in Enrolled Households', self.age_eligibles))
+        data.append(DataRow('Study-Eligible in Enrolled Households', self.study_eligibles))
+        data.append(DataRow('Demographics of Residents Reached', self.reached_stats()))
+        data.append(DataRow('Demographics of Residents Enrolled', self.enrolled_stats()))
+        data.append(DataRow('Unable to be reached after 2 visits', self.twice_unreached))
+        data.append(DataRow('HIV persons in identified Households', self.hiv_positives))
+        data.append(DataRow('New HIV Positives', self.new_infections))
+        data.append(DataRow('Already Documented HIV positive', self.already_infected))
+        data.append(DataRow('Self Reported as HIV positive', self.acknowledged_positives))
+        return data
 
     def refused_qs(self):
-        return self.community_members.filter(member_status='REFUSED')
+        return self.community_members_qs.filter(member_status='REFUSED')
 
     def absentee_stratified(self):
         absentee_strat = OrderedDict()
@@ -39,14 +55,14 @@ class HouseholdMemberReportQuery(object):
         return absentee_strat
 
     def first_time_testers_qs(self):
-        return self.community_members.filter(subjectvisit__hivtestinghistory__has_tested='No')
+        return self.community_members_qs.filter(subjectvisit__hivtestinghistory__has_tested='No')
 
     def age_eligible_qs(self):
         enrolled_ids = HouseholdReportQuery.enrolled_ids_qs(self.community)
-        return self.community_members.filter(age_in_years__gte=16, household_structure__household_id__in=enrolled_ids)
+        return self.community_members_qs.filter(age_in_years__gte=16, household_structure__household_id__in=enrolled_ids)
 
     def tested_qs(self):
-        return self.community_members.exclude(subjectvisit__hivtested=None)
+        return self.community_members_qs.exclude(subjectvisit__hivtested=None)
 
     def study_eligible_qs(self):
         return SubjectConsent.objects.filter(household_member__household_structure__household__community=self.community).count()
@@ -55,14 +71,14 @@ class HouseholdMemberReportQuery(object):
         return self._residents_demographics('REFUSED', 'UNDECIDED', 'RESEARCH')
 
     def absentee_qs(self):
-        return self.community_members.filter(member_status='ABSENT')
+        return self.community_members_qs.filter(member_status='ABSENT')
 
     def enrolled_stats(self):
         return self._residents_demographics('RESEARCH')
 
     def _residents_demographics(self, *args):
         demographics = OrderedDict()
-        demo_query = self.community_members.filter(member_status__in=args)
+        demo_query = self.community_members_qs.filter(member_status__in=args)
         demographics['Count'] = demo_query.count()
         demographics['Males'] = demo_query.filter(gender='M').count()
         demographics['Females'] = demo_query.filter(gender='F').count()
@@ -91,7 +107,7 @@ class HouseholdMemberReportQuery(object):
         return stat
 
     def hiv_positive_qs(self):
-        return self.community_members.filter(subjectvisit__hivresult__hiv_result='POS')
+        return self.community_members_qs.filter(subjectvisit__hivresult__hiv_result='POS')
 
     def new_infections_qs(self):
         untested_Q = Q(subjectvisit__hivtestinghistory__has_tested='No')
