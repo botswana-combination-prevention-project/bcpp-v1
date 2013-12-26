@@ -1,25 +1,34 @@
 from apps.bcpp_household.models.household import Household
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
 from .data_row import DataRow
+from .report_query import TwoColumnReportQuery
 
 
-class HouseholdReportQuery(object):
+class HouseholdReportQuery(TwoColumnReportQuery):
 
-    def __init__(self, community):
-        self.community = community
-        self.data = []
-        targeted_count = self.targeted_qs().count()
-        self.data.append(DataRow("Targeted", targeted_count))
-        self.data.append(DataRow("Visited at least Once", self.visited_qs().count()))
-        enumerated = self.enumerated_qs().count()
-        self.data.append(DataRow("Enumerated", enumerated))
-        self.data.append(DataRow("At least 1 member present", self.eligible_qs().distinct().count()))
-        self.data.append(DataRow("All Refused", self.all_refused_qs().count()))
-        total_age_eligible = self.eligible_qs().count()
-        self.data.append(DataRow("Age-eligible", total_age_eligible))
-        average_age_eligible = float(total_age_eligible) / (enumerated or 1)
-        avg = int(average_age_eligible * 100 + 0.5) / 100.0
-        self.data.append(DataRow("Average Age-eligible per Enumerated", avg))
+    def post_init(self, **kwargs):
+        self.targeted = self.targeted_qs().count()
+        self.visited = self.visited_qs().count()
+        self.enumerated = self.enumerated_qs().count()
+        self.member_present = self.eligible_qs().distinct().count()
+        self.all_refused = self.all_refused_qs().count()
+        self.total_age_eligible = self.eligible_qs().count()
+        average_age_eligible = float(self.total_age_eligible) / (self.enumerated or 1)
+        self.avg_eligible_enumerated = int(average_age_eligible * 100 + 0.5) / 100.0
+
+    def display_title(self):
+        return "Households"
+
+    def data_to_display(self):
+        data = []
+        data.append(DataRow("Targeted", self.targeted))
+        data.append(DataRow("Visited at least Once", self.visited))
+        data.append(DataRow("Enumerated", self.enumerated))
+        data.append(DataRow("At least 1 member present", self.member_present))
+        data.append(DataRow("All Refused", self.all_refused))
+        data.append(DataRow("Age-eligible", self.total_age_eligible))
+        data.append(DataRow("Average Age-eligible per Enumerated", self.avg_eligible_enumerated))
+        return data
 
     def targeted_qs(self):
         return Household.objects.filter(plot__action='confirmed',

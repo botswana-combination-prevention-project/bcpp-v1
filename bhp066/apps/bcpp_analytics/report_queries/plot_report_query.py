@@ -2,19 +2,28 @@ from django.db.models import Count, Sum
 
 from apps.bcpp_household.models.plot import Plot
 from .data_row import DataRow
+from .report_query import TwoColumnReportQuery
 
 
-class PlotReportQuery(object):
-    def __init__(self, community):
-        self.community = community
-        self.plots = Plot.objects.filter(community=community)
-        self.data = []
-        self.data.append(DataRow('Number Targeted', self.targeted_qs().count()))
-        self.data.append(DataRow('Verified Residential', self.plot_stats().get('verified_count')))
-        self.data.append(DataRow('Households on Verified Residential', self.plot_stats().get('household_count')))
+class PlotReportQuery(TwoColumnReportQuery):
+    def post_init(self, **kwargs):
+        self.plots_qs = Plot.objects.filter(community=self.community)
+        self.targeted = self.targeted_qs().count()
+        self.verified = self.plot_stats().get('verified_count')
+        self.households = self.plot_stats().get('household_count')
+
+    def display_title(self):
+        return "Plots"
+
+    def data_to_display(self):
+        data = []
+        data.append(DataRow('Number Targeted', self.targeted))
+        data.append(DataRow('Verified Residential', self.verified))
+        data.append(DataRow('Households on Verified Residential', self.households))
+        return data
 
     def targeted_qs(self):
-        return self.plots.exclude(selected=None)
+        return self.plots_qs.exclude(selected=None)
 
     def confirmed_occupied_qs(self):
         return self.targeted_qs().filter(action='confirmed', status__istartswith='occupied')
