@@ -20,7 +20,7 @@ YES_NO_UNSURE_DWTA = (
      )
 
 YES_NO_UNSURE = (
-    ('Yes',  _('Yes')),
+    ('Yes', _('Yes')),
     ('No', _('No')),
     ('Not Sure', _('Not Sure')),
 )

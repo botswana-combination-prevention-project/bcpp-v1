@@ -1,0 +1,25 @@
+<tr class='report-section'>
+  <th colspan='2' class='text-center'>{{report_section.title}}</th>
+</tr>
+{% for datarow in report_section.data %}
+  <tr class="{% cycle 'even' 'pure-table-odd' %}">
+    <td>{{datarow.label}}</td>
+    <td class='text-right'>
+      {% if datarow.is_dict %}
+        {% for key, value  in datarow.value.items %}
+          {% include "bcpp_analytics/includes/column_dict_display.html" with key=key value=value %}
+        {% endfor %}   
+        {% if datarow.is_nested %}
+          {% for sub_dict in datarow.nested_dicts %}
+            {% for k, v in sub_dict.items %}
+                {% include "bcpp_analytics/includes/column_dict_display.html" with key=k value=v %}
+            {% endfor %}
+          {% endfor %} 
+        {% endif %}
+      {% else %}
+        {{datarow.value}}
+      {% endif %}
+    </td>
+  </tr>
+{% endfor %}
+
