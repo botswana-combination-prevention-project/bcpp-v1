@@ -11,7 +11,8 @@ from .report_query import TwoColumnReportQuery
 
 class HouseholdMemberReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
-        self.community_members_qs = HouseholdMember.objects.filter(household_structure__household__community=self.community)
+        self.community_members_qs = HouseholdMember.objects.filter(household_structure__household__community__iexact=self.community,
+            created__gte=self.start_date, created__lte=self.end_date)
         self.refused = self.refused_qs().count()
         self.first_time_testers = self.first_time_testers_qs().count()
         self.tested = self.tested_qs().count()
@@ -58,14 +59,15 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
         return self.community_members_qs.filter(subjectvisit__hivtestinghistory__has_tested='No')
 
     def age_eligible_qs(self):
-        enrolled_ids = HouseholdReportQuery.enrolled_ids_qs(self.community)
+        enrolled_ids = HouseholdReportQuery.enrolled_ids_qs(self.community, self.start_date, self.end_date)
         return self.community_members_qs.filter(age_in_years__gte=16, household_structure__household_id__in=enrolled_ids)
 
     def tested_qs(self):
         return self.community_members_qs.exclude(subjectvisit__hivtested=None)
 
     def study_eligible_qs(self):
-        return SubjectConsent.objects.filter(household_member__household_structure__household__community=self.community).count()
+        return SubjectConsent.objects.filter(household_member__household_structure__household__community__iexact=self.community,
+                                             created__gte=self.start_date, created__lte=self.end_date)
 
     def reached_stats(self):
         return self._residents_demographics('REFUSED', 'UNDECIDED', 'RESEARCH')

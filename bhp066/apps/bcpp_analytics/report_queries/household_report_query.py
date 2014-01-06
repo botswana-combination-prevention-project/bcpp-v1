@@ -31,7 +31,7 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return data
 
     def targeted_qs(self):
-        return Household.objects.filter(plot__action='confirmed',
+        return Household.objects.filter(plot__action='confirmed', created__gte=self.start_date, created__lte=self.end_date,
                                         plot__status__istartswith='occupied', community=self.community)
 
     def visited_qs(self):
@@ -51,11 +51,11 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return self.enumerated_qs().filter(householdstructure__householdmember__eligible_member=True)
 
     @staticmethod
-    def enrolled_qs(community):
-        community_households = Household.objects.filter(community=community)
+    def enrolled_qs(community, start_date, end_date):
+        community_households = Household.objects.filter(community__iexact=community, created__gte=start_date, created__lte=end_date)
         return community_households.filter(householdstructure__householdmember__subjectconsent__isnull=False).distinct()
 
     @staticmethod
-    def enrolled_ids_qs(community):
-        ids = HouseholdReportQuery.enrolled_qs(community).values_list('id')
+    def enrolled_ids_qs(community, start_date, end_date):
+        ids = HouseholdReportQuery.enrolled_qs(community, start_date, end_date).values_list('id')
         return sum(ids, ())
