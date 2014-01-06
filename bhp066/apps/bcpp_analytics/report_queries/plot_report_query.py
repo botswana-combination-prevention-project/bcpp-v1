@@ -7,7 +7,7 @@ from .report_query import TwoColumnReportQuery
 
 class PlotReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
-        self.plots_qs = Plot.objects.filter(community=self.community)
+        self.plots_qs = Plot.objects.filter(community__iexact=self.community, created__gte=self.start_date, created__lte=self.end_date)
         self.targeted = self.targeted_qs().count()
         self.verified = self.plot_stats().get('verified_count')
         self.households = self.plot_stats().get('household_count')
