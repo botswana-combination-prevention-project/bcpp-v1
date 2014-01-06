@@ -127,7 +127,6 @@ class HivHealthCareCostsAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivHealthCareCosts, HivHealthCareCostsAdmin)
 
 
-
 class HivMedicalCareAdmin(SubjectVisitModelAdmin):
 
     form = HivMedicalCareForm
@@ -176,18 +175,22 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
 admin.site.register(Tubercolosis, TubercolosisAdmin)
 
 
-
 class StiAdmin(SubjectVisitModelAdmin):
 
     form = StiForm
     fields = (
         "subject_visit",
-       "sti_date",
-       'sti_dx',
+        'sti_dx',
+      'sti_dx_other',
+      'wasting_date',
+      'diarrhoea_date',
+      'yeast_infection_date',
+      'pneumonia_date',
+      'pcp_date',
+      'herpes_date',
        'comments',)
-    radio_fields = {'sti_dx': admin.VERTICAL, }
+    filter_horizontal = ('sti_dx',)
 admin.site.register(Sti, StiAdmin)
-
 
 
 class SubstanceUseAdmin(SubjectVisitModelAdmin):
