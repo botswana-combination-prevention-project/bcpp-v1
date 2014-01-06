@@ -44,7 +44,7 @@
         {% endif %}
       </td>
         <td>{{ plot.get_status_display }}</td>
-        <td>{% if plot.household_count %}
+        <td>{% if plot.household_count and 'household' in sections_names%}
 
             <form method="POST" action="{% url 'section_search_word_url' 'household' 'word'  %}">
             {% csrf_token %}
@@ -54,7 +54,7 @@
             {% endif %}
         </td>
         <td>
-            {% if plot.eligible_members %}
+            {% if plot.eligible_members and 'member' in sections_names%}
                 <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
                 {% csrf_token %}
                 <input type="submit" value="{{ plot.eligible_members }} Member{{plot.eligible_members|pluralize}}">
