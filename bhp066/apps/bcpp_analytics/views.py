@@ -41,9 +41,9 @@ def accrual(request):
     start_date = date_from_s(request.GET.get("start_date", "01/10/2013"))
     end_date = date_from_s(request.GET.get("end_date", "30/09/2014"))
 
-    plots = (PlotReportQuery(community1), PlotReportQuery(community2))
-    households = (HouseholdReportQuery(community1), HouseholdReportQuery(community2))
-    members = (HouseholdMemberReportQuery(community1), HouseholdMemberReportQuery(community2))
+    plots = (PlotReportQuery(community1, start_date, end_date), PlotReportQuery(community2, start_date, end_date))
+    households = (HouseholdReportQuery(community1, start_date, end_date), HouseholdReportQuery(community2, start_date, end_date))
+    members = (HouseholdMemberReportQuery(community1, start_date, end_date), HouseholdMemberReportQuery(community2, start_date, end_date))
     report_data = [plots, households, members]
     community1_data = [item[0] for item in report_data]
     community2_data = [item[1] for item in report_data]
