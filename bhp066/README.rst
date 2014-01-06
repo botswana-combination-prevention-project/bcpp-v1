@@ -107,4 +107,18 @@ python manage.py update_visit_schedule_permissions IT_admin --app_label bcpp_lab
 python manage.py update_visit_schedule_permissions IT_admin --app_label appointment --models appointment
 python manage.py update_visit_schedule_permissions IT_admin --app_label lab_clinic_api 
 python manage.py update_visit_schedule_permissions IT_admin --app_label auth
+
+python manage.py update_visit_schedule_permissions assistant_project_coord --visit_codes all
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_subject --models subjectconsent
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_subject --models subjectabsentee
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_subject --models subjectabsenteeentry
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_subject --models subjectrefusal
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_subject --models subjectundecided
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_subject --models subjectundecidedentry
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_household
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_household_member
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label bcpp_lab
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label lab_clinic_api 
+python manage.py update_visit_schedule_permissions assistant_project_coord --app_label appointment --models appointment
+
  
