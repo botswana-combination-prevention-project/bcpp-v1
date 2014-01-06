@@ -9,7 +9,7 @@ from apps.bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith
                               SubjectMovedReason, SubjectUndecidedReason,
                               PartnerResidency, HeartDisease,
                               Diagnoses, Religion, EthnicGroups, ReferredTo,
-                              ReferredFor)
+                              ReferredFor, StiIllnesses)
 
 
 class ElectricalAppliancesAdmin(BaseModelAdmin):
@@ -125,3 +125,8 @@ admin.site.register(ReferredFor, ReferredForAdmin)
 class ReferredToAdmin(BaseModelAdmin):
     pass
 admin.site.register(ReferredTo, ReferredToAdmin)
+
+
+class StiIllnessesAdmin(BaseModelAdmin):
+    pass
+admin.site.register(StiIllnesses, StiIllnessesAdmin)

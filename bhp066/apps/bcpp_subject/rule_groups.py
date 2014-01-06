@@ -344,12 +344,12 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['tubercolosis'])
 
-    sti_record = ScheduledDataRule(
-        logic=Logic(
-            predicate=('sti_record', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['sti'])
+#     sti_record = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('sti_record', 'equals', 'Yes'),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['sti'])
 
     class Meta:
         app_label = 'bcpp_subject'
