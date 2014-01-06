@@ -473,3 +473,7 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
+
+#Stripped down EDC for purposes of CLO's work.
+DENIED_SECTIONS_FOR_GROUP = {'clo': ('household', 'subject', 'member', 'audit_trail', 'appointments', 'reports')}
+LOGGED_IN_USER_GROUP = 'clo'
