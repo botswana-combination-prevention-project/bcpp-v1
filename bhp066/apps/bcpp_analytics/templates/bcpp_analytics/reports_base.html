@@ -8,6 +8,7 @@
     <link href="{% static 'bcpp_analytics/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'bcpp_analytics/css/tables-min.css' %}" rel="stylesheet">
     <link href="{% static 'bcpp_analytics/css/analytics.css' %}" rel="stylesheet">
+    {% block add_css_styles %}{% endblock %}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -50,5 +51,6 @@
 
     <script src="{% static 'bcpp_analytics/js/jquery-1.10.2.min.js' %}"></script>
     <script src="{% static 'bcpp_analytics/js/bootstrap.min.js' %}"></script>
+    {% block add_js_files %}{% endblock %}
   </body>
 </html>

@@ -15,14 +15,12 @@ class HeartAttack (BaseScheduledVisitModel):
     date_heart_attack = models.DateField(
         verbose_name="Date of the heart disease or stroke diagnosis:",
         validators=[date_not_future],
-        help_text=("Note: Record date of first day of hospital admission or date the diagnosis "
-                   "was documented in the OPD record."),
+        help_text="",
         )
 
     dx_heart_attack = models.ManyToManyField(HeartDisease,
         verbose_name="[Interviewer:] What is the heart disease or stroke diagnosis as recorded?",
-        help_text=("Note: If record of diagnosis is not available, record the participant's "
-                   "best knowledge. (tick all that apply)"),
+        help_text=("(tick all that apply)"),
         )
     dx_heart_attack_other = OtherCharField()
 
@@ -30,5 +28,5 @@ class HeartAttack (BaseScheduledVisitModel):
 
     class Meta:
         app_label = 'bcpp_subject'
-        verbose_name = "Heart Attack"
-        verbose_name_plural = "Heart Attack"
+        verbose_name = "Heart Attack or Stroke"
+        verbose_name_plural = "Heart Attack or Stroke"
