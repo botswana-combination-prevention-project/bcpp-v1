@@ -1,5 +1,9 @@
+import collections
+import datetime
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET
 
 #from apps.bcpp_subject.models.hiv_testing_history import HivTestingHistory
 from apps.bcpp.choices import COMMUNITIES
@@ -15,7 +19,10 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
 from apps.bcpp_subject.models import HivResult
-import collections
+
+
+def date_from_s(date_string, date_format="%d/%m/%Y"):
+    return datetime.datetime.strptime(date_string, date_format).date()
 
 
 @login_required
@@ -25,20 +32,27 @@ def index(request):
 
 
 @login_required
+@require_GET
 def accrual(request):
     template = "bcpp_analytics/accrual_report.html"
-    communities = [item[0] for item in COMMUNITIES]
-    community1 = request.GET.get("community1") or 'Ranaka'
-    community2 = request.GET.get("community2") or 'Digawana'
+    communities_list = [item[0] for item in COMMUNITIES]
+    community1 = request.GET.get("community1", "Ranaka")
+    community2 = request.GET.get("community2", "Digawana")
+    start_date = date_from_s(request.GET.get("start_date", "01/10/2013"))
+    end_date = date_from_s(request.GET.get("end_date", "30/09/2014"))
 
-    plots = (PlotReportQuery(community1), PlotReportQuery(community2))
-    households = (HouseholdReportQuery(community1), HouseholdReportQuery(community2))
-    members = (HouseholdMemberReportQuery(community1), HouseholdMemberReportQuery(community2))
+    plots = (PlotReportQuery(community1, start_date, end_date), PlotReportQuery(community2, start_date, end_date))
+    households = (HouseholdReportQuery(community1, start_date, end_date), HouseholdReportQuery(community2, start_date, end_date))
+    members = (HouseholdMemberReportQuery(community1, start_date, end_date), HouseholdMemberReportQuery(community2, start_date, end_date))
+    report_data = [plots, households, members]
+    community1_data = [item[0] for item in report_data]
+    community2_data = [item[1] for item in report_data]
 
-    page_context = {'communities': communities,
-                    'plots': plots,
-                    'households': households,
-                    'members': members,
+    page_context = {'communities_list': communities_list,
+                    'community1_data': community1_data,
+                    'community2_data': community2_data,
+                    'start_date': start_date.strftime("%b.  %d, %Y"),
+                    'end_date': end_date.strftime("%b.  %d, %Y"),
                     }
     return render(request, template, page_context)
 
