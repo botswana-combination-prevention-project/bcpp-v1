@@ -48,7 +48,7 @@
           {% endif %}
         </td>
         <td>
-            {% if household.member_count %}
+            {% if household.member_count and 'member' in sections_names%}
             <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
             {% csrf_token %}
             <input type="submit" value="Members">
