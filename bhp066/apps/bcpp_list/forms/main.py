@@ -3,7 +3,7 @@ from apps.bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith
                               NeighbourhoodProblems, CircumcisionBenefits,
                               FamilyPlanning, MedicalCareAccess, PartnerResidency,
                               HeartDisease, Diagnoses, Religion, EthnicGroups,
-                              ReferredTo, ReferredFor)
+                              ReferredTo, ReferredFor, StiIllnesses)
 
 
 class ElectricalAppliancesForm (BaseModelForm):
@@ -153,3 +153,9 @@ class ReferredToForm (BaseModelForm):
 
     class Meta:
         model = ReferredTo
+
+
+class StiIllnesses (BaseModelForm):
+
+    class Meta:
+        model = StiIllnesses
