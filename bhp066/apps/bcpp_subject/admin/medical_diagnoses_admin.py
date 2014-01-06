@@ -13,13 +13,16 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
         "subject_visit",
        'diagnoses',
        'heart_attack_record',
+       'heart_attack_comment',
        'cancer_record',
-       'sti_record',
-       'tb_record',)
+       'cancer_record_comment',
+#        'sti_record',
+       'tb_record',
+       'tb_record_comment',)
     radio_fields = {
         "heart_attack_record": admin.VERTICAL,
         "cancer_record": admin.VERTICAL,
-        "sti_record": admin.VERTICAL,
+#         "sti_record": admin.VERTICAL,
         "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
     instructions = [_("Read to Participant: I am now going to ask you"
