@@ -162,7 +162,7 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
                                     household_member.registered_subject,
                                     group_name='HIV',
                                     )
-                                self.dispatch_entry_buckets(household_member.registered_subject)
+                                self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
                                 self.dispatch_membership_form_inlines(
                                     'bcpp_household_member',
                                     household_member.registered_subject,
