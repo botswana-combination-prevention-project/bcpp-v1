@@ -27,13 +27,13 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
-    heart_attack_comment = models.CharField(
-        verbose_name="Please provide the diagnosis and an estimation of the date of diagnosis",
-        max_length=100,
-        null=True,
-        blank=True,
-        help_text="provide the verbal response if record is not available",
-        )
+#     heart_attack_comment = models.CharField(
+#         verbose_name="Please provide the diagnosis and an estimation of the date of diagnosis",
+#         max_length=100,
+#         null=True,
+#         blank=True,
+#         help_text="provide the verbal response if record is not available",
+#         )
 
     cancer_record = models.CharField(
         verbose_name=_("Is a record (OPD card, discharge summary) of a cancer diagnosis"
@@ -44,13 +44,13 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
-    cancer_record_comment = models.CharField(
-        verbose_name="Please provide the cancer diagnosis and an estimation of the date of diagnosis",
-        max_length=100,
-        null=True,
-        blank=True,
-        help_text="provide the verbal response if record is not available",
-        )
+#     cancer_record_comment = models.CharField(
+#         verbose_name="Please provide the cancer diagnosis and an estimation of the date of diagnosis",
+#         max_length=100,
+#         null=True,
+#         blank=True,
+#         help_text="provide the verbal response if record is not available",
+#         )
 
 #     sti_record = models.CharField(
 #         verbose_name=_("Is a record (OPD card, discharge summary) of a STI diagnosis"
@@ -71,13 +71,13 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
         choices=YES_NO_DWTA,
         help_text="Please review the available OPD card or other medical records, for all participants",
         )
-    tb_record_comment = models.CharField(
-        verbose_name="Please provide the TB diagnosis and an estimation of date of diagnosis",
-        max_length=100,
-        null=True,
-        blank=True,
-        help_text="provide the verbal response if record is not available",
-        )
+#     tb_record_comment = models.CharField(
+#         verbose_name="Please provide the TB diagnosis and an estimation of date of diagnosis",
+#         max_length=100,
+#         null=True,
+#         blank=True,
+#         help_text="provide the verbal response if record is not available",
+#         )
 
     history = AuditTrail()
 
