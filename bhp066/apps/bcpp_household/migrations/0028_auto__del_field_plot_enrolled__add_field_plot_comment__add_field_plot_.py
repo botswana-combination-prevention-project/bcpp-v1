@@ -12,14 +12,14 @@ class Migration(SchemaMigration):
 #         db.delete_column('bcpp_household_plot', 'enrolled')
 # 
 # #         # Adding field 'Plot.comment'
-#         db.add_column('bcpp_household_plot', 'comment',
-#                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
-#                       keep_default=False)
+        db.add_column('bcpp_household_plot', 'comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
+                      keep_default=False)
 # 
 #         # Adding field 'Plot.access_attempts'
-#         db.add_column('bcpp_household_plot', 'access_attempts',
-#                       self.gf('django.db.models.fields.IntegerField')(default=0),
-#                       keep_default=False)
+        db.add_column('bcpp_household_plot', 'access_attempts',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
 # 
 #         # Adding field 'HouseholdAudit.enrolled'
 #         db.add_column('bcpp_household_household_audit', 'enrolled',
@@ -51,29 +51,32 @@ class Migration(SchemaMigration):
 #                       self.gf('django.db.models.fields.IntegerField')(default=0),
 #                       keep_default=False)
 # 
-#         # Deleting field 'PlotAudit.enrolled'
-#         db.delete_column(u'bcpp_household_plot_audit', 'enrolled')
+        # Deleting field 'PlotAudit.enrolled'
+        db.delete_column(u'bcpp_household_plot_audit', 'enrolled')
+
+        # Deleting field 'PlotAudit.enrolled'
+        db.delete_column(u'bcpp_household_plot', 'enrolled')
 # 
 #         # Adding field 'PlotAudit.comment'
-#         db.add_column('bcpp_household_plot_audit', 'comment',
-#                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
-#                       keep_default=False)
+        db.add_column('bcpp_household_plot_audit', 'comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
+                      keep_default=False)
 # 
 # 
 #         # Adding field 'PlotAudit.access_attempts'
-#         db.add_column('bcpp_household_plot_audit', 'access_attempts',
-#                       self.gf('django.db.models.fields.IntegerField')(default=0),
+        db.add_column('bcpp_household_plot_audit', 'access_attempts',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
+
+        # Adding field 'Plot.distance_from_target'
+#         db.add_column('bcpp_household_plot', 'distance_from_target',
+#                       self.gf('django.db.models.fields.FloatField')(null=True),
 #                       keep_default=False)
-
-        # Adding field 'Plot.distance_from_target'
-        db.add_column('bcpp_household_plot', 'distance_from_target',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
-
-        # Adding field 'Plot.distance_from_target'
-        db.add_column('bcpp_household_plot_audit', 'distance_from_target',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
+# 
+#         # Adding field 'Plot.distance_from_target'
+#         db.add_column('bcpp_household_plot_audit', 'distance_from_target',
+#                       self.gf('django.db.models.fields.FloatField')(null=True),
+#                       keep_default=False)
 
     def backwards(self, orm):
         # Adding field 'Plot.enrolled'
