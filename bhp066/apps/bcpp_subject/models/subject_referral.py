@@ -126,8 +126,21 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         default=None,
         null=True,
         editable=False,
-        help_text="from hiv_care_adherence"
+        help_text="from hiv_care_adherence."
         )
+
+    clinic_receiving_from = models.CharField(
+        default=None,
+        null=True,
+        max_length=50,
+        help_text="from hiv_care_adherence."
+        )
+
+    next_appointment_date = models.DateField(
+         default=None,
+         null=True,
+         help_text="from hiv_care_adherence."
+         )
 
     cd4_result = models.DecimalField(
         null=True,
@@ -232,6 +245,8 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         self.update_pregnant()
         self.update_circumcised()
         self.update_on_art()
+        self.update_clinic_receiving_from()
+        self.update_next_appointment_date()
         self.update_referral_code()
         self.update_urgent_referral()
         super(SubjectReferral, self).save(*args, **kwargs)
@@ -343,6 +358,20 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.on_art = hiv_care_adherence.on_art()
         else:
             self.on_art = None
+
+    def update_clinic_receiving_from(self):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+            hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
+            self.clinic_receiving_from = hiv_care_adherence.clinic_receiving_from()
+        else:
+            self.clinic_receiving_from = None
+
+    def update_next_appointment_date(self):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+            hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
+            self.next_appointment_date = hiv_care_adherence.next_appointment_date()
+        else:
+            self.next_appointment_date = None
 
     def is_defaulter(self):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
