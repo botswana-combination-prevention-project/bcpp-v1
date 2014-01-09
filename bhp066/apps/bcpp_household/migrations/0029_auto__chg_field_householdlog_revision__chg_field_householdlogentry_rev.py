@@ -8,121 +8,80 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Plot.enrolled'
-#         db.delete_column('bcpp_household_plot', 'enrolled')
-# 
-# #         # Adding field 'Plot.comment'
-#         db.add_column('bcpp_household_plot', 'comment',
-#                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
-#                       keep_default=False)
-# 
-#         # Adding field 'Plot.access_attempts'
-#         db.add_column('bcpp_household_plot', 'access_attempts',
-#                       self.gf('django.db.models.fields.IntegerField')(default=0),
-#                       keep_default=False)
-# 
-#         # Adding field 'HouseholdAudit.enrolled'
-        db.add_column('bcpp_household_household_audit', 'enrolled',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-# 
-#         # Adding field 'HouseholdAudit.complete'
-        db.add_column('bcpp_household_household_audit', 'complete',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-# 
-#         # Adding field 'HouseholdAudit.enumeration_attempts'
-        db.add_column('bcpp_household_household_audit', 'enumeration_attempts',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
-                      keep_default=False)
-# 
-#         # Adding field 'Household.enrolled'
-        db.add_column('bcpp_household_household', 'enrolled',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-# 
-#         # Adding field 'Household.complete'
-        db.add_column('bcpp_household_household', 'complete',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
-                      keep_default=False)
-# 
-#         # Adding field 'Household.enumeration_attempts'
-        db.add_column('bcpp_household_household', 'enumeration_attempts',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
-                      keep_default=False)
-# 
-#         # Deleting field 'PlotAudit.enrolled'
-#         db.delete_column(u'bcpp_household_plot_audit', 'enrolled')
-# 
-#         # Adding field 'PlotAudit.comment'
-#         db.add_column('bcpp_household_plot_audit', 'comment',
-#                       self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True),
-#                       keep_default=False)
-# 
-# 
-#         # Adding field 'PlotAudit.access_attempts'
-#         db.add_column('bcpp_household_plot_audit', 'access_attempts',
-#                       self.gf('django.db.models.fields.IntegerField')(default=0),
-#                       keep_default=False)
 
-        # Adding field 'Plot.distance_from_target'
-#         db.add_column('bcpp_household_plot', 'distance_from_target',
-#                       self.gf('django.db.models.fields.FloatField')(null=True),
-#                       keep_default=False)
-# 
-#         # Adding field 'Plot.distance_from_target'
-#         db.add_column('bcpp_household_plot_audit', 'distance_from_target',
-#                       self.gf('django.db.models.fields.FloatField')(null=True),
-#                       keep_default=False
-        pass
+        # Changing field 'HouseholdLog.revision'
+        db.alter_column(u'bcpp_household_householdlog', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdLogEntry.revision'
+        db.alter_column(u'bcpp_household_householdlogentry', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdStructure.revision'
+        db.alter_column(u'bcpp_household_householdstructure', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdLogEntryAudit.revision'
+        db.alter_column(u'bcpp_household_householdlogentry_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'Plot.revision'
+        db.alter_column(u'bcpp_household_plot', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'PlotIdentifierHistory.revision'
+        db.alter_column(u'bcpp_household_plotidentifierhistory', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdStructureAudit.revision'
+        db.alter_column(u'bcpp_household_householdstructure_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdAudit.revision'
+        db.alter_column(u'bcpp_household_household_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdIdentifierHistory.revision'
+        db.alter_column(u'bcpp_household_householdidentifierhistory', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'HouseholdLogAudit.revision'
+        db.alter_column(u'bcpp_household_householdlog_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'Household.revision'
+        db.alter_column(u'bcpp_household_household', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Changing field 'PlotAudit.revision'
+        db.alter_column(u'bcpp_household_plot_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
 
     def backwards(self, orm):
-        # Adding field 'Plot.enrolled'
-        db.add_column('bcpp_household_plot', 'enrolled',
-                      self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True),
-                      keep_default=False)
 
-        # Deleting field 'Plot.comment'
-        db.delete_column('bcpp_household_plot', 'comment')
+        # Changing field 'HouseholdLog.revision'
+        db.alter_column(u'bcpp_household_householdlog', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'Plot.distance_from_target'
-        db.delete_column('bcpp_household_plot', 'distance_from_target')
+        # Changing field 'HouseholdLogEntry.revision'
+        db.alter_column(u'bcpp_household_householdlogentry', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'Plot.access_attempts'
-        db.delete_column('bcpp_household_plot', 'access_attempts')
+        # Changing field 'HouseholdStructure.revision'
+        db.alter_column(u'bcpp_household_householdstructure', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'HouseholdAudit.enrolled'
-        db.delete_column('bcpp_household_household_audit', 'enrolled')
+        # Changing field 'HouseholdLogEntryAudit.revision'
+        db.alter_column(u'bcpp_household_householdlogentry_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'HouseholdAudit.complete'
-        db.delete_column('bcpp_household_household_audit', 'complete')
+        # Changing field 'Plot.revision'
+        db.alter_column(u'bcpp_household_plot', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'HouseholdAudit.enumeration_attempts'
-        db.delete_column('bcpp_household_household_audit', 'enumeration_attempts')
+        # Changing field 'PlotIdentifierHistory.revision'
+        db.alter_column(u'bcpp_household_plotidentifierhistory', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'Household.enrolled'
-        db.delete_column('bcpp_household_household', 'enrolled')
+        # Changing field 'HouseholdStructureAudit.revision'
+        db.alter_column(u'bcpp_household_householdstructure_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'Household.complete'
-        db.delete_column('bcpp_household_household', 'complete')
+        # Changing field 'HouseholdAudit.revision'
+        db.alter_column(u'bcpp_household_household_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'Household.enumeration_attempts'
-        db.delete_column('bcpp_household_household', 'enumeration_attempts')
+        # Changing field 'HouseholdIdentifierHistory.revision'
+        db.alter_column(u'bcpp_household_householdidentifierhistory', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Adding field 'PlotAudit.enrolled'
-        db.add_column(u'bcpp_household_plot_audit', 'enrolled',
-                      self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True),
-                      keep_default=False)
+        # Changing field 'HouseholdLogAudit.revision'
+        db.alter_column(u'bcpp_household_householdlog_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'PlotAudit.comment'
-        db.delete_column('bcpp_household_plot_audit', 'comment')
+        # Changing field 'Household.revision'
+        db.alter_column(u'bcpp_household_household', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
-        # Deleting field 'PlotAudit.distance_from_target'
-        db.delete_column('bcpp_household_plot_audit', 'distance_from_target')
-
-        # Deleting field 'PlotAudit.access_attempts'
-        db.delete_column('bcpp_household_plot_audit', 'access_attempts')
-
+        # Changing field 'PlotAudit.revision'
+        db.alter_column(u'bcpp_household_plot_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
     models = {
         'bcpp_household.community': {
@@ -130,7 +89,7 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_current': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -149,7 +108,7 @@ class Migration(SchemaMigration):
             'gps_serial_number': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
@@ -184,14 +143,14 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Plot']", 'null': 'True'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'target_radius': ('django.db.models.fields.FloatField', [], {'default': '0.025'}),
             'uploaded_map': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdAudit', 'db_table': "'bcpp_household_household_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdAudit', 'db_table': "u'bcpp_household_household_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -220,7 +179,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_household'", 'null': 'True', 'to': "orm['bcpp_household.Plot']"}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'target_radius': ('django.db.models.fields.FloatField', [], {'default': '0.025'}),
             'uploaded_map': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -239,7 +198,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'padding': ('django.db.models.fields.IntegerField', [], {'default': '4'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'sequence_app_label': ('django.db.models.fields.CharField', [], {'default': "'bhp_identifier'", 'max_length': '50'}),
             'sequence_model_name': ('django.db.models.fields.CharField', [], {'default': "'sequence'", 'max_length': '50'}),
             'sequence_number': ('django.db.models.fields.IntegerField', [], {}),
@@ -254,12 +213,12 @@ class Migration(SchemaMigration):
             'household_structure': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_household.HouseholdStructure']", 'unique': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdlogaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogAudit', 'db_table': "'bcpp_household_householdlog_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogAudit', 'db_table': "u'bcpp_household_householdlog_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -269,7 +228,7 @@ class Migration(SchemaMigration):
             'household_structure': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdlog'", 'to': "orm['bcpp_household.HouseholdStructure']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
@@ -285,13 +244,13 @@ class Migration(SchemaMigration):
             'next_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'next_appt_datetime_source': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'occupied'", 'max_length': '25'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdlogentryaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogEntryAudit', 'db_table': "'bcpp_household_householdlogentry_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdLogEntryAudit', 'db_table': "u'bcpp_household_householdlogentry_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -305,7 +264,7 @@ class Migration(SchemaMigration):
             'next_appt_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'next_appt_datetime_source': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'occupied'", 'max_length': '25'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
@@ -321,13 +280,13 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'note': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'progress': ('django.db.models.fields.CharField', [], {'default': "'Not Started'", 'max_length': '25', 'null': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'survey': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_survey.Survey']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdstructureaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdStructureAudit', 'db_table': "'bcpp_household_householdstructure_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdStructureAudit', 'db_table': "u'bcpp_household_householdstructure_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -340,7 +299,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'note': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'progress': ('django.db.models.fields.CharField', [], {'default': "'Not Started'", 'max_length': '25', 'null': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'survey': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_householdstructure'", 'to': "orm['bcpp_survey.Survey']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
@@ -372,7 +331,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25', 'db_index': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'section': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'selected': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
@@ -387,7 +346,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.plotaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'PlotAudit', 'db_table': "'bcpp_household_plot_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'PlotAudit', 'db_table': "u'bcpp_household_plot_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -416,7 +375,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'section': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'selected': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'status': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
@@ -441,7 +400,7 @@ class Migration(SchemaMigration):
             'is_derived': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'padding': ('django.db.models.fields.IntegerField', [], {'default': '4'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'sequence_app_label': ('django.db.models.fields.CharField', [], {'default': "'bhp_identifier'", 'max_length': '50'}),
             'sequence_model_name': ('django.db.models.fields.CharField', [], {'default': "'sequence'", 'max_length': '50'}),
             'sequence_number': ('django.db.models.fields.IntegerField', [], {}),
@@ -458,7 +417,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'survey_description': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '15', 'null': 'True', 'blank': 'True'}),
             'survey_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15', 'db_index': 'True'}),
             'survey_slug': ('django.db.models.fields.SlugField', [], {'max_length': '40'}),
