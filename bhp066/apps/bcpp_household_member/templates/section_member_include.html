@@ -30,7 +30,7 @@
         
         
         <td>
-          {% if hm.household_structure.household|is_dispatched %}
+          {% if hm.household_structure.household.is_dispatched %}
             <div class="warning">Locked</div>{{ hm.household_structure.household.plot.action }}
           {% else %}
             {% if hm.household_structure.household.plot.action == 'confirmed'%}            
