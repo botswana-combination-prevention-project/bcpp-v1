@@ -49,11 +49,17 @@
         </td>
         <td>
             {% if household.member_count and 'member' in sections_names%}
-            <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
-            {% csrf_token %}
-            <input type="submit" value="Members">
-            <input type="hidden" name="search_term" value="{{ household.household_identifier }}">         
-            </form>        
+	            <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
+	            {% csrf_token %}
+	            <input type="submit" value="Members">
+	            <input type="hidden" name="search_term" value="{{ household.household_identifier }}">         
+	            </form>
+	        {% else %}
+	        	<form method="POST" action="">
+	            {% csrf_token %}
+	            <input type="submit" value="Members" disabled>
+	            <input type="hidden" name="search_term" value="{{ household.household_identifier }}">         
+	            </form>        
             {% endif %}
         </td>
      	<td>{{ household.community|encrypted}}</td>
