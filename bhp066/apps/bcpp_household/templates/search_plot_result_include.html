@@ -44,13 +44,19 @@
         {% endif %}
       </td>
         <td>{{ plot.get_status_display }}</td>
-        <td>{% if plot.household_count and 'household' in sections_names%}
-
-            <form method="POST" action="{% url 'section_search_word_url' 'household' 'word'  %}">
-            {% csrf_token %}
-            <input type="submit" value="{{ plot.household_count|default:'0' }} Household{{plot.household_count|pluralize}}">
-            <input type="hidden" name="search_term" value="{{ plot.identifier_segment }}">         
-            </form>        
+        <td>
+        	{% if plot.household_count and 'household' in sections_names%}
+	            <form method="POST" action="{% url 'section_search_word_url' 'household' 'word'  %}">
+	            {% csrf_token %}
+	            <input type="submit" value="{{ plot.household_count|default:'0' }} Household{{plot.household_count|pluralize}}">
+	            <input type="hidden" name="search_term" value="{{ plot.identifier_segment }}">         
+	            </form>
+	        {% else %}
+	        	<form method="POST" action="">
+	            {% csrf_token %}
+	            <input type="submit" value="{{ plot.household_count|default:'0' }} Household{{plot.household_count|pluralize}}" disabled>
+	            <input type="hidden" name="search_term" value="{{ plot.identifier_segment }}">         
+	            </form>        
             {% endif %}
         </td>
         <td>
@@ -58,6 +64,12 @@
                 <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
                 {% csrf_token %}
                 <input type="submit" value="{{ plot.eligible_members }} Member{{plot.eligible_members|pluralize}}">
+                <input type="hidden" name="search_term" value="{{ plot.plot_identifier }}">         
+                </form>
+            {% else %}
+            	<form method="POST" action="">
+                {% csrf_token %}
+                <input type="submit" value="{{ plot.eligible_members }} Member{{plot.eligible_members|pluralize}}" disabled>
                 <input type="hidden" name="search_term" value="{{ plot.plot_identifier }}">         
                 </form>        
             {% endif %}
