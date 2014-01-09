@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-18 12:49+0200\n"
+"POT-Creation-Date: 2014-01-08 14:46+0200\n"
 "PO-Revision-Date: 2013-11-18 12:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: apps/bcpp/choices.py:40 apps/bcpp/choices.py:154 apps/bcpp/choices.py:162
 #: apps/bcpp/choices.py:401 apps/bcpp/choices.py:442 apps/bcpp/choices.py:482
 #: apps/bcpp/choices.py:657 apps/bcpp/choices.py:668
-#: apps/bcpp_htc_subject/choices.py:73 apps/bcpp_subject/choices.py:486
+#: apps/bcpp_htc_subject/choices.py:73 apps/bcpp_subject/choices.py:433
 #: edc/choices/common.py:268 edc/choices/common.py:285
 #: edc/choices/common.py:291 edc/lab/lab_requisition/filters.py:22
 msgid "Yes"
@@ -32,7 +32,7 @@ msgstr "Ee"
 #: apps/bcpp/choices.py:24 apps/bcpp/choices.py:30 apps/bcpp/choices.py:36
 #: apps/bcpp/choices.py:41 apps/bcpp/choices.py:155 apps/bcpp/choices.py:163
 #: apps/bcpp/choices.py:402 apps/bcpp/choices.py:443 apps/bcpp/choices.py:483
-#: apps/bcpp_htc_subject/choices.py:74 apps/bcpp_subject/choices.py:487
+#: apps/bcpp_htc_subject/choices.py:74 apps/bcpp_subject/choices.py:434
 #: edc/choices/common.py:269 edc/choices/common.py:286
 #: edc/choices/common.py:292 edc/lab/lab_requisition/filters.py:23
 msgid "No"
@@ -66,7 +66,7 @@ msgstr "Nnya"
 #: apps/bcpp/choices.py:839 apps/bcpp/choices.py:851 apps/bcpp/choices.py:865
 #: apps/bcpp/choices.py:877 apps/bcpp/choices.py:886 apps/bcpp/choices.py:895
 #: apps/bcpp/choices.py:916 apps/bcpp/choices.py:927 apps/bcpp/choices.py:934
-#: apps/bcpp/choices.py:946 apps/bcpp/choices.py:958 apps/bcpp/choices.py:969
+#: apps/bcpp/choices.py:946 apps/bcpp/choices.py:958 apps/bcpp/choices.py:975
 #: apps/bcpp_htc_subject/choices.py:20 apps/bcpp_htc_subject/choices.py:29
 #: apps/bcpp_subject/choices.py:39 apps/bcpp_subject/choices.py:64
 #: apps/bcpp_subject/choices.py:74 apps/bcpp_subject/choices.py:84
@@ -80,7 +80,7 @@ msgstr "Nnya"
 #: apps/bcpp_subject/choices.py:308 apps/bcpp_subject/choices.py:327
 #: apps/bcpp_subject/choices.py:338 apps/bcpp_subject/choices.py:352
 #: apps/bcpp_subject/choices.py:364 apps/bcpp_subject/choices.py:379
-#: apps/bcpp_subject/choices.py:388 apps/bcpp_subject/choices.py:488
+#: apps/bcpp_subject/choices.py:388 apps/bcpp_subject/choices.py:435
 #: edc/choices/common.py:293
 msgid "Don't want to answer"
 msgstr "Ga ke eletse go araba"
@@ -181,7 +181,7 @@ msgstr "Go feta kgwedi tse thataro"
 #: apps/bcpp/choices.py:535 apps/bcpp/choices.py:554 apps/bcpp/choices.py:593
 #: apps/bcpp/choices.py:600 apps/bcpp/choices.py:614 apps/bcpp/choices.py:629
 #: apps/bcpp/choices.py:638 apps/bcpp/choices.py:651 apps/bcpp/choices.py:678
-#: apps/bcpp/choices.py:945 apps/bcpp/choices.py:967
+#: apps/bcpp/choices.py:945 apps/bcpp/choices.py:973
 #: apps/bcpp_htc_subject/choices.py:88 apps/bcpp_subject/choices.py:295
 msgid "I am not sure"
 msgstr "Ga ke tlhomamise"
@@ -391,10 +391,11 @@ msgid "Islam"
 msgstr "Islam"
 
 #: apps/bcpp/choices.py:180 apps/bcpp/choices.py:301 apps/bcpp/choices.py:802
-#: apps/bcpp/choices.py:829 apps/bcpp_htc_subject/choices.py:68
-#: apps/bcpp_subject/choices.py:124 apps/bcpp_subject/choices.py:199
-#: apps/bcpp_subject/choices.py:232 apps/bcpp_subject/choices.py:265
-#: apps/bcpp_subject/choices.py:418 apps/bcpp_subject/choices.py:432
+#: apps/bcpp/choices.py:829 apps/bcpp_household_member/choices.py:40
+#: apps/bcpp_household_member/choices.py:47
+#: apps/bcpp_htc_subject/choices.py:68 apps/bcpp_subject/choices.py:124
+#: apps/bcpp_subject/choices.py:199 apps/bcpp_subject/choices.py:232
+#: apps/bcpp_subject/choices.py:265
 msgid "Other"
 msgstr "Tse dingwe"
 
@@ -479,7 +480,7 @@ msgstr "Asian"
 #: apps/bcpp/choices.py:534 apps/bcpp/choices.py:553 apps/bcpp/choices.py:592
 #: apps/bcpp/choices.py:639 apps/bcpp/choices.py:652 apps/bcpp/choices.py:662
 #: apps/bcpp/choices.py:688 apps/bcpp/choices.py:729 apps/bcpp/choices.py:915
-#: apps/bcpp/choices.py:957 apps/bcpp/choices.py:968
+#: apps/bcpp/choices.py:957 apps/bcpp/choices.py:974
 #: apps/bcpp_subject/choices.py:21 apps/bcpp_subject/choices.py:220
 #: apps/bcpp_subject/choices.py:307 apps/bcpp_subject/choices.py:326
 #: apps/bcpp_subject/choices.py:337 apps/bcpp_subject/choices.py:363
@@ -730,7 +731,7 @@ msgid "Both of us"
 msgstr "Rotlhe ka bobedi"
 
 #: apps/bcpp/choices.py:372 apps/bcpp/choices.py:415 apps/bcpp/choices.py:456
-#: apps/bcpp_subject/choices.py:36 apps/bcpp_subject/choices.py:545
+#: apps/bcpp_subject/choices.py:36 apps/bcpp_subject/choices.py:492
 msgid "In this community"
 msgstr "Mo motseng o"
 
@@ -996,8 +997,8 @@ msgstr "Go tsaya lebaka le le leele go fola"
 #: apps/bcpp/choices.py:587
 msgid "It will be hard to not have sex or masturbate for 6 weeks"
 msgstr ""
-"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora bonna"
-"( masturbate) beke tse thatataro"
+"Go tla nna thata go nna ke sa tlhakanele dikobo kgotsa go iphoraphora "
+"bonna( masturbate) beke tse thatataro"
 
 #: apps/bcpp/choices.py:588
 msgid "Sex might not feel the same"
@@ -1052,7 +1053,7 @@ msgstr "Fa mongwe wa batsadi kgotsa batsadi botlhe ba ka nthotoetsa"
 msgid "If my friends encouraged me"
 msgstr "Fa ditsala tsame di ka nthotoetsa"
 
-#: apps/bcpp/choices.py:619 apps/bcpp_subject/choices.py:511
+#: apps/bcpp/choices.py:619 apps/bcpp_subject/choices.py:458
 msgid "Radio"
 msgstr "Seromamowa"
 
@@ -1120,7 +1121,7 @@ msgstr "Lebaka le lengwe la botsogo"
 msgid "Personal preference"
 msgstr "Se nna ke se ratang"
 
-#: apps/bcpp/choices.py:647 apps/bcpp_subject/choices.py:503
+#: apps/bcpp/choices.py:647 apps/bcpp_subject/choices.py:450
 msgid "Improved hygiene"
 msgstr "Koketsego ya bophepa"
 
@@ -1178,15 +1179,15 @@ msgstr ""
 msgid "No ARV's"
 msgstr "Ga gona diritibatsi (Ga ke tseye diritibatsi)"
 
-#: apps/bcpp/choices.py:685 apps/bcpp_subject/choices.py:525
+#: apps/bcpp/choices.py:685 apps/bcpp_subject/choices.py:472
 msgid "Myocardial infarction (heart attack)"
 msgstr "Myocardial infarction (heart attack)"
 
-#: apps/bcpp/choices.py:686 apps/bcpp_subject/choices.py:526
+#: apps/bcpp/choices.py:686 apps/bcpp_subject/choices.py:473
 msgid "Congestive cardiac failure"
 msgstr "Congestive cardiac failure"
 
-#: apps/bcpp/choices.py:687 apps/bcpp_subject/choices.py:527
+#: apps/bcpp/choices.py:687 apps/bcpp_subject/choices.py:474
 msgid "Stroke (cerebrovascular accident, CVA)"
 msgstr "Stroke (cerebrovascular accident, CVA)"
 
@@ -1206,23 +1207,23 @@ msgstr "Gabedi go ya gararo mo bekeng"
 msgid "more than 3 times a week"
 msgstr "Go feta ga raro mo bekeng"
 
-#: apps/bcpp/choices.py:724 apps/bcpp_subject/choices.py:532
+#: apps/bcpp/choices.py:724 apps/bcpp_subject/choices.py:479
 msgid "Traditional, faith, or religious healer/doctor"
 msgstr "Ngaka ya setso, semoya kgotsa ya tumelo"
 
-#: apps/bcpp/choices.py:725 apps/bcpp_subject/choices.py:533
+#: apps/bcpp/choices.py:725 apps/bcpp_subject/choices.py:480
 msgid "Pharmacy"
 msgstr "Ko khemisiting"
 
-#: apps/bcpp/choices.py:726 apps/bcpp_subject/choices.py:534
+#: apps/bcpp/choices.py:726 apps/bcpp_subject/choices.py:481
 msgid "Public or government health facility or clinic"
 msgstr "Dikokelo kgotsa sepatela sa puso/goromente"
 
-#: apps/bcpp/choices.py:727 apps/bcpp_subject/choices.py:535
+#: apps/bcpp/choices.py:727 apps/bcpp_subject/choices.py:482
 msgid "Private health facility or clinic"
 msgstr "Kokelo kgotsa sepatela se eseng sa puso"
 
-#: apps/bcpp/choices.py:728 apps/bcpp_subject/choices.py:536
+#: apps/bcpp/choices.py:728 apps/bcpp_subject/choices.py:483
 msgid "Community health worker"
 msgstr "Modiri wa botsogo wa mo motseng"
 
@@ -1257,8 +1258,8 @@ msgstr "Ke na le bothatanyana bo se kae le go itlhapisa kgotsa go ikapesa"
 #: apps/bcpp/choices.py:755 apps/bcpp_subject/choices.py:71
 msgid "I have moderate problems washing or dressing myself"
 msgstr ""
-"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go ikapesa"
-"(moderate)"
+"Ke na le bothata jo bo lekanetseng ja go itlhapisa kgotsa go "
+"ikapesa(moderate)"
 
 #: apps/bcpp/choices.py:756 apps/bcpp_subject/choices.py:72
 msgid "I have severe problems washing or dressing myself"
@@ -1736,6 +1737,32 @@ msgstr "Ga ke eletse go tsewa madi a mmele"
 msgid "I am afraid my information will not be private"
 msgstr "Ke na le letshogo la go gore e tla seke e nne sephiri"
 
+#: apps/bcpp/choices.py:967
+msgid "Fear of needless"
+msgstr ""
+
+#: apps/bcpp/choices.py:968
+msgid "Illiterate does not want a witness"
+msgstr ""
+
+#: apps/bcpp/choices.py:969
+#, fuzzy
+msgid "I already know my status"
+msgstr "Ke ne sa itse seemo same sa HIV"
+
+#: apps/bcpp/choices.py:970
+#, fuzzy
+msgid "I am not ready to test"
+msgstr "Ga ise ke nne mo seemong sa go tlhatlhoba"
+
+#: apps/bcpp/choices.py:971
+msgid "I want to test where i always test"
+msgstr ""
+
+#: apps/bcpp/choices.py:972
+msgid "I already know my partner's status, no need to test"
+msgstr ""
+
 #: apps/bcpp_household/models/household.py:19
 msgid "Household identifier"
 msgstr "Household identifier"
@@ -1744,15 +1771,124 @@ msgstr "Household identifier"
 msgid "You may provide a comment here or leave BLANK."
 msgstr "You may provide a comment here or leave BLANK."
 
-#: apps/bcpp_household/models/plot.py:37
+#: apps/bcpp_household/models/plot.py:40
 msgid "Plot identifier"
 msgstr "Plot identifier"
 
-#: apps/bcpp_household_member/models/household_info.py:31
+#: apps/bcpp_household_member/choices.py:15
+msgid "Absent"
+msgstr "Ga a yo (absent)"
+
+#: apps/bcpp_household_member/choices.py:16
+msgid "No longer absent"
+msgstr "O teng (no longer absent)"
+
+#: apps/bcpp_household_member/choices.py:20
+msgid "Gone visiting"
+msgstr "O etile"
+
+#: apps/bcpp_household_member/choices.py:21
+msgid "Stays at Lands/Cattlepost "
+msgstr "O nna ko masimo/ moraka"
+
+#: apps/bcpp_household_member/choices.py:22
+msgid "Stepped out (shops, errands, ) "
+msgstr "O santse a dule (mabenkeleng)"
+
+#: apps/bcpp_household_member/choices.py:23
+msgid "Works in the village, home daily"
+msgstr "O berekela mono gae, o tla lwapeng malatsi otlhe"
+
+#: apps/bcpp_household_member/choices.py:24
+msgid "Schools in this village, home daily"
+msgstr "O tsena sekolo mono gae, o tla lwapeng malatsi otlhe"
+
+#: apps/bcpp_household_member/choices.py:25
+msgid "Works outside the village, home daily"
+msgstr "O berekela kwa ntle ga motse o, o mo lwapeng malatsi otlhe"
+
+#: apps/bcpp_household_member/choices.py:26
+msgid "Schools outside village, home daily"
+msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng malatsi otlhe"
+
+#: apps/bcpp_household_member/choices.py:27
+msgid "Works outside the village, home irregularly "
+msgstr "O berekela kwa ntle ga motse o, o mo lwapeng fa gongwe"
+
+#: apps/bcpp_household_member/choices.py:28
+msgid "Schools outside village, home irregularly "
+msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng fa gongwe"
+
+#: apps/bcpp_household_member/choices.py:29
+msgid "Works outside the village, home monthly "
+msgstr "O berekela kwa ntle ga motse o, o mo lwapeng ka kgwedi"
+
+#: apps/bcpp_household_member/choices.py:30
+msgid "Schools outside village, home monthly "
+msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng ka kgwedi"
+
+#: apps/bcpp_household_member/choices.py:31
+msgid "Works outside the village, home on weekends "
+msgstr "O berekela kwa ntle ga motse o, o mo lwapeng ka mafelo a beke"
+
+#: apps/bcpp_household_member/choices.py:32
+msgid "Schools outside village, home on weekends "
+msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng ka mafelo a beke"
+
+#: apps/bcpp_household_member/choices.py:33
+#: apps/bcpp_household_member/choices.py:59
+msgid "Other..."
+msgstr "Tse dingwe…"
+
+#: apps/bcpp_household_member/choices.py:37
+msgid "Participant"
+msgstr "Motsayakarolo"
+
+#: apps/bcpp_household_member/choices.py:38
+msgid "household member"
+msgstr "Monni wa mo lwapeng"
+
+#: apps/bcpp_household_member/choices.py:39
+msgid "HBC"
+msgstr "HBC"
+
+#: apps/bcpp_household_member/choices.py:44
+msgid "Job Transfer"
+msgstr "Go fudusiwa ka tiro"
+
+#: apps/bcpp_household_member/choices.py:45
+msgid "Marriage"
+msgstr "Lenyalo"
+
+#: apps/bcpp_household_member/choices.py:46
+msgid "Independence"
+msgstr "Go ikemela ka nosi"
+
+#: apps/bcpp_household_member/choices.py:51
+msgid "Within Village"
+msgstr "Mo gae"
+
+#: apps/bcpp_household_member/choices.py:52
+msgid "Outside Village"
+msgstr "E seng mo gae"
+
+#: apps/bcpp_household_member/choices.py:56
+msgid "afraid_to_test"
+msgstr "go tshaba go itlhatlhoba"
+
+#: apps/bcpp_household_member/choices.py:57
+msgid "not ready to test"
+msgstr "Ga ise ke nne mo seemong sa go tlhatlhoba"
+
+#: apps/bcpp_household_member/choices.py:58
+msgid "wishes to test with partner"
+msgstr "O eletsa go itlhatlhoba le mokapelo"
+
+#: apps/bcpp_household_member/models/household_info.py:35
 msgid "What is the main type of flooring for this household?"
 msgstr "Go dirisitswe bodilo jwa mofuta o fe mo lwapeng?"
 
-#: apps/bcpp_household_member/models/household_info.py:40
+#: apps/bcpp_household_member/models/household_info.py:44
 msgid ""
 "How many living rooms are there in this household unit (exclude garage, "
 "bathroom, kitchen, store-room, etc if not used as living room )? "
@@ -1761,19 +1897,19 @@ msgstr ""
 "bothapelo, ntlo ya boapeelo, ntlo ya mabeelo, fa di sa dirisiwe jaaka ntlo "
 "ya boitapoloso )?"
 
-#: apps/bcpp_household_member/models/household_info.py:50
+#: apps/bcpp_household_member/models/household_info.py:54
 msgid "What is the main source of drinking water for this household? "
 msgstr "Mo lwapeng metsi a gonwa le a tsaya kae?"
 
-#: apps/bcpp_household_member/models/household_info.py:59
+#: apps/bcpp_household_member/models/household_info.py:63
 msgid "What is the main source of energy used for cooking? "
 msgstr "Le dirisa eng thata go apaya?"
 
-#: apps/bcpp_household_member/models/household_info.py:68
+#: apps/bcpp_household_member/models/household_info.py:72
 msgid "What is the main toilet facility used in this household? "
 msgstr "Go dirisiwa ntlwana ya boithomelo ya mofuta mang mo lwapeng?"
 
-#: apps/bcpp_household_member/models/household_info.py:77
+#: apps/bcpp_household_member/models/household_info.py:81
 msgid ""
 "Does any member of this household have any of the following that are "
 "currently working? (check all that apply)."
@@ -1781,7 +1917,7 @@ msgstr ""
 "A mongwe wa lelwapa le o na le nngwe ya tse di latelang ebile e bereka mo bo "
 "gompienong (check all that apply)?"
 
-#: apps/bcpp_household_member/models/household_info.py:86
+#: apps/bcpp_household_member/models/household_info.py:90
 msgid ""
 "Does any member of this household (excluding visitors) own any of the "
 "following forms of transport in working condition? (check all that apply)."
@@ -1789,7 +1925,7 @@ msgstr ""
 "A mongwe mo lwapeng ( kwa ntle ga baeng) o na le sepalamo sa tse di latelang "
 "ebile di bereka mo bo gompienong (check all that apply)?"
 
-#: apps/bcpp_household_member/models/household_info.py:95
+#: apps/bcpp_household_member/models/household_info.py:99
 msgid ""
 "How many goats are owned by the members of this household? [If unsure of "
 "exact number, give your best guess] "
@@ -1797,7 +1933,7 @@ msgstr ""
 "Le na le dipodi di le kae mo lwapeng? [O ka akanyetsa fa o sa tlhomamise "
 "palo ya tsone]"
 
-#: apps/bcpp_household_member/models/household_info.py:105
+#: apps/bcpp_household_member/models/household_info.py:109
 msgid ""
 "How many sheep are owned by the members of this household? [If unsure of "
 "exact number, give your best guess] "
@@ -1805,7 +1941,7 @@ msgstr ""
 "Le na le dinku di le kae mo lwapeng? [O ka akanyetsa fa o sa tlhomamise palo "
 "ya tsone]]"
 
-#: apps/bcpp_household_member/models/household_info.py:115
+#: apps/bcpp_household_member/models/household_info.py:119
 msgid ""
 "How many head of cattle (cows and bulls) are owned by the members of this "
 "household? [If unsure of exact number, give your best guess] "
@@ -1813,7 +1949,7 @@ msgstr ""
 "Le na le dikgomo(dikgomo le dipoo)di le kae mo lwapeng? [O ka akanyetsa fa o "
 "sa tlhomamise palo ya tsone]"
 
-#: apps/bcpp_household_member/models/household_info.py:125
+#: apps/bcpp_household_member/models/household_info.py:129
 msgid ""
 "In the past 4 weeks, did you or any household member have to eat a smaller "
 "meal than you felt you needed because there was not enough food? "
@@ -2095,7 +2231,7 @@ msgid "What is your current employment status?"
 msgstr "Seemo sa gago sa go bereka mo bogompienong ke eng?"
 
 #: apps/bcpp_htc_subject/models/demographics_risk.py:25
-#: apps/bcpp_subject/models/demographics.py:27
+#: apps/bcpp_subject/models/demographics.py:30
 msgid "What is your current marital status?"
 msgstr "Seemo sa gago sa nyalo ke eng mo bogompienong?"
 
@@ -2185,15 +2321,15 @@ msgstr ""
 "Jaanong ke tlaa botsa ka mokapelo wa gago wa bobedi wa tlhakanelo dikobo. "
 "Botsalano jwa gago le ene ke eng?"
 
-#: apps/bcpp_htc_subject/models/htc_subject_consent.py:12
+#: apps/bcpp_htc_subject/models/htc_subject_consent.py:14
 msgid "Is subject a minor?"
 msgstr "Is subject a minor?"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:20
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:61
-#: apps/bcpp_subject/models/subject_locator.py:20
-#: apps/bcpp_subject/models/subject_locator.py:61
-#: edc/subject/locator/models/base_locator.py:65
+#: apps/bcpp_subject/models/subject_locator.py:24
+#: apps/bcpp_subject/models/subject_locator.py:65
+#: edc/subject/locator/models/base_locator.py:72
 msgid "Cell number (alternate)"
 msgstr "Mogala wa letheka (o mongwe)"
 
@@ -2205,26 +2341,26 @@ msgid ""
 msgstr ""
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:37
-#: apps/bcpp_subject/models/subject_locator.py:37
+#: apps/bcpp_subject/models/subject_locator.py:41
 msgid "Full Name of the responsible person"
 msgstr "Maina ka botlalo a motho yo o tsayang maikarabelo"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:45
-#: apps/bcpp_subject/models/subject_locator.py:45
-#: edc/subject/locator/models/base_locator.py:123
+#: apps/bcpp_subject/models/subject_locator.py:49
+#: edc/subject/locator/models/base_locator.py:130
 msgid "Relationship to participant"
 msgstr "Botsalano le motsaya karolo"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:52
-#: apps/bcpp_subject/models/subject_locator.py:52
-#: edc/subject/locator/models/base_locator.py:57
-#: edc/subject/locator/models/base_locator.py:137
+#: apps/bcpp_subject/models/subject_locator.py:56
+#: edc/subject/locator/models/base_locator.py:64
+#: edc/subject/locator/models/base_locator.py:144
 msgid "Cell number"
 msgstr "Mogala wa letheka (cell phone)"
 
 #: apps/bcpp_htc_subject/models/htc_subject_locator.py:70
-#: apps/bcpp_subject/models/subject_locator.py:70
-#: edc/subject/locator/models/base_locator.py:145
+#: apps/bcpp_subject/models/subject_locator.py:74
+#: edc/subject/locator/models/base_locator.py:152
 msgid "Telephone number"
 msgstr "Mogala"
 
@@ -2334,7 +2470,7 @@ msgstr ""
 "Mokapelo wa lebaka le le leele(go feta ngwaga tse pedi) kgotsa monna/mosadi "
 "wame"
 
-#: apps/bcpp_subject/choices.py:31 apps/bcpp_subject/choices.py:481
+#: apps/bcpp_subject/choices.py:31 apps/bcpp_subject/choices.py:428
 msgid "Other, specify"
 msgstr "Tse dingwe, tlhalosa"
 
@@ -2667,328 +2803,220 @@ msgid "No current AIDS opportunistic illness"
 msgstr "No current AIDS opportunistic illness"
 
 #: apps/bcpp_subject/choices.py:415
-msgid "Participant"
-msgstr "Motsayakarolo"
-
-#: apps/bcpp_subject/choices.py:416
-msgid "household member"
-msgstr "Monni wa mo lwapeng"
-
-#: apps/bcpp_subject/choices.py:417
-msgid "HBC"
-msgstr "HBC"
-
-#: apps/bcpp_subject/choices.py:423
-msgid "Absent"
-msgstr "Ga a yo (absent)"
-
-#: apps/bcpp_subject/choices.py:424
-msgid "No longer absent"
-msgstr "O teng (no longer absent)"
-
-#: apps/bcpp_subject/choices.py:429
-msgid "Job Transfer"
-msgstr "Go fudusiwa ka tiro"
-
-#: apps/bcpp_subject/choices.py:430
-msgid "Marriage"
-msgstr "Lenyalo"
-
-#: apps/bcpp_subject/choices.py:431
-msgid "Independence"
-msgstr "Go ikemela ka nosi"
-
-#: apps/bcpp_subject/choices.py:436
-msgid "Within Village"
-msgstr "Mo gae"
-
-#: apps/bcpp_subject/choices.py:437
-msgid "Outside Village"
-msgstr "E seng mo gae"
-
-#: apps/bcpp_subject/choices.py:442
-msgid "Gone visiting"
-msgstr "O etile"
-
-#: apps/bcpp_subject/choices.py:443
-msgid "Stays at Lands/Cattlepost "
-msgstr "O nna ko masimo/ moraka"
-
-#: apps/bcpp_subject/choices.py:444
-msgid "Stepped out (shops, errands, ) "
-msgstr "O santse a dule (mabenkeleng)"
-
-#: apps/bcpp_subject/choices.py:445
-msgid "Works in the village, home daily"
-msgstr "O berekela mono gae, o tla lwapeng malatsi otlhe"
-
-#: apps/bcpp_subject/choices.py:446
-msgid "Schools in this village, home daily"
-msgstr "O tsena sekolo mono gae, o tla lwapeng malatsi otlhe"
-
-#: apps/bcpp_subject/choices.py:447
-msgid "Works outside the village, home daily"
-msgstr "O berekela kwa ntle ga motse o, o mo lwapeng malatsi otlhe"
-
-#: apps/bcpp_subject/choices.py:448
-msgid "Schools outside village, home daily"
-msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng malatsi otlhe"
-
-#: apps/bcpp_subject/choices.py:449
-msgid "Works outside the village, home irregularly "
-msgstr "O berekela kwa ntle ga motse o, o mo lwapeng fa gongwe"
-
-#: apps/bcpp_subject/choices.py:450
-msgid "Schools outside village, home irregularly "
-msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng fa gongwe"
-
-#: apps/bcpp_subject/choices.py:451
-msgid "Works outside the village, home monthly "
-msgstr "O berekela kwa ntle ga motse o, o mo lwapeng ka kgwedi"
-
-#: apps/bcpp_subject/choices.py:452
-msgid "Schools outside village, home monthly "
-msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng ka kgwedi"
-
-#: apps/bcpp_subject/choices.py:453
-msgid "Works outside the village, home on weekends "
-msgstr "O berekela kwa ntle ga motse o, o mo lwapeng ka mafelo a beke"
-
-#: apps/bcpp_subject/choices.py:454
-msgid "Schools outside village, home on weekends "
-msgstr "O tsena sekolo kwa ntle ga motse o, o mo lwapeng ka mafelo a beke"
-
-#: apps/bcpp_subject/choices.py:455 apps/bcpp_subject/choices.py:463
-msgid "Other..."
-msgstr "Tse dingwe…"
-
-#: apps/bcpp_subject/choices.py:460
-msgid "afraid_to_test"
-msgstr "go tshaba go itlhatlhoba"
-
-#: apps/bcpp_subject/choices.py:461
-msgid "not ready to test"
-msgstr "Ga ise ke nne mo seemong sa go tlhatlhoba"
-
-#: apps/bcpp_subject/choices.py:462
-msgid "wishes to test with partner"
-msgstr "O eletsa go itlhatlhoba le mokapelo"
-
-#: apps/bcpp_subject/choices.py:468
 msgid "Referred to receive HIV result in clinic"
 msgstr "O rometswe go tsaya maduo a HIV ko kokelong"
 
-#: apps/bcpp_subject/choices.py:469
+#: apps/bcpp_subject/choices.py:416
 msgid "Referred to test in clinic"
 msgstr "O rometswe go ya go tlhatlhoba ko kokelong"
 
-#: apps/bcpp_subject/choices.py:470
+#: apps/bcpp_subject/choices.py:417
 msgid "Referred as per protocol"
 msgstr "Referred as per protocol"
 
-#: apps/bcpp_subject/choices.py:474
+#: apps/bcpp_subject/choices.py:421
 msgid "spouse"
 msgstr "Mokapelo kgotsa monna/mosadi wame"
 
-#: apps/bcpp_subject/choices.py:475
+#: apps/bcpp_subject/choices.py:422
 msgid "parent"
 msgstr "Batsadi"
 
-#: apps/bcpp_subject/choices.py:476
+#: apps/bcpp_subject/choices.py:423
 msgid "sibling"
 msgstr "Bomorwarre(bonnake/bonkgonne)"
 
-#: apps/bcpp_subject/choices.py:477
+#: apps/bcpp_subject/choices.py:424
 msgid "child"
 msgstr "ngwanake"
 
-#: apps/bcpp_subject/choices.py:478
+#: apps/bcpp_subject/choices.py:425
 msgid "aunt/uncle"
 msgstr "mmangwane/ malome"
 
-#: apps/bcpp_subject/choices.py:479
+#: apps/bcpp_subject/choices.py:426
 msgid "cousin"
 msgstr "ntsalake"
 
-#: apps/bcpp_subject/choices.py:480
+#: apps/bcpp_subject/choices.py:427
 msgid "partner/boyfriend/girlfriend"
 msgstr "mokapelo (partner/boyfriend/girlfriend)"
 
-#: apps/bcpp_subject/choices.py:489
+#: apps/bcpp_subject/choices.py:436
 msgid "Participant does not want to provide record"
 msgstr "Motsayakarolo ga a batle go ntsha sesupo (record)"
 
-#: apps/bcpp_subject/choices.py:504
+#: apps/bcpp_subject/choices.py:451
 msgid "Reduced risk of HIV"
 msgstr "Phokotsego ya bodiphatsa tsa go tsenwa ke HIV"
 
-#: apps/bcpp_subject/choices.py:505
+#: apps/bcpp_subject/choices.py:452
 msgid "Reduced risk of other sexually transmitted diseases"
 msgstr ""
 "Phokotsego ya bodiphatsa tsa go tsenwa ke malwetse a mangwe a tlhakanelo "
 "dikobo"
 
-#: apps/bcpp_subject/choices.py:506
+#: apps/bcpp_subject/choices.py:453
 msgid "Reduced risk of cancer"
 msgstr "Phokotsego ya bodiphatsa tsa bolwetse ja kankere"
 
-#: apps/bcpp_subject/choices.py:507
+#: apps/bcpp_subject/choices.py:454
 msgid "Heart Disease or Stroke"
 msgstr "Bolwetsi jwa pelo kgotsa go swa mhama"
 
-#: apps/bcpp_subject/choices.py:508
+#: apps/bcpp_subject/choices.py:455
 msgid "Cancer"
 msgstr "Kankere"
 
-#: apps/bcpp_subject/choices.py:509
+#: apps/bcpp_subject/choices.py:456
 msgid "Tubercolosis"
 msgstr "Kgotlholo e tona"
 
-#: apps/bcpp_subject/choices.py:510
+#: apps/bcpp_subject/choices.py:457
 msgid "Other serious infection"
 msgstr "Malwetsi a mangwe a a tlhwaafetseng"
 
-#: apps/bcpp_subject/choices.py:512
+#: apps/bcpp_subject/choices.py:459
 msgid "TV"
 msgstr "Television"
 
-#: apps/bcpp_subject/choices.py:513
+#: apps/bcpp_subject/choices.py:460
 msgid "Landline telephone"
 msgstr "Mogala wa mo lwapeng"
 
-#: apps/bcpp_subject/choices.py:514
+#: apps/bcpp_subject/choices.py:461
 msgid "Cell phone"
 msgstr "Mogala wa letheka (cell phone)"
 
-#: apps/bcpp_subject/choices.py:515
+#: apps/bcpp_subject/choices.py:462
 msgid "Computer"
 msgstr "Computara"
 
-#: apps/bcpp_subject/choices.py:516
+#: apps/bcpp_subject/choices.py:463
 msgid "Access to internet"
 msgstr "Internet"
 
-#: apps/bcpp_subject/choices.py:517
+#: apps/bcpp_subject/choices.py:464
 msgid "Refrigerator"
 msgstr "Setsidifatsi"
 
-#: apps/bcpp_subject/choices.py:518
+#: apps/bcpp_subject/choices.py:465
 msgid "Condoms, consistent use (male or female)"
 msgstr "Tiriso ya sekausu nako tsotlhe"
 
-#: apps/bcpp_subject/choices.py:519
+#: apps/bcpp_subject/choices.py:466
 msgid "Injectable contraceptive"
 msgstr "Thibelo /iphemelo pelegi ya mokento"
 
-#: apps/bcpp_subject/choices.py:520
+#: apps/bcpp_subject/choices.py:467
 msgid "Oral contraceptive"
 msgstr "Dipilisi"
 
-#: apps/bcpp_subject/choices.py:521
+#: apps/bcpp_subject/choices.py:468
 msgid "IUD"
 msgstr "IUD"
 
-#: apps/bcpp_subject/choices.py:522
+#: apps/bcpp_subject/choices.py:469
 msgid "Diaphragm or cervical cap"
 msgstr "Loselo/ Leselo"
 
-#: apps/bcpp_subject/choices.py:523
+#: apps/bcpp_subject/choices.py:470
 msgid "Rhythm or menstrual cycle timing"
 msgstr "Boiphemelo jwa go ela tlhoko malatsi a setswalo"
 
-#: apps/bcpp_subject/choices.py:524
+#: apps/bcpp_subject/choices.py:471
 msgid "Withdrawal"
 msgstr "Go somola bonna mo bosading pele ga o tsholola metsi a senna"
 
-#: apps/bcpp_subject/choices.py:528
+#: apps/bcpp_subject/choices.py:475
 msgid "Partner or spouse"
 msgstr "Monna/ Mosadi wa gago"
 
-#: apps/bcpp_subject/choices.py:529
+#: apps/bcpp_subject/choices.py:476
 msgid "Siblings"
 msgstr "Bomorwarre(bonnake/bonkgonne)"
 
-#: apps/bcpp_subject/choices.py:530
+#: apps/bcpp_subject/choices.py:477
 msgid "Alone"
 msgstr "Ke le nosi"
 
-#: apps/bcpp_subject/choices.py:531
+#: apps/bcpp_subject/choices.py:478
 msgid "Extended family"
 msgstr "Masika"
 
-#: apps/bcpp_subject/choices.py:537
+#: apps/bcpp_subject/choices.py:484
 msgid "Water"
 msgstr "Metsi"
 
-#: apps/bcpp_subject/choices.py:538
+#: apps/bcpp_subject/choices.py:485
 msgid "Sewer (sanitation)"
 msgstr "Kgopho ya metsi a a leswe"
 
-#: apps/bcpp_subject/choices.py:539
+#: apps/bcpp_subject/choices.py:486
 msgid "Housing"
 msgstr "Boroko"
 
-#: apps/bcpp_subject/choices.py:540
+#: apps/bcpp_subject/choices.py:487
 msgid "Roads"
 msgstr "Ditsela"
 
-#: apps/bcpp_subject/choices.py:541
+#: apps/bcpp_subject/choices.py:488
 msgid "Malaria"
 msgstr "Malaria"
 
-#: apps/bcpp_subject/choices.py:542
+#: apps/bcpp_subject/choices.py:489
 msgid "HIV/AIDS"
 msgstr "HIV/AIDS"
 
-#: apps/bcpp_subject/choices.py:543
+#: apps/bcpp_subject/choices.py:490
 msgid "Schools"
 msgstr "Dikolo"
 
-#: apps/bcpp_subject/choices.py:544
+#: apps/bcpp_subject/choices.py:491
 msgid "Unemployment"
 msgstr "Letlhoko la ditiro"
 
-#: apps/bcpp_subject/choices.py:546
+#: apps/bcpp_subject/choices.py:493
 msgid "Outside community"
 msgstr "Kwa ntle ga motse o"
 
-#: apps/bcpp_subject/choices.py:547
+#: apps/bcpp_subject/choices.py:494
 msgid "Farm within this community"
 msgstr "Kwa masimo mo motseng o"
 
-#: apps/bcpp_subject/choices.py:548
+#: apps/bcpp_subject/choices.py:495
 msgid "Farm outside this community"
 msgstr "Kwa masimo e seng mo motseng o"
 
-#: apps/bcpp_subject/choices.py:549
+#: apps/bcpp_subject/choices.py:496
 msgid "Cattle post within this community"
 msgstr "Ko morakeng mo motseng o"
 
-#: apps/bcpp_subject/choices.py:550
+#: apps/bcpp_subject/choices.py:497
 msgid "Cattle post outside this community"
 msgstr "Kwa morakeng e seng mo motseng o"
 
-#: apps/bcpp_subject/choices.py:551
+#: apps/bcpp_subject/choices.py:498
 msgid "Motor vehicle (car,truck,taxi, etc)"
 msgstr "Koloi (car, truck, taxi)"
 
-#: apps/bcpp_subject/choices.py:552
+#: apps/bcpp_subject/choices.py:499
 msgid "Tractor"
 msgstr "Terekere"
 
-#: apps/bcpp_subject/choices.py:553
+#: apps/bcpp_subject/choices.py:500
 msgid "Bicycle"
 msgstr "Baesekele"
 
-#: apps/bcpp_subject/choices.py:554
+#: apps/bcpp_subject/choices.py:501
 msgid "Motorcycle/scooter"
 msgstr "Sekuta"
 
-#: apps/bcpp_subject/choices.py:555
+#: apps/bcpp_subject/choices.py:502
 msgid "Donkey or cow cart"
 msgstr "Kara ya ditonki kgotsa ya dikgomo"
 
-#: apps/bcpp_subject/choices.py:556
+#: apps/bcpp_subject/choices.py:503
 msgid "Donkey/horses"
 msgstr "Ditonki/ dipitse"
 
@@ -3038,7 +3066,7 @@ msgstr ""
 "itlhatlhobetse mogare wa HIV le gore a o bone maduo. Gakologelwa gore "
 "dikarabo tsotlhe tsa gago di bewa e le sephiri."
 
-#: apps/bcpp_subject/admin/medical_diagnoses_admin.py:25
+#: apps/bcpp_subject/admin/medical_diagnoses_admin.py:29
 msgid ""
 "Read to Participant: I am now going to ask you some questions about major "
 "illnesses that you may have had in the past 12 months. Sometimes people call "
@@ -3156,6 +3184,11 @@ msgstr "Balela mo tsaya karolo: Batho ba bangwe ba "
 #, fuzzy
 msgid "community"
 msgstr "Mo motseng o"
+
+#: apps/bcpp_subject/filters/subject_locator_is_referred_list_filter.py:9
+#: apps/bcpp_subject/filters/subject_referral_is_referred_list_filter.py:7
+msgid "referred"
+msgstr ""
 
 #: apps/bcpp_subject/models/access_to_care.py:13
 msgid ""
@@ -3375,21 +3408,21 @@ msgstr "Lebaka legolo la gore o bo o dirile loara la borre ke lefe?"
 msgid "Are you circumcised?"
 msgstr "A o dirile loaro la borre?"
 
-#: apps/bcpp_subject/models/clinic_questionnaire.py:13
+#: apps/bcpp_subject/models/clinic_questionnaire.py:14
 msgid "Do you know your current HIV status?"
 msgstr "A o itse seemo sa gago sa HIV?"
 
-#: apps/bcpp_subject/models/clinic_questionnaire.py:22
+#: apps/bcpp_subject/models/clinic_questionnaire.py:23
 msgid "Please tell me your current HIV status?"
 msgstr "Ke kopa go itse seemo sa gago sa HIV mo bogompienong?"
 
-#: apps/bcpp_subject/models/clinic_questionnaire.py:31
-#: apps/bcpp_subject/models/hiv_care_adherence.py:85
+#: apps/bcpp_subject/models/clinic_questionnaire.py:32
+#: apps/bcpp_subject/models/hiv_care_adherence.py:88
 msgid "Are you currently taking antiretroviral therapy (ARVs)?"
 msgstr "A mo bo gompienong o tsaya melemo ya diritibatsi?"
 
-#: apps/bcpp_subject/models/clinic_questionnaire.py:40
-#: apps/bcpp_subject/models/hiv_care_adherence.py:131
+#: apps/bcpp_subject/models/clinic_questionnaire.py:41
+#: apps/bcpp_subject/models/hiv_care_adherence.py:149
 msgid ""
 "Is there evidence [OPD card, tablets, masa number] that the participant is "
 "on therapy?"
@@ -3422,15 +3455,15 @@ msgstr ""
 "Fa go na le mathata mo tikologong e, a bagolo ba dira mmogo go rarabolola "
 "bothata jo?"
 
-#: apps/bcpp_subject/models/demographics.py:15
+#: apps/bcpp_subject/models/demographics.py:18
 msgid "What is your religion affiliation?"
 msgstr "O amana le tumelo efe?"
 
-#: apps/bcpp_subject/models/demographics.py:21
+#: apps/bcpp_subject/models/demographics.py:24
 msgid "What is your ethnic group?"
 msgstr "O wa morafe o fe?"
 
-#: apps/bcpp_subject/models/demographics.py:34
+#: apps/bcpp_subject/models/demographics.py:37
 msgid ""
 "WOMEN: How many wives does your husband have (including traditional "
 "marriage), including yourself?"
@@ -3438,11 +3471,11 @@ msgstr ""
 "BOMME: Monna wa gago o na le basadi ba le kae (go akeradiwa le lenyalo la "
 "setswana), le wena mo palong?"
 
-#: apps/bcpp_subject/models/demographics.py:42
+#: apps/bcpp_subject/models/demographics.py:45
 msgid "MEN: How many wives do you have, including traditional marriage?"
 msgstr "BORRE: O na le basadi ba le kae go akarediwa le lenyalo la setswana"
 
-#: apps/bcpp_subject/models/demographics.py:50
+#: apps/bcpp_subject/models/demographics.py:53
 msgid "Who do you currently live with ?"
 msgstr "O nna le mang mo bo gompienong(kaya tsotlhe tse di lebaneng)?"
 
@@ -3591,11 +3624,11 @@ msgstr "Mo lenaneong lengwe le lengwe o amogela di le kae?"
 msgid "Grant name"
 msgstr "Leina la lenaneo"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:16
+#: apps/bcpp_subject/models/hiv_care_adherence.py:19
 msgid "When was your first positive HIV test result?"
 msgstr "Maduo a gago a ntlha a gore o na le mogare wa HIV a ne a le leng?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:25
+#: apps/bcpp_subject/models/hiv_care_adherence.py:28
 msgid ""
 "Have you ever received HIV-related medical or clinical care, for such things "
 "as a CD4 count (masole), IDCC/ PMTCT registration, additional clinic-based "
@@ -3604,7 +3637,7 @@ msgstr ""
 "tlhatlhobo ya masole a mmele, go kwadisa ko IDCC, lenaneo la PMTCT kgotsa go "
 "bona bogakolodi ja tlaleletso kwa kokelong?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:34
+#: apps/bcpp_subject/models/hiv_care_adherence.py:37
 msgid ""
 "What is the main reason you have not received HIV-related medical or "
 "clinical care?"
@@ -3612,7 +3645,7 @@ msgstr ""
 "Ke mabaka a fe gore o bo o sa ise o amogela tlhokomelo ya botsogo ya seemo "
 "sa HIV?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:45
+#: apps/bcpp_subject/models/hiv_care_adherence.py:48
 msgid ""
 "Have you ever been recommended by a doctor/nurse or other healthcare worker "
 "to start antiretroviral therapy (ARVs), a combination of medicines to treat "
@@ -3623,7 +3656,7 @@ msgstr ""
 "go alafa mogare wa HIV? [gantsi go dirisiwa: combivir, truvada, atripla, "
 "nevirapine]"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:57
+#: apps/bcpp_subject/models/hiv_care_adherence.py:60
 msgid ""
 "Have you ever taken any antiretroviral therapy (ARVs) for your HIV "
 "infection? [For women: Do not include treatment that you took during "
@@ -3633,23 +3666,31 @@ msgstr ""
 "[Bomme/basadi: O seka wa akaretsa kalfi e o e tsereng ka nako ya boimana go "
 "sireletsa ngwana wa gago go tsenwa ke HIV]"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:66
+#: apps/bcpp_subject/models/hiv_care_adherence.py:69
 msgid "What was the main reason why you have not started ARVs?"
 msgstr "Lebaka legolo ke eng o sa simolola di-ARV?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:76
+#: apps/bcpp_subject/models/hiv_care_adherence.py:79
 msgid "When did you first start taking antiretroviral therapy (ARVs)?"
 msgstr "O simolotse go tsaya melemo ya diritibatsi(di-ARV) lantlha leng?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:92
+#: apps/bcpp_subject/models/hiv_care_adherence.py:95
+msgid "Which clinic facility are you already receiving therapy from?"
+msgstr "O tsaya melemo ya diritibatsi(di-ARV) ko kokelong efe?"
+
+#: apps/bcpp_subject/models/hiv_care_adherence.py:103
+msgid "When is your next appointment at this facility?"
+msgstr "O ya teng gape ko kokelong ka letsatsi lefe?"
+
+#: apps/bcpp_subject/models/hiv_care_adherence.py:110
 msgid "When did you stop taking ARV's?"
 msgstr "O ne wa emisa leng go tsaya melemo ya diritibatsi (ARV's)?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:100
+#: apps/bcpp_subject/models/hiv_care_adherence.py:118
 msgid "What was the main reason why you stopped taking ARVs?"
 msgstr "Lebaka legolo la go bo o emisitse go tsaya di-ARV ke lefe?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:111
+#: apps/bcpp_subject/models/hiv_care_adherence.py:129
 msgid ""
 "During the past 4 days, on how many days have you missed taking all your "
 "doses of antiretroviral therapy (ART)?"
@@ -3657,7 +3698,7 @@ msgstr ""
 "Mo malatsing a mane a a fetileng, o tlodisitse go tsaya melemo ya gago "
 "malatsi a le kae?"
 
-#: apps/bcpp_subject/models/hiv_care_adherence.py:121
+#: apps/bcpp_subject/models/hiv_care_adherence.py:139
 msgid ""
 "Thinking about the past 4 weeks, on average, how would you rate your ability "
 "to take all your medications as prescribed?"
@@ -3941,7 +3982,7 @@ msgstr ""
 "A mokwalo(karata ya bongaka, mokwalo wa fa o ntshiwa mo sepatela) wa go "
 "tlhomamisa bolwetse ja pelo kgotsa jwa go swa mhama oteng go sekwasekwa?"
 
-#: apps/bcpp_subject/models/medical_diagnoses.py:32
+#: apps/bcpp_subject/models/medical_diagnoses.py:39
 msgid ""
 "Is a record (OPD card, discharge summary) of a cancer diagnosis available to "
 "review?"
@@ -3949,15 +3990,7 @@ msgstr ""
 "A mokwalo(karata ya bongaka, mokwalo wa fa o ntshiwa mo sepatela) wa go "
 "tlhomamisa bolwetse ja kankere o teng go sekwasekwa"
 
-#: apps/bcpp_subject/models/medical_diagnoses.py:42
-msgid ""
-"Is a record (OPD card, discharge summary) of a STI diagnosis available to "
-"review?"
-msgstr ""
-"A mokwalo(karata ya bongaka, mokwalo wa fa o ntshiwa mo sepatela) wa go "
-"tlhomamisa bolwetse ja tlhakanelo dikobo oteng go sekwasekwa?"
-
-#: apps/bcpp_subject/models/medical_diagnoses.py:52
+#: apps/bcpp_subject/models/medical_diagnoses.py:66
 msgid ""
 "Is a record (OPD card, discharge summary, TB card) of a tuberculosis "
 "infection available to review?"
@@ -4118,30 +4151,30 @@ msgstr "A o ikwadiseditse boimana?"
 msgid "When was the first day of your last normal menstrual period?"
 msgstr "O bone leng setswalo se se siameng la bofelo?"
 
-#: apps/bcpp_subject/models/quality_of_life.py:14
+#: apps/bcpp_subject/models/quality_of_life.py:17
 msgid "Mobility"
 msgstr "Go kgona go tsamaya"
 
-#: apps/bcpp_subject/models/quality_of_life.py:20
+#: apps/bcpp_subject/models/quality_of_life.py:23
 msgid "Self-Care"
 msgstr "Go kgona go itlhokomela"
 
-#: apps/bcpp_subject/models/quality_of_life.py:26
+#: apps/bcpp_subject/models/quality_of_life.py:29
 msgid ""
 "Usual Activities (e.g. work, study, housework, family or leisure activities)"
 msgstr ""
 "Ditiro tsa gale (jaaka: tiro/ go bereka, go tsena sekolo/ go ithuta, tiro ya "
 "mo lapeng, go nna le ba lelwapa kgotsa go itosa bodutu)"
 
-#: apps/bcpp_subject/models/quality_of_life.py:32
+#: apps/bcpp_subject/models/quality_of_life.py:35
 msgid "Pain / Discomfort "
 msgstr "Ga ke na ditlhabi kgotsa go sa ikutlwe sentle"
 
-#: apps/bcpp_subject/models/quality_of_life.py:38
+#: apps/bcpp_subject/models/quality_of_life.py:41
 msgid "Anxiety / Depression "
 msgstr "Go tlhobaela / Maikutlo a wetseng kwa tlase(Depression)"
 
-#: apps/bcpp_subject/models/quality_of_life.py:44
+#: apps/bcpp_subject/models/quality_of_life.py:47
 msgid ""
 "We would like to know how good or bad your health is TODAY. This scale is "
 "numbered from 0 to 100. 100 means the 'best' health you can imagine. 0 means "
@@ -4648,6 +4681,80 @@ msgstr "Ga a na mogare (negative)"
 msgid "Unknown"
 msgstr "Ga go itsiwe (unknown)"
 
+#: edc/core/bhp_templates/admin/change_form.html:23
+#: edc/core/bhp_templates/registration/logged_out.html:5
+#: edc/core/bhp_templates/registration/password_change_form.html:10
+#: templates/bhp_base_site.html:24 templates/admin/change_form.html:23
+#: templates/admin/change_list.html:43 templates/admin/index.html:12
+#: templates/registration/logged_out.html:5
+#: templates/registration/password_change_form.html:10
+msgid "Home"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/change_form.html:26
+#: templates/admin/change_form.html:26
+msgid "Dashboard"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/change_form.html:29
+#: templates/bhp_base_site.html:25
+msgid "Admin"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/change_form.html:33
+#: templates/admin/change_form.html:34 templates/admin/index.html:36
+msgid "Add"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/change_form.html:43
+#: templates/admin/change_form.html:44
+msgid "History"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/change_form.html:44
+#: templates/admin/change_form.html:45 templates/admin/stacked.html:9
+#: templates/admin/tabular.html:30
+msgid "View on site"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/change_form.html:55
+#: templates/admin/change_form.html:56 templates/admin/change_list.html:71
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: edc/core/bhp_templates/admin/submit_line.html:2
+#: templates/admin/submit_line.html:2
+msgid "Save and Next"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/submit_line.html:3
+#: templates/admin/submit_line.html:3
+msgid "Save"
+msgstr ""
+
+#: edc/core/bhp_templates/admin/submit_line.html:4
+#: templates/admin/submit_line.html:4
+#, fuzzy
+msgid "Delete"
+msgstr "Balete"
+
+#: edc/core/bhp_templates/admin/submit_line.html:5
+#: templates/admin/submit_line.html:5
+msgid "Save as new"
+msgstr ""
+
+#: edc/core/bhp_templates/registration/logged_out.html:9
+#: templates/registration/logged_out.html:9
+msgid "You are now logged out."
+msgstr ""
+
+#: edc/core/bhp_templates/registration/logged_out.html:11
+#: templates/registration/logged_out.html:11
+msgid "Log in again"
+msgstr ""
+
 #: edc/core/bhp_variables/models/study_specific.py:12
 msgid "BHP Protocol Number"
 msgstr "BHP Protocol Number"
@@ -4828,35 +4935,35 @@ msgstr "Sample storage after closure?"
 msgid "Subject agrees for samples to be stored after the study closure"
 msgstr "Subject agrees for samples to be stored after the study closure"
 
-#: edc/subject/locator/models/base_locator.py:33
+#: edc/subject/locator/models/base_locator.py:31
 msgid "Mailing address "
 msgstr "Aterese ya poso"
 
-#: edc/subject/locator/models/base_locator.py:45
+#: edc/subject/locator/models/base_locator.py:43
 msgid "Physical address with detailed description"
 msgstr "Tlhalosa ko o nnang teng ka botlalo"
 
-#: edc/subject/locator/models/base_locator.py:73
+#: edc/subject/locator/models/base_locator.py:80
 msgid "Telephone"
 msgstr "Mogala"
 
-#: edc/subject/locator/models/base_locator.py:81
+#: edc/subject/locator/models/base_locator.py:88
 msgid "Telephone (alternate)"
 msgstr "Mogala (o mongwe)"
 
-#: edc/subject/locator/models/base_locator.py:95
+#: edc/subject/locator/models/base_locator.py:102
 msgid "Name and location of work place"
 msgstr "Leina le lehelo ko o berekang teng"
 
-#: edc/subject/locator/models/base_locator.py:102
+#: edc/subject/locator/models/base_locator.py:109
 msgid "Work telephone number "
 msgstr "Mogala wa ko tirong"
 
-#: edc/subject/locator/models/base_locator.py:116
+#: edc/subject/locator/models/base_locator.py:123
 msgid "Full names of the contact person"
 msgstr "Maina ka botlalo a mongwe o go ka ikopanngwang le ene"
 
-#: edc/subject/locator/models/base_locator.py:130
+#: edc/subject/locator/models/base_locator.py:137
 msgid "Full physical address "
 msgstr "Ko o nnang teng ka botlalo"
 
@@ -4889,6 +4996,84 @@ msgstr "Sefane sa gago"
 #: lis/subject/lab_patient/models/patient.py:43
 msgid "Is the subject's date of birth estimated?"
 msgstr "Is the subject's date of birth estimated?"
+
+#: templates/admin/change_form.html:29 templates/admin/change_list.html:44
+#: templates/admin/index.html:13
+msgid "Admininistration"
+msgstr ""
+
+#: templates/admin/change_form.html:30 templates/admin/change_list.html:45
+#: templates/admin/index.html:14
+#, fuzzy
+msgid "Site Admin"
+msgstr "White African"
+
+#: templates/admin/change_list.html:62
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: templates/admin/change_list.html:82
+msgid "Filter"
+msgstr ""
+
+#: templates/admin/index.html:25
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:26
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: templates/admin/index.html:42
+#, fuzzy
+msgid "Change"
+msgstr "Nkange"
+
+#: templates/admin/index.html:52
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:60
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:61
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:65
+#, fuzzy
+msgid "None available"
+msgstr "Ga go kgonege (Ga gona karabo)"
+
+#: templates/admin/index.html:79
+#, fuzzy
+msgid "Unknown content"
+msgstr "Ga go itsiwe (unknown)"
+
+#: templates/admin/stacked.html:69 templates/admin/tabular.html:119
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/stacked.html:72 templates/admin/tabular.html:122
+msgid "Remove"
+msgstr ""
+
+#: templates/admin/tabular.html:17
+#, fuzzy
+msgid "Delete?"
+msgstr "Balete"
+
+#~ msgid ""
+#~ "Is a record (OPD card, discharge summary) of a STI diagnosis available to "
+#~ "review?"
+#~ msgstr ""
+#~ "A mokwalo(karata ya bongaka, mokwalo wa fa o ntshiwa mo sepatela) wa go "
+#~ "tlhomamisa bolwetse ja tlhakanelo dikobo oteng go sekwasekwa?"
 
 #~ msgid "2 years or spouse"
 #~ msgstr "ngwaga tse pedi kgotsa motho yo o nyalaneng le ene"
@@ -5097,9 +5282,6 @@ msgstr "Is the subject's date of birth estimated?"
 #~ msgstr ""
 #~ "Mo nakong e e tlang a go na le nako e e rileng ya ngwaga e o ka ratang go "
 #~ "rupisiwa ka yone?"
-
-#~ msgid "Not applicable"
-#~ msgstr "Ga go kgonege (Ga gona karabo)"
 
 #~ msgid "Within the Survey Ward"
 #~ msgstr "Mo kgotleng e e sekasikiwang (within survey ward)"
