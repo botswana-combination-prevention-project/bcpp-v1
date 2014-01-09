@@ -117,6 +117,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         self.eligible_member = self.is_eligible()
         self.initials = self.initials.upper()
+        if self.eligible_member:
+            self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
+                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
+            self.household_structure.household.plot.save()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
