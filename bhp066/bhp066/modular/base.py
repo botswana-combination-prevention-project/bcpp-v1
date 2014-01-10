@@ -348,3 +348,13 @@ else:
                                    'DATABASE=BHPLAB')
 # edc.subject.consent
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
+
+# edc.device.inspector (middleman)
+MIDDLE_MAN_LIST = ['resourcemac-bhp066']
+
+# edc.device.sync
+ALLOW_MODEL_SERIALIZATION = True
+
+#Stripped down EDC for purposes of CLO's work.
+# DENIED_SECTIONS_FOR_GROUP = {'clo': ('household', 'subject', 'member', 'audit_trail', 'appointments', 'reports')}
+# LOGGED_IN_USER_GROUP = 'clo'
