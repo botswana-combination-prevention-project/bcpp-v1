@@ -19,7 +19,7 @@ DATABASES = {
     'bcpp027-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.135'),
     'bcpp021-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.159'),
     'bcpp029-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.121'),
-    'bcpp034-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.181'),
+    'bcpp034-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.143'),
     'bcpp033-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.125'),
     'bcpp023-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.229'),
     'bcpp019-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.60'),
@@ -43,5 +43,8 @@ DATABASES = {
     'bcpp003-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.170'),
     'bcpp016-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.47'),
     'bcpp010-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.71'),
+    'bcpp026-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.109'),
+    'bcpp020-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.138'),
+    'bcpp030-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.54'),
 #     'bcpp035-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.216'),
 }
