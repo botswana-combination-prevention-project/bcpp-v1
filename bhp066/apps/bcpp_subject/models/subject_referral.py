@@ -367,14 +367,14 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
     def update_clinic_receiving_from(self):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
-            self.clinic_receiving_from = hiv_care_adherence.clinic_receiving_from()
+            self.clinic_receiving_from = hiv_care_adherence.get_clinic_receiving_from()
         else:
             self.clinic_receiving_from = None
 
     def update_next_appointment_date(self):
         if HivCareAdherence.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
-            self.next_appointment_date = hiv_care_adherence.next_appointment_date()
+            self.next_appointment_date = hiv_care_adherence.get_next_appointment_date()
         else:
             self.next_appointment_date = None
 
