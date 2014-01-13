@@ -16,12 +16,15 @@ from edc.subject.visit_schedule.classes import site_visit_schedules
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
 from apps.bcpp.bcpp_app_configuration.classes import BcppAppConfiguration
+from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
+
 
 dajaxice_autodiscover()
 #rule_groups.autodiscover()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
 BcppAppConfiguration()
+BcppClinicConfiguration()
 site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
@@ -91,6 +94,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
     url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
+    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_clinic_dashboard.urls'.format(app_name=APP_NAME))),
 )
 
 urlpatterns += patterns('',
