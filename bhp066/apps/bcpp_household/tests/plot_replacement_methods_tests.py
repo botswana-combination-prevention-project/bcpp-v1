@@ -32,7 +32,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 class PlotReplcamentMethodTests(TestCase):
-    
+
     def setUp(self):
         SurveyFactory()
 
@@ -42,7 +42,21 @@ class PlotReplcamentMethodTests(TestCase):
         print "refusal replacement"
         print "*****************************************"
 
-        plot = PlotFactory(community='test_community', household_count=1, status='occupied')
+        plot = PlotFactory(
+                community='test_community', 
+                household_count=1, 
+                status='occupied', 
+                eligible_members=3, 
+                report_datetime=datetime.date.today(),
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.6666599,
+                gps_degrees_e=25,
+                gps_minutes_e=44.466660,
+                selected=1,
+                access_attempts=0,)
         household = Household.objects.filter(plot=plot)
         h_structure = HouseholdStructure.objects.get(household=household)
         members = HouseholdMember.objects.filter(household_structure=h_structure)
