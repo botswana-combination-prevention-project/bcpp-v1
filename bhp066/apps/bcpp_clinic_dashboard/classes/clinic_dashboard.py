@@ -15,6 +15,9 @@ class ClinicDashboard(RegisteredSubjectDashboard):
         self.dashboard_type_list = ['clinic']
         kwargs.update({'dashboard_models': {'clinic_consent': ClinicConsent}, 'membership_form_category': 'clinic'})
         self.visit_model = ClinicVisit
+        self._locator_model = None
+        self._registered_subject = None
+        self.extra_url_context = ()
         super(ClinicDashboard, self).__init__(*args, **kwargs)
 
     def add_to_context(self):
@@ -39,8 +42,7 @@ class ClinicDashboard(RegisteredSubjectDashboard):
         self._registered_subject = self.registered_subject
         if RegisteredSubject.objects.filter(subject_identifier=self.subject_identifier):
             self._registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_identifier)
-#             self.registered_subject = self._registered_subject
-        return self._registered_subject
+            #self.registered_subject = self._registered_subject
 
     def get_registered_subject(self):
         if not self._registered_subject:
