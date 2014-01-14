@@ -20,6 +20,6 @@ def clinic_dashboard(request, **kwargs):
         )
     dashboard.set_context()
     return render_to_response(
-        'subject_dashboard_url.html',
+        'clinic_dashboard.html',
         dashboard.context.get(),
         context_instance=RequestContext(request))
