@@ -59,6 +59,7 @@ class PlotReplcamentMethodTests(TestCase):
                 access_attempts=0,)
         household = Household.objects.filter(plot=plot)
         h_structure = HouseholdStructure.objects.get(household=household)
+        h_strucure.
         members = HouseholdMember.objects.filter(household_structure=h_structure)
 
     def test_replacement_absentee(self):
