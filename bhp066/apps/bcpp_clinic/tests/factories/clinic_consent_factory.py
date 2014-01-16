@@ -16,4 +16,4 @@ class ClinicConsentFactory(BaseConsentFactory):
     is_verified = True
     identity = factory.Sequence(lambda n: 'identity{0}'.format(n))
     identity_type = (('OMANG', 'Omang'), ('DRIVERS', "Driver's License"), ('PASSPORT', 'Passport'), ('OMANG_RCPT', 'Omang Receipt'), ('OTHER', 'Other'))[0][0]
-    is_signed = True
+    #is_signed = True
