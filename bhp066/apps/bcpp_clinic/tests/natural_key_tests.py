@@ -22,7 +22,7 @@ class NaturalKeyTests(TestCase):
 
     def test_p1(self):
         """Confirms all models have a natural_key method (except Audit models)"""
-        app = get_app('bcpp_subject')
+        app = get_app('bcpp_clinic')
         for model in get_models(app):
             if 'Audit' not in model._meta.object_name:
                 print 'checking for natural key on {0}.'.format(model._meta.object_name)
@@ -30,7 +30,7 @@ class NaturalKeyTests(TestCase):
 
     def test_p2(self):
         """Confirms all models have a get_by_natural_key manager method."""
-        app = get_app('bcpp_subject')
+        app = get_app('bcpp_clinic')
         for model in get_models(app):
             if 'Audit' not in model._meta.object_name:
                 print 'checking for get_by_natural_key manager method key on {0}.'.format(model._meta.object_name)
@@ -45,13 +45,16 @@ class NaturalKeyTests(TestCase):
         content_type_map_helper.populate()
         content_type_map_helper.sync()
         print 'setup the consent catalogue for this BCPP'
-        content_type_map = ContentTypeMap.objects.get(content_type__model__iexact='SubjectConsent')
+        content_type_map = ContentTypeMap.objects.get(content_type__model__iexact='ClinicConsent')
         print ContentTypeMap.objects.all().count()
         consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
-        consent_catalogue.add_for_app = 'bcpp_subject'
+        consent_catalogue.add_for_app = 'bcpp_clinic'
         consent_catalogue.save()
+        clinic_visit_content_type = ContentType.objects.get(app_label='bcpp_clinic', model='clinicvisit')
+        clinic_visit_content_type_map = ContentTypeMap.objects.get(content_type=clinic_visit_content_type)
+        from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory
+        visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=clinic_visit_content_type_map)
 
-        print 'consent the subject'
         # SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
         survey1 = Survey.objects.create(survey_name='YEAR 0',
                           datetime_start=datetime.today() - timedelta(days=30),
@@ -61,19 +64,16 @@ class NaturalKeyTests(TestCase):
 #         RegisteredSubject.objects.all().delete()
 
         subject_clinic_consent = ClinicConsentFactory()
-        print 'get a community name from the mapper classes'
 
-        print 'get registered subject'
         #registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
         registered_subject = subject_clinic_consent.registered_subject
         instances = []
         instances.append(subject_clinic_consent)
         instances.append(registered_subject)
 
-        print 'test natural key / get_by_natural_key on subject_visit'
         clinic_eligiility = ClinicEligibilityFactory(registered_subject=registered_subject)
         instances.append(clinic_eligiility)
-        appointment = AppointmentFactory(registered_subject=registered_subject)
+        appointment = AppointmentFactory(registered_subject=registered_subject, visit_definition=visit_definition)
         clinic_visit = ClinicVisitFactory(appointment=appointment)
         instances.append(clinic_visit)
         #clinic_off_study = ClinicOffStudyFactory()
@@ -83,6 +83,7 @@ class NaturalKeyTests(TestCase):
         for obj in instances:
             print 'test natural key on {0}'.format(obj._meta.object_name)
             natural_key = obj.natural_key()
+            print 'getting '+str(obj.__class__)
             get_obj = obj.__class__.objects.get_by_natural_key(*natural_key)
             self.assertEqual(obj.pk, get_obj.pk)
         # pp = pprint.PrettyPrinter(indent=4)
