@@ -20,6 +20,8 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'why_no_arv_other',
         'first_arv',
         'on_arv',
+        'clinic_receiving_from',
+        'next_appointment_date',
         'arv_stop_date',
         'arv_stop',
         'arv_stop_other',

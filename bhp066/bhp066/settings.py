@@ -28,8 +28,8 @@ MAP_DIR = STATIC_ROOT.child('img')
 # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-# KEY_PATH = '/Volumes/keys'
+#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -473,3 +473,7 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
+
+#Stripped down EDC for purposes of CLO's work.
+DENIED_SECTIONS_FOR_GROUP = {'clo': ('household', 'subject', 'member', 'audit_trail', 'appointments', 'reports')}
+LOGGED_IN_USER_GROUP = 'clo'
