@@ -23,7 +23,7 @@ class PlotReportQuery(TwoColumnReportQuery):
         return data
 
     def targeted_qs(self):
-        return self.plots_qs.exclude(selected=None)
+        return self.plots_qs.filter(selected__isnull=False)
 
     def confirmed_occupied_qs(self):
         return self.targeted_qs().filter(action='confirmed', status__istartswith='occupied')
