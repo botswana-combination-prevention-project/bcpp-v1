@@ -99,8 +99,8 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
         HouseholdMember = get_model('bcpp_household_member', 'householdmember')
         self.dispatch_list_models('bcpp_household')
         self.dispatch_list_models('bcpp_subject')
-        self.dispatch_crypt()
-        self.dispatch_registered_subjects()
+#         self.dispatch_crypt()
+#         self.dispatch_registered_subjects()
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
             #self.dispatch_user_container_as_json(plot)
@@ -162,7 +162,7 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
                                     household_member.registered_subject,
                                     group_name='HIV',
                                     )
-                                self.dispatch_entry_buckets(household_member.registered_subject)
+                                #self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
                                 self.dispatch_membership_form_inlines(
                                     'bcpp_household_member',
                                     household_member.registered_subject,
@@ -179,7 +179,8 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
                 self.dispatch_user_items_as_json(member_status, user_container)
 
     def get_member_status_models(self, app_label):
-        return self._get_models_by_base('bcpp_subject', BaseMemberStatusModel)
+        from apps.bcpp_household_member.models import BaseMemberStatusModel
+        return self._get_models_by_base('bcpp_household_member', BaseMemberStatusModel)
 
     def get_inlines(self, app_name):
         _models = []

@@ -18,9 +18,9 @@ class MemberSearchByWord(BaseSearchByWord):
     def get_qset_by_search_term_pattern(self):
         qset_filter = Q()
         qset_exclude = Q()
-        if re.match('^[0-9]{7}-[0-9]{2}$', self.get_search_term()):
+        if re.match('^[0-9]{6}-[0-9]{2}$', self.get_search_term()):
             qset_filter = Q(household_structure__household__plot__plot_identifier=self.get_search_term())
-        elif re.match('^[0-9]{8}-[0-9]{2}$', self.get_search_term()):
+        elif re.match('^[0-9]{7}-[0-9]{2}$', self.get_search_term()):
             qset_filter = Q(household_structure__household__household_identifier=self.get_search_term())
         if qset_filter:
             return qset_filter, qset_exclude
