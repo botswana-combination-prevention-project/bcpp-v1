@@ -5,7 +5,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 
-#from apps.bcpp_subject.models.hiv_testing_history import HivTestingHistory
 from apps.bcpp.choices import COMMUNITIES
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
@@ -21,7 +20,13 @@ from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndec
 from apps.bcpp_subject.models import HivResult
 
 
-def date_from_s(date_string, date_format="%d/%m/%Y"):
+DEFAULT_DATE_FORMAT = "%d/%m/%Y"
+STRFTIME_FORMAT = "%b.  %d, %Y"
+
+
+def date_from_s(date_string, date_format=DEFAULT_DATE_FORMAT):
+    # This is a throwaway variable to deal with a python _strptime import bug
+    throwaway = datetime.datetime.strptime('20110101','%Y%m%d')
     return datetime.datetime.strptime(date_string, date_format).date()
 
 
@@ -36,25 +41,39 @@ def index(request):
 def accrual(request):
     template = "bcpp_analytics/accrual_report.html"
     communities_list = [item[0] for item in COMMUNITIES]
-    community1 = request.GET.get("community1", "Ranaka")
-    community2 = request.GET.get("community2", "Digawana")
-    start_date = date_from_s(request.GET.get("start_date", "01/10/2013"))
-    end_date = date_from_s(request.GET.get("end_date", "30/09/2014"))
+    context = _process_accrual(request, date_format=DEFAULT_DATE_FORMAT)
+    context.update({'communities_list': communities_list})
+    return render(request, template,  context)
 
-    plots = (PlotReportQuery(community1, start_date, end_date), PlotReportQuery(community2, start_date, end_date))
-    households = (HouseholdReportQuery(community1, start_date, end_date), HouseholdReportQuery(community2, start_date, end_date))
-    members = (HouseholdMemberReportQuery(community1, start_date, end_date), HouseholdMemberReportQuery(community2, start_date, end_date))
+
+@login_required
+@require_GET
+def accrual_pdf(request, **kwargs):
+    from .pdf.accrual_report import AccrualPDFReport
+
+    pdf_data = _process_accrual(request, date_format=STRFTIME_FORMAT)
+    return AccrualPDFReport(pdf_data).display(request)
+
+
+def _process_accrual(req, date_format):
+    default_start = "Oct.  01, 2013" if date_format == STRFTIME_FORMAT else "01/10/2013"
+    default_end = "Sep.  30, 2014" if date_format == STRFTIME_FORMAT else "30/09/2014"
+    community1 = req.GET.get("com1", "Ranaka")
+    community2 = req.GET.get("com2", "Digawana")
+    start_date = date_from_s(req.GET.get("start") or default_start, date_format)
+    end_date = date_from_s(req.GET.get("to") or default_end, date_format)
+    plots, households, members = [[], [], []]
+    for community in [community1, community2]:
+        plots.append(PlotReportQuery(community, start_date, end_date))
+        households.append(HouseholdReportQuery(community, start_date, end_date))
+        members.append(HouseholdMemberReportQuery(community, start_date, end_date))
     report_data = [plots, households, members]
-    community1_data = [item[0] for item in report_data]
-    community2_data = [item[1] for item in report_data]
-
-    page_context = {'communities_list': communities_list,
-                    'community1_data': community1_data,
-                    'community2_data': community2_data,
-                    'start_date': start_date.strftime("%b.  %d, %Y"),
-                    'end_date': end_date.strftime("%b.  %d, %Y"),
-                    }
-    return render(request, template, page_context)
+    context_data = {
+        'community1_data': [item[0] for item in report_data],
+        'community2_data': [item[1] for item in report_data],
+        'start_date': start_date.strftime(STRFTIME_FORMAT),
+        'end_date': end_date.strftime(STRFTIME_FORMAT), }
+    return context_data
 
 
 @login_required
