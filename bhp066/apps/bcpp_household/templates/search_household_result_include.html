@@ -20,7 +20,7 @@
         <!-- obj is a Household object -->
 
         <tr class="{% cycle 'row1' 'row2' %}">
-        <td>{{household.household_identifier}}</td>
+        <td><A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">{{household.household_identifier}}</A></td>
 
         <td>
             <form method="POST" action="{% url 'section_search_word_url' 'plot' 'word'  %}">

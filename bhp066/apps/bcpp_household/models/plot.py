@@ -18,7 +18,7 @@ from edc.map.exceptions import MapperError
 
 from apps.bcpp.choices import COMMUNITIES
 
-from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
+from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED, ENUMERATION_STATUS
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
 
@@ -172,6 +172,14 @@ class Plot(BaseDispatchSyncUuidModel):
         choices=SELECTED,
         editable=False,
         )
+
+#     allowed_to_enumerate = models.CharField(
+#         max_length=25,
+#         null=True,
+#         verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
+#         choices=ENUMERATION_STATUS,
+#         editable=False,
+#         )
 
     device_id = models.CharField(
         max_length=2,
