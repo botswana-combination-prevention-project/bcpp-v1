@@ -173,6 +173,12 @@ class HivCareAdherence (BaseScheduledVisitModel):
         else:
             return None
 
+    def get_clinic_receiving_from(self):
+        return self.clinic_receiving_from
+
+    def get_next_appointment_date(self):
+        return self.next_appointment_date
+
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "HIV care & Adherence"

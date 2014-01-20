@@ -18,9 +18,8 @@ from edc.dashboard.section.classes import site_sections
 from apps.bcpp.bcpp_app_configuration.classes import BcppAppConfiguration
 
 dajaxice_autodiscover()
-#rule_groups.autodiscover()
 site_visit_schedules.autodiscover()
-#site_visit_schedules.build_all()
+site_visit_schedules.build_all()
 BcppAppConfiguration()
 site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
