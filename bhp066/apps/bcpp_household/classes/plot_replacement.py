@@ -8,7 +8,6 @@ class PlotReplacement(object):
     def __init__(self, *args, **kwargs):
         self._members = None
         self._h_structure = None
-        self._replacement_plot = None
 
     def replace_refusal_plot(self, plot):
         """Check if a plot has refusal that would make it be replaced."""
@@ -51,24 +50,24 @@ class PlotReplacement(object):
     def replacement_none_consented(self, plot):
         """Check if a plot has no consents to make it be replaced."""
         #A plot with more than one household.
-        if plot.household_count >= 2:
-            households = Household.objects.filter(plot=plot)
-            consented_check_list = []
-            for household in households:
-                if HouseholdStructure.objects.get(household=household):
-                    h_structure = HouseholdStructure.objects.get(household=household)
-                    if HouseholdMember.objects.filter(household_structure=h_structure):
-                        members = HouseholdMember.objects.filter(household_structure=h_structure)
-                #No HH consented.
-                if members:
-                    for member in members:
-                        consented_check_list.append(member.is_consented)
+        replaced = {}
+        households = Household.objects.filter(plot=plot)
+        consented_check_list = []
+        for household in households:
+            if HouseholdStructure.objects.get(household=household).exists():
+                h_structure = HouseholdStructure.objects.get(household=household)
+                if HouseholdMember.objects.filter(household_structure=h_structure):
+                    members = HouseholdMember.objects.filter(household_structure=h_structure)
+            #No HH consented.
+            if members:
+                for member in members:
+                    consented_check_list.append(member.is_consented)
             if consented_check_list:
                 if all(map(lambda x: x == consented_check_list[0], consented_check_list)):
                     if consented_check_list[0] == False:
-                        replacement_plot = plot
-                        return replacement_plot
-        return replacement_plot
+                        replaced[plot] = self.evaluate_refusals(household)
+                        return replaced
+        return replaced
 
     def evaluate_refusals(self, household):
         replacement_household = None
