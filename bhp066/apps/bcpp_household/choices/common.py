@@ -45,6 +45,7 @@ PLOT_STATUS = (
     # ('occupied_refused_enumeration', 'occupied but refused enumeration'),
     ('vacant', 'Vacant / Uninhabited'),
     ('non-residential', 'Not a residential plot'),
+    #('temporary-unclassified', 'Temporary Unclassified'),
     ('inaccessible', 'Inaccessible'),
     )
 
