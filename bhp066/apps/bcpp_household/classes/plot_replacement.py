@@ -12,32 +12,36 @@ class PlotReplacement(object):
 
     def replace_refusal_plot(self, plot):
         """Check if a plot has refusal that would make it be replaced."""
-        replaced = None
-        if plot.household_count == 1:
-            household = Household.objects.get(plot=plot)
-            return self.evaluate_refusals(plot, household)
-        if plot.household_count >= 2:
-            households = Household.objects.filter(plot=plot)
-            for household in households:
-                #Does this current household qualify the plot to be replaced?
-                replaced = self.evaluate_refusals(plot, household)
-                if replaced:
-                    #If a single household qualifies a plot to be replaced, then replace the whole plot
-                    return replaced
+        replaced = {}
+        if plot.status == 'occupied':
+            if plot.household_count == 1:
+                household = Household.objects.get(plot=plot)
+                replaced[plot] = self.evaluate_refusals(household)
+                return replaced
+            if plot.household_count >= 2:
+                households = Household.objects.filter(plot=plot)
+                for household in households:
+                    #Does this current household qualify the plot to be replaced?
+                    replaced[plot] = self.evaluate_refusals(household)
+                    if replaced:
+                        #If a single household qualifies a plot to be replaced, then replace the whole plot
+                        return replaced
         #We will return None if the plot passed does not qualify to be replaced
         return None
 
     def replacement_absentee(self, plot):
         """Check if a plot has absentees that would make it be replaced."""
-        replaced = None
-        if plot.household_count == 1:#We will replace if all eligible members are absent 3 times
-            household = Household.objects.get(plot=plot)
-            return self.evaluate_absentees(plot, household)
-        if plot.household_count >= 2:#We will replace if all eligible members in each household are absent 3 times
-            households = Household.objects.filter(plot=plot)
-            for household in households:
-                #Does this current household qualify the plot to be replaced?
-                replaced = self.evaluate_absentees(plot, household)
+        replaced = []
+        if plot.status == 'occupied':
+            if plot.household_count == 1:#We will replace if all eligible members are absent 3 times
+                household = Household.objects.get(plot=plot)
+                replaced[plot] = self.evaluate_refusals(household)
+                return replaced
+            if plot.household_count >= 2:#We will replace if all eligible members in each household are absent 3 times
+                households = Household.objects.filter(plot=plot)
+                for household in households:
+                    #Does this current household qualify the plot to be replaced?
+                    replaced[plot] = self.evaluate_refusals(household)
                 if replaced:
                     #If a single household qualifies a plot to be replaced, then replace the whole plot
                     return replaced
@@ -66,8 +70,8 @@ class PlotReplacement(object):
                         return replacement_plot
         return replacement_plot
 
-    def evaluate_refusals(self, plot, household):
-        replacement_plot = None
+    def evaluate_refusals(self, household):
+        replacement_household = None
         dont_replace = False#Assume a plot should be replaced untill we find a reason not to replace it
         if HouseholdStructure.objects.filter(household=household).exists():
                 h_structure = HouseholdStructure.objects.get(household=household)
@@ -88,11 +92,12 @@ class PlotReplacement(object):
                             break
                 if not dont_replace:
                     #If any member had a status that is not 'REFUSE' then this plot does not qualify for replacement
-                    replacement_plot = plot
-                return replacement_plot
+                    replacement_household = household
+                return replacement_household
+        return replacement_household
 
-    def evaluate_absentees(self, plot, household):
-        replacement_plot = None
+    def evaluate_absentees(self, household):
+        replacement_household = None
         dont_replace = False#Assume a plot should be replaced untill we find a reason not to replace it
         if HouseholdStructure.objects.filter(household=household).exists():
             h_structure = HouseholdStructure.objects.get(household=household)
@@ -106,5 +111,5 @@ class PlotReplacement(object):
                     if num_absentee_entries <= '3':#Then we have found a reason not to replace this plot
                         dont_replace = True
         if not dont_replace:
-            replacement_plot = plot
-        return replacement_plot
+            replacement_household = household
+        return replacement_household
