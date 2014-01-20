@@ -251,6 +251,11 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         self.update_urgent_referral()
         super(SubjectReferral, self).save(*args, **kwargs)
 
+    def update_mixin_fields(self):
+        self.exported = True
+        self.exported_datetime = datetime.now()
+        self.save()
+
     def get_referral_identifier(self):
         return self.id
 
@@ -261,13 +266,13 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
 
     def update_demographics(self):
         self.gender = self.subject_visit.appointment.registered_subject.gender
-        if SubjectConsent.objects.filter(household_member=self.subject_visit.household_member):
+        if SubjectConsent.objects.filter(household_member=self.subject_visit.household_member).exists():
             subject_consent = SubjectConsent.objects.get(household_member=self.subject_visit.household_member)
             if subject_consent.identity_type == 'OMANG':
                 self.citizen = True
 
     def update_hiv(self):
-        if HivResult.objects.filter(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND']):
+        if HivResult.objects.filter(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND']).exists():
             hiv_result = HivResult.objects.get(subject_visit=self.subject_visit)
             self.hiv_result = hiv_result.hiv_result
             self.hiv_result_datetime = hiv_result.hiv_result_datetime
@@ -281,7 +286,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.new_pos = None
 
     def update_cd4(self):
-        if Pima.objects.filter(subject_visit=self.subject_visit, pima_today='Yes'):
+        if Pima.objects.filter(subject_visit=self.subject_visit, pima_today='Yes').exists():
             pima = Pima.objects.get(subject_visit=self.subject_visit)
             self.cd4_result = int(pima.cd4_value)
             self.cd4_result_datetime = pima.cd4_datetime
@@ -290,7 +295,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.cd4_result_datetime = None
 
     def update_last_hiv(self):
-        if HivTestReview.objects.filter(subject_visit=self.subject_visit):
+        if HivTestReview.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_test_review = HivTestReview.objects.get(subject_visit=self.subject_visit)
             self.last_hiv_result = hiv_test_review.recorded_hiv_result
             self.last_hiv_test_date = hiv_test_review.hiv_test_date
@@ -301,7 +306,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.new_pos = None
 
     def update_last_cd4(self):
-        if Cd4History.objects.filter(subject_visit=self.subject_visit):
+        if Cd4History.objects.filter(subject_visit=self.subject_visit).exists():
             cd4_history = Cd4History.objects.get(subject_visit=self.subject_visit)
             self.last_cd4_result = cd4_history.last_cd4_count
             self.last_cd4_test_date = cd4_history.last_cd4_drawn_date
@@ -310,7 +315,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.last_cd4_test_date = None
 
     def update_vl(self):
-        if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load'):
+        if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').exists():
             if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').count() > 1:
                 #  FIXME: should not be possible, but dashboard still allows this (more than one req.per visit)
                 subject_requisition = SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').order_by('created')[0]
@@ -324,7 +329,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
                 self.vl_sample_datetime_drawn = None
 
     def update_residency(self):
-        if ResidencyMobility.objects.filter(subject_visit=self.subject_visit):
+        if ResidencyMobility.objects.filter(subject_visit=self.subject_visit).exists():
             residency_mobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit)
             self.permanent_resident = self.convert_to_nullboolean(residency_mobility.permanent_resident)
             self.intend_residency = self.convert_to_nullboolean(residency_mobility.intend_residency)
@@ -334,16 +339,16 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
 
     def update_circumcised(self):
         if self.gender == 'M':
-            if Circumcision.objects.filter(subject_visit=self.subject_visit, circumcised='Yes'):
+            if Circumcision.objects.filter(subject_visit=self.subject_visit, circumcised='Yes').exists():
                 self.circumcised = True
-            elif Circumcision.objects.filter(subject_visit=self.subject_visit, circumcised='No'):
+            elif Circumcision.objects.filter(subject_visit=self.subject_visit, circumcised='No').exists():
                 self.circumcised = False
         else:
             self.circumcised = None
 
     def update_pregnant(self):
         if self.gender == 'F':
-            if ReproductiveHealth.objects.filter(subject_visit=self.subject_visit):
+            if ReproductiveHealth.objects.filter(subject_visit=self.subject_visit).exists():
                 reproductive_health = ReproductiveHealth.objects.get(subject_visit=self.subject_visit)
                 if reproductive_health.currently_pregnant == 'Yes':
                     self.pregnant = True
@@ -353,28 +358,28 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.pregnant = None
 
     def update_on_art(self):
-        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
             self.on_art = hiv_care_adherence.on_art()
         else:
             self.on_art = None
 
     def update_clinic_receiving_from(self):
-        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
-            self.clinic_receiving_from = hiv_care_adherence.clinic_receiving_from()
+            self.clinic_receiving_from = hiv_care_adherence.get_clinic_receiving_from()
         else:
             self.clinic_receiving_from = None
 
     def update_next_appointment_date(self):
-        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
-            self.next_appointment_date = hiv_care_adherence.next_appointment_date()
+            self.next_appointment_date = hiv_care_adherence.get_next_appointment_date()
         else:
             self.next_appointment_date = None
 
     def is_defaulter(self):
-        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit):
+        if HivCareAdherence.objects.filter(subject_visit=self.subject_visit).exists():
             hiv_care_adherence = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
             return hiv_care_adherence.defaulter()
         return False
