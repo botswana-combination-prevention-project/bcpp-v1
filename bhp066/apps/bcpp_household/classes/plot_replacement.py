@@ -13,13 +13,21 @@ class PlotReplacement(object):
         if plot.status == 'occupied':
             if plot.household_count == 1:
                 household = Household.objects.get(plot=plot)
-                replaced[plot] = self.evaluate_refusals(household)
-                return replaced
+                if plot.allowed_to_enumerate:
+                    replaced[plot] = household
+                    return replaced
+                else:
+                    replaced[plot] = self.evaluate_refusals(household)
+                    return replaced
             if plot.household_count >= 2:
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
-                    replaced[plot] = self.evaluate_refusals(household)
+                    if household.allowed_to_enumerate:
+                        replaced[plot] = household
+                        return replaced
+                    else:
+                        replaced[plot] = self.evaluate_refusals(household)
                     if replaced:
                         #If a single household qualifies a plot to be replaced, then replace the whole plot
                         return replaced
