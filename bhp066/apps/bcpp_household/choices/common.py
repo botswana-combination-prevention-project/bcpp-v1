@@ -72,6 +72,11 @@ SELECTED = (
             (2, 'five_percent'),
 )
 
+ENUMERATION_STATUS = (
+    ('yes', 'Yes'),
+    ('no', 'No')
+)
+
 SECTIONS = (
     ('A', 'A'),
     ('B', 'B'),
