@@ -173,13 +173,13 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-#     allowed_to_enumerate = models.CharField(
-#         max_length=25,
-#         null=True,
-#         verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
-#         choices=ENUMERATION_STATUS,
-#         editable=False,
-#         )
+    allowed_to_enumerate = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
+        choices=ENUMERATION_STATUS,
+        editable=True,
+        )
 
     device_id = models.CharField(
         max_length=2,
