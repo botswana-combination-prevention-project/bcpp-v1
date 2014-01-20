@@ -1,16 +1,14 @@
-from ...bcpp_household_member.models import HouseholdMember
-from ..models import Household, HouseholdStructure
-from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
-
 
 class PlotReplacement(object):
 
     def __init__(self, *args, **kwargs):
         self._members = None
         self._h_structure = None
+        self._replacement_plot = None
 
     def replace_refusal_plot(self, plot):
         """Check if a plot has refusal that would make it be replaced."""
+        from apps.bcpp_household.models import Household
         replaced = {}
         if plot.status == 'occupied':
             if plot.household_count == 1:
@@ -30,6 +28,7 @@ class PlotReplacement(object):
 
     def replacement_absentee(self, plot):
         """Check if a plot has absentees that would make it be replaced."""
+        from apps.bcpp_household.models import Household
         replaced = []
         if plot.status == 'occupied':
             if plot.household_count == 1:#We will replace if all eligible members are absent 3 times
@@ -50,6 +49,8 @@ class PlotReplacement(object):
     def replacement_none_consented(self, plot):
         """Check if a plot has no consents to make it be replaced."""
         #A plot with more than one household.
+        from apps.bcpp_household.models import Household, HouseholdStructure
+        from apps.bcpp_household_member.models import HouseholdMember
         replaced = {}
         households = Household.objects.filter(plot=plot)
         consented_check_list = []
@@ -70,6 +71,8 @@ class PlotReplacement(object):
         return replaced
 
     def evaluate_refusals(self, household):
+        from apps.bcpp_household.models import HouseholdStructure
+        from apps.bcpp_household_member.models import HouseholdMember
         replacement_household = None
         dont_replace = False#Assume a plot should be replaced untill we find a reason not to replace it
         if HouseholdStructure.objects.filter(household=household).exists():
@@ -96,6 +99,9 @@ class PlotReplacement(object):
         return replacement_household
 
     def evaluate_absentees(self, household):
+        from apps.bcpp_household.models import HouseholdStructure
+        from apps.bcpp_household_member.models import HouseholdMember
+        from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
         replacement_household = None
         dont_replace = False#Assume a plot should be replaced untill we find a reason not to replace it
         if HouseholdStructure.objects.filter(household=household).exists():
