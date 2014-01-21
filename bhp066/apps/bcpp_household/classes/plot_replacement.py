@@ -7,7 +7,7 @@ class PlotReplacement(object):
         self._replacement_plot = None
 
     def replace_refusal_plot(self, plot):
-        """Check if a plot has refusal that would make it be replaced."""
+        """Check if a plot has household refusals that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = {}
         if plot.status == 'occupied':
