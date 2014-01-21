@@ -25,7 +25,6 @@ class PlotReplacement(object):
                     #Does this current household qualify the plot to be replaced?
                     if household.allowed_to_enumerate:
                         replaced[plot] = household
-                        return replaced
                     else:
                         replaced[plot] = self.evaluate_refusals(household)
                     if replaced:
