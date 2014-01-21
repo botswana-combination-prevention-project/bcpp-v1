@@ -27,9 +27,9 @@ class PlotReplacement(object):
                         replaced[plot] = household
                     else:
                         replaced[plot] = self.evaluate_refusals(household)
-                    if replaced:
-                        #If a single household qualifies a plot to be replaced, then replace the whole plot
-                        return replaced
+                if replaced:
+                    #If a single household qualifies a plot to be replaced, then replace the whole plot
+                    return replaced
         #We will return None if the plot passed does not qualify to be replaced
         return None
 
