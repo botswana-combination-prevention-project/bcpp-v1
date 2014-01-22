@@ -46,5 +46,4 @@ DATABASES = {
     'bcpp026-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.109'),
     'bcpp020-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.138'),
     'bcpp030-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.54'),
-#     'bcpp035-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.216'),
 }

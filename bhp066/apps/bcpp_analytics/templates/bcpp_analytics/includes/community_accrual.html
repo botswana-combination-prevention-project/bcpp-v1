@@ -1,6 +1,7 @@
 <h3 class="text-left">{{ community_data.0.community }}</h3>
 <h4 class="text-left">{{start_date}} - {{end_date}}</h4>
 <div class="report-data">
+  <a href="{% url 'analytics:accrual_pdf' com1=community1_data.0.community com2=community2_data.0.community start=start_date to=end_date  %}">PDF view of the report</a>
   <table class='pure-table pure-table-bordered'>
     <tbody>
       {% for data in community_data %}
