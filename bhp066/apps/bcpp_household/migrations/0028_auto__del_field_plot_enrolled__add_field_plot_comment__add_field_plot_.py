@@ -22,34 +22,34 @@ class Migration(SchemaMigration):
 #                       keep_default=False)
 # 
 #         # Adding field 'HouseholdAudit.enrolled'
-#         db.add_column('bcpp_household_household_audit', 'enrolled',
-#                       self.gf('django.db.models.fields.BooleanField')(default=False),
-#                       keep_default=False)
+        db.add_column('bcpp_household_household_audit', 'enrolled',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 # 
 #         # Adding field 'HouseholdAudit.complete'
-#         db.add_column('bcpp_household_household_audit', 'complete',
-#                       self.gf('django.db.models.fields.BooleanField')(default=False),
-#                       keep_default=False)
+        db.add_column('bcpp_household_household_audit', 'complete',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 # 
 #         # Adding field 'HouseholdAudit.enumeration_attempts'
-#         db.add_column('bcpp_household_household_audit', 'enumeration_attempts',
-#                       self.gf('django.db.models.fields.IntegerField')(default=0),
-#                       keep_default=False)
+        db.add_column('bcpp_household_household_audit', 'enumeration_attempts',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
 # 
 #         # Adding field 'Household.enrolled'
-#         db.add_column('bcpp_household_household', 'enrolled',
-#                       self.gf('django.db.models.fields.BooleanField')(default=False),
-#                       keep_default=False)
+        db.add_column('bcpp_household_household', 'enrolled',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 # 
 #         # Adding field 'Household.complete'
-#         db.add_column('bcpp_household_household', 'complete',
-#                       self.gf('django.db.models.fields.BooleanField')(default=False),
-#                       keep_default=False)
+        db.add_column('bcpp_household_household', 'complete',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 # 
 #         # Adding field 'Household.enumeration_attempts'
-#         db.add_column('bcpp_household_household', 'enumeration_attempts',
-#                       self.gf('django.db.models.fields.IntegerField')(default=0),
-#                       keep_default=False)
+        db.add_column('bcpp_household_household', 'enumeration_attempts',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
 # 
 #         # Deleting field 'PlotAudit.enrolled'
 #         db.delete_column(u'bcpp_household_plot_audit', 'enrolled')
@@ -66,14 +66,15 @@ class Migration(SchemaMigration):
 #                       keep_default=False)
 
         # Adding field 'Plot.distance_from_target'
-        db.add_column('bcpp_household_plot', 'distance_from_target',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
-
-        # Adding field 'Plot.distance_from_target'
-        db.add_column('bcpp_household_plot_audit', 'distance_from_target',
-                      self.gf('django.db.models.fields.FloatField')(null=True),
-                      keep_default=False)
+#         db.add_column('bcpp_household_plot', 'distance_from_target',
+#                       self.gf('django.db.models.fields.FloatField')(null=True),
+#                       keep_default=False)
+# 
+#         # Adding field 'Plot.distance_from_target'
+#         db.add_column('bcpp_household_plot_audit', 'distance_from_target',
+#                       self.gf('django.db.models.fields.FloatField')(null=True),
+#                       keep_default=False
+        pass
 
     def backwards(self, orm):
         # Adding field 'Plot.enrolled'

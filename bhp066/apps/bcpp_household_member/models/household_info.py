@@ -31,6 +31,12 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         validators=[datetime_not_before_study_start, datetime_not_future],
         )
 
+    allow_other_members = models.BooleanField(
+        verbose_name="Do you allow other household members to participate in the study if they want?",
+        default=False,
+        editable=True
+        )
+
     flooring_type = models.CharField(
         verbose_name=_("What is the main type of flooring for this household?"),
         max_length=25,
