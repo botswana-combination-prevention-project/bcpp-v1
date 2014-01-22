@@ -107,7 +107,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_aqua',
+            'NAME': 'bhp066_clinic',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',

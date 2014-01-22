@@ -88,8 +88,23 @@ class HivCareAdherence (BaseScheduledVisitModel):
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
         choices=YES_NO_DWTA,
-        help_text="",
+        help_text="If yes, need to answer next two questions.",
         )
+
+    clinic_receiving_from = models.CharField(
+        verbose_name=_('Which clinic facility are you already receiving therapy from?'),
+        default=None,
+        null=True,
+        max_length=50,
+        help_text=""
+        )
+
+    next_appointment_date = models.DateField(
+         verbose_name=_("When is your next appointment at this facility?"),
+         default=None,
+         null=True,
+         help_text=""
+         )
 
     arv_stop_date = models.DateField(
         verbose_name=_("When did you stop taking ARV\'s?"),
@@ -157,6 +172,12 @@ class HivCareAdherence (BaseScheduledVisitModel):
             return False
         else:
             return None
+
+    def get_clinic_receiving_from(self):
+        return self.clinic_receiving_from
+
+    def get_next_appointment_date(self):
+        return self.next_appointment_date
 
     class Meta:
         app_label = 'bcpp_subject'
