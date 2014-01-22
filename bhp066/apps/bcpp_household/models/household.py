@@ -7,6 +7,7 @@ from ..managers import HouseholdManager
 from ..classes import HouseholdIdentifier
 from .plot import Plot
 
+from ..choices import ENUMERATION_STATUS
 
 class Household(BaseDispatchSyncUuidModel):
 
@@ -115,6 +116,14 @@ class Household(BaseDispatchSyncUuidModel):
         help_text='If the community is incorrect, please contact the DMC immediately.',
         null=True,
         editable=False,
+        )
+
+    allowed_to_enumerate = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
+        choices=ENUMERATION_STATUS,
+        editable=True,
         )
 
     comment = EncryptedTextField(

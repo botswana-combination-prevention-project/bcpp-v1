@@ -13,11 +13,12 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
         self.community_members_qs = HouseholdMember.objects.filter(household_structure__household__community__iexact=self.community,
             created__gte=self.start_date, created__lte=self.end_date)
+        self.absentees = self.absentee_stratified()
         self.refused = self.refused_qs().count()
         self.first_time_testers = self.first_time_testers_qs().count()
         self.tested = self.tested_qs().count()
         self.age_eligibles = self.age_eligible_qs().count()
-        self.study_eligibles = self.study_eligible_qs()
+        self.study_eligibles = self.study_eligible_qs().count()
         self.twice_unreached = self.unreached_after_visits_qs(2).count()
         self.hiv_positives = self.hiv_positive_qs().count()
         self.new_infections = self.new_infections_qs().count()
@@ -29,7 +30,7 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
 
     def data_to_display(self):
         data = []
-        data.append(DataRow("Absentees stratified by visits", self.absentee_stratified()))
+        data.append(DataRow("Absentees stratified by visits", self.absentees))
         data.append(DataRow("Number Refused", self.refused))
         data.append(DataRow("First Time Testers", self.first_time_testers))
         data.append(DataRow('Eligible Members Tested', self.tested))
@@ -63,7 +64,7 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
         return self.community_members_qs.filter(age_in_years__gte=16, household_structure__household_id__in=enrolled_ids)
 
     def tested_qs(self):
-        return self.community_members_qs.exclude(subjectvisit__hivtested=None)
+        return self.community_members_qs.filter(subjectvisit__hivtested__isnull=False)
 
     def study_eligible_qs(self):
         return SubjectConsent.objects.filter(household_member__household_structure__household__community__iexact=self.community,

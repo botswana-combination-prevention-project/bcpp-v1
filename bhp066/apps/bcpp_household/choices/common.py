@@ -45,6 +45,7 @@ PLOT_STATUS = (
     # ('occupied_refused_enumeration', 'occupied but refused enumeration'),
     ('vacant', 'Vacant / Uninhabited'),
     ('non-residential', 'Not a residential plot'),
+    #('temporary-unclassified', 'Temporary Unclassified'),
     ('inaccessible', 'Inaccessible'),
     )
 
@@ -69,6 +70,11 @@ STATUS = (
 SELECTED = (
             (1, 'twenty_percent'),
             (2, 'five_percent'),
+)
+
+ENUMERATION_STATUS = (
+    ('yes', 'Yes'),
+    ('no', 'No')
 )
 
 SECTIONS = (
