@@ -135,17 +135,17 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-        'bcpp028-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.88',
-            'PORT': '3306',
-        },
+#         'bcpp028-bhp066': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'init_command': 'SET storage_engine=INNODB',
+#             },
+#             'NAME': 'bhp066',
+#             'USER': 'root',
+#             'PASSWORD': 'cc3721b',
+#             'HOST': '192.168.1.88',
+#             'PORT': '3306',
+#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
