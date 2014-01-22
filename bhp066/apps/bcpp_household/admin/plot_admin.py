@@ -20,6 +20,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'gps_minutes_e',
         'cso_number',
         'household_count',
+        'allowed_to_enumerate',
         'eligible_members',
         'time_of_week',
         'time_of_day',
@@ -34,6 +35,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
     readonly_fields = ('plot_identifier',)
     radio_fields = {
         'status': admin.VERTICAL,
+        'allowed_to_enumerate': admin.VERTICAL,
         'time_of_week': admin.VERTICAL,
         'time_of_day': admin.VERTICAL,
         }

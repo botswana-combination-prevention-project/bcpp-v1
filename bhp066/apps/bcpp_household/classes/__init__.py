@@ -1,2 +1,3 @@
 from .household_identifier import HouseholdIdentifier
 from .plot_identifier import PlotIdentifier
+from .plot_replacement import PlotReplacement

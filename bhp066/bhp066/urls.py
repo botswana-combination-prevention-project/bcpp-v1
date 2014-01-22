@@ -20,7 +20,6 @@ from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguratio
 
 
 dajaxice_autodiscover()
-#rule_groups.autodiscover()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
 BcppAppConfiguration()
