@@ -14,6 +14,22 @@ from edc.entry_meta_data.managers import EntryMetaDataManager
 
 class ClinicMain (BaseClinicVisitModel):
 
+    pims_id = models.CharField(
+        verbose_name="PIMS Identifier",
+        max_length=15,
+        null=True,
+        blank=True,
+        help_text="",
+        )
+
+    htc_id = models.CharField(
+        verbose_name="HTC Identifier",
+        max_length=12,
+        null=True,
+        blank=True,
+        help_text="00-00-000-00",
+        )
+
     on_arv = models.CharField(
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
