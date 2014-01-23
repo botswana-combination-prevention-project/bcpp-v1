@@ -12,6 +12,8 @@ class ClinicMainAdmin(ClinicVisitModelAdmin):
     fields = (
         "clinic_visit",
         "report_datetime",
+        "pims_id",
+        "htc_id",
         "on_arv",
         "cd4_count",
     )
