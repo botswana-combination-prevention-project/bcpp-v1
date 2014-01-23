@@ -17,7 +17,7 @@ class ClinicDashboard(RegisteredSubjectDashboard):
         self.visit_model = ClinicVisit
         self._locator_model = None
         self._registered_subject = None
-        self.extra_url_context = ()
+        self.extra_url_context = ""
         super(ClinicDashboard, self).__init__(*args, **kwargs)
 
     def add_to_context(self):

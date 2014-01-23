@@ -1,7 +1,11 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
+# from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_tracking.models import BaseVisitTracking
-from apps.bcpp_subject.choices import VISIT_UNSCHEDULED_REASON
+
+from ..choices import VISIT_UNSCHEDULED_REASON
+
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
 
@@ -14,6 +18,8 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         null=True,
         choices=VISIT_UNSCHEDULED_REASON,
         )
+
+#     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)
 
     history = AuditTrail()
 

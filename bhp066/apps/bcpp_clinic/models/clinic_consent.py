@@ -17,7 +17,7 @@ from .clinic_off_study_mixin import ClinicOffStudyMixin
 # declare abstract base class
 class BaseClinicConsent(ClinicOffStudyMixin, BaseConsent):
 
-    registered_subject = models.ForeignKey(RegisteredSubject,  # this also updates from household_member in save()
+    registered_subject = models.ForeignKey(RegisteredSubject,
         editable=False,
         null=True,
         help_text='')

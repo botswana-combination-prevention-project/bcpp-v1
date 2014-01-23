@@ -1,6 +1,6 @@
 from django.contrib import admin
 from edc.subject.appointment.admin import BaseAppointmentModelAdmin
-# from apps.bcpp_clinic_lab.models import ClinicRequisition
+from apps.bcpp_clinic_lab.models import ClinicRequisition
 from ..models import ClinicVisit
 from ..forms import ClinicVisitForm
 
@@ -9,8 +9,8 @@ class ClinicVisitAdmin(BaseAppointmentModelAdmin):
 
     form = ClinicVisitForm
     visit_model_instance_field = 'clinic_visit'
-#     requisition_model = ClinicRequisition
-    dashboard_type = 'subject'
+    requisition_model = ClinicRequisition
+    dashboard_type = 'clinic'
 
     list_display = (
         'appointment',
@@ -38,6 +38,11 @@ class ClinicVisitAdmin(BaseAppointmentModelAdmin):
     fields = (
         "appointment",
         "report_datetime",
+        'reason',
+#         'reason_unscheduled',
         "comments"
         )
+
+#     radio_fields = {
+#         "reason_unscheduled": admin.VERTICAL}
 admin.site.register(ClinicVisit, ClinicVisitAdmin)

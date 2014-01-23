@@ -8,5 +8,5 @@ class ClinicVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     visit_model = ClinicVisit
     visit_model_foreign_key = 'clinic_visit'
-    dashboard_type = 'subject'
+    dashboard_type = 'clinic'
     date_heirarchy = 'clinic_visit__report_datetime'

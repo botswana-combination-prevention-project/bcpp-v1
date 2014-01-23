@@ -11,11 +11,12 @@ class ClinicEligibilityAdmin(BaseModelAdmin):
     instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject.']
 
     fields = (
+        'registered_subject',
         'dob',
         "part_time_resident",
         "hiv_status",)
     radio_fields = {
         "part_time_resident": admin.VERTICAL,
-        "hiv_status": admin.VERTICAL,}
+        "hiv_status": admin.VERTICAL, }
 
 admin.site.register(ClinicEligibility, ClinicEligibilityAdmin)
