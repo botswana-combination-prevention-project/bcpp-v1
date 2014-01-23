@@ -19,8 +19,6 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         choices=VISIT_UNSCHEDULED_REASON,
         )
 
-#     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)
-
     history = AuditTrail()
 
     @property
