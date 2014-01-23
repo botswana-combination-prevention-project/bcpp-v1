@@ -25,10 +25,10 @@ MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
 #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+#KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 # KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
@@ -107,7 +107,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_clinic',
+            'NAME': 'bhp066_aqua',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -245,7 +245,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -368,6 +368,11 @@ INSTALLED_APPS = (
     'apps.bcpp_clinic_dashboard',
     'tastypie',
 )
+
+#Celery
+BROKER_URL = "django://" # tell kombu to use the Django database as the message queue  
+import djcelery  
+djcelery.setup_loader()
 
 # django
 SESSION_COOKIE_AGE = 10000
