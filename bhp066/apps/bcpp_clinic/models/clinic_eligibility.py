@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from edc.base.model.validators import eligible_if_yes
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import eligible_if_yes, eligible_if_positive
 from edc.choices.common import YES_NO_DWTA
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 
@@ -42,9 +43,15 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
         max_length=30,
         null=True,
         blank=True,
+        validators=[eligible_if_positive, ],
         choices=VERBALHIVRESULT_CHOICE,
         help_text="(verbal response)",
         )
+
+    history = AuditTrail()
+
+    def get_registration_datetime(self):
+        return self.registration_datetime
 
     class Meta:
         app_label = "bcpp_clinic"
