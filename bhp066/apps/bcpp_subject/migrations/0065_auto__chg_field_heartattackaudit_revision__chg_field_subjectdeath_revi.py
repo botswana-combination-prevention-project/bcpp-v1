@@ -192,6 +192,15 @@ class Migration(SchemaMigration):
         # Changing field 'PregnancyAudit.revision'
         db.alter_column(u'bcpp_subject_pregnancy_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
 
+        # Deleting field 'MedicalDiagnoses.cancer_record_comment'
+        db.delete_column(u'bcpp_subject_medicaldiagnoses', 'cancer_record_comment')
+
+        # Deleting field 'MedicalDiagnoses.tb_record_comment'
+        db.delete_column(u'bcpp_subject_medicaldiagnoses', 'tb_record_comment')
+
+        # Deleting field 'MedicalDiagnoses.heart_attack_comment'
+        db.delete_column(u'bcpp_subject_medicaldiagnoses', 'heart_attack_comment')
+
         # Changing field 'MedicalDiagnoses.revision'
         db.alter_column(u'bcpp_subject_medicaldiagnoses', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
 
@@ -311,6 +320,15 @@ class Migration(SchemaMigration):
 
         # Changing field 'EducationAudit.revision'
         db.alter_column(u'bcpp_subject_education_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
+
+        # Deleting field 'MedicalDiagnosesAudit.cancer_record_comment'
+        db.delete_column(u'bcpp_subject_medicaldiagnoses_audit', 'cancer_record_comment')
+
+        # Deleting field 'MedicalDiagnosesAudit.heart_attack_comment'
+        db.delete_column(u'bcpp_subject_medicaldiagnoses_audit', 'heart_attack_comment')
+
+        # Deleting field 'MedicalDiagnosesAudit.tb_record_comment'
+        db.delete_column(u'bcpp_subject_medicaldiagnoses_audit', 'tb_record_comment')
 
         # Changing field 'MedicalDiagnosesAudit.revision'
         db.alter_column(u'bcpp_subject_medicaldiagnoses_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True))
@@ -503,6 +521,21 @@ class Migration(SchemaMigration):
         # Changing field 'PregnancyAudit.revision'
         db.alter_column(u'bcpp_subject_pregnancy_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
+        # Adding field 'MedicalDiagnoses.cancer_record_comment'
+        db.add_column(u'bcpp_subject_medicaldiagnoses', 'cancer_record_comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'MedicalDiagnoses.tb_record_comment'
+        db.add_column(u'bcpp_subject_medicaldiagnoses', 'tb_record_comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'MedicalDiagnoses.heart_attack_comment'
+        db.add_column(u'bcpp_subject_medicaldiagnoses', 'heart_attack_comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
         # Changing field 'MedicalDiagnoses.revision'
         db.alter_column(u'bcpp_subject_medicaldiagnoses', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
@@ -623,6 +656,21 @@ class Migration(SchemaMigration):
         # Changing field 'EducationAudit.revision'
         db.alter_column(u'bcpp_subject_education_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
+        # Adding field 'MedicalDiagnosesAudit.cancer_record_comment'
+        db.add_column(u'bcpp_subject_medicaldiagnoses_audit', 'cancer_record_comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'MedicalDiagnosesAudit.heart_attack_comment'
+        db.add_column(u'bcpp_subject_medicaldiagnoses_audit', 'heart_attack_comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
+        # Adding field 'MedicalDiagnosesAudit.tb_record_comment'
+        db.add_column(u'bcpp_subject_medicaldiagnoses_audit', 'tb_record_comment',
+                      self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
+
         # Changing field 'MedicalDiagnosesAudit.revision'
         db.alter_column(u'bcpp_subject_medicaldiagnoses_audit', 'revision', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
 
@@ -635,8 +683,10 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
@@ -650,8 +700,10 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
@@ -665,8 +717,9 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'display_index': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
             'field_name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250', 'unique': 'True', 'null': 'True', 'db_index': 'True'}),
@@ -688,8 +741,9 @@ class Migration(SchemaMigration):
             'contact_tel': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dashboard_type': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'is_confirmed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -1113,6 +1167,7 @@ class Migration(SchemaMigration):
             'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'legal_marriage': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'marriage_certificate': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
@@ -1957,6 +2012,11 @@ class Migration(SchemaMigration):
         'bcpp_subject.medicaldiagnoses': {
             'Meta': {'object_name': 'MedicalDiagnoses'},
             'cancer_record': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'diagnoses': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bcpp_list.Diagnoses']", 'symmetrical': 'False'}),
+            'heart_attack_record': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'cancer_record_comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'diagnoses': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bcpp_list.Diagnoses']", 'symmetrical': 'False'}),
@@ -1964,6 +2024,7 @@ class Migration(SchemaMigration):
             'heart_attack_record': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 1, 7, 0, 0)'}),
