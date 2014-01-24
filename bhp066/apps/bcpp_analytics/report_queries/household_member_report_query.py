@@ -12,7 +12,10 @@ from .report_query import TwoColumnReportQuery
 class HouseholdMemberReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
         self.community_members_qs = HouseholdMember.objects.filter(household_structure__household__community__iexact=self.community,
-            created__gte=self.start_date, created__lte=self.end_date)
+                                                                   created__gte=self.start_date, created__lte=self.end_date)
+
+    def build(self):
+        """builds up the report data"""
         self.absentees = self.absentee_stratified()
         self.refused = self.refused_qs().count()
         self.first_time_testers = self.first_time_testers_qs().count()
@@ -29,6 +32,7 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
         return "Households Members/Residents"
 
     def data_to_display(self):
+        self.build()
         data = []
         data.append(DataRow("Absentees stratified by visits", self.absentees))
         data.append(DataRow("Number Refused", self.refused))

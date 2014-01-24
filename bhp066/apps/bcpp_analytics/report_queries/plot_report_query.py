@@ -8,6 +8,8 @@ from .report_query import TwoColumnReportQuery
 class PlotReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
         self.plots_qs = Plot.objects.filter(community__iexact=self.community, created__gte=self.start_date, created__lte=self.end_date)
+
+    def build(self):
         self.targeted = self.targeted_qs().count()
         self.verified = self.plot_stats().get('verified_count')
         self.households = self.plot_stats().get('household_count')
@@ -16,6 +18,7 @@ class PlotReportQuery(TwoColumnReportQuery):
         return "Plots"
 
     def data_to_display(self):
+        self.build()
         data = []
         data.append(DataRow('Number Targeted', self.targeted))
         data.append(DataRow('Verified Residential', self.verified))
