@@ -23,6 +23,8 @@ from apps.bcpp_subject.models import HivResult
 DEFAULT_DATE_FORMAT = "%d/%m/%Y"
 STRFTIME_FORMAT = "%b.  %d, %Y"
 
+communities = [item[0] for item in COMMUNITIES]
+
 
 def date_from_s(date_string, date_format=DEFAULT_DATE_FORMAT):
     # This is a throwaway variable to deal with a python _strptime import bug
@@ -40,9 +42,8 @@ def index(request):
 @require_GET
 def accrual(request):
     template = "bcpp_analytics/accrual_report.html"
-    communities_list = [item[0] for item in COMMUNITIES]
     context = _process_accrual(request, date_format=DEFAULT_DATE_FORMAT)
-    context.update({'communities_list': communities_list})
+    context.update({'communities': communities})
     return render(request, template,  context)
 
 
@@ -55,25 +56,53 @@ def accrual_pdf(request, **kwargs):
     return AccrualPDFReport(pdf_data).display(request)
 
 
+@login_required
+@require_GET
+def key_indicators(request):
+    from .report_queries.indicators_report_query import IndicatorsReportQuery
+
+    template = "bcpp_analytics/indicators_report.html"
+    context = {'communities': communities}
+    params = _prepare_params(request, date_format=DEFAULT_DATE_FORMAT)
+    context.update(params)
+    report_data = []
+    for community in params['community_pair']:
+        indicator_data = IndicatorsReportQuery(community, params["start_date"], params["end_date"])
+        report_data.append(indicator_data)
+    context.update({'data': report_data})
+    return render(request, template, context)
+
+
 def _process_accrual(req, date_format):
+    from .report_queries.household_visits_report_query import HouseholdVisitsReportQuery
+
+    params = _prepare_params(req, date_format)
+    start_date = params['start_date']
+    end_date = params['end_date']
+    report_data = []
+    for community in params['community_pair']:
+        community_data = []
+        community_data.append(PlotReportQuery(community, start_date, end_date))
+        community_data.append(HouseholdReportQuery(community, start_date, end_date))
+        community_data.append(HouseholdMemberReportQuery(community, start_date, end_date))
+        community_data.append(HouseholdVisitsReportQuery(community, start_date, end_date))
+        report_data.append(community_data)
+    context_data = {
+        'community1_data': report_data[0],
+        'community2_data': report_data[1],
+        'start_date': start_date.strftime(STRFTIME_FORMAT),
+        'end_date': end_date.strftime(STRFTIME_FORMAT), }
+    return context_data
+
+
+def _prepare_params(req, date_format):
     default_start = "Oct.  01, 2013" if date_format == STRFTIME_FORMAT else "01/10/2013"
     default_end = "Sep.  30, 2014" if date_format == STRFTIME_FORMAT else "30/09/2014"
     community1 = req.GET.get("com1", "Ranaka")
     community2 = req.GET.get("com2", "Digawana")
     start_date = date_from_s(req.GET.get("start") or default_start, date_format)
     end_date = date_from_s(req.GET.get("to") or default_end, date_format)
-    plots, households, members = [[], [], []]
-    for community in [community1, community2]:
-        plots.append(PlotReportQuery(community, start_date, end_date))
-        households.append(HouseholdReportQuery(community, start_date, end_date))
-        members.append(HouseholdMemberReportQuery(community, start_date, end_date))
-    report_data = [plots, households, members]
-    context_data = {
-        'community1_data': [item[0] for item in report_data],
-        'community2_data': [item[1] for item in report_data],
-        'start_date': start_date.strftime(STRFTIME_FORMAT),
-        'end_date': end_date.strftime(STRFTIME_FORMAT), }
-    return context_data
+    return dict(community_pair=[community1, community2], start_date=start_date, end_date=end_date)
 
 
 @login_required
