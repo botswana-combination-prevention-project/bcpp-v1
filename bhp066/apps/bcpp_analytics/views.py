@@ -81,6 +81,7 @@ def operational_report_view(request, **kwargs):
     values = {}
     utilities = OperatationalReportUtilities()
     community = request.GET.get('community', '')
+    previous_community = community
     if community.find('----') != -1:
         community = ''
     date_from = utilities.date_format_utility(request.GET.get('date_from', ''), '1960/01/01')
@@ -134,8 +135,18 @@ def operational_report_view(request, **kwargs):
     for undecided in age_eligible_undecided:
             visits_per_undecided.append((str(undecided), undecided_entries.filter(subject_undecided__registered_subject=undecided.registered_subject).count()))
 
-    communities = [community[0].lower() for community in  COMMUNITIES]
-    communities[0] = '---------'
+    #communities = [community[0].lower() for community in  COMMUNITIES]
+    communities = []
+    if previous_community.find('----') == -1 and not previous_community == '':#Passing filtered results
+        #communities = [community[0].lower() for community in  COMMUNITIES]
+        for community in  COMMUNITIES:
+            if community[0].lower() != previous_community:
+                communities.append(community[0])
+        communities.insert(0, previous_community)
+        communities.insert(1, '---------')
+    else:
+        communities = [community[0].lower() for community in  COMMUNITIES]
+        communities.insert(0, '---------')
     return render_to_response(
         # 'report_'+request.user.username+'_'+report_name+'.html', {},
 
