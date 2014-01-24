@@ -41,7 +41,7 @@ class AccrualPDFReport(object):
         tables = []
         report_style.extend(added_styles)
         for report_data in tables_data:
-            table = LongTable(report_data)
+            table = LongTable(report_data, repeatRows=1)
             table.setStyle(report_style)
             tables.append(table)
         container_data.append(tables)

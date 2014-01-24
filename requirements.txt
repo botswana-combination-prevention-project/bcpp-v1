@@ -28,3 +28,4 @@ gitpython==0.3.2.RC1
 django-storages==1.1.8
 pil==1.1.7
 django-database-storage==0.1.2
+reportlab==2.7
