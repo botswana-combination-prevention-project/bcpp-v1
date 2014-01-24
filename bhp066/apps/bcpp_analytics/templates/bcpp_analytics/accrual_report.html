@@ -1,56 +1,10 @@
-{% extends 'bcpp_analytics/reports_base.html' %}
-
-{% load staticfiles %}
-
-{% block add_css_styles %}
-  <link href="{% static 'bcpp_analytics/css/datepicker.css' %}" rel="stylesheet">
-{% endblock %}
-
+{% extends 'bcpp_analytics/community_pair_report.html' %}
 
 {% block report_title %} Community Accrual Report{% endblock %}
 
-{% block content %}
-  <div class="row">
-    <div class="report-criteria">
-      <form class="form-inline" action="{% url 'analytics:accrual' %}" method="get" role="form">  
-          <div class="form-group">
-            <label for="com1">Community 1</label>
-            <select multiple class="form-control" name="com1">
-              {% for community in communities_list %}
-              <option>{{ community }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="com2">Community 2</label>
-            <select multiple class="form-control" name="com2">
-              {% for community in communities_list %}
-              <option>{{ community }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class ="form-group input-daterange">
-            <input type="text" class="form-control" name="start" placeholder="start date"/>
-          </div>
-          <div class="form-group input-daterange">
-            <input type="text" class="form-control" name="to" placeholder="end date"/>
-          </div>
-          <button type="submit" class="btn btn-default">Show Report</button>
-        </form>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      {% include "bcpp_analytics/includes/community_accrual.html" with community_data=community1_data %}
-    </div>
-    <div class="col-md-6">
-      {% include "bcpp_analytics/includes/community_accrual.html" with community_data=community2_data %}
-    </div>
-  </div>
+{% block community1_content %}
+    {% include "bcpp_analytics/includes/community_accrual.html" with community_data=community1_data %}
 {% endblock %}
-
-{% block add_js_files %}
-  <script src="{% static 'bcpp_analytics/js/bootstrap-datepicker.js' %}"></script>
-  <script src="{% static 'bcpp_analytics/js/analytics.js' %}"></script>
+{% block community2_content %}
+    {% include "bcpp_analytics/includes/community_accrual.html" with community_data=community2_data %}
 {% endblock %}
