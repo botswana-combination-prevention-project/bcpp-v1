@@ -1,0 +1,4 @@
+
+
+class ReplacementError(Exception):
+    pass
