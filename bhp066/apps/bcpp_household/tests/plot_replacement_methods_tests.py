@@ -9,7 +9,7 @@ from edc.map.exceptions import MapperError
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_household.classes import PlotReplacement
+from apps.bcpp_household.classes import ReplacementData
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
@@ -57,7 +57,7 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='REFUSED')
         member.save()
         #refusal with one household
-        self.assertEqual(PlotReplacement.replace_refusal_plot(plot), [plot])
+        self.assertEqual(ReplacementData.replace_refusals(plot), [plot])
 
         plot = PlotFactory(
                 community='test_community',
@@ -111,7 +111,7 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='RESEARCH')
         member.save()
 
-        self.assertEqual(PlotReplacement.replace_refusal_plot(plot), Household.objects.filter(plot=plot))
+        self.assertEqual(ReplacementData.replace_refusals(plot), Household.objects.filter(plot=plot))
 
     def test_replacement_absentee(self):
         print "*********************************"
@@ -149,7 +149,7 @@ class PlotReplcamentMethodTests(TestCase):
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         #refusal with one household
-        self.assertEqual(PlotReplacement.replacement_absentee(plot), [plot])
+        self.assertEqual(ReplacementData.replacement_absentee(plot), [plot])
 
         plot = PlotFactory(
                 community='test_community',
@@ -207,7 +207,7 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='RESEARCH')
         member.save()
         #A plot with more than one household
-        self.assertEqual(PlotReplacement.replacement_absentee(plot), [household[0]])
+        self.assertEqual(ReplacementData.replacement_absentee(plot), [household[0]])
 
     def test_replacement_none_consented(self):
 
