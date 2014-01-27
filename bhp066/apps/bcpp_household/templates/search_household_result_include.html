@@ -39,7 +39,7 @@
             </form>
           {% else %}
             {% if household.plot.action == 'confirmed'%}
-            	{% if household.allowed_to_enumerate == 'yes' %}
+            	{% if household.allowed_to_enumerate == 'no' %}
             		Refusal
             	{% else %}            
 	                <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=household.pk %}">
@@ -69,7 +69,7 @@
         </td>
      	<td>{{ household.community|encrypted}}</td>
      	<td>
-     		{% if household.allowed_to_enumerate == 'yes' %}
+     		{% if household.allowed_to_enumerate == 'no' %}
      			<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">Marked as refusal</A>
      		{% else %}
      			<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">Make refusal</A>
