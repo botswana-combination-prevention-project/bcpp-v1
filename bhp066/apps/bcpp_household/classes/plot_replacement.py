@@ -1,16 +1,15 @@
 from ...bcpp_household_member.models import HouseholdInfo, HouseholdMember
 from ..models import Household, HouseholdStructure
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
- 
- 
- 
+
+
 class PlotReplacement(object):
- 
+
     def __init__(self, *args, **kwargs):
         self._members = None
         self._h_structure = None
         self._replacement_plot = None
- 
+
     def replace_refusal_plot(self, plot):
         """Check if a plot has refusal that would make it be replaced."""
         if plot.household_count == 1:
