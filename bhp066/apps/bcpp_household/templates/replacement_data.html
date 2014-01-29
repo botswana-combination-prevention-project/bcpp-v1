@@ -14,18 +14,16 @@
 	{% if replacement_data %}
 		<table>
 			<thead>
-				<th>Plot</th>
-				<th>Household</th>
+				<th>Household to return</th>
 				<th>Return</th>
 			</thead>
-		{% for plot, household in replacement_data %}
+		{% for household in replacement_data %}
 			<tr>
-				<td>{{ plot }}</td>
 				<td>{{ household }}</td>
 				<td><a href="{% url 'return_data_url' %}/?household={{ household }}&plot={{ plot }}">return</a></td>
 			</tr>
 		{% endfor %}
-		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replacement_data={{ replacement_data }}"><b>Return All</b></a></td></tr>
+		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replacement_data={{ replacement_data_list }}"><b>Return All</b></a></td></tr>
 		<tr><td>Total replacements: {{ replacement_count }}</td></tr>
 		</table>
 	{% else %}
