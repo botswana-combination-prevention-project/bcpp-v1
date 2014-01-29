@@ -9,6 +9,7 @@ from edc.map.exceptions import MapperError
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_household.classes import PlotReplacement
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ..forms import PlotForm
@@ -45,7 +46,15 @@ class PlotReplcamentMethodTests(TestCase):
         plot = PlotFactory(community='test_community', household_count=1, status='occupied')
         household = Household.objects.filter(plot=plot)
         h_structure = HouseholdStructure.objects.get(household=household)
-        members = HouseholdMember.objects.filter(household_structure=h_structure)
+        member = HouseholdMember(
+                household_structure=h_structure,
+                first_name='MOSIMANE',
+                initials='MB',
+                gender='M',
+                age_in_years=24,
+                present_today='Yes',
+                member_status='RESEARCH')
+        self.assertEqual(PlotReplacement.replace_refusal_plot(plot), plot)
 
     def test_replacement_absentee(self):
         print "*********************************"
