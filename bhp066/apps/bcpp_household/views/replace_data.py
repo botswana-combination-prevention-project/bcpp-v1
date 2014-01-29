@@ -5,7 +5,7 @@ from django.db.models import Q
 from ..models import Plot, Household
 from ..classes import ReplacementData
 
-def replacement_data(request):
+def replace_data(request):
 
     replacement_data = {}
     replacement_data_list = []
@@ -22,11 +22,12 @@ def replacement_data(request):
             replacement_data.update(ReplacementData().replacement_none_consented(plot))
     replacement_count = len(replacement_data)
     for plot, household in replacement_data.iteritems():
-        replacement_data_list.append([plot, household])
+        replacement_data_list.append(household.household_identifier)
         plot.replacement = True
         household.replacement = True
         plot.save()
         household.save()
+    print replacement_data_list
     return render_to_response(
             template, {
                 'replacement_data': replacement_data_list,
