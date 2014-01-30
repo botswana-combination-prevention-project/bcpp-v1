@@ -3,6 +3,7 @@ from datetime import datetime
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 
 from apps.bcpp_survey.models import Survey
+from edc.map.classes import site_mappers
 
 
 study_start_datetime = datetime(2013, 10, 29, 10, 30, 00)
@@ -52,6 +53,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'survey_slug': 'bcpp-year-1',
                 'datetime_start': study_start_datetime,
                 'datetime_end': datetime(2014, 10, 29, 16, 30, 00)}
+
+    study_site_setup = {'site_mapper': site_mappers.get_current_mapper()}
 
     def update_or_create_survey(self):
         if Survey.objects.all().count() == 0:
