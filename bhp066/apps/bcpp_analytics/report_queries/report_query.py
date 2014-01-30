@@ -7,7 +7,12 @@ class TwoColumnReportQuery(object):
         self.title = self.display_title()
         self.data = self.data_to_display()
 
+    def build(self):
+        """override to kickstart queries"""
+        pass
+
     def post_init(self, **kwargs):
+        """override this method to add subclass instances rather than call Super for __init__ in subclasses"""
         pass
 
     def display_title(self):
