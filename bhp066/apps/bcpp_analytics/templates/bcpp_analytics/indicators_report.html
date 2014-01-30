@@ -1,0 +1,71 @@
+{% extends 'bcpp_analytics/community_pair_report.html' %}
+
+{% block report_title %} Key Indicators Report {% endblock %}
+
+{% block community1_content %}
+  <h3>{{community_pair.0}}</h3>
+  <h5>{{start_date}} - {{end_date}}</h5>
+  <div class='report-data'>
+    <table class='pure-table pure-table-bordered'>
+      <tbody>
+        <tr>
+          <td>Number of Eligible participants accrued</td>
+          <td>{{data.0.eligible_participants_count}}</td>
+        </tr>
+        <tr>
+          <td>Percentage of Eligible participants accrued</td>
+          <td>{{data.0.participants_percentage}} %</td>
+        </tr>
+        <tr>
+          <td>Number of HIV positive individuals Identified</td>
+          <td>{{data.0.positive_participants_count}}</td>
+        </tr>
+        <tr>
+          <td>Percentage of HIV positive individuals identified</td>
+          <td>{{data.0.positive_percentage}} %</td>
+        </tr>
+        <tr class='report-section'>
+          <th colspan=2 class="text-center">Core Indicators</th>
+        </tr>
+        <tr>
+          <td>Proportion of eligible BHS participants Versus all eligible</td>
+          <td>{{data.0.participants_percentage}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+
+{% block community2_content %}
+  <h3>{{community_pair.1}}</h3>
+  <h5>{{start_date}} - {{end_date}}</h5>
+  <div class='report-data'>
+    <table class='pure-table pure-table-bordered'>
+      <tbody>
+        <tr>
+          <td>Number of Eligible participants accrued</td>
+          <td>{{data.1.eligible_participants_count}}</td>
+        </tr>
+        <tr>
+          <td>Percentage of Eligible participants accrued</td>
+          <td>{{data.1.participants_percentage}} %</td>
+        </tr>
+        <tr>
+          <td>Number of HIV positive individuals Identified</td>
+          <td>{{data.1.positive_participants_count}}</td>
+        </tr>
+        <tr>
+          <td>Percentage of HIV positive individuals identified</td>
+          <td>{{data.1.positive_percentage}} %</td>
+        </tr>
+        <tr class='report-section'>
+          <th colspan=2 class="text-center">Core Indicators</th>
+        </tr>
+        <tr>
+          <td>Proportion of eligible BHS participants Versus all eligible</td>
+          <td>{{data.1.participants_percentage}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

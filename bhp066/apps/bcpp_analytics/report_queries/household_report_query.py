@@ -6,7 +6,7 @@ from .report_query import TwoColumnReportQuery
 
 class HouseholdReportQuery(TwoColumnReportQuery):
 
-    def post_init(self, **kwargs):
+    def build(self):
         self.targeted = self.targeted_qs().count()
         self.visited = self.visited_qs().count()
         self.enumerated = self.enumerated_qs().count()
@@ -20,6 +20,7 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return "Households"
 
     def data_to_display(self):
+        self.build()
         data = []
         data.append(DataRow("Targeted", self.targeted))
         data.append(DataRow("Visited at least Once", self.visited))
