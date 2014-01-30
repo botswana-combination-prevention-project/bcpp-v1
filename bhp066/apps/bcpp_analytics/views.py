@@ -42,7 +42,7 @@ def index(request):
 @require_GET
 def accrual(request):
     template = "bcpp_analytics/accrual_report.html"
-    context = _process_accrual(request, date_format=DEFAULT_DATE_FORMAT)
+    context = _process_accrual(request.GET, date_format=DEFAULT_DATE_FORMAT)
     context.update({'communities': communities})
     return render(request, template,  context)
 
@@ -50,10 +50,14 @@ def accrual(request):
 @login_required
 @require_GET
 def accrual_pdf(request, **kwargs):
-    from .pdf.accrual_report import AccrualPDFReport
+    from django.http import HttpResponse
+    from .pdf.community_comparison_report import CommunityComparisonPDF
 
-    pdf_data = _process_accrual(request, date_format=STRFTIME_FORMAT)
-    return AccrualPDFReport(pdf_data).display(request)
+    response = HttpResponse(content_type="application/pdf")
+    response['Content-Disposition'] = 'inline;filename=community_accrual.pdf'
+    pdf_data = _process_accrual(kwargs, date_format=STRFTIME_FORMAT)
+    CommunityComparisonPDF(pdf_data, "Community Accrual Report").build(response)
+    return response
 
 
 @login_required
@@ -63,7 +67,7 @@ def key_indicators(request):
 
     template = "bcpp_analytics/indicators_report.html"
     context = {'communities': communities}
-    params = _prepare_params(request, date_format=DEFAULT_DATE_FORMAT)
+    params = _prepare_params(request.GET, date_format=DEFAULT_DATE_FORMAT)
     context.update(params)
     report_data = []
     for community in params['community_pair']:
@@ -73,10 +77,10 @@ def key_indicators(request):
     return render(request, template, context)
 
 
-def _process_accrual(req, date_format):
+def _process_accrual(params_dict, date_format):
     from .report_queries.household_visits_report_query import HouseholdVisitsReportQuery
 
-    params = _prepare_params(req, date_format)
+    params = _prepare_params(params_dict, date_format)
     start_date = params['start_date']
     end_date = params['end_date']
     report_data = []
@@ -88,6 +92,7 @@ def _process_accrual(req, date_format):
         community_data.append(HouseholdVisitsReportQuery(community, start_date, end_date))
         report_data.append(community_data)
     context_data = {
+        'report_data': report_data,
         'community1_data': report_data[0],
         'community2_data': report_data[1],
         'start_date': start_date.strftime(STRFTIME_FORMAT),
@@ -95,13 +100,13 @@ def _process_accrual(req, date_format):
     return context_data
 
 
-def _prepare_params(req, date_format):
+def _prepare_params(params_dict, date_format):
     default_start = "Oct.  01, 2013" if date_format == STRFTIME_FORMAT else "01/10/2013"
     default_end = "Sep.  30, 2014" if date_format == STRFTIME_FORMAT else "30/09/2014"
-    community1 = req.GET.get("com1", "Ranaka")
-    community2 = req.GET.get("com2", "Digawana")
-    start_date = date_from_s(req.GET.get("start") or default_start, date_format)
-    end_date = date_from_s(req.GET.get("to") or default_end, date_format)
+    community1 = params_dict.get("com1", "Ranaka")
+    community2 = params_dict.get("com2", "Digawana")
+    start_date = date_from_s(params_dict.get("start") or default_start, date_format)
+    end_date = date_from_s(params_dict.get("to") or default_end, date_format)
     return dict(community_pair=[community1, community2], start_date=start_date, end_date=end_date)
 
 
