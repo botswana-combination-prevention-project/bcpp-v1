@@ -54,7 +54,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'datetime_start': study_start_datetime,
                 'datetime_end': datetime(2014, 10, 29, 16, 30, 00)}
 
-    study_site_setup = {'site_mapper': site_mappers.get_current_mapper()}
+    study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
+                        'site_code': site_mappers.get_current_mapper().map_code}
 
     def update_or_create_survey(self):
         if Survey.objects.all().count() == 0:
