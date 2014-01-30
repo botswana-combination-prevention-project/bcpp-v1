@@ -25,11 +25,11 @@ MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
 #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-# KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/keys'
+# KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+# KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -107,23 +107,12 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_clinic',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
             'PORT': '',
         },
-        #'master': {
-        #    'ENGINE': 'django.db.backends.mysql',
-        #    'OPTIONS': {
-        #        'init_command': 'SET storage_engine=INNODB',
-        #    },
-        #    'NAME': 'bhp066_master',
-        #    'USER': 'root',
-        #    'PASSWORD': 'cc3721b',
-        #    'HOST': '192.168.1.65',
-        #    'PORT': '3306',
-        #},
         'lab_api': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
@@ -135,17 +124,6 @@ else:
             'HOST': '192.168.1.50',
             'PORT': '3306',
         },
-#         'bcpp028-bhp066': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'OPTIONS': {
-#                 'init_command': 'SET storage_engine=INNODB',
-#             },
-#             'NAME': 'bhp066',
-#             'USER': 'root',
-#             'PASSWORD': 'cc3721b',
-#             'HOST': '192.168.1.88',
-#             'PORT': '3306',
-#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -384,6 +362,10 @@ INSTALLED_APPS = (
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
+    'apps.bcpp_clinic_lab',
+    'apps.bcpp_clinic',
+    'apps.clinic',
+    'apps.bcpp_clinic_dashboard',
     'tastypie',
 )
 
@@ -430,7 +412,7 @@ APPOINTMENTS_PER_DAY_MAX = 20
 APPOINTMENTS_DAYS_FORWARD = 15
 
 # edc.subject.registered_subject
-SUBJECT_APP_LIST = ['bcpp_subject']
+SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
 SUBJECT_TYPES = ['subject']
 MAX_SUBJECTS = {'subject': 3000}
 
@@ -465,6 +447,7 @@ else:
 # edc.subject.consent
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
+SITE_CODE = '14'
 #  edc.device.device
 DEVICE_ID = '99'
 
@@ -473,7 +456,3 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
-
-#Stripped down EDC for purposes of CLO's work.
-DENIED_SECTIONS_FOR_GROUP = {'clo': ('household', 'subject', 'member', 'audit_trail', 'appointments', 'reports')}
-LOGGED_IN_USER_GROUP = 'clo'
