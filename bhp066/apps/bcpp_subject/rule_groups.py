@@ -88,7 +88,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('verbal_hiv_result', 'equals', 'NEG'),
             consequence='new',
             alternative='not_required'),
-        target_model=['futurehivtesting', 'stigma', 'stigmaopinion'])
+        target_model=['stigma', 'stigmaopinion'])
 
     # TODO: this looks WRONG!!
     other_response = ScheduledDataRule(
@@ -96,7 +96,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
             consequence='not_required',
             alternative='new'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -119,7 +119,7 @@ class HivTestReviewRuleGroup(RuleGroup):
             predicate=('recorded_hiv_result', 'equals', 'NEG'),
             consequence='new',
             alternative='not_required'),
-        target_model=['futurehivtesting', 'stigma', 'stigmaopinion'])
+        target_model=['stigma', 'stigmaopinion'])
 
     # TODO: this looks WRONG!!
     other_responses = ScheduledDataRule(
@@ -127,7 +127,7 @@ class HivTestReviewRuleGroup(RuleGroup):
             predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'or')),
             consequence='not_required',
             alternative='new'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'futurehivtesting', 'stigma', 'stigmaopinion'])
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
 #     if_recorded_result_not_positive = ScheduledDataRule(
