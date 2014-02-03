@@ -44,19 +44,31 @@ def accrual(request):
     template = "bcpp_analytics/accrual_report.html"
     context = _process_accrual(request.GET, date_format=DEFAULT_DATE_FORMAT)
     context.update({'communities': communities})
+    context.update({'action_url': 'analytics:accrual'})
     return render(request, template,  context)
 
 
 @login_required
 @require_GET
 def accrual_pdf(request, **kwargs):
-    from django.http import HttpResponse
     from .pdf.community_comparison_report import CommunityComparisonPDF
+    from itertools import izip
 
-    response = HttpResponse(content_type="application/pdf")
-    response['Content-Disposition'] = 'inline;filename=community_accrual.pdf'
-    pdf_data = _process_accrual(kwargs, date_format=STRFTIME_FORMAT)
-    CommunityComparisonPDF(pdf_data, "Community Accrual Report").build(response)
+    response = _pdf_response("community_accrual")
+    result = _process_accrual(kwargs, date_format=STRFTIME_FORMAT)
+    comm1_data = result['community1_data']
+    comm2_data = result['community2_data']
+    data = izip(comm1_data, comm2_data)
+    pdf_data = {
+        'data': data,
+        'community1': comm1_data[0].community,
+        'community2': comm2_data[0].community,
+        'start_date': result['start_date'],
+        'end_date': result['end_date'],
+        'title': "Community Accrual",
+        'report_variables': 'Accrual Variables',
+    }
+    CommunityComparisonPDF(pdf_data).build(response)
     return response
 
 
@@ -68,13 +80,54 @@ def key_indicators(request):
     template = "bcpp_analytics/indicators_report.html"
     context = {'communities': communities}
     params = _prepare_params(request.GET, date_format=DEFAULT_DATE_FORMAT)
-    context.update(params)
+    context['community_pair'] = params['community_pair']
+    start_date = params['start_date']
+    end_date = params['end_date']
     report_data = []
     for community in params['community_pair']:
-        indicator_data = IndicatorsReportQuery(community, params["start_date"], params["end_date"])
+        indicator_data = IndicatorsReportQuery(community, start_date, end_date)
         report_data.append(indicator_data)
     context.update({'data': report_data})
+    context['start_date'] = start_date.strftime(STRFTIME_FORMAT)
+    context['end_date'] = end_date.strftime(STRFTIME_FORMAT)
+    context.update({'action_url': 'analytics:indicators'})
     return render(request, template, context)
+
+
+@login_required
+@require_GET
+def key_indicators_pdf(request, **kwargs):
+    from .report_queries.indicators_report_query import IndicatorsReportQuery
+    from .pdf.community_comparison_report import CommunityComparisonPDF
+
+    response = _pdf_response("key_indicators_report")
+    params = _prepare_params(kwargs, date_format=STRFTIME_FORMAT)
+    community1 = params['community_pair'][0]
+    community2 = params['community_pair'][1]
+    data1 = IndicatorsReportQuery(community1, params["start_date"], params["end_date"])
+    data2 = IndicatorsReportQuery(community2, params["start_date"], params["end_date"])
+    data = [(data1, data2)]
+    start_date = params['start_date']
+    end_date = params['end_date']
+    pdf_data = {
+        'data': data,
+        'community1': community1,
+        'community2': community2,
+        'start_date': start_date.strftime(STRFTIME_FORMAT),
+        'end_date': end_date.strftime(STRFTIME_FORMAT),
+        'title': 'Key Indicators',
+        'report_variables': 'Indicators Variables',
+    }
+    CommunityComparisonPDF(pdf_data).build(response)
+    return response
+
+
+def _pdf_response(filename):
+    from django.http import HttpResponse
+
+    response = HttpResponse(content_type="application/pdf")
+    response['Content-Disposition'] = 'inline;filename={0}.pdf'.format(filename)
+    return response
 
 
 def _process_accrual(params_dict, date_format):
