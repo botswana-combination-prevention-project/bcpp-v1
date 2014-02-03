@@ -23,18 +23,25 @@ def return_data(request):
     if request.GET.get('replacement_data'):
         replacement_data = request.GET.get('replacement_data')
         print replacement_data
+        print replacement_data[2:-1]
+        print replacement_data[1]
+        print replacement_data[-1]
+        replacement_data = replacement_data[2:-1]
+        print replacement_data
         
         #return households
         #TODO: Call return method to return households
         #get replacement plots
         replacement_plots = Plot.objects.filter(selected=2)
+        print "Plots"
+        print replacement_plots
+        print "Plots"
         replacement_count = 0
         content_type = None
         while replacement_count < len(replacement_data):
-            for plot, household in replacement_data:
+            for household in replacement_data:
                 if replacement_plots[replacement_count]:
                     replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
-                    print replacement_data_list
                     plot.replacement = True
                     plot.save
                     household.replacement = True
@@ -47,7 +54,9 @@ def return_data(request):
                     replacement_count += 1
                 else:
                     raise ReplacementError("There are no more Plots available to replace with.")
-    selected = replacement_data_list
+    pks = Plot.objects.filter(selected=2).values_list('pk')
+    selected = list(itertools.chain(*pks))
+    #selected = replacement_data_list
     content_type = ContentType.objects.get_for_model(Plot)
     return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
 
