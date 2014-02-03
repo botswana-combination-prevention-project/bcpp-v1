@@ -27,7 +27,6 @@ def replace_data(request):
         household.replacement = True
         plot.save()
         household.save()
-    print replacement_data_list
     return render_to_response(
             template, {
                 'replacement_data': replacement_data_list,
