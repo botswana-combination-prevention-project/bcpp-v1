@@ -6,9 +6,11 @@ from ..models import Plot, Household
 from ..classes import ReplacementData
 
 def replace_data(request):
+    """Get all plots to be replaced.
 
+    Filter plots to be replaced by calling replacement methods that return replacement household.
+    """
     replacement_data = []
-    replacement_data_list = []
     replace_str = ''
     replacement_count = 0
     template = 'replacement_data.html'
