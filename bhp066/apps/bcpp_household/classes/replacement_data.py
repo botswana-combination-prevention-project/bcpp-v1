@@ -9,25 +9,26 @@ class ReplacementData(object):
     def replace_refusals(self, plot):
         """Check if a plot has household refusals that would make it be replaced."""
         from apps.bcpp_household.models import Household
-        replaced = {}
+        replaced = []
         if plot.status == 'occupied':
             if plot.household_count == 1:
                 household = Household.objects.get(plot=plot)
                 if self.evaluate_head_of_household_refusal(plot, household):
-                    replaced[plot] = self.evaluate_head_of_household_refusal(plot, household)
+                    replaced.append(self.evaluate_head_of_household_refusal(plot, household))
                     return replaced
                 else:
                     if self.evaluate_refusals(household):
-                        replaced[plot] = self.evaluate_refusals(household)
+                        replaced.append(self.evaluate_refusals(household))
                         return replaced
             if plot.household_count >= 2:
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
                     if self.evaluate_head_of_household_refusal(plot, household):
-                        replaced[plot] = self.evaluate_head_of_household_refusal(plot, household)
+                        replaced.append(self.evaluate_head_of_household_refusal(plot, household))
                     else:
-                        replaced[plot] = self.evaluate_refusals(household)
+                        if self.evaluate_refusals(household):
+                            replaced.append(self.evaluate_refusals(household))
                 if replaced:
                     #If a single household qualifies a plot to be replaced, then replace the whole plot
                     return replaced
@@ -45,19 +46,19 @@ class ReplacementData(object):
     def replacement_absentee(self, plot):
         """Check if a plot has absentees that would make it be replaced."""
         from apps.bcpp_household.models import Household
-        replaced = {}
+        replaced = []
         if plot.status == 'occupied':
             if plot.household_count == 1:#We will replace if all eligible members are absent 3 times
                 household = Household.objects.get(plot=plot)
                 if self.evaluate_absentees(household):
-                    replaced[plot] = self.evaluate_absentees(household)
+                    replaced.append(self.evaluate_absentees(household))
                     return replaced
             if plot.household_count >= 2:#We will replace if all eligible members in each household are absent 3 times
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
                     if self.evaluate_absentees(household):
-                        replaced[plot] = self.evaluate_absentees(household)
+                        replaced.append(self.evaluate_absentees(household))
                         return replaced
         #We will return None if the plot passed does not qualify to be replaced
         return None
@@ -67,7 +68,7 @@ class ReplacementData(object):
         #A plot with more than one household.
         from apps.bcpp_household.models import Household, HouseholdStructure
         from apps.bcpp_household_member.models import HouseholdMember
-        replaced = {}
+        replaced = []
         members = None
         households = Household.objects.filter(plot=plot)
         consented_check_list = []
@@ -83,7 +84,7 @@ class ReplacementData(object):
             if consented_check_list:
                 if all(map(lambda x: x == consented_check_list[0], consented_check_list)):
                     if consented_check_list[0] == False:
-                        replaced[plot] = household
+                        replaced.append(household)
                         return replaced
         return replaced
 

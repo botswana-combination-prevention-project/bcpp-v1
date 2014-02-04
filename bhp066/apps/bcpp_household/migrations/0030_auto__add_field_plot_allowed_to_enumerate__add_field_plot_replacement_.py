@@ -8,20 +8,72 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding field 'Plot.allowed_to_enumerate'
+        db.add_column(u'bcpp_household_plot', 'allowed_to_enumerate',
+                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
+                      keep_default=False)
 
-        # Changing field 'HouseholdAudit.allowed_to_enumerate'
-        db.alter_column(u'bcpp_household_household_audit', 'allowed_to_enumerate', self.gf('django.db.models.fields.CharField')(max_length=25))
+        # Adding field 'Plot.replacement'
+        db.add_column(u'bcpp_household_plot', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 
-        # Changing field 'Household.allowed_to_enumerate'
-        db.alter_column(u'bcpp_household_household', 'allowed_to_enumerate', self.gf('django.db.models.fields.CharField')(max_length=25))
+        # Adding field 'HouseholdAudit.allowed_to_enumerate'
+        db.add_column(u'bcpp_household_household_audit', 'allowed_to_enumerate',
+                      self.gf('django.db.models.fields.CharField')(default='yes', max_length=25),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.replacement'
+        db.add_column(u'bcpp_household_household_audit', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
+        # Adding field 'Household.allowed_to_enumerate'
+        db.add_column(u'bcpp_household_household', 'allowed_to_enumerate',
+                      self.gf('django.db.models.fields.CharField')(default='yes', max_length=25),
+                      keep_default=False)
+
+        # Adding field 'Household.replacement'
+        db.add_column(u'bcpp_household_household', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
+        # Adding field 'PlotAudit.allowed_to_enumerate'
+        db.add_column(u'bcpp_household_plot_audit', 'allowed_to_enumerate',
+                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
+                      keep_default=False)
+
+        # Adding field 'PlotAudit.replacement'
+        db.add_column(u'bcpp_household_plot_audit', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
 
     def backwards(self, orm):
+        # Deleting field 'Plot.allowed_to_enumerate'
+        db.delete_column(u'bcpp_household_plot', 'allowed_to_enumerate')
 
-        # Changing field 'HouseholdAudit.allowed_to_enumerate'
-        db.alter_column(u'bcpp_household_household_audit', 'allowed_to_enumerate', self.gf('django.db.models.fields.CharField')(max_length=25, null=True))
+        # Deleting field 'Plot.replacement'
+        db.delete_column(u'bcpp_household_plot', 'replacement')
 
-        # Changing field 'Household.allowed_to_enumerate'
-        db.alter_column(u'bcpp_household_household', 'allowed_to_enumerate', self.gf('django.db.models.fields.CharField')(max_length=25, null=True))
+        # Deleting field 'HouseholdAudit.allowed_to_enumerate'
+        db.delete_column(u'bcpp_household_household_audit', 'allowed_to_enumerate')
+
+        # Deleting field 'HouseholdAudit.replacement'
+        db.delete_column(u'bcpp_household_household_audit', 'replacement')
+
+        # Deleting field 'Household.allowed_to_enumerate'
+        db.delete_column(u'bcpp_household_household', 'allowed_to_enumerate')
+
+        # Deleting field 'Household.replacement'
+        db.delete_column(u'bcpp_household_household', 'replacement')
+
+        # Deleting field 'PlotAudit.allowed_to_enumerate'
+        db.delete_column(u'bcpp_household_plot_audit', 'allowed_to_enumerate')
+
+        # Deleting field 'PlotAudit.replacement'
+        db.delete_column(u'bcpp_household_plot_audit', 'replacement')
+
 
     models = {
         'bcpp_household.community': {
@@ -59,7 +111,7 @@ class Migration(SchemaMigration):
         'bcpp_household.household': {
             'Meta': {'ordering': "['-household_identifier']", 'object_name': 'Household'},
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
-            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'no'", 'max_length': '25'}),
+            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'yes'", 'max_length': '25'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'complete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -97,7 +149,7 @@ class Migration(SchemaMigration):
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
-            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'no'", 'max_length': '25'}),
+            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'yes'", 'max_length': '25'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'complete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
