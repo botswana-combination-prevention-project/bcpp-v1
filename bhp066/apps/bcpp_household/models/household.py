@@ -120,13 +120,13 @@ class Household(BaseDispatchSyncUuidModel):
 
     allowed_to_enumerate = models.CharField(
         max_length=25,
-        default='no',
+        default='yes',
         null=False,
         verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
         choices=ENUMERATION_STATUS,
         editable=True,
         )
-
+ 
     #Indicates that a household has been replaced if its part of twenty percent.
     #For five percent indicates that a household has been used for replacement.
     replacement = models.BooleanField(default=False, editable=False)
@@ -192,16 +192,16 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
-
-    def post_save_plot_allowed_to_enumerate(self, instance, created):
-        """Updates the allowed_to_enumerate field on the plot model."""
-        plot = Plot.objects.get(plot_identifier=instance.plot.plot_identifier)
-        if instance.allowed_to_enumerate == 'no':
-            plot.allowed_to_enumerate = 'no'
-            plot.save()
-        else:
-            plot.allowed_to_enumerate = 'yes'
-            plot.save()
+ 
+#     def post_save_plot_allowed_to_enumerate(self, instance, created):
+#         """Updates the allowed_to_enumerate field on the plot model."""
+#         plot = Plot.objects.get(plot_identifier=instance.plot.plot_identifier)
+#         if instance.allowed_to_enumerate == 'no':
+#             plot.allowed_to_enumerate = 'no'
+#             plot.save()
+#         else:
+#             plot.allowed_to_enumerate = 'yes'
+#             plot.save()
 
     def get_subject_identifier(self):
         return self.household_identifier
