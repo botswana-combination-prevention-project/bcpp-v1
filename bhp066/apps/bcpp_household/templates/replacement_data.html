@@ -20,14 +20,14 @@
 		{% for household in replacement_data %}
 			<tr>
 				<td>{{ household }}</td>
-				<td><a href="{% url 'return_data_url' %}/?household={{ household }}&plot={{ plot }}">return</a></td>
+				<td><a href="{% url 'return_data_url' %}/?household_identifier={{ household.household_identifier }}">return</a></td>
 			</tr>
 		{% endfor %}
-		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replacement_data={{ replacement_data }}"><b>Return All</b></a></td></tr>
+		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replace_str={{ replace_str }}"><b>Return All</b></a></td></tr>
 		<tr><td>Total replacements: {{ replacement_count }}</td></tr>
 		</table>
 	{% else %}
-		<b>No replacements Households.</b>
+		<b>No households qualify for replacement.</b>
 	{%endif%}
 
 {% endblock %}

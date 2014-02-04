@@ -19,63 +19,52 @@ def return_data(request):
     replacement_data_list = []
     replacement_count = 0
     template = 'return_data.html'
-
-    if request.GET.get('replacement_data'):
-        replacement_data = request.GET.get('replacement_data')
-        print replacement_data
-        print replacement_data[2:-1]
-        print replacement_data[1]
-        print replacement_data[-1]
-        replacement_data = replacement_data[2:-1]
-        print replacement_data
-        
-        #return households
-        #TODO: Call return method to return households
-        #get replacement plots
-        replacement_plots = Plot.objects.filter(selected=2)
-        print "Plots"
-        print replacement_plots
-        print "Plots"
-        replacement_count = 0
-        content_type = None
-        while replacement_count < len(replacement_data):
+    message = None
+    replacement_plots = Plot.objects.filter(selected=2, replacement=False)
+    if not replacement_plots:
+        message = 'No plots available to replace with.'
+        return render_to_response(
+                template, {
+                    'message': message,
+                    },
+                    context_instance=RequestContext(request)
+                )
+    else:
+        if request.GET.get('replace_str'):
+            replacement_data = request.GET.get('replace_str')
+            replacement_data = replacement_data.split(',')
+            replacement_data.pop(0)
+            #return households
+            #TODO: Call return method to return households
+            #get replacement plots
+            replacement_count = 0
+            content_type = None
             for household in replacement_data:
-                if replacement_plots[replacement_count]:
+                if replacement_plots and len(replacement_plots) > replacement_count:
                     replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
-                    plot.replacement = True
-                    plot.save
-                    household.replacement = True
-                    household.save()
+                    house = Household.objects.get(household_identifier=household)
+                    house.replacement = True
+                    house.save()
                     replacement_plots[replacement_count].replacement = True
                     replacement_plots[replacement_count].save()
-                    household_rep = Household.objects.get(plot=replacement_plots[replacement_count])
-                    household_rep.replacement = True
-                    household_rep.save()
                     replacement_count += 1
-                else:
-                    raise ReplacementError("There are no more Plots available to replace with.")
-    pks = Plot.objects.filter(selected=2).values_list('pk')
-    selected = list(itertools.chain(*pks))
-    #selected = replacement_data_list
-    content_type = ContentType.objects.get_for_model(Plot)
-    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
-
-
-#     elif request.GET.get('plot') and request.GET.get('household'):
-#         plot = request.GET.get('plot')
-#         household = request.GET.get('household')
-#         return render_to_response(
-#                 template, {
-#                     'replacement_data': replacement_data_list,
-#                     'replacement_count': replacement_count,
-#                     },
-#                     context_instance=RequestContext(request)
-#                 )
-#     else:
-#         return render_to_response(
-#                 template, {
-#                     'replacement_data': replacement_data_list,
-#                     'replacement_count': replacement_count,
-#                     },
-#                     context_instance=RequestContext(request)
-#                 )
+            pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_data_list})).values_list('pk')
+            selected = list(itertools.chain(*pks))
+            content_type = ContentType.objects.get_for_model(Plot)
+            return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
+        else:
+            if request.GET.get('household_identifier'):
+                household_id = request.GET.get('household_identifier')
+                #return households
+                #TODO: Call return method to return households
+                if replacement_plots:
+                    replacement_data_list.append(replacement_plots[0].plot_identifier)
+                    house = Household.objects.get(household_identifier=household_id)
+                    house.replacement = True
+                    house.save()
+                    replacement_plots[0].replacement = True
+                    replacement_plots[0].save()
+                pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_data_list})).values_list('pk')
+                selected = list(itertools.chain(*pks))
+                content_type = ContentType.objects.get_for_model(Plot)
+                return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
