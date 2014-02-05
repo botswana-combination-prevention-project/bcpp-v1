@@ -1,5 +1,6 @@
 from .household_member_report_query import HouseholdMemberReportQuery
 from .report_query import TwoColumnReportQuery
+from .data_row import DataRow
 
 
 class IndicatorsReportQuery(TwoColumnReportQuery):
@@ -8,10 +9,17 @@ class IndicatorsReportQuery(TwoColumnReportQuery):
         self.member_query = HouseholdMemberReportQuery(self.community, self.start_date, self.end_date)
 
     def display_title(self):
-        pass
+        return "Core Indicators Variables (After blank line)"
 
     def data_to_display(self):
-        pass
+        data = []
+        data.append(DataRow('Number of Eligible participants accrued', self.eligible_participants_count()))
+        data.append(DataRow('Percentage of Eligible participants accrued', self.participants_percentage()))
+        data.append(DataRow('Number of HIV positive individuals identified', self.positive_participants_count()))
+        data.append(DataRow('Percentage of HIV positive individuals identified', self.positive_percentage()))
+        data.append(DataRow('', ''))
+        data.append(DataRow('Proportion of Eligible BHS participants versus all Eligible', self.participants_percentage()))
+        return data
 
     def eligible_participants_count(self):
         return self.member_query.study_eligible_qs().count()

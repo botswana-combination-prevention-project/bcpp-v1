@@ -34,5 +34,5 @@ class DataRow(object):
         value_str = ""
         for k, v in a_dict.items():
             value_str += str(v) if k == 'header' else " : ".join([k, str(v)])
-            value_str += "\n"
+            value_str += "<br/>"
         return value_str
