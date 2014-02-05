@@ -13,14 +13,29 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
                       keep_default=False)
 
+        # Adding field 'Plot.replacement'
+        db.add_column(u'bcpp_household_plot', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
         # Adding field 'HouseholdAudit.allowed_to_enumerate'
         db.add_column(u'bcpp_household_household_audit', 'allowed_to_enumerate',
-                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
+                      self.gf('django.db.models.fields.CharField')(default='yes', max_length=25),
+                      keep_default=False)
+
+        # Adding field 'HouseholdAudit.replacement'
+        db.add_column(u'bcpp_household_household_audit', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
         # Adding field 'Household.allowed_to_enumerate'
         db.add_column(u'bcpp_household_household', 'allowed_to_enumerate',
-                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
+                      self.gf('django.db.models.fields.CharField')(default='yes', max_length=25),
+                      keep_default=False)
+
+        # Adding field 'Household.replacement'
+        db.add_column(u'bcpp_household_household', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
         # Adding field 'PlotAudit.allowed_to_enumerate'
@@ -28,19 +43,36 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
                       keep_default=False)
 
+        # Adding field 'PlotAudit.replacement'
+        db.add_column(u'bcpp_household_plot_audit', 'replacement',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Deleting field 'Plot.allowed_to_enumerate'
         db.delete_column(u'bcpp_household_plot', 'allowed_to_enumerate')
 
+        # Deleting field 'Plot.replacement'
+        db.delete_column(u'bcpp_household_plot', 'replacement')
+
         # Deleting field 'HouseholdAudit.allowed_to_enumerate'
         db.delete_column(u'bcpp_household_household_audit', 'allowed_to_enumerate')
+
+        # Deleting field 'HouseholdAudit.replacement'
+        db.delete_column(u'bcpp_household_household_audit', 'replacement')
 
         # Deleting field 'Household.allowed_to_enumerate'
         db.delete_column(u'bcpp_household_household', 'allowed_to_enumerate')
 
+        # Deleting field 'Household.replacement'
+        db.delete_column(u'bcpp_household_household', 'replacement')
+
         # Deleting field 'PlotAudit.allowed_to_enumerate'
         db.delete_column(u'bcpp_household_plot_audit', 'allowed_to_enumerate')
+
+        # Deleting field 'PlotAudit.replacement'
+        db.delete_column(u'bcpp_household_plot_audit', 'replacement')
 
 
     models = {
@@ -79,7 +111,7 @@ class Migration(SchemaMigration):
         'bcpp_household.household': {
             'Meta': {'ordering': "['-household_identifier']", 'object_name': 'Household'},
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
-            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'yes'", 'max_length': '25'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'complete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -103,6 +135,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household.Plot']", 'null': 'True'}),
+            'replacement': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'target_radius': ('django.db.models.fields.FloatField', [], {'default': '0.025'}),
@@ -116,7 +149,7 @@ class Migration(SchemaMigration):
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
-            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'yes'", 'max_length': '25'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'complete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -140,6 +173,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_household'", 'null': 'True', 'to': "orm['bcpp_household.Plot']"}),
+            'replacement': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'target_radius': ('django.db.models.fields.FloatField', [], {'default': '0.025'}),
@@ -294,6 +328,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25', 'db_index': 'True'}),
+            'replacement': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'section': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'selected': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
@@ -339,6 +374,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'plot_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
+            'replacement': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'section': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'selected': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
