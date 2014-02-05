@@ -107,7 +107,7 @@ class ReplacementData(object):
                             members_status_list.append(member.member_status)
                 if members_status_list:
                     #Ckeck if all the values in the member status list are the same.
-                    if all(map(lambda x: x == consented_check_list[0], consented_check_list)):
+                    if all(map(lambda x: x == members_status_list[0], members_status_list)):
                         if members_status_list == 'REFUSED':
                             #If any member had a status that is not 'REFUSE' then this plot does not qualify for replacement
                             replacement_household = household
