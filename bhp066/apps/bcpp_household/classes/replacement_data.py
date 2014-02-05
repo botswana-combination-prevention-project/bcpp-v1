@@ -137,7 +137,3 @@ class ReplacementData(object):
         if not dont_replace:
             replacement_household = household
         return replacement_household
-#                     if num_absentee_entries == '3':#Then we have found a reason not to replace this plot
-#                         replacement_household = household
-#         return replacement_household
-#     fixed_dispatch:bhp066/apps/bcpp_household/classes/replacement_data.py
