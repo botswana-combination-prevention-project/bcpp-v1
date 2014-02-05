@@ -81,12 +81,10 @@ class ReplacementData(object):
             #No HH consented.
             if members:
                 for member in members:
-                    consented_check_list.append(member.is_consented)
-            if consented_check_list:
-                if all(map(lambda x: x == consented_check_list[0], consented_check_list)):
-                    if consented_check_list[0] == False:
-                        replaced.append(household)
-                        return replaced
+                    if member.eligible_member and member.participation_form:
+                        if member.member_status != 'RESEARCH':
+                            replaced.append(household)
+                            return replaced
         return replaced
 
     def evaluate_refusals(self, household):
@@ -132,6 +130,6 @@ class ReplacementData(object):
                     num_absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee).count()
                     if num_absentee_entries <= '3':#Then we have found a reason not to replace this plot
                         dont_replace = True
-        if not dont_replace:
+        if dont_replace:
             replacement_household = household
         return replacement_household
