@@ -1,8 +1,5 @@
-from datetime import date
 from django.conf.urls import patterns, url
-from .views import index, accrual, accrual_pdf, key_indicators
-from .views import operational_report_view
-
+from .views import index, operational_report_view, accrual, accrual_pdf, key_indicators, key_indicators_pdf
 
 urlpatterns = patterns('',
                        url(r'^reports/$', index, name="index"),
@@ -11,4 +8,6 @@ urlpatterns = patterns('',
                            accrual_pdf, name="accrual_pdf"),
                        url(r'^report/operational/$', operational_report_view, name="operational"),
                        url(r'^report/key_indicators/$', key_indicators, name="indicators"),
+                       url(r'^report/key_indicators/pdf/(?P<com1>\w+)/(?P<com2>\w+)/(?P<start>[a-zA-Z0-9_., ]+)/(?P<to>[a-zA-Z0-9_., ]+)/$',
+                           key_indicators_pdf, name="indicators_pdf"),
                        )

@@ -5,6 +5,7 @@
 {% block community1_content %}
   <h3>{{community_pair.0}}</h3>
   <h5>{{start_date}} - {{end_date}}</h5>
+  <a href="{% url 'analytics:indicators_pdf' com1=community_pair.0 com2=community_pair.1 start=start_date to=end_date  %}">PDF view of the report</a>
   <div class='report-data'>
     <table class='pure-table pure-table-bordered'>
       <tbody>
@@ -40,6 +41,7 @@
   <h3>{{community_pair.1}}</h3>
   <h5>{{start_date}} - {{end_date}}</h5>
   <div class='report-data'>
+  <a href="{% url 'analytics:indicators_pdf' com1=community_pair.0 com2=community_pair.1 start=start_date to=end_date  %}">PDF view of the report</a>
     <table class='pure-table pure-table-bordered'>
       <tbody>
         <tr>
