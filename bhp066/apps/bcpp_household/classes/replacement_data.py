@@ -1,6 +1,4 @@
-from ...bcpp_household_member.models import HouseholdInfo, HouseholdMember
-from ..models import Household, HouseholdStructure
-from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
+
 
 class ReplacementData(object):
 
