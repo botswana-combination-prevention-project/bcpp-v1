@@ -23,6 +23,9 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
 
     objects = SubjectUndecidedEntryManager()
 
+    def inline_parent(self):
+        return self.subject_undecided
+
     def natural_key(self):
         return (self.report_datetime,) + self.subject_undecided.natural_key()
     natural_key.dependencies = ['bcpp_subject.subjectundecided']
@@ -30,4 +33,6 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
     class Meta:
         app_label = 'bcpp_household_member'
 #         db_table = 'bcpp_subject_subjectundecidedentry'
+        verbose_name = "Subject Undecided Entry"
+        verbose_name_plural = "Subject Undecided Entries"
         unique_together = ('subject_undecided', 'report_datetime')
