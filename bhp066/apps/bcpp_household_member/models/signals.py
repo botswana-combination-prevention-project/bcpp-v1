@@ -3,6 +3,7 @@ from django.dispatch import receiver
 
 from .household_member import HouseholdMember
 from .subject_absentee_entry import SubjectAbsenteeEntry
+from .subject_undecided_entry import SubjectUndecidedEntry
 from .base_member_status_model import BaseMemberStatusModel
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
@@ -33,24 +34,14 @@ def base_household_member_consent_on_post_save(sender, instance, **kwargs):
         instance.confirm_registered_subject_pk_on_post_save()
 
 
-@receiver(post_save, weak=False, dispatch_uid='subject_absentee_entry_on_post_save')
-def subject_absentee_entry_on_post_save(sender, instance, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid='visit_attempts_on_post_save')
+def visit_attempts_on_post_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
-        if isinstance(instance, SubjectAbsenteeEntry):
-            household_member = instance.subject_absentee.household_member
-            household_member.absentee = False
-            if sender.objects.filter(subject_absentee__registered_subject=instance.subject_absentee.registered_subject).count() >= 3:
-                household_member.absentee = True
-            household_member.save()
-
-
-@receiver(post_save, weak=False, dispatch_uid='absentee_visit_attempts_on_post_save')
-def absentee_visit_attempts_on_post_save(sender, instance, **kwargs):
-    if not kwargs.get('raw', False):
-        if isinstance(instance, SubjectAbsenteeEntry):
-            household_member = instance.subject_absentee.household_member
+        if isinstance(instance, SubjectAbsenteeEntry) or isinstance(instance, SubjectUndecidedEntry):
+            if isinstance(instance, SubjectAbsenteeEntry) and instance.subject_absentee:
+                household_member = instance.subject_absentee.household_member
+            elif isinstance(instance, SubjectUndecidedEntry) and instance.subject_undecided:
+                household_member = instance.subject_undecided.household_member
             if household_member.absentee_visit_attempts < 3:
                 household_member.absentee_visit_attempts += 1
                 household_member.save()
-            else:
-                raise TypeError("Cannot have more than three visit attempts for household member")
