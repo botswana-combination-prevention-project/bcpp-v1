@@ -109,10 +109,6 @@ class PlotReplcamentMethodTests(TestCase):
                 initials='TF', gender='F', age_in_years=27, present_today='Yes',
                 member_status='RESEARCH')
         member.save()
-
-        self.assertEqual(PlotReplacement.replace_refusal_plot(plot), Household.objects.filter(plot=plot),
-                member_status='RESEARCH')
-        self.assertEqual(PlotReplacement.replace_refusal_plot(plot), plot)
         self.assertEqual(ReplacementData.replace_refusals(plot), [Household.objects.filter(plot=plot)])
 
     def test_replacement_absentee(self):
