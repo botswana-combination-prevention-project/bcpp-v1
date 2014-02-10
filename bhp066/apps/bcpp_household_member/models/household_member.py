@@ -230,7 +230,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                                           'household_member': self.id,
                                           'dashboard_id': self.household_structure.id,
                                           'dashboard_model': 'household_structure',
-                                          'dashboard_type': 'household'})
+                                          'dashboard_type': 'household',},)
+#                                           age=self.age_in_years,
+#                                           residency=self.study_resident)
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
