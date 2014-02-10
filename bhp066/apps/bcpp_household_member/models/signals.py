@@ -24,6 +24,9 @@ def household_member_on_post_save(sender, instance, **kwargs):
             if instance.member_status == 'ABSENT':
                 # TODO: probably do not need to call this now??
                 instance.subject_absentee
+            if instance.member_status == 'UNDECIDED':
+                # TODO: probably do not need to call this now??
+                instance.subject_undecided
 
 
 @receiver(post_save, weak=False, dispatch_uid='base_household_member_consent_on_post_save')
@@ -42,6 +45,7 @@ def visit_attempts_on_post_save(sender, instance, **kwargs):
                 household_member = instance.subject_absentee.household_member
             elif isinstance(instance, SubjectUndecidedEntry) and instance.subject_undecided:
                 household_member = instance.subject_undecided.household_member
-            if household_member.absentee_visit_attempts < 3:
-                household_member.absentee_visit_attempts += 1
+            if household_member.visit_attempts <= 3:
+                household_member.visit_attempts = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=household_member).count() + \
+                                                  SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=household_member).count()
                 household_member.save()
