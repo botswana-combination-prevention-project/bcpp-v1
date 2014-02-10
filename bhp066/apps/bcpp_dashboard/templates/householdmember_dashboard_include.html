@@ -126,6 +126,8 @@
                     <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.moved_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.moved_form_label }}</A>
+               {% elif household_member.member_status == 'NOT_ELIGIBLE' %}
+               		<A name="loss-{{household_member.pk}}" href="{{ household_member.loss_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.loss_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.loss_form_label }}</A>
                {% endif %}
             {% else %}
                     ----

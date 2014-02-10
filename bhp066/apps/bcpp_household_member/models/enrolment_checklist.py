@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
+from django.core.exceptions import ValidationError
 
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.base.model.validators import eligible_if_yes
