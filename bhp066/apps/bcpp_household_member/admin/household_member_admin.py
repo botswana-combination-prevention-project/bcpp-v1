@@ -37,7 +37,7 @@ class AbsenteeVisitAtempts(admin.SimpleListFilter):
         `self.value()`.
         """
         if self.value():
-            return queryset.filter(member_status='ABSENT', absentee_visit_attempts=self.value())
+            return queryset.filter(member_status='ABSENT', visit_attempts=self.value())
         else:
             return queryset
 
@@ -79,7 +79,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'eligible_subject',
                     'is_consented',
                     'member_status',
-                    'absentee_visit_attempts',
+                    'visit_attempts',
                     'created',
                     'hostname_created')
 
