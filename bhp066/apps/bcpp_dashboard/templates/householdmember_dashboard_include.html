@@ -108,7 +108,7 @@
 	                    {% for absentee in household_member.absentee_form_label %}
 	                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_urls|index_dictionary:absentee.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_absentee={{household_member.subject_absentee.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ absentee.0 }}</li></A>
 	                    {% endfor %}
-		                {% if household_member.absentee_visit_attempts == 3 %}
+		                {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)
 		                {% endif %}
                     </ol>
@@ -118,7 +118,7 @@
 	                    {% for undecided in household_member.undecided_form_label %}
 	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
 	                    {% endfor %}
-	                    {% if household_member.absentee_visit_attempts == 3 %}
+	                    {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)
 		                {% endif %}
                     </ol>
