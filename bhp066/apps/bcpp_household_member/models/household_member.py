@@ -87,7 +87,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     #absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
 
-    absentee_visit_attempts = models.IntegerField(default=0)
+    visit_attempts = models.IntegerField(default=0)
 
     target = models.IntegerField(default=0)
 
@@ -348,7 +348,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             model_entry_count = model_entry_instances.count()
             for subject_undecided_entry in model_entry_instances:
                 report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'),subject_undecided_entry.id))
-            if self.absentee_visit_attempts < 3:
+            if self.visit_attempts < 3:
                 report_datetime.append(('add new entry', 'add new entry'))
         if not report_datetime:
             report_datetime.append(('add new entry', 'add new entry'))
