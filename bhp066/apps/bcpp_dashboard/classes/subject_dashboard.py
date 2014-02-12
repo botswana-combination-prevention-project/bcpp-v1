@@ -15,7 +15,9 @@ class SubjectDashboard(BaseSubjectDashboard):
     def __init__(self, *args, **kwargs):
         self.household_dashboard_url = 'household_dashboard_url'
         self.dashboard_type_list = ['subject']
+        self.form_category = None
         kwargs.update({'dashboard_models': {'subject_consent': SubjectConsent}})
+        #kwargs.update({'membership_form_category': self.survey.survey_slug})
         self.visit_model = SubjectVisit
         super(SubjectDashboard, self).__init__(*args, **kwargs)
 
