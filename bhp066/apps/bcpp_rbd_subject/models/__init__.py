@@ -1,2 +1,3 @@
 from .subject_locator_rbd import SubjectLocatorRBD
 from .subject_visit_rbd import SubjectVisitRBD
+from .subject_consent_rbd import SubjectConsentRBDonly
