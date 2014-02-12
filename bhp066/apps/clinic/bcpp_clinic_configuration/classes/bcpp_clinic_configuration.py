@@ -37,3 +37,5 @@ class BcppClinicConfiguration(BaseAppConfiguration):
                 'start_datetime': datetime(2013, 12, 16, 10, 30, 00),
                 'end_datetime': datetime(2014, 12, 23, 16, 30, 00),
                 'add_for_app': 'bcpp_clinic'}
+
+    consent_catalogue_list = [consent_catalogue_setup]
