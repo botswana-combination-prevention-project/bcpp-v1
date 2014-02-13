@@ -1,4 +1,4 @@
-from .subject_consent import SubjectConsent, SubjectConsentRbd
+from .subject_consent import BaseSubjectConsent, SubjectConsent, SubjectConsentRbd
 from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
@@ -37,6 +37,7 @@ from .reproductive_health import ReproductiveHealth
 from .medical_diagnoses import MedicalDiagnoses
 from .heart_attack import HeartAttack
 from .cancer import Cancer
+from .subject_off_study_mixin import SubjectOffStudyMixin
 from .tubercolosis import Tubercolosis
 from .sti import Sti
 from .substance_use import SubstanceUse

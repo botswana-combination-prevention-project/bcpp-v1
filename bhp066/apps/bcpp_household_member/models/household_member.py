@@ -86,9 +86,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_checklist_filled = models.NullBooleanField(default=None, editable=False)
 
-    absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
+    #absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
 
-    absentee_visit_attempts = models.IntegerField(default=0)
+    visit_attempts = models.IntegerField(default=0)
 
     target = models.IntegerField(default=0)
 
@@ -275,18 +275,27 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def subject_absentee(self):
         """Returns the subject absentee instance for this member and creates a subject_absentee if it does not exist."""
         from ..models import SubjectAbsentee
-        subject_absentee = None
+        return self.entry_instance_factory(SubjectAbsentee, 'ABSENT')
+
+    @property
+    def subject_undecided(self):
+        """Returns the subject undecided instance for this member and creates a subject_undecided if it does not exist."""
+        from ..models import SubjectUndecided
+        return self.entry_instance_factory(SubjectUndecided, 'UNDECIDED')
+
+    def entry_instance_factory(self, entry_parent_model, member_status):
+        instance = None
         try:
-            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
-        except SubjectAbsentee.DoesNotExist:
-            if self.member_status == 'ABSENT':
-                subject_absentee = SubjectAbsentee.objects.create(
+            instance = entry_parent_model.objects.get(household_member=self)
+        except entry_parent_model.DoesNotExist:
+            if self.member_status == member_status:
+                instance = entry_parent_model.objects.create(
                     report_datetime=datetime.today(),
                     registered_subject=self.registered_subject,
                     household_member=self,
                     survey=self.household_structure.survey,
                     )
-        return subject_absentee
+        return instance
 
     def render_absentee_info(self):
         """Renders the absentee information for the template."""
@@ -308,10 +317,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def absentee_entry_form_urls(self):
         """Returns a url or urls to the subjectabsenteeentry(s) if an instance(s) exists."""
-        SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
         SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
         absentee_entry_urls = {}
-        subject_absentee = SubjectAbsentee.objects.get(household_member=self)
+        subject_absentee = self.subject_absentee
         for entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
             absentee_entry_urls[entry.pk] = self._get_form_url('subjectabsenteeentry', entry.pk)
         add_url_2 = self._get_form_url('subjectabsenteeentry', model_pk=None, add_url=True)
@@ -321,18 +329,44 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def absentee_form_label(self):
         SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
         SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
+        return self.form_label_helper(SubjectAbsentee, SubjectAbsenteeEntry)
+    absentee_form_label.allow_tags = True
+
+    @property
+    def undecided_entry_form_urls(self):
+        """Returns a url or urls to the subjectundecidedentry(s) if an instance(s) exists."""
+        SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'subjectundecidedentry')
+        undecided_entry_urls = {}
+        subject_undecided = self.subject_undecided
+        for entry in SubjectUndecidedEntry.objects.filter(subject_undecided=subject_undecided).order_by('report_datetime'):
+            undecided_entry_urls[entry.pk] = self._get_form_url('subjectundecidedentry', entry.pk)
+        add_url_2 = self._get_form_url('subjectundecidedentry', model_pk=None, add_url=True)
+        undecided_entry_urls['add new entry'] = add_url_2
+        return undecided_entry_urls
+
+    def undecided_form_label(self):
+        SubjectUndecided = models.get_model('bcpp_household_member', 'subjectundecided')
+        SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'subjectundecidedentry')
+        return self.form_label_helper(SubjectUndecided, SubjectUndecidedEntry)
+    undecided_form_label.allow_tags = True
+
+    def form_label_helper(self, model, model_entry):
         report_datetime = []
-        if SubjectAbsentee.objects.filter(household_member=self):
-            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
-            absentee_count = SubjectAbsenteeEntry.objects.filter(subject_absentee = subject_absentee).count()
-            for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
-                report_datetime.append((subject_absentee_entry.report_datetime.strftime('%Y-%m-%d'),subject_absentee_entry.id))
-            if absentee_count < 3:
+        model_entry_instances = []
+        if model.objects.filter(household_member=self):
+            model_instance = model.objects.get(household_member=self)
+            if model._meta.module_name == 'subjectundecided':
+                model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
+            elif model._meta.module_name == 'subjectabsentee':
+                model_entry_instances = model_entry.objects.filter(subject_absentee=model_instance).order_by('report_datetime')
+            model_entry_count = model_entry_instances.count()
+            for subject_undecided_entry in model_entry_instances:
+                report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'),subject_undecided_entry.id))
+            if self.visit_attempts < 3:
                 report_datetime.append(('add new entry', 'add new entry'))
         if not report_datetime:
             report_datetime.append(('add new entry', 'add new entry'))
         return report_datetime
-    absentee_form_label.allow_tags = True
 
     @property
     def refused_form_url(self):

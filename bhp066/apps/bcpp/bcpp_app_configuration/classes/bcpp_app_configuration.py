@@ -48,6 +48,16 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'end_datetime': study_end_datetime,
                 'add_for_app': 'bcpp_subject'}
 
+    rbd_consent_catalogue_setup = {
+                'name': 'subject_rbd',
+                # TO DO: how do we call a ContentTypeMap here???
+#                 'content_type_map': '',
+                'consent_type': 'study',
+                'version': 1,
+                'start_datetime': study_start_datetime,
+                'end_datetime': study_end_datetime,
+                'add_for_app': 'bcpp_rbd_subject'}
+
     survey_setup = {
                 'survey_name': 'BCPP Year 1',
                 'survey_slug': 'bcpp-year-1',
@@ -56,6 +66,9 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
                         'site_code': site_mappers.get_current_mapper().map_code}
+
+    consent_catalogue_list = [consent_catalogue_setup,rbd_consent_catalogue_setup]
+
 
     def update_or_create_survey(self):
         if Survey.objects.all().count() == 0:
