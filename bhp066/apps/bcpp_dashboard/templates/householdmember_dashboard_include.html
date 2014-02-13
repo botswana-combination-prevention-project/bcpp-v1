@@ -35,7 +35,7 @@
     <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
     
     <td>{{ forloop.counter }}.&nbsp;
-    {% if not household_member.member_status == 'CONSENT' %}
+    {% if not household_member.is_consented %}
     	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
     		{{ household_member.first_name|encrypted }}
     	{% else %}
@@ -106,12 +106,35 @@
 	                    {% for absentee in household_member.absentee_form_label %}
 	                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_urls|index_dictionary:absentee.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_absentee={{household_member.subject_absentee.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ absentee.0 }}</li></A>
 	                    {% endfor %}
+		                {% if household_member.visit_attempts == 3 %}
+               				reached maximum visit attempts (absentee + undecided)
+		                {% endif %}
+                    </ol>
+               {% elif household_member.member_status == 'UNDECIDED' %}
+               Undecided log (attempts to contact)
+               		<ol>
+	                    {% for undecided in household_member.undecided_form_label %}
+	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
+	                    {% endfor %}
+	                    {% if household_member.visit_attempts == 3 %}
+               				reached maximum visit attempts (absentee + undecided)
+		                {% endif %}
                     </ol>
                {% elif household_member.member_status == 'REFUSED' %}
                     <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.moved_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.moved_form_label }}</A>
-               {% endif %}
+
+               {% elif household_member.member_status == 'RBD' and not household_member.eligible_subject %}
+               		{% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
+                	<span style="color:white;background-color:red;">&nbsp;</span>
+                	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+               {% elif household_member.member_status == 'RBD' and household_member.eligible_subject %}
+               		Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
+               {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.is_minor %}
+               		<span style="color:white;background-color:red;">&nbsp;</span>
+                	<A title="Complete the Loss form no need for enrolment checklist for a minor" href="{% url loss_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_member.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+            	{% endif %}
             {% else %}
                     ----
             {% endif %}                
