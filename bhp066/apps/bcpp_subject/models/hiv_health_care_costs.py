@@ -27,17 +27,17 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         help_text="",
         )
     place_care_received = models.CharField(
-        verbose_name=_("Where do you receive most of your HIV related health care? "),
+        verbose_name=_("Where do you receive most of your HIV related health care when not staying in the hospital? "),
         max_length=40,
         choices=HEALTH_CARE_PLACE,
         help_text="",
         )
     care_regularity = models.CharField(
-        verbose_name=_("In the past 3 months, how many times did you obtain HIV related health care"
-                      " in this location? "),
+        verbose_name=_("In the past 3 months, how many times did you have clinic visits to see a health care worker,"
+                      " a nurse, or doctor? "),
         max_length=20,
         choices=CARE_REGULARITY,
-        help_text="",
+        help_text="Do not include medicine re-fill visits.",
         )
     doctor_visits = models.CharField(
         verbose_name=_("In the last 3 months, how often did someone take you to the doctor? "),
