@@ -251,7 +251,7 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
         self.update_urgent_referral()
         super(SubjectReferral, self).save(*args, **kwargs)
 
-    def update_mixin_fields(self):
+    def update_export_mixin_fields(self):
         self.exported = True
         self.exported_datetime = datetime.now()
         self.save()
