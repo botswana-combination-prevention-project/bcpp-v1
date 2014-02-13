@@ -53,25 +53,19 @@
     <td>{{ household_member.relation }}</td>
     {% comment%} particpation {% endcomment %}
     <td id="participation">
-        
-        {% if household_member.is_eligible and not household_member.is_consented %}
-            <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="post">
-                {% csrf_token %}
-                <table>
-                    <tr>
-                        {% if household_member.member_status == 'NOT_REPORTED' %}<td style="color:white;background-color:red;">&nbsp;</td>{% else %}<td>&nbsp;</td>{% endif %}            
-                        <td>
-                            <table><tr>{{ household_member.participation_form.as_table }}</tr></table>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        {% else %}
-            {% if household_member.member_status != 'NOT_REPORTED' %}
-                {{ household_member.member_status }}
-            {% else %}
-                {{ household_member.member_status }} {{household_member.is_consented}}
-            {% endif %}            
+        {% if not household_member.is_consented %}
+         <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
+         {% csrf_token %}
+		    <select name="status" id="status" onchange="this.form.submit()">
+	    		{% for status_key, status_value  in household_member.status_choices %}
+	    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+		    	{% endfor %}
+			</select>
+		    <input type="hidden" name="household_member" value={{ household_member.id }}>
+		    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
+		    <input type="hidden" name="dashboard_model" value="household_structure">
+		    <input type="hidden" name="dashboard_type" value="household">
+		</form>            
         {% endif %}
     </td>
  
@@ -98,7 +92,11 @@
              		    Participant Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
                     {% endif %}
             	{% endif %}
-
+			
+			{% elif 'RESEARCH' in household_member.member_status and household_member.eligible_checklist_filled and not household_member.eligible_subject %}
+				<span style="color:white;background-color:red;">&nbsp;</span>
+                <A title="Complete the Loss form" href="{% url loss_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_member.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+			
             {% elif household_member.member_status == 'HTC' %}
                 <span style="color:white;background-color:red;">option not available</span>
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
@@ -113,8 +111,6 @@
                     <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.moved_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.moved_form_label }}</A>
-               {% elif household_member.member_status == 'NOT_ELIGIBLE' %}
-               		<A name="loss-{{household_member.pk}}" href="{{ household_member.loss_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.loss_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.loss_form_label }}</A>
                {% endif %}
             {% else %}
                     ----
