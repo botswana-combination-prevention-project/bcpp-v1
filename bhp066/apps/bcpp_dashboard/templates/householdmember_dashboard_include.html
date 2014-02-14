@@ -73,8 +73,8 @@
     <td>    
             {% comment %}DEBUG, remove{% endcomment %}
             {% if household_member.member_status and household_member.member_status not in household_member_actions %}Unknown member status!{%endif%}
-
-            {% if 'RESEARCH' in household_member.member_status and not household_member.eligible_subject %}
+	
+            {% if 'RESEARCH' == household_member.member_status and not household_member.eligible_subject %}
                 {% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
                 <span style="color:white;background-color:red;">&nbsp;</span>
                 <A title="Complete the enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
@@ -95,7 +95,7 @@
 			
 			{% elif 'RESEARCH' in household_member.member_status and household_member.eligible_checklist_filled and not household_member.eligible_subject %}
 				<span style="color:white;background-color:red;">&nbsp;</span>
-                <A title="Complete the Loss form" href="{% url loss_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_member.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+                <A title="Complete the Loss form" href="{% url loss_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_member.pk }}&household_member={{household_member.pk}}">Loss form</A>
 			
             {% elif household_member.member_status == 'HTC' %}
                 <span style="color:white;background-color:red;">option not available</span>
@@ -133,7 +133,7 @@
                		Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
                {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.is_minor %}
                		<span style="color:white;background-color:red;">&nbsp;</span>
-                	<A title="Complete the Loss form no need for enrolment checklist for a minor" href="{% url loss_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_member.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+                	<A title="Complete the Loss form no need for enrolment checklist for a minor" href="{% url loss_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Loss form</A>
             	{% endif %}
             {% else %}
                     ----
