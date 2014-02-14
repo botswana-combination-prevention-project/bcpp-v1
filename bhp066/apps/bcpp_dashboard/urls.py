@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from apps.bcpp_dashboard.classes import SubjectDashboard, HouseholdDashboard
+from apps.bcpp_dashboard.classes import SubjectDashboard, HouseholdDashboard, BloodDrawDashboard
 
 regex = {}
 regex['dashboard_type'] = 'subject'
@@ -12,10 +12,10 @@ urlpatterns = SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', rege
 # regex['dashboard_model'] = 'household_member'
 # urlpatterns += SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['htc_subject_visit', ])
 
-# regex = {}
-# regex['dashboard_type'] = 'htc_subject'
-# regex['dashboard_model'] = 'household_member'
-# urlpatterns += SubjectDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['htc_visit', ])
+regex = {}
+regex['dashboard_type'] = 'rbd_subject'
+regex['dashboard_model'] = 'household_member'
+urlpatterns += BloodDrawDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['subject_visit', ])
 
 regex = {}
 regex['dashboard_type'] = 'household'
