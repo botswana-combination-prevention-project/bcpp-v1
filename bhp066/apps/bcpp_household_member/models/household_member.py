@@ -144,7 +144,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return self.household_structure.survey
 
     def is_minor(self):
-        return (self.age_in_years <= 16)
+        return (self.age_in_years >= 16 and self.age_in_years <= 17)
 
     def is_adult(self):
         return (self.age_in_years >= 18 and self.age_in_years <= 64)
