@@ -28,8 +28,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
         )
     money_spent = models.DecimalField(
         verbose_name=_("In the last 3 months, how much money in total have you spent on "
-                      "medicines for yourself? Please include alternative and traditional "
-                      "medicine or special foods "),
+                      "medicines for yourself?"),
         max_digits=5,
         decimal_places=2,
         help_text="",

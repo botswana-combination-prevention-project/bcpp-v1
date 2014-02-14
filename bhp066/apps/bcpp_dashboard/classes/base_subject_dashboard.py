@@ -14,9 +14,10 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
         dashboard_models = kwargs.get('dashboard_models', {})
         dashboard_models.update({'household_member': HouseholdMember})
         kwargs.update({'dashboard_models': dashboard_models})
-
         self.household_member = (kwargs.get('dashboard_model'), kwargs.get('dashboard_id'))
-        kwargs.update({'membership_form_category': self.survey.survey_slug})
+        if not self.form_category:
+            self.form_category = self.survey.survey_slug
+        kwargs.update({'membership_form_category': self.form_category})
 
         super(BaseSubjectDashboard, self).__init__(*args, **kwargs)
 
