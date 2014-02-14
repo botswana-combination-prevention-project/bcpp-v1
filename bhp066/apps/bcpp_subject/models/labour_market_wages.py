@@ -18,12 +18,12 @@ class LabourMarketWages (BaseScheduledVisitModel):
         help_text="",
         )
     occupation = models.CharField(
-        verbose_name=_("What is your occupation?"),
+        verbose_name=_("What is your primary occupation?"),
         max_length=40,
         choices=OCCUPATION,
         null=True,
         blank=True,
-        help_text="",
+        help_text="main source of income.",
         )
     occupation_other = OtherCharField()
 
