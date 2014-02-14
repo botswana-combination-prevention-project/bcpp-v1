@@ -103,7 +103,13 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         """Does not save anything, note no call to super."""
-        self.household_member.eligible_subject = True
+        if self.legal_marriage == 'No':
+            self.household_member.eligible_subject = False
+        elif self.legal_marriage == 'Yes' and self.marriage_certificate == 'No':
+            self.household_member.eligible_subject = False
+        else:
+            self.household_member.eligible_subject = True
+        self.household_member.eligible_checklist_filled = True
         self.household_member.save()
 
     class Meta:

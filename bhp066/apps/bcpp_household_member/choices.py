@@ -11,6 +11,16 @@ HOUSEHOLD_MEMBER_ACTION = [
     ('NOT_ELIGIBLE', 'Not Eligible'),
 ]
 
+HOUSEHOLD_MEMBER_HTC = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('HTC', 'HTC'),
+]
+
+HOUSEHOLD_MEMBER_MINOR = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('NOT_ELIGIBLE', 'Not Eligible'),
+]
+
 ABSENTEE_STATUS = (
     ('ABSENT', _('Absent')),
     ('NOT_ABSENT', _('No longer absent')),
