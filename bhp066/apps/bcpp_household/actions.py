@@ -7,9 +7,9 @@ from django.http import HttpResponseRedirect
 
 def process_dispatch(modeladmin, request, queryset, **kwargs):
     selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
-    print selected
     content_type = ContentType.objects.get_for_model(queryset.model)
     return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
+    #return HttpResponseRedirect("http://www.google.com")
 
 process_dispatch.short_description = "Dispatch plots to netbook."
 
