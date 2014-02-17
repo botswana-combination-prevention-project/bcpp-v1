@@ -17,6 +17,8 @@ class PlotForm(BaseModelForm):
                 raise forms.ValidationError('Unknown community {0}. Must be one of {1}.'.format(self.instance.community, ', '.join(site_mappers.get_as_list())))
 
             # verify gps to target before the save() method does
+            if not cleaned_data.get('gps_degrees_s') and not cleaned_data.get('gps_minutes_s') and not cleaned_data.get('gps_degrees_e') and not cleaned_data.get('gps_minutes_e'):
+                raise forms.ValidationError('The following fields must all be filled gps_degrees_s, gps_minutes_s, gps_degrees_e, gps_minutes_e. Got {0}, {1}, {2}, {3}'.format(cleaned_data.get('gps_degrees_s'), cleaned_data.get('gps_minutes_s'), cleaned_data.get('gps_degrees_e'), cleaned_data.get('gps_minutes_e')))
             mapper_cls = site_mappers.get_registry(self.instance.community)
             mapper = mapper_cls()
             gps_lat = mapper.get_gps_lat(cleaned_data.get('gps_degrees_s'), cleaned_data.get('gps_minutes_s'))

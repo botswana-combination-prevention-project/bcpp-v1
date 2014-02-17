@@ -81,10 +81,13 @@ class ReplacementData(object):
             #No HH consented.
             if members:
                 for member in members:
-                    if member.eligible_member and member.participation_form:
-                        if member.member_status != 'RESEARCH':
-                            replaced.append(household)
-                            return replaced
+                    if member.eligible_member:
+                        if member.member_status == 'RESEARCH':
+                            consented_check_list.append(member.is_consented)
+            if all(map(lambda x: x == consented_check_list[0], consented_check_list)):
+                if consented_check_list[0] == False:
+                    replaced.append(household)
+                    return replaced
         return replaced
 
     def evaluate_refusals(self, household):
