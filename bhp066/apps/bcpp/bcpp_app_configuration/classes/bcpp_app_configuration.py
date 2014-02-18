@@ -6,7 +6,7 @@ from apps.bcpp_survey.models import Survey
 from edc.map.classes import site_mappers
 
 
-study_start_datetime = datetime(2013, 10, 29, 10, 30, 00)
+study_start_datetime = datetime(2013, 12, 29, 10, 30, 00)
 study_end_datetime = datetime(2014, 10, 29, 16, 30, 00)
 
 
