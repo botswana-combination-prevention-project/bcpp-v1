@@ -18,7 +18,7 @@ class Migration(SchemaMigration):
         db.delete_column(u'bcpp_household_member_householdmember_audit', 'absentee')
 
         # Deleting field 'HouseholdMemberAudit.absentee_visit_attempts'
-        db.rename_column(u'bcpp_household_member_householdmember', 'absentee_visit_attempts', 'visit_attempts')
+        db.rename_column(u'bcpp_household_member_householdmember_audit', 'absentee_visit_attempts', 'visit_attempts')
 
 
     def backwards(self, orm):
