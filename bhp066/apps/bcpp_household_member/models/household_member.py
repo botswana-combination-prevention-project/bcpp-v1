@@ -84,8 +84,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the eligibility checklist if completed")
 
-    eligible_checklist_filled = models.NullBooleanField(default=None, editable=False)
-
     #absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
 
     visit_attempts = models.IntegerField(default=0)
