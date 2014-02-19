@@ -18,8 +18,7 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
-from ..choices import HOUSEHOLD_MEMBER_ACTION
-
+from ..choices import HOUSEHOLD_MEMBER_ACTION, HOUSEHOLD_MEMBER_HTC, HOUSEHOLD_MEMBER_MINOR
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
 
@@ -86,6 +85,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
 
     eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
+    
+    eligible_checklist_filled = models.NullBooleanField(default=None, editable=False)
 
     visit_attempts = models.IntegerField(default=0)
 
@@ -220,19 +221,30 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             retval = True
         return retval
 
+#  @property
+#     def participation_form_choices(self):
+#         """Returns a form object for the household survey dashboard."""
+#         from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION, HOUSEHOLD_MEMBER_H
+#         if not self.member_status:
+#             self.member_status = 'NOT_REPORTED'
+#         return ParticipationForm(initial={'status': self.member_status,
+#                                           'household_member': self.id,
+#                                           'dashboard_id': self.household_structure.id,
+#                                           'dashboard_model': 'household_structure',
+#                                           'dashboard_type': 'household',},)
+# #                                           age=self.age_in_years,
+# #                                           residency=self.study_resident)
+
     @property
-    def participation_form(self):
-        """Returns a form object for the household survey dashboard."""
-        from apps.bcpp_household_member.forms import ParticipationForm
-        if not self.member_status:
-            self.member_status = 'NOT_REPORTED'
-        return ParticipationForm(initial={'status': self.member_status,
-                                          'household_member': self.id,
-                                          'dashboard_id': self.household_structure.id,
-                                          'dashboard_model': 'household_structure',
-                                          'dashboard_type': 'household',},)
-#                                           age=self.age_in_years,
-#                                           residency=self.study_resident)
+    def status_choices(self):
+        status_choices = HOUSEHOLD_MEMBER_ACTION
+        if self.age_in_years >= 64 or self.study_resident == 'No':
+            status_choices = HOUSEHOLD_MEMBER_HTC
+        elif (self.age_in_years <= 16):
+            status_choices = HOUSEHOLD_MEMBER_MINOR
+        else:
+            status_choices = HOUSEHOLD_MEMBER_ACTION
+        return status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
