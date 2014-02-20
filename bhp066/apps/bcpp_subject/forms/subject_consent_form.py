@@ -21,6 +21,10 @@ class MainConsentForm(BaseSubjectConsentForm):
         help_text="",
         widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer))
 
+    def check_elligibility_filled(self, cleaned_data):
+        if not cleaned_data.get('household_member').eligible_subject == True:
+            raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
+
     def clean(self):
 
         cleaned_data = self.cleaned_data
@@ -32,13 +36,11 @@ class MainConsentForm(BaseSubjectConsentForm):
         household_member = cleaned_data.get("household_member")
         if not household_member:
             raise forms.ValidationError("HouseholdMember cannot be None.")
-        if not cleaned_data.get('household_member').eligible_subject == True:
-            raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
         if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('guardian_name', None):
             raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
         if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
             raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
-
+        self.check_elligibility_filled(cleaned_data)
         if cleaned_data.get('consent_datetime'):
             consent_datetime = cleaned_data.get('consent_datetime').date()
             rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
