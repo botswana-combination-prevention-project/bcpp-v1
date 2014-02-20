@@ -92,7 +92,7 @@
              		    Participant Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
                     {% endif %}
             	{% endif %}
-			
+            	
             {% elif household_member.member_status == 'HTC' %}
                 <span style="color:white;background-color:red;">option not available</span>
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}

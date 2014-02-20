@@ -47,3 +47,13 @@ DATABASES = {
 #     'bcpp020-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.138'),
 #     'bcpp030-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.54'),
 }
+
+INSTALLED_APPS += ('debug_toolbar',)
+
+INTERNAL_IPS = ('127.0.0.1', )
+
+DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False, }
+
+MIDDLEWARE_CLASSES += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+)
