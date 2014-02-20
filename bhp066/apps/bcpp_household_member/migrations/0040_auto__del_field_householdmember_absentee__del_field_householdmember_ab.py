@@ -11,11 +11,6 @@ class Migration(SchemaMigration):
         # Deleting field 'HouseholdMember.absentee'
         db.delete_column(u'bcpp_household_member_householdmember', 'absentee')
 
-        # Adding field 'HouseholdMember.eligible_checklist_filled'
-        db.add_column(u'bcpp_household_member_householdmember', 'eligible_checklist_filled',
-                      self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
-                      keep_default=False)
-
         # Deleting field 'HouseholdMemberAudit.absentee'
         db.delete_column(u'bcpp_household_member_householdmember_audit', 'absentee')
 
@@ -24,12 +19,6 @@ class Migration(SchemaMigration):
 
         # Rebnaming field 'HouseholdMemberAudit.absentee_visit_attempts'
         db.rename_column(u'bcpp_household_member_householdmember_audit', 'absentee_visit_attempts', 'visit_attempts')
-
-
-        # Adding field 'HouseholdMemberAudit.eligible_checklist_filled'
-        db.add_column(u'bcpp_household_member_householdmember_audit', 'eligible_checklist_filled',
-                      self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
-                      keep_default=False)
 
 
     def backwards(self, orm):
