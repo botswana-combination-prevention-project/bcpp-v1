@@ -8,7 +8,7 @@ from  apps.bcpp_rbd_subject.forms import SubjectConsentRBDForm
 #blood draw consent
 class SubjectConsentRBDAdmin(BaseConsentModelAdmin):
 
-    dashboard_type = 'subject'
+    dashboard_type = 'rbd_subject'
     form = SubjectConsentRBDForm
 
     def __init__(self, *args, **kwargs):

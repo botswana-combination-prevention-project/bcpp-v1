@@ -85,8 +85,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
 
     eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
-    
-    eligible_checklist_filled = models.NullBooleanField(default=None, editable=False)
 
     visit_attempts = models.IntegerField(default=0)
 
