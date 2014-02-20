@@ -238,7 +238,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         status_choices = HOUSEHOLD_MEMBER_ACTION
         if self.age_in_years >= 64 or self.study_resident == 'No':
             status_choices = HOUSEHOLD_MEMBER_HTC
-        elif (self.age_in_years <= 16):
+        elif (self.age_in_years < 16):
             status_choices = HOUSEHOLD_MEMBER_MINOR
         else:
             status_choices = HOUSEHOLD_MEMBER_ACTION
