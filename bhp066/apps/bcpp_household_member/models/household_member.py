@@ -82,9 +82,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_member = models.NullBooleanField(default=None, editable=False, help_text='just based on what is on this form...')
 
-    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the eligibility checklist if completed")
+    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
 
-    #absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
+    eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
 
     visit_attempts = models.IntegerField(default=0)
 
@@ -238,7 +238,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         status_choices = HOUSEHOLD_MEMBER_ACTION
         if self.age_in_years >= 64 or self.study_resident == 'No':
             status_choices = HOUSEHOLD_MEMBER_HTC
-        elif (self.age_in_years <= 16):
+        elif (self.age_in_years < 16):
             status_choices = HOUSEHOLD_MEMBER_MINOR
         else:
             status_choices = HOUSEHOLD_MEMBER_ACTION
