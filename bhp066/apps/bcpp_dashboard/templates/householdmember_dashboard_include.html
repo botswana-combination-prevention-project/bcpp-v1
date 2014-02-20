@@ -65,8 +65,14 @@
 		    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
 		    <input type="hidden" name="dashboard_model" value="household_structure">
 		    <input type="hidden" name="dashboard_type" value="household">
-		</form>            
-        {% endif %}
+		</form>
+		{% else %}
+			{% if household_member.member_status != 'NOT_REPORTED' %}
+            	{{ household_member.member_status }}
+            {% else %}
+            	{{ household_member.member_status }} {{household_member.is_consented}}
+            {% endif %}            
+        {% endif %}            
     </td>
  
     {% comment%} dashboard {% endcomment %}
