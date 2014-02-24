@@ -9,6 +9,7 @@ from edc.choices.common import YES_NO, YES_NO_DWTA, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from .household_member import HouseholdMember
+from .loss import Loss
 
 
 class EnrolmentChecklist (BaseDispatchSyncUuidModel):
@@ -105,11 +106,14 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         """Does not save anything, note no call to super."""
         if self.legal_marriage == 'No':
             self.household_member.eligible_subject = False
+            loss_form  = Loss(household_member=self.household_member, report_datetime=, reason='Not a citizen and not married.')
+            loss_form.save()
         elif self.legal_marriage == 'Yes' and self.marriage_certificate == 'No':
             self.household_member.eligible_subject = False
+            loss_form  = Loss(household_member=self.household_member, report_datetime=, reason='Not a citizen, married but does not have a marriage certificate.')
+            loss_form.save()
         else:
             self.household_member.eligible_subject = True
-        self.household_member.eligible_checklist_filled = True
         self.household_member.save()
 
     class Meta:
