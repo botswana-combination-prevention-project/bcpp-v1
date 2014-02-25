@@ -2,6 +2,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from .household import Household
 from .plot import Plot
+from .plot_log import PlotLogEntry
 from .household_structure import HouseholdStructure
 
 
@@ -33,3 +34,15 @@ def create_household_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False) and created:
         if isinstance(instance, Plot):
             instance.create_or_delete_households(instance)
+
+@receiver(post_save, weak=False, dispatch_uid="plot_visit_attempts_on_post_save")
+def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, PlotLogEntry):
+            plot = instance.plot_log.plot
+            attempts = PlotLogEntry.objects.filter(plot_log__plot=plot).count()
+            if attempts <= 3:
+                plot.access_attempts = attempts
+                plot.save()
+            else:
+                raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
