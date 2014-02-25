@@ -157,7 +157,6 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=35,
         null=True,
         choices=PLOT_STATUS,
-        help_text='If Inaccessible, update status and comment but not GPS, household count, time_of_week, etc.'
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
@@ -274,8 +273,7 @@ class Plot(BaseDispatchSyncUuidModel):
             self.action = self.get_action()
             if self.id:
                 self.household_count = self.create_or_delete_households(self)
-            if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
-                    (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
+            if ((self.household_count == 0 and self.status in  ['residential_habitable'])):
                 raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
@@ -304,15 +302,17 @@ class Plot(BaseDispatchSyncUuidModel):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
         for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, member_count=0).order_by('-created'):
-            if Household.objects.filter().count() > instance.household_count:
+            if Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
                 try:
-                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure):
+                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).exists():
                         HouseholdLog.objects.filter(household_structure=household_structure).delete()
                         household_pk = unicode(household_structure.household.pk)
                         household_structure.delete()
-                        for household in Household.objects.filter(pk=household_pk):
-                            HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier).delete
-                            household.delete()
+                        household = Household.objects.get(pk=household_pk)
+                        identifier_history = HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier)
+                        for ind in identifier_history:
+                            ind.delete()
+                        household.delete()
                 except IntegrityError:
                     pass
 
@@ -325,18 +325,20 @@ class Plot(BaseDispatchSyncUuidModel):
             * If number is less than actual household instances, households are deleted as long as
               there are no household members and the household log does not have entries."""
         Household = models.get_model('bcpp_household', 'Household')
-        # check that tuple has not changed and has "occupied"
+        # check that tuple has not changed and has "residential_habitable"
         if instance.status:
             if instance.status not in [item[0] for item in PLOT_STATUS]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        if instance.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'] and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
-            while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
-                instance.create_household(instance)
-            number_of_households = Household.objects.filter(plot__pk=instance.pk).count()
-            if number_of_households > instance.household_count:
-                instance.delete_unused_households(instance)
-        else:
-            instance.delete_unused_households(instance)
+        existing_household_count = Household.objects.filter(plot__pk=instance.pk).count()
+        if instance.status in  ['residential_habitable'] and not (existing_household_count == instance.household_count):
+            if Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
+                while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
+                    instance.create_household(instance)
+            elif Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
+                while Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
+                    instance.delete_unused_households(instance)
+            else:
+                pass
         return Household.objects.filter(plot__pk=instance.pk).count()
 
     def get_action(self):
