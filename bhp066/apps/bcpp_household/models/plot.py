@@ -1,8 +1,6 @@
-from database_storage import DatabaseStorage
-
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError
 from django.utils.translation import ugettext as _
@@ -391,6 +389,69 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
+
+    @property
+    def log_form_label(self):
+        from .plot_log import PlotLog, PlotLogEntry
+        report_datetime = []
+        if PlotLog.objects.filter(plot=self).exists():
+            plot_log_instance = PlotLog.objects.get(plot=self)
+            log_entry_instances = PlotLogEntry.objects.filter(plot_log=plot_log_instance).order_by('report_datetime')
+            entry_count = log_entry_instances.count()
+            for log_entry in log_entry_instances:
+                report_datetime.append((log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
+            if self.access_attempts < 3:
+                report_datetime.append(('add new entry', 'add new entry'))
+        if not report_datetime:
+            report_datetime.append(('add new entry', 'add new entry'))
+        return report_datetime
+    #log_form_label.allow_tags = True
+
+    @property
+    def log_entry_form_urls(self):
+        """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
+        from .plot_log import PlotLog, PlotLogEntry
+        entry_urls = {}
+        plot_log = self.plot_log
+        for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):
+            entry_urls[entry.pk] = self._get_form_url('plotlogentry', entry.pk)
+        add_url_2 = self._get_form_url('plotlogentry', model_pk=None, add_url=True)
+        entry_urls['add new entry'] = add_url_2
+        return entry_urls
+    #log_entry_form_urls.allow_tags = True
+
+    def _get_form_url(self, model, model_pk=None, add_url=None):
+        url = ''
+        pk = None
+        app_label = 'bcpp_household'
+        if add_url:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model))
+            return url
+        if not model_pk:  # This is a like a SubjectAbsentee
+            model_class = models.get_model(app_label, model)
+            try:
+                instance = model_class.objects.get(plot=self)
+                pk = instance.id
+            except:
+                pk = None
+        else:
+            pk = model_pk
+        if pk:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(pk, ))
+        else:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model))
+        return url
+
+    @property
+    def plot_log(self):
+        from .plot_log import PlotLog
+        try:
+            instance = PlotLog.objects.get(plot=self)
+        except PlotLog.DoesNotExist:
+            instance = PlotLog.objects.create(
+                plot=self
+                )
+        return instance
 
     class Meta:
         app_label = 'bcpp_household'

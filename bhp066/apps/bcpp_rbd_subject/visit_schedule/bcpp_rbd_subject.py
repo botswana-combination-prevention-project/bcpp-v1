@@ -39,10 +39,11 @@ class BcppRBDSubjectVisitSchedule(VisitScheduleConfiguration):
             'instructions': None,
             'requisitions': (
                 # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
-                RequisitionTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
+                RequisitionTuple(10L, u'bcpp_lab', u'rbdsubjectRequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
                 ),
             'entries': (
                 EntryTuple(10L, u'bcpp_rbd_subject', u'subjectlocatorrbd'),
+                EntryTuple(20L, u'bcpp_rbd_subject', u'rbddemographics'),
             )}
         }
     )
