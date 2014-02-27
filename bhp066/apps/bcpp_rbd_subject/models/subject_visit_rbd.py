@@ -6,11 +6,10 @@ from edc.subject.visit_tracking.models import BaseVisitTracking
 from apps.bcpp_household_member.models import HouseholdMember
 
 from apps.bcpp_subject.choices import VISIT_UNSCHEDULED_REASON
+from ..models import RBDSubjectOffStudyMixin
 
-from apps.bcpp_subject.models import SubjectOffStudyMixin
 
-
-class SubjectVisitRBD(SubjectOffStudyMixin, BaseVisitTracking):
+class SubjectVisitRBD(RBDSubjectOffStudyMixin, BaseVisitTracking):
 
     household_member = models.ForeignKey(HouseholdMember)
 
