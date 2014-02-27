@@ -7,7 +7,7 @@ from apps.bcpp_rbd_subject.models import SubjectVisitRBD, SubjectConsentRBDonly
 
 class BcppRBDSubjectVisitSchedule(VisitScheduleConfiguration):
 
-    name = 'visit schedule'
+    name = 'rbd visit schedule'
     app_label = 'bcpp_rbd_subject'
     # membership forms
     # (name, model, visible)
