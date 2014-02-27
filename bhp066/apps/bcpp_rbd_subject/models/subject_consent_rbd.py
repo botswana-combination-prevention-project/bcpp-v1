@@ -13,8 +13,13 @@ class SubjectConsentRBDonly(BaseSubjectConsent):
 
     class Meta:
         app_label = 'bcpp_rbd_subject'
+<<<<<<< HEAD
         verbose_name = 'Subject Consent RBD only'
         verbose_name_plural = 'Subject Consent RBD only'
+=======
+        verbose_name = 'Blood Draw Consent RBD Only'
+        verbose_name_plural = 'Blood Draw Consent RBD Only'
+>>>>>>> 2692f8915f0746ef0cbe241092790d2c7c159195
         unique_together = ('subject_identifier', 'survey')
 
 # add Mixin fields to abstract class

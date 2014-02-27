@@ -1,17 +1,18 @@
 from django.contrib import admin
 from edc.lab.lab_packing.admin import BasePackingListAdmin, BasePackingListItemAdmin
+from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
+from apps.bcpp_subject.models import SubjectVisit
+from apps.bcpp_rbd_subject.models import SubjectVisitRBD
 from ..classes import SubjectRequisitionModelAdmin
-from ..models import SubjectRequisition
+from ..models import SubjectRequisition, RBDSubjectRequisition
 from ..models import PackingList, PackingListItem
-from ..forms import SubjectRequisitionForm, PackingListForm, PackingListItemForm
+from ..forms import SubjectRequisitionForm, RBDSubjectRequisitionForm, PackingListForm, PackingListItemForm
 
 
-class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
-
-    form = SubjectRequisitionForm
+class BaseSubjectRequisitionAdmin(BaseRequisitionModelAdmin):
 
     def __init__(self, *args, **kwargs):
-        super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
+        super(BaseSubjectRequisitionAdmin, self).__init__(*args, **kwargs)
         self.fields = [
             self.visit_fieldname,
             "requisition_datetime",
@@ -64,7 +65,26 @@ class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
             'requisition_identifier',
             'panel__name']
 
+class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
+
+    visit_model = SubjectVisit
+    visit_fieldname = 'subject_visit'
+    dashboard_type = 'subject'
+
+    form = SubjectRequisitionForm
+
 admin.site.register(SubjectRequisition, SubjectRequisitionAdmin)
+
+
+class RBDSubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
+
+    visit_model = SubjectVisitRBD
+    visit_fieldname = 'subject_visit_rbd'
+    dashboard_type = 'rbd_subject'
+
+    form = RBDSubjectRequisitionForm
+
+admin.site.register(RBDSubjectRequisition, RBDSubjectRequisitionAdmin)
 
 
 class PackingListAdmin(BasePackingListAdmin):

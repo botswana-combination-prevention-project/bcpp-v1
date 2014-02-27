@@ -340,7 +340,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def form_label_helper(self, model, model_entry):
         report_datetime = []
         model_entry_instances = []
-        if model.objects.filter(household_member=self):
+        if model.objects.filter(household_member=self).exists():
             model_instance = model.objects.get(household_member=self)
             if model._meta.module_name == 'subjectundecided':
                 model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
