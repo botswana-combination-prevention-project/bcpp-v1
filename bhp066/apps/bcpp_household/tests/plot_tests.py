@@ -14,7 +14,7 @@ from apps.bcpp_survey.tests.factories import SurveyFactory
 from ..forms import PlotForm
 from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
 
-from .factories import PlotFactory
+from .factories import PlotFactory, PlotLogEntryFactory
 
 
 class TestPlotMapper(Mapper):
@@ -251,7 +251,17 @@ class PlotTests(TestCase):
         household.delete()
         self.assertIsNone(plot.save())
 
-#     def test_identifier(self):
+    def test_plot_visit_attempts(self):
+        from ..models import PlotLog
+        plot = PlotFactory(status=None, community='test_community')
+        plot_log = plot.plot_log
+        self.assertEqual(1,PlotLog.objects.all().count())
+        plot_log_entry_1 = PlotLogEntryFactory(plot_log)
+        plot_log_entry_2 = PlotLogEntryFactory(plot_log)
+        self.assertEqual(2, PlotLog.objects.all().count())
+        plot_log_entry_3 = PlotLogEntryFactory(plot_log)
+        self.assertRaises(TypeError, PlotLogEntryFactory(plot_log))
+#     def test_identifier(self):plot_log
 #         print 'create a survey'
 #         SurveyFactory()
 #         print 'get site mappers'
