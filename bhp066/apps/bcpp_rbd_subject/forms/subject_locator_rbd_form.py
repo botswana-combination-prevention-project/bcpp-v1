@@ -6,7 +6,7 @@ from apps.bcpp_subject.forms import BaseSubjectModelForm
 class SubjectLocatorRBDForm (BaseSubjectModelForm):
 
     def clean(self):
-        cleaned_data = super(SubjectLocatorRBD, self).clean()
+        cleaned_data = super(SubjectLocatorRBDForm, self).clean()
 
         # validating home_visits
         if cleaned_data.get('home_visit_permission', None) == 'No' and cleaned_data.get('physical_address', None):

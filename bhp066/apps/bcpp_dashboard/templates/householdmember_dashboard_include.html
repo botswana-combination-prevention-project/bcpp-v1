@@ -102,6 +102,7 @@
              		    Participant Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
                     {% endif %}
             	{% endif %}
+            	
             {% elif household_member.member_status == 'HTC' %}
                 <span style="color:white;background-color:red;">option not available</span>
             {% elif household_member.eligibility_checklist_filled and household_member.member_status == 'NOT_ELIGIBLE' %}
@@ -131,7 +132,7 @@
                     <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.moved_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.moved_form_label }}</A>
-               {% elif household_member.member_status == 'RBD' and not household_member.eligible_subject %}
+               {% elif household_member.member_status == 'RBD' and not household_member.eligible_rbd_subject %}
                		{% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
                 	<span style="color:white;background-color:red;">&nbsp;</span>
                 	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url rbd_enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
