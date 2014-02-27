@@ -62,33 +62,7 @@ class ReplacementData(object):
                         replaced.append(self.evaluate_absentees(household))
                         return replaced
         #We will return None if the plot passed does not qualify to be replaced
-        return None
-
-    def replacement_none_consented(self, plot):
-        """Check if a plot has no consents to make it be replaced."""
-        #A plot with more than one household.
-        from apps.bcpp_household.models import Household, HouseholdStructure
-        from apps.bcpp_household_member.models import HouseholdMember
-        replaced = []
-        members = None
-        households = Household.objects.filter(plot=plot)
-        consented_check_list = []
-        for household in households:
-            if HouseholdStructure.objects.get(household=household):
-                h_structure = HouseholdStructure.objects.get(household=household)
-                if HouseholdMember.objects.filter(household_structure=h_structure):
-                    members = HouseholdMember.objects.filter(household_structure=h_structure)
-            #No HH consented.
-            if members:
-                for member in members:
-                    if member.eligible_member:
-                        if member.member_status == 'RESEARCH':
-                            consented_check_list.append(member.is_consented)
-            if all(map(lambda x: x == consented_check_list[0], consented_check_list)):
-                if consented_check_list[0] == False:
-                    replaced.append(household)
-                    return replaced
-        return replaced
+        return None 
 
     def evaluate_refusals(self, household):
         from apps.bcpp_household.models import HouseholdStructure
@@ -121,7 +95,6 @@ class ReplacementData(object):
         from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
         replacement_household = None
         members = None
-        dont_replace = False#Assume a plot should be replaced untill we find a reason not to replace it
         if HouseholdStructure.objects.filter(household=household):
             h_structure = HouseholdStructure.objects.get(household=household)
             if HouseholdMember.objects.filter(household_structure=h_structure):
@@ -131,8 +104,6 @@ class ReplacementData(object):
                 if member.eligible_member and member.member_status == 'ABSENT':
                     sub_absentee = SubjectAbsentee.objects.get(household_member=member)
                     num_absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee).count()
-                    if num_absentee_entries <= '3':#Then we have found a reason not to replace this plot
-                        dont_replace = True
-        if dont_replace:
-            replacement_household = household
+                    if num_absentee_entries == '3':#Then we have found a reason not to replace this plot
+                        replacement_household = household
         return replacement_household
