@@ -18,3 +18,5 @@ class LossAdmin(BaseModelAdmin):
         return super(LossAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(Loss, LossAdmin)
+
+
