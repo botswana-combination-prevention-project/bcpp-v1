@@ -13,6 +13,7 @@ from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdL
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from apps.bcpp_rbd_subject.models import RBDEligibility
+from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, Loss
 from apps.bcpp_survey.models import Survey
 
 
@@ -52,6 +53,7 @@ class HouseholdDashboard(Dashboard):
             title='',  # 'A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
+            loss_meta=Loss._meta,
             household_structure_meta=HouseholdStructure._meta,
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
