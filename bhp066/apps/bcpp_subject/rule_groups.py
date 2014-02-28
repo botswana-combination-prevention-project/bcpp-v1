@@ -1,10 +1,32 @@
 from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic
+from edc.subject.appointment.models import Appointment
 from edc.subject.registration.models import RegisteredSubject
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
                     HivResult, HivResultDocumentation)
 
+
+# class VisitCreationRuleGroup(RuleGroup):
+#     gender_male = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('gender', 'equals', 'f'),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['circumcision', 'circumcised', 'uncircumcised'])
+# 
+#     gender_female = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('gender', 'equals', 'm'),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         filter_model = (Appointment, 'appointment')
+#         source_model = SubjectVisit
+# site_rule_groups.register(VisitCreationRuleGroup)
 
 class ResourceUtilizationRuleGroup(RuleGroup):
 
