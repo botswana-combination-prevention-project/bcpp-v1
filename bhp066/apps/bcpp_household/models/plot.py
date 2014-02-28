@@ -405,7 +405,10 @@ class Plot(BaseDispatchSyncUuidModel):
             log_entry_instances = PlotLogEntry.objects.filter(plot_log=plot_log_instance).order_by('report_datetime')
             entry_count = log_entry_instances.count()
             for log_entry in log_entry_instances:
-                report_datetime.append((log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
+                if log_entry.log_status:
+                    report_datetime.append((log_entry.log_status.lower()+'-'+log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
+                else:
+                    report_datetime.append((log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
             if self.access_attempts < 3:
                 report_datetime.append(('add new entry', 'add new entry'))
         if not report_datetime:
