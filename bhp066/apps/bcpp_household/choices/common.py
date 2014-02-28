@@ -46,7 +46,7 @@ PLOT_STATUS = (
     ('vacant', 'Vacant / Uninhabited'),
     ('non-residential', 'Not a residential plot'),
     #('temporary-unclassified', 'Temporary Unclassified'),
-    ('inaccessible', 'Inaccessible'),
+    #    ('inaccessible', 'Inaccessible'),
     )
 
 HOUSEHOLD_STATUS = (
