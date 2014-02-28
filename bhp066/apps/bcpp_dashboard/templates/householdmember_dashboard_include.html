@@ -54,25 +54,29 @@
     {% comment%} particpation {% endcomment %}
     <td id="participation">
         {% if not household_member.is_consented %}
-         <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
-         {% csrf_token %}
-		    <select name="status" id="status" onchange="this.form.submit()">
-	    		{% for status_key, status_value  in household_member.status_choices %}
-	    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
-		    	{% endfor %}
-			</select>
-		    <input type="hidden" name="household_member" value={{ household_member.id }}>
-		    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
-		    <input type="hidden" name="dashboard_model" value="household_structure">
-		    <input type="hidden" name="dashboard_type" value="household">
-		</form>
+        	{% if household_member.member_status == 'NOT_ELIGIBLE' and household_member.eligibility_checklist_filled %}
+        		{{ household_member.member_status }}
+			{% else %}      
+        		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
+		         {% csrf_token %}
+				    <select name="status" id="status" onchange="this.form.submit()">
+			    		{% for status_key, status_value  in household_member.status_choices %}
+			    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+				    	{% endfor %}
+					</select>
+				    <input type="hidden" name="household_member" value={{ household_member.id }}>
+				    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
+				    <input type="hidden" name="dashboard_model" value="household_structure">
+				    <input type="hidden" name="dashboard_type" value="household">
+				</form>
+        	{% endif%}
 		{% else %}
 			{% if household_member.member_status != 'NOT_REPORTED' %}
-            	{{ household_member.member_status }}
+            	{{ household_member.member_status }} 
             {% else %}
             	{{ household_member.member_status }} {{household_member.is_consented}}
-            {% endif %}            
-        {% endif %}            
+            {% endif %}
+        {% endif %}          
     </td>
  
     {% comment%} dashboard {% endcomment %}
@@ -101,6 +105,8 @@
             	
             {% elif household_member.member_status == 'HTC' %}
                 <span style="color:white;background-color:red;">option not available</span>
+            {% elif household_member.eligibility_checklist_filled and household_member.member_status == 'NOT_ELIGIBLE' %}
+            	<span style="color:white;background-color:red;">Failled eligibility checklist, loss form created.</span>
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                {% if household_member.member_status == 'ABSENT'%}
                Absentee log (attempts to contact)
