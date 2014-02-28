@@ -84,20 +84,20 @@ class SubjectLocatorRBD(SubjectOffStudyMixin, BaseLocator):
     entry_meta_data_manager = EntryMetaDataManager(SubjectVisitRBD)
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
+        return (Plot, 'subject_visit_rbd__household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
-        if self.subject_visit:
+        if self.subject_visit_rbd:
             if not self.registered_subject:
-                self.registered_subject = self.registered_subject = self.subject_visit.appointment.registered_subject
+                self.registered_subject = self.registered_subject = self.subject_visit_rbd.appointment.registered_subject
         super(SubjectLocatorRBD, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return self.subject_visit.natural_key()
+        return self.subject_visit_rbd.natural_key()
 
     def get_visit(self):
-        return self.subject_visit
+        return self.subject_visit_rbd
 
     def get_subject_identifier(self):
         if self.get_visit():
@@ -108,7 +108,7 @@ class SubjectLocatorRBD(SubjectOffStudyMixin, BaseLocator):
         return self.created
 
     def __unicode__(self):
-        return unicode(self.subject_visit)
+        return unicode(self.subject_visit_rbd)
 
     class Meta:
         verbose_name = 'Research Blood Draw Subject Locator'

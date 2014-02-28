@@ -69,9 +69,10 @@ def update_member_status(household_member, cleaned_data):
                 household_member.eligible_subject = False
                 household_member.member_status = status
                 household_member.save()
-        elif household_member.eligible_subject and status == 'NOT_ELIGIBLE':
+        elif status == 'NOT_ELIGIBLE':
             # do not allow to change to NOT ELIGIBLE if already has passed eligibility
-            pass
+            household_member.member_status = status
+            household_member.save()
         else:
             pass
     return household_member.member_status
