@@ -40,6 +40,7 @@ INFO_PROVIDER = (
     ('OTHER', 'Other'))
 
 PLOT_STATUS = (
+<<<<<<< HEAD
     ('occupied', 'Occupied'),
     # ('occupied_no_residents', 'occupied but no residents'),
     # ('occupied_refused_enumeration', 'occupied but refused enumeration'),
@@ -50,6 +51,11 @@ PLOT_STATUS = (
 #     ('non-residential', 'non-residential'),
 #     ('residential_not_habitable', 'residential, not-habitable'),
 #     ('residential_habitable', 'residential, habitable'),
+=======
+    ('non-residential', 'non-residential'),
+    ('residential_not_habitable', 'residential, not-habitable'),
+    ('residential_habitable', 'residential, habitable'),
+>>>>>>> develop
     )
 
 HOUSEHOLD_STATUS = (
