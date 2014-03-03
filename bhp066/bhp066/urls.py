@@ -21,12 +21,12 @@ from edc.dashboard.section.classes import site_sections
 
 dajaxice_autodiscover()
 site_mappers.autodiscover()
-site_visit_schedules.autodiscover()
-site_visit_schedules.build_all()
+# site_visit_schedules.autodiscover()
+# site_visit_schedules.build_all()
 from apps.bcpp.bcpp_app_configuration.classes import BcppAppConfiguration
 from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
-BcppAppConfiguration()
-BcppClinicConfiguration()
+# BcppAppConfiguration()
+# BcppClinicConfiguration()
 site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
