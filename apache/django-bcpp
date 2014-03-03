@@ -1,6 +1,6 @@
 <VirtualHost *:80>
 
-	#Redirect / http://192.168.1.65/bcpp_offline.html?
+		#Redirect / http://192.168.1.65/dom_offline.html?
 
         ServerAdmin webmaster@localhost
 
@@ -10,27 +10,27 @@
 
         CustomLog /var/log/apache2/django-bcpp-access.log combined
 
-        Alias /media/ /home/django/source/bhp066_project/media/
-        <Directory "/home/django/source/bhp066_project/media/" >
+        Alias /media/ /home/django_dev/source/bhp066/live/bhp066_project/bhp066/media/
+        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/bhp066/media/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        Alias /sitestatic/ /home/django/source/bhp066_project/sitestatic/        
-        <Directory "/home/django/source/bhp066_project/sitestatic/" >
+        Alias /sitestatic/ /home/django_dev/source/bhp066/live/bhp066_project/bhp066/sitestatic/
+        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/bhp066/sitestatic/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        Alias /static/ /home/django/source/bhp066_project/static/
-        <Directory "/home/django/source/bhp066_project/static/" >
+        Alias /static/ /home/django_dev/source/bhp066/live/bhp066_project/bhp066/static/
+        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/bhp066/static/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        WSGIScriptAlias / /home/django/source/bhp066_project/apache/django.wsgi
+        WSGIScriptAlias / /home/django_dev/source/bhp066/live/bhp066_project/apache/django.wsgi
 
-        <Directory "/home/django/source/bhp066_project/apache/" >
+        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/apache/" >
           Order deny,allow
           Allow from all
         </Directory>
