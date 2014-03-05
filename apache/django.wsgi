@@ -23,7 +23,7 @@ if path not in sys.path:
 
 #sys.path.insert(0, "/{0}/django_dev/.virtualenvs/bhp066_env/lib/python2.7/site-packages/".format(home_dir))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'bhp066.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bhp066.bhp066.settings'
 
 if platform.system() == 'Darwin':
         os.environ['PYTHON_EGG_CACHE'] = '/usr/local/pylons/python-eggs'

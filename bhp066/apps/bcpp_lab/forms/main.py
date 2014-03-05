@@ -12,6 +12,7 @@ class SubjectRequisitionForm(BaseRequisitionForm):
         self.fields['item_type'].initial = 'tube'
 
     def clean(self):
+        super(SubjectRequisitionForm, self).clean()
 
         cleaned_data = self.cleaned_data
 
@@ -30,6 +31,7 @@ class RBDSubjectRequisitionForm(BaseRequisitionForm):
         self.fields['item_type'].initial = 'tube'
 
     def clean(self):
+        super(RBDSubjectRequisitionForm, self).clean()
 
         cleaned_data = self.cleaned_data
 
