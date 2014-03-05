@@ -56,8 +56,10 @@ class BaseSubjectRequisitionAdmin(BaseRequisitionModelAdmin):
             'is_lis',
             'community',
             "requisition_datetime",
+            'panel',
             'is_receive_datetime',
             'is_labelled_datetime',
+            'user_modified'
             'hostname_created', ]
         self.search_fields = [
             '{0}__appointment__registered_subject__subject_identifier'.format(self.visit_fieldname,),
