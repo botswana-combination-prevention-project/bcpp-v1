@@ -121,7 +121,6 @@ class PlotReplcamentMethodTests(TestCase):
                 household_count=1,
                 status='residential_habitable',
                 eligible_members=3,
-                report_datetime=datetime.date.today(),
                 description="A blue house with yellow screen wall",
                 time_of_week='Weekdays',
                 time_of_day='Morning',
@@ -229,4 +228,4 @@ class PlotReplcamentMethodTests(TestCase):
         household.save()
 
         self.assertEqual(ReplacementData.evaluate_head_of_household_refusal(household), household)
-        
+
