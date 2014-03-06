@@ -109,11 +109,14 @@ class PlotReplcamentMethodTests(TestCase):
                 gender='M',
                 age_in_years=26,
                 present_today='Yes',
-                member_status='RESEARCH')
+                member_status='RESEARCH',
+                eligible_member=True,
+                eligibility_checklist_filled=True)
         member.save()
         member = HouseholdMember(household_structure=h_structure, first_name='THABANG',
                 initials='TF', gender='F', age_in_years=27, present_today='Yes',
-                member_status='RESEARCH')
+                member_status='RESEARCH', eligible_member=True,
+                eligibility_checklist_filled=True)
         member.save()
         
         print "*************************************************"
