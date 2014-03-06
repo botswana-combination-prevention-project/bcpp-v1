@@ -111,7 +111,7 @@ class PlotReplcamentMethodTests(TestCase):
         member.save()
         self.assertEqual(ReplacementData.replace_refusals(plot), [Household.objects.filter(plot=plot)])
 
-    def test_replacement_absentee(self):
+    def test_replacement_absentees_ineligibles(self):
         print "*********************************"
         print "Absentee replacement"
         print "*****************************************"
@@ -147,7 +147,7 @@ class PlotReplcamentMethodTests(TestCase):
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         #refusal with one household
-        self.assertEqual(ReplacementData.replacement_absentee(plot), [household])
+        self.assertEqual(ReplacementData.replacement_absentees_ineligibles(plot), [household])
 
         plot = PlotFactory(
                 community='test_community',
@@ -205,4 +205,29 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='RESEARCH')
         member.save()
         #A plot with more than one household
-        self.assertEqual(ReplacementData.replacement_absentee(plot), [household[0]])
+        self.assertEqual(ReplacementData.replacement_absentees_ineligibles(plot), [household[0]])
+
+        def test_evaluate_head_of_household_refusal(self):
+            plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='occupied',
+                eligible_members=3,
+                report_datetime=datetime.date.today(),
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.88457999,
+                gps_degrees_e=25,
+                gps_minutes_e=44.9277000,
+                selected=1,
+                access_attempts=0,)
+        households = Household.objects.filter(plot=plot)
+        household = households[0]
+        household.report_datetime = datetime.now()
+        household.allowed_to_enumerate = 'No'
+        household.save()
+
+        self.assertEqual(ReplacementData.evaluate_head_of_household_refusal(household), household)
+        

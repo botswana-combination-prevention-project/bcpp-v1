@@ -11,7 +11,7 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     list_display = ('household_log', 'report_datetime', 'next_appt_datetime')
     list_filter = ('household_log__household_structure__survey', 'report_datetime', 'next_appt_datetime')
     radio_fields = {
-        "status": admin.VERTICAL,
+        "household_status": admin.VERTICAL,
         "next_appt_datetime_source": admin.VERTICAL,
         }
 
