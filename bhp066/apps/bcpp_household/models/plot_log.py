@@ -3,7 +3,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
-from edc.choices import PLOT_LOG_STATUS
+from apps.bcpp.choices import PLOT_LOG_STATUS
 
 from apps.bcpp_survey.validators import date_in_survey
 from .plot import Plot
