@@ -1,4 +1,4 @@
-
+from datetime import datetime as DT
 
 class ReplacementData(object):
 
@@ -25,26 +25,15 @@ class ReplacementData(object):
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
-                    if self.evaluate_head_of_household_refusal(plot, household):
-                        replaced.append(self.evaluate_head_of_household_refusal(plot, household))
+                    if self.evaluate_head_of_household_refusal(household):
+                        replaced.append(self.evaluate_head_of_household_refusal(household))
                     else:
                         if self.evaluate_refusals(household):
                             replaced.append(self.evaluate_refusals(household))
-                if replaced:
-                    #If a single household qualifies a plot to be replaced, then replace the whole plot
-                    return replaced
-        #We will return None if the plot passed does not qualify to be replaced
+                return replaced
         return None
 
-    def evaluate_head_of_household_refusal(self, plot, household):
-        """Updates the allowed_to_enumerate field on the plot model."""
-        if plot.household_count >= 2:
-            if household.allowed_to_enumerate == 'no':
-                return household
-        if plot.household_count == 1 and plot.allowed_to_enumerate == 'no':
-            return household
-
-    def replacement_absentee(self, plot):
+    def replacement_absentees_ineligibles(self, plot):
         """Check if a plot has absentees that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = []
@@ -60,9 +49,30 @@ class ReplacementData(object):
                     #Does this current household qualify the plot to be replaced?
                     if self.evaluate_absentees(household):
                         replaced.append(self.evaluate_absentees(household))
-                        return replaced
-        #We will return None if the plot passed does not qualify to be replaced
-        return None 
+                    if self.unavailable_members(household):
+                        replaced.append(self.unavailable_members(household))
+                    if self.no_eligible_rep(household):
+                        replaced.append(self.no_eligible_rep(household))
+                return replaced
+        return None
+
+    def evaluate_head_of_household_refusal(self, household):
+        """Check if head of household refused memebers to participate."""
+        if household.allowed_to_enumerate == 'no':
+            return household
+
+    def no_eligible_rep(self, household):
+        from apps.bcpp_household.models import HouseholdLogEntry
+        household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
+        h_log_dates = []
+        for h_log in household_logs:
+            h_log_dates.append(DT(h_log.report_datetime))
+        report_datetime = max(h_log_dates)
+        latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
+        if latest_log.household_status == 'eligible_representative_absent' and latest_log.supervisor_vdc_confirm == 'Yes':
+            replacement_household = household
+            return replacement_household
+        return replacement_household
 
     def evaluate_refusals(self, household):
         from apps.bcpp_household.models import HouseholdStructure
@@ -87,6 +97,21 @@ class ReplacementData(object):
                             #If any member had a status that is not 'REFUSE' then this plot does not qualify for replacement
                             replacement_household = household
                             return replacement_household
+        return replacement_household
+
+    def unavailable_members(self, household):
+        from apps.bcpp_household.models import HouseholdLogEntry
+        replacement_household = None
+        h_log_dates = []
+        if household.enumeration_attempts == 3:
+            household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
+            for h_log in household_logs:
+                h_log_dates.append(DT(h_log.report_datetime))
+            report_datetime = max(h_log_dates)
+            latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
+            if latest_log.household_status == 'no_household_informant' and latest_log.supervisor_vdc_confirm == 'Yes':
+                replacement_household = household
+                return replacement_household
         return replacement_household
 
     def evaluate_absentees(self, household):

@@ -108,7 +108,7 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.    db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
