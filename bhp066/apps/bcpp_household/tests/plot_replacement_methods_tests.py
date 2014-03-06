@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -29,7 +29,7 @@ class PlotReplcamentMethodTests(TestCase):
         plot = PlotFactory(
                 community='test_community',
                 household_count=1,
-                status='occupied',
+                status='residential_habitable',
                 eligible_members=3,
                 report_datetime=datetime.date.today(),
                 description="A blue house with yellow screen wall",
@@ -61,7 +61,7 @@ class PlotReplcamentMethodTests(TestCase):
         plot = PlotFactory(
                 community='test_community',
                 household_count=2,
-                status='occupied',
+                status='residential_habitable',
                 eligible_members=3,
                 report_datetime=datetime.date.today(),
                 description="A blue house with yellow screen wall",
@@ -119,7 +119,7 @@ class PlotReplcamentMethodTests(TestCase):
         plot = PlotFactory(
                 community='test_community',
                 household_count=1,
-                status='occupied',
+                status='residential_habitable',
                 eligible_members=3,
                 report_datetime=datetime.date.today(),
                 description="A blue house with yellow screen wall",
@@ -129,8 +129,7 @@ class PlotReplcamentMethodTests(TestCase):
                 gps_minutes_s=0.786540,
                 gps_degrees_e=25,
                 gps_minutes_e=44.8981199,
-                selected=1,
-                access_attempts=0,)
+                selected=1)
         household = Household.objects.filter(plot=plot)
         h_structure = HouseholdStructure.objects.get(household=household)
         member = HouseholdMember(
@@ -152,7 +151,7 @@ class PlotReplcamentMethodTests(TestCase):
         plot = PlotFactory(
                 community='test_community',
                 household_count=2,
-                status='occupied',
+                status='residential_habitable',
                 eligible_members=3,
                 report_datetime=datetime.date.today(),
                 description="A blue house with yellow screen wall",
@@ -211,7 +210,7 @@ class PlotReplcamentMethodTests(TestCase):
             plot = PlotFactory(
                 community='test_community',
                 household_count=1,
-                status='occupied',
+                status='residential_habitable',
                 eligible_members=3,
                 report_datetime=datetime.date.today(),
                 description="A blue house with yellow screen wall",
@@ -225,7 +224,7 @@ class PlotReplcamentMethodTests(TestCase):
                 access_attempts=0,)
         households = Household.objects.filter(plot=plot)
         household = households[0]
-        household.report_datetime = datetime.now()
+        household.report_datetime = datetime.datetime.now()
         household.allowed_to_enumerate = 'No'
         household.save()
 
