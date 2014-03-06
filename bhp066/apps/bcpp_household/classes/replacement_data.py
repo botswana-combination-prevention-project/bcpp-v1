@@ -87,7 +87,7 @@ class ReplacementData(object):
                 members_status_list = []
                 if members:
                     for member in members:
-                        if member.eligible_member:
+                        if member.age_in_years >= 16 and member.study_resident == 'Yes':
                             #accumulate the statuses of all eligible members
                             members_status_list.append(member.member_status)
                 if members_status_list:
@@ -126,7 +126,7 @@ class ReplacementData(object):
                 members = HouseholdMember.objects.filter(household_structure=h_structure)
         if members:
             for member in members:
-                if member.eligible_member and member.member_status == 'ABSENT':
+                if member.age_in_years >= 16 and member.study_resident == 'Yes' and member.member_status == 'ABSENT':
                     sub_absentee = SubjectAbsentee.objects.get(household_member=member)
                     num_absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee).count()
                     if num_absentee_entries == '3':#Then we have found a reason not to replace this plot
