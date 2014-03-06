@@ -19,8 +19,8 @@ def replace_data(request):
     for plot in plots:
         if ReplacementData().replace_refusals(plot):
             replacement_data = replacement_data + ReplacementData().replace_refusals(plot)
-        if ReplacementData().replacement_absentee(plot):
-            replacement_data = replacement_data + ReplacementData().replacement_absentee(plot)
+        if ReplacementData().replacement_absentees_ineligibles(plot):
+            replacement_data = replacement_data + ReplacementData().replacement_absentees_ineligibles(plot)
     replacement_count = len(replacement_data)
     for household in replacement_data:
         replace_str = replace_str + ',' + household.household_identifier
