@@ -251,7 +251,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         if self.status == 'inaccessible':
             # reset any editable fields that the user changed
-            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and field.name not in ['status', 'comment']]:
+            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment']]:
                 setattr(self, field.name, None)
         else:
             if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
