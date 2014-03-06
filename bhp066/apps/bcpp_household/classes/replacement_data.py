@@ -11,11 +11,11 @@ class ReplacementData(object):
         """Check if a plot has household refusals that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = []
-        if plot.status == 'non-residential':
+        if plot.status == 'residential_habitable':
             if plot.household_count == 1:
                 household = Household.objects.get(plot=plot)
-                if self.evaluate_head_of_household_refusal(plot, household):
-                    replaced.append(self.evaluate_head_of_household_refusal(plot, household))
+                if self.evaluate_head_of_household_refusal(household):
+                    replaced.append(self.evaluate_head_of_household_refusal(household))
                     return replaced
                 else:
                     if self.evaluate_refusals(household):
@@ -37,7 +37,7 @@ class ReplacementData(object):
         """Check if a plot has absentees that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = []
-        if plot.status == 'non-residential':
+        if plot.status == 'residential_habitable':
             if plot.household_count == 1:#We will replace if all eligible members are absent 3 times
                 household = Household.objects.get(plot=plot)
                 if self.evaluate_absentees(household):
