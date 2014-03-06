@@ -18,7 +18,7 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
-from ..choices import HOUSEHOLD_MEMBER_ACTION, HOUSEHOLD_MEMBER_HTC, HOUSEHOLD_MEMBER_MINOR
+from ..choices import HOUSEHOLD_MEMBER_ACTION, HOUSEHOLD_MEMBER_HTC, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
 
@@ -229,6 +229,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             status_choices = HOUSEHOLD_MEMBER_HTC
         elif (self.age_in_years < 16):
             status_choices = HOUSEHOLD_MEMBER_MINOR
+        elif self.member_status == 'REFUSED':
+            status_choices = HOUSEHOLD_MEMBER_PARTIAL
         else:
             status_choices = HOUSEHOLD_MEMBER_ACTION
         return status_choices
