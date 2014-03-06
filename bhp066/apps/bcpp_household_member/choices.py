@@ -16,6 +16,12 @@ HOUSEHOLD_MEMBER_HTC = [
     ('HTC', 'HTC'),
 ]
 
+HOUSEHOLD_MEMBER_PARTIAL = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('RBD', 'RBD only'),
+    ('HTC', 'HTC'),
+]
+
 HOUSEHOLD_MEMBER_MINOR = [
     ('NOT_REPORTED', '<not reported>'),
     ('NOT_ELIGIBLE', 'Not Eligible'),
