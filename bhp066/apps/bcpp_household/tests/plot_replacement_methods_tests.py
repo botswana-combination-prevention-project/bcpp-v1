@@ -35,10 +35,10 @@ class PlotReplcamentMethodTests(TestCase):
                 time_of_week='Weekdays',
                 time_of_day='Morning',
                 gps_degrees_s=25,
-                gps_minutes_s=0.6666599,
+                gps_minutes_s=0.5666599,
                 gps_degrees_e=25,
-                gps_minutes_e=44.466660,
-                selected=2)
+                gps_minutes_e=44.366660,
+                selected=1)
         household = Household.objects.get(plot=plot)
         print household
         household.allowed_to_enumerate='no'
@@ -73,7 +73,7 @@ class PlotReplcamentMethodTests(TestCase):
                 time_of_week='Weekdays',
                 time_of_day='Morning',
                 gps_degrees_s=25,
-                gps_minutes_s=0.5876399,
+                gps_minutes_s=0.7876399,
                 gps_degrees_e=25,
                 gps_minutes_e=44.8782599,
                 selected=1)
@@ -92,16 +92,16 @@ class PlotReplcamentMethodTests(TestCase):
 
         member = HouseholdMember(
                 household_structure=h_structure,
-                first_name='WANE',
-                initials='WA',
+                first_name='DANE',
+                initials='DA',
                 gender='M',
                 age_in_years=25,
                 present_today='Yes',
                 member_status='REFUSED')
         member.save()
 
-        household2=household1[1]
-        h_structure = HouseholdStructure.objects.get(household2=households[1])
+        household2=households[1]
+        h_structure = HouseholdStructure.objects.get(household=household2)
         member = HouseholdMember(
                 household_structure=h_structure,
                 first_name='GOSIAME',
@@ -225,11 +225,10 @@ class PlotReplcamentMethodTests(TestCase):
             time_of_week='Weekdays',
             time_of_day='Morning',
             gps_degrees_s=25,
-            gps_minutes_s=0.88457999,
+            gps_minutes_s=0.23117999,
             gps_degrees_e=25,
-            gps_minutes_e=44.9277000,
-            selected=1,
-            access_attempts=0,)
+            gps_minutes_e=44.1667000,
+            selected=1)
         households = Household.objects.filter(plot=plot)
         household = households[0]
         household.report_datetime = datetime.datetime.now()
