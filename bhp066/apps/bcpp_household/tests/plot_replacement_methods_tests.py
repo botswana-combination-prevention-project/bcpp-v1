@@ -126,98 +126,98 @@ class PlotReplcamentMethodTests(TestCase):
         self.assertEqual(ReplacementData().replace_refusals(plot), [household1])
         print "*************************************************Done"
 
-#     def test_replacement_absentees_ineligibles(self):
-#         print "*********************************"
-#         print "Absentee replacement"
-#         print "*****************************************"
-# 
-#         plot = PlotFactory(
-#                 community='test_community',
-#                 household_count=1,
-#                 status='residential_habitable',
-#                 eligible_members=3,
-#                 description="A blue house with yellow screen wall",
-#                 time_of_week='Weekdays',
-#                 time_of_day='Morning',
-#                 gps_degrees_s=25,
-#                 gps_minutes_s=0.786540,
-#                 gps_degrees_e=25,
-#                 gps_minutes_e=44.8981199,
-#                 selected=1)
-#         household = Household.objects.filter(plot=plot)
-#         h_structure = HouseholdStructure.objects.get(household=household)
-#         member = HouseholdMember(
-#                 household_structure=h_structure,
-#                 first_name='KGOSANA',
-#                 initials='KB',
-#                 gender='M',
-#                 age_in_years=21,
-#                 present_today='No',
-#                 member_status='ABSENT')
-#         member.save()
-#         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         #refusal with one household
-#         self.assertEqual(ReplacementData().replacement_absentees_ineligibles(plot), [household])
+    def test_replacement_absentees_ineligibles(self):
+        print "*********************************"
+        print "Absentee replacement"
+        print "*****************************************"
+ 
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.filter(plot=plot)
+        h_structure = HouseholdStructure.objects.get(household=household)
+        member = HouseholdMember(
+                household_structure=h_structure,
+                first_name='KGOSANA',
+                initials='KB',
+                gender='M',
+                age_in_years=21,
+                present_today='No',
+                member_status='ABSENT')
+        member.save()
+        sub_absentee = SubjectAbsentee.objects.get(household_member=member)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        #refusal with one household
+        self.assertEqual(ReplacementData().replacement_absentees_ineligibles(plot), [household])
 
-#         plot = PlotFactory(
-#                 community='test_community',
-#                 household_count=2,
-#                 status='residential_habitable',
-#                 eligible_members=3,
-#                 description="A blue house with yellow screen wall",
-#                 time_of_week='Weekdays',
-#                 time_of_day='Morning',
-#                 gps_degrees_s=25,
-#                 gps_minutes_s=0.88457999,
-#                 gps_degrees_e=25,
-#                 gps_minutes_e=44.9277000,
-#                 selected=1,
-#                 access_attempts=0,)
-#         household = Household.objects.filter(plot=plot)
-#         h_structure = HouseholdStructure.objects.get(household=household[0])
-#         member = HouseholdMember(
-#                 household_structure=h_structure,
-#                 first_name='KABELO',
-#                 initials='KA',
-#                 gender='M',
-#                 age_in_years=29,
-#                 present_today='Yes',
-#                 member_status='ABSENT')
-#         member.save()
-#         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-# 
-#         member = HouseholdMember(
-#                 household_structure=h_structure,
-#                 first_name='DILO',
-#                 initials='DA',
-#                 gender='M',
-#                 age_in_years=25,
-#                 present_today='Yes',
-#                 member_status='ABSENT')
-#         member.save()
-#         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-# 
-#         h_structure = HouseholdStructure.objects.get(household=household[1])
-#         member = HouseholdMember(
-#                 household_structure=h_structure,
-#                 first_name='BATHO',
-#                 initials='BS',
-#                 gender='M',
-#                 age_in_years=26,
-#                 present_today='Yes',
-#                 member_status='RESEARCH')
-#         member.save()
-#         #A plot with more than one household
-#         self.assertEqual(ReplacementData().replacement_absentees_ineligibles(plot), [household[0]])
+        plot = PlotFactory(
+                community='test_community',
+                household_count=2,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.88457999,
+                gps_degrees_e=25,
+                gps_minutes_e=44.9277000,
+                selected=1,
+                access_attempts=0,)
+        household = Household.objects.filter(plot=plot)
+        h_structure = HouseholdStructure.objects.get(household=household[0])
+        member = HouseholdMember(
+                household_structure=h_structure,
+                first_name='KABELO',
+                initials='KA',
+                gender='M',
+                age_in_years=29,
+                present_today='Yes',
+                member_status='ABSENT')
+        member.save()
+        sub_absentee = SubjectAbsentee.objects.get(household_member=member)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+ 
+        member = HouseholdMember(
+                household_structure=h_structure,
+                first_name='DILO',
+                initials='DA',
+                gender='M',
+                age_in_years=25,
+                present_today='Yes',
+                member_status='ABSENT')
+        member.save()
+        sub_absentee = SubjectAbsentee.objects.get(household_member=member)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+        SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
+ 
+        h_structure = HouseholdStructure.objects.get(household=household[1])
+        member = HouseholdMember(
+                household_structure=h_structure,
+                first_name='BATHO',
+                initials='BS',
+                gender='M',
+                age_in_years=26,
+                present_today='Yes',
+                member_status='RESEARCH')
+        member.save()
+        #A plot with more than one household
+        self.assertEqual(ReplacementData().replacement_absentees_ineligibles(plot), [household[0]])
 
     def test_evaluate_head_of_household_refusal(self):
         plot = PlotFactory(
