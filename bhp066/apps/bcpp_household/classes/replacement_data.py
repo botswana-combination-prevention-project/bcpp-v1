@@ -34,7 +34,7 @@ class ReplacementData(object):
         return None
 
     def replacement_absentees_ineligibles(self, plot):
-        """Check if a plot has absentees that would make it be replaced."""
+        """Check if a plot has absentees and ineligibles that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = []
         if plot.status == 'residential_habitable':
@@ -62,18 +62,21 @@ class ReplacementData(object):
             return household
 
     def no_eligible_rep(self, household):
-        return None
-#         from apps.bcpp_household.models import HouseholdLogEntry
-#         household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
-#         h_log_dates = []
-#         for h_log in household_logs:
-#             h_log_dates.append(DT(h_log.report_datetime))
-#         report_datetime = max(h_log_dates)
-#         latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
-#         if latest_log.household_status == 'eligible_representative_absent' and latest_log.supervisor_vdc_confirm == 'Yes':
-#             replacement_household = household
-#             return replacement_household
-#         return replacement_household
+        from apps.bcpp_household.models import HouseholdLogEntry
+        household_logs = None
+        replacement_household = None
+        if HouseholdLogEntry.objects.filter(household_log__household_structure__household=household):
+            household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
+            h_log_dates = []
+            for h_log in household_logs:
+                h_log_dates.append(DT(h_log.report_datetime))
+            if h_log_dates:
+                report_datetime = max(h_log_dates)
+                latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
+                if latest_log.household_status == 'eligible_representative_absent' and latest_log.supervisor_vdc_confirm == 'Yes':
+                    replacement_household = household
+                    return replacement_household
+        return replacement_household
 
     def evaluate_refusals(self, household):
         from apps.bcpp_household.models import HouseholdStructure
