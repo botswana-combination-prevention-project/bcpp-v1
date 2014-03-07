@@ -62,17 +62,18 @@ class ReplacementData(object):
             return household
 
     def no_eligible_rep(self, household):
-        from apps.bcpp_household.models import HouseholdLogEntry
-        household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
-        h_log_dates = []
-        for h_log in household_logs:
-            h_log_dates.append(DT(h_log.report_datetime))
-        report_datetime = max(h_log_dates)
-        latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
-        if latest_log.household_status == 'eligible_representative_absent' and latest_log.supervisor_vdc_confirm == 'Yes':
-            replacement_household = household
-            return replacement_household
-        return replacement_household
+        return None
+#         from apps.bcpp_household.models import HouseholdLogEntry
+#         household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
+#         h_log_dates = []
+#         for h_log in household_logs:
+#             h_log_dates.append(DT(h_log.report_datetime))
+#         report_datetime = max(h_log_dates)
+#         latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
+#         if latest_log.household_status == 'eligible_representative_absent' and latest_log.supervisor_vdc_confirm == 'Yes':
+#             replacement_household = household
+#             return replacement_household
+#         return replacement_household
 
     def evaluate_refusals(self, household):
         from apps.bcpp_household.models import HouseholdStructure
@@ -93,7 +94,7 @@ class ReplacementData(object):
                 if members_status_list:
                     #Ckeck if all the values in the member status list are the same.
                     if all(map(lambda x: x == members_status_list[0], members_status_list)):
-                        if members_status_list == 'REFUSED':
+                        if members_status_list[0] == 'REFUSED':
                             #If any member had a status that is not 'REFUSE' then this plot does not qualify for replacement
                             replacement_household = household
                             return replacement_household
