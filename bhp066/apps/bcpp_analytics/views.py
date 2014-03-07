@@ -187,7 +187,7 @@ def operational_report_view(request, **kwargs):
                              modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count()
     values['2. Plots not reached'] = not_reached
     members = HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
-                                             created__gte=date_from, created__lte=date_to, user_modified__icontains=ra_username)
+                                             created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username)
     values['3. Total members'] = members.count()
     age_eligible = members.filter(eligible_member=True).count()
     values['4. Total age eligible members'] = age_eligible
@@ -209,13 +209,13 @@ def operational_report_view(request, **kwargs):
     refused = age_eligible_refused.count()
     values['91. Age eligible members that REFUSED'] = refused
     how_many_tested = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                               created__gte=date_from, created__lte=date_to, user_modified__icontains=ra_username).count()
+                                               created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count()
     values['92. Age eligible members that TESTED'] = how_many_tested
     values = collections.OrderedDict(sorted(values.items()))
 
     members_tobe_visited = []
     absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                        created__gte=date_from, created__lte=date_to, user_modified__icontains=ra_username).order_by('member_status')
+                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
     for mem in absentee_undecided:
         if mem.member_status == 'UNDECIDED':
             undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('report_datetime')
