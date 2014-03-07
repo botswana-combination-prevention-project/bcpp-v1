@@ -131,7 +131,7 @@
 		                {% endif %}
                     </ol>
                {% elif household_member.member_status == 'REFUSED' %}
-                    <A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
+                	<A name="refused-{{household_member.pk}}" href="{{ household_member.refused_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}&household_member={{household_member.pk}}&registered_subject={{household_member.registered_subject.pk }}">{% if 'Add' in household_member.refused_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.refused_form_label }}</A>
                {% elif household_member.member_status == 'MOVED' %}
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.moved_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.moved_form_label }}</A>
                {%endif%}
@@ -140,29 +140,33 @@
             {% endif %}                
     </td>
     <td>
-    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
-     	{% csrf_token %}
-	    {% if household_member.member_status == 'REFUSED' %}
-		    <select name="status" id="status" onchange="this.form.submit()">
-	    		{% for status_key, status_value  in household_member.status_choices %}
-	    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
-		    	{% endfor %}
-			</select>
+	    {% if not household_member.is_consented_partial %}
+		    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
+		     	{% csrf_token %}
+			    {% if household_member.non_bhs_member and not household_member.age_in_years < 16 %}
+				    <select name="status_partial" id="status_partial" onchange="this.form.submit()">
+			    		{% for status_key, status_value  in household_member.status_choices_partial %}
+			    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+				    	{% endfor %}
+					</select>
+				{% endif %}
+			    <input type="hidden" name="household_member" value={{ household_member.id }}>
+			    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
+			    <input type="hidden" name="dashboard_model" value="household_structure">
+			    <input type="hidden" name="dashboard_type" value="household">
+			</form>
+		{% elif household_member.is_consented_partial %}
+				{{household_member.member_status_partial}}
 		{% endif %}
-	    <input type="hidden" name="household_member" value={{ household_member.id }}>
-	    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
-	    <input type="hidden" name="dashboard_model" value="household_structure">
-	    <input type="hidden" name="dashboard_type" value="household">
-	</form>
     </td>
     <td>
-    {% if household_member.member_status == 'RBD' and not household_member.eligible_rbd_subject %}
-   		{% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
-    	<span style="color:white;background-color:red;">&nbsp;</span>
-    	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url rbd_enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
-    {% elif household_member.member_status == 'RBD' and household_member.eligible_rbd_subject %}
-   		Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
-	{% endif %}
+	    {% if household_member.member_status_partial == 'RBD' and not household_member.eligible_rbd_subject %}
+	   		{% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
+	    	<span style="color:white;background-color:red;">&nbsp;</span>
+	    	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url rbd_enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
+	    {% elif household_member.member_status_partial == 'RBD' and household_member.eligible_rbd_subject %}
+			Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
+		{% endif %}
     </td>
     </tr>
   {% endfor %}
