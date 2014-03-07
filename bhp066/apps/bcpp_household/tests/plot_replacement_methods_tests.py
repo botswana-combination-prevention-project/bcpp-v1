@@ -52,7 +52,8 @@ class PlotReplcamentMethodTests(TestCase):
                 gender='M',
                 age_in_years=24,
                 present_today='Yes',
-                member_status='REFUSED')
+                member_status='REFUSED',
+                study_resident='Yes')
         member.save()
         print ReplacementData().replace_refusals(plot),"its the 1 returning none"
         print household, "this is the househod to be returned"
@@ -80,29 +81,31 @@ class PlotReplcamentMethodTests(TestCase):
         households = Household.objects.filter(plot=plot)
         household1=households[0]
         h_structure = HouseholdStructure.objects.get(household=household1)
-        member = HouseholdMember(
+        member1 = HouseholdMember(
                 household_structure=h_structure,
                 first_name='WANE',
                 initials='WA',
                 gender='M',
                 age_in_years=25,
                 present_today='Yes',
-                member_status='REFUSED')
-        member.save()
+                member_status='REFUSED',
+                study_resident='Yes')
+        member1.save()
 
-        member = HouseholdMember(
+        member2 = HouseholdMember(
                 household_structure=h_structure,
                 first_name='DANE',
                 initials='DA',
                 gender='M',
                 age_in_years=25,
                 present_today='Yes',
-                member_status='REFUSED')
-        member.save()
+                member_status='REFUSED',
+                study_resident='Yes')
+        member2.save()
 
         household2=households[1]
         h_structure = HouseholdStructure.objects.get(household=household2)
-        member = HouseholdMember(
+        member3 = HouseholdMember(
                 household_structure=h_structure,
                 first_name='GOSIAME',
                 initials='GS',
@@ -110,14 +113,12 @@ class PlotReplcamentMethodTests(TestCase):
                 age_in_years=26,
                 present_today='Yes',
                 member_status='RESEARCH',
-                eligible_member=True,
-                eligibility_checklist_filled=True)
-        member.save()
-        member = HouseholdMember(household_structure=h_structure, first_name='THABANG',
+                study_resident='Yes')
+        member3.save()
+        member4 = HouseholdMember(household_structure=h_structure, first_name='THABANG',
                 initials='TF', gender='F', age_in_years=27, present_today='Yes',
-                member_status='RESEARCH', eligible_member=True,
-                eligibility_checklist_filled=True)
-        member.save()
+                member_status='RESEARCH')
+        member4.save()
         
         print "*************************************************"
         print "refusal tests for 2 household 1 as a refusal"
