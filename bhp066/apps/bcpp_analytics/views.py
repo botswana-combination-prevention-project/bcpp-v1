@@ -29,7 +29,7 @@ communities = [item[0] for item in COMMUNITIES]
 
 def date_from_s(date_string, date_format=DEFAULT_DATE_FORMAT):
     # This is a throwaway variable to deal with a python _strptime import bug
-    throwaway = datetime.datetime.strptime('20110101','%Y%m%d')
+    throwaway = datetime.datetime.strptime('20110101', '%Y%m%d')
     return datetime.datetime.strptime(date_string, date_format).date()
 
 
@@ -46,7 +46,7 @@ def accrual(request):
     context = _process_accrual(request.GET, date_format=DEFAULT_DATE_FORMAT)
     context.update({'communities': communities})
     context.update({'action_url': 'analytics:accrual'})
-    return render(request, template,  context)
+    return render(request, template, context)
 
 
 @login_required
@@ -215,7 +215,8 @@ def operational_report_view(request, **kwargs):
 
     members_tobe_visited = []
     absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status_full')
+                                        #created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status_full')
+                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
     for mem in absentee_undecided:
         if mem.member_status_full == 'UNDECIDED':
             undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
@@ -258,7 +259,7 @@ def operational_report_view(request, **kwargs):
 
     #communities = [community[0].lower() for community in  COMMUNITIES]
     communities = []
-    if (previous_community.find('----') == -1) and (not previous_community == ''):#Passing filtered results
+    if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
         #communities = [community[0].lower() for community in  COMMUNITIES]
         for community in  COMMUNITIES:
             if community[0].lower() != previous_community:
