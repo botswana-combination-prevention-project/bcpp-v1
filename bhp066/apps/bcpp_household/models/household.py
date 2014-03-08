@@ -9,6 +9,7 @@ from .plot import Plot
 
 from ..choices import ENUMERATION_STATUS
 
+
 class Household(BaseDispatchSyncUuidModel):
 
     plot = models.ForeignKey(Plot, null=True)  # TODO: field should not be nullable.
@@ -120,11 +121,9 @@ class Household(BaseDispatchSyncUuidModel):
 
     allowed_to_enumerate = models.CharField(
         max_length=25,
-        default='yes',
+        default='Yes',
         null=False,
-        verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
-        choices=ENUMERATION_STATUS,
-        editable=True,
+        editable=False,
         )
  
     #Indicates that a household has been replaced if its part of twenty percent.
