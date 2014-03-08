@@ -9,6 +9,7 @@ from .plot import Plot
 
 from ..choices import ENUMERATION_STATUS
 
+
 class Household(BaseDispatchSyncUuidModel):
 
     plot = models.ForeignKey(Plot, null=True)  # TODO: field should not be nullable.
@@ -126,7 +127,7 @@ class Household(BaseDispatchSyncUuidModel):
         choices=ENUMERATION_STATUS,
         editable=True,
         )
- 
+
     #Indicates that a household has been replaced if its part of twenty percent.
     #For five percent indicates that a household has been used for replacement.
     replacement = models.BooleanField(default=False, editable=False)
