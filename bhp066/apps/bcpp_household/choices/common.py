@@ -45,6 +45,11 @@ PLOT_STATUS = (
     ('residential_habitable', 'residential, habitable'),
     )
 
+PLOT_LOG_STATUS = (
+    ('ACCESSIBLE', 'Accessible'),
+    ('INACCESSIBLE', 'Inaccessible'),
+)
+
 HOUSEHOLD_STATUS = (
     ('enumerated', 'Enumerated'),
     ('not_enumerated', 'Not Enumerated'),
