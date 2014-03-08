@@ -4,7 +4,7 @@ from django.contrib import messages
 
 from apps.bcpp_dashboard.views import household_dashboard
 from apps.bcpp_household_member.forms import ParticipationForm
-from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.models import HouseholdMember, Loss
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry, SubjectRefusal
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
 
@@ -48,17 +48,31 @@ def update_member_status_partial(request, household_member, cleaned_data):
             if not status_partial in [item[0] for item in HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION]:
                 raise TypeError('Unknown member status. Expected one on {0}, Got {1}.'.format([item[0] for item in HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION], status_partial))
         if SubjectRefusal.objects.filter(household_member=household_member).exists():
+            #Potential BHS group that refused. Enforce a refusal form.
             refusal = SubjectRefusal.objects.get(household_member=household_member)
-            if status_partial == 'HTC' and refusal.accepted_htc:
+            if has_htc(status_partial) and refusal.accepted_htc:
                 household_member.member_status_partial = status_partial
-            elif status_partial == 'HTC' and not refusal.accepted_htc:
+            elif has_htc(status_partial) and not refusal.accepted_htc:
                 messages.add_message(request, messages.ERROR, 'Cannot make HTC as participant declined HTC in REFUSAL REPORT.')
-            elif status_partial != 'HTC':
+            elif not has_htc(status_partial):
                 household_member.member_status_partial = status_partial
+            household_member.save()
+        elif Loss.objects.filter(household_member=household_member).exists():
+            #Group that failed BHS eligibility, they did not refuse and Loss form was created for them. Do not enforce refusal report.
+            household_member.member_status_partial = status_partial
+            household_member.save()
+        elif household_member.age_in_years > 64:
+            #Group that cannot take part in BHS, did not refuse, so do not enforce a refusal form.
+            household_member.member_status_partial = status_partial
             household_member.save()
         else:
             messages.add_message(request, messages.ERROR, 'Please enter the refusal report before proceeding to partial participation.')
     return household_member.member_status_partial
+
+def has_htc(status):
+    if status.find('HTC') != -1:
+        return True
+    return False
 
 def update_member_status_full(request, household_member, cleaned_data):
     """Updates the full participation status and possibly the eligibile_subject flag.
