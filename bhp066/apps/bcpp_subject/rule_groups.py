@@ -24,9 +24,34 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 # 
 #     class Meta:
 #         app_label = 'bcpp_subject'
-#         filter_model = (Appointment, 'appointment')
+#         source_fk = (Appointment, 'appointment')
 #         source_model = SubjectVisit
 # site_rule_groups.register(VisitCreationRuleGroup)
+
+
+class RegisteredSubjectRuleGroup(RuleGroup):
+
+    gender_circumsion = ScheduledDataRule(
+        logic=Logic(
+            predicate=('gender', 'equals', 'f'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['circumcision', 'circumcised', 'uncircumcised'])
+
+    gender_menopause = ScheduledDataRule(
+        logic=Logic(
+            predicate=('gender', 'equals', 'm'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = None
+        source_model = RegisteredSubject
+
+site_rule_groups.register(RegisteredSubjectRuleGroup)
+
 
 class ResourceUtilizationRuleGroup(RuleGroup):
 
@@ -46,8 +71,9 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = ResourceUtilization
+
 site_rule_groups.register(ResourceUtilizationRuleGroup)
 
 
@@ -64,7 +90,7 @@ site_rule_groups.register(ResourceUtilizationRuleGroup)
 #     class Meta:
 #         app_label = 'bcpp_subject'
 #         source_model = SubjectVisit
-#         filter_model = (RegisteredSubject, 'registered_subject')
+#         source_fk = (RegisteredSubject, 'registered_subject')
 # site_rule_groups.register(SubjectDeathRuleGroup)
 
 
@@ -122,7 +148,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
 site_rule_groups.register(HivTestingHistoryRuleGroup)
 
@@ -161,7 +187,7 @@ class HivTestReviewRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 site_rule_groups.register(HivTestReviewRuleGroup)
 
@@ -177,7 +203,7 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 site_rule_groups.register(ReviewNotPositiveRuleGroup)
 
@@ -193,7 +219,7 @@ class HivDocumentationGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResultDocumentation
 site_rule_groups.register(HivDocumentationGroup)
 
@@ -216,7 +242,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
 site_rule_groups.register(HivCareAdherenceRuleGroup)
 
@@ -232,7 +258,7 @@ class TodaysHivRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResult
 site_rule_groups.register(TodaysHivRuleGroup)
 
@@ -262,19 +288,12 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = SexualBehaviour
 site_rule_groups.register(SexualBehaviourRuleGroup)
 
 
 class CircumcisionRuleGroup(RuleGroup):
-
-    gender = ScheduledDataRule(
-        logic=Logic(
-            predicate=('gender', 'equals', 'f'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['circumcision', 'circumcised', 'uncircumcised'])
 
     circumcised = ScheduledDataRule(
         logic=Logic(
@@ -292,19 +311,12 @@ class CircumcisionRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = Circumcision
 site_rule_groups.register(CircumcisionRuleGroup)
 
 
 class MenopauseRuleGroup(RuleGroup):
-
-    gender = ScheduledDataRule(
-        logic=Logic(
-            predicate=('gender', 'equals', 'm'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     menopause = ScheduledDataRule(
         logic=Logic(
@@ -315,7 +327,7 @@ class MenopauseRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = ReproductiveHealth
 site_rule_groups.register(MenopauseRuleGroup)
 
@@ -338,7 +350,7 @@ class ReproductiveRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = ReproductiveHealth
 site_rule_groups.register(ReproductiveRuleGroup)
 
@@ -375,6 +387,6 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
-        filter_model = (SubjectVisit, 'subject_visit')
+        source_fk = (SubjectVisit, 'subject_visit')
         source_model = MedicalDiagnoses
 site_rule_groups.register(MedicalDiagnosesRuleGroup)

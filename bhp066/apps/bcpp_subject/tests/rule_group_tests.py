@@ -71,7 +71,7 @@ class RuleGroupTests(TestCase):
 
         self.survey = SurveyFactory()
 
-        plot = PlotFactory(community=self.community, household_count=1, status='occupied')
+        plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot)
         HouseholdMemberFactory(household_structure=household_structure)
