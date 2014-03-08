@@ -90,6 +90,9 @@ class MainConsentForm(BaseSubjectConsentForm):
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, gender))
         return super(MainConsentForm, self).clean()
 
+    def accepted_consent_copy(self, cleaned_data):
+        return True
+
 
 class SubjectConsentForm(MainConsentForm):
 
