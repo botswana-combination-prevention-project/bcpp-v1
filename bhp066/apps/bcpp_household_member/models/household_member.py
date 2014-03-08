@@ -176,7 +176,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         "determines wether this participant should be offered full participation or partial participation"
         if self.member_status_full == 'REFUSED':
             return True
-        if not self.is_eligible():
+        if not self.is_eligible():#evaluated before eligibility checklist for BHS is ran.
+            return True
+        if self.member_status_full == 'NOT_ELIGIBLE':#Sometimes set after a more strict criteria of the BHS eligibility checklist.
             return True
         return False
 
