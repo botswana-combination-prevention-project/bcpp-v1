@@ -29,7 +29,7 @@ communities = [item[0] for item in COMMUNITIES]
 
 def date_from_s(date_string, date_format=DEFAULT_DATE_FORMAT):
     # This is a throwaway variable to deal with a python _strptime import bug
-    throwaway = datetime.datetime.strptime('20110101','%Y%m%d')
+    throwaway = datetime.datetime.strptime('20110101', '%Y%m%d')
     return datetime.datetime.strptime(date_string, date_format).date()
 
 
@@ -46,7 +46,7 @@ def accrual(request):
     context = _process_accrual(request.GET, date_format=DEFAULT_DATE_FORMAT)
     context.update({'communities': communities})
     context.update({'action_url': 'analytics:accrual'})
-    return render(request, template,  context)
+    return render(request, template, context)
 
 
 @login_required
@@ -187,48 +187,49 @@ def operational_report_view(request, **kwargs):
                              modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count()
     values['2. Plots not reached'] = not_reached
     members = HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
-                                             created__gte=date_from, created__lte=date_to, user_modified__icontains=ra_username)
+                                             created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username)
     values['3. Total members'] = members.count()
     age_eligible = members.filter(eligible_member=True).count()
     values['4. Total age eligible members'] = age_eligible
     not_age_eligible = members.filter(eligible_member=False).count()
     values['5. Total members not age eligible'] = not_age_eligible
-    age_eligible_research = members.filter(eligible_member=True, member_status='RESEARCH')
+    age_eligible_research = members.filter(eligible_member=True, member_status_full='RESEARCH')
     research = age_eligible_research.count()
     values['6. Age eligible members that consented for RESEARCH'] = research
-    age_eligible_htc = members.filter(eligible_member=True, member_status='HTC')
+    age_eligible_htc = members.filter(eligible_member=True, member_status_partial='HTC')
     htc = age_eligible_htc.count()
     values['7. Age eligible members that consented for HTC ONLY'] = htc
-    age_eligible_absent = members.filter(Q(eligible_member=True) | Q(member_status='ABSENT'))
+    age_eligible_absent = members.filter(eligible_member=True, member_status_full='ABSENT')
     absent = age_eligible_absent.count()
     values['8. Age eligible members that where ABSENT'] = absent
-    age_eligible_undecided = members.filter(eligible_member=True, member_status='UNDECIDED')
+    age_eligible_undecided = members.filter(eligible_member=True, member_status_full='UNDECIDED')
     undecided = age_eligible_undecided.count()
     values['9. Age eligible members that where UNDECIDED'] = undecided
-    age_eligible_refused = members.filter(eligible_member=True, member_status='REFUSED')
+    age_eligible_refused = members.filter(eligible_member=True, member_status_full='REFUSED')
     refused = age_eligible_refused.count()
     values['91. Age eligible members that REFUSED'] = refused
     how_many_tested = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                               created__gte=date_from, created__lte=date_to, user_modified__icontains=ra_username).count()
+                                               created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count()
     values['92. Age eligible members that TESTED'] = how_many_tested
     values = collections.OrderedDict(sorted(values.items()))
 
     members_tobe_visited = []
     absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                        created__gte=date_from, created__lte=date_to, user_modified__icontains=ra_username).order_by('member_status')
+                                        #created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status_full')
+                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
     for mem in absentee_undecided:
-        if mem.member_status == 'UNDECIDED':
-            undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('report_datetime')
+        if mem.member_status_full == 'UNDECIDED':
+            undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
             if undecided_entries:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].report_datetime)))
+                members_tobe_visited.append((str(mem), mem.member_status_full, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
             else:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-        elif mem.member_status == 'ABSENT':
-            absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('report_datetime')
+                members_tobe_visited.append((str(mem), mem.member_status_full, mem.visit_attempts, '-------'))
+        elif mem.member_status_full == 'ABSENT':
+            absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('next_appt_datetime')
             if absentee_entries:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].report_datetime)))
+                members_tobe_visited.append((str(mem), mem.member_status_full, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
             else:
-                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
+                members_tobe_visited.append((str(mem), mem.member_status_full, mem.visit_attempts, '-------'))
 
 
 
@@ -258,7 +259,7 @@ def operational_report_view(request, **kwargs):
 
     #communities = [community[0].lower() for community in  COMMUNITIES]
     communities = []
-    if (previous_community.find('----') == -1) and (not previous_community == ''):#Passing filtered results
+    if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
         #communities = [community[0].lower() for community in  COMMUNITIES]
         for community in  COMMUNITIES:
             if community[0].lower() != previous_community:
