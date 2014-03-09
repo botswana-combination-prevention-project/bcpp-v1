@@ -403,9 +403,9 @@ class Plot(BaseDispatchSyncUuidModel):
                     report_datetime.append((log_entry.log_status.lower()+'-'+log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
                 else:
                     report_datetime.append((log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
-            if self.access_attempts < 3:
+            if self.access_attempts < 3 and self.action != 'confirmed':
                 report_datetime.append(('add new entry', 'add new entry'))
-        if not report_datetime:
+        if not report_datetime and self.action != 'confirmed':
             report_datetime.append(('add new entry', 'add new entry'))
         return report_datetime
     #log_form_label.allow_tags = True
