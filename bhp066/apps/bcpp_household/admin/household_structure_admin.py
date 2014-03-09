@@ -45,7 +45,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         )
     search_fields = (
         'household__household_identifier',
-        'household__id', 
+        'household__id',
         'id',)
     radio_fields = {
         'survey': admin.VERTICAL,
