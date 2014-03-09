@@ -1,13 +1,14 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
-from ..managers import HouseholdManager
-from ..classes import HouseholdIdentifier
-from .plot import Plot
 
-from ..choices import ENUMERATION_STATUS
+from edc.audit.audit_trail import AuditTrail
+from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
+from ..classes import HouseholdIdentifier
+from ..managers import HouseholdManager
+
+from .plot import Plot
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -121,11 +122,9 @@ class Household(BaseDispatchSyncUuidModel):
 
     allowed_to_enumerate = models.CharField(
         max_length=25,
-        default='yes',
+        default='Yes',
         null=False,
-        verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
-        choices=ENUMERATION_STATUS,
-        editable=True,
+        editable=False,
         )
 
     #Indicates that a household has been replaced if its part of twenty percent.
