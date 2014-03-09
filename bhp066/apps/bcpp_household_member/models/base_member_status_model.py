@@ -23,10 +23,10 @@ class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
     def post_save_update_hm_status(self, using=None):
         """Updates the hm member_status."""
         hm = self.household_member
-        if not hm.member_status == 'CONSENTED':
+        if not hm.member_status_full == 'CONSENTED':
             if self.member_status_string() == 'CONSENTED':
                 # consent overwrites everything else
-                hm.member_status = self.member_status_string()
+                hm.member_status_full = self.member_status_string()
             else:
                 # among these model classes look for an instance with the most recent report_datetime
                 # and set hm member_status to the status from that instance (member_status_string())
@@ -44,7 +44,7 @@ class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
                         if instance.report_datetime > max_report_datetime:
                             max_report_datetime = instance.report_datetime
                             selected_instance = instance
-                hm.member_status = selected_instance.member_status_string()
+                hm.member_status_full = selected_instance.member_status_string()
             hm.save(using=using)
 
     class Meta:

@@ -927,6 +927,12 @@ WORKINCOMECOSTS_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
+PLOT_LOG_STATUS = (
+    ('ABSENT', 'Household(s) Absent'),
+    ('PRESENT', 'Household(s) Present'),
+    ('INACCESSIBLE', 'Inaccessible'),
+)
+
 WORKPAIDCOSTS_CHOICE = (
         ('Fixed salary', _('Fixed salary')),
         ('Paid daily', _('Paid daily')),
@@ -964,12 +970,19 @@ WHYNOPARTICIPATE_CHOICE = (
         ('I don\'t want to answer the questions', _('I don\'t want to answer the questions')),
         ('I don\'t want to have the blood drawn', _('I don\'t want to have the blood drawn')),
         ('I am afraid my information will not be private', _('I am afraid my information will not be private')),
-        ('Fear of needles', _('Fear of needless')),
+        ('Fear of needles', _('Fear of needles')),
         ('Illiterate does not want a witness', _('Illiterate does not want a witness')),
         ('I already know my status', _('I already know my status')),
+        ('I am afraid of testing', _('I am afraid of testing')),
+        ('I don\'t want to take part', _('I don\'t want to take part')),
+        ('I haven\'t had a chance to think about it', _('I haven\'t had a chance to think about it')),
+        ('Have a newly born baby, not permitted', _('Have a newly born baby, not permitted')),
         ('I am not ready to test', _('I am not ready to test')),
+        ('I already know my status', _('I already know my status')),
+        ('Already on HAART', _('Already on HAART')),
         ('I want to test where i always test', _('I want to test where i always test')),
         ('I already know my partner\'s status, no need to test', _('I already know my partner\'s status, no need to test')),
+        ('The appointment was not honoured', _('The appointment was not honoured')),
         ('not_sure', _('I am not sure')),
         ('OTHER', _('Other, specify:')),
         ('not_answering', _('Don\'t want to answer')),
