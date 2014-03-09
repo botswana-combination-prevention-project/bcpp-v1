@@ -106,11 +106,11 @@
             	{% endif %}
             	
             {% elif household_member.eligibility_checklist_filled and household_member.member_status == 'NOT_ELIGIBLE' %}
-            	<span style="color:white;background-color:red;">Failled eligibility checklist, loss form created. Can participate only partially, if atleast one enrolled member</span>
+            	Failled eligibility checklist, loss form created. Can participate only partially, if atleast one enrolled member.
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
-            	<span style="color:white;background-color:red;">Under age 16, cannot participate at any level.</span>
+            	Under age 16, cannot participate at any level.
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
-            	<span style="color:white;background-color:red;">Older than age 64. Can participate only partially, if atleast one enrolled member.</span>
+            	Older than age 64. Can participate only partially, if atleast one enrolled member.
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                {% if household_member.member_status == 'ABSENT'%}
                Absentee log (attempts to contact)
@@ -169,7 +169,7 @@
 	    {% elif household_member.member_status_partial == 'RBD' or household_member.member_status_partial == 'HTC/RBD' and household_member.eligible_rbd_subject %}
 			Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
         {% elif household_member.member_status_partial == 'HTC' %}
-            <span style="color:white;background-color:red;">option not available</span>
+            option not available.
 		{% endif %}
     </td>
     </tr>
