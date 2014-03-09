@@ -1,13 +1,14 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
-from ..managers import HouseholdManager
-from ..classes import HouseholdIdentifier
-from .plot import Plot
 
-from ..choices import ENUMERATION_STATUS
+from edc.audit.audit_trail import AuditTrail
+from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
+from ..classes import HouseholdIdentifier
+from ..managers import HouseholdManager
+
+from .plot import Plot
 
 
 class Household(BaseDispatchSyncUuidModel):
