@@ -69,7 +69,7 @@ class ReplacementData(object):
             household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
             h_log_dates = []
             for h_log in household_logs:
-                h_log_dates.append(DT(h_log.report_datetime))
+                h_log_dates.append(DT(h_log.report_datetime.year, h_log.report_datetime.month, h_log.report_datetime.day, 8, 56, 28))
             if h_log_dates:
                 report_datetime = max(h_log_dates)
                 latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
@@ -110,7 +110,7 @@ class ReplacementData(object):
         if household.enumeration_attempts == 3:
             household_logs = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household)
             for h_log in household_logs:
-                h_log_dates.append(DT(h_log.report_datetime))
+                h_log_dates.append(DT(h_log.report_datetime.year, h_log.report_datetime.month, h_log.report_datetime.day, 8, 56, 28))
             report_datetime = max(h_log_dates)
             latest_log = HouseholdLogEntry.objects.get(household_log__household_structure__household=household, report_datetime=report_datetime)
             if latest_log.household_status == 'no_household_informant' and latest_log.supervisor_vdc_confirm == 'Yes':
