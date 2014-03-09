@@ -35,6 +35,7 @@ def create_household_on_post_save(sender, instance, created, **kwargs):
         if isinstance(instance, Plot):
             instance.create_or_delete_households(instance)
 
+
 @receiver(post_save, weak=False, dispatch_uid="plot_visit_attempts_on_post_save")
 def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):

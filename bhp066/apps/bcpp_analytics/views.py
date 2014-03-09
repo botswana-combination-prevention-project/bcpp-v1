@@ -29,7 +29,7 @@ communities = [item[0] for item in COMMUNITIES]
 
 def date_from_s(date_string, date_format=DEFAULT_DATE_FORMAT):
     # This is a throwaway variable to deal with a python _strptime import bug
-    throwaway = datetime.datetime.strptime('20110101','%Y%m%d')
+    throwaway = datetime.datetime.strptime('20110101', '%Y%m%d')
     return datetime.datetime.strptime(date_string, date_format).date()
 
 
@@ -46,7 +46,7 @@ def accrual(request):
     context = _process_accrual(request.GET, date_format=DEFAULT_DATE_FORMAT)
     context.update({'communities': communities})
     context.update({'action_url': 'analytics:accrual'})
-    return render(request, template,  context)
+    return render(request, template, context)
 
 
 @login_required
@@ -258,7 +258,7 @@ def operational_report_view(request, **kwargs):
 
     #communities = [community[0].lower() for community in  COMMUNITIES]
     communities = []
-    if (previous_community.find('----') == -1) and (not previous_community == ''):#Passing filtered results
+    if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
         #communities = [community[0].lower() for community in  COMMUNITIES]
         for community in  COMMUNITIES:
             if community[0].lower() != previous_community:
