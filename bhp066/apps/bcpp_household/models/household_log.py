@@ -1,6 +1,6 @@
 from django.db import models
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
 from ..choices import YES_NO
@@ -98,7 +98,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
 
     def __unicode__(self):
-        return unicode(self.household_log)+'('+unicode(self.report_datetime)+')'
+        return unicode(self.household_log) + '(' + unicode(self.report_datetime) + ')'
 
     class Meta:
         app_label = 'bcpp_household'

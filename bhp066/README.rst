@@ -99,7 +99,7 @@ python manage.py update_visit_schedule_permissions field_supervisor --app_label 
 python manage.py update_visit_schedule_permissions field_supervisor --app_label bcpp_household
 python manage.py update_visit_schedule_permissions field_supervisor --app_label bcpp_rbd_subject
 python manage.py update_visit_schedule_permissions field_supervisor --app_label bcpp_household_member
-python manage.py update_visit_schedule_permissions field_supervisor --app_label bcpp_la
+python manage.py update_visit_schedule_permissions field_supervisor --app_label bcpp_lab
 python manage.py update_visit_schedule_permissions field_supervisor --app_label lab_clinic_api 
 python manage.py update_visit_schedule_permissions field_supervisor --app_label appointment --models appointment
 
