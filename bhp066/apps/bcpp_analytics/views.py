@@ -215,8 +215,7 @@ def operational_report_view(request, **kwargs):
 
     members_tobe_visited = []
     absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                        #created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status_full')
-                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
+                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status_full')
     for mem in absentee_undecided:
         if mem.member_status_full == 'UNDECIDED':
             undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
