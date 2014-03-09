@@ -107,7 +107,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'fix_base',
+            'NAME': 'bhp066_140308',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -121,8 +121,8 @@ else:
             'NAME': 'lab',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.50',
-            'PORT': '3306',
+            'HOST': '',
+            'PORT': '',
         },
     }
 
@@ -350,7 +350,7 @@ INSTALLED_APPS = (
     'lis.exim.lab_import_dmis',
 
     'apps.bcpp',
-    'apps.bcpp.bcpp_app_configuration',
+    'apps.bcpp.app_configuration',
     'apps.bcpp_list',
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
