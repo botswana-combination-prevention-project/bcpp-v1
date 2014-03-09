@@ -51,8 +51,9 @@ PLOT_LOG_STATUS = (
 )
 
 HOUSEHOLD_STATUS = (
-    ('enumerated', 'Enumerated'),
-    ('not_enumerated', 'Not Enumerated'),
+    ('eligible_representative_present', 'HOH or eligible representative present'),
+    ('eligible_representative_absent', 'HOH or eligible representative absent, ineligible household member present'),
+    ('no_household_informant', 'No household informant'),
     )
 
 HOUSEHOLD_COMPLETION_STATUS = (
@@ -74,6 +75,11 @@ SELECTED = (
 )
 
 ENUMERATION_STATUS = (
+    ('yes', 'Yes'),
+    ('no', 'No')
+)
+
+YES_NO = (
     ('yes', 'Yes'),
     ('no', 'No')
 )
