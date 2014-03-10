@@ -279,11 +279,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def member_status(self):
-        if self.member_status_full in ['NOT_ELIGIBLE', 'REFUSED']:
-            ret = self.member_status_partial
-        else:
-            ret = self.member_status_full
-        return ret
+#         if self.member_status_full in ['NOT_ELIGIBLE', 'REFUSED']:
+#             ret = self.member_status_partial
+#         else:
+#             ret = self.member_status_full
+#         return ret
+        return self.member_status_full
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
