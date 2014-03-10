@@ -9,21 +9,21 @@ if platform.system() == 'Darwin':
 else:
         home_dir = 'home'
 
-path = '/{0}/django/source'.format(home_dir)
+path = '/{0}/django_dev/source/bhp066/live/bhp066_project'.format(home_dir)
 if path not in sys.path:
     sys.path.append(path)
 
-path = '/{0}/django/source/bhp066'.format(home_dir)
+path = '/{0}/django_dev/source/bhp066/live/bhp066_project/bhp066'.format(home_dir)
 if path not in sys.path:
     sys.path.append(path)
 
-path = '/{0}/django/source/bhp066/keys'.format(home_dir)
+path = '/{0}/django_dev/source/bhp066/live/bhp066_project/bhp066/keys'.format(home_dir)
 if path not in sys.path:
     sys.path.append(path)
 
-sys.path.insert(0, "/{0}/django/Virtualenvs/django1_5/lib/python2.7/site-packages/".format(home_dir))
+#sys.path.insert(0, "/{0}/django_dev/.virtualenvs/bhp066_env/lib/python2.7/site-packages/".format(home_dir))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'bhp066.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bhp066.bhp066.settings'
 
 if platform.system() == 'Darwin':
         os.environ['PYTHON_EGG_CACHE'] = '/usr/local/pylons/python-eggs'
