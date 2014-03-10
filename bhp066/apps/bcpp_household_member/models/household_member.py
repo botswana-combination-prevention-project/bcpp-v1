@@ -86,6 +86,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
 
+    #Keep track of wherether the elilibility form has been filled before
+    eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
+
     visit_attempts = models.IntegerField(default=0)
 
     target = models.IntegerField(default=0)
@@ -168,7 +171,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                     if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
                         has_consent_instance = True
                         break
-        return has_consent_instance
+        return has_consent_instance 
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -218,20 +221,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if SubjectMoved.objects.filter(household_member=self, survey=self.survey):
             retval = True
         return retval
-
-#  @property
-#     def participation_form_choices(self):
-#         """Returns a form object for the household survey dashboard."""
-#         from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION, HOUSEHOLD_MEMBER_H
-#         if not self.member_status:
-#             self.member_status = 'NOT_REPORTED'
-#         return ParticipationForm(initial={'status': self.member_status,
-#                                           'household_member': self.id,
-#                                           'dashboard_id': self.household_structure.id,
-#                                           'dashboard_model': 'household_structure',
-#                                           'dashboard_type': 'household',},)
-# #                                           age=self.age_in_years,
-# #                                           residency=self.study_resident)
 
     @property
     def status_choices(self):
@@ -351,7 +340,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def form_label_helper(self, model, model_entry):
         report_datetime = []
         model_entry_instances = []
-        if model.objects.filter(household_member=self):
+        if model.objects.filter(household_member=self).exists():
             model_instance = model.objects.get(household_member=self)
             if model._meta.module_name == 'subjectundecided':
                 model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
