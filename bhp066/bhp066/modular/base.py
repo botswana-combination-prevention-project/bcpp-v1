@@ -260,6 +260,7 @@ INSTALLED_APPS = (
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
+    'apps.bcpp_rbd_subject',
     'apps.bcpp_subject',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
