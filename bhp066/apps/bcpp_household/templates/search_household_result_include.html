@@ -70,9 +70,9 @@
      	<td>{{ household.community|encrypted}}</td>
      	<td>
      		{% if household.allowed_to_enumerate == 'no' %}
-     			<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">HOH refusal</A>
+     			<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">HOH has refused</A>
      		{% else %}
-     			<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">---</A>
+     			<A href="{% url household|get_meta|admin_urlname:'change' household.pk %}?next=section_url&section_name=household">HOH Refused?</A>
      		{% endif %}
      	</td>
         <td>{{ household.user_created }}{% if household.user_modified%} / {% endif%}{{ household.user_modified }}</td> 
