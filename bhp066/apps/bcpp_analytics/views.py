@@ -11,7 +11,6 @@ from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
 
-from django.db.models import Q
 from edc.core.bhp_birt_reports.classes import OperatationalReportUtilities
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -196,9 +195,9 @@ def operational_report_view(request, **kwargs):
     age_eligible_research = members.filter(eligible_member=True, member_status_full='RESEARCH')
     research = age_eligible_research.count()
     values['6. Age eligible members that consented for RESEARCH'] = research
-    age_eligible_htc = members.filter(eligible_member=True, member_status_partial='HTC')
+    age_eligible_htc = members.filter(eligible_member=True, member_status_partial__in=['HTC', 'RBD/HTC'])
     htc = age_eligible_htc.count()
-    values['7. Age eligible members that consented for HTC ONLY'] = htc
+    values['7. Age eligible members that agreed to HTC (not through BHS)'] = htc
     age_eligible_absent = members.filter(eligible_member=True, member_status_full='ABSENT')
     absent = age_eligible_absent.count()
     values['8. Age eligible members that where ABSENT'] = absent
