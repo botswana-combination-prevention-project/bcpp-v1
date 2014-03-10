@@ -83,6 +83,8 @@
                 {% endfor %}
                 {% if plot.access_attempts == 3 %}
        				reached maximum visit attempts
+                {% elif plot.action == 'confirmed' %}
+       				not required
                 {% endif %}
             </ol>
         </td>
