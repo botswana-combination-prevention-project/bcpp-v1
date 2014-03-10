@@ -170,7 +170,11 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replacement = models.BooleanField(default=False, editable=False)
+    replacing_household = models.CharField(
+        max_length=25,
+        blank=True,
+        editable=False,
+        )
 
     device_id = models.CharField(
         max_length=2,
