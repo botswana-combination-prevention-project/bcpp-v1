@@ -25,6 +25,24 @@ class MainConsentForm(BaseSubjectConsentForm):
         if not cleaned_data.get('household_member').eligible_subject == True:
             raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
 
+    def study_specifics_checks(self, obj, cleaned_data):
+        consent_datetime = cleaned_data.get('consent_datetime').date()
+        rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
+        if rdelta.years < obj.minimum_age_of_consent:
+            raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(rdelta.years))
+        if rdelta.years > obj.maximum_age_of_consent:
+            raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(rdelta.years))
+        if cleaned_data.get('is_minor') == 'No':
+            if obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound:
+                raise forms.ValidationError(u'Subject is a minor based on DOB {0} yet you wrote they are not a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+        if cleaned_data.get('is_minor') == 'Yes':
+            if rdelta.years < obj.minimum_age_of_consent:
+                raise forms.ValidationError(u'Subject is minor but is too young to consent. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+            elif rdelta.years >= obj.age_at_adult_lower_bound:
+                raise forms.ValidationError(u'Subject is an adult based on DOB {0} yet you wrote they are a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
+            elif not (obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound):
+                raise forms.ValidationError(u'Subject is not a minor as defined by this protocol. Got {0} years'.format(rdelta.years))
+
     def clean(self):
 
         cleaned_data = self.cleaned_data
@@ -42,22 +60,7 @@ class MainConsentForm(BaseSubjectConsentForm):
             raise forms.ValidationError('You wrote subject is NOT a minor. Guardian\'s name is not required for adults. Please correct.')
         self.check_elligibility_filled(cleaned_data)
         if cleaned_data.get('consent_datetime'):
-            consent_datetime = cleaned_data.get('consent_datetime').date()
-            rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
-            if rdelta.years < obj.minimum_age_of_consent:
-                raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(rdelta.years))
-            if rdelta.years > obj.maximum_age_of_consent:
-                raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(rdelta.years))
-            if cleaned_data.get('is_minor') == 'No':
-                if obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound:
-                    raise forms.ValidationError(u'Subject is a minor based on DOB {0} yet you wrote they are not a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
-            if cleaned_data.get('is_minor') == 'Yes':
-                if rdelta.years < obj.minimum_age_of_consent:
-                    raise forms.ValidationError(u'Subject is minor but is too young to consent. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
-                elif rdelta.years >= obj.age_at_adult_lower_bound:
-                    raise forms.ValidationError(u'Subject is an adult based on DOB {0} yet you wrote they are a minor. Please correct.'.format(cleaned_data.get('dob'), obj.minimum_age_of_consent, rdelta.years, obj.age_at_adult_lower_bound))
-                elif not (obj.minimum_age_of_consent <= rdelta.years < obj.age_at_adult_lower_bound):
-                    raise forms.ValidationError(u'Subject is not a minor as defined by this protocol. Got {0} years'.format(rdelta.years))
+            self.study_specifics_checks(obj, cleaned_data)
         # check for identity
         if not cleaned_data.get('identity'):
             raise forms.ValidationError("Identity cannot be None.")
