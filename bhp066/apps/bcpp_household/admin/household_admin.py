@@ -11,14 +11,14 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     list_per_page = 30
     list_max_show_all = 1000
 
-#     fields = (
-#         'report_datetime',
-#         'allowed_to_enumerate',
-#         'comment')
-#
-#     radio_fields = {
-#         "allowed_to_enumerate": admin.VERTICAL,
-#         }
+    fields = (
+        'report_datetime',
+        'allowed_to_enumerate',
+        'comment')
+
+    radio_fields = {
+        "allowed_to_enumerate": admin.VERTICAL,
+        }
 
     list_display = ('household_identifier', 'structure', 'plot', 'community', 'created')
 

@@ -21,6 +21,7 @@ from ..managers import HouseholdMemberManager
 from ..choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION, \
                     HOUSEHOLD_MEMBER_NOT_ELIGIBLE
 
+
 class HouseholdMember(BaseDispatchSyncUuidModel):
 
     household_structure = models.ForeignKey(HouseholdStructure,
@@ -76,7 +77,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         null=True,
         editable=False,
         default='NOT_REPORTED',
-        help_text='RESEARCH, ABSENT, REFUSED, MOVED',
+        help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
         db_index=True)
 
     member_status = models.CharField(
@@ -94,7 +95,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         null=True,
         editable=False,
         default='NOT_REPORTED',
-        help_text='RBD, HTC',
+        help_text='RBD, HTC or RBC/HTC',
         db_index=True)
 
     hiv_history = models.CharField(max_length=25, null=True, editable=False)
@@ -186,9 +187,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         "determines wether this participant should be offered full participation or partial participation"
         if self.member_status_full == 'REFUSED':
             return True
-        if not self.is_eligible():#evaluated before eligibility checklist for BHS is ran.
+        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran.
             return True
-        if self.member_status_full == 'NOT_ELIGIBLE':#Sometimes set after a more strict criteria of the BHS eligibility checklist.
+        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist.
             return True
         return False
 
@@ -288,8 +289,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def member_status(self):
-        return self.member_status_full
- 
+        if self.member_status_full in ['NOT_ELIGIBLE', 'REFUSED']:
+            ret = self.member_status_partial
+        else:
+            ret = self.member_status_full
+        return ret
+
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
         url = ''
@@ -405,7 +410,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 model_entry_instances = model_entry.objects.filter(subject_absentee=model_instance).order_by('report_datetime')
             model_entry_count = model_entry_instances.count()
             for subject_undecided_entry in model_entry_instances:
-                report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'),subject_undecided_entry.id))
+                report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'), subject_undecided_entry.id))
             if self.visit_attempts < 3:
                 report_datetime.append(('add new entry', 'add new entry'))
         if not report_datetime:
