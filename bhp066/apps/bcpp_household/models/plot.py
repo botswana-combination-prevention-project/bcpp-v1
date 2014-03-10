@@ -1,8 +1,6 @@
-from database_storage import DatabaseStorage
-
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError
 from django.utils.translation import ugettext as _
@@ -157,7 +155,6 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=35,
         null=True,
         choices=PLOT_STATUS,
-        help_text='If Inaccessible, update status and comment but not GPS, household count, time_of_week, etc.'
         )
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
@@ -171,14 +168,6 @@ class Plot(BaseDispatchSyncUuidModel):
         verbose_name='selected',
         choices=SELECTED,
         editable=False,
-        )
-
-    allowed_to_enumerate = models.CharField(
-        max_length=25,
-        null=True,
-        verbose_name='Does the Household memeber and Head of Household allow you to enumerate them?',
-        choices=ENUMERATION_STATUS,
-        editable=True,
         )
 
     replacement = models.BooleanField(default=False, editable=False)
@@ -262,7 +251,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         if self.status == 'inaccessible':
             # reset any editable fields that the user changed
-            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and field.name not in ['status', 'comment']]:
+            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment']]:
                 setattr(self, field.name, None)
         else:
             if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
@@ -274,8 +263,7 @@ class Plot(BaseDispatchSyncUuidModel):
             self.action = self.get_action()
             if self.id:
                 self.household_count = self.create_or_delete_households(self)
-            if ((self.household_count == 0 and self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration']) or
-                    (self.household_count > 0 and not self.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'])):
+            if ((self.household_count == 0 and self.status in  ['residential_habitable'])):
                 raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
@@ -304,15 +292,17 @@ class Plot(BaseDispatchSyncUuidModel):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
         for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, member_count=0).order_by('-created'):
-            if Household.objects.filter().count() > instance.household_count:
+            if Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
                 try:
-                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure):
+                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).exists():
                         HouseholdLog.objects.filter(household_structure=household_structure).delete()
                         household_pk = unicode(household_structure.household.pk)
                         household_structure.delete()
-                        for household in Household.objects.filter(pk=household_pk):
-                            HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier).delete
-                            household.delete()
+                        household = Household.objects.get(pk=household_pk)
+                        identifier_history = HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier)
+                        for ind in identifier_history:
+                            ind.delete()
+                        household.delete()
                 except IntegrityError:
                     pass
 
@@ -325,18 +315,20 @@ class Plot(BaseDispatchSyncUuidModel):
             * If number is less than actual household instances, households are deleted as long as
               there are no household members and the household log does not have entries."""
         Household = models.get_model('bcpp_household', 'Household')
-        # check that tuple has not changed and has "occupied"
+        # check that tuple has not changed and has "residential_habitable"
         if instance.status:
             if instance.status not in [item[0] for item in PLOT_STATUS]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        if instance.status in  ['occupied', 'occupied_no_residents', 'occupied_refused_enumeration'] and not Household.objects.filter(plot__pk=instance.pk).count() == instance.household_count:
-            while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
-                instance.create_household(instance)
-            number_of_households = Household.objects.filter(plot__pk=instance.pk).count()
-            if number_of_households > instance.household_count:
-                instance.delete_unused_households(instance)
-        else:
-            instance.delete_unused_households(instance)
+        existing_household_count = Household.objects.filter(plot__pk=instance.pk).count()
+        if instance.status in  ['residential_habitable'] and not (existing_household_count == instance.household_count):
+            if Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
+                while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
+                    instance.create_household(instance)
+            elif Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
+                while Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
+                    instance.delete_unused_households(instance)
+            else:
+                pass
         return Household.objects.filter(plot__pk=instance.pk).count()
 
     def get_action(self):
@@ -397,6 +389,72 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
+
+    @property
+    def log_form_label(self):
+        from .plot_log import PlotLog, PlotLogEntry
+        report_datetime = []
+        if PlotLog.objects.filter(plot=self).exists():
+            plot_log_instance = PlotLog.objects.get(plot=self)
+            log_entry_instances = PlotLogEntry.objects.filter(plot_log=plot_log_instance).order_by('report_datetime')
+            entry_count = log_entry_instances.count()
+            for log_entry in log_entry_instances:
+                if log_entry.log_status:
+                    report_datetime.append((log_entry.log_status.lower()+'-'+log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
+                else:
+                    report_datetime.append((log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
+            if self.access_attempts < 3:
+                report_datetime.append(('add new entry', 'add new entry'))
+        if not report_datetime:
+            report_datetime.append(('add new entry', 'add new entry'))
+        return report_datetime
+    #log_form_label.allow_tags = True
+
+    @property
+    def log_entry_form_urls(self):
+        """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
+        from .plot_log import PlotLog, PlotLogEntry
+        entry_urls = {}
+        plot_log = self.plot_log
+        for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):
+            entry_urls[entry.pk] = self._get_form_url('plotlogentry', entry.pk)
+        add_url_2 = self._get_form_url('plotlogentry', model_pk=None, add_url=True)
+        entry_urls['add new entry'] = add_url_2
+        return entry_urls
+    #log_entry_form_urls.allow_tags = True
+
+    def _get_form_url(self, model, model_pk=None, add_url=None):
+        url = ''
+        pk = None
+        app_label = 'bcpp_household'
+        if add_url:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model))
+            return url
+        if not model_pk:  # This is a like a SubjectAbsentee
+            model_class = models.get_model(app_label, model)
+            try:
+                instance = model_class.objects.get(plot=self)
+                pk = instance.id
+            except:
+                pk = None
+        else:
+            pk = model_pk
+        if pk:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(pk, ))
+        else:
+            url = reverse('admin:{0}_{1}_add'.format(app_label, model))
+        return url
+
+    @property
+    def plot_log(self):
+        from .plot_log import PlotLog
+        try:
+            instance = PlotLog.objects.get(plot=self)
+        except PlotLog.DoesNotExist:
+            instance = PlotLog.objects.create(
+                plot=self
+                )
+        return instance
 
     class Meta:
         app_label = 'bcpp_household'

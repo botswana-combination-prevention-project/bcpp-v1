@@ -2,7 +2,8 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.subject.visit_tracking.models import BaseVisitTracking
-
+#from edc.entry_meta_data.managers import EntryMetaDataManager
+from edc.subject.appointment.models import Appointment
 from apps.bcpp_household_member.models import HouseholdMember
 
 from ..choices import VISIT_UNSCHEDULED_REASON
@@ -21,6 +22,8 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
         null=True,
         choices=VISIT_UNSCHEDULED_REASON,
         )
+
+    #entry_meta_data_manager = EntryMetaDataManager(Appointment)
 
     history = AuditTrail()
 
