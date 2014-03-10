@@ -20,7 +20,7 @@ def return_data(request):
     replacement_count = 0
     template = 'return_data.html'
     message = None
-    replacement_plots = Plot.objects.filter(selected=2, replacement=False)
+    replacement_plots = Plot.objects.filter(selected=2, replacing_household=None)
     if not replacement_plots:
         message = 'No plots available to replace with.'
         return render_to_response(
@@ -41,13 +41,14 @@ def return_data(request):
             content_type = None
             for household in replacement_data:
                 if replacement_plots and len(replacement_plots) > replacement_count:
-                    replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
-                    house = Household.objects.get(household_identifier=household)
-                    house.replacement = True
-                    house.save()
-                    replacement_plots[replacement_count].replacement = True
-                    replacement_plots[replacement_count].save()
-                    replacement_count += 1
+                    if not replacement_plots[replacement_count].replacement_household:
+                        replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
+                        house = Household.objects.get(household_identifier=household)
+                        house.replacement = True
+                        house.save()
+                        replacement_plots[replacement_count].replacement = True
+                        replacement_plots[replacement_count].save()
+                        replacement_count += 1
             pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_data_list})).values_list('pk')
             selected = list(itertools.chain(*pks))
             content_type = ContentType.objects.get_for_model(Plot)
