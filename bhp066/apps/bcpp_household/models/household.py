@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
+from edc.choices import YES_NO
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
@@ -121,10 +122,12 @@ class Household(BaseDispatchSyncUuidModel):
         )
 
     allowed_to_enumerate = models.CharField(
+        verbose_name='Are you able to enumerate this household?',
+        choices=YES_NO,
         max_length=25,
         default='Yes',
         null=False,
-        editable=False,
+        editable=True,
         )
 
     #Indicates that a household has been replaced if its part of twenty percent.
