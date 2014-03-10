@@ -6,7 +6,6 @@ from edc.core.crypto_fields.fields import EncryptedTextField
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp.choices import PLOT_LOG_STATUS
 from apps.bcpp_survey.validators import date_in_survey
 
 from .plot import Plot
@@ -16,7 +15,7 @@ from ..managers import PlotLogManager, PlotLogEntryManager
 
 
 class PlotLog(BaseDispatchSyncUuidModel):
-    #Household
+
     plot = models.OneToOneField(Plot)
 
     history = AuditTrail()
@@ -32,11 +31,6 @@ class PlotLog(BaseDispatchSyncUuidModel):
     def natural_key(self):
         return self.plot.natural_key()
     natural_key.dependencies = ['bcpp_household.plot', ]
-
-#     def plot_structure(self):
-#         url = '/admin/{0}/householdstructure/?q={1}'.format(self._meta.app_label, self.household_structure.pk)
-#         return """<a href="{url}" />structure</a>""".format(url=url)
-#     plot_structure.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_household'
