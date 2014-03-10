@@ -79,6 +79,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text='RESEARCH, ABSENT, REFUSED, MOVED',
         db_index=True)
 
+    member_status = models.CharField(
+        max_length=25,
+        choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+        null=True,
+        editable=False,
+        default='NOT_REPORTED',
+        help_text='RESEARCH, ABSENT, REFUSED, MOVED',
+        db_index=True)
+
     member_status_partial = models.CharField(
         max_length=25,
         choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
@@ -135,6 +144,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.household_structure.household.plot.save()
         else:
             self.member_status_full = 'NOT_ELIGIBLE'
+        self.member_status = self.member_status_full
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
