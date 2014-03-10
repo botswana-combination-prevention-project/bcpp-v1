@@ -24,7 +24,7 @@ def replace_data(request):
     replacement_count = len(replacement_data)
     for household in replacement_data:
         replace_str = replace_str + ',' + household.household_identifier
-        household.replacement = True
+        household.replacement_plot = True
         household.save()
     return render_to_response(
             template, {
