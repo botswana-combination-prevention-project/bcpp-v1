@@ -1,0 +1,1557 @@
+[
+{
+  "pk": 1, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "django", 
+    "first_name": "", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-01-23T13:22:40", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$ghtJM8negFM3$McjaaExTZ3XrCsRsJSrhNovZET9JkVgSM/Da276t5iE=", 
+    "email": "django@bhp.org.bw", 
+    "date_joined": "2013-10-15T15:14:16"
+  }
+},
+{
+  "pk": 2, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "mkewagamang", 
+    "first_name": "Melissa", 
+    "last_name": "Kewagamang", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-02-28T11:01:26", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$T3N8rA7uRLoE$rqfFJPbYvtgrf69U8mNKl3WBAtPR/BiddzXiR2svpQk=", 
+    "email": "mkewagamang@bhp.org.bw", 
+    "date_joined": "2013-10-16T08:15:52"
+  }
+},
+{
+  "pk": 3, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "jtshikedi", 
+    "first_name": "James", 
+    "last_name": "Tshikedi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:09:39", 
+    "groups": [
+      5
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$hsuAiXCW2dl9$4UrY4eqj75vqEcQNNG4h6HNXoL+yxbWaBCj1efjS1og=", 
+    "email": "jtshikedi@bhp.org.bw", 
+    "date_joined": "2013-10-16T11:20:23"
+  }
+},
+{
+  "pk": 4, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmolokwane", 
+    "first_name": "keotshepile", 
+    "last_name": "Molokwane", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T12:21:35", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$gfk74FccD9Cr$9U6eMBFrWTjBLptVnoKOrhJeP5E2y0JFDuA4BAO/pNE=", 
+    "email": "kmolokwane@bhp.org.bw", 
+    "date_joined": "2013-10-16T12:21:35"
+  }
+},
+{
+  "pk": 5, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "msegobaetso", 
+    "first_name": "mmoloki", 
+    "last_name": "segobaetso", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-28T16:28:06", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$KqwXoPrPOfKM$s43ejl2LrQDmynomPPbKSynKVQyb2edUpz7rTq+YCC4=", 
+    "email": "msegobaetso@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:02:00"
+  }
+},
+{
+  "pk": 6, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "omoichubedi", 
+    "first_name": "osenotse", 
+    "last_name": "moichubedi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:04:56", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$kOboRFGvTprS$z1rq2i6Uw6jbBTyT16p2XLvwfe9Z0I3QUiVVv2KlyU8=", 
+    "email": "moichubedi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:04:56"
+  }
+},
+{
+  "pk": 7, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "gtlhoafalo", 
+    "first_name": "Gaolatlhe", 
+    "last_name": "Tlhoafalo", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:06:33", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$xQfTdhJ1S2jC$P3qZb4JHafvfLXZAZfAXbjOyU+GVn5K5uA2rGqgaYNc=", 
+    "email": "gtlhoafalo@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:06:33"
+  }
+},
+{
+  "pk": 8, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "abojang", 
+    "first_name": "Annah", 
+    "last_name": "Bojang", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:08:05", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$ASS3XkxL44ij$3l6juHiU3ponRQQD8ibsP7gZ0OonGsIZNPLTc3/lKkc=", 
+    "email": "abojang@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:08:05"
+  }
+},
+{
+  "pk": 9, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kkeothepile", 
+    "first_name": "Kgakgamatso", 
+    "last_name": "keothepile", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:10:49", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$DXvdXGX5oj8G$1Wsiso3MZX1Kcik6Innpua5E/K4STHQEgdeEnuCoXTw=", 
+    "email": "kkeothepile@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:10:49"
+  }
+},
+{
+  "pk": 10, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "smbayi", 
+    "first_name": "Mpho Sunday", 
+    "last_name": "Mbayi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:12:53", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$EdC7BHBD74hK$pGgadpT0BmhMHWl7Arw0brc/oSSI9uQGXJp/uzDtUYA=", 
+    "email": "smbayi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:12:53"
+  }
+},
+{
+  "pk": 11, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "jdubula", 
+    "first_name": "Jackson", 
+    "last_name": "Dubula", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:14:13", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$nvfboUNyKPo2$nllWib77d9q+mcT6/BdFKdpJ+1F9DZOYOG+8LpjNpI8=", 
+    "email": "jdubula@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:14:13"
+  }
+},
+{
+  "pk": 12, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tkgautlhe", 
+    "first_name": "Tshepho", 
+    "last_name": "Kgautlhe", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:15:30", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$qol45AqLsggR$HpOXiLgSu0EXK5q2L5cZKYOQhEQ2xeQYh+s8zFMxdIc=", 
+    "email": "tkgautlhe@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:15:30"
+  }
+},
+{
+  "pk": 13, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "dkeabetswe", 
+    "first_name": "Dikgang", 
+    "last_name": "Keabetswe", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:16:48", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$kVrjODufNSmO$ACqjzfH1Dtw7UY/Fk4vbi2FCJYHHoztUwz835cScztA=", 
+    "email": "dkeabetswe@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:16:48"
+  }
+},
+{
+  "pk": 14, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ktshwene", 
+    "first_name": "keitumetse", 
+    "last_name": "Tshwene", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:17:54", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$E41PqnPkTH9L$Ry4wiE8MiCgL2KiON/57+vMhyt/UZXY76UQabMdl/bM=", 
+    "email": "ktshwene@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:17:54"
+  }
+},
+{
+  "pk": 15, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tmotladiile", 
+    "first_name": "Tshegofatso", 
+    "last_name": "Motladiile", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-28T15:14:36", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$UciVyBq2pmOr$Y3SP30100pnK0MWAGz7QznEni1J9gIljQ+nBuNIM50M=", 
+    "email": "tmotladiile@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:19:15"
+  }
+},
+{
+  "pk": 16, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "mmichael", 
+    "first_name": "Margaret", 
+    "last_name": "Michael", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:20:22", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$7aMFyUeqOBQr$/tjJXUFrrOqfhLf5p7shKyYIGWZYn4uSKhrVJnU6A3M=", 
+    "email": "mmichael@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:20:22"
+  }
+},
+{
+  "pk": 17, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "erathedi", 
+    "first_name": "Entetse", 
+    "last_name": "Rathedi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:24:39", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$YHuCa9y3bqWz$wQENgGNsVQqmbLTD4CbsHbpoIeTfAnNGW4jabnigMjQ=", 
+    "email": "erathedi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:24:39"
+  }
+},
+{
+  "pk": 18, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ckgathi", 
+    "first_name": "Coulson", 
+    "last_name": "Kgathi", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-03-04T15:13:41", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$KfKiqy0HsycZ$pEJHu0sK5cHc65j2xGiuTtTSKy/6J18Jmrqw53o/IXU=", 
+    "email": "ckgathi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:24:46"
+  }
+},
+{
+  "pk": 19, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tmotseotsile", 
+    "first_name": "Thatayotlhe", 
+    "last_name": "Motseotsile", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:26:49", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$NuSybqWCMP2y$iyDzC+kaA+9b2pY3phE0GJfIrFIuydU0zHx5MlCbwAY=", 
+    "email": "tmotseotsile@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:26:49"
+  }
+},
+{
+  "pk": 20, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "lmochoba", 
+    "first_name": "Lorato", 
+    "last_name": "Mochoba", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:28:43", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$W0Lz303PM5ZM$MqDaX5huhEe2hhF75JQzKq9hH+HyeVljawru4aE2kJ0=", 
+    "email": "lmochoba@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:28:43"
+  }
+},
+{
+  "pk": 21, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "rmabutho", 
+    "first_name": "Robert", 
+    "last_name": "Mabutho", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:30:19", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$le12doBtWHZJ$KrRI4Qs9XAlvSxleJIFFsfoSY/1A4K6biWEQvnzgkwM=", 
+    "email": "rmabutho@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:30:19"
+  }
+},
+{
+  "pk": 22, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmaotonyane", 
+    "first_name": "Khumoyame", 
+    "last_name": "Maotonyane", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:31:50", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$CgkpGrtQixZa$rQ5dTOOhi79wWRZwBbwFw/PNtcuqXaLqk3lOH/3UPOU=", 
+    "email": "kmaotonyane@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:31:50"
+  }
+},
+{
+  "pk": 23, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmakabe", 
+    "first_name": "Kelebemang", 
+    "last_name": "Makabe", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:33:04", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$OKRjkAT6i15N$ORy3jkj+TDNUpsDhL2yMYqaCTFDUx9NRDCfJCTJAKa0=", 
+    "email": "kmakabe@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:33:04"
+  }
+},
+{
+  "pk": 24, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "nkeakantse", 
+    "first_name": "Natefo Daughter", 
+    "last_name": "Keakantse", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:35:24", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$tZX5Eoy4XPtT$20RsbCXJcIeJNwq0lmmLuE88oyH6ox9C2f3fiNWRT4Q=", 
+    "email": "nkeakantse@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:35:24"
+  }
+},
+{
+  "pk": 26, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "mmalomo", 
+    "first_name": "Masimba", 
+    "last_name": "Malomo", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-28T15:13:07", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$WJCxYOeljPQL$ZMJWAB+QXgHpD6TJe6wSus34WTZ5ByRjoB07DVSQGjc=", 
+    "email": "mmalomo@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:38:02"
+  }
+},
+{
+  "pk": 27, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tmooketsi", 
+    "first_name": "Thatayotlhe", 
+    "last_name": "Mooketsi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:39:23", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$R5lR6fVXOUwA$kCmEFOZ3ZftXAz7niFB0zXV2R8MhrFTWJKR2UcUOzyA=", 
+    "email": "tmooketsi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:39:23"
+  }
+},
+{
+  "pk": 28, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "molesitse", 
+    "first_name": "Mavis", 
+    "last_name": "Olesitse", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-29T08:05:15", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$GvBWt8vBSeYk$RsBvyCIJTZFuYuleeW9Qu2qoA/x9bsQZLlGaXS75A1Q=", 
+    "email": "molesitse@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:40:36"
+  }
+},
+{
+  "pk": 29, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "smasole", 
+    "first_name": "Sarah", 
+    "last_name": "Masole", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:42:00", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$JKrcUBUvDsxO$QleXX9JkyrMH4fXzP3ETw7VoQ3ENcdTm8h97860MCMg=", 
+    "email": "smasole@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:42:00"
+  }
+},
+{
+  "pk": 30, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "cmazongo", 
+    "first_name": "Caroline", 
+    "last_name": "Mazongo", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:43:17", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$uSPBmpx0QO7i$MX300yE9OXsanNMlnDcRT84Ghvz2vMuPbXciK8ZoeAw=", 
+    "email": "cmazongo@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:43:17"
+  }
+},
+{
+  "pk": 31, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "skutlapye", 
+    "first_name": "Salang", 
+    "last_name": "Kutlapye", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:44:51", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$0psCog9IFDl6$aDgd8WbHgJN5b2JQVYDImM1HVGLF+mg19l0vRZLriPs=", 
+    "email": "skutlapye@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:44:51"
+  }
+},
+{
+  "pk": 32, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "lmologasele", 
+    "first_name": "Lefhela", 
+    "last_name": "Mologasele", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:45:53", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$2ueE5d3ga23H$l0zHqHs4PODkQ2bDfVCROKkdatcpucXUafWoMST82tg=", 
+    "email": "lmologasele@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:45:53"
+  }
+},
+{
+  "pk": 33, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "wmangwegape", 
+    "first_name": "Waxson", 
+    "last_name": "Manswegape", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-29T07:47:12", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$mbhJS22deL0x$IhPN0kGBS3Zqlu6MFxCn2urvZclgDUP9NEfi1UH44Zk=", 
+    "email": "wmangwegape@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:47:54"
+  }
+},
+{
+  "pk": 34, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmmokele", 
+    "first_name": "Kealeboga", 
+    "last_name": "Mmokele", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:48:05", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$wuDPMTADF45r$ovjqh1BqLJWdfkCkf/Mex2X//AF5T9MyXzq1us3o13U=", 
+    "email": "kmmokele@bhp.org", 
+    "date_joined": "2013-10-16T14:48:05"
+  }
+},
+{
+  "pk": 35, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "nmoilwanyane", 
+    "first_name": "Nametso", 
+    "last_name": "Moilwanyane", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-28T12:16:15", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$9xVCkUXFUwCV$110uXPOqRl4yLSSzXaI28cfc07ZjuqWfWNFyn5e+af4=", 
+    "email": "nmoilwanyane@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:51:07"
+  }
+},
+{
+  "pk": 36, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ndapiwa", 
+    "first_name": "Ndapiwa", 
+    "last_name": "Molapisi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:51:59", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$dPwZtLT44IgF$dYbeo/bQ0kPs0ogiCFQh+kufOdV7kJ6/jbLJEn2mhuE=", 
+    "email": "ndapiwa@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:51:59"
+  }
+},
+{
+  "pk": 37, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "bsimon", 
+    "first_name": "Boikhutso", 
+    "last_name": "Simon", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:52:23", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$W0rpflzwUDbd$6rZVsVvOULDydI53wtMneeBOvXMJ7Q1XRj9xlyb4WBc=", 
+    "email": "bsimon@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:52:23"
+  }
+},
+{
+  "pk": 38, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmoloi", 
+    "first_name": "Keamogetswe", 
+    "last_name": "Moloi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:53:05", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$cogD3AvazYs2$dZx+rzStv5gBJBPWWN0wf8g8hYJZdpYjsXDyoZxAlIw=", 
+    "email": "kmoloi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:53:05"
+  }
+},
+{
+  "pk": 39, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kkgosikoma", 
+    "first_name": "Kago", 
+    "last_name": "Kgosikoma", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:53:45", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$hCS6aTZCgFL2$iiHDeBJJrFGZY3Xpk5vx5FWdUIDjtOhvugb09GB2fFg=", 
+    "email": "kkgosikoma@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:53:45"
+  }
+},
+{
+  "pk": 40, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "pditlhage", 
+    "first_name": "Phemo John", 
+    "last_name": "Ditlhage", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:54:56", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$1ShhLzcTP9Mj$jZf4Gzm0xCRIrMhor52r9KbeX1xmSKjdCArhu5P39Pg=", 
+    "email": "pditlhage@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:54:56"
+  }
+},
+{
+  "pk": 41, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmokhokhwe", 
+    "first_name": "koketso", 
+    "last_name": "Mokhokhwe", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:55:25", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$S4ApHmo6rc9f$xCWM/XqmhleJC4qEiKFzeXnQbS8lyqeeD/3iN4EJcp4=", 
+    "email": "kmokhokhwe@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:55:25"
+  }
+},
+{
+  "pk": 42, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ttsokunyane", 
+    "first_name": "Tsholofelo", 
+    "last_name": "Tsokunyane", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:56:33", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$exoSUZ6tkTvm$x3iZH47QWhGVCqIfyf4EfxGNRV5nxYu8q7OC2KDdroM=", 
+    "email": "ttsokunyane@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:56:33"
+  }
+},
+{
+  "pk": 43, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kolesitse", 
+    "first_name": "Keoneeng Quinton", 
+    "last_name": "Olesitse", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:56:59", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$TwpZXq6omaWS$RT2GotwAFRgLNXkVHfsOg5IZR+bR16koX+KPz47HHfY=", 
+    "email": "kolesitse@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:56:59"
+  }
+},
+{
+  "pk": 44, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "osethunyane", 
+    "first_name": "Oganeditse", 
+    "last_name": "Sethunyane", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-28T14:15:57", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$SS9shYefJY10$vpYwbcDbuFOYWln7JKRiDMVJZkXXtgnHoyDUiZ9Ldgk=", 
+    "email": "osethunyane@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:57:33"
+  }
+},
+{
+  "pk": 45, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "lmmesi", 
+    "first_name": "Lebogang", 
+    "last_name": "Mmesi", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T14:59:03", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$R2fhCi5S1koV$fWGURLmWHWWx9TdmOkA+o4YxnbuGMc3YdtTXwiFu7gw=", 
+    "email": "lmmesi@bhp.org.bw", 
+    "date_joined": "2013-10-16T14:59:03"
+  }
+},
+{
+  "pk": 46, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "lramatokwane", 
+    "first_name": "Lesedi", 
+    "last_name": "Ramatokwane", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T15:00:18", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$6kk2U1UWqTjN$jYQuo9xU18RGsGE/uLZNrPzYJVYCk97oa8qoG+O52g4=", 
+    "email": "lramatokwane@bhp.org.bw", 
+    "date_joined": "2013-10-16T15:00:18"
+  }
+},
+{
+  "pk": 47, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "bmabiletsa", 
+    "first_name": "Bathoba", 
+    "last_name": "Mabiletsa", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-16T15:02:52", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$My5xaXnAaOld$GPqMJls9sPmlKSeu4jww2G/sRC3ZuuZucKoAtW0OzDA=", 
+    "email": "bmabiletsa@bhp.org.bw", 
+    "date_joined": "2013-10-16T15:02:52"
+  }
+},
+{
+  "pk": 48, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tbasuti", 
+    "first_name": "Tebogo", 
+    "last_name": "Basuti", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-25T08:55:20", 
+    "groups": [
+      5
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$SjwJHAWLO1ir$fRCpJWyWQIJuOfUDTiO3YmVbi7eqJR29Q7TNBj/Ek7g=", 
+    "email": "tbasuti@bhp.org.bw", 
+    "date_joined": "2013-10-17T16:03:08"
+  }
+},
+{
+  "pk": 49, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tmoruiemang", 
+    "first_name": "Tefo", 
+    "last_name": "Moruiemang", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-25T11:12:22", 
+    "groups": [
+      5
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$AHX56H0tvJTD$rHNQp0Fkwo7dvbcw0+ffd7hTimaNDx7TJkig69zDakY=", 
+    "email": "tmoruiemang@bhp.org.bw", 
+    "date_joined": "2013-10-17T16:04:15"
+  }
+},
+{
+  "pk": 50, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "onep", 
+    "first_name": "One", 
+    "last_name": "Pharatlhatlhe", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-03-10T07:34:30", 
+    "groups": [
+      3
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$diYTTHrCe80T$4Y8ZiPiuBP+XcC2drDHjBKaNVkNLHLbRR5CSGD4L1T0=", 
+    "email": "opharatlhatlhe@bhp.org.bw", 
+    "date_joined": "2013-10-17T16:31:56"
+  }
+},
+{
+  "pk": 51, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ankhutelang", 
+    "first_name": "Angel", 
+    "last_name": "Nkhutelang", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-17T16:32:39", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$mpV08nNPHYTj$BTCqDtOJRqUM0l2YKZwkYfxB8a5ETCY+/touCSevxkk=", 
+    "email": "ankhutelang@bhp.org.bw", 
+    "date_joined": "2013-10-17T16:32:39"
+  }
+},
+{
+  "pk": 52, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "erikvw", 
+    "first_name": "", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-03-03T15:36:18", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$KrrXS5wqKprq$f+5seEReS1WqpMnuMu51OTL0sACLO6EBYeTtfDlZMdo=", 
+    "email": "ew2789@gmail.com", 
+    "date_joined": "2013-10-21T01:17:01"
+  }
+},
+{
+  "pk": 53, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "lokui", 
+    "first_name": "Lillian", 
+    "last_name": "Okui", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-04T15:15:29", 
+    "groups": [
+      2, 
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$EbkvkxUloJ7x$wzFBF0aVCazTo+jJ9xUV9PPL2ZqJTvEKHWI4SiQwl5w=", 
+    "email": "lokui@bhp.org.bw", 
+    "date_joined": "2013-10-23T08:54:05"
+  }
+},
+{
+  "pk": 54, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "mmotsepe", 
+    "first_name": "Motswana", 
+    "last_name": "Motsepe", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-10-25T11:47:10", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$dpq1G1zcraOG$n6UHLY7js3RIR4WD6AVZOX/MetUHcJSGm81I1Fr4SAk=", 
+    "email": "mmotsepe@bhp.org.bw", 
+    "date_joined": "2013-10-23T08:59:52"
+  }
+},
+{
+  "pk": 55, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo1", 
+    "first_name": "clo1", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T14:22:00", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$8MEutxPzZN0b$hz7tyyfwuvDZ1ZJkj0Wyr/xdoleT8+PSuPoooL8tFv0=", 
+    "email": "", 
+    "date_joined": "2013-10-25T08:57:51"
+  }
+},
+{
+  "pk": 56, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo2", 
+    "first_name": "clo2", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T14:23:15", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$cHZqimGE5Lv7$fN8qO2KbhjVa2X0XmnL0R/19uwjkCJcmmRFUAxb0bKI=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:01:28"
+  }
+},
+{
+  "pk": 57, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo3", 
+    "first_name": "clo3", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T14:21:58", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$aag2NMCrl05I$Qjcw2GzHcae6o36P5iOKxLG1CmfGesrMy1M+OLN3VDQ=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:02:30"
+  }
+},
+{
+  "pk": 58, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo4", 
+    "first_name": "clo4", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T14:22:56", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$QoZygm5SdJ4r$Xy/aWJSLaM3xT7U0pNQdiAWD9amqYTwRVrHeivhK8Nc=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:03:12"
+  }
+},
+{
+  "pk": 59, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo5", 
+    "first_name": "clo5", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T14:22:00", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$kBcAVyOKSsXE$5A2+z0r2WtLkUCFUKpZLQ8h2LNCH6PKGO+7VFNUMnAE=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:03:56"
+  }
+},
+{
+  "pk": 60, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo6", 
+    "first_name": "clo6", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T16:34:08", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$IBczRSlX9Elm$metZ4ypFihcvAlDMgkUCTDJgb/XyI+pONUvR/q8bsQQ=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:04:30"
+  }
+},
+{
+  "pk": 61, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo7", 
+    "first_name": "clo7", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T16:33:56", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$VOJaihYEQsmz$i70yEvTLOQiDQ1KzRzJiYdy+3h21ru+VlhMQa5z/fOE=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:05:03"
+  }
+},
+{
+  "pk": 62, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "clo8", 
+    "first_name": "clo8", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-11-20T16:11:57", 
+    "groups": [
+      8
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$Ne3YNPhoRcYc$hkOS2NNz4Oik9zTrrj+6xIfXK/g7X+D7MfjC3uU7aso=", 
+    "email": "", 
+    "date_joined": "2013-10-25T09:05:46"
+  }
+},
+{
+  "pk": 63, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "slockman", 
+    "first_name": "Shahin", 
+    "last_name": "Lockman", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-12-19T00:42:32", 
+    "groups": [
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$19RQYvmRRDuq$yPUkFbOPkHR7aTViAZQyNhQSJoVBQ63TMx30PQ402sg=", 
+    "email": "", 
+    "date_joined": "2013-12-13T09:07:07"
+  }
+},
+{
+  "pk": 64, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "rletlhogile", 
+    "first_name": "Rona", 
+    "last_name": "Letlhogile", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-09T16:06:38", 
+    "groups": [
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$Cf5RPiEoeUwg$6AVRQKNe0KgPD/EDyLqc3jJ1SoxjQIZ/3l3MdKXJ0VE=", 
+    "email": "rletlhogile@bhp.org.bw", 
+    "date_joined": "2013-12-18T11:30:56"
+  }
+},
+{
+  "pk": 65, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kmanyake", 
+    "first_name": "Kutlo", 
+    "last_name": "Manyake", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-07T14:04:08", 
+    "groups": [
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$rP1kbZkqHUir$Mp0iRoLAavNJtZ/LbGbzSIO+5XCcXZ3FoxlvUwux35Q=", 
+    "email": "kmanyake@bhp.org.bw", 
+    "date_joined": "2013-12-18T11:31:45"
+  }
+},
+{
+  "pk": 66, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ssimon", 
+    "first_name": "Vino", 
+    "last_name": "Simon", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-09T16:23:09", 
+    "groups": [
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$Fnc561uEwswF$h/5k/tA095KX+f1ooVR3FRVzFecP6Xs5vtJJwR+9Mk8=", 
+    "email": "ssimon@bhp.org.bw", 
+    "date_joined": "2013-12-18T11:32:28"
+  }
+},
+{
+  "pk": 67, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "twicet", 
+    "first_name": "Twice", 
+    "last_name": "T", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2013-12-19T17:16:49", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$hRgxiBVDF99Q$d/pQ1omJiSz8DDbAhGKHwJmJc0pzVjhe2ZHneJWdBqU=", 
+    "email": "", 
+    "date_joined": "2013-12-18T16:01:01"
+  }
+},
+{
+  "pk": 68, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "mpretori", 
+    "first_name": "Molly", 
+    "last_name": "Pretori", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-12-19T23:35:54", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$0QYRxs2aMvC8$yuVmtvcR5LhTcDclC2lEcp/Nd2eBNTuopPJxQijVOGk=", 
+    "email": "mpretori@hsph.harvard.edu", 
+    "date_joined": "2013-12-19T11:35:07"
+  }
+},
+{
+  "pk": 69, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "lquanhong", 
+    "first_name": "Lei", 
+    "last_name": "Quanhong", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2013-12-19T11:35:39", 
+    "groups": [
+      4
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$fOnPhvGImygT$PlXm8FYiJWtFAYbR1L9Zl+yOdrUgMncQukUPdNAwxTo=", 
+    "email": "lei@hsph.harvard.edu", 
+    "date_joined": "2013-12-19T11:35:39"
+  }
+},
+{
+  "pk": 70, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "jcipolla", 
+    "first_name": "Joseph", 
+    "last_name": "Cipolla", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2013-12-19T22:41:45", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$4LDsbnLQT1Ce$G5Bd+UndIrNSWhQsvkoSUiwuggUZ5mFtj4b4244BNJU=", 
+    "email": "", 
+    "date_joined": "2013-12-19T11:48:27"
+  }
+},
+{
+  "pk": 71, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "mthomas", 
+    "first_name": "Manoj", 
+    "last_name": " Thomas", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-02-26T23:05:49", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$FmRDHPw6BUMX$7lXBZpP5/FeFyjvEb08jXGNnUfagAMfKl2nts9ls1bM=", 
+    "email": "", 
+    "date_joined": "2013-12-19T11:49:44"
+  }
+},
+{
+  "pk": 72, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kpowis", 
+    "first_name": "Kate", 
+    "last_name": "Powis", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-02-28T12:52:35", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$JPzJjrPi3931$25TDOEqWIix31uwdJrfdBxd4i8V00BPCoc89wCSbA5g=", 
+    "email": "", 
+    "date_joined": "2013-12-19T11:51:49"
+  }
+},
+{
+  "pk": 73, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "uchakalisa", 
+    "first_name": "Unoda", 
+    "last_name": "Chakalisa", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-07T16:23:16", 
+    "groups": [
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$DdSxgKxlVN2Z$9+Ac84XvJ3GXZ6/FNpLYIIibN+ALWR7gJELAxWWVn28=", 
+    "email": "uchakalisa@bhp.org.bw", 
+    "date_joined": "2014-01-06T11:39:47"
+  }
+},
+{
+  "pk": 74, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "hbussmann", 
+    "first_name": "Hermann", 
+    "last_name": "Bussman", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-07T16:23:04", 
+    "groups": [
+      3, 
+      6, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$bNibeviMzmck$+5v/womz4qFzcUSwHQ/WCdZbG1A6L7mPW5o2fSubDXY=", 
+    "email": "", 
+    "date_joined": "2014-01-16T11:29:22"
+  }
+},
+{
+  "pk": 75, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ekadima", 
+    "first_name": "Etienne", 
+    "last_name": "Kadima", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-07T13:54:16", 
+    "groups": [
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$xnkjaKquwC76$fmo5mXw/IaG5TKhia7MBgr7F1fqtIonbyEytQ6xkcro=", 
+    "email": "ekadima@bhp.org.bw", 
+    "date_joined": "2014-01-22T14:40:06"
+  }
+},
+{
+  "pk": 76, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "ambikiwa", 
+    "first_name": "Atang", 
+    "last_name": "Mbikiwa", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-06T10:19:22", 
+    "groups": [
+      3, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$KLZw5WJN9bR5$J+9o/4rZ95H3ozRGDUmtPxxsOTfpUN0K//SXj1Ih7OI=", 
+    "email": "ambikiwa@bhp.org.bw", 
+    "date_joined": "2014-01-29T09:10:58"
+  }
+},
+{
+  "pk": 77, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "nkhan", 
+    "first_name": "Nalia", 
+    "last_name": "Khan", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2014-03-06T23:49:56", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$RnW2r4y9rqfF$s4FkSf7kSCpjrJVBiPXFij+iWtyVuc2lJJOz4oq6pso=", 
+    "email": "nkhan@hsph.harvard.edu", 
+    "date_joined": "2014-02-18T08:45:48"
+  }
+},
+{
+  "pk": 78, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "vmaiswe", 
+    "first_name": "Vicky", 
+    "last_name": "Maiswe", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-03T10:33:15", 
+    "groups": [
+      6
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$VaOY5mnpPhE6$nDl0w7TRcb9AQKHge4ZlWCq7MrcA2LzZXgdLLvjgUJY=", 
+    "email": "", 
+    "date_joined": "2014-03-03T10:29:32"
+  }
+},
+{
+  "pk": 79, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "tsetsiba", 
+    "first_name": "Tshepiso", 
+    "last_name": "Setsiba", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2014-03-10T08:07:21", 
+    "groups": [
+      3, 
+      5, 
+      6, 
+      7
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$Q1q6gp0mCXSa$Vobf+Xxj8K1bCx+7zTu1VMix43F3UoiKc4eedGhG31w=", 
+    "email": "tsetsiba@bhp.org.bw", 
+    "date_joined": "2014-03-07T14:00:27"
+  }
+}
+]
