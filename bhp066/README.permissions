@@ -1,5 +1,0 @@
-python manage.py update_visit_schedule_permissions field_research_assistant --app_label bcpp_subject --models subjectconsent
-python manage.py update_visit_schedule_permissions clinic_research_assistant --app_label bcpp_subject --models subjectconsent
-python manage.py update_visit_schedule_permissions IT_assistant --app_label bcpp_subject --models subjectconsent
-python manage.py update_visit_schedule_permissions field_supervisor --app_label bcpp_subject --models subjectconsent
-python manage.py update_visit_schedule_permissions IT_admin --app_label bcpp_subject --models subjectconsent
