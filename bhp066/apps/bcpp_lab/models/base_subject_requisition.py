@@ -1,9 +1,7 @@
 from datetime import datetime
 
-from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
 from edc.device.device.classes import Device
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
