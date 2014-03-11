@@ -1,13 +1,14 @@
 from django import forms
 from django.forms.widgets import Select
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
+from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
 
 
 class ParticipationForm(forms.Form):
     """A form to select the type of participation for a household member.
 
     ...note:: configured and referenced directly on the household_member model via method participation_form()"""
-    status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_ACTION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
+    status = forms.ChoiceField(required=False, choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
+    status_partial = forms.ChoiceField(required=False, choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
     household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
     dashboard_id = forms.CharField(widget=forms.HiddenInput())

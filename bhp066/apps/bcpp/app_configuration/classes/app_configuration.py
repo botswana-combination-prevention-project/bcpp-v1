@@ -67,8 +67,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
                         'site_code': site_mappers.get_current_mapper().map_code}
 
-    consent_catalogue_list = [consent_catalogue_setup,rbd_consent_catalogue_setup]
-
+    consent_catalogue_list = [consent_catalogue_setup, rbd_consent_catalogue_setup]
 
     def update_or_create_survey(self):
         if Survey.objects.all().count() == 0:
