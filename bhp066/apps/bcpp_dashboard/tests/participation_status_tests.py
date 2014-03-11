@@ -14,7 +14,7 @@ from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEn
 from apps.bcpp_subject.models import SubjectConsent
 
 # from apps.bcpp_subject.tests.factories import SubjectAbsenteeEntryFactory
-from ..views.participation import update_member_status
+from ..views.participation import update_member_status_full as update_member_status
 
 
 class TestPlotMapper(Mapper):
@@ -35,8 +35,8 @@ class ParticipationStatusTests(TestCase):
 
     def setUp(self):
         if Survey.objects.all().count() == 0:
-            survey = SurveyFactory()
-            plot = PlotFactory(community='test_community3', household_count=1, status='occupied')
+            SurveyFactory()
+            plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
             household = Household.objects.get(plot=plot)
             household_structure = HouseholdStructure.objects.get(household=household)
             self.household_member = HouseholdMemberFactory(household_structure=household_structure)

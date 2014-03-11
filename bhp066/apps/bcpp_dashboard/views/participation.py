@@ -37,6 +37,7 @@ def participation(request, **kwargs):
         # household_member=household_member,
         )
 
+
 def update_member_status_partial(request, household_member, cleaned_data):
     """Updates the partial participation status.
 
@@ -69,10 +70,12 @@ def update_member_status_partial(request, household_member, cleaned_data):
             messages.add_message(request, messages.ERROR, 'Please enter the refusal report before proceeding to partial participation.')
     return household_member.member_status_partial
 
+
 def has_htc(status):
     if status.find('HTC') != -1:
         return True
     return False
+
 
 def update_member_status_full(request, household_member, cleaned_data):
     """Updates the full participation status and possibly the eligibile_subject flag.
