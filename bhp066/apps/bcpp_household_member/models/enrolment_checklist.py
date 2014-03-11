@@ -50,8 +50,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         verbose_name="[Interviewer] Has the subject presented a valid OMANG or other identity document?",
         max_length=10,
         choices=YES_NO,
-        validators=[eligible_if_yes, ],
-        help_text="Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO', STOP participant cannot be enrolled"
+        help_text="Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO' participant will not be enrolled."
         )
 
     citizen = models.CharField(
@@ -68,7 +67,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         default='N/A',
-        help_text="If 'NO', STOP participant cannot be enrolled",
+        help_text="If 'NO' participant will not be enrolled.",
         )
 
     marriage_certificate = models.CharField(
@@ -78,7 +77,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         default='N/A',
-        help_text="If 'NO', STOP participant cannot be enrolled",
+        help_text="If 'NO' participant will not be enrolled.",
         )
 
     marriage_certificate_no = models.CharField(
@@ -94,28 +93,37 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
                       " more nights per month in this community? "),
         max_length=10,
         choices=YES_NO_DWTA,
-        validators=[eligible_if_yes, ],
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
                   "spent more than 3 nights per month in this community. "
-                  "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
+                  "If 'NO (or don't want to answer)'. Participant will not be enrolled."),
         )
 
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
         """Does not save anything, note no call to super."""
-        if self.legal_marriage == 'No':
+        if self.has_identity.lower() == 'no':
             self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen and not married.')
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='No valid identity.')
             loss_form.save()
-            self.household_member.member_status = 'NOT_ELIGIBLE'
-        elif self.legal_marriage == 'Yes' and self.marriage_certificate == 'No':
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.part_time_resident.lower() != 'yes':
             self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen, married but does not have a marriage certificate.')
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Does not spend 3 or more nights per month in the community.')
             loss_form.save()
-            self.household_member.member_status = 'NOT_ELIGIBLE'
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen and not married to a citizen.')
+            loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'no':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen, married to a citizen but does not have a marriage certificate.')
+            loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
         else:
             self.household_member.eligible_subject = True
         self.household_member.eligibility_checklist_filled = True
