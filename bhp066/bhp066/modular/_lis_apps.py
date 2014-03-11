@@ -1,5 +1,5 @@
 LIS_APPS = (
-    'lis.core.lab_barcode',
+    'lis.labeling',
     'lis.core.lab_common',
     'lis.core.lab_flag',
     'lis.core.lab_grading',
