@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
+from apps.bcpp.choices import YES_NO_DWTA, YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -31,9 +31,9 @@ class ResidencyMobility (BaseScheduledVisitModel):
         )
 
     intend_residency = models.CharField(
-        verbose_name=_("Do you intend to stay in this community for the next year?"),
+        verbose_name=_("Do you intend to move out of the community in the next 12 months?"),
         max_length=25,
-        choices=YES_NO_UNSURE,
+        choices=YES_NO,
         help_text="",
         )
 
