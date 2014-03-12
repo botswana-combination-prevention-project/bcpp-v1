@@ -24,6 +24,7 @@ from .reproductive_health_form import ReproductiveHealthForm
 from .pima_form import PimaForm
 from .cd4_history_form import Cd4HistoryForm
 from .education_form import EducationForm
+from .hic_enrollment_form import HicEnrollmentForm
 from .community_engagement_form import CommunityEngagementForm
 from .medical_diagnoses_form import MedicalDiagnosesForm
 from .cea_enrolment_checklist_form import CeaEnrolmentChecklistForm
