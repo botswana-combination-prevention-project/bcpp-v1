@@ -1,1 +1,3 @@
-from .main import *
+from .packing_list_admin import PackingListAdmin, PackingListItemAdmin
+from .rbd_subject_requisition_admin import RBDSubjectRequisitionAdmin
+from .subject_requisition_admin import SubjectRequisitionAdmin
