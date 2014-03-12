@@ -8,7 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'SubjectRequisitionRBD'
+        # Adding model 'RBDRequisition'
         db.create_table(u'bcpp_lab_rbdsubjectrequisition', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -45,9 +45,9 @@ class Migration(SchemaMigration):
             ('community', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
             ('rbd_visit', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_rbd.RBDVisit'])),
         ))
-        db.send_create_signal('bcpp_lab', ['SubjectRequisitionRBD'])
+        db.send_create_signal('bcpp_lab', ['RBDRequisition'])
 
-        # Adding M2M table for field test_code on 'SubjectRequisitionRBD'
+        # Adding M2M table for field test_code on 'RBDRequisition'
         m2m_table_name = db.shorten_name(u'bcpp_lab_rbdsubjectrequisition_test_code')
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
@@ -56,7 +56,7 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['rbdsubjectrequisition_id', 'testcode_id'])
 
-        # Adding model 'SubjectRequisitionRBDAudit'
+        # Adding model 'RBDRequisitionAudit'
         db.create_table(u'bcpp_lab_rbdsubjectrequisition_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -96,17 +96,17 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
             ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
         ))
-        db.send_create_signal('bcpp_lab', ['SubjectRequisitionRBDAudit'])
+        db.send_create_signal('bcpp_lab', ['RBDRequisitionAudit'])
 
 
     def backwards(self, orm):
-        # Deleting model 'SubjectRequisitionRBD'
+        # Deleting model 'RBDRequisition'
         db.delete_table(u'bcpp_lab_rbdsubjectrequisition')
 
-        # Removing M2M table for field test_code on 'SubjectRequisitionRBD'
+        # Removing M2M table for field test_code on 'RBDRequisition'
         db.delete_table(db.shorten_name(u'bcpp_lab_rbdsubjectrequisition_test_code'))
 
-        # Deleting model 'SubjectRequisitionRBDAudit'
+        # Deleting model 'RBDRequisitionAudit'
         db.delete_table(u'bcpp_lab_rbdsubjectrequisition_audit')
 
 
@@ -295,7 +295,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_lab.rbdsubjectrequisition': {
-            'Meta': {'object_name': 'SubjectRequisitionRBD'},
+            'Meta': {'object_name': 'RBDRequisition'},
             'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.AliquotType']"}),
             'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -333,7 +333,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_lab.rbdsubjectrequisitionaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'SubjectRequisitionRBDAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDRequisitionAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
