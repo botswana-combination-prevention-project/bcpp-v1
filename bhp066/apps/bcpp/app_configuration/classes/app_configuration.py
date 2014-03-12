@@ -56,7 +56,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'version': 1,
                 'start_datetime': study_start_datetime,
                 'end_datetime': study_end_datetime,
-                'add_for_app': 'bcpp_rbd_subject'}
+                'add_for_app': 'bcpp_rbd'}
 
     survey_setup = {
                 'survey_name': 'BCPP Year 1',
