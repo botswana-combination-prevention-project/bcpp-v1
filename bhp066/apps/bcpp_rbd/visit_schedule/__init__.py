@@ -1,1 +1,1 @@
-from bcpp_rbd import BcppRBDSubjectVisitSchedule
+from bcpp_rbd_visit_schedule import BcppRBDVisitSchedule

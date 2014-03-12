@@ -5,20 +5,20 @@ from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_
 from apps.bcpp_rbd.models import RBDVisit, RBDConsent
 
 
-class BcppRBDSubjectVisitSchedule(VisitScheduleConfiguration):
+class BcppRBDVisitSchedule(VisitScheduleConfiguration):
 
     name = 'rbd visit schedule'
     app_label = 'bcpp_rbd'
     # membership forms
     # (name, model, visible)
     membership_forms = OrderedDict({
-        'subject_rbd-year-1': MembershipFormTuple('subject_rbd-year-1', RBDConsent, True),
+        'rbd-year-1': MembershipFormTuple('rbd-year-1', RBDConsent, True),
         })
 
     # schedule groups
     # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
-        'group-3': ScheduleGroupTuple('group-3', 'subject_rbd-year-1', None, None),
+        'group-3': ScheduleGroupTuple('group-3', 'rbd-year-1', None, None),
         })
 
     # visit_schedule
@@ -39,13 +39,13 @@ class BcppRBDSubjectVisitSchedule(VisitScheduleConfiguration):
             'instructions': None,
             'requisitions': (
                 # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
-                RequisitionTuple(10L, u'bcpp_lab', u'rbdsubjectRequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
+                RequisitionTuple(10L, u'bcpp_lab', u'rbdrequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
                 ),
             'entries': (
-                EntryTuple(10L, u'bcpp_rbd', u'subjectlocatorrbd'),
+                EntryTuple(10L, u'bcpp_rbd', u'rbdlocator'),
                 EntryTuple(20L, u'bcpp_rbd', u'rbddemographics'),
             )}
         }
     )
 
-site_visit_schedules.register(BcppRBDSubjectVisitSchedule)
+site_visit_schedules.register(BcppRBDVisitSchedule)
