@@ -35,3 +35,4 @@ from .subject_referral_admin import SubjectReferralAdmin
 from .subject_visit_admin import SubjectVisitAdmin
 from .hiv_result_documentation_admin import HivResultDocumentationAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
+from .hic_enrollment_admin import HicEnrollmentAdmin
