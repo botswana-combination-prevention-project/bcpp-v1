@@ -8,7 +8,7 @@ HOUSEHOLD_MEMBER_FULL_PARTICIPATION = [
     ('ABSENT', 'Absentee'),
     ('REFUSED', 'Refusal'),
     ('UNDECIDED', 'Undecided'),
-#     ('NOT_ELIGIBLE', 'Not Eligible'),
+    ('NOT_ELIGIBLE', 'Not Eligible'),
 ]
 
 HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
