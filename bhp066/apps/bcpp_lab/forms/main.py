@@ -1,6 +1,6 @@
 from edc.lab.lab_requisition.forms import BaseRequisitionForm
 from edc.lab.lab_packing.forms import BasePackingListForm, BasePackingListItemForm
-from ..models import SubjectRequisition, RBDSubjectRequisition, PackingList, PackingListItem
+from ..models import SubjectRequisition, SubjectRequisitionRBD, PackingList, PackingListItem
 
 
 class SubjectRequisitionForm(BaseRequisitionForm):
@@ -22,23 +22,23 @@ class SubjectRequisitionForm(BaseRequisitionForm):
         model = SubjectRequisition
 
 
-class RBDSubjectRequisitionForm(BaseRequisitionForm):
+class SubjectRequisitionRBDForm(BaseRequisitionForm):
 
     def __init__(self, *args, **kwargs):
 
-        super(RBDSubjectRequisitionForm, self).__init__(*args, **kwargs)
+        super(SubjectRequisitionRBDForm, self).__init__(*args, **kwargs)
 
         self.fields['item_type'].initial = 'tube'
 
     def clean(self):
-        super(RBDSubjectRequisitionForm, self).clean()
+        super(SubjectRequisitionRBDForm, self).clean()
 
         cleaned_data = self.cleaned_data
 
         return cleaned_data
 
     class Meta:
-        model = RBDSubjectRequisition
+        model = SubjectRequisitionRBD
 
 
 class PackingListForm (BasePackingListForm):

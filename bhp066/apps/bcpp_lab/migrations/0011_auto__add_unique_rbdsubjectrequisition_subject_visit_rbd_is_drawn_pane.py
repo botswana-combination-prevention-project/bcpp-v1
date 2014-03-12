@@ -8,7 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding unique constraint on 'RBDSubjectRequisition', fields ['subject_visit_rbd', 'is_drawn', 'panel']
+        # Adding unique constraint on 'SubjectRequisitionRBD', fields ['subject_visit_rbd', 'is_drawn', 'panel']
         db.create_unique(u'bcpp_lab_rbdsubjectrequisition', ['subject_visit_rbd_id', 'is_drawn', 'panel_id'])
 
         # Adding unique constraint on 'SubjectRequisition', fields ['subject_visit', 'is_drawn', 'panel']
@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'SubjectRequisition', fields ['subject_visit', 'is_drawn', 'panel']
         db.delete_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'is_drawn', 'panel_id'])
 
-        # Removing unique constraint on 'RBDSubjectRequisition', fields ['subject_visit_rbd', 'is_drawn', 'panel']
+        # Removing unique constraint on 'SubjectRequisitionRBD', fields ['subject_visit_rbd', 'is_drawn', 'panel']
         db.delete_unique(u'bcpp_lab_rbdsubjectrequisition', ['subject_visit_rbd_id', 'is_drawn', 'panel_id'])
 
 
@@ -209,7 +209,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_lab.rbdsubjectrequisition': {
-            'Meta': {'unique_together': "(('subject_visit_rbd', 'panel', 'is_drawn'),)", 'object_name': 'RBDSubjectRequisition'},
+            'Meta': {'unique_together': "(('subject_visit_rbd', 'panel', 'is_drawn'),)", 'object_name': 'SubjectRequisitionRBD'},
             'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.AliquotType']"}),
             'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -247,7 +247,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_lab.rbdsubjectrequisitionaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDSubjectRequisitionAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'SubjectRequisitionRBDAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
