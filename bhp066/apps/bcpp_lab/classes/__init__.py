@@ -1,1 +1,0 @@
-from .subject_requisition_model_admin import SubjectRequisitionModelAdmin
