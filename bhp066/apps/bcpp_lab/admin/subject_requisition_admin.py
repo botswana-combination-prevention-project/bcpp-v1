@@ -2,12 +2,13 @@ from django.contrib import admin
 
 from apps.bcpp_subject.models import SubjectVisit
 
-from ..classes import SubjectRequisitionModelAdmin
+from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
+
 from ..forms import SubjectRequisitionForm
 from ..models import SubjectRequisition
 
 
-class SubjectRequisitionAdmin(SubjectRequisitionModelAdmin):
+class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
 
     visit_model = SubjectVisit
     visit_fieldname = 'subject_visit'
