@@ -3,7 +3,7 @@ from apps.bcpp_rbd_subject.models import SubjectLocatorRBD, SubjectVisitRBD
 from apps.bcpp_rbd_subject.models import SubjectConsentRBDonly
 from apps.bcpp_subject.models import SubjectReferral
 from base_subject_dashboard import BaseSubjectDashboard
-from apps.bcpp_lab.models import RBDSubjectRequisition, PackingList
+from apps.bcpp_lab.models import SubjectRequisitionRBD, PackingList
 
 
 class BloodDrawDashboard(BaseSubjectDashboard):
@@ -49,7 +49,7 @@ class BloodDrawDashboard(BaseSubjectDashboard):
 
     @property
     def requisition_model(self):
-        return RBDSubjectRequisition
+        return SubjectRequisitionRBD
 
     @property
     def locator_model(self):

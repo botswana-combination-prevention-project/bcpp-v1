@@ -8,7 +8,7 @@ from ..models import BaseSubjectRequisition
 from ..managers import RequisitionManager
 
 
-class RBDSubjectRequisition(BaseSubjectRequisition):
+class SubjectRequisitionRBD(BaseSubjectRequisition):
 
     subject_visit_rbd = models.ForeignKey(SubjectVisitRBD)
 
@@ -19,7 +19,7 @@ class RBDSubjectRequisition(BaseSubjectRequisition):
     def save(self, *args, **kwargs):
         self.community = self.subject_visit_rbd.household_member.household_structure.household.plot.community
         self.subject_identifier = self.get_visit().get_subject_identifier()
-        super(RBDSubjectRequisition, self).save(*args, **kwargs)
+        super(SubjectRequisitionRBD, self).save(*args, **kwargs)
 
     def get_visit(self):
         return self.subject_visit_rbd
