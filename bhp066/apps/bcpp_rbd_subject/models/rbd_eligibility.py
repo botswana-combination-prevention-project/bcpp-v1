@@ -19,7 +19,6 @@ class RBDEligibility (BaseDispatchSyncUuidModel):
         validators=[
             dob_not_future,
             MinConsentAge,
-            MaxConsentAge,
             ],
         null=True,
         blank=False,
