@@ -1,6 +1,6 @@
 from django.template.loader import render_to_string
-from apps.bcpp_rbd_subject.models import SubjectLocatorRBD, SubjectVisitRBD
-from apps.bcpp_rbd_subject.models import SubjectConsentRBDonly
+from apps.bcpp_rbd.models import RBDLocator, RBDVisit
+from apps.bcpp_rbd.models import RBDConsent
 from apps.bcpp_subject.models import SubjectReferral
 from base_subject_dashboard import BaseSubjectDashboard
 from apps.bcpp_lab.models import SubjectRequisitionRBD, PackingList
@@ -17,8 +17,8 @@ class BloodDrawDashboard(BaseSubjectDashboard):
         self.household_dashboard_url = 'household_dashboard_url'
         self.dashboard_type_list = ['rbd_subject']
         self.form_category = 'subject_rbd-year-1'
-        kwargs.update({'dashboard_models': {'subject_consent': SubjectConsentRBDonly}})
-        self.visit_model = SubjectVisitRBD
+        kwargs.update({'dashboard_models': {'subject_consent': RBDConsent}})
+        self.visit_model = RBDVisit
         super(BloodDrawDashboard, self).__init__(**kwargs)
 
     def add_to_context(self):
@@ -37,8 +37,8 @@ class BloodDrawDashboard(BaseSubjectDashboard):
     def consent(self):
         """Returns to the subject consent, if it has been completed."""
         self._consent = None
-        if SubjectConsentRBDonly.objects.filter(subject_identifier=self.subject_identifier):
-            self._consent = SubjectConsentRBDonly.objects.get(subject_identifier=self.subject_identifier)
+        if RBDConsent.objects.filter(subject_identifier=self.subject_identifier):
+            self._consent = RBDConsent.objects.get(subject_identifier=self.subject_identifier)
         return self._consent
 
     @property
@@ -53,7 +53,7 @@ class BloodDrawDashboard(BaseSubjectDashboard):
 
     @property
     def locator_model(self):
-        return SubjectLocatorRBD
+        return RBDLocator
 
     @property
     def locator_scheduled_visit_code(self):
