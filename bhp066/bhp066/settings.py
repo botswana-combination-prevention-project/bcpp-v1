@@ -356,7 +356,7 @@ INSTALLED_APPS = (
     'apps.bcpp_stats',
     'apps.bcpp_household',
     'apps.bcpp_subject',
-    'apps.bcpp_rbd_subject',
+    'apps.bcpp_rbd',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
     'apps.bcpp_survey',
