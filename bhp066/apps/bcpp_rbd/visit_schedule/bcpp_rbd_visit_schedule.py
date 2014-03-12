@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionTuple
 
-from apps.bcpp_rbd.models import RBDVisit, RBDConsent
+from ..models import RBDVisit, RBDConsent
 
 
 class BcppRBDVisitSchedule(VisitScheduleConfiguration):
