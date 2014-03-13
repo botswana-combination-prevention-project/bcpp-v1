@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from edc.apps.app_configuration.classes import BaseAppConfiguration
+from edc.core.bhp_content_type_map.models import ContentTypeMap
 
 from apps.bcpp_survey.models import Survey
 from edc.map.classes import site_mappers
@@ -41,7 +42,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     consent_catalogue_setup = {
                 'name': 'bcpp-year-1',
                 # TO DO: how do we call a ContentTypeMap here???
-#                 'content_type_map': '',
+                'content_type_map': ContentTypeMap.objects.get(app_label='bcpp_subject', module_name='subjectconsent'),
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,
@@ -51,7 +52,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     rbd_consent_catalogue_setup = {
                 'name': 'subject_rbd-year-1',
                 # TO DO: how do we call a ContentTypeMap here???
-#                 'content_type_map': '',
+                'content_type_map': ContentTypeMap.objects.get(app_label='bcpp_rbd_subject', module_name='subjectconsentrbdonly'),
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,

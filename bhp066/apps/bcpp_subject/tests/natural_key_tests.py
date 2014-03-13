@@ -16,7 +16,13 @@ from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.visit_schedule.tests.factories import VisitDefinitionFactory
+from edc.subject.visit_schedule.models import VisitDefinition
+from edc.subject.visit_schedule.classes import site_visit_schedules
+from edc.subject.rule_groups.classes import site_rule_groups
+from edc.entry_meta_data.models import ScheduledEntryMetaData
+from edc.subject.entry.models import Entry
+from edc.subject.appointment.models import Appointment
+
 
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
@@ -46,14 +52,20 @@ class NaturalKeyTests(TestCase):
 
     def test_p3(self):
         site_lab_tracker.autodiscover()
+        site_visit_schedules.autodiscover()
         StudySpecificFactory()
         study_site = StudySiteFactory()
         ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
-        content_type_map_helper.sync()
+        content_type_map_helper.sync()  
         print 'setup the consent catalogue for this BCPP'
         content_type_map = ContentTypeMap.objects.get(content_type__model__iexact='SubjectConsent')
+        print 'create a new survey'
+        site_visit_schedules.build_all()
+        site_rule_groups.autodiscover()
+        from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+        BcppAppConfiguration()
         print ContentTypeMap.objects.all().count()
         consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
         consent_catalogue.add_for_app = 'bcpp_subject'
@@ -61,26 +73,26 @@ class NaturalKeyTests(TestCase):
 
         print 'consent the subject'
         # SubjectConsentFactory = get_model('bcpp_subject','SubjectConsentFactory')
-        survey1 = Survey.objects.create(survey_name='YEAR 0',
-                          datetime_start=datetime.today() - timedelta(days=30),
-                          datetime_end=datetime.today() + timedelta(days=180)
-                          )
+#         survey1 = Survey.objects.create(survey_name='YEAR 0',
+#                           datetime_start=datetime.today() - timedelta(days=30),
+#                           datetime_end=datetime.today() + timedelta(days=180)
+#                           )
 #         print 'Clear previous Registered Subjects: Count='+str(RegisteredSubject.objects.all().count())
 #         RegisteredSubject.objects.all().delete()
 
-
         print 'get a community name from the mapper classes'
         community = site_mappers.get_as_list()[0]
-        print 'create a new survey'
         site_mappers.autodiscover()
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
+        print 'No. of SURVEY = '+str(Survey.objects.all().count()) 
         plot = PlotFactory(community=mapper().get_map_area())
+        print 'No. of HOUSEHOLDS = '+str(Household.objects.all().count())    
         household = Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 1)
-        household_structure = HouseholdStructure.objects.get(survey=survey1)
+        self.assertEquals(Survey.objects.all().count(), 1)
+        household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
 
         household_member = HouseholdMemberFactory(household_structure=household_structure)
-
         subject_consent = SubjectConsentFactory(study_site=study_site, household_member=household_member, registered_subject=household_member.registered_subject)
         print subject_consent.subject_identifier
         print 'get registered subject'
@@ -94,22 +106,27 @@ class NaturalKeyTests(TestCase):
 #         appointment, created = Appointment.objects.get_or_create(registered_subject=registered_subject,
 #                                                                  appt_datetime = datetime.today(),
 #                                                                  visit_definition__code='1000')
+        print 'No. of ENTRIES = '+str(Entry.objects.all().count())
         content_type = ContentType.objects.get(app_label='bcpp_subject', model='subjectvisit')
         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
-        visit_definition = VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
-        appointment = AppointmentFactory(registered_subject=registered_subject, visit_definition=visit_definition)
+        self.assertEqual(VisitDefinition.objects.all().count(), 3)
+        visit_definition = VisitDefinition.objects.get(title = 'T0') #VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
+        print 'No. of Appointments = '+str(Appointment.objects.all().count())
+        appointment = Appointment.objects.get(visit_definition=visit_definition)
+        print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_visit = SubjectVisitFactory(appointment=appointment)
+        print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         # BloodDraw : for BaseScheduledVisitModels, REPLACED BY CD4_HISTORY
         # Grant: Independent Natural Key
-        labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
-        grant = GrantFactory(labour_market_wages=labour_market_wages, subject_visit=subject_visit)  # Investigate natural keys further
+        #labour_market_wages = LabourMarketWagesFactory(subject_visit=subject_visit)
+        #grant = GrantFactory(labour_market_wages=labour_market_wages, subject_visit=subject_visit)  # Investigate natural keys further
         # SubjectAbsentee : for BaseRegisteredHouseholdMemberModel
 #         from apps.bcpp_subject.tests.factories import SubjectAbsenteeFactory
 #         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
 #         from apps.bcpp_subject.tests.factories import SubjectUndecidedFactory
 #         subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
 #         subject_refusal = SubjectRefusalFactory(household_member=household_member)
-        subject_referral = SubjectReferralFactory(household_member=household_member, registered_subject=registered_subject)
+        subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
 #         subject_moved = SubjectMovedFactory(household_member=household_member, registered_subject=registered_subject)
         # SubjectAbsenteeEntry : Independent Natural Key
 #         subject_absentee_entry = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
@@ -122,7 +139,7 @@ class NaturalKeyTests(TestCase):
         subject_locator = SubjectLocatorFactory(subject_visit=subject_visit, registered_subject=registered_subject)
         # SubjectOffStudy :
         # subject_off_study =
-        instances.append(grant)
+        #instances.append(grant)
 #         instances.append(subject_absentee)
 #         instances.append(subject_undecided)
 #         instances.append(subject_refusal)
