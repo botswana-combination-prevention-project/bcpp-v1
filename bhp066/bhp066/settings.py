@@ -28,8 +28,8 @@ MAP_DIR = STATIC_ROOT.child('img')
 #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
+#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -107,7 +107,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'fix_base',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -121,8 +121,8 @@ else:
             'NAME': 'lab',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.50',
-            'PORT': '3306',
+            'HOST': '',
+            'PORT': '',
         },
     }
 
@@ -350,12 +350,13 @@ INSTALLED_APPS = (
     'lis.exim.lab_import_dmis',
 
     'apps.bcpp',
-    'apps.bcpp.bcpp_app_configuration',
+    'apps.bcpp.app_configuration',
     'apps.bcpp_list',
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
     'apps.bcpp_subject',
+    'apps.bcpp_rbd_subject',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
     'apps.bcpp_survey',
