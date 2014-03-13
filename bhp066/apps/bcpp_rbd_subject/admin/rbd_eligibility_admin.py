@@ -15,12 +15,31 @@ class RBDEligibilityAdmin(BaseModelAdmin):
     fields = (
         'household_member',
         'dob',
-        'part_time_resident',
-        'hiv_status')
+        'gender',
+        'hiv_status',
+        "part_time_resident",
+        'has_identity',
+        "citizen",
+        "legal_marriage",
+        "marriage_certificate",
+        "marriage_certificate_no",
+        "literacy",
+        "guardian",
+        "mentally_incapacitated",
+        "involuntary_incarceration")
 
     radio_fields = {
+        'has_identity': admin.VERTICAL,
+        "gender": admin.VERTICAL,
+        "citizen": admin.VERTICAL,
+        "hiv_status": admin.VERTICAL,
+        "legal_marriage": admin.VERTICAL,
+        "marriage_certificate": admin.VERTICAL,
         "part_time_resident": admin.VERTICAL,
-        "hiv_status": admin.VERTICAL, }
+        "literacy": admin.VERTICAL,
+        "guardian": admin.VERTICAL,
+        "mentally_incapacitated": admin.VERTICAL,
+        "involuntary_incarceration": admin.VERTICAL, }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
 #         if db_field.name == "household_structure":
