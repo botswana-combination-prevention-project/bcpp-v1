@@ -1,5 +1,5 @@
 from apps.bcpp_household.models.household import Household
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
+from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION as member_actions
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery
 
@@ -46,7 +46,7 @@ class HouseholdReportQuery(TwoColumnReportQuery):
 
     def all_refused_qs(self):
         actions = [item[0] for item in member_actions if item[0] != 'REFUSED']
-        return self.visited_qs().exclude(householdstructure__householdmember__member_status__in=actions)
+        return self.visited_qs().exclude(householdstructure__householdmember__member_status_full__in=actions)
 
     def age_elegible_qs(self):
         return self.enumerated_qs().filter(householdstructure__householdmember__eligible_member=True)

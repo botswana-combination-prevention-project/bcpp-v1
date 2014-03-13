@@ -1,13 +1,39 @@
 from django.utils.translation import ugettext as _
 
-HOUSEHOLD_MEMBER_ACTION = [
+HOUSEHOLD_MEMBER_FULL_PARTICIPATION = [
     ('NOT_REPORTED', '<not reported>'),
     ('RESEARCH', 'BHS'),
-    ('HTC', 'HTC'),
-    ('RBD', 'RBD only'),
+#     ('HTC', 'HTC'),
+#     ('RBD', 'RBD only'),
     ('ABSENT', 'Absentee'),
     ('REFUSED', 'Refusal'),
     ('UNDECIDED', 'Undecided'),
+    #('NOT_ELIGIBLE', 'Not Eligible'),
+]
+
+HOUSEHOLD_MEMBER_RBD_PARTICIPATION = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('RBD', 'RBD'),
+]
+
+HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
+    ('NOT_ELIGIBLE', 'Not Eligible'),
+]
+
+HOUSEHOLD_MEMBER_HTC_PARTICIPATION = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('HTC', 'HTC'),
+]
+
+HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('RBD', 'RBD only'),
+    ('HTC', 'HTC'),
+    ('HTC/RBD', 'HTC plus RBD'),
+]
+
+HOUSEHOLD_MEMBER_MINOR = [
+    ('NOT_REPORTED', '<not reported>'),
     ('NOT_ELIGIBLE', 'Not Eligible'),
 ]
 

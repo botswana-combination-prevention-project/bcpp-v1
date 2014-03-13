@@ -19,11 +19,11 @@ class Loss (BaseDispatchSyncUuidModel):
         max_length=500,
         help_text='Do not include any personal identifiable information.'
         )
-    
+
     objects = LossManager()
-    
+
     def natural_key(self):
         return self.household_member.natural_key()
-    
+
     class Meta:
         app_label = 'bcpp_household_member'

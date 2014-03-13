@@ -1,8 +1,9 @@
 from django.db import models
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_future
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
+from ..choices import YES_NO
 from apps.bcpp_survey.validators import date_in_survey
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
@@ -45,13 +46,23 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         validators=[datetime_not_before_study_start, datetime_not_future, date_in_survey],
         )
 
-    status = models.CharField(
+    household_status = models.CharField(
         verbose_name='Household Status',
-        max_length=25,
-        default='occupied',
+        max_length=50,
         choices=HOUSEHOLD_STATUS,
-        editable=False,
+        null=True,
         )
+
+    supervisor_vdc_confirm = models.CharField(
+        verbose_name='VDC confirmation, Members rarely there or temporarily/ seasonally there.',
+        max_length=25,
+        null=True,
+        choices=YES_NO,
+        editable=True,
+        blank=True,
+        help_text='Fill only when there is no informant available, after having consulted supervisor and VDC.',
+        )
+
     next_appt_datetime = models.DateTimeField(
         verbose_name="Re-Visit On",
         help_text="The date and time to revisit household",
@@ -87,7 +98,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
 
     def __unicode__(self):
-        return unicode(self.household_log)+'('+unicode(self.report_datetime)+')'
+        return unicode(self.household_log) + '(' + unicode(self.report_datetime) + ')'
 
     class Meta:
         app_label = 'bcpp_household'

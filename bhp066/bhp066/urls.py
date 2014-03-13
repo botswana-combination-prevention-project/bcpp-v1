@@ -15,19 +15,21 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.visit_schedule.classes import site_visit_schedules
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
-from apps.bcpp.bcpp_app_configuration.classes import BcppAppConfiguration
-from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
+# from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+# from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
 
 
 dajaxice_autodiscover()
+site_mappers.autodiscover()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+#from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
 BcppAppConfiguration()
-BcppClinicConfiguration()
+#BcppClinicConfiguration()
 site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
-site_mappers.autodiscover()
 admin.autodiscover()
 site_sections.autodiscover()
 site_sections.update_section_lists()
@@ -130,7 +132,11 @@ urlpatterns += patterns('',
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     )
 
-if settings.DEBUG:
-    urlpatterns += patterns('django.contrib.staticfiles.views',
-        url(r'^static/(?P<path>.*)$', 'serve'),
-    )
+# if settings.DEBUG:
+#     import debug_toolbar
+#     urlpatterns += patterns('',
+#         url(r'^__debg__/', include(debug_toolbar.urls)),
+#     )
+#     urlpatterns += patterns('django.contrib.staticfiles.views',
+#         url(r'^static/(?P<path>.*)$', 'serve'),
+#     )
