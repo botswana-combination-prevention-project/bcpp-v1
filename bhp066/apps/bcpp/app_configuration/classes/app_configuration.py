@@ -41,7 +41,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     consent_catalogue_setup = {
                 'name': 'bcpp-year-1',
                 # TO DO: how do we call a ContentTypeMap here???
-#                 'content_type_map': '',
+                'content_type_map': 'subjectconsent',
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,
@@ -51,7 +51,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     rbd_consent_catalogue_setup = {
                 'name': 'subject_rbd-year-1',
                 # TO DO: how do we call a ContentTypeMap here???
-#                 'content_type_map': '',
+                'content_type_map': 'rbdconsent',
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,
