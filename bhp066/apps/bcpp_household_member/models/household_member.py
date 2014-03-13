@@ -18,7 +18,8 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
-from ..choices import HOUSEHOLD_MEMBER_ACTION
+from ..choices import (HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC_PARTICIPATION, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE, HOUSEHOLD_MEMBER_RBD_PARTICIPATION)
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -70,22 +71,34 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         choices=YES_NO,
         db_index=True)
 
-    member_status = models.CharField(
+    member_status_full = models.CharField(
         max_length=25,
-        choices=HOUSEHOLD_MEMBER_ACTION,
+        choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
         null=True,
         editable=False,
         default='NOT_REPORTED',
-        help_text='RESEARCH, ABSENT, REFUSED, MOVED',
+        help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
+        db_index=True)
+
+    member_status_partial = models.CharField(
+        max_length=25,
+        choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+        null=True,
+        editable=False,
+        default='NOT_REPORTED',
+        help_text='RBD, HTC or RBC/HTC',
         db_index=True)
 
     hiv_history = models.CharField(max_length=25, null=True, editable=False)
 
     eligible_member = models.NullBooleanField(default=None, editable=False, help_text='just based on what is on this form...')
 
-    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the eligibility checklist if completed")
+    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
 
-    #absentee = models.NullBooleanField(default=None, editable=False, help_text="updated by subject absentee entry on post_save signal")
+    eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
+
+    #Keep track of wherether the elilibility form has been filled before
+    eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
 
     visit_attempts = models.IntegerField(default=0)
 
@@ -121,6 +134,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
                                     household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
             self.household_structure.household.plot.save()
+        else:
+            self.member_status_full = 'NOT_ELIGIBLE'
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -158,6 +173,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             return False
 
     @property
+    def non_bhs_member(self):
+        "Those participants that where never BHS potentials to start with, or failed the BHS eligibility checklist."
+        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran,just fro household meber values eg age < 16..
+            return True
+        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist, e.g non citizen not married to citizen.
+            return True
+        return False
+
+    @property
     def is_consented(self):
         "Returns True or False based on search for a consent instance related to this household member"
         from edc.subject.consent.models import BaseConsent
@@ -170,6 +194,21 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                         has_consent_instance = True
                         break
         return has_consent_instance
+
+    @property
+    def is_consented_partial(self):
+        "Returns True or False based on search for a partial participation consent instance related to this household member"
+        from apps.bcpp_rbd.models import RBDConsent
+        from apps.bcpp_htc_subject.models import HtcSubjectConsent
+        has_partial_consent_instance = False
+        for any_model_cls in models.get_models():
+            if issubclass(any_model_cls, RBDConsent) or issubclass(any_model_cls, HtcSubjectConsent):
+                consent_model_cls = any_model_cls
+                if 'household_member' in dir(consent_model_cls):
+                    if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
+                        has_partial_consent_instance = True
+                        break
+        return has_partial_consent_instance 
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -221,18 +260,35 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return retval
 
     @property
-    def participation_form(self):
-        """Returns a form object for the household survey dashboard."""
-        from apps.bcpp_household_member.forms import ParticipationForm
-        if not self.member_status:
-            self.member_status = 'NOT_REPORTED'
-        return ParticipationForm(initial={'status': self.member_status,
-                                          'household_member': self.id,
-                                          'dashboard_id': self.household_structure.id,
-                                          'dashboard_model': 'household_structure',
-                                          'dashboard_type': 'household',},)
-#                                           age=self.age_in_years,
-#                                           residency=self.study_resident)
+    def status_choices(self):
+        status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
+        if (self.age_in_years < 16) or not self.is_eligible():
+            status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
+        else:
+            status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
+        return status_choices
+
+    @property
+    def status_choices_partial(self):
+        status_choices_p = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
+        if self.non_bhs_member and self.household_structure.number_enrolled > 0:
+            status_choices_p = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
+        elif self.member_status_full == 'REFUSED':
+            enrolled = self.household_structure.number_enrolled 
+            if enrolled > 0:
+                status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+            elif enrolled == 0:
+                status_choices_p = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
+        return status_choices_p
+
+    @property
+    def member_status(self):
+#         if self.member_status_full in ['NOT_ELIGIBLE', 'REFUSED']:
+#             ret = self.member_status_partial
+#         else:
+#             ret = self.member_status_full
+#         return ret
+        return self.member_status_full
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
@@ -341,7 +397,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def form_label_helper(self, model, model_entry):
         report_datetime = []
         model_entry_instances = []
-        if model.objects.filter(household_member=self):
+        if model.objects.filter(household_member=self).exists():
             model_instance = model.objects.get(household_member=self)
             if model._meta.module_name == 'subjectundecided':
                 model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
@@ -349,7 +405,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 model_entry_instances = model_entry.objects.filter(subject_absentee=model_instance).order_by('report_datetime')
             model_entry_count = model_entry_instances.count()
             for subject_undecided_entry in model_entry_instances:
-                report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'),subject_undecided_entry.id))
+                report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'), subject_undecided_entry.id))
             if self.visit_attempts < 3:
                 report_datetime.append(('add new entry', 'add new entry'))
         if not report_datetime:

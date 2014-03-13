@@ -14,16 +14,15 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_schedule.models import VisitDefinition
 from edc.testing.classes import TestVisitSchedule
-from edc.testing.tests.factories import TestConsentWithMixinFactory, TestScheduledModel1Factory, TestRequisitionFactory
+from edc.testing.tests.factories import TestConsentWithMixinFactory
 
 from apps.bcpp_household.models import HouseholdStructure, Household
-from apps.bcpp_household.tests.factories import HouseholdFactory, PlotFactory
+from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_subject.tests import BaseScheduledModelTestCase
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ..classes import HouseholdDashboard, SubjectDashboard
+from ..classes import HouseholdDashboard
 
 
 class DashboardTests(TestCase):
