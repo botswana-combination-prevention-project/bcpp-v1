@@ -927,6 +927,12 @@ WORKINCOMECOSTS_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
+PLOT_LOG_STATUS = (
+    ('ABSENT', 'Household(s) Absent'),
+    ('PRESENT', 'Household(s) Present'),
+    ('INACCESSIBLE', 'Inaccessible'),
+)
+
 WORKPAIDCOSTS_CHOICE = (
         ('Fixed salary', _('Fixed salary')),
         ('Paid daily', _('Paid daily')),
