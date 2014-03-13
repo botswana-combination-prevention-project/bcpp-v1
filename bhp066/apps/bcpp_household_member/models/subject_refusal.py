@@ -28,7 +28,7 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     subject_refusal_status = models.CharField(
         verbose_name="Refusal status",
-        max_length=50,
+        max_length=100,
         help_text=("Change the refusal status from 'refused' to 'no longer refusing' if and"
                    " when the subject changes their mind"),
         default='REFUSED',
@@ -42,7 +42,9 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment'))
 
-    participant_offered_htc = models.NullBooleanField(verbose_name="Offered HTC", default=None, help_text="has the participant been offered HTC?")
+    participant_offered_htc = models.NullBooleanField(verbose_name="Paticipant offered HTC", default=None, help_text="has the participant been offered HTC?")
+
+    accepted_htc = models.NullBooleanField(verbose_name="Participant accepted HTC", default=None, help_text="did the participant accept HTC?")
 
     history = AuditTrail()
 
