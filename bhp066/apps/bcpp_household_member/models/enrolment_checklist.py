@@ -88,14 +88,6 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text="If 'NO' participant will not be enrolled.",
         )
 
-    marriage_certificate_no = models.CharField(
-        verbose_name=("What is the marriage certificate number?"),
-        max_length=9,
-        null=True,
-        blank=True,
-        help_text="e.g. 000/YYYY",
-        )
-
     part_time_resident = models.CharField(
         verbose_name=("In the past 12 months, have you typically spent 3 or"
                       " more nights per month in this community? "),
@@ -108,6 +100,13 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
                   "If 'NO (or don't want to answer)'. Participant will not be enrolled."),
         )
 
+    household_residency = models.CharField(
+        verbose_name='In the past 12 months, have you typically spent more nights on average in this household than in any other household in the same community?',
+        max_length=3,
+        choices=YES_NO,
+        help_text="If 'NO' participant will not be enrolled.",
+        )
+
     literacy = models.CharField(
         verbose_name=("Is the participant LITERATE?, or if ILLITRATE, is there a"
                       "  LITERATE witness available "),
@@ -115,20 +114,6 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         choices=YES_NO,
         help_text=("If participate is illitrate, confirm there is a literate"
                    "witness available otherwise participant will not be enrolled."),
-        )
-
-    mentally_incapacitated = models.CharField(
-        verbose_name=("[Interviewer] In your opinion, Is the participant mentally incapacitated?"),
-        max_length=10,
-        choices=YES_NO,
-        help_text=("If Yes, participant will not be enrolled"),
-        )
-
-    involuntary_incarceration = models.CharField(
-        verbose_name=("[Interviewer] Is this participant involuntarily incarcerated?"),
-        max_length=10,
-        choices=YES_NO,
-        help_text=("If Yes, participant will not be enrolled"),
         )
 
     objects = models.Manager()
@@ -179,6 +164,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             self.household_member.eligible_subject = True
         self.household_member.eligibility_checklist_filled = True
         self.household_member.save()
+        super(EnrolmentChecklist, self).save(*args, **kwargs)
 
     class Meta:
         app_label = "bcpp_household_member"
