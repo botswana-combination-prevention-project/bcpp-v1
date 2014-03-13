@@ -16,7 +16,7 @@ class BloodDrawDashboard(BaseSubjectDashboard):
         #kwargs.update({'dashboard_models': {'subject_consent_rbd': SubjectConsentRbd}})
         self.household_dashboard_url = 'household_dashboard_url'
         self.dashboard_type_list = ['rbd_subject']
-        self.form_category = 'subject_rbd-year-1'
+        self.form_category = 'rbd-year-1'
         kwargs.update({'dashboard_models': {'subject_consent': RBDConsent}})
         self.visit_model = RBDVisit
         super(BloodDrawDashboard, self).__init__(**kwargs)

@@ -140,7 +140,7 @@
             {% endif %}                
     </td>
     <td>
-	    {% if not household_member.is_consented_partial %}
+	    {% if not household_member.is_consented_partial or household_member.member_status_partial == 'HTC' %}
 		    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 		     	{% csrf_token %}
 		     	{% if household_member.member_status == 'REFUSED' %}
@@ -173,9 +173,9 @@
 		    	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url rbd_enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
 		    {% elif household_member.eligible_rbd_subject %}
 				Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
-	        {% elif household_member.member_status_partial == 'HTC' %}
-	            option not available.
-	        {% endif %}
+        	{% endif %}
+        {% elif household_member.member_status_partial == 'HTC' %}
+            option not available.
 		{% endif %}
     </td>
     </tr>
