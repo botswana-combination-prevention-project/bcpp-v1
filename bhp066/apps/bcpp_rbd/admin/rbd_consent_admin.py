@@ -9,13 +9,13 @@ from ..forms import RBDConsentForm
 from ..models import RBDConsent
 
 
-class SubjectConsentRBDAdmin(BaseConsentModelAdmin):
+class RBDConsentAdmin(BaseConsentModelAdmin):
 
     dashboard_type = 'rbd_subject'
     form = RBDConsentForm
 
     def __init__(self, *args, **kwargs):
-        super(SubjectConsentRBDAdmin, self).__init__(*args, **kwargs)
+        super(RBDConsentAdmin, self).__init__(*args, **kwargs)
         for i, item in enumerate(self.fields):
             if item == 'assessment_score':
                 del self.fields[i]
@@ -81,6 +81,6 @@ class SubjectConsentRBDAdmin(BaseConsentModelAdmin):
             kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))
         if db_field.name == "registered_subject":
             kwargs["queryset"] = RegisteredSubject.objects.filter(id__exact=request.GET.get('registered_subject', 0))
-        return super(SubjectConsentRBDAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(RBDConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(RBDConsent, SubjectConsentRBDAdmin)
+admin.site.register(RBDConsent, RBDConsentAdmin)
