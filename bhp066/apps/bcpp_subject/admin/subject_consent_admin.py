@@ -54,7 +54,8 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'study_questions',
             'assessment_score',
             'consent_signature',
-            'consent_copy']
+            'consent_copy',
+            'mentally_incapacitated']
 
         self.radio_fields = {
             "language": admin.VERTICAL,
@@ -67,7 +68,8 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             "assessment_score": admin.VERTICAL,
             'consent_signature': admin.VERTICAL,
             "consent_copy": admin.VERTICAL,
-            "is_literate": admin.VERTICAL}
+            "is_literate": admin.VERTICAL,
+            "mentally_incapacitated": admin.VERTICAL,}
 
         self.search_fields.append('household_member__household_structure__household__household_identifier')
         self.search_fields.append('household_member__household_structure__household__plot__plot_identifier')
