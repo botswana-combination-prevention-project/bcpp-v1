@@ -5,7 +5,7 @@ from django.db.models import Q
 from edc.dashboard.search.classes import BaseSearchByWord
 
 from ..models import HouseholdMember
-from ..choices import HOUSEHOLD_MEMBER_ACTION
+from ..choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
 
 
 class MemberSearchByWord(BaseSearchByWord):
@@ -27,7 +27,7 @@ class MemberSearchByWord(BaseSearchByWord):
         return None
 
     def get_filter_keyword_list(self):
-        return [item[1] for item in HOUSEHOLD_MEMBER_ACTION]
+        return [item[1] for item in HOUSEHOLD_MEMBER_FULL_PARTICIPATION]
 
     def get_filter_keyword_url_list(self):
         pass
@@ -38,12 +38,12 @@ class MemberSearchByWord(BaseSearchByWord):
         If you predefine keywords, the search term will be intercepted and used to select a query instead."""
         qset_filter = Q()
         qset_exclude = Q()
-        if self.get_search_term().lower() in [item[1].lower() for item in HOUSEHOLD_MEMBER_ACTION] + ['-{0}'.format(item[1].lower()) for item in HOUSEHOLD_MEMBER_ACTION]:
+        if self.get_search_term().lower() in [item[1].lower() for item in HOUSEHOLD_MEMBER_FULL_PARTICIPATION] + ['-{0}'.format(item[1].lower()) for item in HOUSEHOLD_MEMBER_FULL_PARTICIPATION]:
             if self.get_search_term()[0] == '-':
-                search_term = [item[0] for item in HOUSEHOLD_MEMBER_ACTION if item == self.get_search_term()[1:]][0]
+                search_term = [item[0] for item in HOUSEHOLD_MEMBER_FULL_PARTICIPATION if item == self.get_search_term()[1:]][0]
                 qset_exclude = Q(member_status=search_term)
             else:
-                search_term = [item[0] for item in HOUSEHOLD_MEMBER_ACTION if item[1].lower() == self.get_search_term().lower()][0]
+                search_term = [item[0] for item in HOUSEHOLD_MEMBER_FULL_PARTICIPATION if item[1].lower() == self.get_search_term().lower()][0]
                 qset_filter = Q(member_status=search_term)
         if qset_filter or qset_exclude:
             return (qset_filter, qset_exclude)

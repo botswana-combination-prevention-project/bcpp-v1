@@ -36,7 +36,6 @@ def base_household_member_consent_on_post_save(sender, instance, **kwargs):
     if isinstance(instance, BaseRegisteredHouseholdMemberModel):
         instance.confirm_registered_subject_pk_on_post_save()
 
-
 @receiver(post_save, weak=False, dispatch_uid='visit_attempts_on_post_save')
 def visit_attempts_on_post_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):

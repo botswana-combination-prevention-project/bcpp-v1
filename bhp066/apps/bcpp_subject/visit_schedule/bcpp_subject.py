@@ -47,7 +47,6 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator'),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility'),
                 EntryTuple(30L, u'bcpp_subject', u'communityengagement'),
-                #EntryTuple(30L, u'bcpp_subject', u'subjectvisit'),
                 EntryTuple(40L, u'bcpp_subject', u'demographics'),
                 EntryTuple(50L, u'bcpp_subject', u'education'),
                 EntryTuple(60L, u'bcpp_subject', u'hivtestinghistory'),
@@ -79,8 +78,9 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(320L, u'bcpp_subject', u'positiveparticipant'),
                 EntryTuple(330L, u'bcpp_subject', u'accesstocare'),
                 EntryTuple(340L, u'bcpp_subject', u'hivresult'),
-                EntryTuple(350L, u'bcpp_subject', u'pima'),
-                EntryTuple(360L, u'bcpp_subject', u'subjectreferral'),
+                EntryTuple(350L, u'bcpp_subject', u'hicenrollment'),
+                EntryTuple(360L, u'bcpp_subject', u'pima'),
+                EntryTuple(370L, u'bcpp_subject', u'subjectreferral'),
             )}
         }
     )

@@ -36,3 +36,4 @@ class RBDSubjectRequisition(BaseSubjectRequisition):
     class Meta:
         app_label = 'bcpp_lab'
         verbose_name = 'Blood Draw Only Requisition'
+        unique_together = ('subject_visit_rbd', 'panel', 'is_drawn')
