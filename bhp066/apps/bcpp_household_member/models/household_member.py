@@ -198,11 +198,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def is_consented_partial(self):
         "Returns True or False based on search for a partial participation consent instance related to this household member"
-        from apps.bcpp_rbd_subject.models import SubjectConsentRBDonly
+        from apps.bcpp_rbd.models import RBDConsent
         from apps.bcpp_htc_subject.models import HtcSubjectConsent
         has_partial_consent_instance = False
         for any_model_cls in models.get_models():
-            if issubclass(any_model_cls, SubjectConsentRBDonly) or issubclass(any_model_cls, HtcSubjectConsent):
+            if issubclass(any_model_cls, RBDConsent) or issubclass(any_model_cls, HtcSubjectConsent):
                 consent_model_cls = any_model_cls
                 if 'household_member' in dir(consent_model_cls):
                     if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):

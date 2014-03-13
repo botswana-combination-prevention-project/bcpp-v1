@@ -8,19 +8,132 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding unique constraint on 'RBDRequisition', fields ['rbd_visit', 'is_drawn', 'panel']
-        db.create_unique(u'bcpp_lab_rbdsubjectrequisition', ['rbd_visit_id', 'is_drawn', 'panel_id'])
+        # Deleting model 'RBDConsentAudit'
+        db.delete_table(u'bcpp_rbd_subjectconsentrbdonly_audit')
 
-        # Adding unique constraint on 'SubjectRequisition', fields ['subject_visit', 'is_drawn', 'panel']
-        db.create_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'is_drawn', 'panel_id'])
+        # Adding field 'RBDConsent.consent_reviewed'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'consent_reviewed',
+                      self.gf('django.db.models.fields.CharField')(max_length=3, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.study_questions'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'study_questions',
+                      self.gf('django.db.models.fields.CharField')(max_length=3, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.assessment_score'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'assessment_score',
+                      self.gf('django.db.models.fields.CharField')(max_length=3, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.consent_copy'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'consent_copy',
+                      self.gf('django.db.models.fields.CharField')(max_length=3, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.identity'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'identity',
+                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=78L),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.identity_type'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'identity_type',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=15),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.confirm_identity'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'confirm_identity',
+                      self.gf('django.db.models.fields.CharField')(max_length=78L, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.is_minor'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'is_minor',
+                      self.gf('django.db.models.fields.CharField')(default='-', max_length=10, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.consent_signature'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'consent_signature',
+                      self.gf('django.db.models.fields.CharField')(max_length=3, null=True),
+                      keep_default=False)
+
+        # Adding field 'RBDConsent.community'
+        db.add_column('bcpp_rbd_subjectconsentrbdonly', 'community',
+                      self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'SubjectRequisition', fields ['subject_visit', 'is_drawn', 'panel']
-        db.delete_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'is_drawn', 'panel_id'])
+        # Adding model 'RBDConsentAudit'
+        db.create_table(u'bcpp_rbd_subjectconsentrbdonly_audit', (
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=250, null=True, blank=True)),
+            ('consent_version_on_entry', self.gf('django.db.models.fields.IntegerField')(default=1)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, blank=True, db_index=True)),
+            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True)),
+            ('may_store_samples', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('consent_version_recent', self.gf('django.db.models.fields.IntegerField')(default=1)),
+            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectconsentrbdonly', null=True, to=orm['registration.RegisteredSubject'])),
+            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('is_literate', self.gf('django.db.models.fields.CharField')(default='-', max_length=3)),
+            ('subject_type', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
+            ('is_signed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('consent_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('witness_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True, db_index=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
+            ('study_site', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectconsentrbdonly', null=True, to=orm['bhp_variables.StudySite'])),
+            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True)),
+            ('subject_identifier_as_pk', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, db_index=True)),
+            ('language', self.gf('django.db.models.fields.CharField')(default='not specified', max_length=25)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('dob', self.gf('django.db.models.fields.DateField')(null=True)),
+            ('gender', self.gf('django.db.models.fields.CharField')(max_length=1, null=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='One.local', max_length=50, blank=True, db_index=True)),
+            ('is_verified_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('guardian_name', self.gf('django.db.models.fields.CharField')(max_length=78L, null=True, blank=True)),
+            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectconsentrbdonly', to=orm['bcpp_household_member.HouseholdMember'])),
+            ('is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
+            ('subject_identifier', self.gf('django.db.models.fields.CharField')(blank=True, max_length=50, db_index=True)),
+            ('survey', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectconsentrbdonly', to=orm['bcpp_survey.Survey'])),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('is_verified', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('is_incarcerated', self.gf('django.db.models.fields.CharField')(default='-', max_length=3)),
+            ('initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True)),
+        ))
+        db.send_create_signal('bcpp_rbd', ['RBDConsentAudit'])
 
-        # Removing unique constraint on 'RBDRequisition', fields ['rbd_visit', 'is_drawn', 'panel']
-        db.delete_unique(u'bcpp_lab_rbdsubjectrequisition', ['rbd_visit_id', 'is_drawn', 'panel_id'])
+        # Deleting field 'RBDConsent.consent_reviewed'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'consent_reviewed')
+
+        # Deleting field 'RBDConsent.study_questions'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'study_questions')
+
+        # Deleting field 'RBDConsent.assessment_score'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'assessment_score')
+
+        # Deleting field 'RBDConsent.consent_copy'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'consent_copy')
+
+        # Deleting field 'RBDConsent.identity'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'identity')
+
+        # Deleting field 'RBDConsent.identity_type'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'identity_type')
+
+        # Deleting field 'RBDConsent.confirm_identity'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'confirm_identity')
+
+        # Deleting field 'RBDConsent.is_minor'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'is_minor')
+
+        # Deleting field 'RBDConsent.consent_signature'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'consent_signature')
+
+        # Deleting field 'RBDConsent.community'
+        db.delete_column('bcpp_rbd_subjectconsentrbdonly', 'community')
 
 
     models = {
@@ -54,7 +167,7 @@ class Migration(SchemaMigration):
         'bcpp_household.household': {
             'Meta': {'ordering': "['-household_identifier']", 'object_name': 'Household'},
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
-            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '25'}),
+            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'default': "'yes'", 'max_length': '25'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'complete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -106,6 +219,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-plot_identifier']", 'unique_together': "(('gps_target_lat', 'gps_target_lon'),)", 'object_name': 'Plot'},
             'access_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'action': ('django.db.models.fields.CharField', [], {'default': "'unconfirmed'", 'max_length': '25', 'null': 'True'}),
+            'allowed_to_enumerate': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'bhs': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -148,9 +262,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-created']", 'unique_together': "(('household_structure', 'first_name', 'initials'), ('registered_subject', 'household_structure'))", 'object_name': 'HouseholdMember'},
             'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'db_index': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'eligibility_checklist_filled': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_member': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'eligible_rbd_subject': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_subject': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'db_index': 'True'}),
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'db_index': 'True'}),
@@ -161,8 +273,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '3', 'db_index': 'True'}),
             'internal_identifier': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '36', 'null': 'True'}),
-            'member_status_full': ('django.db.models.fields.CharField', [], {'default': "'NOT_REPORTED'", 'max_length': '25', 'null': 'True', 'db_index': 'True'}),
-            'member_status_partial': ('django.db.models.fields.CharField', [], {'default': "'NOT_REPORTED'", 'max_length': '25', 'null': 'True', 'db_index': 'True'}),
+            'member_status': ('django.db.models.fields.CharField', [], {'default': "'NOT_REPORTED'", 'max_length': '25', 'null': 'True', 'db_index': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'present_today': ('django.db.models.fields.CharField', [], {'max_length': '3', 'db_index': 'True'}),
             'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['registration.RegisteredSubject']", 'null': 'True'}),
@@ -174,193 +285,133 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'visit_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },
-        'bcpp_lab.packinglist': {
-            'Meta': {'object_name': 'PackingList'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'list_comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'list_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 11, 0, 0)'}),
-            'list_items': ('django.db.models.fields.TextField', [], {'max_length': '1000'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'bcpp_lab.packinglistitem': {
-            'Meta': {'object_name': 'PackingListItem'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'item_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'item_description': ('django.db.models.fields.TextField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'item_priority': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
-            'item_reference': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'old_panel_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
-            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.PackingList']", 'null': 'True'}),
-            'panel': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.Panel']", 'null': 'True', 'blank': 'True'}),
-            'requisition': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'bcpp_lab.rbdsubjectrequisition': {
-            'Meta': {'unique_together': "(('rbd_visit', 'panel', 'is_drawn'),)", 'object_name': 'RBDRequisition'},
-            'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.AliquotType']"}),
-            'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+        'bcpp_rbd.subjectconsentrbdonly': {
+            'Meta': {'unique_together': "(('subject_identifier', 'survey'),)", 'object_name': 'RBDConsent'},
+            'assessment_score': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'confirm_identity': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True'}),
+            'consent_copy': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
+            'consent_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'consent_reviewed': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
+            'consent_signature': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
+            'consent_version_on_entry': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
+            'consent_version_recent': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'drawn_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'estimated_volume': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '7', 'decimal_places': '1'}),
+            'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True'}),
+            'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'null': 'True'}),
+            'guardian_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'identity': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '78L'}),
+            'identity_type': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
+            'initials': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True'}),
+            'is_dob_estimated': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'is_incarcerated': ('django.db.models.fields.CharField', [], {'default': "'-'", 'max_length': '3'}),
+            'is_literate': ('django.db.models.fields.CharField', [], {'default': "'-'", 'max_length': '3'}),
+            'is_minor': ('django.db.models.fields.CharField', [], {'default': "'-'", 'max_length': '10', 'null': 'True'}),
+            'is_signed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_verified': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_verified_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'not specified'", 'max_length': '25'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True'}),
+            'may_store_samples': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['registration.RegisteredSubject']", 'null': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'study_questions': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
+            'study_site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_variables.StudySite']", 'null': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
+            'subject_identifier_as_pk': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'db_index': 'True'}),
+            'subject_type': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_survey.Survey']"}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'witness_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'})
+        },
+        'bcpp_rbd.subjectlocatorrbd': {
+            'Meta': {'object_name': 'RBDLocator'},
+            'alt_contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_cell_number': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_rel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_tel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_phone': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'contact_rel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'date_signed': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 2, 12, 0, 0)'}),
+            'has_alt_contact': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'home_visit_permission': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'is_drawn': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '3'}),
-            'is_labelled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_labelled_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'is_lis': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_packed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'item_count_total': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
-            'item_type': ('django.db.models.fields.CharField', [], {'default': "'tube'", 'max_length': '25'}),
+            'mail_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'may_call_work': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'may_contact_someone': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'may_follow_up': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'may_sms_follow_up': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.PackingList']", 'null': 'True', 'blank': 'True'}),
-            'panel': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.Panel']"}),
-            'priority': ('django.db.models.fields.CharField', [], {'default': "'normal'", 'max_length': '25'}),
-            'protocol': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
-            'reason_not_drawn': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'requisition_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'requisition_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
+            'other_alt_contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'registered_subject': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['registration.RegisteredSubject']", 'unique': 'True', 'null': 'True'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 2, 12, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_variables.StudySite']", 'null': 'True'}),
-            'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
-            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'rbd_visit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_rbd.RBDVisit']"}),
-            'test_code': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['lab_clinic_api.TestCode']", 'null': 'True', 'blank': 'True'}),
+            'subject_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_cell_alt': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_phone': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_phone_alt': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_rbd.RBDVisit']", 'null': 'True'}),
+            'subject_work_phone': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_work_place': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_lab.rbdsubjectrequisitionaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDRequisitionAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
+        'bcpp_rbd.subjectlocatorrbdaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDLocatorAudit', 'db_table': "'bcpp_rbd_subjectlocatorrbd_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
-            'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'to': "orm['lab_clinic_api.AliquotType']"}),
-            'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'alt_contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_cell_number': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_rel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'alt_contact_tel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_name': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_phone': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'contact_physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'contact_rel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'drawn_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'estimated_volume': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '7', 'decimal_places': '1'}),
+            'date_signed': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 2, 12, 0, 0)'}),
+            'has_alt_contact': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'home_visit_permission': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
-            'is_drawn': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '3'}),
-            'is_labelled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_labelled_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'is_lis': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_packed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'item_count_total': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
-            'item_type': ('django.db.models.fields.CharField', [], {'default': "'tube'", 'max_length': '25'}),
+            'mail_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'may_call_work': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'may_contact_someone': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'may_follow_up': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'may_sms_follow_up': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'_audit_rbdsubjectrequisition'", 'null': 'True', 'to': "orm['bcpp_lab.PackingList']"}),
-            'panel': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'to': "orm['lab_clinic_api.Panel']"}),
-            'priority': ('django.db.models.fields.CharField', [], {'default': "'normal'", 'max_length': '25'}),
-            'protocol': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
-            'reason_not_drawn': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'requisition_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'requisition_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'other_alt_contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectlocatorrbd'", 'null': 'True', 'to': "orm['registration.RegisteredSubject']"}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 2, 12, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'null': 'True', 'to': "orm['bhp_variables.StudySite']"}),
-            'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'rbd_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'to': "orm['bcpp_rbd.RBDVisit']"}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'bcpp_lab.subjectrequisition': {
-            'Meta': {'unique_together': "(('subject_visit', 'panel', 'is_drawn'),)", 'object_name': 'SubjectRequisition'},
-            'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.AliquotType']"}),
-            'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'drawn_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'estimated_volume': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '7', 'decimal_places': '1'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            'is_drawn': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '3'}),
-            'is_labelled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_labelled_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'is_lis': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_packed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'item_count_total': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
-            'item_type': ('django.db.models.fields.CharField', [], {'default': "'tube'", 'max_length': '25'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.PackingList']", 'null': 'True', 'blank': 'True'}),
-            'panel': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.Panel']"}),
-            'priority': ('django.db.models.fields.CharField', [], {'default': "'normal'", 'max_length': '25'}),
-            'protocol': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
-            'reason_not_drawn': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'requisition_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'requisition_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_variables.StudySite']", 'null': 'True'}),
-            'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
-            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_subject.SubjectVisit']"}),
-            'test_code': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['lab_clinic_api.TestCode']", 'null': 'True', 'blank': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'bcpp_lab.subjectrequisitionaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'SubjectRequisitionAudit', 'db_table': "u'bcpp_lab_subjectrequisition_audit'"},
-            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
-            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
-            'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectrequisition'", 'to': "orm['lab_clinic_api.AliquotType']"}),
-            'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
-            'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'drawn_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'estimated_volume': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '7', 'decimal_places': '1'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
-            'is_drawn': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '3'}),
-            'is_labelled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_labelled_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'is_lis': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_packed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_receive_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'item_count_total': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
-            'item_type': ('django.db.models.fields.CharField', [], {'default': "'tube'", 'max_length': '25'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'_audit_subjectrequisition'", 'null': 'True', 'to': "orm['bcpp_lab.PackingList']"}),
-            'panel': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectrequisition'", 'to': "orm['lab_clinic_api.Panel']"}),
-            'priority': ('django.db.models.fields.CharField', [], {'default': "'normal'", 'max_length': '25'}),
-            'protocol': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
-            'reason_not_drawn': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'requisition_datetime': ('django.db.models.fields.DateTimeField', [], {}),
-            'requisition_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectrequisition'", 'null': 'True', 'to': "orm['bhp_variables.StudySite']"}),
-            'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectrequisition'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
+            'subject_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_cell_alt': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_phone': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_phone_alt': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectlocatorrbd'", 'null': 'True', 'to': "orm['bcpp_rbd.RBDVisit']"}),
+            'subject_work_phone': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
+            'subject_work_place': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
@@ -385,15 +436,18 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.subjectvisit': {
-            'Meta': {'object_name': 'SubjectVisit'},
-            'appointment': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['appointment.Appointment']", 'unique': 'True'}),
+        'bcpp_rbd.subjectvisitrbdaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDVisitAudit', 'db_table': "'bcpp_rbd_subjectvisitrbd_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'appointment': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectvisitrbd'", 'to': "orm['appointment.Appointment']"}),
             'comments': ('django.db.models.fields.TextField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household_member.HouseholdMember']"}),
-            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectvisitrbd'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'info_source': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'info_source_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -426,11 +480,11 @@ class Migration(SchemaMigration):
         'bhp_content_type_map.contenttypemap': {
             'Meta': {'ordering': "['name']", 'unique_together': "(['app_label', 'model'],)", 'object_name': 'ContentTypeMap'},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']", 'null': 'True', 'blank': 'True'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']", 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_index': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'module_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
@@ -451,72 +505,12 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        u'contenttypes.contenttype': {
+        'contenttypes.contenttype': {
             'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'lab_clinic_api.aliquottype': {
-            'Meta': {'ordering': "['name']", 'object_name': 'AliquotType'},
-            'alpha_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'numeric_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '2'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'lab_clinic_api.panel': {
-            'Meta': {'object_name': 'Panel'},
-            'aliquot_type': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['lab_clinic_api.AliquotType']", 'symmetrical': 'False'}),
-            'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'edc_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50', 'db_index': 'True'}),
-            'panel_type': ('django.db.models.fields.CharField', [], {'default': "'TEST'", 'max_length': '15'}),
-            'test_code': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['lab_clinic_api.TestCode']", 'null': 'True', 'blank': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'lab_clinic_api.testcode': {
-            'Meta': {'ordering': "['edc_name']", 'object_name': 'TestCode'},
-            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '15'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'display_decimal_places': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'edc_code': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'db_index': 'True'}),
-            'edc_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'db_index': 'True'}),
-            'formula': ('django.db.models.fields.CharField', [], {'max_length': "'50'", 'null': 'True', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_absolute': ('django.db.models.fields.CharField', [], {'default': "'absolute'", 'max_length': "'15'"}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'test_code_group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.TestCodeGroup']", 'null': 'True'}),
-            'units': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
-        },
-        'lab_clinic_api.testcodegroup': {
-            'Meta': {'ordering': "['code']", 'object_name': 'TestCodeGroup'},
-            'code': ('django.db.models.fields.CharField', [], {'max_length': '15', 'null': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
-            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'registration.registeredsubject': {
             'Meta': {'ordering': "['subject_identifier']", 'unique_together': "(('first_name', 'dob', 'initials'),)", 'object_name': 'RegisteredSubject', 'db_table': "'bhp_registration_registeredsubject'"},
@@ -557,7 +551,7 @@ class Migration(SchemaMigration):
         'visit_schedule.membershipform': {
             'Meta': {'object_name': 'MembershipForm', 'db_table': "'bhp_visit_membershipform'"},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'category': ('django.db.models.fields.CharField', [], {'default': "'subject'", 'max_length': '35', 'unique': 'True', 'null': 'True'}),
+            'category': ('django.db.models.fields.CharField', [], {'default': "'subject'", 'max_length': '25', 'unique': 'True', 'null': 'True'}),
             'content_type_map': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'+'", 'unique': 'True', 'to': "orm['bhp_content_type_map.ContentTypeMap']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'One.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -611,4 +605,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['bcpp_lab']
+    complete_apps = ['bcpp_rbd']
