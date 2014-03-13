@@ -1,5 +1,5 @@
 from apps.bcpp_household.models.household import Household
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
+from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION as member_actions
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery
 

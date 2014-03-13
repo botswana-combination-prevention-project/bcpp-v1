@@ -36,3 +36,4 @@ class SubjectRequisition(BaseSubjectRequisition):
     class Meta:
         app_label = 'bcpp_lab'
         verbose_name = 'Patient Lab Requisition'
+        unique_together = ('subject_visit', 'panel', 'is_drawn')
