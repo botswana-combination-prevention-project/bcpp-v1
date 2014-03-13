@@ -52,6 +52,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
+    @property
     def number_enrolled(self):
         from apps.bcpp_household_member.models import HouseholdMember
         members = HouseholdMember.objects.filter(household_structure=self)

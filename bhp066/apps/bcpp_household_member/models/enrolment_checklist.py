@@ -124,6 +124,13 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text=("If Yes, participant will not be enrolled"),
         )
 
+    involuntary_incarceration = models.CharField(
+        verbose_name=("[Interviewer] Is this participant involuntarily incarcerated?"),
+        max_length=10,
+        choices=YES_NO,
+        help_text=("If Yes, participant will not be enrolled"),
+        )
+
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
@@ -157,6 +164,10 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             self.household_member.eligible_subject = False
             loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Mentally Incapacitated.')
             loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.involuntary_incarceration.lower() == 'yes':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Involuntarily Incarcerated.')
             self.household_member.member_status_full = 'NOT_ELIGIBLE'
         elif self.household_member.is_minor():
             if self.guardian != 'Yes':
