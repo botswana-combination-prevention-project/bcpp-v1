@@ -24,7 +24,8 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "part_time_resident",
         "literacy",
         "guardian",
-        "mentally_incapacitated")
+        "mentally_incapacitated",
+        "involuntary_incarceration")
 
     radio_fields = {
         'has_identity': admin.VERTICAL,
@@ -35,7 +36,8 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "part_time_resident": admin.VERTICAL,
         "literacy": admin.VERTICAL,
         "guardian": admin.VERTICAL,
-        "mentally_incapacitated": admin.VERTICAL, }
+        "mentally_incapacitated": admin.VERTICAL,
+        "involuntary_incarceration": admin.VERTICAL, }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":

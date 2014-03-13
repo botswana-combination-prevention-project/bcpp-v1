@@ -11,11 +11,16 @@ HOUSEHOLD_MEMBER_FULL_PARTICIPATION = [
     #('NOT_ELIGIBLE', 'Not Eligible'),
 ]
 
+HOUSEHOLD_MEMBER_RBD_PARTICIPATION = [
+    ('NOT_REPORTED', '<not reported>'),
+    ('RBD', 'RBD'),
+]
+
 HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
     ('NOT_ELIGIBLE', 'Not Eligible'),
 ]
 
-HOUSEHOLD_MEMBER_HTC = [
+HOUSEHOLD_MEMBER_HTC_PARTICIPATION = [
     ('NOT_REPORTED', '<not reported>'),
     ('HTC', 'HTC'),
 ]
