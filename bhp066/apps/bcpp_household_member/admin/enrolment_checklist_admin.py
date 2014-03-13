@@ -21,7 +21,10 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "legal_marriage",
         "marriage_certificate",
         "marriage_certificate_no",
-        "part_time_resident")
+        "part_time_resident",
+        "literacy",
+        "guardian",
+        "mentally_incapacitated")
 
     radio_fields = {
         'has_identity': admin.VERTICAL,
@@ -29,7 +32,10 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "citizen": admin.VERTICAL,
         "legal_marriage": admin.VERTICAL,
         "marriage_certificate": admin.VERTICAL,
-        "part_time_resident": admin.VERTICAL, }
+        "part_time_resident": admin.VERTICAL,
+        "literacy": admin.VERTICAL,
+        "guardian": admin.VERTICAL,
+        "mentally_incapacitated": admin.VERTICAL, }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
