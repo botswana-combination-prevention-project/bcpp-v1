@@ -1,4 +1,3 @@
-from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
@@ -23,15 +22,6 @@ class RBDRequisition(BaseSubjectRequisition):
 
     def get_visit(self):
         return self.rbd_visit
-
-    def dashboard(self):
-        url = reverse('subject_dashboard_url',
-                      kwargs={'dashboard_type': self.rbd_visit.appointment.registered_subject.subject_type.lower(),
-                              'dashboard_model': 'appointment',
-                              'dashboard_id': self.rbd_visit.appointment.pk,
-                              'show': 'appointments'})
-        return """<a href="{url}" />dashboard</a>""".format(url=url)
-    dashboard.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_lab'
