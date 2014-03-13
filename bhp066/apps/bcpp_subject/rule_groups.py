@@ -177,7 +177,7 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
             predicate=('recorded_hiv_result', 'ne', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult', ])
+        target_model=['hivresult', 'hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -193,7 +193,7 @@ class HivDocumentationGroup(RuleGroup):
             predicate=('result_recorded', 'ne', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult'])
+        target_model=['hivresult', 'hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
