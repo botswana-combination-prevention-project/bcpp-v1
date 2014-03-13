@@ -18,8 +18,8 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
-from ..choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION, \
-                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE
+from ..choices import (HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC_PARTICIPATION, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE, HOUSEHOLD_MEMBER_RBD_PARTICIPATION)
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -174,12 +174,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def non_bhs_member(self):
-        "determines wether this participant should be offered full participation or partial participation"
-        if self.member_status_full == 'REFUSED':
+        "Those participants that where never BHS potentials to start with, or failed the BHS eligibility checklist."
+        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran,just fro household meber values eg age < 16..
             return True
-        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran.
-            return True
-        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist.
+        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist, e.g non citizen not married to citizen.
             return True
         return False
 
@@ -273,8 +271,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def status_choices_partial(self):
         status_choices_p = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if self.non_bhs_member:
-            status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+        if self.non_bhs_member and self.household_structure.number_enrolled > 0:
+            status_choices_p = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
+        elif self.member_status_full == 'REFUSED':
+            enrolled = self.household_structure.number_enrolled 
+            if enrolled > 0:
+                status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+            elif enrolled == 0:
+                status_choices_p = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
         return status_choices_p
 
     @property
