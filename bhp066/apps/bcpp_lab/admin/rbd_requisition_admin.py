@@ -12,7 +12,7 @@ class RBDRequisitionAdmin(BaseRequisitionModelAdmin):
 
     visit_model = RBDVisit
     visit_fieldname = 'rbd_visit'
-    dashboard_type = 'rbd_subject'
+    dashboard_type = 'subject'
 
     form = RBDRequisitionForm
 

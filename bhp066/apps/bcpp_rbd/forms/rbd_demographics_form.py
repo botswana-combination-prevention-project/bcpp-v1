@@ -1,6 +1,6 @@
 from django import forms
 
-from .base_rbd_subject_model_form import BaseRBDModelForm
+from .base_rbd_model_form import BaseRBDModelForm
 
 from ..models import RBDDemographics
 
