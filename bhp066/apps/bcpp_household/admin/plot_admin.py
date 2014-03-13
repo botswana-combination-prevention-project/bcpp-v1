@@ -20,22 +20,20 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'gps_minutes_e',
         'cso_number',
         'household_count',
-        'allowed_to_enumerate',
         'eligible_members',
         'time_of_week',
         'time_of_day',
         'description')
 
-    list_display = ('plot_identifier', 'action', 'status', 'cso_number', 'community', 'section', 'created')
+    list_display = ('plot_identifier', 'action', 'status', 'access_attempts', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('status', 'bhs', 'created', 'community', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day')
+    list_filter = ('status', 'bhs', 'created', 'community', 'access_attempts', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day', 'modified')
 
     search_fields = ('plot_identifier', 'cso_number', 'community', 'section', 'id')
 
     readonly_fields = ('plot_identifier',)
     radio_fields = {
         'status': admin.VERTICAL,
-        'allowed_to_enumerate': admin.VERTICAL,
         'time_of_week': admin.VERTICAL,
         'time_of_day': admin.VERTICAL,
         }

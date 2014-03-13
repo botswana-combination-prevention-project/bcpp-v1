@@ -14,7 +14,7 @@ class BasePlotMapper(Mapper):
     section_field_attr = 'sub_section'
     section_label = 'Sub Section'
     map_area_field_attr = 'community'
-    
+
     #Different map fields, the numbers are the zoom levels
     map_field_attr_18 = 'uploaded_map_18'
     map_field_attr_17 = 'uploaded_map_17'
@@ -44,4 +44,3 @@ class BasePlotMapper(Mapper):
         degrees_e, minutes_e = self.deg_to_dms(self.gps_center_lon)
         degrees_s, minutes_s = self.deg_to_dms(self.gps_center_lat)
         return (degrees_s, minutes_s, degrees_e, minutes_e)
-

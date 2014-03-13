@@ -52,6 +52,17 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
+    @property
+    def number_enrolled(self):
+        from apps.bcpp_household_member.models import HouseholdMember
+        members = HouseholdMember.objects.filter(household_structure=self)
+        count = 0
+        for member in members:
+            #member has a consent, which is not a partial consent, so it has to be a BHS consent.
+            if member.is_consented and not member.is_consented_partial:
+                count = count + 1
+        return count
+
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         if not HouseholdLog.objects.filter(household_structure__pk=self.pk):
@@ -63,7 +74,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         using = kwargs.get('using', None)
         # create new members, if new
         if created:
-            self.__class__.objects.fetch_household_members(self, using)
+            self.__class__.objects.fetch_household_members(self)
         # recount members, may be greater but not less than the actual number of members
         household_member = get_model(app_label="bcpp_household_member", model_name="householdmember")
         current_member_count = household_member.objects.filter(household_structure__pk=self.pk).count()
