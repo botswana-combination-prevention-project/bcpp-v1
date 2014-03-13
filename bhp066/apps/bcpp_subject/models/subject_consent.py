@@ -2,7 +2,7 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO
+from edc.choices.common import YES_NO, YES_NO_NA
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers
 from edc.subject.consent.mixins.bw import IdentityFieldsMixin
@@ -23,6 +23,41 @@ from .subject_consent_history import SubjectConsentHistory
 
 # declare abstract base class
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
+
+    citizen = models.CharField(
+        verbose_name="Are you a Botswana citizen? ",
+        max_length=3,
+        choices=YES_NO,
+        help_text="",
+        )
+
+    legal_marriage = models.CharField(
+        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
+        max_length=3,
+        choices=YES_NO_NA,
+        null=True,
+        blank=False,
+        default='N/A',
+        help_text="If 'NO' participant will not be enrolled.",
+        )
+
+    marriage_certificate = models.CharField(
+        verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
+        max_length=3,
+        choices=YES_NO_NA,
+        null=True,
+        blank=False,
+        default='N/A',
+        help_text="If 'NO' participant will not be enrolled.",
+        )
+
+    marriage_certificate_no = models.CharField(
+        verbose_name=("What is the marriage certificate number?"),
+        max_length=9,
+        null=True,
+        blank=True,
+        help_text="e.g. 000/YYYY",
+        )
 
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
