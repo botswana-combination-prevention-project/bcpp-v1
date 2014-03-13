@@ -16,7 +16,7 @@ from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import HouseholdStructureFactory
 from apps.bcpp_household.models import post_save_on_household, create_household_on_post_save, household_structure_on_post_save
 from .factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory , SubjectAbsenteeEntryFactory, \
-                        SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory
+                        SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, LossFactory
 
 
 
@@ -71,6 +71,7 @@ class NaturalKeyTests(TestCase):
         signals.post_save.connect(household_structure_on_post_save, weak=False, dispatch_uid="household_structure_on_post_save")
         signals.post_save.connect(create_household_on_post_save, weak=False, dispatch_uid="create_household_on_post_save")
         household_member = HouseholdMemberFactory(household_structure=household_structure, survey=survey)
+        loss = LossFactory(household_member = household_member)
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=household_member.registered_subject.subject_identifier)
         # enrolment_checklist = EnrolmentChecklistFactory(household_member=household_member)
@@ -94,6 +95,7 @@ class NaturalKeyTests(TestCase):
         instances.append(household_structure)
         instances.append(household_info)
         instances.append(subject_refusal)
+        instances.append(loss)
         instances.append(subject_moved)
 
         instances.append(subject_absentee_entry)

@@ -4,3 +4,7 @@ from .household_log_entry_factory import HouseholdLogEntryFactory
 from .gps_device_factory import GpsDeviceFactory
 from .household_structure_factory import HouseholdStructureFactory
 from .plot_factory import PlotFactory
+from .plot_log_factory import PlotLogFactory
+from .plot_log_entry_factory import PlotLogEntryFactory
+from .household_enumeration_factory import HouseholdEnumerationRefusalFactory
+from .plot_identifier_factory import PlotIdentifierHistoryFactory
