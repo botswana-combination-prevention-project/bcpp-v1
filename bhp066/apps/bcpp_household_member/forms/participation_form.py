@@ -1,28 +1,14 @@
 from django import forms
 from django.forms.widgets import Select
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION
+from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
 
 
 class ParticipationForm(forms.Form):
     """A form to select the type of participation for a household member.
 
     ...note:: configured and referenced directly on the household_member model via method participation_form()"""
-#     def __init__(self, *args, **kwargs):
-#         super(ParticipationForm, self).__init__()
-#         HOUSEHOLD_MEMBER_HTC = [
-#                         ('NOT_REPORTED', '<not reported>'),
-#                         ('HTC', 'HTC'),
-#                         ]
-#         age = kwargs.get('age')
-#         residency = kwargs.get('residency')
-#         if age and age >= 64:
-#             self.status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_HTC, widget=Select(attrs={'onchange': 'this.form.submit();'}))
-#         if residency and residency == 'No':
-#             self.status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_HTC, widget=Select(attrs={'onchange': 'this.form.submit();'}))
-
-#     residency = forms.CharField(widget=forms.HiddenInput())
-#     age = forms.IntegerField(widget=forms.HiddenInput())
-    status = forms.ChoiceField(choices=HOUSEHOLD_MEMBER_ACTION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
+    status = forms.ChoiceField(required=False, choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
+    status_partial = forms.ChoiceField(required=False, choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
     household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
     dashboard_id = forms.CharField(widget=forms.HiddenInput())

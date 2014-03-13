@@ -6,10 +6,10 @@ from ..models import HouseholdMember
 from ..forms import HouseholdMemberForm
 
 
-class AbsenteeVisitAtempts(admin.SimpleListFilter):
+class VisitAtempts(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = 'Current Absentee visit attempts'
+    title = 'Current visit attempts'
 
     # Parameter for the filter that will be used in the URL query.
     parameter_name = 'visit_attempts'
@@ -78,7 +78,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'eligible_member',
                     'eligible_subject',
                     'is_consented',
-                    'member_status',
+                    'member_status_full',
                     'visit_attempts',
                     'created',
                     'hostname_created')
@@ -92,9 +92,9 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__household__plot__id',
         'relation', 'id']
 
-    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status',
+    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status_full',
                    'eligible_member', 'eligible_subject', 'target', 'hiv_history', 'household_structure__household__community',
-                    'modified', 'hostname_created', AbsenteeVisitAtempts)
+                    'modified', 'hostname_created', 'user_created', VisitAtempts)
 
     #readonly_fields = ('absentee_visit_attempts', )
     list_per_page = 25

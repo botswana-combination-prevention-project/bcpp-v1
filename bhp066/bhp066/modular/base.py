@@ -229,7 +229,7 @@ INSTALLED_APPS = (
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
 
-    'lis.core.lab_barcode',
+    'lis.labeling',
     'lis.core.lab_common',
     'lis.core.lab_flag',
     'lis.core.lab_grading',
@@ -260,6 +260,7 @@ INSTALLED_APPS = (
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
+    'apps.bcpp_rbd',
     'apps.bcpp_subject',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',

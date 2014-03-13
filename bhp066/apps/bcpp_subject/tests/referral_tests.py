@@ -4,7 +4,7 @@ from edc.map.classes import Mapper, site_mappers
 
 from apps.bcpp_subject.tests.factories import (SubjectReferralFactory, ReproductiveHealthFactory,
                                                HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
-                                               PimaFactory, HivTestingHistoryFactory, HivTestReviewFactory,
+                                               PimaFactory, HivTestReviewFactory,
                                                Cd4HistoryFactory)
 
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
