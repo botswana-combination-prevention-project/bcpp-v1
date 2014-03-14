@@ -4,11 +4,11 @@ from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp_subject.models import SubjectVisit
 
-from ..models import BaseSubjectRequisition
+from ..models import BaseBcppRequisition
 from ..managers import RequisitionManager
 
 
-class SubjectRequisition(BaseSubjectRequisition):
+class SubjectRequisition(BaseBcppRequisition):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
