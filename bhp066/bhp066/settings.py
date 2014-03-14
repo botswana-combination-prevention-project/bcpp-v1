@@ -24,12 +24,12 @@ CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
-#KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-KEY_PATH = '/Volumes/keys'
+KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+#KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -240,12 +240,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django_extensions',
+    #'django_extensions',
     'django_databrowse',
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -323,7 +323,7 @@ INSTALLED_APPS = (
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
 
-    'lis.core.lab_barcode',
+    'lis.labeling',
     'lis.core.lab_common',
     'lis.core.lab_flag',
     'lis.core.lab_grading',
@@ -356,7 +356,7 @@ INSTALLED_APPS = (
     'apps.bcpp_stats',
     'apps.bcpp_household',
     'apps.bcpp_subject',
-    'apps.bcpp_rbd_subject',
+    'apps.bcpp_rbd',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
     'apps.bcpp_survey',

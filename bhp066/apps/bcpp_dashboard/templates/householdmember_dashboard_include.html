@@ -84,8 +84,6 @@
     {% comment%} dashboard {% endcomment %}
     <td>    
             {% comment %}DEBUG, remove{% endcomment %}
-            {% if household_member.member_status and household_member.member_status not in household_member_actions %}Unknown member status!{%endif%}
-	
             {% if 'RESEARCH' == household_member.member_status and not household_member.eligible_subject %}
                 {% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
                 <span style="color:white;background-color:red;">&nbsp;</span>
@@ -106,11 +104,11 @@
             	{% endif %}
             	
             {% elif household_member.eligibility_checklist_filled and household_member.member_status == 'NOT_ELIGIBLE' %}
-            	Failled eligibility checklist, loss form created. Can participate only partially, if atleast one enrolled member.
+            	Failled eligibility checklist, loss form created. Can only participate in HTC, if atleast one enrolled member.
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
             	Under age 16, cannot participate at any level.
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
-            	Older than age 64. Can participate only partially, if atleast one enrolled member.
+            	Older than age 64. Can participate only in HTC, if atleast one enrolled member.
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                {% if household_member.member_status == 'ABSENT'%}
                Absentee log (attempts to contact)
@@ -142,10 +140,16 @@
             {% endif %}                
     </td>
     <td>
-	    {% if not household_member.is_consented_partial %}
+	    {% if not household_member.is_consented_partial or household_member.member_status_partial == 'HTC' %}
 		    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 		     	{% csrf_token %}
-			    {% if household_member.non_bhs_member and not household_member.age_in_years < 16 and household_member.household_structure.number_enrolled > 0 %}
+		     	{% if household_member.member_status == 'REFUSED' %}
+		     		<select name="status_partial" id="status_partial" onchange="this.form.submit()">
+			    		{% for status_key, status_value  in household_member.status_choices_partial %}
+			    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+				    	{% endfor %}
+					</select>
+			    {% elif household_member.non_bhs_member and not household_member.age_in_years < 16 and household_member.household_structure.number_enrolled > 0 %}
 				    <select name="status_partial" id="status_partial" onchange="this.form.submit()">
 			    		{% for status_key, status_value  in household_member.status_choices_partial %}
 			    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
@@ -169,9 +173,9 @@
 		    	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url rbd_enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
 		    {% elif household_member.eligible_rbd_subject %}
 				Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
-	        {% elif household_member.member_status_partial == 'HTC' %}
-	            option not available.
-	        {% endif %}
+        	{% endif %}
+        {% elif household_member.member_status_partial == 'HTC' %}
+            option not available.
 		{% endif %}
     </td>
     </tr>
