@@ -56,5 +56,5 @@ class RBDDemographics (BaseScheduledRBDVisitModel):
 
     class Meta:
         app_label = 'bcpp_rbd'
-        verbose_name = "Research Blood Draw Demographics"
-        verbose_name_plural = "Research Blood Draw Demographics"
+        verbose_name = "RBD Demographics"
+        verbose_name_plural = "RBD Demographics"

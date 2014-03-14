@@ -20,5 +20,5 @@ class RBDRequisition(BaseBcppRequisition):
 
     class Meta:
         app_label = 'bcpp_lab'
-        verbose_name = 'Blood Draw Only Requisition'
+        verbose_name = 'RBD Requisition'
         unique_together = ('rbd_visit', 'panel', 'is_drawn')
