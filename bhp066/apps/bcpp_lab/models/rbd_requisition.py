@@ -15,11 +15,6 @@ class RBDRequisition(BaseSubjectRequisition):
 
     history = AuditTrail()
 
-    def save(self, *args, **kwargs):
-        self.community = self.rbd_visit.household_member.household_structure.household.plot.community
-        self.subject_identifier = self.get_visit().get_subject_identifier()
-        super(RBDRequisition, self).save(*args, **kwargs)
-
     def get_visit(self):
         return self.rbd_visit
 
