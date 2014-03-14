@@ -38,6 +38,14 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text="Format is YYYY-MM-DD. (Data will not be saved)",
         )
 
+    guardian = models.CharField(
+        verbose_name=("If minor, is there a guardian available? "),
+        max_length=10,
+        choices=YES_NO_NA,
+        help_text=("If a minor age 16 and 17, ensure a guardian is available otherwise"
+                   " participant will not be enrolled."),
+        )
+
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER,
@@ -100,6 +108,29 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
                   "If 'NO (or don't want to answer)'. Participant will not be enrolled."),
         )
 
+    literacy = models.CharField(
+        verbose_name=("Is the participant LITERATE?, or if ILLITRATE, is there a"
+                      "  LITERATE witness available "),
+        max_length=10,
+        choices=YES_NO,
+        help_text=("If participate is illitrate, confirm there is a literate"
+                   "witness available otherwise participant will not be enrolled."),
+        )
+
+    mentally_incapacitated = models.CharField(
+        verbose_name=("[Interviewer] In your opinion, Is the participant mentally incapacitated?"),
+        max_length=10,
+        choices=YES_NO,
+        help_text=("If Yes, participant will not be enrolled"),
+        )
+
+    involuntary_incarceration = models.CharField(
+        verbose_name=("[Interviewer] Is this participant involuntarily incarcerated?"),
+        max_length=10,
+        choices=YES_NO,
+        help_text=("If Yes, participant will not be enrolled"),
+        )
+
     objects = models.Manager()
 
     def save(self, *args, **kwargs):
@@ -124,6 +155,26 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen, married to a citizen but does not have a marriage certificate.')
             loss_form.save()
             self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.literacy.lower() == 'no':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='ILLITRATE with no LITERATE witness.')
+            loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.mentally_incapacitated.lower() == 'yes':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Mentally Incapacitated.')
+            loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.involuntary_incarceration.lower() == 'yes':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Involuntarily Incarcerated.')
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.household_member.is_minor():
+            if self.guardian != 'Yes':
+                self.household_member.eligible_subject = False
+                loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Minor without guardian available.')
+                loss_form.save()
+                self.household_member.member_status_full = 'NOT_ELIGIBLE'
         else:
             self.household_member.eligible_subject = True
         self.household_member.eligibility_checklist_filled = True

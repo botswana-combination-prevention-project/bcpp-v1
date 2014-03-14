@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from edc.apps.app_configuration.classes import BaseAppConfiguration
+from edc.apps.app_configuration.classes import BaseAppConfiguration, AliquotTypeTuple, ProfileItemTuple, ProfileTuple
 
 from apps.bcpp_survey.models import Survey
 from edc.map.classes import site_mappers
@@ -40,8 +40,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     consent_catalogue_setup = {
                 'name': 'bcpp-year-1',
-                # TO DO: how do we call a ContentTypeMap here???
-#                 'content_type_map': '',
+                'content_type_map': 'subjectconsent',
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,
@@ -50,13 +49,12 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     rbd_consent_catalogue_setup = {
                 'name': 'subject_rbd-year-1',
-                # TO DO: how do we call a ContentTypeMap here???
-#                 'content_type_map': '',
+                'content_type_map': 'rbdconsent',
                 'consent_type': 'study',
                 'version': 1,
                 'start_datetime': study_start_datetime,
                 'end_datetime': study_end_datetime,
-                'add_for_app': 'bcpp_rbd_subject'}
+                'add_for_app': 'bcpp_rbd'}
 
     survey_setup = {
                 'survey_name': 'BCPP Year 1',
@@ -66,6 +64,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
                         'site_code': site_mappers.get_current_mapper().map_code}
+
+    lab_clinic_api_setup = {'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
+                                             AliquotTypeTuple('Plasma', 'PL', '32'),
+                                             AliquotTypeTuple('Buffy Coat', 'BC', '16')],
+                            'processing_profile': [ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
+                            'processing_profile_item': [ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
+                                                   ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
+                                                   ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
+                                                   ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
+                                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
+                                                   ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}
 
     consent_catalogue_list = [consent_catalogue_setup, rbd_consent_catalogue_setup]
 
