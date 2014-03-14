@@ -14,6 +14,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     fields = (
         'report_datetime',
         'allowed_to_enumerate',
+        'reason_not_enumerate',
         'comment')
 
     radio_fields = {
