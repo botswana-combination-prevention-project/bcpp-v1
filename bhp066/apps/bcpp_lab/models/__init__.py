@@ -1,4 +1,4 @@
-from .base_subject_requisition import BaseSubjectRequisition
+from .base_bcpp_requisition import BaseBcppRequisition
 from .subject_requisition import SubjectRequisition
 from .rbd_requisition import RBDRequisition
 from .packing_list import PackingList
