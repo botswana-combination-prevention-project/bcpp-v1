@@ -31,5 +31,11 @@
  </tbody>
  </table>    
  {% endif %}
- <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
+ <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;{% if not household_residency_status_assessment.vdc_househould_status %}<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>{% endif %}
+ {% if household.enumeration_attempts == 3 and not household_residency_status_assessment %}
+  <p><A href="{% url household_residency_status_assessment_meta|admin_urlname:'add' %}?household_residency_status_assessment={{household_residency_status_assessment.pk}}&household={{household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add Assessing of Household residency status form</A></p>
+ {% endif %}
+ {% if household_residency_status_assessment %}
+  <a href="{% url household_residency_status_assessment_meta|admin_urlname:'change' household_residency_status_assessment.pk %}?household={{ household.pk }}&household_residency_status_assessment={{household_residency_status_assessment.pk}}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Assessing of Household residency status form</a>
+ {% endif %}
 {% endif %}

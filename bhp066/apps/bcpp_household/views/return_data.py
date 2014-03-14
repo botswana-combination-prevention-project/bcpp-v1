@@ -37,18 +37,22 @@ def return_data(request):
             #return households
             #TODO: Call return method to return households
             #get replacement plots
-            replacement_count = 0
             content_type = None
             for household in replacement_data:
                 if replacement_plots and len(replacement_plots) > replacement_count:
                     if not replacement_plots[replacement_count].replacement_household:
                         replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
                         house = Household.objects.get(household_identifier=household)
-                        house.replacement = True
+                        house.replacement_plot = replacement_plots[replacement_count].plot_identifier
                         house.save()
-                        replacement_plots[replacement_count].replacement = True
+                        replacement_plots[replacement_count].replacement_household = house.household_identifier
                         replacement_plots[replacement_count].save()
-                        replacement_count += 1
+                    else:
+                        house = Household.objects.get(household_identifier=household)
+                        if not house.is_dispatched:
+                            plot = Plot.objects.get(household_identifier=house.replacement_plot)
+                            replacement_data_list.append(plot.plot_identifier)
+                replacement_count += 1
             pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_data_list})).values_list('pk')
             selected = list(itertools.chain(*pks))
             content_type = ContentType.objects.get_for_model(Plot)
@@ -58,13 +62,19 @@ def return_data(request):
                 household_id = request.GET.get('household_identifier')
                 #return households
                 #TODO: Call return method to return households
-                if replacement_plots:
-                    replacement_data_list.append(replacement_plots[0].plot_identifier)
-                    house = Household.objects.get(household_identifier=household_id)
-                    house.replacement = True
-                    house.save()
-                    replacement_plots[0].replacement = True
-                    replacement_plots[0].save()
+                if replacement_plots and len(replacement_plots) > replacement_count:
+                    if not replacement_plots[replacement_count].replacement_household:
+                        replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
+                        house = Household.objects.get(household_identifier=household_id)
+                        house.replacement_plot = replacement_plots[replacement_count].plot_identifier
+                        house.save()
+                        replacement_plots[replacement_count].replacement_household = house.household_identifier
+                        replacement_plots[replacement_count].save()
+                    else:
+                        house = Household.objects.get(household_identifier=household_id)
+                        if not house.is_dispatched:
+                            plot = Plot.objects.get(household_identifier=house.replacement_plot)
+                            replacement_data_list.append(plot.plot_identifier)
                 pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_data_list})).values_list('pk')
                 selected = list(itertools.chain(*pks))
                 content_type = ContentType.objects.get_for_model(Plot)

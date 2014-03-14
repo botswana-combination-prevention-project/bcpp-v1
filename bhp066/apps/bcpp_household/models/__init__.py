@@ -8,4 +8,5 @@ from .community import Community
 from .signals import *
 from .plot_identifier_history import PlotIdentifierHistory
 from .plot_log import PlotLog, PlotLogEntry
+from .household_residency_status_assessment import HouseholdResidencyStatusAssessment
 from .household_enumeration_refusal import HouseholdEnumerationRefusal

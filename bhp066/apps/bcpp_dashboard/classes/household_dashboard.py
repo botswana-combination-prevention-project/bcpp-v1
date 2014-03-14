@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdResidencyStatusAssessment, HouseholdEnumerationRefusal
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from apps.bcpp_rbd_subject.models import RBDEligibility
@@ -30,9 +30,11 @@ class HouseholdDashboard(Dashboard):
         self._household_members = None
         self._household_structure = None
         self._household_log = None
+        self._household_residency_status_assessment = None
         self._current_member_count = None
         self._enrolment_checklist = None
         self._household_info = None
+        self._household_enumeration_refusal = None
         self._first_survey = None
         self._survey = None
         self._surveys = None
@@ -53,13 +55,17 @@ class HouseholdDashboard(Dashboard):
             title='',  # 'A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
+            household_residency_status_assessment_meta=HouseholdResidencyStatusAssessment._meta,
             loss_meta=Loss._meta,
             household_structure_meta=HouseholdStructure._meta,
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             rbd_enrolment_checklist_meta=RBDEligibility._meta,
             household_info_meta=HouseholdInfo._meta,
+            household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
+            household_enumeration_refusal=self.household_enumeration_refusal,
             plot=self.household.plot,
+            household_residency_status_assessment=self.household_residency_status_assessment,
             household=self.household,
             household_identifier=self.household.household_identifier,
             household_structure=self.household_structure,
@@ -82,13 +88,22 @@ class HouseholdDashboard(Dashboard):
         """Confirms there is an househol_log_entry for today."""
         today = date.today()
         if self.household_log:
-            if not HouseholdLogEntry.objects.filter(
-                household_log=self.household_log,
-                report_datetime__year=today.year,
-                report_datetime__month=today.month,
-                report_datetime__day=today.day):
+            if not HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
                 return False
+            elif HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day) and self.household_residency_status_assessment:
+                if self.household_residency_status_assessment.vdc_househould_status:
+                    return False
+            elif HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
+                if HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).household_status == 'no_household_informant':
+                    return False
         return True
+
+    @property
+    def household_residency_status_assessment(self):
+        self._household_residency_status_assessment = None
+        if HouseholdResidencyStatusAssessment.objects.filter(household=self.household):
+            self._household_residency_status_assessment = HouseholdResidencyStatusAssessment.objects.get(household=self.household)
+        return self._household_residency_status_assessment
 
     @property
     def household_info(self):
@@ -96,6 +111,14 @@ class HouseholdDashboard(Dashboard):
         if HouseholdInfo.objects.filter(household_structure=self.household_structure):
             self._household_info = HouseholdInfo.objects.get(household_structure=self.household_structure)
         return self._household_info
+    
+    @property
+    def household_enumeration_refusal(self):
+        self._household_enumeration_refusal = None
+        if HouseholdEnumerationRefusal.objects.filter(household=self.household):
+            self._household_enumeration_refusal = HouseholdEnumerationRefusal.objects.get(household=self.household)
+            return self._household_enumeration_refusal
+        return self._household_enumeration_refusal
 
     @property
     def survey(self):
