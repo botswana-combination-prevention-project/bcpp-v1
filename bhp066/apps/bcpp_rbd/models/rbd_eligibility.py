@@ -180,4 +180,4 @@ class RBDEligibility (BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = "bcpp_rbd"
-        verbose_name = "Research Blood Draw Eligibility"
+        verbose_name = "RBD Eligibility"
