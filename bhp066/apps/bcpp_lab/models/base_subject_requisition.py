@@ -21,6 +21,11 @@ class BaseBcppRequisition(InspectorMixin, BaseRequisition):
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
+    def save(self, *args, **kwargs):
+        self.community = self.get_visit().household_member.household_structure.household.plot.community
+        self.subject_identifier = self.get_visit().get_subject_identifier()
+        super(BaseBcppRequisition, self).save(*args, **kwargs)
+
     def dispatch_container_lookup(self, using=None):
         return None
 
