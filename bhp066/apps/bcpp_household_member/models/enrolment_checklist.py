@@ -145,15 +145,6 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='ILLITRATE with no LITERATE witness.')
             loss_form.save()
             self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        elif self.mentally_incapacitated.lower() == 'yes':
-            self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Mentally Incapacitated.')
-            loss_form.save()
-            self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        elif self.involuntary_incarceration.lower() == 'yes':
-            self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Involuntarily Incarcerated.')
-            self.household_member.member_status_full = 'NOT_ELIGIBLE'
         elif self.household_member.is_minor():
             if self.guardian != 'Yes':
                 self.household_member.eligible_subject = False

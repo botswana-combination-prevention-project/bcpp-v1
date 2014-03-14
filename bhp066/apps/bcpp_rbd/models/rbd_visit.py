@@ -35,5 +35,5 @@ class RBDVisit(RBDOffStudyMixin, BaseVisitTracking):
         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     class Meta:
-        verbose_name = 'Research Blood Draw Subject Visit'
         app_label = 'bcpp_rbd'
+        verbose_name = 'RBD Visit'

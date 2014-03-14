@@ -1,8 +1,11 @@
 from django.contrib import admin
+
 from edc.base.admin.admin import BaseModelAdmin
+
 from apps.bcpp_household.models import HouseholdStructure
-from ..models import EnrolmentChecklist, HouseholdMember
+
 from ..forms import EnrolmentChecklistForm
+from ..models import EnrolmentChecklist, HouseholdMember
 
 
 class EnrolmentChecklistAdmin(BaseModelAdmin):
@@ -20,12 +23,10 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "citizen",
         "legal_marriage",
         "marriage_certificate",
-        "marriage_certificate_no",
         "part_time_resident",
         "literacy",
         "guardian",
-        "mentally_incapacitated",
-        "involuntary_incarceration")
+        )
 
     radio_fields = {
         'has_identity': admin.VERTICAL,
@@ -36,8 +37,7 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
         "part_time_resident": admin.VERTICAL,
         "literacy": admin.VERTICAL,
         "guardian": admin.VERTICAL,
-        "mentally_incapacitated": admin.VERTICAL,
-        "involuntary_incarceration": admin.VERTICAL, }
+        }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
