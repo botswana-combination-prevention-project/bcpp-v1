@@ -6,3 +6,4 @@ from .household_structure_admin import HouseholdStructureAdmin
 from .plot_admin import PlotAdmin
 from .plot_log_admin import PlotLogEntryAdmin, PlotLogAdmin
 from .household_enumeration_refusal_admin import HouseholdEnumerationRefusalAdmin
+from .household_residency_status_assessment_admin import HouseholdResidencyStatusAssessmentAdmin
