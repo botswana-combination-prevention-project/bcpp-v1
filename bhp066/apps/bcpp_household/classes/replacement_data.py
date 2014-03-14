@@ -14,24 +14,21 @@ class ReplacementData(object):
         if plot.status == 'residential_habitable':
             if plot.household_count == 1:
                 household = Household.objects.get(plot=plot)
-                if self.is_household_refusal(household):
+                if self.is_refused_household(household):
                     replaced.append(household)
-                    return replaced
                 else:
                     if self.evaluate_refusals(household):
                         replaced.append(self.evaluate_refusals(household))
-                        return replaced
             if plot.household_count > 1:
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
-                    if self.is_household_refusal(household):
+                    if self.is_refused_household(household):
                         replaced.append(household)
                     else:
                         if self.evaluate_refusals(household):
                             replaced.append(self.evaluate_refusals(household))
-                return replaced
-        return None
+        return replaced
 
     def replacement_absentees_ineligibles(self, plot):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
@@ -55,7 +52,7 @@ class ReplacementData(object):
                 return replaced
         return None
 
-    def is_household_refusal(self, household):
+    def is_refused_household(self, household):
         """Check if head of household refused members to participate."""
         return household.allowed_to_enumerate.lower() == 'no'
 
