@@ -16,7 +16,7 @@ from edc.map.exceptions import MapperError
 
 from apps.bcpp.choices import COMMUNITIES
 
-from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED, ENUMERATION_STATUS
+from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
 

@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+
 from apps.bcpp_subject.models import SubjectVisit
 
 from ..models import BaseSubjectRequisition

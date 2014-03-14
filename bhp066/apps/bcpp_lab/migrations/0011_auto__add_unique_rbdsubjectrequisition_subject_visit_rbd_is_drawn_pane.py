@@ -8,8 +8,8 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding unique constraint on 'RBDSubjectRequisition', fields ['subject_visit_rbd', 'is_drawn', 'panel']
-        db.create_unique(u'bcpp_lab_rbdsubjectrequisition', ['subject_visit_rbd_id', 'is_drawn', 'panel_id'])
+        # Adding unique constraint on 'RBDRequisition', fields ['rbd_visit', 'is_drawn', 'panel']
+        db.create_unique(u'bcpp_lab_rbdsubjectrequisition', ['rbd_visit_id', 'is_drawn', 'panel_id'])
 
         # Adding unique constraint on 'SubjectRequisition', fields ['subject_visit', 'is_drawn', 'panel']
         db.create_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'is_drawn', 'panel_id'])
@@ -19,8 +19,8 @@ class Migration(SchemaMigration):
         # Removing unique constraint on 'SubjectRequisition', fields ['subject_visit', 'is_drawn', 'panel']
         db.delete_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'is_drawn', 'panel_id'])
 
-        # Removing unique constraint on 'RBDSubjectRequisition', fields ['subject_visit_rbd', 'is_drawn', 'panel']
-        db.delete_unique(u'bcpp_lab_rbdsubjectrequisition', ['subject_visit_rbd_id', 'is_drawn', 'panel_id'])
+        # Removing unique constraint on 'RBDRequisition', fields ['rbd_visit', 'is_drawn', 'panel']
+        db.delete_unique(u'bcpp_lab_rbdsubjectrequisition', ['rbd_visit_id', 'is_drawn', 'panel_id'])
 
 
     models = {
@@ -209,7 +209,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_lab.rbdsubjectrequisition': {
-            'Meta': {'unique_together': "(('subject_visit_rbd', 'panel', 'is_drawn'),)", 'object_name': 'RBDSubjectRequisition'},
+            'Meta': {'unique_together': "(('rbd_visit', 'panel', 'is_drawn'),)", 'object_name': 'RBDRequisition'},
             'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['lab_clinic_api.AliquotType']"}),
             'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -241,13 +241,13 @@ class Migration(SchemaMigration):
             'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_variables.StudySite']", 'null': 'True'}),
             'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
             'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'subject_visit_rbd': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_rbd_subject.SubjectVisitRBD']"}),
+            'rbd_visit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_rbd.RBDVisit']"}),
             'test_code': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['lab_clinic_api.TestCode']", 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_lab.rbdsubjectrequisitionaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDSubjectRequisitionAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'RBDRequisitionAudit', 'db_table': "u'bcpp_lab_rbdsubjectrequisition_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -282,7 +282,7 @@ class Migration(SchemaMigration):
             'site': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'null': 'True', 'to': "orm['bhp_variables.StudySite']"}),
             'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'subject_visit_rbd': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'to': "orm['bcpp_rbd_subject.SubjectVisitRBD']"}),
+            'rbd_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbdsubjectrequisition'", 'to': "orm['bcpp_rbd.RBDVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
@@ -364,8 +364,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_rbd_subject.subjectvisitrbd': {
-            'Meta': {'object_name': 'SubjectVisitRBD'},
+        'bcpp_rbd.subjectvisitrbd': {
+            'Meta': {'object_name': 'RBDVisit'},
             'appointment': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['appointment.Appointment']", 'unique': 'True'}),
             'comments': ('django.db.models.fields.TextField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
