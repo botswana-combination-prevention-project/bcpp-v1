@@ -15,22 +15,21 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.visit_schedule.classes import site_visit_schedules
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
-# from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 # from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
 
 
+admin.autodiscover()
 dajaxice_autodiscover()
+BcppAppConfiguration()
+#BcppClinicConfiguration()
 site_mappers.autodiscover()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-#from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
-BcppAppConfiguration()
-#BcppClinicConfiguration()
 site_rule_groups.autodiscover()
 site_lab_tracker.autodiscover()
 data_manager.prepare()
-admin.autodiscover()
 site_sections.autodiscover()
 site_sections.update_section_lists()
 
