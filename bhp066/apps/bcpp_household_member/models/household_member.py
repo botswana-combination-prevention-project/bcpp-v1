@@ -119,8 +119,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
-                  "spent 3 or more nights per month in this community. "
-                  "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
+                  "spent 3 or more nights per month in this community."),
         )
 
     objects = HouseholdMemberManager()
