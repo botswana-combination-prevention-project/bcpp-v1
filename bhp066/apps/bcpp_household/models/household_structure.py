@@ -52,6 +52,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
+    @property
     def number_enrolled(self):
         from apps.bcpp_household_member.models import HouseholdMember
         members = HouseholdMember.objects.filter(household_structure=self)
@@ -73,7 +74,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         using = kwargs.get('using', None)
         # create new members, if new
         if created:
-            self.__class__.objects.fetch_household_members(self, using)
+            self.__class__.objects.fetch_household_members(self)
         # recount members, may be greater but not less than the actual number of members
         household_member = get_model(app_label="bcpp_household_member", model_name="householdmember")
         current_member_count = household_member.objects.filter(household_structure__pk=self.pk).count()

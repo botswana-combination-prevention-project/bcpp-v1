@@ -29,6 +29,7 @@ site_mappers.autodiscover()
 
 REFERRAL_CODES = (
     ('TST-CD4', 'POS any, need CD4 testing'),
+    ('TST-HIV', 'HIV test'),
     ('HIV-IND', 'HIV re-test (IND)'),
     ('MASA', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
