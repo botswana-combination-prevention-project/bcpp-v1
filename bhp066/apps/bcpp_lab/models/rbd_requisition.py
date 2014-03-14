@@ -3,11 +3,11 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from apps.bcpp_rbd.models import RBDVisit
 
-from ..models import BaseSubjectRequisition
+from ..models import BaseBcppRequisition
 from ..managers import RequisitionManager
 
 
-class RBDRequisition(BaseSubjectRequisition):
+class RBDRequisition(BaseBcppRequisition):
 
     rbd_visit = models.ForeignKey(RBDVisit)
 
