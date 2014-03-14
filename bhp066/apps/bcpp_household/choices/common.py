@@ -56,6 +56,11 @@ HOUSEHOLD_STATUS = (
     ('no_household_informant', 'No household informant'),
     )
 
+NOT_ENUMERATED_REASONS = (
+        ('HOH_refued', 'HOH refusal'),
+        ('no_household_informant', 'No Household Informant'),
+)
+
 HOUSEHOLD_COMPLETION_STATUS = (
     ('complete', 'Complete'),
     ('incomplete', 'Incomplete'),
