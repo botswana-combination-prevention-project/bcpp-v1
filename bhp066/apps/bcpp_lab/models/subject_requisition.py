@@ -21,5 +21,5 @@ class SubjectRequisition(BaseBcppRequisition):
 
     class Meta:
         app_label = 'bcpp_lab'
-        verbose_name = 'Patient Lab Requisition'
+        verbose_name = 'Subject Requisition'
         unique_together = ('subject_visit', 'panel', 'is_drawn')

@@ -112,5 +112,5 @@ class RBDLocator(SubjectOffStudyMixin, BaseLocator):
         return unicode(self.rbd_visit)
 
     class Meta:
-        verbose_name = 'Research Blood Draw Subject Locator'
         app_label = 'bcpp_rbd'
+        verbose_name = 'RBD Locator'

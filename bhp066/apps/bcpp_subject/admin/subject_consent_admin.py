@@ -48,6 +48,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'citizen',
             'legal_marriage',
             'marriage_certificate',
+            'marriage_certificate_no',
             'identity',
             'identity_type',
             'confirm_identity',
@@ -61,6 +62,9 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
 
         self.radio_fields = {
             "language": admin.VERTICAL,
+            "citizen": admin.VERTICAL,
+            "legal_marriage": admin.VERTICAL,
+            "marriage_certificate": admin.VERTICAL,
             "gender": admin.VERTICAL,
             "is_dob_estimated": admin.VERTICAL,
             "identity_type": admin.VERTICAL,
