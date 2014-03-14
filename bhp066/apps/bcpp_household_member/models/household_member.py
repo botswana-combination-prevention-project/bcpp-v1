@@ -18,8 +18,8 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdMemberManager
-from ..choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION, \
-                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE
+from ..choices import (HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC_PARTICIPATION, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE, HOUSEHOLD_MEMBER_RBD_PARTICIPATION)
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -174,12 +174,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def non_bhs_member(self):
-        "determines wether this participant should be offered full participation or partial participation"
-        if self.member_status_full == 'REFUSED':
+        "Those participants that where never BHS potentials to start with, or failed the BHS eligibility checklist."
+        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran,just fro household meber values eg age < 16..
             return True
-        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran.
-            return True
-        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist.
+        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist, e.g non citizen not married to citizen.
             return True
         return False
 
@@ -200,11 +198,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def is_consented_partial(self):
         "Returns True or False based on search for a partial participation consent instance related to this household member"
-        from apps.bcpp_rbd_subject.models import SubjectConsentRBDonly
+        from apps.bcpp_rbd.models import RBDConsent
         from apps.bcpp_htc_subject.models import HtcSubjectConsent
         has_partial_consent_instance = False
         for any_model_cls in models.get_models():
-            if issubclass(any_model_cls, SubjectConsentRBDonly) or issubclass(any_model_cls, HtcSubjectConsent):
+            if issubclass(any_model_cls, RBDConsent) or issubclass(any_model_cls, HtcSubjectConsent):
                 consent_model_cls = any_model_cls
                 if 'household_member' in dir(consent_model_cls):
                     if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
@@ -273,8 +271,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def status_choices_partial(self):
         status_choices_p = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if self.non_bhs_member:
-            status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+        if self.non_bhs_member and self.household_structure.number_enrolled > 0:
+            status_choices_p = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
+        elif self.member_status_full == 'REFUSED':
+            enrolled = self.household_structure.number_enrolled 
+            if enrolled > 0:
+                status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+            elif enrolled == 0:
+                status_choices_p = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
         return status_choices_p
 
     @property
