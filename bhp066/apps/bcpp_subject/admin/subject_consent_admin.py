@@ -45,6 +45,9 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'dob',
             'guardian_name',
             'is_dob_estimated',
+            'citizen',
+            'legal_marriage',
+            'marriage_certificate',
             'identity',
             'identity_type',
             'confirm_identity',
@@ -54,9 +57,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'study_questions',
             'assessment_score',
             'consent_signature',
-            'consent_copy',
-            'mentally_incapacitated',
-            'involuntary_incarceration']
+            'consent_copy', ]
 
         self.radio_fields = {
             "language": admin.VERTICAL,
