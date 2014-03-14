@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.lab.lab_requisition.models import BaseRequisition
@@ -9,7 +10,7 @@ from apps.bcpp_inspector.classes import InspectorMixin
 from .packing_list import PackingList
 
 
-class BaseSubjectRequisition(InspectorMixin, BaseRequisition):
+class BaseBcppRequisition(InspectorMixin, BaseRequisition):
 
     packing_list = models.ForeignKey(PackingList, null=True, blank=True)
 
@@ -19,6 +20,11 @@ class BaseSubjectRequisition(InspectorMixin, BaseRequisition):
         editable=False)
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.community = self.get_visit().household_member.household_structure.household.plot.community
+        self.subject_identifier = self.get_visit().get_subject_identifier()
+        super(BaseBcppRequisition, self).save(*args, **kwargs)
 
     def dispatch_container_lookup(self, using=None):
         return None
@@ -36,7 +42,14 @@ class BaseSubjectRequisition(InspectorMixin, BaseRequisition):
         return self.get_visit().subject_identifier
 
     def dashboard(self):
-        raise TypeError('method \'dashboard()\' in BaseSubjectRequisition must be overidden by the subclass')
+        url = reverse('subject_dashboard_url',
+                      kwargs={'dashboard_type': self.get_visit().appointment.registered_subject.subject_type.lower(),
+                              'dashboard_model': 'appointment',
+                              'dashboard_id': self.get_visit().appointment.pk,
+                              'show': 'appointments'})
+        return """<a href="{url}" />dashboard</a>""".format(url=url)
+    dashboard.allow_tags = True
+
 
     class Meta:
         abstract = True
