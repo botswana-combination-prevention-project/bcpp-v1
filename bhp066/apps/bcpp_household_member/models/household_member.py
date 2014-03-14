@@ -145,6 +145,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.household_structure.household.plot.save()
         else:
             self.member_status_full = 'NOT_ELIGIBLE'
+        if not self.household_structure.household.enumerated:
+            self.household_structure.household.enumerated=True
+            self.household_structure.household.save()
         self.member_status = self.member_status_full
         super(HouseholdMember, self).save(*args, **kwargs)
 

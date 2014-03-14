@@ -26,3 +26,5 @@ from referred_to import ReferredTo
 from referred_for import ReferredFor
 
 from sti_illnesses import StiIllnesses
+
+from resident_most_likely import ResidentMostLikely

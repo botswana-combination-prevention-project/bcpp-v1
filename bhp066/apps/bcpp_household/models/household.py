@@ -8,7 +8,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
-
+from ..choices import NOT_ENUMERATED_REASONS
 from .plot import Plot
 
 
@@ -130,6 +130,16 @@ class Household(BaseDispatchSyncUuidModel):
         editable=True,
         )
 
+    reason_not_enumerate = models.CharField(
+        verbose_name='What are the reasons why you where not able to enumerate this household?',
+        choices=NOT_ENUMERATED_REASONS,
+        max_length=25,
+        default='Yes',
+        null=False,
+        editable=True,
+        blank=True,
+        )
+
     #Indicates that a household has been replaced if its part of twenty percent.
     #For five percent indicates that a household has been used for replacement.
     replacement_plot =  models.CharField(
@@ -163,10 +173,18 @@ class Household(BaseDispatchSyncUuidModel):
 
     complete = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
+    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household has been enumerated')
+
     enumeration_attempts = models.IntegerField(
         default=0,
         editable=False,
         help_text='Number of attempts to enumerate a plot to determine it\'s status.'
+        )
+
+    household_status = models.CharField(
+        verbose_name='Household Status',
+        max_length=50,
+        null=True,
         )
 
     objects = HouseholdManager()
@@ -200,16 +218,12 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
- 
-#     def post_save_plot_allowed_to_enumerate(self, instance, created):
-#         """Updates the allowed_to_enumerate field on the plot model."""
-#         plot = Plot.objects.get(plot_identifier=instance.plot.plot_identifier)
-#         if instance.allowed_to_enumerate == 'no':
-#             plot.allowed_to_enumerate = 'no'
-#             plot.save()
-#         else:
-#             plot.allowed_to_enumerate = 'yes'
-#             plot.save()
+
+    def save(self, *args, **kwargs):
+        if self.allowed_to_enumerate == 'No' and self.reason_not_enumerate == 'no_household_informant':
+            self.household_status = 'no_household_informant'
+
+        super(Household, self).save(*args, **kwargs)
 
     def get_subject_identifier(self):
         return self.household_identifier

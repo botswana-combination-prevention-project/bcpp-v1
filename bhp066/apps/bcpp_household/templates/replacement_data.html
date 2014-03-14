@@ -29,5 +29,29 @@
 	{% else %}
 		<b>No households qualify for replacement.</b>
 	{%endif%}
+	
+	
+	
+	
+	
+	{% if replacement_producer %}
+		<table>
+			<thead>
+				<th>Household to return</th>
+				<th>Return</th>
+			</thead>
+		{% for household, producer in replacement_producer %}
+			<tr>
+				<td>{{ household }}</td>
+				<td>{{ producer }}</td>
+				<td><a href="{% url 'return_data_url' %}/?household_identifier={{ household.household_identifier }}">return</a></td>
+			</tr>
+		{% endfor %}
+		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replace_str={{ replace_str }}"><b>Return All</b></a></td></tr>
+		<tr><td>Total replacements: {{ replacement_count }}</td></tr>
+		</table>
+	
+	
+	
 
 {% endblock %}
