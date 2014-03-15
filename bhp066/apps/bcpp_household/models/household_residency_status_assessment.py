@@ -118,22 +118,13 @@ class HouseholdResidencyStatusAssessment(BaseDispatchSyncUuidModel):
         for item in self.most_likely.all():
             most_likely.append(item.short_name)
         if most_likely:
-            if self.compare_list(most_likely, seasonal):
+            if set(most_likely + seasonal) == len(seasonal):
                 status = 'seasonally_there'
-            elif self.compare_list(most_likely, rarely_there):
+            elif set(most_likely + rarely_there) == len(rarely_there):
                 status = 'rarely_there'
-            elif self.compare_list(most_likely, never_there):
+            elif set(most_likely + never_there) == len(never_there):
                 status = 'never_there'
         return status
-
-    def compare_list(self, l1, l2):
-        i,j = 0,len(l1)
-        for e in l2:
-            if e == l1[i]:
-                i += 1
-            if i == j:
-                return True
-        return False
 
     class Meta:
         app_label = 'bcpp_household'
