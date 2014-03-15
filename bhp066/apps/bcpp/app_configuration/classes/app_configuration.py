@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from edc.apps.app_configuration.classes import BaseAppConfiguration, AliquotTypeTuple, ProfileItemTuple, ProfileTuple
+from edc.apps.app_configuration.classes import BaseAppConfiguration
+from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
+
+from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple
+from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 
 from apps.bcpp_survey.models import Survey
 from edc.map.classes import site_mappers
@@ -65,16 +69,21 @@ class BcppAppConfiguration(BaseAppConfiguration):
     study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
                         'site_code': site_mappers.get_current_mapper().map_code}
 
-    lab_clinic_api_setup = {'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
-                                             AliquotTypeTuple('Plasma', 'PL', '32'),
-                                             AliquotTypeTuple('Buffy Coat', 'BC', '16')],
-                            'processing_profile': [ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
-                            'processing_profile_item': [ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
-                                                   ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
-                                                   ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
-                                                   ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
-                                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
-                                                   ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}
+    lab_setup = {'bcpp': {
+                     'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
+                                      AliquotTypeTuple('Plasma', 'PL', '32'),
+                                      AliquotTypeTuple('Buffy Coat', 'BC', '16')],
+                     'profile': [ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
+                     'profile_item': [ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
+                                      ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
+                                      ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
+                                      ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
+                                      ProfileItemTuple('ELISA', 'PL', 1.0, 1),
+                                      ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}}
+
+    labeling = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', '127.0.0.1', True), ],
+#                 'zpl_template': ZplTemplateTuple('aliquot_label', ''),
+                }
 
     consent_catalogue_list = [consent_catalogue_setup, rbd_consent_catalogue_setup]
 

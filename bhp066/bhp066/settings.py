@@ -435,6 +435,7 @@ GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 
 # edc.lab
+LAB_SECTION = 'bcpp_lab'
 LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'
