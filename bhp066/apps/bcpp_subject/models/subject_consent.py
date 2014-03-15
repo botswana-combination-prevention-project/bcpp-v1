@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
@@ -15,6 +16,7 @@ from .base_household_member_consent import BaseHouseholdMemberConsent
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent_history import SubjectConsentHistory
+from .hic_enrollment import HicEnrollment
 
 # Note below: Mixin fields are added after the abstract class, BaseSubjectConsent, and before
 # the concrete class, SubjectConsent, using the field.contribute_to_class method.
@@ -123,10 +125,19 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
-    
+
     def bypass_for_edit_dispatched_as_item(self):
         return True
-    
+
+    def save(self, *args, **kwargs):
+        if HicEnrollment.objects.filter(subject_visit__household_member = self.household_member).exists():
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member = self.household_member)
+            if self.dob != hic_enrollment.dob or self.consent_datetime != hic_enrollment.consent_datetime:
+                raise TypeError('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
+        if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
+            raise TypeError('The subject has to be a citizen, or legally married to a citizen to consent.')
+        super(SubjectConsent, self).save(*args, **kwargs)
+
     class Meta:
         app_label = 'bcpp_subject'
         unique_together = ('subject_identifier', 'survey')
@@ -136,10 +147,10 @@ class SubjectConsent(BaseSubjectConsent):
 class SubjectConsentRbd(BaseSubjectConsent):
 
     history = AuditTrail()
-    
+
     def bypass_for_edit_dispatched_as_item(self):
         return True
-    
+
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = 'Blood Draw Consent'
