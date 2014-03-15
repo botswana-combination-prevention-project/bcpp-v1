@@ -51,7 +51,8 @@ class ReplacementData(object):
 
     def is_refused_household(self, household):
         """Check if head of household refused members to participate."""
-        return household.allowed_to_enumerate.lower() == 'no'
+        from ..models import HouseholdEnumerationRefusal
+        return household.household_status == 'refused' and HouseholdEnumerationRefusal.objects.get(household=household)
 
     def no_eligible_rep(self, household):
         replacement_household = None
