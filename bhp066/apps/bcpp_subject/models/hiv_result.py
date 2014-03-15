@@ -1,9 +1,11 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .hic_enrollment import HicEnrollment
 
 
 class HivResult (BaseScheduledVisitModel):
@@ -33,6 +35,12 @@ class HivResult (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
+            if self.hiv_result.lower() != 'neg':
+                raise TypeError('An HicEnrollment form already exists for this Subject. So \'hiv_result\' cannot be changed to \'POS\'.')
+        super(HivResult, self).save(*args, **kwargs)
 
     def get_test_code(self):
         return 'HIV'
