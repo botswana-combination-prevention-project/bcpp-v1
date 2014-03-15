@@ -1,6 +1,3 @@
-from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
-
-from ..models import Household, HouseholdStructure, HouseholdResidencyStatusAssessment
 
 
 class ReplacementData(object):
@@ -10,6 +7,7 @@ class ReplacementData(object):
 
     def replace_refusals(self, plot):
         """Check if a plot has household refusals that would make it be replaced."""
+        from ..models import Household
         replaced = []
         if plot.status == 'residential_habitable':
             if plot.household_count == 1:
@@ -17,8 +15,8 @@ class ReplacementData(object):
                 if self.is_refused_household(household):
                     replaced.append(household)
                 else:
-                    if self.evaluate_refusals(household):
-                        replaced.append(self.evaluate_refusals(household))
+                    if self.is_refusal(household):
+                        replaced.append(self.is_refusal(household))
             if plot.household_count > 1:
                 households = Household.objects.filter(plot=plot)
                 for household in households:
@@ -26,31 +24,30 @@ class ReplacementData(object):
                     if self.is_refused_household(household):
                         replaced.append(household)
                     else:
-                        if self.evaluate_refusals(household):
-                            replaced.append(self.evaluate_refusals(household))
+                        if self.is_refusal(household):
+                            replaced.append(self.is_refusal(household))
         return replaced
 
     def replacement_absentees_ineligibles(self, plot):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
+        from ..models import Household
         replaced = []
         if plot.status == 'residential_habitable':
             if plot.household_count == 1:  # We will replace if all eligible members are absent 3 times
                 household = Household.objects.get(plot=plot)
-                if self.evaluate_absentees(household):
-                    replaced.append(self.evaluate_absentees(household))
-                    return replaced
+                if self.is_absent(household):
+                    replaced.append(self.is_absent(household))
             if plot.household_count >= 2:  # We will replace if all eligible members in each household are absent 3 times
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
-                    if self.evaluate_absentees(household):
-                        replaced.append(self.evaluate_absentees(household))
-                    if self.unavailable_members(household):
-                        replaced.append(self.unavailable_members(household))
+                    if self.is_absent(household):
+                        replaced.append(self.is_absent(household))
+                    if self.no_informant(household):
+                        replaced.append(self.no_informant(household))
                     if self.no_eligible_rep(household):
                         replaced.append(self.no_eligible_rep(household))
-                return replaced
-        return None
+        return replaced
 
     def is_refused_household(self, household):
         """Check if head of household refused members to participate."""
@@ -64,7 +61,10 @@ class ReplacementData(object):
                 return replacement_household
         return replacement_household
 
-    def evaluate_refusals(self, household):
+    def is_refusal(self, household):
+        """Check if the all household member are refusals"""
+        from ..models import HouseholdStructure
+        from apps.bcpp_household_member.models import HouseholdMember
         replacement_household = None
         members = None
         if HouseholdStructure.objects.filter(household=household):
@@ -87,19 +87,21 @@ class ReplacementData(object):
                             return replacement_household
         return replacement_household
 
-    def unavailable_members(self, household):
-        """TODO:"""
+    def no_informant(self, household):
+        """Check if there is anyone to give information living in the household"""
+        from ..models import HouseholdResidencyStatusAssessment
         replacement_household = None
         if household.enumeration_attempts == 3:
             household_residency_status_assessment = HouseholdResidencyStatusAssessment.objects.get(household=household)
             if household_residency_status_assessment:
                 if household.household_status == 'no_household_informant' and household_residency_status_assessment.vdc_househould_status in ['rarely_there', 'seasonally_there']:
                     replacement_household = household
-                    return replacement_household
         return replacement_household
 
-    def evaluate_absentees(self, household):
-        """TODO:"""
+    def is_absent(self, household):
+        """Check if all members of a household are absent"""
+        from ..models import HouseholdStructure
+        from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
         replacement_household = None
         members = None
         if HouseholdStructure.objects.filter(household=household):
@@ -114,3 +116,13 @@ class ReplacementData(object):
                     if num_absentee_entries == 3:  # Then we have found a reason not to replace this plot
                         replacement_household = household
         return replacement_household
+
+    def is_replacement_valid(self, plot):
+        """Check if a plot used to replace a household is valid.
+
+            If the plot is not valid the replace the plot.
+        """
+        replacement_plot = None
+        if plot.replacement_household and plot.status in ['residential_not_habitable', 'non-residential']:
+            replacement_plot = plot
+        return replacement_plot

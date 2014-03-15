@@ -121,25 +121,6 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    allowed_to_enumerate = models.CharField(
-        verbose_name='Are you able to enumerate this household?',
-        choices=YES_NO,
-        max_length=25,
-        default='Yes',
-        null=False,
-        editable=True,
-        )
-
-    reason_not_enumerate = models.CharField(
-        verbose_name='What are the reasons why you where not able to enumerate this household?',
-        choices=NOT_ENUMERATED_REASONS,
-        max_length=25,
-        default='Yes',
-        null=False,
-        editable=True,
-        blank=True,
-        )
-
     #Indicates that a household has been replaced if its part of twenty percent.
     #For five percent indicates that a household has been used for replacement.
     replacement_plot =  models.CharField(
@@ -218,12 +199,6 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
-
-    def save(self, *args, **kwargs):
-        if self.allowed_to_enumerate == 'No' and self.reason_not_enumerate == 'no_household_informant':
-            self.household_status = 'no_household_informant'
-
-        super(Household, self).save(*args, **kwargs)
 
     def get_subject_identifier(self):
         return self.household_identifier
