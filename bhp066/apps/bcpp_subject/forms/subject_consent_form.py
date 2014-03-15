@@ -10,7 +10,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
 
-from ..models import SubjectConsent, SubjectConsentRbd
+from ..models import SubjectConsent, SubjectConsentRbd, HicEnrollment
 
 
 class MainConsentForm(BaseSubjectConsentForm):
@@ -50,10 +50,14 @@ class MainConsentForm(BaseSubjectConsentForm):
             obj = StudySpecific.objects.all()[0]
         except IndexError:
             raise forms.ValidationError("Please contact your DATA/IT assistant to add your edc.core.bhp_variables site specifics")
-        # check for hm
         household_member = cleaned_data.get("household_member")
+        # check for hm
         if not household_member:
             raise forms.ValidationError("HouseholdMember cannot be None.")
+        if HicEnrollment.objects.filter(subject_visit__household_member = household_member).exists():
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member = household_member)
+            if cleaned_data.get("dob") != hic_enrollment.dob:#consent_datetime is not editable. So no need to check it here.
+                raise forms.ValidationError('An HicEnrollment form already exists for this Subject. So \'dob\' cannot changed.')
         if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('guardian_name', None):
             raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
         if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
