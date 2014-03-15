@@ -1,11 +1,12 @@
 from django.db import models
+
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp.choices import YES_NO_DWTA, YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
 from .base_scheduled_visit_model import BaseScheduledVisitModel
-
+from .hic_enrollment import HicEnrollment
 
 class ResidencyMobility (BaseScheduledVisitModel):
 
@@ -55,6 +56,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         default='N/A',
         help_text="",
         )
+
     cattle_postlands_other = models.CharField(
         verbose_name=_("Give the name of the community"),
         max_length=65,
@@ -65,6 +67,12 @@ class ResidencyMobility (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
+            if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
+                raise TypeError('An HicEnrollment form already exists for this Subject. So \'permanent_resident\' and \'intend_residency\' cannot be changed.')
+        super(ResidencyMobility, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return unicode(self.subject_visit)
