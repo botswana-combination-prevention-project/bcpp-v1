@@ -11,6 +11,8 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from apps.bcpp.choices import VERBALHIVRESULT_CHOICE
 from apps.bcpp_household_member.models import HouseholdMember
 
+from ..managers import RBDEligibilityManager
+
 
 class RBDEligibility (BaseDispatchSyncUuidModel):
 
@@ -151,7 +153,19 @@ class RBDEligibility (BaseDispatchSyncUuidModel):
 #         help_text=("If Yes, participant will not be enrolled"),
 #         )
 
-    objects = models.Manager()
+    objects = RBDEligibilityManager()
+
+    def __unicode__(self):
+        return str(self.household_member)
+
+    def natural_key(self):
+        if not self.household_member:
+            raise AttributeError("household_member cannot be None for household_head_eligibility with pk='\{0}\'".format(self.pk))
+        return self.household_member.natural_key()
+    natural_key.dependencies = ['bcpp_household.household_member']
+
+    def dispatch_container_lookup(self, using=None):
+        return (models.get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         """Does not save anything, note no call to super."""

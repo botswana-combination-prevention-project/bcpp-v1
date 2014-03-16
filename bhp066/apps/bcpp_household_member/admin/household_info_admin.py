@@ -43,8 +43,8 @@ class HouseholdInfoAdmin(BaseModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
             household_members = HouseholdMember.objects.none()
-            if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
-                household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0))
+            if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh = True).exists():
+                household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh = True)
             kwargs["queryset"] = household_members
         if db_field.name == "household_structure":
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
