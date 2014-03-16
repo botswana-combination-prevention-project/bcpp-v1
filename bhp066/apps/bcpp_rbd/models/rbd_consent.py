@@ -3,6 +3,7 @@ from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 
 from apps.bcpp_subject.models import BaseSubjectConsent
+from .rbd_eligibility  import RBDEligibility
 
 
 class RBDConsent(BaseSubjectConsent):
@@ -11,6 +12,9 @@ class RBDConsent(BaseSubjectConsent):
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
+
+    def get_enrollment_checklist_query_set(self):
+        return RBDEligibility.objects.filter(household_member = self.household_member)
 
     class Meta:
         app_label = 'bcpp_rbd'
