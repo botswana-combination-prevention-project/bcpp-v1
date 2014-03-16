@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 
 from edc.base.model.validators import dob_not_future, MinConsentAge
 from edc.base.model.validators import eligible_if_yes, eligible_if_positive
@@ -14,6 +15,14 @@ from apps.bcpp_household_member.models import HouseholdMember
 class RBDEligibility (BaseDispatchSyncUuidModel):
 
     household_member = models.OneToOneField(HouseholdMember)
+
+    initials = models.CharField('Initials',
+        max_length=3,
+        validators=[
+            MinLengthValidator(2),
+            MaxLengthValidator(3),
+            RegexValidator("^[A-Za-z]{1,3}$", "Must be 2 or 3 letters. No spaces or numbers allowed.")],
+        db_index=True)
 
     dob = models.DateField(
         verbose_name=_("Date of birth"),
@@ -128,19 +137,19 @@ class RBDEligibility (BaseDispatchSyncUuidModel):
                    "witness available otherwise participant will not be enrolled."),
         )
 
-    mentally_incapacitated = models.CharField(
-        verbose_name=("[Interviewer] In your opinion, Is the participant mentally incapacitated?"),
-        max_length=10,
-        choices=YES_NO,
-        help_text=("If Yes, participant will not be enrolled"),
-        )
-
-    involuntary_incarceration = models.CharField(
-        verbose_name=("[Interviewer] Is this participant involuntarily incarcerated?"),
-        max_length=10,
-        choices=YES_NO,
-        help_text=("If Yes, participant will not be enrolled"),
-        )
+#     mentally_incapacitated = models.CharField(
+#         verbose_name=("[Interviewer] In your opinion, Is the participant mentally incapacitated?"),
+#         max_length=10,
+#         choices=YES_NO,
+#         help_text=("If Yes, participant will not be enrolled"),
+#         )
+#  
+#     involuntary_incarceration = models.CharField(
+#         verbose_name=("[Interviewer] Is this participant involuntarily incarcerated?"),
+#         max_length=10,
+#         choices=YES_NO,
+#         help_text=("If Yes, participant will not be enrolled"),
+#         )
 
     objects = models.Manager()
 
@@ -164,12 +173,12 @@ class RBDEligibility (BaseDispatchSyncUuidModel):
         elif self.literacy.lower() == 'no':
             self.household_member.eligible_rbd_subject = False
             self.household_member.member_status_partial = 'NOT_ELIGIBLE'
-        elif self.mentally_incapacitated.lower() == 'yes':
-            self.household_member.eligible_rbd_subject = False
-            self.household_member.member_status_partial = 'NOT_ELIGIBLE'
-        elif self.involuntary_incarceration.lower() == 'yes':
-            self.household_member.eligible_rbd_subject = False
-            self.household_member.member_status_partial = 'NOT_ELIGIBLE'
+#         elif self.mentally_incapacitated.lower() == 'yes':
+#             self.household_member.eligible_rbd_subject = False
+#             self.household_member.member_status_partial = 'NOT_ELIGIBLE'
+#         elif self.involuntary_incarceration.lower() == 'yes':
+#             self.household_member.eligible_rbd_subject = False
+#             self.household_member.member_status_partial = 'NOT_ELIGIBLE'
         elif self.household_member.is_minor():
             if self.guardian != 'Yes':
                 self.household_member.eligible_rbd_subject = False
@@ -177,6 +186,7 @@ class RBDEligibility (BaseDispatchSyncUuidModel):
         else:
             self.household_member.eligible_rbd_subject = True
         self.household_member.save()
+        super(RBDEligibility, self).save(*args, **kwargs)
 
     class Meta:
         app_label = "bcpp_rbd"

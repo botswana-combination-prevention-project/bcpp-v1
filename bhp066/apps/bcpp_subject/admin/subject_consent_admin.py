@@ -75,8 +75,9 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'consent_signature': admin.VERTICAL,
             "consent_copy": admin.VERTICAL,
             "is_literate": admin.VERTICAL,
-            "mentally_incapacitated": admin.VERTICAL,
-            "involuntary_incarceration": admin.VERTICAL,}
+            #"mentally_incapacitated": admin.VERTICAL,
+            #"involuntary_incarceration": admin.VERTICAL,
+            }
 
         self.search_fields.append('household_member__household_structure__household__household_identifier')
         self.search_fields.append('household_member__household_structure__household__plot__plot_identifier')
