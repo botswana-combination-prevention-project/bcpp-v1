@@ -3,6 +3,7 @@ from .base_member_status_model import BaseMemberStatusModel
 from .contact_log import ContactLog
 from .enrolment_checklist import EnrolmentChecklist
 from .household_info import HouseholdInfo
+from .head_household_eligibility import HouseholdHeadEligibility
 from .loss import Loss
 from .subject_absentee import SubjectAbsentee
 from .subject_absentee_entry import SubjectAbsenteeEntry
