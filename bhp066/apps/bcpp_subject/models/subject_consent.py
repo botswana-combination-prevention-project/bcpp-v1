@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -11,7 +12,7 @@ from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 
 
 from apps.bcpp.choices import COMMUNITIES
-
+from apps.bcpp_household_member.models import EnrolmentChecklist
 from .base_household_member_consent import BaseHouseholdMemberConsent
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
@@ -86,7 +87,24 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
+        self.is_minor = self.get_is_minor()
         self.community = self.household_member.household_structure.household.plot.community
+        enrolment_checklist = self.get_enrollment_checklist_query_set()#EnrolmentChecklist.objects.filter(household_member = self.household_member)
+        #Ensuring that values entered in the consent, match those in the enrollment checklist
+        if enrolment_checklist.exists():
+            if enrolment_checklist[0].dob != self.dob:
+                raise TypeError('Dob in this consent does not match that in the enrollment checklist')
+            if enrolment_checklist[0].initials != self.initials:
+                raise TypeError('Initials in this consent does not match that in the enrollment checklist')
+            if enrolment_checklist[0].guardian.lower() == 'yes' and not (self.is_minor.lower() == 'yes' and self.guardian_name):
+                raise TypeError('Enrollment checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
+            if enrolment_checklist[0].gender != self.gender:
+                raise TypeError('Gender in this consent does not match that in the enrollment checklist')
+            if enrolment_checklist[0].citizen != self.citizen:
+                raise TypeError('Enrollment checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+            if (enrolment_checklist[0].legal_marriage.lower() == 'yes' and enrolment_checklist[0].marriage_certificate.lower() == 'yes') and not \
+                (self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'yes'):
+                    raise TypeError('Enrollment checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
@@ -107,6 +125,23 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         .. note:: more than one table is tracked so the history includes HIV results not performed by our team
                   as well as the results of tests we perform."""
         return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
+
+    def get_is_minor(self):
+        if self.calculate_age() == 16 or self.calculate_age() == 17:
+            return 'Yes'
+        return 'No'
+
+    def calculate_age(self):#TODO: Move this up to a utility class to be used by all
+        today = date.today()
+        born = self.dob
+        try:
+            birthday = born.replace(year=today.year)
+        except ValueError: # raised when birth date is February 29 and the current year is not a leap year
+            birthday = born.replace(year=today.year, month=born.month+1, day=1)
+        if birthday > today:
+            return today.year - born.year - 1
+        else:
+            return today.year - born.year
 
     class Meta:
         abstract = True
@@ -137,6 +172,9 @@ class SubjectConsent(BaseSubjectConsent):
         if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
             raise TypeError('The subject has to be a citizen, or legally married to a citizen to consent.')
         super(SubjectConsent, self).save(*args, **kwargs)
+
+    def get_enrollment_checklist_query_set(self):
+        return EnrolmentChecklist.objects.filter(household_member = self.household_member)
 
     class Meta:
         app_label = 'bcpp_subject'
