@@ -97,6 +97,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
 
+    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household eligibility checklist.")
+
     #Keep track of wherether the elilibility form has been filled before
     eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
 
@@ -135,6 +137,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.household_structure.household.plot.save()
         else:
             self.member_status_full = 'NOT_ELIGIBLE'
+        from .head_household_eligibility import HouseholdHeadEligibility
+        if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member = self, aged_over_18='Yes', verball_script='Yes').exists():
+            if self.age_in_years < 18:
+                raise TypeError('This household member is the head of house. You cannot change their age to less than 18.')
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
