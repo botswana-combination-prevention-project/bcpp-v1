@@ -28,6 +28,7 @@ from .hiv_result_documentation_factory import HivResultDocumentationFactory
 from .stigma_opinion_factory import StigmaOpinionFactory
 from .grant_factory import GrantFactory
 from .hiv_result_factory import HivResultFactory
+from .hic_enrollment_factory import HicEnrollmentFactory
 from .sexual_behaviour_factory import SexualBehaviourFactory
 from .hiv_medical_care_factory import HivMedicalCareFactory
 from .positive_participant_factory import PositiveParticipantFactory
