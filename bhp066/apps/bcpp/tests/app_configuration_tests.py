@@ -35,4 +35,4 @@ class BcppAppConfigurationTests(TestCase):
     def test_consent_catalogue_configuration(self):
         self.assertEqual(0, ConsentCatalogue.objects.count())
         BcppAppConfiguration().update_or_create_consent_catalogue()
-        self.assertEqual(2, ConsentCatalogue.objects.count())
+        self.assertEqual(1, ConsentCatalogue.objects.count())

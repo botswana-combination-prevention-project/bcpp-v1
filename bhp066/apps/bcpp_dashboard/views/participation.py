@@ -18,8 +18,8 @@ def participation(request, **kwargs):
             household_member = HouseholdMember.objects.get(pk=form.cleaned_data.get('household_member'))
             if not household_member.is_consented:
                 if form.cleaned_data.get('status'):  # status_full
-                    #update_member_status_full(household_member, form.cleaned_data.get('status'))
-                    household_member.member_status_full = form.cleaned_data.get('status')
+                    #update_member_status(household_member, form.cleaned_data.get('status'))
+                    household_member.member_status = form.cleaned_data.get('status')
                     household_member.save()
                 elif form.cleaned_data.get('status_partial', None):
                     error_messages = update_member_status_partial(household_member, form.cleaned_data.get('status_partial'))
@@ -71,39 +71,39 @@ def update_member_status_partial(household_member, selected_status):
     return error_messages
 
 
-def update_member_status_full(household_member, selected_status):
+def update_member_status(household_member, selected_status):
     """Updates the full participation status and possibly the eligibile_subject flag.
 
     .. note:: if the member is consented, no changes are made."""
-    member_status_full = household_member.member_status_full
+    member_status = household_member.member_status
     eligible_subject = household_member.eligible_subject
     if is_valid_status_full(selected_status):
         # changing from absent, clear subject_absentee if no entries for this member/survey if changing from absent to something else
-        if household_member.member_status_full == 'ABSENT' and not selected_status == 'ABSENT':
+        if household_member.member_status == 'ABSENT' and not selected_status == 'ABSENT':
             if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=household_member):
                 SubjectAbsentee.objects.filter(household_member=household_member).delete()
         # if changing to absent, set up a blank subject_absentee instance
-        if not household_member.member_status_full == 'ABSENT' and selected_status == 'ABSENT':
+        if not household_member.member_status == 'ABSENT' and selected_status == 'ABSENT':
             if not SubjectAbsentee.objects.filter(household_member=household_member):
                 SubjectAbsentee.objects.create(
                     registered_subject=household_member.registered_subject,
                     household_member=household_member,
                     report_datetime=datetime.today())
         if selected_status == 'RESEARCH':
-            member_status_full = selected_status
+            member_status = selected_status
         elif selected_status == 'NOT_ELIGIBLE':
             # do not allow to change to NOT ELIGIBLE if already has passed eligibility
-            member_status_full = selected_status
+            member_status = selected_status
         else:
             # if anything other than RESEARCH and NOT_ELIGIBLE, clear eligibility flag and change
             # clear eligibility flag then set status
             eligible_subject = False  # Why?
-            member_status_full = selected_status
-        if household_member.member_status_full != member_status_full:
-            household_member.member_status_full = member_status_full
+            member_status = selected_status
+        if household_member.member_status != member_status:
+            household_member.member_status = member_status
             household_member.eligible_subject = eligible_subject
             household_member.save()
-    return member_status_full
+    return member_status
 
 
 def is_valid_status_partial(status_partial):

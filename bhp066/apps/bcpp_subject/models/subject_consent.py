@@ -88,33 +88,45 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
+        self.matches_enrollment_checklist()
         self.is_minor = self.get_is_minor()
         self.community = self.household_member.household_structure.household.plot.community
+        self.enroll_household()
+        self.household_member.is_consented = True
+        self.household_member.save()
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    def matches_enrollment_checklist(self, exception_cls=None):
+        """Matches values in this consent against the enrolmnet checklist.
+
+        ..note:: the enrollment checklist is required for consent, so always exists."""
+        exception_cls = exception_cls or ValidationError
+        enrollment_checklist = EnrolmentChecklist.objects.get(household_member=self.household_member)
+        if enrollment_checklist.dob != self.dob:
+            raise exception_cls('Dob does not match that on the enrollment checklist')
+        if enrollment_checklist.initials != self.initials:
+            raise exception_cls('Initials do not match those on the enrollment checklist')
+        if enrollment_checklist.guardian.lower() == 'yes' and not (self.is_minor.lower() == 'yes' and self.guardian_name):
+            raise exception_cls('Enrollment checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
+        if enrollment_checklist.gender != self.gender:
+            raise exception_cls('Gender does not match that in the enrollment checklist')
+        if enrollment_checklist.citizen != self.citizen:
+            raise exception_cls('Enrollment checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+        if ((enrollment_checklist.legal_marriage.lower() == 'yes' and enrollment_checklist.marriage_certificate.lower() == 'yes') and
+                not (self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'yes')):
+            raise exception_cls('Enrollment checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
+        return True
+
+    def enroll_household(self):
+        """Updates the household structure as enrolled if the member consents.
+
+        ..note:: household structure will update the household as enrolled."""
         # household_structure is enrolled if a member consents
         household_structure = self.household_member.household_structure
         if not household_structure.enrolled:
             household_structure.enrolled = True
             household_structure.enrolled_datetime = datetime.today()
             household_structure.save()
-        self.household_member.is_consented = True
-        self.household_member.save()
-        enrolment_checklist = self.get_enrollment_checklist_query_set()  # EnrolmentChecklist.objects.filter(household_member = self.household_member)
-        #Ensuring that values entered in the consent, match those in the enrollment checklist
-        if enrolment_checklist.exists():
-            if enrolment_checklist[0].dob != self.dob:
-                raise TypeError('Dob in this consent does not match that in the enrollment checklist')
-            if enrolment_checklist[0].initials != self.initials:
-                raise TypeError('Initials in this consent does not match that in the enrollment checklist')
-            if enrolment_checklist[0].guardian.lower() == 'yes' and not (self.is_minor.lower() == 'yes' and self.guardian_name):
-                raise TypeError('Enrollment checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
-            if enrolment_checklist[0].gender != self.gender:
-                raise TypeError('Gender in this consent does not match that in the enrollment checklist')
-            if enrolment_checklist[0].citizen != self.citizen:
-                raise TypeError('Enrollment checklist indicates that this subject is a citizen, but the consent does not indicate this.')
-            if (enrolment_checklist[0].legal_marriage.lower() == 'yes' and enrolment_checklist[0].marriage_certificate.lower() == 'yes') and not \
-                (self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'yes'):
-                    raise TypeError('Enrollment checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
-        super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
