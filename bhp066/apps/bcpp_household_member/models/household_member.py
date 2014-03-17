@@ -100,6 +100,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
 
+<<<<<<< HEAD
+=======
+    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household eligibility checklist.")
+
+    #Keep track of wherether the elilibility form has been filled before
+>>>>>>> 0d4c4afdf80c5a5ad48099980c8bf51331fede36
     eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
 
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
@@ -151,6 +157,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.eligible_htc = (self.age_in_years >= 16 and not self.is_consented)
         #self.member_status = self.calculate_member_status()
 #         self.member_status_partial = self.calc_member_status()
+        from .head_household_eligibility import HouseholdHeadEligibility
+        if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member = self, aged_over_18='Yes', verball_script='Yes').exists():
+            if self.age_in_years < 18:
+                raise TypeError('This household member is the head of house. You cannot change their age to less than 18.')
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
