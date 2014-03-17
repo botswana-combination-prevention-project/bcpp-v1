@@ -11,7 +11,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
+from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, HouseholdHeadEligibility
 from apps.bcpp_rbd.models import RBDEligibility
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, Loss
 from apps.bcpp_survey.models import Survey
@@ -33,6 +33,7 @@ class HouseholdDashboard(Dashboard):
         self._current_member_count = None
         self._enrolment_checklist = None
         self._household_info = None
+        self.__eligible_hoh = None
         self._first_survey = None
         self._survey = None
         self._surveys = None
@@ -59,6 +60,8 @@ class HouseholdDashboard(Dashboard):
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             rbd_enrolment_checklist_meta=RBDEligibility._meta,
             household_info_meta=HouseholdInfo._meta,
+            head_household_eligibility_meta=HouseholdHeadEligibility._meta,
+            head_household_eligibility=self.head_household_eligibility,
             plot=self.household.plot,
             household=self.household,
             household_identifier=self.household.household_identifier,
@@ -73,6 +76,7 @@ class HouseholdDashboard(Dashboard):
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry(),
             household_info=self.household_info,
+            eligible_hoh=self.any_eligible_hoh,
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
@@ -96,6 +100,19 @@ class HouseholdDashboard(Dashboard):
         if HouseholdInfo.objects.filter(household_structure=self.household_structure):
             self._household_info = HouseholdInfo.objects.get(household_structure=self.household_structure)
         return self._household_info
+
+    @property
+    def any_eligible_hoh(self):
+        self._eligible_hoh = None
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes'):
+            self._eligible_hoh = HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes')
+        return self._eligible_hoh
+
+    @property
+    def head_household_eligibility(self):
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes'):
+            return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes')
+        return None
 
     @property
     def survey(self):

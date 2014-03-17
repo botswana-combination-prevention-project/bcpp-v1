@@ -48,6 +48,10 @@ class RBDConsentAdmin(BaseConsentModelAdmin):
             'dob',
             'guardian_name',
             'is_dob_estimated',
+            'citizen',
+            'legal_marriage',
+            'marriage_certificate',
+            'marriage_certificate_no',
             'identity',
             'identity_type',
             'confirm_identity',
@@ -58,8 +62,9 @@ class RBDConsentAdmin(BaseConsentModelAdmin):
             'assessment_score',
             'consent_signature',
             'consent_copy',
-            'mentally_incapacitated',
-            'involuntary_incarceration']
+            #'mentally_incapacitated',
+            #'involuntary_incarceration'
+            ]
 
         self.radio_fields = {
             "language": admin.VERTICAL,
@@ -73,8 +78,10 @@ class RBDConsentAdmin(BaseConsentModelAdmin):
             'consent_signature': admin.VERTICAL,
             "consent_copy": admin.VERTICAL,
             "is_literate": admin.VERTICAL,
-            "mentally_incapacitated": admin.VERTICAL,
-            "involuntary_incarceration": admin.VERTICAL}
+            "citizen": admin.VERTICAL,
+            "legal_marriage": admin.VERTICAL,
+            "marriage_certificate": admin.VERTICAL
+            }
 
         self.search_fields.append('household_member__household_structure__household__household_identifier')
         self.search_fields.append('household_member__household_structure__household__plot__plot_identifier')
