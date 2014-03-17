@@ -119,7 +119,7 @@ class HouseholdDashboard(Dashboard):
         """Returns the first survey and there should always be at least one."""
         if not self._first_survey:
             try:
-                self._first_survey = Survey.objects.all().order_by('datetime_start')[0]
+                self._first_survey = Survey.objects.all().order_by('datetime_start', 'survey_name')[0]
             except:
                 pass
         return self._first_survey
