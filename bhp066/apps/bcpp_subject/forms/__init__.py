@@ -1,5 +1,5 @@
 from .main import *
-from .subject_consent_form import MainConsentForm, SubjectConsentForm
+from .subject_consent_form import SubjectConsentForm
 #from .base_subject_model_form import BaseSubjectModelForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_referral_form import SubjectReferralForm

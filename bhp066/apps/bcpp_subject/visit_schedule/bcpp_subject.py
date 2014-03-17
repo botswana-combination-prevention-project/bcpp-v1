@@ -83,9 +83,9 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(320L, u'bcpp_subject', u'positiveparticipant'),
                 EntryTuple(330L, u'bcpp_subject', u'accesstocare'),
                 EntryTuple(340L, u'bcpp_subject', u'hivresult'),
-                EntryTuple(350L, u'bcpp_subject', u'hicenrollment'),
-                EntryTuple(360L, u'bcpp_subject', u'pima'),
-                EntryTuple(370L, u'bcpp_subject', u'subjectreferral'),
+                EntryTuple(350L, u'bcpp_subject', u'pima'),
+                EntryTuple(360L, u'bcpp_subject', u'subjectreferral'),
+                EntryTuple(370L, u'bcpp_subject', u'hicenrollment'),
             )}
         }
     )

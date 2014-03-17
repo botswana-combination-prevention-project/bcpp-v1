@@ -1,5 +1,5 @@
 from django import forms
-from ..models import HivResult
+from ..models import HivResult, HicEnrollment
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -9,10 +9,14 @@ class HivResultForm (BaseSubjectModelForm):
 
         cleaned_data = super(HivResultForm, self).clean()
 
+        # validating that hiv_result is not changed after HicEnrollment is filled
+        if HicEnrollment.objects.filter(subject_visit = cleaned_data.get('subject_visit', None)).exists():
+            if cleaned_data.get('hiv_result', None).lower() != 'neg':
+                raise forms.ValidationError('An HicEnrollment form already exists for this Subject. So \'hiv_result\' cannot be changed to \'{0}\'.'.format(cleaned_data.get('hiv_result', None)))
         # validating when testing declined
         if cleaned_data.get('hiv_result', None) == 'Declined' and not cleaned_data.get('why_not_tested', None):
             raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing')
-        
+
         # validating when testing not performed
         if cleaned_data.get('hiv_result', None) == 'Not performed' and cleaned_data.get('why_not_tested', None):
             raise forms.ValidationError('If testing was not performed, DO NOT provide reason for declining')
