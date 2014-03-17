@@ -1,23 +1,24 @@
-from datetime import datetime
+from datetime import datetime, date
+from dateutils import relativedelta
 
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
-from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers
-from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
-
+from edc.subject.consent.mixins.bw import IdentityFieldsMixin
+from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_household_member.models import EnrolmentChecklist
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
-
-from .subject_off_study_mixin import SubjectOffStudyMixin
+from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 # Note below: Mixin fields are added after the abstract class, BaseSubjectConsent, and before
 # the concrete class, SubjectConsent, using the field.contribute_to_class method.
@@ -87,6 +88,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
+        self.is_minor = self.get_is_minor()
         self.community = self.household_member.household_structure.household.plot.community
         # household_structure is enrolled if a member consents
         household_structure = self.household_member.household_structure
@@ -96,6 +98,22 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             household_structure.save()
         self.household_member.is_consented = True
         self.household_member.save()
+        enrolment_checklist = self.get_enrollment_checklist_query_set()  # EnrolmentChecklist.objects.filter(household_member = self.household_member)
+        #Ensuring that values entered in the consent, match those in the enrollment checklist
+        if enrolment_checklist.exists():
+            if enrolment_checklist[0].dob != self.dob:
+                raise TypeError('Dob in this consent does not match that in the enrollment checklist')
+            if enrolment_checklist[0].initials != self.initials:
+                raise TypeError('Initials in this consent does not match that in the enrollment checklist')
+            if enrolment_checklist[0].guardian.lower() == 'yes' and not (self.is_minor.lower() == 'yes' and self.guardian_name):
+                raise TypeError('Enrollment checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
+            if enrolment_checklist[0].gender != self.gender:
+                raise TypeError('Gender in this consent does not match that in the enrollment checklist')
+            if enrolment_checklist[0].citizen != self.citizen:
+                raise TypeError('Enrollment checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+            if (enrolment_checklist[0].legal_marriage.lower() == 'yes' and enrolment_checklist[0].marriage_certificate.lower() == 'yes') and not \
+                (self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'yes'):
+                    raise TypeError('Enrollment checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
@@ -117,6 +135,15 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                   as well as the results of tests we perform."""
         return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
 
+    def get_is_minor(self):
+        if self.age == 16 or self.age == 17:
+            return 'Yes'
+        return 'No'
+
+    @property
+    def age(self):
+        return relativedelta(date.today(), self.dob).years
+
     class Meta:
         abstract = True
 
@@ -135,13 +162,22 @@ class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
 
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
     def save(self, *args, **kwargs):
         if not self.household_member.eligible_subject:
             raise ValidationError('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
+        if HicEnrollment.objects.filter(subject_visit__household_member=self.household_member).exists():
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
+            if self.dob != hic_enrollment.dob or self.consent_datetime != hic_enrollment.consent_datetime:
+                raise TypeError('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
+        if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
+            raise TypeError('The subject has to be a citizen, or legally married to a citizen to consent.')
         super(SubjectConsent, self).save(*args, **kwargs)
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
+    def get_enrollment_checklist_query_set(self):
+        return EnrolmentChecklist.objects.filter(household_member=self.household_member)
 
     class Meta:
         app_label = 'bcpp_subject'
