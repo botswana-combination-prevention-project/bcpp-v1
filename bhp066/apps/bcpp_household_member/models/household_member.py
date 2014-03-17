@@ -1,25 +1,28 @@
 from datetime import datetime
 
-from django.db import models
+from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from django.core.urlresolvers import reverse
+from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
-from edc.core.crypto_fields.utils import mask_encrypted
-from edc.subject.registration.models import RegisteredSubject
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
+from edc.core.crypto_fields.fields import EncryptedFirstnameField
+from edc.core.crypto_fields.utils import mask_encrypted
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.choices import RELATIONS
-from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.models import Plot
 
+from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
+                       HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
+                       HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+                       HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
+                       HOUSEHOLD_MEMBER_FULL_PARTICIPATION)
 from ..managers import HouseholdMemberManager
-from ..choices import (HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC_PARTICIPATION, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE, HOUSEHOLD_MEMBER_RBD_PARTICIPATION)
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -71,7 +74,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         choices=YES_NO,
         db_index=True)
 
-    member_status_full = models.CharField(
+    member_status = models.CharField(
         max_length=25,
         choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
         null=True,
@@ -95,10 +98,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
 
-    eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
+    eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
 
-    #Keep track of wherether the elilibility form has been filled before
     eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
+
+    is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
 
     visit_attempts = models.IntegerField(default=0)
 
@@ -126,15 +130,27 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+    def __unicode__(self):
+        return '{0} {1} {2}{3}'.format(
+            mask_encrypted(self.first_name),
+            self.initials,
+            self.age_in_years,
+            self.gender)
+
     def save(self, *args, **kwargs):
-        self.eligible_member = self.is_eligible()
+        self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
         self.initials = self.initials.upper()
         if self.eligible_member:
-            self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
-                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
-            self.household_structure.household.plot.save()
-        else:
-            self.member_status_full = 'NOT_ELIGIBLE'
+            # updated the number of eligible members on the plot model
+            plot = self.household_structure.household.plot
+            plot.eligible_members = self.__class__.objects.filter(
+                household_structure__household__plot__plot_identifier=plot.plot_identifier,
+                eligible_member=True).count()
+            plot.save()
+        if self.household_structure.enrolled:
+            self.eligible_htc = (self.age_in_years >= 16 and not self.is_consented)
+        #self.member_status = self.calculate_member_status()
+#         self.member_status_partial = self.calc_member_status()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -145,69 +161,62 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return self.household_structure.natural_key() + self.registered_subject.natural_key()
     natural_key.dependencies = ['bcpp_household.householdstructure', 'registration.registeredsubject']
 
-    def __unicode__(self):
-        return '{0} {1} {2}{3}'.format(
-            mask_encrypted(self.first_name),
-            self.initials,
-            self.age_in_years,
-            self.gender)
-
     @property
     def survey(self):
         return self.household_structure.survey
 
+    @property
     def is_minor(self):
         return (self.age_in_years >= 16 and self.age_in_years <= 17)
 
+    @property
     def is_adult(self):
         return (self.age_in_years >= 18 and self.age_in_years <= 64)
 
-    def is_eligible(self):
-        "Returns if the subject is eligible or ineligible based on age and residency"
-        if self.is_minor() and self.study_resident == 'Yes':
-            return True
-        elif self.is_adult() and self.study_resident == 'Yes':
-            return True
-        else:
-            return False
-
     @property
-    def non_bhs_member(self):
-        "Those participants that where never BHS potentials to start with, or failed the BHS eligibility checklist."
-        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran,just fro household meber values eg age < 16..
-            return True
-        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist, e.g non citizen not married to citizen.
-            return True
-        return False
+    def is_htc_only(self):
+        """Returns True if subject has participated by accepting HTC only."""
+        pass
 
-    @property
-    def is_consented(self):
-        "Returns True or False based on search for a consent instance related to this household member"
-        from edc.subject.consent.models import BaseConsent
-        has_consent_instance = False
-        for any_model_cls in models.get_models():
-            if issubclass(any_model_cls, BaseConsent):
-                consent_model_cls = any_model_cls
-                if 'household_member' in dir(consent_model_cls):
-                    if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
-                        has_consent_instance = True
-                        break
-        return has_consent_instance
+    def calculate_member_status(self):
+        """Updates the full participation status.
 
-    @property
-    def is_consented_partial(self):
-        "Returns True or False based on search for a partial participation consent instance related to this household member"
-        from apps.bcpp_rbd.models import RBDConsent
-        from apps.bcpp_htc_subject.models import HtcSubjectConsent
-        has_partial_consent_instance = False
-        for any_model_cls in models.get_models():
-            if issubclass(any_model_cls, RBDConsent) or issubclass(any_model_cls, HtcSubjectConsent):
-                consent_model_cls = any_model_cls
-                if 'household_member' in dir(consent_model_cls):
-                    if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
-                        has_partial_consent_instance = True
-                        break
-        return has_partial_consent_instance 
+        .. note:: if the member is consented, no changes are made."""
+        if self.id:
+            SubjectAbsentee = models.get_model('bcpp_household_member', 'SubjectAbsentee')
+            SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'SubjectAbsenteeEntry')
+            SubjectRefusal = models.get_model('bcpp_household_member', 'SubjectRefusal')
+            SubjectUndecided = models.get_model('bcpp_household_member', 'SubjectUndecided')
+            if self.member_status != 'ABSENT':
+                if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=self):
+                    SubjectAbsentee.objects.filter(household_member=self).delete()
+            if not self.member_status == 'ABSENT':
+                if not SubjectAbsentee.objects.filter(household_member=self):
+                    SubjectAbsentee.objects.create(
+                        registered_subject=self.registered_subject,
+                        household_member=self,
+                        report_datetime=datetime.today())
+            elif self.member_status == 'NOT_ELIGIBLE' and not self.eligible_subject:
+                pass
+            elif self.member_status == 'NOT_ELIGIBLE' and self.eligible_subject:
+                self.member_status = 'RESEARCH'  # already has passed eligibility!
+            elif self.member_status == 'RESEARCH':
+                pass
+            elif self.member_status == 'NOT_REPORTED':
+                # don't allow to revert to not reported if something has already been reported.
+                old_instance = self.__class__.objects.get(pk=self.pk)
+                if old_instance.member_status != 'NOT_REPORTED':
+                    # lookup for absentee, refusal, undecided
+                    if SubjectAbsentee.objects.filter(household_member=self) or SubjectRefusal.objects.filter(household_member=self) or SubjectUndecided.objects.filter(household_member=self):
+                        self.member_status = old_instance.member_status
+            else:
+                pass
+        return self.member_status
+
+    def calc_member_status_partial(self):
+        if self.id:
+            pass
+        return self.member_status_partial
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -216,10 +225,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Updates from lab_tracker."""
         self.hiv_history = self.get_hiv_history()
 
-    def update_household_member_count_on_post_save(self, **kwargs):
+    def update_household_member_count_on_post_save(self, sender, using=None):
         """Updates the member count on the household_structure model."""
-        using = kwargs.get('using', None)
-        self.household_structure.member_count = self.__class__.objects.filter(household_structure=self.household_structure).count()
+        household_members = sender.objects.using(using).filter(household_structure=self.household_structure)
+        self.household_structure.member_count = household_members.count()
+        self.household_structure.enrolled_member_count = len([household_member for household_member in household_members if household_member.is_consented])
         self.household_structure.save(using=using)
 
     def update_registered_subject_on_post_save(self, **kwargs):
@@ -259,35 +269,25 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return retval
 
     @property
-    def status_choices(self):
+    def status_choices_full(self):
+        """"Returns all choices for bhs participation if an eligible member ."""
         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if (self.age_in_years < 16) or not self.is_eligible():
+        if not self.is_eligible_member():
             status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
-        else:
-            status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
         return status_choices
 
     @property
     def status_choices_partial(self):
-        status_choices_p = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if self.non_bhs_member and self.household_structure.number_enrolled > 0:
-            status_choices_p = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
-        elif self.member_status_full == 'REFUSED':
+        status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
+        if self.non_bhs_member and self.household_structure.household.enrolled:
+            status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
+        elif self.member_status == 'REFUSED':
             enrolled = self.household_structure.number_enrolled 
             if enrolled > 0:
-                status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+                status_choices = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
             elif enrolled == 0:
-                status_choices_p = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
-        return status_choices_p
-
-    @property
-    def member_status(self):
-#         if self.member_status_full in ['NOT_ELIGIBLE', 'REFUSED']:
-#             ret = self.member_status_partial
-#         else:
-#             ret = self.member_status_full
-#         return ret
-        return self.member_status_full
+                status_choices = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
+        return status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID

@@ -10,7 +10,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
 
-from ..models import SubjectConsent, SubjectConsentRbd
+from ..models import SubjectConsent
 
 
 class MainConsentForm(BaseSubjectConsentForm):
@@ -101,9 +101,3 @@ class SubjectConsentForm(MainConsentForm):
 
     class Meta:
         model = SubjectConsent
-
-
-class SubjectConsentRbdForm(MainConsentForm):
-
-    class Meta:
-        model = SubjectConsentRbd

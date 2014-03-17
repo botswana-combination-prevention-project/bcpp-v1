@@ -13,6 +13,7 @@ def check_for_survey_on_pre_save(sender, instance, **kwargs):
     if isinstance(instance, (Plot)):
         instance.check_for_survey_on_pre_save(**kwargs)
 
+
 @receiver(post_save, weak=False, dispatch_uid="post_save_on_household")
 def post_save_on_household(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
@@ -48,7 +49,8 @@ def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
                 plot.save()
             else:
                 raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
-            
+
+
 @receiver(post_save, weak=False, dispatch_uid='household_visit_attempts_on_post_save')
 def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
