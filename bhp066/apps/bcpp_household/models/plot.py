@@ -349,7 +349,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return 'Not Dispatched'
 
     def is_server(self):
-        if Device().get_device_id() == '99':
+        if Device().device_id == '99':
             return True
         return False
 
