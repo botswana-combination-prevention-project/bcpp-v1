@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from dateutils import relativedelta
 
 from django.db import models
@@ -136,7 +136,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.household_member.eligible_subject = False
-        age_in_years = relativedelta(datetime.today(), datetime(self.dob.year, self.dob.month, self.dob.day)).years
+        age_in_years = relativedelta(date.today(), self.dob).years
         if self.matches_household_member_values(age_in_years):
             if not self.has_loss_reason(age_in_years):
                 self.household_member.eligible_subject = True
@@ -150,11 +150,13 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         validation_error = None
         exception_cls = exception_cls or ValidationError
         if age_in_years != self.household_member.age_in_years:
-            validation_error = 'Age does not match with that entered on the household member. Got {0} <> {1}'.format(age_in_years, self.household_member.age_in_years)
+            validation_error = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, self.household_member.age_in_years)
         if self.household_member.study_resident.lower() != self.part_time_resident.lower():
-            validation_error = 'Residency does not with match that entered on the household member. Got {0} <> {1}'.format(self.part_time_resident, self.household_member.study_resident)
+            validation_error = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(self.part_time_resident, self.household_member.study_resident)
         if self.household_member.initials.lower() != self.initials.lower():
-            validation_error = 'Initials do not with match that entered on the household member. Got {0} <> {1}'.format(self.initials, self.household_member.initials)
+            validation_error = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(self.initials, self.household_member.initials)
+        if self.household_member.gender != self.gender:
+            validation_error = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(self.gender, self.household_member.gender)
         if validation_error:
             raise exception_cls(validation_error)
         return True
