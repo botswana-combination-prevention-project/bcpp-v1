@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
@@ -149,6 +150,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 household_structure__household__plot__plot_identifier=plot.plot_identifier,
                 eligible_member=True).count()
             plot.save()
+#         if self.eligible_subject:
+#             # confirm enrollment checklist
+#             EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
+#             EnrollmentChecklist.objects.get(household_member=self, is_eligible=True)
         if self.household_structure.enrolled:
             self.eligible_htc = (self.age_in_years >= 16 and not self.is_consented)
         #self.member_status = self.calculate_member_status()
@@ -157,7 +162,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         # TODO: why are you querying HouseholdHeadEligibility???
         if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member=self, aged_over_18='Yes', verball_script='Yes').exists():
             if self.age_in_years < 18:
-                raise TypeError('This household member is the head of house. You cannot change their age to less than 18.')
+                raise ValidationError('This household member is the head of house. You cannot change their age to less than 18.')
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
