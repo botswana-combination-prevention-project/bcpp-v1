@@ -154,9 +154,10 @@ class Household(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
+    # see subject_consent save method
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
-    complete = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
+    complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
 
     enumeration_attempts = models.IntegerField(
         default=0,
