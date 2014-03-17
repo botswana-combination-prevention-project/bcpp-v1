@@ -30,19 +30,12 @@ class DashboardTests(TestCase):
         except AlreadyRegisteredLabProfile:
             pass
         BcppAppConfiguration()
-
         site_lab_tracker.autodiscover()
-
         BcppSubjectVisitSchedule().build()
-
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-
         site_mappers.autodiscover()
-
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
-
         self.community = mapper().get_map_area()
-
         gps_degrees_s, gps_minutes_s, gps_degrees_e, gps_minutes_e = mapper().test_location
         self.plot = PlotFactory(community=self.community,
                                 gps_degrees_s=gps_degrees_s,

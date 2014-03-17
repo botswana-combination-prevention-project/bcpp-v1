@@ -60,7 +60,7 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, gender))
         return super(BaseBcppConsentForm, self).clean()
 
-    def enrollment_checklist_checks(self, enrollment_checklist, cleaned_data, obj):
+    def enrollment_checklist_checks(self, enrollment_checklist, cleaned_data, obj):  # TODO: access the same code on the consent instead of repeating
         minor = obj.minimum_age_of_consent <= self.calculate_age(cleaned_data.get('dob', None)) < obj.age_at_adult_lower_bound
         if enrollment_checklist.dob != cleaned_data.get('dob', None):
             raise forms.ValidationError('Dob in this consent does not match that in the enrollment checklist')

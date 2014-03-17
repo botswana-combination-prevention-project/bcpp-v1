@@ -322,6 +322,7 @@ INSTALLED_APPS = (
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
+    'edc.lab.lab_profile',
 
     'lis.labeling',
     'lis.core.lab_common',

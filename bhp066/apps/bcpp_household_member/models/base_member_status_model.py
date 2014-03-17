@@ -12,7 +12,7 @@ class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
         return self.report_datetime
 
     def member_status_string(self):
-        """Returns a the value for updating household_member.member_status_full.
+        """Returns a the value for updating household_member.member_status.
 
         For example: CONSENTED, ABSENT, REFUSED"""
         return None
@@ -21,12 +21,12 @@ class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
         return (('bcpp_household', 'plot'), 'household_member__household_structure__household__plot')
 
     def post_save_update_hm_status(self, using=None):
-        """Updates the household_member member_status_full."""
-        if not self.household_member.is_consented_subject:
+        """Updates the household_member member_status."""
+        if not self.household_member.is_consented:
             # TODO: is this the correct string for a subject_consent??
             if self.member_status_string() == 'RESEARCH':
                 # consent overwrites everything else
-                self.household_member.member_status_full = self.member_status_string()
+                self.household_member.member_status = self.member_status_string()
             else:
                 # among these model classes look for an instance with the most recent report_datetime
                 # and set self.household_member member_status to the status from that instance (member_status_string())
@@ -44,7 +44,7 @@ class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
                         if instance.report_datetime > max_report_datetime:
                             max_report_datetime = instance.report_datetime
                             selected_instance = instance
-                self.household_member.member_status_full = selected_instance.member_status_string()
+                self.household_member.member_status = selected_instance.member_status_string()
             self.household_member.save(using=using)
 
     class Meta:
