@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from dateutils import relativedelta
 
 from django.test import TestCase
 from django.db.models import signals
@@ -14,13 +15,13 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import HouseholdStructure, Household
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_household_member.tests.factories import EnrolmentChecklistFactory, HouseholdMemberFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from ..views.participation import update_member_status_full
+from ..views.participation import update_member_status
 
 
 class TestPlotMapper(Mapper):
@@ -58,8 +59,6 @@ class ParticipationStatusTests(TestCase):
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             age_in_years=25)
-        self.assertEqual(household_member.member_status_full, 'NOT_REPORTED')
-        self.assertEqual(household_member.member_status_partial, 'NOT_REPORTED')
         self.assertEqual(household_member.member_status, 'NOT_REPORTED')
 
     def test_new_member_status_is_not_eligible_by_age1(self):
@@ -67,8 +66,6 @@ class ParticipationStatusTests(TestCase):
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             age_in_years=2)
-        self.assertEqual(household_member.member_status_full, 'NOT_ELIGIBLE')
-        self.assertEqual(household_member.member_status_partial, 'NOT_ELIGIBLE')
         self.assertEqual(household_member.member_status, 'NOT_ELIGIBLE')
 
     def test_new_member_status_is_not_eligible_by_age2(self):
@@ -76,8 +73,6 @@ class ParticipationStatusTests(TestCase):
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             age_in_years=65)
-        self.assertEqual(household_member.member_status_full, 'NOT_ELIGIBLE')
-        self.assertEqual(household_member.member_status_partial, 'NOT_REPORTED')
         self.assertEqual(household_member.member_status, 'NOT_ELIGIBLE')
 
     def test_change_absent(self):
@@ -87,8 +82,7 @@ class ParticipationStatusTests(TestCase):
             age_in_years=50)
         self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 0)
         self.assertNotEqual('ABSENT', household_member.member_status)
-        cleaned_data = {'status': 'ABSENT'}
-        new_status, eligible_subject, changed = update_member_status_full(household_member, cleaned_data)
+        new_status, eligible_subject, changed = update_member_status(household_member, 'ABSENT')
         self.assertEqual('ABSENT', new_status)
         self.assertEqual(eligible_subject, False)
         self.assertEqual(changed, True)
@@ -102,13 +96,11 @@ class ParticipationStatusTests(TestCase):
             present_today='No',  # on day of survey
             study_resident='Yes')
         self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 0)
-        update_member_status_full(household_member, "ABSENT")
+        update_member_status(household_member, "ABSENT")
         subject_absentee = SubjectAbsentee.objects.filter(household_member=household_member)
         self.assertEqual(SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).count(), 0)
-        new_status, eligible_subject, changed = update_member_status_full(household_member, 'NOT_REPORTED')
-        self.assertEqual('NOT_REPORTED', new_status)
-        self.assertEqual(eligible_subject, False)
-        self.assertEqual(changed, True)
+        new_member_status = update_member_status(household_member, 'NOT_REPORTED')
+        self.assertEqual('NOT_REPORTED', new_member_status)
         self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 0)
 
     def test_change_to_absent_and_back2(self):
@@ -120,10 +112,10 @@ class ParticipationStatusTests(TestCase):
             study_resident='Yes')
         self.assertTrue(household_member.eligible_member)
         self.assertFalse(household_member.eligible_subject)
-        self.assertEqual('NOT_REPORTED', household_member.member_status_full)
+        self.assertEqual('NOT_REPORTED', household_member.member_status)
         self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 0)
-        update_member_status_full(household_member, 'ABSENT')
-        self.assertEqual('ABSENT', household_member.member_status_full)
+        update_member_status(household_member, 'ABSENT')
+        self.assertEqual('ABSENT', household_member.member_status)
         subject_absentee = SubjectAbsentee.objects.filter(household_member=household_member)
         self.assertEqual(SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).count(), 0)
         SubjectAbsenteeEntry.objects.create(
@@ -133,8 +125,8 @@ class ParticipationStatusTests(TestCase):
             next_appt_datetime=datetime.today() + timedelta(days=10),
             next_appt_datetime_source='erik')
         self.assertEqual(SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).count(), 1)
-        update_member_status_full(household_member, 'NOT_REPORTED')
-        self.assertEqual('NOT_REPORTED', household_member.member_status_full)
+        update_member_status(household_member, 'NOT_REPORTED')
+        self.assertEqual('NOT_REPORTED', household_member.member_status)
         self.assertEqual(household_member.eligible_subject, False)
         self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 1)
 
@@ -142,14 +134,19 @@ class ParticipationStatusTests(TestCase):
         """change from research to something else and clear eligible_subject if true."""
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
+            gender='M',
             age_in_years=50)
-        household_member.eligible_subject = True
-        household_member.member_status_full = 'RESEARCH'
+        EnrolmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=50),
+            initials=household_member.initials,
+            part_time_resident='Yes')
+        household_member.member_status = 'RESEARCH'
         household_member.save()
         self.assertTrue(household_member.eligible_subject)
         cleaned_data = {'status': 'REFUSED'}
-        new_status, eligible_subject, changed = update_member_status_full(household_member, cleaned_data)
-        self.assertFalse(household_member.eligible_subject)
+        update_member_status(household_member, cleaned_data)
         self.assertEqual(household_member.member_status, 'REFUSED')
 
     def test_change_from_research2(self):
@@ -157,11 +154,19 @@ class ParticipationStatusTests(TestCase):
         signals.post_save.disconnect(prepare_appointments_on_post_save, weak=False, dispatch_uid='prepare_appointments_on_post_save')
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
-            age_in_years=50)
-        household_member.eligible_subject = True
-        household_member.member_status_full = 'RESEARCH'
+            gender='M',
+            age_in_years=50,
+            study_resident='Yes')
+        EnrolmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=50),
+            initials=household_member.initials,
+            part_time_resident='Yes')
+        household_member.member_status = 'RESEARCH'
         household_member.save()
         self.assertTrue(household_member.eligible_subject)
+
         SubjectConsent.objects.create(  # TODO: replace with factory
             household_member=household_member,
             registered_subject=household_member.registered_subject,
@@ -179,6 +184,6 @@ class ParticipationStatusTests(TestCase):
             is_literate='Yes',
             )
         cleaned_data = {'status': 'REFUSED'}
-        new_status, eligible_subject, changed = update_member_status_full(household_member, cleaned_data)
+        update_member_status(household_member, cleaned_data)
         self.assertTrue(household_member.eligible_subject)
         self.assertEqual(household_member.member_status, 'RESEARCH')
