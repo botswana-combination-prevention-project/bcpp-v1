@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
@@ -85,6 +88,14 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def save(self, *args, **kwargs):
         self.community = self.household_member.household_structure.household.plot.community
+        # household_structure is enrolled if a member consents
+        household_structure = self.household_member.household_structure
+        if not household_structure.enrolled:
+            household_structure.enrolled = True
+            household_structure.enrolled_datetime = datetime.today()
+            household_structure.save()
+        self.household_member.is_consented = True
+        self.household_member.save()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
@@ -123,26 +134,15 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
-    
+
+    def save(self, *args, **kwargs):
+        if not self.household_member.eligible_subject:
+            raise ValidationError('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
+        super(SubjectConsent, self).save(*args, **kwargs)
+
     def bypass_for_edit_dispatched_as_item(self):
         return True
-    
+
     class Meta:
         app_label = 'bcpp_subject'
         unique_together = ('subject_identifier', 'survey')
-
-
-# research blood draw consent
-class SubjectConsentRbd(BaseSubjectConsent):
-
-    history = AuditTrail()
-    
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
-    
-    class Meta:
-        app_label = 'bcpp_subject'
-        verbose_name = 'Blood Draw Consent'
-        verbose_name_plural = 'Blood Draw Consent'
-        unique_together = ('subject_identifier', 'survey')
-

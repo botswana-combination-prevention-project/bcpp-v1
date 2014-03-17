@@ -1,13 +1,12 @@
-from datetime import datetime
 from django.test import SimpleTestCase
 from django.forms import ValidationError
-from edc.map.classes import Mapper, site_mappers
+
+from edc.map.classes import Mapper
+
 from apps.bcpp_survey.tests.factories import SurveyFactory
-#from apps.bcpp_household.tests.factories import PlotFactory
 
 from ..forms import EnrolmentChecklistForm
 from ..models import HouseholdMember
-#from .factories import HouseholdMemberFactory
 
 
 class OtsePlotMapper(Mapper):
@@ -21,10 +20,8 @@ class OtsePlotMapper(Mapper):
     radius = 5.5
     location_boundary = ()
 
-#site_mappers.register(OtsePlotMapper)
 
-
-class EligibilityTests(SimpleTestCase):
+class EligibilityFormTests(SimpleTestCase):
 
     def setUp(self):
         self.survey = SurveyFactory()
@@ -148,23 +145,3 @@ class EligibilityTests(SimpleTestCase):
             'initials': 'EE'}
         self.assertRaisesRegexp(ValidationError, 'Initials do not match', form.clean)
         self.assertRaisesRegexp(ValidationError, 'Martin', form.clean)
-
-#     def test_updated_household_member(self):
-#         plot = PlotFactory()
-#         household_member = HouseholdMemberFactory(
-#             household_structure=plot.household_structure,
-#             first_name='Malcolm',
-#             initials='MXE',
-#             gender='M',
-#             age_in_years=20,
-#             present_today='Yes'
-#             )
-#         pk = household_member.pk
-#         self.assertFalse(household_member.eligible_subject)
-#         form = EnrolmentChecklistForm()
-#         form.cleaned_data = {
-#             'household_member': household_member,
-#             'initials': 'MXE',
-#             'citizen': 'Yes'}
-#         household_member = HouseholdMember.objects.get(pk=pk)
-#         self.assertTrue(household_member.eligible_subject)
