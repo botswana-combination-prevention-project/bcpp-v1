@@ -84,6 +84,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
         db_index=True)
 
+    member_status = models.CharField(
+        max_length=25,
+        choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+        null=True,
+        editable=False,
+        default='NOT_REPORTED',
+        help_text='RESEARCH, ABSENT, REFUSED, MOVED',
+        db_index=True)
+
     member_status_partial = models.CharField(
         max_length=25,
         choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
@@ -144,6 +153,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
         self.initials = self.initials.upper()
         if self.eligible_member:
+            self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
+                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
+            self.household_structure.household.plot.save()
+        else:
+            self.member_status_full = 'NOT_ELIGIBLE'
+        if not self.household_structure.household.enumerated:
+            self.household_structure.household.enumerated=True
+            self.household_structure.household.save()
+        #self.member_status = self.member_status_full
             # updated the number of eligible members on the plot model
             plot = self.household_structure.household.plot
             plot.eligible_members = self.__class__.objects.filter(
@@ -163,6 +181,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member=self, aged_over_18='Yes', verbal_script='Yes').exists():
             if self.age_in_years < 18:
                 raise ValidationError('This household member is the head of house. You cannot change their age to less than 18.')
+
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
