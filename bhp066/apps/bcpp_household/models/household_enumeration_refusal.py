@@ -9,7 +9,7 @@ from ..managers import HouseholdRefusalManager
 from .household import Household
 from .plot import Plot
 
-HOUSEHOLD_ENUMERATION_REFUSAL = (
+HOUSEHOLD_REFUSAL = (
     ('not_interested', 'Not Interested'),
     ('does_not_have_time', 'Does not have time'),
     ('dont_want_to_answer', 'Don\'t want to answer'),
@@ -26,7 +26,7 @@ class HouseholdRefusal(BaseDispatchSyncUuidModel):
     reason = models.CharField(
         verbose_name=_('Please indicate the reason the household cannot be enumerated'),
         max_length=25,
-        choices=HOUSEHOLD_ENUMERATION_REFUSAL)
+        choices=HOUSEHOLD_REFUSAL)
 
     reason_other = EncryptedCharField(
         verbose_name=_('If Other, specify'),
