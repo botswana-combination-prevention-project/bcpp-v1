@@ -1,14 +1,19 @@
 from collections import OrderedDict
 
-from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionTuple
+from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
+
+# from apps.bcpp_lab.models import Panel, AliquotType
 
 from ..models import SubjectVisit, SubjectConsent
 
 
 class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
 
-    name = 'visit schedule'
+    name = 'bcpp subject visit schedule'
     app_label = 'bcpp_subject'
+#     panel_model = Panel
+#     aliquot_type_model = AliquotType
+
     # membership forms
     # (name, model, visible)
     membership_forms = OrderedDict({
@@ -39,9 +44,9 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'instructions': None,
             'requisitions': (
                 # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
-                RequisitionTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
-                RequisitionTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'Viral Load', 'TEST', 'WB'),
-                RequisitionTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'Microtube', 'STORAGE', 'WB'),
+                RequisitionPanelTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'TEST', 'WB'),
+                RequisitionPanelTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'TEST', 'WB'),
+                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'STORAGE', 'WB'),
                 ),
             'entries': (
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator'),
@@ -80,6 +85,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(340L, u'bcpp_subject', u'hivresult'),
                 EntryTuple(350L, u'bcpp_subject', u'pima'),
                 EntryTuple(360L, u'bcpp_subject', u'subjectreferral'),
+                EntryTuple(370L, u'bcpp_subject', u'hicenrollment'),
             )}
         }
     )

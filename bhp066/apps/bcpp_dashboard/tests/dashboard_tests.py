@@ -3,27 +3,21 @@ from datetime import datetime
 
 from django.test import TestCase
 
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.map.classes import site_mappers
-from edc.subject.appointment.models import Appointment
-from edc.subject.appointment.tests.factories import ConfigurationFactory
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.registration.models import RegisteredSubject
-from edc.subject.visit_schedule.models import VisitDefinition
-from edc.testing.classes import TestVisitSchedule
-from edc.testing.tests.factories import TestConsentWithMixinFactory, TestScheduledModel1Factory, TestRequisitionFactory
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 
 from apps.bcpp_household.models import HouseholdStructure, Household
-from apps.bcpp_household.tests.factories import HouseholdFactory, PlotFactory
+from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_subject.tests import BaseScheduledModelTestCase
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from apps.bcpp_survey.models import Survey
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
-from ..classes import HouseholdDashboard, SubjectDashboard
+from ..classes import HouseholdDashboard
 
 
 class DashboardTests(TestCase):
@@ -31,57 +25,25 @@ class DashboardTests(TestCase):
     app_label = 'testing'
 
     def setUp(self):
-        from edc.testing.tests.factories import TestVisitFactory
-        self.test_visit_factory = TestVisitFactory
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration()
         site_lab_tracker.autodiscover()
-        study_specific = StudySpecificFactory()
-        StudySiteFactory()
-        ConfigurationFactory()
-        content_type_map_helper = ContentTypeMapHelper()
-        content_type_map_helper.populate()
-        content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(content_type__model='TestConsentWithMixin'.lower())
-        ConsentCatalogueFactory(
-            name=self.app_label,
-            consent_type='study',
-            content_type_map=content_type_map,
-            version=1,
-            start_datetime=study_specific.study_start_datetime,
-            end_datetime=datetime(datetime.today().year + 5, 1, 1),
-            add_for_app=self.app_label)
-
-        test_visit_schedule = TestVisitSchedule()
-        test_visit_schedule.rebuild()
-
-        self.visit_definition = VisitDefinition.objects.get(code='1000')
-
-        self.test_consent = TestConsentWithMixinFactory(gender='M')
-
-        self.registered_subject = RegisteredSubject.objects.get(subject_identifier=self.test_consent.subject_identifier)
-        self.appointment = Appointment.objects.get(registered_subject=self.registered_subject)
-
-        self.survey1 = SurveyFactory(
-            datetime_start=datetime.today() + relativedelta(months=-5),
-            datetime_end=datetime.today() + relativedelta(days=5))
-        self.survey2 = SurveyFactory(
-            datetime_start=datetime.today() + relativedelta(months=-5, years=1),
-            datetime_end=datetime.today() + relativedelta(months=5, years=1))
-        self.survey3 = SurveyFactory(
-            datetime_start=datetime.today() + relativedelta(months=-5, years=2),
-            datetime_end=datetime.today() + relativedelta(months=5, years=2))
-
+        BcppSubjectVisitSchedule().build()
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         site_mappers.autodiscover()
-
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
-
         self.community = mapper().get_map_area()
-
-        self.plot = PlotFactory(community=self.community)
-        self.plot.gps_degrees_s, self.plot.gps_minutes_s, self.plot.gps_degrees_e, self.plot.gps_minutes_e = mapper().test_location
-        self.plot.household_count = 2
-        self.plot.status = 'occupied'
-        self.plot.save()
-
+        gps_degrees_s, gps_minutes_s, gps_degrees_e, gps_minutes_e = mapper().test_location
+        self.plot = PlotFactory(community=self.community,
+                                gps_degrees_s=gps_degrees_s,
+                                gps_minutes_s=gps_minutes_s,
+                                gps_degrees_e=gps_degrees_e,
+                                gps_minutes_e=gps_minutes_e,
+                                household_count=2,
+                                status='residential_habitable')
         self.household1 = Household.objects.filter(plot=self.plot).order_by('created')[0]
         self.household_structure1 = HouseholdStructure.objects.get(household=self.household1, survey=self.survey1)
         self.household2 = Household.objects.filter(plot=self.plot).order_by('created')[1]
@@ -112,7 +74,7 @@ class DashboardTests(TestCase):
         household_dashboard.set_context()
 
     def test_create_household_dashboard2(self):
-        dashboard_type = 'household_structure'
+        dashboard_type = 'household'
         dashboard_model = 'household_structure'
         dashboard_id = self.household_structure1.pk
         household_dashboard = HouseholdDashboard(dashboard_type, dashboard_id, dashboard_model)

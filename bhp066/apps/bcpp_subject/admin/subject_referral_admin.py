@@ -23,6 +23,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'dashboard',
+        'subject_referred',
         'referral_code',
         'referral_appt_date',
         'exported',
@@ -35,6 +36,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
     fields = (
         'subject_visit',
         'report_datetime',
+        'subject_referred',
         'referral_code',
         'referral_appt_date',
         'referral_clinic',
@@ -44,6 +46,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "referral_code": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
+        "subject_referred": admin.VERTICAL,
         }
 
     def get_actions(self, request):

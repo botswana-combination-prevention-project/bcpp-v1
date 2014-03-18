@@ -29,6 +29,7 @@ site_mappers.autodiscover()
 
 REFERRAL_CODES = (
     ('TST-CD4', 'POS any, need CD4 testing'),
+    ('TST-HIV', 'HIV test'),
     ('HIV-IND', 'HIV re-test (IND)'),
     ('MASA', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
@@ -53,6 +54,13 @@ class BaseSubjectReferral(BaseScheduledVisitModel):
 
 
 class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
+
+    subject_referred = models.CharField(
+        max_length=10,
+        choices=(('Yes', 'Yes, subject has been handed a referral letter'),
+                 ('No', 'No, subject is not being referred'),
+                 ('refused', 'Subject refused referral')),
+        )
 
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
