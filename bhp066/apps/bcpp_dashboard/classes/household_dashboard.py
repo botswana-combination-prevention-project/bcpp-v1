@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdEnumerationRefusal
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, HouseholdHeadEligibility
 from apps.bcpp_rbd.models import RBDEligibility
@@ -30,10 +30,15 @@ class HouseholdDashboard(Dashboard):
         self._household_members = None
         self._household_structure = None
         self._household_log = None
+        self._household_assessment = None
         self._current_member_count = None
         self._enrolment_checklist = None
         self._household_info = None
+<<<<<<< HEAD
+        self._household_enumeration_refusal = None
+=======
         self.__eligible_hoh = None
+>>>>>>> develop
         self._first_survey = None
         self._survey = None
         self._surveys = None
@@ -54,15 +59,22 @@ class HouseholdDashboard(Dashboard):
             title='',  # 'A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
+            household_assessment_meta=HouseholdAssessment._meta,
             loss_meta=Loss._meta,
             household_structure_meta=HouseholdStructure._meta,
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             rbd_enrolment_checklist_meta=RBDEligibility._meta,
             household_info_meta=HouseholdInfo._meta,
+<<<<<<< HEAD
+            household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
+            household_enumeration_refusal=self.household_enumeration_refusal,
+=======
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
             head_household_eligibility=self.head_household_eligibility,
+>>>>>>> develop
             plot=self.household.plot,
+            household_assessment=self.household_assessment,
             household=self.household,
             household_identifier=self.household.household_identifier,
             household_structure=self.household_structure,
@@ -86,13 +98,22 @@ class HouseholdDashboard(Dashboard):
         """Confirms there is an househol_log_entry for today."""
         today = date.today()
         if self.household_log:
-            if not HouseholdLogEntry.objects.filter(
-                household_log=self.household_log,
-                report_datetime__year=today.year,
-                report_datetime__month=today.month,
-                report_datetime__day=today.day):
+            if not HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
                 return False
+            elif HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day) and self.household_assessment:
+                if self.household_assessment.vdc_househould_status:
+                    return False
+            elif HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
+                if HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).household_status == 'no_household_informant':
+                    return False
         return True
+
+    @property
+    def household_assessment(self):
+        self._household_assessment = None
+        if HouseholdAssessment.objects.filter(household=self.household):
+            self._household_assessment = HouseholdAssessment.objects.get(household=self.household)
+        return self._household_assessment
 
     @property
     def household_info(self):
@@ -100,18 +121,26 @@ class HouseholdDashboard(Dashboard):
         if HouseholdInfo.objects.filter(household_structure=self.household_structure):
             self._household_info = HouseholdInfo.objects.get(household_structure=self.household_structure)
         return self._household_info
+    
+    @property
+    def household_enumeration_refusal(self):
+        self._household_enumeration_refusal = None
+        if HouseholdEnumerationRefusal.objects.filter(household=self.household):
+            self._household_enumeration_refusal = HouseholdEnumerationRefusal.objects.get(household=self.household)
+            return self._household_enumeration_refusal
+        return self._household_enumeration_refusal
 
     @property
     def any_eligible_hoh(self):
         self._eligible_hoh = None
-        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes'):
-            self._eligible_hoh = HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes')
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
+            self._eligible_hoh = HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
         return self._eligible_hoh
 
     @property
     def head_household_eligibility(self):
-        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes'):
-            return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes')
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
+            return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
         return None
 
     @property
@@ -136,7 +165,7 @@ class HouseholdDashboard(Dashboard):
         """Returns the first survey and there should always be at least one."""
         if not self._first_survey:
             try:
-                self._first_survey = Survey.objects.all().order_by('datetime_start')[0]
+                self._first_survey = Survey.objects.all().order_by('datetime_start', 'survey_name')[0]
             except:
                 pass
         return self._first_survey

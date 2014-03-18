@@ -21,7 +21,7 @@ class InspectorMixin(object):
                     requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),  # FIXME: why strptime this??
                     requisition_identifier=requisition_identifier,
                     specimen_identifier=specimen_identifier,
-                    device_id=device.get_device_id(),
+                    device_id=device.device_id,
                     app_name=self._meta.app_label,
                     model_name=self._meta.object_name
                     )

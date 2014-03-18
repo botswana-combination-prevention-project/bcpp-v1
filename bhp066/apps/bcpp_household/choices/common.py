@@ -54,7 +54,13 @@ HOUSEHOLD_STATUS = (
     ('eligible_representative_present', 'HOH or eligible representative present'),
     ('eligible_representative_absent', 'HOH or eligible representative absent, ineligible household member present'),
     ('no_household_informant', 'No household informant'),
+    ('refused', 'refused'),
     )
+
+NOT_ENUMERATED_REASONS = (
+        ('HOH_refued', 'HOH refusal'),
+        ('no_household_informant', 'No Household Informant'),
+)
 
 HOUSEHOLD_COMPLETION_STATUS = (
     ('complete', 'Complete'),

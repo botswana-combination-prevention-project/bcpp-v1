@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start, eligible_if_no
@@ -89,7 +90,8 @@ class HicEnrollment (BaseScheduledVisitModel):
         self.locator_information = self.is_locator_information()
         super(HicEnrollment, self).save(*args, **kwargs)
 
-    def is_permanent_resident(self):
+    def is_permanent_resident(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         from ..models import ResidencyMobility
         residency_mobility = ResidencyMobility.objects.filter(subject_visit = self.subject_visit)
         if residency_mobility.exists():
@@ -100,7 +102,8 @@ class HicEnrollment (BaseScheduledVisitModel):
         else:
             raise TypeError('Please fill ResidencyMobility form before proceeding with this one.')
 
-    def is_intended_residency(self):
+    def is_intended_residency(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         from ..models import ResidencyMobility
         residency_mobility = ResidencyMobility.objects.filter(subject_visit = self.subject_visit)
         if residency_mobility.exists():
@@ -111,7 +114,8 @@ class HicEnrollment (BaseScheduledVisitModel):
         else:
             raise TypeError('Please fill ResidencyMobility form before proceeding with this one.')
 
-    def get_hiv_status_today(self):
+    def get_hiv_status_today(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         from ..models import HivResult
         hiv_result = HivResult.objects.filter(subject_visit = self.subject_visit)
         if hiv_result.exists():
@@ -122,7 +126,8 @@ class HicEnrollment (BaseScheduledVisitModel):
         else:
             raise TypeError('Please fill Today\'s Hiv Result form before proceeding with this one.')
 
-    def get_dob_consent_datetime(self):
+    def get_dob_consent_datetime(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
         subject_consent = SubjectConsent.objects.filter(household_member = self.subject_visit.household_member)
         if subject_consent.exists():
@@ -133,13 +138,15 @@ class HicEnrollment (BaseScheduledVisitModel):
         else:
             raise TypeError('Please fill SubjectConsent form before proceeding with this one.')
 
-    def is_household_residency(self):
+    def is_household_residency(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         if self.subject_visit.household_member:
             return True
         else:
             raise TypeError('This form has to be attached by to a household member. Currently it is not.')
 
-    def is_citizen_or_spouse(self):
+    def is_citizen_or_spouse(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
         subject_consent = SubjectConsent.objects.filter(household_member = self.subject_visit.household_member)
         if subject_consent.exists():
@@ -150,7 +157,8 @@ class HicEnrollment (BaseScheduledVisitModel):
         else:
             raise TypeError('Please fill SubjectConsent form before proceeding with this one.')
 
-    def is_locator_information(self):
+    def is_locator_information(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         from ..models import SubjectLocator
         subject_locator = SubjectLocator.objects.filter(subject_visit = self.subject_visit)
         if subject_locator.exists():

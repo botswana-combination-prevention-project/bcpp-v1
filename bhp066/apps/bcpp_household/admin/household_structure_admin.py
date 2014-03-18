@@ -21,7 +21,6 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
 
     fields = (
         'survey',
-        'member_count',
         'note')
     list_display = (
         'plot',
@@ -39,6 +38,8 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'survey',
         'progress',
         'member_count',
+        'enrolled',
+        'enrolled_datetime',
         'modified',
         'user_modified',
         'hostname_modified',
