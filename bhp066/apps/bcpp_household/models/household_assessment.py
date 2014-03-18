@@ -2,11 +2,13 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO, YES_NO_DONT_KNOW, RESIDENT_LAST_SEEN
+from edc.choices import YES_NO, YES_NO_DONT_KNOW
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_list.models import ResidentMostLikely
 from apps.bcpp_household.managers import HouseholdAssessmentManager
+
+from ..choices import RESIDENT_LAST_SEEN
 
 from .household import Household
 from .plot import Plot
