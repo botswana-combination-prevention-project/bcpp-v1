@@ -1,12 +1,13 @@
 from django.contrib import admin
 
+from edc.base.admin.admin import BaseModelAdmin
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 from ..models import HouseholdEnumerationRefusal, Household
 from ..forms import HouseholdEnumerationRefusalForm
 
 
-class HouseholdEnumerationRefusalAdmin(BaseHouseholdModelAdmin):
+class HouseholdEnumerationRefusalAdmin(BaseModelAdmin):
 
     form = HouseholdEnumerationRefusalForm
     date_hierarchy = 'modified'
@@ -28,8 +29,6 @@ class HouseholdEnumerationRefusalAdmin(BaseHouseholdModelAdmin):
     list_filter = ('report_datetime', 'created',)
 
     search_fields = ('household__household_identifier', 'community', 'id', 'plot__id')
-
-    readonly_fields = ('household',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household":
