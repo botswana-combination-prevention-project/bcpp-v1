@@ -1,12 +1,12 @@
 import factory
 from datetime import datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from ...models import HouseholdEnumerationRefusal
+from ...models import HouseholdRefusal
 from .plot_factory import PlotFactory
 
 
-class HouseholdEnumerationRefusalFactory(BaseUuidModelFactory):
-    FACTORY_FOR = HouseholdEnumerationRefusal
+class HouseholdRefusalFactory(BaseUuidModelFactory):
+    FACTORY_FOR = HouseholdRefusal
 
     household = factory.SubFactory(PlotFactory)
     report_datetime = datetime.now()
