@@ -38,8 +38,8 @@ def create_household_on_post_save(sender, instance, created, **kwargs):
             instance.create_or_delete_households(instance)
 
 
-@receiver(post_save, weak=False, dispatch_uid="plot_visit_attempts_on_post_save")
-def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid="plot_access_attempts_on_post_save")
+def plot_access_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, PlotLogEntry):
             plot = instance.plot_log.plot
@@ -51,8 +51,8 @@ def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
                 raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
 
 
-@receiver(post_save, weak=False, dispatch_uid='household_visit_attempts_on_post_save')
-def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
+def household_enumeration_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
