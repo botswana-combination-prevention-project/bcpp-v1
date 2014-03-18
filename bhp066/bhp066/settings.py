@@ -107,7 +107,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_140310',
+            'NAME': 'bhp066_dvp',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -240,12 +240,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django_extensions',
+    'django_extensions',   # DONT TOUCH!!
     'django_databrowse',
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -322,8 +322,9 @@ INSTALLED_APPS = (
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
+    'edc.lab.lab_profile',
 
-    'lis.core.lab_barcode',
+    'lis.labeling',
     'lis.core.lab_common',
     'lis.core.lab_flag',
     'lis.core.lab_grading',
@@ -356,7 +357,6 @@ INSTALLED_APPS = (
     'apps.bcpp_stats',
     'apps.bcpp_household',
     'apps.bcpp_subject',
-    'apps.bcpp_rbd_subject',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
     'apps.bcpp_survey',
@@ -435,6 +435,7 @@ GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 
 # edc.lab
+LAB_SECTION = 'bcpp_lab'
 LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'

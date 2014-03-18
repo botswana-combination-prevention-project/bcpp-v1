@@ -1,15 +1,16 @@
-from datetime import datetime
+from datetime import datetime, date
+from dateutils import relativedelta
 
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.core.exceptions import ValidationError
 
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
-from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_DWTA, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from ..managers import EnrolmentChecklistManager
 from .household_member import HouseholdMember
 from .loss import Loss
 
@@ -36,6 +37,14 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         help_text="Format is YYYY-MM-DD. (Data will not be saved)",
+        )
+
+    guardian = models.CharField(
+        verbose_name=("If minor, is there a guardian available? "),
+        max_length=10,
+        choices=YES_NO_NA,
+        help_text=("If a minor age 16 and 17, ensure a guardian is available otherwise"
+                   " participant will not be enrolled."),
         )
 
     gender = models.CharField(
@@ -80,14 +89,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         help_text="If 'NO' participant will not be enrolled.",
         )
 
-    marriage_certificate_no = models.CharField(
-        verbose_name=("What is the marriage certificate number?"),
-        max_length=9,
-        null=True,
-        blank=True,
-        help_text="e.g. 000/YYYY",
-        )
-
+    # same as study_resident in household member
     part_time_resident = models.CharField(
         verbose_name=("In the past 12 months, have you typically spent 3 or"
                       " more nights per month in this community? "),
@@ -100,34 +102,94 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
                   "If 'NO (or don't want to answer)'. Participant will not be enrolled."),
         )
 
-    objects = models.Manager()
+    household_residency = models.CharField(
+        verbose_name='In the past 12 months, have you typically spent more nights on average in this household than in any other household in the same community?',
+        max_length=3,
+        choices=YES_NO,
+        help_text="If 'NO' participant will not be enrolled.",
+        )
+
+    literacy = models.CharField(
+        verbose_name=("Is the participant LITERATE?, or if ILLITRATE, is there a"
+                      "  LITERATE witness available "),
+        max_length=10,
+        choices=YES_NO,
+        help_text=("If participate is illitrate, confirm there is a literate"
+                   "witness available otherwise participant will not be enrolled."),
+        )
+
+    is_eligible = models.BooleanField(default=False)
+
+    objects = EnrolmentChecklistManager()
+
+    def __unicode__(self):
+        return str(self.household_member)
+
+    def natural_key(self):
+        if not self.household_member:
+            raise AttributeError("household_member cannot be None for household_head_eligibility with pk='\{0}\'".format(self.pk))
+        return self.household_member.natural_key()
+    natural_key.dependencies = ['bcpp_household.household_member']
+
+    def dispatch_container_lookup(self, using=None):
+        return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        """Does not save anything, note no call to super."""
-        if self.has_identity.lower() == 'no':
-            self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='No valid identity.')
-            loss_form.save()
-            self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        elif self.part_time_resident.lower() != 'yes':
-            self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Does not spend 3 or more nights per month in the community.')
-            loss_form.save()
-            self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        elif self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
-            self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen and not married to a citizen.')
-            loss_form.save()
-            self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        elif self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'no':
-            self.household_member.eligible_subject = False
-            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not a citizen, married to a citizen but does not have a marriage certificate.')
-            loss_form.save()
-            self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        else:
-            self.household_member.eligible_subject = True
+        self.household_member.eligible_subject = False
+        age_in_years = relativedelta(date.today(), self.dob).years
+        if self.matches_household_member_values(age_in_years):
+            if not self.has_loss_reason(age_in_years):
+                self.household_member.eligible_subject = True
+        self.is_eligible = self.household_member.eligible_subject
         self.household_member.eligibility_checklist_filled = True
         self.household_member.save()
+        super(EnrolmentChecklist, self).save(*args, **kwargs)
+
+    def matches_household_member_values(self, age_in_years, exception_cls=None):
+        """Compares shared values on household_member form and returns True if all match."""
+        validation_error = None
+        exception_cls = exception_cls or ValidationError
+        if age_in_years != self.household_member.age_in_years:
+            validation_error = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, self.household_member.age_in_years)
+        if self.household_member.study_resident.lower() != self.part_time_resident.lower():
+            validation_error = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(self.part_time_resident, self.household_member.study_resident)
+        if self.household_member.initials.lower() != self.initials.lower():
+            validation_error = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(self.initials, self.household_member.initials)
+        if self.household_member.gender != self.gender:
+            validation_error = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(self.gender, self.household_member.gender)
+        if validation_error:
+            raise exception_cls(validation_error)
+        return True
+
+    def has_loss_reason(self, age_in_years):
+        """Adds any reasons for ineligibilty to a loss reason list and create a loss model instance."""
+        loss_reason = []
+        if not (age_in_years >= 16 and age_in_years <= 64):
+            loss_reason.append('Must be aged between >=16 and <=64 years.')
+        if self.has_identity.lower() == 'no':
+            loss_reason.append('No valid identity.')
+        if self.part_time_resident.lower() != 'yes':
+            loss_reason.append('Does not spend 3 or more nights per month in the community.')
+        if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
+            loss_reason.append('Not a citizen and not married to a citizen.')
+        if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'no':
+            loss_reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
+        if self.literacy.lower() == 'no':
+            loss_reason.append('Illiterate with no literate witness.')
+        if self.household_member.is_minor and self.guardian.lower() != 'yes':
+            loss_reason.append('Minor without guardian available.')
+        #TODO: delete loss if no reason
+        if loss_reason:
+            if Loss.objects.filter(household_member=self.household_member):
+                loss = Loss.objects.get(household_member=self.household_member)
+                loss.report_datetime = datetime.today()
+                loss.loss_reason = loss_reason
+            else:
+                Loss.objects.create(
+                    household_member=self.household_member,
+                    report_datetime=datetime.today(),
+                    reason=';'.join(loss_reason))
+        return loss_reason
 
     class Meta:
         app_label = "bcpp_household_member"

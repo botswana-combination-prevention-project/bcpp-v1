@@ -1,23 +1,16 @@
 import datetime
 
-from django import forms
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from edc.map.classes import site_mappers, Mapper
-from edc.map.exceptions import MapperError
-
 from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_household.classes import ReplacementData
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ..forms import PlotForm
-from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
-from edc.map.classes import site_mappers
+from ..models import Household, HouseholdStructure
 
 from .factories import PlotFactory
+
 
 class PlotReplcamentMethodTests(TestCase):
 
@@ -41,7 +34,7 @@ class PlotReplcamentMethodTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         print household
-        household.allowed_to_enumerate='no'
+        household.allowed_to_enumerate = 'no'
         household.report_datetime = datetime.datetime.now()
         household.save()
         h_structure = HouseholdStructure.objects.get(household=household)
@@ -55,7 +48,7 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='REFUSED',
                 study_resident='Yes')
         member.save()
-        print ReplacementData().replace_refusals(plot),"its the 1 returning none"
+        print ReplacementData().replace_refusals(plot), "its the 1 returning none"
         print household, "this is the househod to be returned"
         print h_structure, "STRUCTURE"
         print HouseholdMember.objects.filter(household_structure=h_structure), "Members"
@@ -79,7 +72,7 @@ class PlotReplcamentMethodTests(TestCase):
                 gps_minutes_e=44.8782599,
                 selected=1)
         households = Household.objects.filter(plot=plot)
-        household1=households[0]
+        household1 = households[0]
         h_structure = HouseholdStructure.objects.get(household=household1)
         member1 = HouseholdMember(
                 household_structure=h_structure,
@@ -103,7 +96,7 @@ class PlotReplcamentMethodTests(TestCase):
                 study_resident='Yes')
         member2.save()
 
-        household2=households[1]
+        household2 = households[1]
         h_structure = HouseholdStructure.objects.get(household=household2)
         member3 = HouseholdMember(
                 household_structure=h_structure,
@@ -119,7 +112,7 @@ class PlotReplcamentMethodTests(TestCase):
                 initials='TF', gender='F', age_in_years=27, present_today='Yes',
                 member_status='RESEARCH')
         member4.save()
-        
+
         print "*************************************************"
         print "refusal tests for 2 household 1 as a refusal"
         print "*************************************************"
@@ -130,7 +123,7 @@ class PlotReplcamentMethodTests(TestCase):
         print "*********************************"
         print "Absentee replacement"
         print "*****************************************"
- 
+
         plot = PlotFactory(
                 community='test_community',
                 household_count=1,
@@ -191,7 +184,7 @@ class PlotReplcamentMethodTests(TestCase):
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
- 
+
         member = HouseholdMember(
                 household_structure=h_structure,
                 first_name='DILO',
@@ -205,7 +198,7 @@ class PlotReplcamentMethodTests(TestCase):
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
- 
+
         h_structure = HouseholdStructure.objects.get(household=household[1])
         member = HouseholdMember(
                 household_structure=h_structure,
@@ -238,7 +231,7 @@ class PlotReplcamentMethodTests(TestCase):
         household.report_datetime = datetime.datetime.now()
         household.allowed_to_enumerate = 'no'
         household.save()
-        
+
         print "*************************************************"
         print "Head of household refusal tests"
         print "*************************************************"

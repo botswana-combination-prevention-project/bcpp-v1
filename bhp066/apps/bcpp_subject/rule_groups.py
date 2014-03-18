@@ -4,29 +4,7 @@ from edc.subject.registration.models import RegisteredSubject
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation)
-
-
-# class VisitCreationRuleGroup(RuleGroup):
-#     gender_male = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('gender', 'equals', 'f'),
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['circumcision', 'circumcised', 'uncircumcised'])
-# 
-#     gender_female = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('gender', 'equals', 'm'),
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
-# 
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         source_fk = (Appointment, 'appointment')
-#         source_model = SubjectVisit
-# site_rule_groups.register(VisitCreationRuleGroup)
+                    HivResult, HivResultDocumentation, HicEnrollment)
 
 
 class RegisteredSubjectRuleGroup(RuleGroup):
@@ -199,7 +177,7 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
             predicate=('recorded_hiv_result', 'ne', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult', ])
+        target_model=['hivresult', 'hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -215,7 +193,7 @@ class HivDocumentationGroup(RuleGroup):
             predicate=('result_recorded', 'ne', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult'])
+        target_model=['hivresult', 'hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -255,6 +233,13 @@ class TodaysHivRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
+
+    hic_enrollement = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined','or'), ('hiv_result', 'equals', 'Not performed','or')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'

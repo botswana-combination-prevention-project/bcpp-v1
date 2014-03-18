@@ -9,7 +9,6 @@ from ..managers import HouseholdRefusalManager
 from .household import Household
 from .plot import Plot
 
-
 HOUSEHOLD_ENUMERATION_REFUSAL = (
     ('not_interested', 'Not Interested'),
     ('does_not_have_time', 'Does not have time'),
@@ -17,8 +16,7 @@ HOUSEHOLD_ENUMERATION_REFUSAL = (
     ('other', 'Other'),
 )
 
-
-class HouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
+class HouseholdRefusal(BaseDispatchSyncUuidModel):
 
     household = models.OneToOneField(Household)
 
@@ -43,9 +41,6 @@ class HouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
         null=True,
         )
 
-    def __unicode__(self):
-        return unicode(self.household)
-
     objects = HouseholdRefusalManager()
 
     history = AuditTrail()
@@ -56,6 +51,9 @@ class HouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household__plot__plot_identifier')
+
+    def __unicode__(self):
+        return unicode(self.household) + '(' + unicode(self.report_datetime) + ')'
 
     class Meta:
         app_label = 'bcpp_household'
