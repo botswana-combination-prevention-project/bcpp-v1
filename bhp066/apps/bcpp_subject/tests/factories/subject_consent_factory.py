@@ -1,5 +1,5 @@
 import factory
-from datetime import datetime
+from datetime import datetime, date
 from edc.testing.tests.factories.test_consent_factory import BaseConsentFactory
 from ...models import SubjectConsent
 #from edc.core.bhp_variables.tests.factories import StudySiteFactory
@@ -16,6 +16,8 @@ class SubjectConsentFactory(BaseConsentFactory):
     is_literate = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     consent_version_on_entry = 1
     consent_version_recent = 1
+    gender = 'M'
+    dob = date(1980,01,01)
     citizen = 'Yes'
     is_verified = True
     identity = factory.Sequence(lambda n: 'identity{0}'.format(n))

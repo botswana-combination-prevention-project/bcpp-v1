@@ -93,7 +93,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         verbose_name=("In the past 12 months, have you typically spent 3 or"
                       " more nights per month in this community? "),
         max_length=10,
-        choices=YES_NO_DWTA,
+        choices=YES_NO,
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
@@ -158,12 +158,16 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='ILLITRATE with no LITERATE witness.')
             loss_form.save()
             self.household_member.member_status_full = 'NOT_ELIGIBLE'
-        elif self.household_member.is_minor():
-            if self.guardian != 'Yes':
-                self.household_member.eligible_subject = False
-                loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Minor without guardian available.')
-                loss_form.save()
-                self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.household_residency.lower() == 'no':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Not household RESIDENT')
+            loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
+        elif self.household_member.is_minor() and self.guardian != 'Yes':
+            self.household_member.eligible_subject = False
+            loss_form = Loss(household_member=self.household_member, report_datetime=datetime.today(), reason='Minor without guardian available.')
+            loss_form.save()
+            self.household_member.member_status_full = 'NOT_ELIGIBLE'
         else:
             self.household_member.eligible_subject = True
         self.household_member.eligibility_checklist_filled = True
