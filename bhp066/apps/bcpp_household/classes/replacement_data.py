@@ -51,8 +51,8 @@ class ReplacementData(object):
 
     def is_refused_household(self, household):
         """Check if head of household refused members to participate."""
-        from ..models import HouseholdEnumerationRefusal
-        if household.household_status == 'refused' and HouseholdEnumerationRefusal.objects.filter(household=household):
+        from ..models import HouseholdRefusal
+        if household.household_status == 'refused' and HouseholdRefusal.objects.filter(household=household):
             return True
         return False
 

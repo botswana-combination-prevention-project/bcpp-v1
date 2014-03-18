@@ -9,6 +9,7 @@ from apps.bcpp_list.models import ResidentMostLikely
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
 from ..choices import RESIDENT_LAST_SEEN
+
 from .household import Household
 from .plot import Plot
 
