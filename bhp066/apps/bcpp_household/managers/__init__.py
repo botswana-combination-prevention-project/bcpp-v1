@@ -6,5 +6,6 @@ from .household_log_manager import *
 from .community_manager import CommunityManager
 from .plot_manager import PlotManager
 from .plot_log_manager import PlotLogManager, PlotLogEntryManager
-from .household_residency_status_assessment_manager import HouseholdResidencyStatusAssessmentManager
+from .household_assessment_manager import HouseholdAssessmentManager
+from .Household_refusal_manager import HouseholdRefusalManager
 

@@ -17,9 +17,10 @@
 				<th>Household to return</th>
 				<th>Return</th>
 			</thead>
-		{% for household in replacement_data %}
+		{% for household, reason in replacement_data %}
 			<tr>
 				<td>{{ household }}</td>
+				<td>{{ reason }}</td>
 				<td><a href="{% url 'return_data_url' %}/?household_identifier={{ household.household_identifier }}">return</a></td>
 			</tr>
 		{% endfor %}
@@ -50,7 +51,7 @@
 		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replace_str={{ replace_str }}"><b>Return All</b></a></td></tr>
 		<tr><td>Total replacements: {{ replacement_count }}</td></tr>
 		</table>
-	
+	{% endif %}
 	
 	
 

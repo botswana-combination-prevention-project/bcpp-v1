@@ -8,15 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        pass
         # Adding field 'HouseholdMember.eligible_rbd_subject'
-        db.add_column(u'bcpp_household_member_householdmember', 'eligible_rbd_subject',
-                      self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'HouseholdMemberAudit.eligible_rbd_subject'
-        db.add_column(u'bcpp_household_member_householdmember_audit', 'eligible_rbd_subject',
-                      self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
-                      keep_default=False)
+#         db.add_column(u'bcpp_household_member_householdmember', 'eligible_rbd_subject',
+#                       self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
+#                       keep_default=False)
+# 
+#         # Adding field 'HouseholdMemberAudit.eligible_rbd_subject'
+#         db.add_column(u'bcpp_household_member_householdmember_audit', 'eligible_rbd_subject',
+#                       self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
+#                       keep_default=False)
 
 
     def backwards(self, orm):

@@ -6,13 +6,13 @@ from edc.choices import YES_NO, YES_NO_DONT_KNOW, RESIDENT_LAST_SEEN
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_list.models import ResidentMostLikely
-from apps.bcpp_household.managers import HouseholdResidencyStatusAssessmentManager
+from apps.bcpp_household.managers import HouseholdAssessmentManager
 
 from .household import Household
 from .plot import Plot
 
 
-class HouseholdResidencyStatusAssessment(BaseDispatchSyncUuidModel):
+class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     household = models.ForeignKey(Household, null=True)
 
@@ -97,7 +97,7 @@ class HouseholdResidencyStatusAssessment(BaseDispatchSyncUuidModel):
     def __unicode__(self):
         return unicode(self.household)
 
-    objects = HouseholdResidencyStatusAssessmentManager()
+    objects = HouseholdAssessmentManager()
 
     history = AuditTrail()
 
