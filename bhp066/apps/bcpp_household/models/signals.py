@@ -1,10 +1,13 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+
 from .household import Household
 from .household_log import HouseholdLogEntry
 from .plot import Plot
 from .plot_log import PlotLogEntry
 from .household_structure import HouseholdStructure
+from .household_enumeration_refusal import HouseholdRefusal
+
 from apps.bcpp_household_member.models import HouseholdMember
 
 
@@ -51,6 +54,14 @@ def plot_access_attempts_on_post_save(sender, instance, created, **kwargs):
                 raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
 
 
+@receiver(post_save, weak=False, dispatch_uid='household_visit_attempts_on_post_save')
+def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdLogEntry):
+            household = instance.household_log.household_structure.household
+            if not household.enumerated and instance.household_status == 'no_household_informant':
+
+
 @receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
 def household_enumeration_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
@@ -62,3 +73,12 @@ def household_enumeration_attempts_on_post_save(sender, instance, created, **kwa
                 enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
                 household.enumeration_attempts = enumeration_attempts
                 household.save()
+
+
+@receiver(post_save, weak=False, dispatch_uid='delete_household_refusal_on_post_save')
+def delete_household_refusal(sender, instance, created, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdLogEntry):
+            household = instance.household_log.household_structure.household
+            if not instance.household_status == 'refused' and HouseholdRefusal.objects.get(household=household):
+                HouseholdRefusal.objects.get(household=household).delete()
