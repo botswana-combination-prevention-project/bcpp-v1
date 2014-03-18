@@ -1,20 +1,42 @@
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.lab.lab_requisition.models import BaseRequisition
+from edc.map.classes import site_mappers
 
+from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_inspector.classes import InspectorMixin
 from apps.bcpp_subject.models import SubjectVisit
 
-from ..models import BaseBcppRequisition
 from ..managers import RequisitionManager
 
+from .aliquot_type import AliquotType
+from .packing_list import PackingList
+from .panel import Panel
 
-class SubjectRequisition(BaseBcppRequisition):
+
+class SubjectRequisition(InspectorMixin, BaseRequisition):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
     entry_meta_data_manager = RequisitionManager(SubjectVisit)
 
+    packing_list = models.ForeignKey(PackingList, null=True, blank=True)
+
+    aliquot_type = models.ForeignKey(AliquotType)
+
+    panel = models.ForeignKey(Panel)
+
+    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        self.community = self.get_visit().household_member.household_structure.household.plot.community
+        super(SubjectRequisition, self).save(*args, **kwargs)
+
+    def get_site_code(self):
+        return site_mappers.get_current_mapper().map_code
 
     def get_visit(self):
         return self.subject_visit

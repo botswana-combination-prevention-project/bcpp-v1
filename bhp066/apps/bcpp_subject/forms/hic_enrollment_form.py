@@ -8,23 +8,30 @@ class HicEnrollmentForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        # validating a need to specify the participant's preference
-        if not cleaned_data.get('subject_visit', None).household_member:
-            raise forms.ValidationError('This form has to be attached by to a household member. Currently it is not.')
-        mobility = ResidencyMobility.objects.filter(subject_visit=cleaned_data.get('subject_visit'))
-        if mobility.exists():
-            if mobility[0].intend_residency == 'Yes':
-                raise forms.ValidationError('In Recidency Mobility form this individual states they want to move out of this community. Please cancel and revise that answer before coming back to this HicEnrollment form.')
-            if mobility[0].permanent_resident != 'Yes':
-                raise forms.ValidationError('In Recidency Mobility form this individual has to spend atleast 14 days/month. Please cancel and revise that answer before coming back to this HicEnrollment form.')
-        else:
-            raise forms.ValidationError('You need to have filled the Recidency Mobility form before this one.')
-        hiv_result = HivResult.objects.filter(subject_visit=cleaned_data.get('subject_visit'))
-        if hiv_result.exists():
-            if hiv_result[0].hiv_result.lower() != 'neg':
-                raise forms.ValidationError('This participant needs to be \'NEG\' in Today\'s HivResult form. Please review that answer before continuing with this form.')
-        else:
-            raise forms.ValidationError('You need to have filled the Today\'s HivResult form before this one.')
+        self.instance.is_permanent_resident()
+        self.instance.is_intended_residency()
+        self.instance.get_hiv_status_today()
+        self.instance.get_dob_consent_datetime()
+        self.instance.is_household_residency()
+        self.instance.is_citizen_or_spouse()
+        self.instance.is_locator_information()
+#         # validating a need to specify the participant's preference
+#         if not cleaned_data.get('subject_visit', None).household_member:
+#             raise forms.ValidationError('This form has to be attached by to a household member. Currently it is not.')
+#         mobility = ResidencyMobility.objects.filter(subject_visit=cleaned_data.get('subject_visit'))
+#         if mobility.exists():
+#             if mobility[0].intend_residency == 'Yes':
+#                 raise forms.ValidationError('In Recidency Mobility form this individual states they want to move out of this community. Please cancel and revise that answer before coming back to this HicEnrollment form.')
+#             if mobility[0].permanent_resident != 'Yes':
+#                 raise forms.ValidationError('In Recidency Mobility form this individual has to spend atleast 14 days/month. Please cancel and revise that answer before coming back to this HicEnrollment form.')
+#         else:
+#             raise forms.ValidationError('You need to have filled the Recidency Mobility form before this one.')
+#         hiv_result = HivResult.objects.filter(subject_visit=cleaned_data.get('subject_visit'))
+#         if hiv_result.exists():
+#             if hiv_result[0].hiv_result.lower() != 'neg':
+#                 raise forms.ValidationError('This participant needs to be \'NEG\' in Today\'s HivResult form. Please review that answer before continuing with this form.')
+#         else:
+#             raise forms.ValidationError('You need to have filled the Today\'s HivResult form before this one.')
         #Validations below commented out because those fields are readonly, hence not submitted with the form. Its sufficient to validate them in the save method.
 #         subject_consent = SubjectConsent.objects.filter(household_member = cleaned_data.get('subject_visit').household_member)
 #         if subject_consent.exists():
