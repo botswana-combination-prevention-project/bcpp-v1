@@ -59,8 +59,10 @@
         {% if household_members %}
             {% if household_info %}
                 <p style="clear:both;font-size:11px;"><a href="{% url household_info_meta|admin_urlname:'change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information from {{household_info.household_member.get_relation_display }} {{household_info.household_member.first_name|encrypted }}</a></p>
-            {% else %}
-                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from Head of Household or a Representative</a></p>
+            {% elif not household_info and not eligible_hoh %}
+            	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url head_household_eligibility_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Fill Household Head Eligibility</a></p>
+            {% elif not household_info and eligible_hoh %}
+                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from {{head_household_eligibility.household_member.get_relation_display }} {{head_household_eligibility.household_member.first_name|encrypted }}</a></p>
             {% endif %}
         {% endif %}
       {% endblock %}

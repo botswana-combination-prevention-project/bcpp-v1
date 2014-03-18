@@ -11,8 +11,8 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdEnumerationRefusal
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo
-from apps.bcpp_rbd_subject.models import RBDEligibility
+from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, HouseholdHeadEligibility
+from apps.bcpp_rbd.models import RBDEligibility
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, Loss
 from apps.bcpp_survey.models import Survey
 
@@ -34,7 +34,11 @@ class HouseholdDashboard(Dashboard):
         self._current_member_count = None
         self._enrolment_checklist = None
         self._household_info = None
+<<<<<<< HEAD
         self._household_enumeration_refusal = None
+=======
+        self.__eligible_hoh = None
+>>>>>>> develop
         self._first_survey = None
         self._survey = None
         self._surveys = None
@@ -62,8 +66,13 @@ class HouseholdDashboard(Dashboard):
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             rbd_enrolment_checklist_meta=RBDEligibility._meta,
             household_info_meta=HouseholdInfo._meta,
+<<<<<<< HEAD
             household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
             household_enumeration_refusal=self.household_enumeration_refusal,
+=======
+            head_household_eligibility_meta=HouseholdHeadEligibility._meta,
+            head_household_eligibility=self.head_household_eligibility,
+>>>>>>> develop
             plot=self.household.plot,
             household_assessment=self.household_assessment,
             household=self.household,
@@ -79,6 +88,7 @@ class HouseholdDashboard(Dashboard):
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry(),
             household_info=self.household_info,
+            eligible_hoh=self.any_eligible_hoh,
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
@@ -121,6 +131,19 @@ class HouseholdDashboard(Dashboard):
         return self._household_enumeration_refusal
 
     @property
+    def any_eligible_hoh(self):
+        self._eligible_hoh = None
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
+            self._eligible_hoh = HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
+        return self._eligible_hoh
+
+    @property
+    def head_household_eligibility(self):
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
+            return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
+        return None
+
+    @property
     def survey(self):
         return self.current_survey
 
@@ -142,7 +165,7 @@ class HouseholdDashboard(Dashboard):
         """Returns the first survey and there should always be at least one."""
         if not self._first_survey:
             try:
-                self._first_survey = Survey.objects.all().order_by('datetime_start')[0]
+                self._first_survey = Survey.objects.all().order_by('datetime_start', 'survey_name')[0]
             except:
                 pass
         return self._first_survey
