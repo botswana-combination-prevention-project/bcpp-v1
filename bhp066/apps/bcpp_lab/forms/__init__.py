@@ -1,3 +1,2 @@
 from .packing_list_form import PackingListForm, PackingListItemForm
-from .rbd_requisition_form import RBDRequisitionForm
 from .subject_requisition_form import SubjectRequisitionForm

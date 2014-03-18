@@ -56,12 +56,9 @@ def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
-            members = None
-            if HouseholdStructure.objects.filter(household=household):
-                h_structure = HouseholdStructure.objects.get(household=household)
-                if HouseholdMember.objects.filter(household_structure=h_structure):
-                    members = HouseholdMember.objects.filter(household_structure=h_structure)
-            if not members and instance.household_status == 'no_household_informant':
+            household_structure = instance.household_log.household_structure
+            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
+            if not household_members and instance.household_status == 'no_household_informant':
                 enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
                 household.enumeration_attempts = enumeration_attempts
                 household.save()
