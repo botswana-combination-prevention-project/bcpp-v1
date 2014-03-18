@@ -1,18 +1,13 @@
 import itertools
 from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import redirect
 from django.template import RequestContext
-from django.core.urlresolvers import reverse
 
 from django.http import HttpResponseRedirect
 
 from django.db.models import Q
 
 from ..models import Plot, Household
-from ..classes import ReplacementData
-from ..exceptions import ReplacementError
 
 
 def return_data(request):
@@ -64,7 +59,7 @@ def return_data(request):
                 #return households
                 #TODO: Call return method to return households
                 if replacement_plots and len(replacement_plots) > replacement_count:
-                    if not replacement_plots[replacement_count].:
+                    if not replacement_plots[replacement_count]:
                         replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
                         house = Household.objects.get(household_identifier=household_id)
                         house.replacement_plot = replacement_plots[replacement_count].plot_identifier
