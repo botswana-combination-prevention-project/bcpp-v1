@@ -83,5 +83,5 @@ def delete_household_refusal(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
-            if not instance.household_status == 'refused' and HouseholdRefusal.objects.get(household=household):
+            if not instance.household_status == 'refused':  # TODO: what if more than one HH.household_status == refused????
                 HouseholdRefusal.objects.get(household=household).delete()
