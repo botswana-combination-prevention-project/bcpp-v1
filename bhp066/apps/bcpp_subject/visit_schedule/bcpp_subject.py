@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
 
-from apps.bcpp_lab.models import Panel, AliquotType
+# from apps.bcpp_lab.models import Panel, AliquotType
 
 from ..models import SubjectVisit, SubjectConsent
 
@@ -11,8 +11,8 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
 
     name = 'bcpp subject visit schedule'
     app_label = 'bcpp_subject'
-    panel_model = Panel
-    aliquot_type_model = AliquotType
+#     panel_model = Panel
+#     aliquot_type_model = AliquotType
 
     # membership forms
     # (name, model, visible)
