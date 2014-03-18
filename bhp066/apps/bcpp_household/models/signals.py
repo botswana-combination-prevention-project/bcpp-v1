@@ -60,6 +60,9 @@ def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
             if not household.enumerated and instance.household_status == 'no_household_informant':
+                enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
+                household.enumeration_attempts = enumeration_attempts
+                household.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
