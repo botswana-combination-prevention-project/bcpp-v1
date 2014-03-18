@@ -75,7 +75,9 @@
             
             <table><tr><td>
                 {% if has_household_log_entry and not household_members %}<span style="background-color:red;">&nbsp;</span>{% endif %}
-                <A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A>
+                {% if not household.household_status == 'refused' %}
+                	<A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A>
+            	{% endif %}
             </td></tr></table>
         {% endif %}
     {% endif%}  
