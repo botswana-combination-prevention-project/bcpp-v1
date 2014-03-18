@@ -6,7 +6,7 @@ from .household_log import HouseholdLogEntry
 from .plot import Plot
 from .plot_log import PlotLogEntry
 from .household_structure import HouseholdStructure
-from .household_enumeration_refusal import HouseholdRefusal
+from .household_refusal import HouseholdRefusal
 
 from apps.bcpp_household_member.models import HouseholdMember
 
