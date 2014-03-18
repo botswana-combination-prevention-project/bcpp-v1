@@ -1,13 +1,23 @@
 from django.test import TestCase
 
-from edc.subject.appointment.models import Configuration
 from edc.core.bhp_variables.models import StudySpecific
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.subject.appointment.models import Configuration
 from edc.subject.consent.models import ConsentCatalogue
 
 from ..app_configuration.classes import BcppAppConfiguration
 
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+
 
 class BcppAppConfigurationTests(TestCase):
+
+    def setUp(self):
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
 
     def test_appointment_configuration(self):
         #check that there aren't any configurations in the database
