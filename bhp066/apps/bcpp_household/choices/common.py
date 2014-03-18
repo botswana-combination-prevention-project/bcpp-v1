@@ -150,7 +150,6 @@ RELATIONS = (
     ('EMPLOYEE', 'Employee'),
     ('UNKNOWN', 'UNKNOWN'),
     )
-
 RESIDENT_LAST_SEEN = (
         ('more_than_a_year', 'More than one year ago '),
         ('1_to_6_months', '1-6 months ago'),
