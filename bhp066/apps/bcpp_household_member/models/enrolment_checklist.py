@@ -178,6 +178,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             loss_reason.append('Illiterate with no literate witness.')
         if self.household_member.is_minor and self.guardian.lower() != 'yes':
             loss_reason.append('Minor without guardian available.')
+        #TODO: delete loss if no reason
         if loss_reason:
             if Loss.objects.filter(household_member=self.household_member):
                 loss = Loss.objects.get(household_member=self.household_member)
