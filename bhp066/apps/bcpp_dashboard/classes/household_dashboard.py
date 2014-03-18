@@ -104,14 +104,14 @@ class HouseholdDashboard(Dashboard):
     @property
     def any_eligible_hoh(self):
         self._eligible_hoh = None
-        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes'):
-            self._eligible_hoh = HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes')
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
+            self._eligible_hoh = HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
         return self._eligible_hoh
 
     @property
     def head_household_eligibility(self):
-        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes'):
-            return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verball_script='Yes')
+        if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
+            return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
         return None
 
     @property

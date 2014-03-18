@@ -49,12 +49,13 @@ def base_household_member_consent_on_post_save(sender, instance, raw, created, u
 @receiver(post_save, weak=False, dispatch_uid='visit_attempts_on_post_save')
 def visit_attempts_on_post_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
-        if isinstance(instance, SubjectAbsenteeEntry) or isinstance(instance, SubjectUndecidedEntry):
-            if isinstance(instance, SubjectAbsenteeEntry) and instance.subject_absentee:
-                household_member = instance.subject_absentee.household_member
-            elif isinstance(instance, SubjectUndecidedEntry) and instance.subject_undecided:
-                household_member = instance.subject_undecided.household_member
+        household_member = None
+        if isinstance(instance, SubjectAbsenteeEntry):
+            household_member = instance.subject_absentee.household_member
+        if isinstance(instance, SubjectUndecidedEntry):
+            household_member = instance.subject_undecided.household_member
+        if household_member:
             if household_member.visit_attempts <= 3:
-                household_member.visit_attempts = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=household_member).count() + \
-                                                  SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=household_member).count()
+                household_member.visit_attempts = (SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=household_member).count() +
+                                                   SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=household_member).count())
                 household_member.save()
