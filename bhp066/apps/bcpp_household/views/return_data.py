@@ -41,12 +41,12 @@ def return_data(request):
             content_type = None
             for household in replacement_data:
                 if replacement_plots and len(replacement_plots) > replacement_count:
-                    if not replacement_plots[replacement_count].replacing_household:
+                    if not replacement_plots[replacement_count].replacement:
                         replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
                         house = Household.objects.get(household_identifier=household)
                         house.replacement_plot = replacement_plots[replacement_count].plot_identifier
                         house.save()
-                        replacement_plots[replacement_count].replacing_household = house.household_identifier
+                        replacement_plots[replacement_count].replacement = house.household_identifier
                         replacement_plots[replacement_count].save()
                     else:
                         house = Household.objects.get(household_identifier=household)
@@ -64,12 +64,12 @@ def return_data(request):
                 #return households
                 #TODO: Call return method to return households
                 if replacement_plots and len(replacement_plots) > replacement_count:
-                    if not replacement_plots[replacement_count].replacing_household:
+                    if not replacement_plots[replacement_count].:
                         replacement_data_list.append(replacement_plots[replacement_count].plot_identifier)
                         house = Household.objects.get(household_identifier=household_id)
                         house.replacement_plot = replacement_plots[replacement_count].plot_identifier
                         house.save()
-                        replacement_plots[replacement_count].replacing_household = house.household_identifier
+                        replacement_plots[replacement_count].replacement = house.household_identifier
                         replacement_plots[replacement_count].save()
                     else:
                         house = Household.objects.get(household_identifier=household_id)
