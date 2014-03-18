@@ -1,4 +1,4 @@
-from .subject_consent import BaseSubjectConsent, SubjectConsent, SubjectConsentRbd
+from .subject_consent import BaseSubjectConsent, SubjectConsent
 from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
@@ -46,13 +46,14 @@ from .stigma_opinion import StigmaOpinion
 from .positive_participant import PositiveParticipant
 from .access_to_care import AccessToCare
 from .hiv_result import HivResult
+from .hic_enrollment import HicEnrollment
 from .pregnancy import Pregnancy
 from .non_pregnancy import NonPregnancy
 from .hiv_result_documentation import HivResultDocumentation
-from .subject_referral import SubjectReferral
 from .pima import Pima
 from .cd4_history import Cd4History
 from .subject_consent_history import SubjectConsentHistory
 from .clinic_questionnaire import ClinicQuestionnaire
 from .base_household_member_consent import BaseHouseholdMemberConsent
+from .subject_referral import SubjectReferral
 from .signals import *

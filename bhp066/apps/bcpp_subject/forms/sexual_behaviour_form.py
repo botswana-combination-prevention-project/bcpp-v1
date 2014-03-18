@@ -16,12 +16,14 @@ class SexualBehaviourForm (BaseSubjectModelForm):
         self.validate_no_sex('condom', cleaned_data)
         self.validate_no_sex('alcohol_sex', cleaned_data)
         # validating having had sex
-        if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('lifetime_sex_partners'):
-            raise forms.ValidationError('If participant has had sex at some point in their life, give details about life time partners')
+        #Commented out because it proved that many participants did not like answering the question(below)
+        #if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('lifetime_sex_partners'):
+        #    raise forms.ValidationError('If participant has had sex at some point in their life, give details about life time partners')
         # This validation is commented out because question can be left blank if participant does not want to answer
         #         if cleaned_data.get('ever_sex') == 'Yes' and not cleaned_data.get('last_year_partners'):
         #             raise forms.ValidationError('If participant has had sex at some point in their life, give details about sexual partners')
         #If number of sexual partners in past 12months is more than zero, did participant have sex with anyone outside the community 12months ago
+
         if cleaned_data.get('last_year_partners')  > 0  and not cleaned_data.get('more_sex'):
             raise forms.ValidationError('If participant has had sex with anyone in the past 12months, has participant had sex with anyone outside community in the past 12months?')
         # Commented out because on the model its said that this question can be left blank if the participant does not want to answer

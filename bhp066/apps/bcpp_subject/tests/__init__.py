@@ -5,4 +5,5 @@ from .choice_tests import ChoiceTests
 from .consent_history_tests import ConsentHistoryTests
 # from .consent_tests import ConsentTests
 from .referral_tests import ReferralTests
+from .hic_enrollment_tests import HicEnrollmentTests
 from .rule_group_tests import RuleGroupTests

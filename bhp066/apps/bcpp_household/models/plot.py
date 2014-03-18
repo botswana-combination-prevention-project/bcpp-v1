@@ -16,7 +16,7 @@ from edc.map.exceptions import MapperError
 
 from apps.bcpp.choices import COMMUNITIES
 
-from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED, ENUMERATION_STATUS
+from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
 
@@ -351,7 +351,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return 'Not Dispatched'
 
     def is_server(self):
-        if Device().get_device_id() == '99':
+        if Device().device_id == '99':
             return True
         return False
 
