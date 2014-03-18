@@ -9,4 +9,4 @@ from .signals import *
 from .plot_identifier_history import PlotIdentifierHistory
 from .plot_log import PlotLog, PlotLogEntry
 from .household_assessment import HouseholdAssessment
-from .household_enumeration_refusal import HouseholdRefusal
+from .household_refusal import HouseholdRefusal
