@@ -171,6 +171,7 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=25,
         blank=True,
         editable=False,
+        null=True
         )
 
     device_id = models.CharField(
