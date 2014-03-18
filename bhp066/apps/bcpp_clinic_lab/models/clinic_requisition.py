@@ -18,11 +18,6 @@ class ClinicRequisition(BaseRequisition):
 
     packing_list = models.ForeignKey(ClinicPackingList, null=True, blank=True)
 
-    subject_identifier = models.CharField(
-        max_length=25,
-        null=True,
-        editable=False)
-
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
     history = AuditTrail()

@@ -6,3 +6,4 @@ from .plot_form import PlotForm
 from .gps_search_form import GpsSearchForm
 from .plot_log_form import PlotLogForm, PlotLogEntryForm
 from household_enumeration_refusal_form import HouseholdEnumerationRefusalForm
+from .household_assessment_form import HouseholdAssessmentForm
