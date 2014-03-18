@@ -167,7 +167,7 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replacing = models.CharField(
+    replacement = models.CharField(
         max_length=25,
         blank=True,
         editable=False,
