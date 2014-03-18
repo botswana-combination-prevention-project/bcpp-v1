@@ -1,11 +1,14 @@
-from django.db import models
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.db.models import get_model
-from django.core.validators import MinValueValidator, MaxValueValidator
+
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
 from apps.bcpp_survey.models import Survey
+
 from ..managers import HouseholdStructureManager
+
 from .household import Household
 from .plot import Plot
 
@@ -25,15 +28,15 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         null=True,
         editable=False)
 
-    member_count = models.IntegerField(
-        verbose_name="Members",
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(50), ],
-        help_text="Indicate the total number of members in the household. You may change this later.",
-            )
     note = models.CharField("Note", max_length=250, blank=True)
+
+    member_count = models.IntegerField(default=0, editable=False)
+
+    enrolled = models.NullBooleanField(default=None, editable=False)
+
+    enrolled_datetime = models.DateTimeField(null=True, editable=False)
+
+    enrolled_member_count = models.IntegerField(default=0, editable=False)
 
     objects = HouseholdStructureManager()
 
@@ -41,6 +44,12 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     def __unicode__(self):
         return unicode(self.household)
+
+    def save(self, *args, **kwargs):
+        if self.enrolled and not self.household.enrolled:
+            self.household.enrolled = True
+            self.household.save()
+        super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()
@@ -51,16 +60,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
-
-    def number_enrolled(self):
-        from apps.bcpp_household_member.models import HouseholdMember
-        members = HouseholdMember.objects.filter(household_structure=self)
-        count = 0
-        for member in members:
-            #member has a consent, which is not a partial consent, so it has to be a BHS consent.
-            if member.is_consented and not member.is_consented_partial:
-                count = count + 1
-        return count
 
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
@@ -73,7 +72,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         using = kwargs.get('using', None)
         # create new members, if new
         if created:
-            self.__class__.objects.fetch_household_members(self, using)
+            self.__class__.objects.fetch_household_members(self)
         # recount members, may be greater but not less than the actual number of members
         household_member = get_model(app_label="bcpp_household_member", model_name="householdmember")
         current_member_count = household_member.objects.filter(household_structure__pk=self.pk).count()

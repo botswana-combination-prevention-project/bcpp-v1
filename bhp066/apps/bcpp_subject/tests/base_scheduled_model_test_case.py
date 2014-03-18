@@ -48,14 +48,11 @@ class BaseScheduledModelTestCase(TestCase):
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
         visit_definition = VisitDefinitionFactory(code='T0', title='T0', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
-        
+
         # add entries
         content_type_map = ContentTypeMap.objects.get(app_label='testing', model='testscheduledmodel1')
         EntryFactory(content_type_map=content_type_map, visit_definition=self.visit_definition, entry_order=100, entry_category='clinic')
 
-        # add requisitions
-        
-        
         plot = PlotFactory(community=self.community, household_count=1, status='occupied')
         self.assertEqual(Plot.objects.all().count(), 1)
         self.assertEqual(Household.objects.all().count(), 1)
