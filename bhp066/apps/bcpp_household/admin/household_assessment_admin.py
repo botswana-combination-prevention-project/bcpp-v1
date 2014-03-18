@@ -1,13 +1,13 @@
 from django.contrib import admin
-from apps.bcpp_household.forms import HouseholdResidencyStatusAssessmentForm
+from apps.bcpp_household.forms import HouseholdAssessmentForm
 from apps.bcpp_household.actions import process_dispatch
-from apps.bcpp_household.models import HouseholdResidencyStatusAssessment, Household
+from apps.bcpp_household.models import HouseholdAssessment, Household
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
-class HouseholdResidencyStatusAssessmentAdmin(BaseHouseholdModelAdmin):
+class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
 
-    form = HouseholdResidencyStatusAssessmentForm
+    form = HouseholdAssessmentForm
 
     fields = (
         'household',
@@ -37,5 +37,5 @@ class HouseholdResidencyStatusAssessmentAdmin(BaseHouseholdModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household":
             kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household', 0))
-        return super(HouseholdResidencyStatusAssessmentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-admin.site.register(HouseholdResidencyStatusAssessment, HouseholdResidencyStatusAssessmentAdmin)
+        return super(HouseholdAssessmentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+admin.site.register(HouseholdAssessment, HouseholdAssessmentAdmin)
