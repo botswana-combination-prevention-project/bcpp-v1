@@ -1,10 +1,13 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+
 from .household import Household
 from .household_log import HouseholdLogEntry
 from .plot import Plot
 from .plot_log import PlotLogEntry
 from .household_structure import HouseholdStructure
+from .household_enumeration_refusal import HouseholdRefusal
+
 from apps.bcpp_household_member.models import HouseholdMember
 
 
@@ -12,6 +15,7 @@ from apps.bcpp_household_member.models import HouseholdMember
 def check_for_survey_on_pre_save(sender, instance, **kwargs):
     if isinstance(instance, (Plot)):
         instance.check_for_survey_on_pre_save(**kwargs)
+
 
 @receiver(post_save, weak=False, dispatch_uid="post_save_on_household")
 def post_save_on_household(sender, instance, created, **kwargs):
@@ -37,8 +41,8 @@ def create_household_on_post_save(sender, instance, created, **kwargs):
             instance.create_or_delete_households(instance)
 
 
-@receiver(post_save, weak=False, dispatch_uid="plot_visit_attempts_on_post_save")
-def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid="plot_access_attempts_on_post_save")
+def plot_access_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, PlotLogEntry):
             plot = instance.plot_log.plot
@@ -48,18 +52,33 @@ def plot_visit_attempts_on_post_save(sender, instance, created, **kwargs):
                 plot.save()
             else:
                 raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
-            
+
+
 @receiver(post_save, weak=False, dispatch_uid='household_visit_attempts_on_post_save')
 def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
-            members = None
-            if HouseholdStructure.objects.filter(household=household):
-                h_structure = HouseholdStructure.objects.get(household=household)
-                if HouseholdMember.objects.filter(household_structure=h_structure):
-                    members = HouseholdMember.objects.filter(household_structure=h_structure)
-            if not members and instance.household_status == 'no_household_informant':
+            if not household.enumerated and instance.household_status == 'no_household_informant':
+
+
+@receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
+def household_enumeration_attempts_on_post_save(sender, instance, created, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdLogEntry):
+            household = instance.household_log.household_structure.household
+            household_structure = instance.household_log.household_structure
+            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
+            if not household_members and instance.household_status == 'no_household_informant':
                 enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
                 household.enumeration_attempts = enumeration_attempts
                 household.save()
+
+
+@receiver(post_save, weak=False, dispatch_uid='delete_household_refusal_on_post_save')
+def delete_household_refusal(sender, instance, created, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdLogEntry):
+            household = instance.household_log.household_structure.household
+            if not instance.household_status == 'refused' and HouseholdRefusal.objects.get(household=household):
+                HouseholdRefusal.objects.get(household=household).delete()

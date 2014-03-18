@@ -55,6 +55,13 @@ class BaseSubjectReferral(BaseScheduledVisitModel):
 
 class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
 
+    subject_referred = models.CharField(
+        max_length=10,
+        choices=(('Yes', 'Yes, subject has been handed a referral letter'),
+                 ('No', 'No, subject is not being referred'),
+                 ('refused', 'Subject refused referral')),
+        )
+
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],

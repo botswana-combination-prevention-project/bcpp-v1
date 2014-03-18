@@ -41,6 +41,7 @@ class VisitAtempts(admin.SimpleListFilter):
         else:
             return queryset
 
+
 class HouseholdMemberInline(BaseTabularInline):
     model = HouseholdMember
     extra = 3
@@ -78,7 +79,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'eligible_member',
                     'eligible_subject',
                     'is_consented',
-                    'member_status_full',
+                    'member_status',
                     'visit_attempts',
                     'created',
                     'hostname_created')
@@ -92,10 +93,9 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__household__plot__id',
         'relation', 'id']
 
-    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status_full',
+    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status',
                    'eligible_member', 'eligible_subject', 'target', 'hiv_history', 'household_structure__household__community',
                     'modified', 'hostname_created', 'user_created', VisitAtempts)
 
-    #readonly_fields = ('absentee_visit_attempts', )
     list_per_page = 25
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)
