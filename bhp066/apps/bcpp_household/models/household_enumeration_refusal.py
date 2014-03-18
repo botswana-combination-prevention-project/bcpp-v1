@@ -16,6 +16,7 @@ HOUSEHOLD_ENUMERATION_REFUSAL = (
     ('other', 'Other'),
 )
 
+
 class HouseholdRefusal(BaseDispatchSyncUuidModel):
 
     household = models.OneToOneField(Household)
