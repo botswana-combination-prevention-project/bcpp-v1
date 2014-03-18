@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class HouseholdResidencyStatusAssessmentManager(models.Manager):
+class HouseholdAssessmentManager(models.Manager):
 
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()

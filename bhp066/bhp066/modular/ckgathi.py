@@ -77,7 +77,7 @@ if 'test' in sys.argv:
         }
 else:
     DATABASES = {
-        'default': mysql_db(NAME='bhp066_data_test'),
+        'default': mysql_db(NAME='bhp066_replacement'),
         'lab_api': mysql_db(NAME='lab', HOST='192.168.1.50'),
 #         'bcpp024-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.191'),
 #         'bcpp027-bhp066': mysql_db(NAME='bhp066', HOST='192.168.1.135'),

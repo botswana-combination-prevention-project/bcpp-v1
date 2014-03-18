@@ -33,14 +33,15 @@ def replace_data(request):
     # For all items attach it to the produce where it has been dispatch to.
     for identifier in plot_identifiers:
         container = DispatchContainerRegister.objects.get(container_identifier=identifier)
-        plot = Plot.objects.get(plot_identifier=identifier)
-        household = Household.objects.get(plot=plot)
-        replacement_producer.append([household.household_identifier, container.producer])
+        if container:
+            plot = Plot.objects.get(plot_identifier=identifier)
+            household = Household.objects.get(plot=plot)
+            replacement_producer.append([household.household_identifier, container.producer])
     for item in replacement_data:
-        if isinstance(item, Plot):
-            replace_str = replace_str + ',' + item.plot_identifier
-        elif isinstance(item, Household):
-            replace_str = replace_str + ',' + item.household_identifier
+        if isinstance(item[0], Plot):
+            replace_str = replace_str + ',' + item[0].plot_identifier
+        elif isinstance(item[0], Household):
+            replace_str = replace_str + ',' + item[0].household_identifier
     return render_to_response(
             template, {
                 'replacement_data': replacement_data,
