@@ -107,7 +107,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
 
-    visit_attempts = models.IntegerField(default=0)
+    visit_attempts = models.IntegerField(default=0, help_text="")  # TODO: attempts of what? I see visit_attempts on HH HHS and HHM
 
     target = models.IntegerField(default=0)
 
@@ -160,7 +160,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #         self.member_status_partial = self.calc_member_status()
         from .head_household_eligibility import HouseholdHeadEligibility
         # TODO: why are you querying HouseholdHeadEligibility???
-        if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member=self, aged_over_18='Yes', verball_script='Yes').exists():
+        if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member=self, aged_over_18='Yes', verbal_script='Yes').exists():
             if self.age_in_years < 18:
                 raise ValidationError('This household member is the head of house. You cannot change their age to less than 18.')
         super(HouseholdMember, self).save(*args, **kwargs)
