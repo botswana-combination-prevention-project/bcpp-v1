@@ -4,12 +4,12 @@ from edc.base.admin.admin import BaseModelAdmin
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 from ..models import HouseholdEnumerationRefusal, Household
-from ..forms import HouseholdEnumerationRefusalForm
+from ..forms import HouseholdRefusalForm
 
 
-class HouseholdEnumerationRefusalAdmin(BaseModelAdmin):
+class HouseholdRefusalAdmin(BaseModelAdmin):
 
-    form = HouseholdEnumerationRefusalForm
+    form = HouseholdRefusalForm
     date_hierarchy = 'modified'
     list_per_page = 30
 
@@ -33,6 +33,6 @@ class HouseholdEnumerationRefusalAdmin(BaseModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household":
             kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household', 0))
-        return super(HouseholdEnumerationRefusalAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(HouseholdRefusalAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(HouseholdEnumerationRefusal, HouseholdEnumerationRefusalAdmin)
+admin.site.register(HouseholdRefusal, HouseholdRefusalAdmin)
