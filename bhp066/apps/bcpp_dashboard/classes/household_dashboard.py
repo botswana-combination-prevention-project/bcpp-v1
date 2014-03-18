@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdEnumerationRefusal
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
 from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, HouseholdHeadEligibility
 from apps.bcpp_rbd.models import RBDEligibility
@@ -67,7 +67,7 @@ class HouseholdDashboard(Dashboard):
             rbd_enrolment_checklist_meta=RBDEligibility._meta,
             household_info_meta=HouseholdInfo._meta,
 <<<<<<< HEAD
-            household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
+            household_enumeration_refusal_meta=HouseholdRefusal._meta,
             household_enumeration_refusal=self.household_enumeration_refusal,
 =======
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
@@ -125,8 +125,8 @@ class HouseholdDashboard(Dashboard):
     @property
     def household_enumeration_refusal(self):
         self._household_enumeration_refusal = None
-        if HouseholdEnumerationRefusal.objects.filter(household=self.household):
-            self._household_enumeration_refusal = HouseholdEnumerationRefusal.objects.get(household=self.household)
+        if HouseholdRefusal.objects.filter(household=self.household):
+            self._household_enumeration_refusal = HouseholdRefusal.objects.get(household=self.household)
             return self._household_enumeration_refusal
         return self._household_enumeration_refusal
 
