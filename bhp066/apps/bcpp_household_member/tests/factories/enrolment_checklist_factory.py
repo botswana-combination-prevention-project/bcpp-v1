@@ -1,5 +1,5 @@
 import factory
-from datetime import datetime
+from datetime import datetime, date
 from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from ...models import EnrolmentChecklist
@@ -10,11 +10,13 @@ class EnrolmentChecklistFactory(BaseUuidModelFactory):
     FACTORY_FOR = EnrolmentChecklist
 
     household_member = factory.SubFactory(HouseholdMemberFactory)
-    #registered_subject = factory.SubFactory(RegisteredSubjectFactory)
-    #report_datetime = datetime.today()
-    #omang = factory.Sequence(lambda n: 'identity{0}'.format(n))
-    initials = 'NN'
-    part_time_resident = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    has_identity = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    citizen = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    #community_resident = (('Yes', 'Yes'), ('No', 'No'), ('REF', 'Refused to answer'))[0][0]
+    dob = date(1997,10,10)
+    guardian = 'Yes'
+    gender = 'M'
+    has_identity = 'Yes'
+    citizen = 'Yes'
+    legal_marriage = 'N/A'
+    marriage_certificate = 'N/A'
+    part_time_resident = 'Yes'
+    household_residency = 'Yes'
+    literacy = 'Yes'
