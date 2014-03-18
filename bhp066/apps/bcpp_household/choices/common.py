@@ -157,4 +157,4 @@ RESIDENT_LAST_SEEN = (
         ('less_than_a_month_ago', 'Less than a month ago'),
 )
 
-NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'HBC'), ('other', 'Other'))
+NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))
