@@ -1,5 +1,5 @@
 from datetime import date
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer

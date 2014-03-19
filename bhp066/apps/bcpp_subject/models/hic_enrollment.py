@@ -98,9 +98,9 @@ class HicEnrollment (BaseScheduledVisitModel):
             if residency_mobility[0].permanent_resident.lower() == 'yes':
                 return True
             else:
-                raise TypeError('Please review \'residency_mobility\' in ResidencyMobility form before proceeding with this one.')
+                raise exception_cls('Please review \'residency_mobility\' in ResidencyMobility form before proceeding with this one.')
         else:
-            raise TypeError('Please fill ResidencyMobility form before proceeding with this one.')
+            raise exception_cls('Please fill ResidencyMobility form before proceeding with this one.')
 
     def is_intended_residency(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -110,9 +110,9 @@ class HicEnrollment (BaseScheduledVisitModel):
             if residency_mobility[0].permanent_resident.lower() == 'yes':
                 return True
             else:
-                raise TypeError('Please review \'intend_residency\' in ResidencyMobility form before proceeding with this one.')
+                raise exception_cls('Please review \'intend_residency\' in ResidencyMobility form before proceeding with this one.')
         else:
-            raise TypeError('Please fill ResidencyMobility form before proceeding with this one.')
+            raise exception_cls('Please fill ResidencyMobility form before proceeding with this one.')
 
     def get_hiv_status_today(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -122,9 +122,9 @@ class HicEnrollment (BaseScheduledVisitModel):
             if hiv_result[0].hiv_result.lower() == 'neg':
                 return 'NEG'
             else:
-                raise TypeError('Please review \'hiv_result\' in Today\'s Hiv Result form before proceeding with this one.')
+                raise exception_cls('Please review \'hiv_result\' in Today\'s Hiv Result form before proceeding with this one.')
         else:
-            raise TypeError('Please fill Today\'s Hiv Result form before proceeding with this one.')
+            raise exception_cls('Please fill Today\'s Hiv Result form before proceeding with this one.')
 
     def get_dob_consent_datetime(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -134,16 +134,16 @@ class HicEnrollment (BaseScheduledVisitModel):
             if subject_consent[0].dob and subject_consent[0].consent_datetime:
                 return (subject_consent[0].dob, subject_consent[0].consent_datetime)
             else:
-                raise TypeError('Please review \'dob\' and \'consent_datetime\' in SubjectConsent form before proceeding with this one.')
+                raise exception_cls('Please review \'dob\' and \'consent_datetime\' in SubjectConsent form before proceeding with this one.')
         else:
-            raise TypeError('Please fill SubjectConsent form before proceeding with this one.')
+            raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 
     def is_household_residency(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         if self.subject_visit.household_member:
             return True
         else:
-            raise TypeError('This form has to be attached by to a household member. Currently it is not.')
+            raise exception_cls('This form has to be attached by to a household member. Currently it is not.')
 
     def is_citizen_or_spouse(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -153,9 +153,9 @@ class HicEnrollment (BaseScheduledVisitModel):
             if ((subject_consent[0].citizen.lower() == 'yes') or (subject_consent[0].legal_marriage.lower() == 'yes' and subject_consent[0].marriage_certificate.lower() == 'yes')):
                 return True
             else:
-                raise TypeError('Please review \'citizen\', \'legal_marriage\' and \'marriage_certificate\' in SubjectConsent form before proceeding with this one.')
+                raise exception_cls('Please review \'citizen\', \'legal_marriage\' and \'marriage_certificate\' in SubjectConsent form before proceeding with this one.')
         else:
-            raise TypeError('Please fill SubjectConsent form before proceeding with this one.')
+            raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 
     def is_locator_information(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -165,9 +165,9 @@ class HicEnrollment (BaseScheduledVisitModel):
             if subject_locator[0].subject_cell or subject_locator[0].subject_cell_alt or subject_locator[0].subject_phone:
                 return True
             else:
-                raise TypeError('Please review \'subject_cell\', \'subject_cell_alt\' and \'subject_phone\' in SubjectConsent form before proceeding with this one.')
+                raise exception_cls('Please review \'subject_cell\', \'subject_cell_alt\' and \'subject_phone\' in SubjectConsent form before proceeding with this one.')
         else:
-            raise TypeError('Please fill SubjectLocator form before proceeding with this one.')
+            raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
 
     class Meta:
         app_label = 'bcpp_subject'
