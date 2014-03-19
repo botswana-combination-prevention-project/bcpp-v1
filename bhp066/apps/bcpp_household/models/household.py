@@ -123,7 +123,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     #Indicates that a household has been replaced if its part of twenty percent.
     #For five percent indicates that a household has been used for replacement.
-    replacement_plot =  models.CharField(
+    replacement =  models.CharField(
         max_length=25,
         blank=True,
         editable=False,
