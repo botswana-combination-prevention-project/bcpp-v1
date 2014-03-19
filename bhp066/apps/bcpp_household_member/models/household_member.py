@@ -84,23 +84,23 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
         db_index=True)
 
-    member_status = models.CharField(
-        max_length=25,
-        choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
-        null=True,
-        editable=False,
-        default='NOT_REPORTED',
-        help_text='RESEARCH, ABSENT, REFUSED, MOVED',
-        db_index=True)
-
-    member_status_partial = models.CharField(
-        max_length=25,
-        choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-        null=True,
-        editable=False,
-        default='NOT_REPORTED',
-        help_text='RBD, HTC or RBC/HTC',
-        db_index=True)
+#     member_status = models.CharField(
+#         max_length=25,
+#         choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+#         null=True,
+#         editable=False,
+#         default='NOT_REPORTED',
+#         help_text='RESEARCH, ABSENT, REFUSED, MOVED',
+#         db_index=True)
+# 
+#     member_status_partial = models.CharField(
+#         max_length=25,
+#         choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+#         null=True,
+#         editable=False,
+#         default='NOT_REPORTED',
+#         help_text='RBD, HTC or RBC/HTC',
+#         db_index=True)
 
     hiv_history = models.CharField(max_length=25, null=True, editable=False)
 
@@ -151,33 +151,31 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
+        if not self.eligible_member:
+            #else it will remain as not reported
+            self.member_status = 'NOT_ELIGIBLE'
         self.initials = self.initials.upper()
         self.match_eligibility_values()
-        if self.eligible_member:
-            #TODO: when saved for the first time this member is not counted as they are not yet in the DB.
-            self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
-                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
-            self.household_structure.household.plot.save()
-        else:
-            self.member_status_full = 'NOT_ELIGIBLE'
         if not self.household_structure.household.enumerated:
             self.household_structure.household.enumerated=True
             self.household_structure.household.save()
         if self.household_structure.enrolled:
             self.eligible_htc = (self.age_in_years >= 16 and not self.is_consented)
-        from .head_household_eligibility import HouseholdHeadEligibility
-        # TODO: why are you querying HouseholdHeadEligibility???
-        if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member=self, aged_over_18='Yes', verbal_script='Yes').exists():
-            if self.age_in_years < 18:
-                raise ValidationError('This household member is the head of house. You cannot change their age to less than 18.')
-
+        #The following has to be last statement in this save method, after everything else has been updated.
+        self.calculate_member_status()
         super(HouseholdMember, self).save(*args, **kwargs)
+
+    def update_plot_eligible_members(self):
+        self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
+                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
+        self.household_structure.household.plot.save()
 
     def match_eligibility_values(self, exception_cls=None):
         from .enrolment_checklist import EnrolmentChecklist
         validation_error = None
         exception_cls = exception_cls or ValidationError
         #Ensure age is not changed after making HoH
+        # TODO: why are you querying HouseholdHeadEligibility???
         if self.eligible_hoh and self.age_in_years < 18:
             validation_error = 'This household member is the head of house. You cannot change their age to less than 18. Got {0}.'.format(self.age_in_years)
         if validation_error:
@@ -216,41 +214,43 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Updates the full participation status.
 
         .. note:: if the member is consented, no changes are made."""
-        if self.id:
-            SubjectAbsentee = models.get_model('bcpp_household_member', 'SubjectAbsentee')
-            SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'SubjectAbsenteeEntry')
-            SubjectRefusal = models.get_model('bcpp_household_member', 'SubjectRefusal')
-            SubjectUndecided = models.get_model('bcpp_household_member', 'SubjectUndecided')
-            if self.member_status != 'ABSENT':
-                if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=self):
+        #Do not manipulate 'self.eligible_subject' here, it can only be done in the enrollment checklist.
+        SubjectAbsentee = models.get_model('bcpp_household_member', 'SubjectAbsentee')
+        SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'SubjectAbsenteeEntry')
+        SubjectRefusal = models.get_model('bcpp_household_member', 'SubjectRefusal')
+        SubjectUndecided = models.get_model('bcpp_household_member', 'SubjectUndecided')
+        SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'SubjectUndecidedEntry')
+        if not self.is_consented:
+            #Next two if blocks are for house keeping
+            old_instance = self.__class__.objects.get(pk=self.pk)
+            if old_instance.member_status != 'ABSENT' and self.member_status != 'ABSENT':
+                #Currently not ABSENT, and selected status is also not ABSENT, then delete a SubjectAbsentee without any entries
+                if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=self).exists():
                     SubjectAbsentee.objects.filter(household_member=self).delete()
-            if not self.member_status == 'ABSENT':
-                if not SubjectAbsentee.objects.filter(household_member=self):
-                    SubjectAbsentee.objects.create(
-                        registered_subject=self.registered_subject,
-                        household_member=self,
-                        report_datetime=datetime.today())
-            elif self.member_status == 'NOT_ELIGIBLE' and not self.eligible_subject:
-                pass
-            elif self.member_status == 'NOT_ELIGIBLE' and self.eligible_subject:
-                self.member_status = 'RESEARCH'  # already has passed eligibility!
-            elif self.member_status == 'RESEARCH':
-                pass
-            elif self.member_status == 'NOT_REPORTED':
-                # don't allow to revert to not reported if something has already been reported.
-                old_instance = self.__class__.objects.get(pk=self.pk)
-                if old_instance.member_status != 'NOT_REPORTED':
-                    # lookup for absentee, refusal, undecided
-                    if SubjectAbsentee.objects.filter(household_member=self) or SubjectRefusal.objects.filter(household_member=self) or SubjectUndecided.objects.filter(household_member=self):
-                        self.member_status = old_instance.member_status
+            if old_instance.member_status != 'UNDECIDED' and self.member_status != 'UNDECIDED':
+                #Currently not UNDECIDED, and selected status is also not UNDECIDED, then delete a SubjectUndecided without any entries
+                if not SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=self).exists():
+                    SubjectUndecided.objects.filter(household_member=self).delete()
+            #Next set of if blocks is for determining allowed status transitions
+            if not old_instance.visit_attempts < 3:
+                #Allowed to change to member status only if visit attempts are less than 3.
+                raise ValidationError('Invalid member status change. Visit attempts not less than 3. Got {}'.format(old_instance.visit_attempts))
+            elif self.member_status == 'NOT_REPORTED' and (SubjectAbsentee.objects.filter(household_member=self).exists() or
+                SubjectRefusal.objects.filter(household_member=self).exists() or
+                SubjectUndecided.objects.filter(household_member=self).exists()):
+                #You can only change to NOT_REPORTED if no reports have been captured against subject
+                    raise ValidationError('Cannot change member status to NOT_REPORTED. Already reported as either REFUSAL, ABSENTEE or UNDECIDED')
+            elif self.member_status == 'NOT_ELIGIBLE' and not (self.eligible_member or self.eligible_subject):
+                raise ValidationError('This subject passed BHS eligibility or is a BHS potential. Cannot change thenm to NOT_ELIGIBLE')
+            elif old_instance.member_status != 'RESEARCH' and self.member_status == 'RESEARCH':
+                #We allow change from any status to 'RESEARCH' for as long as there is no consent.
+                self.member_status = 'RESEARCH'
             else:
                 pass
-        return self.member_status
-
-    def calc_member_status_partial(self):
-        if self.id:
+        else:
+            #Subject is consented and nothing should change.
             pass
-        return self.member_status_partial
+        return self.member_status
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -265,6 +265,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.household_structure.member_count = household_members.count()
         self.household_structure.enrolled_member_count = len([household_member for household_member in household_members if household_member.is_consented])
         self.household_structure.save(using=using)
+        self.update_plot_eligible_members()
 
     def update_registered_subject_on_post_save(self, **kwargs):
         using = kwargs.get('using', None)
