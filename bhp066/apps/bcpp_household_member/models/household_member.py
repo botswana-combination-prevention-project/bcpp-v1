@@ -222,7 +222,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'SubjectUndecidedEntry')
         if not self.is_consented:
             #Next two if blocks are for house keeping
-            old_instance = self.__class__.objects.get(pk=self.pk)
+            if self.id:
+                old_instance = self.__class__.objects.get(pk=self.pk)
+            else:
+                old_instance = self
             if old_instance.member_status != 'ABSENT' and self.member_status != 'ABSENT':
                 #Currently not ABSENT, and selected status is also not ABSENT, then delete a SubjectAbsentee without any entries
                 if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=self).exists():
@@ -304,6 +307,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return retval
 
     @property
+    def member_status_dashboard(self):
+        if self.member_status != 'HTC':
+            return self.member_status
+        return 'NOT_ELIGIBLE'
+
+    @property
     def status_choices_full(self):
         """"Returns all choices for bhs participation if an eligible member ."""
         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
@@ -322,6 +331,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 status_choices = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
             elif enrolled == 0:
                 status_choices = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
+        return status_choices
+
+    @property
+    def status_choices_htc(self):
+        status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
         return status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
