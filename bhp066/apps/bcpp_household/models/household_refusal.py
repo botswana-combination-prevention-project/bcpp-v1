@@ -53,6 +53,9 @@ class HouseholdRefusal(BaseReplacement):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household__plot__plot_identifier')
 
+    def replacement_container(self, using=None):
+        return self.household
+
     def __unicode__(self):
         return unicode(self.household) + '(' + unicode(self.report_datetime) + ')'
 
