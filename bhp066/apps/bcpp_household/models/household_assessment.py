@@ -3,18 +3,18 @@ from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_DONT_KNOW
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_list.models import ResidentMostLikely
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
 from ..choices import RESIDENT_LAST_SEEN
 
+from .base_replacement import BaseReplacement
 from .household import Household
 from .plot import Plot
 
 
-class HouseholdAssessment(BaseDispatchSyncUuidModel):
+class HouseholdAssessment(BaseReplacement):
 
     household = models.ForeignKey(Household, null=True)
 
@@ -109,6 +109,9 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household__plot__plot_identifier')
+
+    def replacement_container(self, using=None):
+        return self.household
 
     @property
     def vdc_househould_status(self):
