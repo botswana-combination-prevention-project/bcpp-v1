@@ -12,7 +12,7 @@ class SubjectConsentFactory(BaseConsentFactory):
     subject_identifier = None  # factory.Sequence(lambda n: 'subject_identifier{0}'.format(n))
     consent_datetime = datetime.today()
     may_store_samples = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    is_incarcerated = (('Yes', 'Yes'), ('No', 'No'))[0][0]
+#     is_incarcerated = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     is_literate = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     consent_version_on_entry = 1
     consent_version_recent = 1

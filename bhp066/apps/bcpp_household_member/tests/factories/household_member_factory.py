@@ -17,5 +17,5 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     present_today = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     study_resident = 'Yes'
     target = 20
-    member_status_full = 'NOT_REPORTED'
+    member_status = 'NOT_REPORTED'
     household_structure = factory.SubFactory(HouseholdStructureFactory)
