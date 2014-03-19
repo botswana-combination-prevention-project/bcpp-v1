@@ -10,12 +10,12 @@ from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.device.classes import Device
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
 from apps.bcpp.choices import COMMUNITIES
 
+from .base_replacement import BaseReplacement
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
@@ -29,7 +29,7 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(BaseDispatchSyncUuidModel):
+class Plot(BaseReplacement):
 
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
@@ -357,6 +357,11 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def is_dispatch_container_model(self):
         return True
+
+    def replaced(self, using=None):
+        if self.replacement:
+            return True
+        return False
 
     def dispatched_as_container_identifier_attr(self):
         return 'plot_identifier'

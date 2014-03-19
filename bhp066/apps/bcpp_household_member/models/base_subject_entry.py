@@ -4,7 +4,7 @@ from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.core.crypto_fields.fields import EncryptedCharField
 
-from apps.bcpp_household.models import BaseReplacement, Plot
+from apps.bcpp_household.models import BaseReplacement, Household, Plot
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -48,6 +48,17 @@ class BaseSubjectEntry(BaseReplacement):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
            'information in this comment')
         )
+
+    def replacement_container(self, using=None):
+        field = None
+        for fld in self._meta.fields:
+            if fld.rel:
+                if issubclass(fld.rel.to, BaseMemberStatusModel):
+                    field = fld
+                    break
+        if not field:
+            raise TypeError('Method \'replacement_container\' cannot find the "inline\'s" related field for class {0}'.format(self.__class__))
+        return self.household_member.household_structure.household
 
     def dispatch_container_lookup(self):
         field = None

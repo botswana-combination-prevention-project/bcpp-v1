@@ -14,7 +14,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.choices import RELATIONS
-from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import BaseReplacement
 
@@ -251,6 +251,9 @@ class HouseholdMember(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
+
+    def replacement_container(self, using=None):
+        return self.household_structure.household
 
     def update_hiv_history_on_pre_save(self, **kwargs):
         """Updates from lab_tracker."""

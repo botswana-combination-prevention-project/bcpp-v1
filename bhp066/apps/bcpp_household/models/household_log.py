@@ -8,6 +8,7 @@ from apps.bcpp_household_member.models import HouseholdMember
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 from .household_structure import HouseholdStructure
+from .household import Household
 from .plot import Plot
 from .base_replacement import BaseReplacement
 
@@ -25,6 +26,9 @@ class HouseholdLog(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
+
+    def replacement_container(self, using=None):
+        return self.household_structure.household
 
     def natural_key(self):
         return self.household_structure.natural_key()
@@ -92,6 +96,9 @@ class HouseholdLogEntry(BaseReplacement):
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
+
+    def replacement_container(self, using=None):
+        return self.hosehold_log.household_structure.household
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')

@@ -41,6 +41,13 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
+    replacement_model_items = models.CharField(
+        verbose_name="replacement model items",
+        max_lelength=250,
+        null=True,
+        editable=False,
+        )
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-replacing_item', ]
