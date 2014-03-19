@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 
@@ -69,10 +70,14 @@ class ResidencyMobility (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        self.hic_enrollment_checks()
+        super(ResidencyMobility, self).save(*args, **kwargs)
+
+    def hic_enrollment_checks(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
             if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
-                raise TypeError('An HicEnrollment form already exists for this Subject. So \'permanent_resident\' and \'intend_residency\' cannot be changed.')
-        super(ResidencyMobility, self).save(*args, **kwargs)
+                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'permanent_resident\' and \'intend_residency\' cannot be changed.')
 
     def __unicode__(self):
         return unicode(self.subject_visit)

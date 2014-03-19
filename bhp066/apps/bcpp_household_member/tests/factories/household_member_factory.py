@@ -15,5 +15,7 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     gender = (('M', 'Male'), ('F', 'Female'))[0][0]
     age_in_years = 25
     present_today = (('Yes', 'Yes'), ('No', 'No'))[0][0]
+    study_resident = 'Yes'
     target = 20
+    member_status = 'NOT_REPORTED'
     household_structure = factory.SubFactory(HouseholdStructureFactory)
