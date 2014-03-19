@@ -174,6 +174,8 @@ class Plot(BaseReplacement):
         null=True
         )
 
+    replaceble = models.BooleanField(default=False, editable=False, help_text='Set to True if the plot is a potential replacement')
+
     device_id = models.CharField(
         max_length=2,
         null=True,
