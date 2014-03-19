@@ -58,12 +58,21 @@ class HouseholdHeadEligibility(BaseReplacement):
 
     def save(self, *args, **kwargs):
         self.household_member.eligible_hoh = False
-        if self.aged_over_18.lower() == 'yes' and self.household_member.age_in_years < 18:
-            raise ValidationError('This household member is \'{0}\' years old which is not aged 18 or older. Perhaps catch this in the form.'.format(self.household_member.age_in_years))
+        self.matches_household_member_values()
         if self.aged_over_18.lower() == 'yes' or self.verbal_script.lower() == 'yes':
             self.household_member.eligible_hoh = True
         self.household_member.save()
         super(HouseholdHeadEligibility, self).save(*args, **kwargs)
+
+    def matches_household_member_values(self, exception_cls=None):
+        """Compares shared values on household_member form and returns True if all match."""
+        validation_error = None
+        exception_cls = exception_cls or ValidationError
+        if self.aged_over_18 == 'yes' and self.household_member.age_in_years < 18:
+            raise ValidationError('This household member is \'{0}\' years old which is not aged 18 or older.'.format(self.household_member.age_in_years))
+        if exception_cls:
+            raise exception_cls(validation_error)
+        return True
 
     class Meta:
         app_label = 'bcpp_household_member'
