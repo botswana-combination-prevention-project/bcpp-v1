@@ -6,7 +6,7 @@ from .household_log import HouseholdLogEntry
 from .plot import Plot
 from .plot_log import PlotLogEntry
 from .household_structure import HouseholdStructure
-from .household_enumeration_refusal import HouseholdRefusal
+from .household_refusal import HouseholdRefusal
 
 from apps.bcpp_household_member.models import HouseholdMember
 
@@ -60,6 +60,9 @@ def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
             if not household.enumerated and instance.household_status == 'no_household_informant':
+                enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
+                household.enumeration_attempts = enumeration_attempts
+                household.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
@@ -80,5 +83,5 @@ def delete_household_refusal(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
-            if not instance.household_status == 'refused' and HouseholdRefusal.objects.get(household=household):
-                HouseholdRefusal.objects.get(household=household).delete()
+            if not instance.household_status == 'refused':  # TODO: what if more than one HH.household_status == refused????
+                HouseholdRefusal.objects.filter(household=household).delete()
