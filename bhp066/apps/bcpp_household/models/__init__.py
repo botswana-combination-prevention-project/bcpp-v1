@@ -1,3 +1,4 @@
+from .base_replacement import BaseReplacement
 from .plot import Plot
 from .household import Household
 from .household_identifier_history import HouseholdIdentifierHistory
@@ -10,4 +11,4 @@ from .plot_identifier_history import PlotIdentifierHistory
 from .plot_log import PlotLog, PlotLogEntry
 from .household_assessment import HouseholdAssessment
 from .household_refusal import HouseholdRefusal
-from .base_replacement import BaseReplacement
+

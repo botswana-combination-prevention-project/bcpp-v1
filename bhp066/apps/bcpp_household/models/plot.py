@@ -365,6 +365,9 @@ class Plot(BaseReplacement):
             return True
         return False
 
+    def is_plot(self):
+        return True
+
     def dispatched_as_container_identifier_attr(self):
         return 'plot_identifier'
 
