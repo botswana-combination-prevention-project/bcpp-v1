@@ -8,10 +8,21 @@ from ..models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
 
 class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
 
+    fields = (
+              'subject_absentee',
+              'report_datetime',
+              'next_appt_datetime',
+              'next_appt_datetime_source',
+              'reason',
+              'reason_other',
+              'contact_details')
+
     list_display = (
-        'id',
         'subject_absentee',
-        'report_datetime',)
+        'report_datetime',
+        'next_appt_datetime',
+        'contact_details')
+
     radio_fields = {
         "reason": admin.VERTICAL,
         "next_appt_datetime_source": admin.VERTICAL}
