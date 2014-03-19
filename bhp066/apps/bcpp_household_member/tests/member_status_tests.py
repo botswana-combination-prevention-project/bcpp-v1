@@ -17,9 +17,7 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-
-class MemberStatusError(Exception):
-    pass
+from ..exceptions import MemberStatusError
 
 
 class TestPlotMapper(Mapper):
@@ -61,7 +59,8 @@ class MemberStatusTests(TestCase):
     def test_household_member1(self):
         """Assert not reported based on age and residency"""
         HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
-        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_REPORTED')
+        household_member = HouseholdMember.objects.get(household_structure=self.household_structure)
+        self.assertTrue(household_member.member_status == 'NOT_REPORTED')
 
     def test_household_member1a(self):
         """Assert not reported based on age and residency"""
@@ -106,7 +105,7 @@ class MemberStatusTests(TestCase):
             age_in_years=50,
             present_today='No',
             study_resident='Yes')
-        self.assertRaises(SubjectAbsentee.objects.filter(household_member=household_member).count(), 1)
+        self.assertEquals(SubjectAbsentee.objects.filter(household_member=household_member).count(), 1)
         self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'ABSENT')
 
     def test_change_household_member1(self):
@@ -147,8 +146,8 @@ class MemberStatusTests(TestCase):
             age_in_years=50,
             present_today='No',
             study_resident='Yes')
-        #self.assertEquals(household_member.member_status, 'ABSENT')
-        household_member = HouseholdMember.objects.get(pk=household_member.pk)
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
         household_member.created = datetime.today() - timedelta(days=1)
         self.assertTrue(isinstance(EnrolmentChecklistFactory(
             household_member=household_member,
@@ -159,7 +158,22 @@ class MemberStatusTests(TestCase):
         self.assertEquals(household_member.member_status, 'BHS_ELIGIBLE')
 
     def test_change_household_member4(self):
-        """Assert sets to REFUSED even if refusal form not added, is_refused is False."""
+        """Assert can set to REFUSED but is_refused is False."""
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=50,
+            present_today='Yes',
+            study_resident='Yes')
+        household_member.member_status = 'REFUSED'
+        household_member.save()
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, 'REFUSED')
+        self.assertFalse(household_member.is_refused)
+
+    def test_change_household_member5(self):
+        """Assert sets to REFUSED as refusal form is added, is_refused is True."""
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             gender='M',
@@ -172,4 +186,5 @@ class MemberStatusTests(TestCase):
             dob=date.today() - relativedelta(years=50),
             initials=household_member.initials,
             part_time_resident='Yes'), EnrolmentChecklist))
-        self.assertEquals(household_member.member_status, 'BHS_ELIGIBLE')
+        self.assertEquals(household_member.member_status, 'REFUSED')
+        self.assertTrue(household_member.is_refused)
