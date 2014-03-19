@@ -400,4 +400,3 @@ class EligibilityModelTests(TestCase):
             dob=date.today() - relativedelta(years=25),
             initials="EE",
             part_time_resident='Yes')
-
