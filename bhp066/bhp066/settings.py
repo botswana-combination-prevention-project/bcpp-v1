@@ -19,6 +19,9 @@ STATIC_ROOT = PROJECT_DIR.child('static')
 TEMPLATE_DIRS = (
     PROJECT_DIR.child('templates'),
     )
+FIXTURE_DIRS = (
+    PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
+    )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
