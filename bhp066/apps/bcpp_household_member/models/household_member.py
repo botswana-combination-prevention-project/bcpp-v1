@@ -152,7 +152,9 @@ class HouseholdMember(BaseReplacement):
     def save(self, *args, **kwargs):
         self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
         self.initials = self.initials.upper()
+        self.match_eligibility_values()
         if self.eligible_member:
+            #TODO: when saved for the first time this member is not counted as they are not yet in the DB.
             self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
                                     household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
             self.household_structure.household.plot.save()
@@ -161,21 +163,8 @@ class HouseholdMember(BaseReplacement):
         if not self.household_structure.household.enumerated:
             self.household_structure.household.enumerated=True
             self.household_structure.household.save()
-        #self.member_status = self.member_status_full
-            # updated the number of eligible members on the plot model
-            plot = self.household_structure.household.plot
-            plot.eligible_members = self.__class__.objects.filter(
-                household_structure__household__plot__plot_identifier=plot.plot_identifier,
-                eligible_member=True).count()
-            plot.save()
-#         if self.eligible_subject:
-#             # confirm enrollment checklist
-#             EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
-#             EnrollmentChecklist.objects.get(household_member=self, is_eligible=True)
         if self.household_structure.enrolled:
             self.eligible_htc = (self.age_in_years >= 16 and not self.is_consented)
-        #self.member_status = self.calculate_member_status()
-#         self.member_status_partial = self.calc_member_status()
         from .head_household_eligibility import HouseholdHeadEligibility
         # TODO: why are you querying HouseholdHeadEligibility???
         if self.eligible_hoh and HouseholdHeadEligibility.objects.filter(household_member=self, aged_over_18='Yes', verbal_script='Yes').exists():
@@ -183,6 +172,20 @@ class HouseholdMember(BaseReplacement):
                 raise ValidationError('This household member is the head of house. You cannot change their age to less than 18.')
 
         super(HouseholdMember, self).save(*args, **kwargs)
+
+    def match_eligibility_values(self, exception_cls=None):
+        from .enrolment_checklist import EnrolmentChecklist
+        validation_error = None
+        exception_cls = exception_cls or ValidationError
+        #Ensure age is not changed after making HoH
+        if self.eligible_hoh and self.age_in_years < 18:
+            validation_error = 'This household member is the head of house. You cannot change their age to less than 18. Got {0}.'.format(self.age_in_years)
+        if validation_error:
+            raise exception_cls(validation_error)
+        #Ensure values used are not changed after capturing enrollment_checklist
+        enrollment_checklist = EnrolmentChecklist.objects.filter(household_member=self)
+        if enrollment_checklist.exists():
+            enrollment_checklist[0].matches_household_member_values(self.age_in_years)
 
     def natural_key(self):
         if not self.household_structure:

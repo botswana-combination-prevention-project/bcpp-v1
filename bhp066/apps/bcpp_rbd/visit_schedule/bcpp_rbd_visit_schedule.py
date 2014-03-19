@@ -52,4 +52,4 @@ class BcppRBDVisitSchedule(VisitScheduleConfiguration):
         }
     )
 
-site_visit_schedules.register(BcppRBDVisitSchedule)
+#site_visit_schedules.register(BcppRBDVisitSchedule)
