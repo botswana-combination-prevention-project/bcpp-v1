@@ -3,11 +3,11 @@ from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..managers import HouseholdRefusalManager
 from .household import Household
 from .plot import Plot
+from .base_replacement import BaseReplacement
 
 HOUSEHOLD_REFUSAL = (
     ('not_interested', 'Not Interested'),
@@ -17,7 +17,7 @@ HOUSEHOLD_REFUSAL = (
 )
 
 
-class HouseholdRefusal(BaseDispatchSyncUuidModel):
+class HouseholdRefusal(BaseReplacement):
 
     household = models.OneToOneField(Household)
 
