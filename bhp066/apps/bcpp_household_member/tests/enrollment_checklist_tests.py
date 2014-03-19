@@ -1,26 +1,35 @@
-from datetime import datetime, timedelta, date
+from datetime import datetime, date
 
-from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-from edc.map.classes import site_mappers
-from edc.subject.appointment.tests.factories import ConfigurationFactory
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.visit_schedule.classes import site_visit_schedules
-from edc.subject.rule_groups.classes import site_rule_groups
 
-
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import Loss, HouseholdMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
+
+
+class TestPlotMapper(Mapper):
+    map_area = 'test_community4'
+    map_code = '092'
+    regions = []
+    sections = []
+    landmarks = []
+    gps_center_lat = -25.033194
+    gps_center_lon = 25.747139
+    radius = 5.5
+    location_boundary = ()
+site_mappers.register(TestPlotMapper)
 
 
 class EnrollmentChecklistTests(TestCase):
@@ -33,51 +42,55 @@ class EnrollmentChecklistTests(TestCase):
         super(EnrollmentChecklistTests, self).__init__(*args, **kwargs)
 
     def setUp(self):
-        site_lab_tracker.autodiscover()
-        site_visit_schedules.autodiscover()
-        StudySpecificFactory()
-        study_site = StudySiteFactory()
-        ConfigurationFactory()
-        content_type_map_helper = ContentTypeMapHelper()
-        content_type_map_helper.populate()
-        content_type_map_helper.sync()  
-        print 'setup the consent catalogue for this BCPP'
-        content_type_map = ContentTypeMap.objects.get(content_type__model__iexact='SubjectConsent')
-        print 'create a new survey'
-        site_visit_schedules.build_all()
-        site_rule_groups.autodiscover()
-        from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
         BcppAppConfiguration()
-        print ContentTypeMap.objects.all().count()
-        consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
-        consent_catalogue.add_for_app = 'bcpp_subject'
-        consent_catalogue.save()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
 
-        print 'get a community name from the mapper classes'
-        community = site_mappers.get_as_list()[0]
-        site_mappers.autodiscover()
-        mapper = site_mappers.get(site_mappers.get_as_list()[0])
-        print 'No. of SURVEY = '+str(Survey.objects.all().count()) 
-        plot = PlotFactory(community=mapper().get_map_area())
-        print 'No. of HOUSEHOLDS = '+str(Household.objects.all().count())
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
-        self.assertEquals(HouseholdStructure.objects.all().count(), 1)
-        self.assertEquals(Survey.objects.all().count(), 1)
-        household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
+        self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_member = HouseholdMemberFactory(member_status_full='BHS', age_in_years=17, household_structure=self.household_structure)
 
-        self.household_member = HouseholdMemberFactory(member_status_full='BHS', age_in_years=17, household_structure=household_structure)
-#         subject_consent = SubjectConsentFactory(study_site=study_site, citizen='Yes', household_member=self.household_member, registered_subject=self.household_member.registered_subject)
-#         print subject_consent.subject_identifier
-#         print 'get registered subject'
-#         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
+    def test_household_member1(self):
+        """Assert new eligible adult household member is NOT_REPORTED."""
+        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_REPORTED')
 
-    def test_checklist_household_member(self):
-        #Create a proper enrollment checklist, confirm that householdmeber is eligible.
-        self.assertEqual(HouseholdMember.objects.all().count(), 1)
-        #self.household_member = HouseholdMember.objects.all()[0]
+    def test_household_member2(self):
+        """Assert not eligible fir BHS but eligible for HTC by age household member is HTC_ELIGIBLE."""
+        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=65, study_resident='Yes', household_structure=self.household_structure)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_REPORTED')
+
+    def test_household_member3(self):
+        """Assert not eligible for BHS or HTC by age household member is NOT_ELIGIBLE."""
+        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=12, study_resident='Yes', household_structure=self.household_structure)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_REPORTED')
+
+    def test_household_member4(self):
+        """Assert minor is eligible for BHS."""
+        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=16, study_resident='Yes', household_structure=self.household_structure)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_REPORTED')
+
+    def test_household_member5(self):
+        """Assert not study resident is not eligible."""
+        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=16, study_resident='No', household_structure=self.household_structure)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_REPORTED')
+
+    def test_household_member6(self):
+        """Assert not study resident is not eligible."""
+        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=16, study_resident='No', household_structure=self.household_structure)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure).member_status == 'NOT_ELIGIBLE')
+
         self.enrollment_checklist = EnrolmentChecklistFactory(household_member=self.household_member)
+        self.assertTrue(HouseholdMember.objects.get(household_structure=self.household_structure))
         self.assertEqual(self.household_member.member_status_full, 'BHS')
         self.assertTrue(self.household_member.eligible_subject)
+
         #Create with a < 16 DOB, should make member ineligible
         #enrollment_checklist.dob = datetime(2000,01,01)
         #enrollment_checklist.save()
