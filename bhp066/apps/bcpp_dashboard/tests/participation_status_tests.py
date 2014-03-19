@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, date
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 from django.db.models import signals
