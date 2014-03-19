@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -88,8 +88,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
-        self.matches_enrollment_checklist()
         self.is_minor = self.get_is_minor()
+        self.matches_enrollment_checklist()
         self.community = self.household_member.household_structure.household.plot.community
         self.enroll_household()
         self.household_member.is_consented = True
@@ -101,7 +101,11 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
         exception_cls = exception_cls or ValidationError
-        enrollment_checklist = EnrolmentChecklist.objects.get(household_member=self.household_member)
+        enrollment_checklist = self.get_enrollment_checklist_query_set()
+        if enrollment_checklist.count() != 1:
+            raise exception_cls('There should be 1 enrollment checklist for individual prior to consenting. Got {0}'.format(enrollment_checklist.count()))
+        else:
+            enrollment_checklist = enrollment_checklist[0]
         if enrollment_checklist.dob != self.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != self.initials:
@@ -115,6 +119,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         if ((enrollment_checklist.legal_marriage.lower() == 'yes' and enrollment_checklist.marriage_certificate.lower() == 'yes') and
                 not (self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'yes')):
             raise exception_cls('Enrollment checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
+        if not self.household_member.eligible_subject:
+            raise exception_cls('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
         return True
 
     def enroll_household(self):
@@ -178,17 +184,20 @@ class SubjectConsent(BaseSubjectConsent):
         return True
 
     def save(self, *args, **kwargs):
-        if not self.household_member.eligible_subject:
-            raise ValidationError('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
+        self.matches_hic_enrollment_values()
+        super(SubjectConsent, self).save(*args, **kwargs)
+
+    def matches_hic_enrollment_values(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit__household_member=self.household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
             if self.dob != hic_enrollment.dob or self.consent_datetime != hic_enrollment.consent_datetime:
-                raise TypeError('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
+                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
         if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
-            raise TypeError('The subject has to be a citizen, or legally married to a citizen to consent.')
-        super(SubjectConsent, self).save(*args, **kwargs)
+            raise exception_cls('The subject has to be a citizen, or legally married to a citizen to consent.')
 
     def get_enrollment_checklist_query_set(self):
+        #For every consented individual there has to be an enrollment checklist. Its enforced.
         return EnrolmentChecklist.objects.filter(household_member=self.household_member)
 
     class Meta:

@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
@@ -94,7 +94,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         verbose_name=("In the past 12 months, have you typically spent 3 or"
                       " more nights per month in this community? "),
         max_length=10,
-        choices=YES_NO_DWTA,
+        choices=YES_NO,
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
