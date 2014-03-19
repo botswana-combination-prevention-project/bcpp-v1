@@ -120,14 +120,15 @@ class Household(BaseReplacement):
         editable=False,
         )
 
-    #Indicates that a household has been replaced if its part of twenty percent.
-    #For five percent indicates that a household has been used for replacement.
-    replacement =  models.CharField(
+    #Store a plot identifier that replaces a household
+    replacement = models.CharField(
         max_length=25,
         blank=True,
         editable=False,
         db_index=True,
         )
+
+    replaceble = models.BooleanField(default=False, editable=False, help_text='Set to True if the household is a potential replacement')
 
     comment = EncryptedTextField(
         max_length=250,
