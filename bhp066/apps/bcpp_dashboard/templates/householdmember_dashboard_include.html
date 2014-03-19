@@ -55,29 +55,21 @@
     <td>{{ household_member.relation }}</td>
     {% comment%} particpation {% endcomment %}
     <td id="participation">
-        {% if not household_member.is_consented %}
-        	{% if household_member.member_status == 'NOT_ELIGIBLE' %}
-        		{{ household_member.member_status }}
-			{% else %}      
-        		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
-		         {% csrf_token %}
-				    <select name="status" id="status" onchange="this.form.submit()">
-			    		{% for status_key, status_value  in household_member.status_choices_full %}
-			    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
-				    	{% endfor %}
-					</select>
-				    <input type="hidden" name="household_member" value={{ household_member.id }}>
-				    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
-				    <input type="hidden" name="dashboard_model" value="household_structure">
-				    <input type="hidden" name="dashboard_type" value="household">
-				</form>
-        	{% endif%}
+        {% if not household_member.is_consented and not household_member.member_status_dashboard == 'NOT_ELIGIBLE' %}     
+    		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
+	         {% csrf_token %}
+			    <select name="status" id="status" onchange="this.form.submit()">
+		    		{% for status_key, status_value  in household_member.status_choices_full %}
+		    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+			    	{% endfor %}
+				</select>
+			    <input type="hidden" name="household_member" value={{ household_member.id }}>
+			    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
+			    <input type="hidden" name="dashboard_model" value="household_structure">
+			    <input type="hidden" name="dashboard_type" value="household">
+			</form>
 		{% else %}
-			{% if household_member.member_status != 'NOT_REPORTED' %}
-            	{{ household_member.member_status }} 
-            {% else %}
-            	{{ household_member.member_status }} {{household_member.is_consented}}
-            {% endif %}
+        	{{ household_member.member_status_dashboard }}
         {% endif %}          
     </td>
  
@@ -105,9 +97,9 @@
             	
             {% elif household_member.eligibility_checklist_filled and household_member.member_status == 'NOT_ELIGIBLE' %}
             	Failled eligibility checklist, loss form created. Can only participate in HTC, if atleast one enrolled member.
-            {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
+            {% elif household_member.member_status_dashboard == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
             	Under age 16, cannot participate at any level.
-            {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
+            {% elif household_member.member_status_dashboard == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
             	Older than age 64. Can participate only in HTC, if atleast one enrolled member.
             {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
                {% if household_member.member_status == 'ABSENT'%}
@@ -140,41 +132,22 @@
             {% endif %}                
     </td>
     <td>
-	    {% if not household_member.is_consented_rbd or household_member.member_status_partial == 'HTC' %}
+	    {% if household_member.eligible_htc and household_member.household_stucture.enrolled%}
 		    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 		     	{% csrf_token %}
-		     	{% if household_member.member_status == 'REFUSED' %}
-		     		<select name="status_partial" id="status_partial" onchange="this.form.submit()">
-			    		{% for status_key, status_value  in household_member.status_choices_partial %}
-			    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
-				    	{% endfor %}
-					</select>
-			    {% elif self.eligible_htc %}
-				    <select name="status_partial" id="status_partial" onchange="this.form.submit()">
-			    		{% for status_key, status_value  in household_member.status_choices_partial %}
-			    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
-				    	{% endfor %}
-					</select>
-				{% endif %}
+	     		<select name="status" id="status" onchange="this.form.submit()">
+		    		{% for status_key, status in household_member.status_choices_htc %}
+		    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+			    	{% endfor %}
+				</select>
 			    <input type="hidden" name="household_member" value={{ household_member.id }}>
 			    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
 			    <input type="hidden" name="dashboard_model" value="household_structure">
 			    <input type="hidden" name="dashboard_type" value="household">
 			</form>
-		{% elif household_member.is_consented_rbd %}
-				{{household_member.member_status_partial}}
-		{% endif %}
     </td>
     <td>
-    	{% if household_member.member_status_partial == 'RBD' or household_member.member_status_partial == 'HTC/RBD' %}
-		    {% if not household_member.eligible_rbd_subject %}
-		   		{% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
-		    	<span style="color:white;background-color:red;">&nbsp;</span>
-		    	<A title="Complete the enrolment checklist to confirm eligibility before blood draw consent" href="{% url rbd_enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
-		    {% elif household_member.eligible_rbd_subject %}
-				Reseach Blood Draw Only Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='rbd_subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
-        	{% endif %}
-        {% elif household_member.member_status_partial == 'HTC' %}
+        {% if household_member.eligible_htc and household_member.member_status == 'HTC' %}
             option not available.
 		{% endif %}
     </td>
