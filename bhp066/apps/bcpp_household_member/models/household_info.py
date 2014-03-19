@@ -5,10 +5,9 @@ from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.models import BaseReplacement, HouseholdStructure
 from apps.bcpp_list.models import ElectricalAppliances, TransportMode
 from apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
@@ -17,7 +16,7 @@ from ..managers import HouseholdInfoManager
 from .household_member import HouseholdMember
 
 
-class HouseholdInfo(BaseDispatchSyncUuidModel):
+class HouseholdInfo(BaseReplacement):
     """Collects information from the Head of Household on household economic status."""
     household_structure = models.OneToOneField(HouseholdStructure)
 

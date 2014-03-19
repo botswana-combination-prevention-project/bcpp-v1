@@ -3,16 +3,15 @@ from django.db import models
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.core.crypto_fields.fields import EncryptedCharField
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import Plot
+from apps.bcpp_household.models import BaseReplacement, Plot
 
 from .base_member_status_model import BaseMemberStatusModel
 
 from ..choices import NEXT_APPOINTMENT_SOURCE
 
 
-class BaseSubjectEntry(BaseDispatchSyncUuidModel):
+class BaseSubjectEntry(BaseReplacement):
     """For absentee and undecided log models."""
     report_datetime = models.DateTimeField("Report date",
         validators=[datetime_not_before_study_start, datetime_not_future],
