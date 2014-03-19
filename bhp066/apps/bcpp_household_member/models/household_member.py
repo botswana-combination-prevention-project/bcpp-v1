@@ -22,7 +22,8 @@ from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
                        HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
                        HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
                        HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
-                       HOUSEHOLD_MEMBER_FULL_PARTICIPATION)
+                       HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+                       HOUSEHOLD_MEMBER_REFUSED)
 from ..managers import HouseholdMemberManager
 
 
@@ -210,11 +211,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Returns True if subject has participated by accepting HTC only."""
         pass
 
-    def calculate_member_status(self):
+    def calculate_member_status(self, exception_cls=None):
         """Updates the full participation status.
 
         .. note:: if the member is consented, no changes are made."""
         #Do not manipulate 'self.eligible_subject' here, it can only be done in the enrollment checklist.
+        exception_cls = exception_cls or ValidationError
         SubjectAbsentee = models.get_model('bcpp_household_member', 'SubjectAbsentee')
         SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'SubjectAbsenteeEntry')
         SubjectRefusal = models.get_model('bcpp_household_member', 'SubjectRefusal')
@@ -225,27 +227,31 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             if self.id:
                 old_instance = self.__class__.objects.get(pk=self.pk)
             else:
-                old_instance = self
-            if old_instance.member_status != 'ABSENT' and self.member_status != 'ABSENT':
+                old_instance = None
+            if old_instance and old_instance.member_status != 'ABSENT' and self.member_status != 'ABSENT':
                 #Currently not ABSENT, and selected status is also not ABSENT, then delete a SubjectAbsentee without any entries
                 if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=self).exists():
                     SubjectAbsentee.objects.filter(household_member=self).delete()
-            if old_instance.member_status != 'UNDECIDED' and self.member_status != 'UNDECIDED':
+            if old_instance and old_instance.member_status != 'UNDECIDED' and self.member_status != 'UNDECIDED':
                 #Currently not UNDECIDED, and selected status is also not UNDECIDED, then delete a SubjectUndecided without any entries
                 if not SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=self).exists():
                     SubjectUndecided.objects.filter(household_member=self).delete()
             #Next set of if blocks is for determining allowed status transitions
-            if not old_instance.visit_attempts < 3:
+            if not old_instance and self.member_status not in ['NOT_ELIGIBLE', 'NOT_REPORTED']:
+                raise exception_cls('A newly created member can either be NOT_ELIGIBLE or NOT_REPORTED only. Got \'{0}\''.format(self.member_status))
+            if old_instance and not old_instance.visit_attempts <= 3:
                 #Allowed to change to member status only if visit attempts are less than 3.
-                raise ValidationError('Invalid member status change. Visit attempts not less than 3. Got {}'.format(old_instance.visit_attempts))
+                raise exception_cls('Invalid member status change. Visit attempts not less than 3. Got {0}'.format(old_instance.visit_attempts))
             elif self.member_status == 'NOT_REPORTED' and (SubjectAbsentee.objects.filter(household_member=self).exists() or
                 SubjectRefusal.objects.filter(household_member=self).exists() or
                 SubjectUndecided.objects.filter(household_member=self).exists()):
                 #You can only change to NOT_REPORTED if no reports have been captured against subject
-                    raise ValidationError('Cannot change member status to NOT_REPORTED. Already reported as either REFUSAL, ABSENTEE or UNDECIDED')
-            elif self.member_status == 'NOT_ELIGIBLE' and not (self.eligible_member or self.eligible_subject):
-                raise ValidationError('This subject passed BHS eligibility or is a BHS potential. Cannot change thenm to NOT_ELIGIBLE')
-            elif old_instance.member_status != 'RESEARCH' and self.member_status == 'RESEARCH':
+                    raise exception_cls('Cannot change member status to NOT_REPORTED. Already reported as either REFUSAL, ABSENTEE or UNDECIDED')
+            elif self.member_status == 'NOT_ELIGIBLE' and (self.eligible_member or self.eligible_subject):
+                raise exception_cls('This subject passed BHS eligibility or is a BHS potential. Cannot change them to NOT_ELIGIBLE')
+            elif old_instance and old_instance.member_status == 'REFUSED' and self.member_status not in ['RESEARCH', 'HTC']:
+                raise exception_cls('A refusal can only be changed to either BHS or HTC. Got \'{0}\''.format(self.member_status))
+            elif old_instance and old_instance.member_status != 'RESEARCH' and self.member_status == 'RESEARCH':
                 #We allow change from any status to 'RESEARCH' for as long as there is no consent.
                 self.member_status = 'RESEARCH'
             else:
@@ -316,8 +322,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def status_choices_full(self):
         """"Returns all choices for bhs participation if an eligible member ."""
         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if not self.is_eligible_member():
+        if not self.eligible_member:
             status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
+        elif self.member_status == 'REFUSED':
+            status_choices = HOUSEHOLD_MEMBER_REFUSED
         return status_choices
 
     @property
