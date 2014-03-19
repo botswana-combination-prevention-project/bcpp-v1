@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models import get_model
 
 from edc.audit.audit_trail import AuditTrail
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
@@ -11,9 +10,10 @@ from ..managers import HouseholdStructureManager
 
 from .household import Household
 from .plot import Plot
+from .base_replacement import BaseReplacement
 
 
-class HouseholdStructure(BaseDispatchSyncUuidModel):
+class HouseholdStructure(BaseReplacement):
 
     """ Each year/survey a new household_structure is created for the household """
 

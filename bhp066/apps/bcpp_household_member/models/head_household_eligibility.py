@@ -5,16 +5,15 @@ from django.db.models import get_model
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.choices.common import YES_NO
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.models import BaseReplacement, HouseholdStructure
 
 from ..managers import HouseholdHeadEligibilityManager
 
 from .household_member import HouseholdMember
 
 
-class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
+class HouseholdHeadEligibility(BaseReplacement):
     """Determines if the household member is eligible to be treated as head of household."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
