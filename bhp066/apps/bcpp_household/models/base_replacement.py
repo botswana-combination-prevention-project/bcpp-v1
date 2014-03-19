@@ -2,8 +2,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..exceptions import AlreadyReplaced
-from .household import Household
-from .plot import Plot
 from ..classes import ReplacementData
 
 
@@ -11,9 +9,15 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+    def is_plot(self):
+        return False
+
+    def is_household(self):
+        return False
+
     def replaced(self, using=None):
-        if isinstance(Household, self.instance) or isinstance(Plot, self.instance):
-            if self.instance.replacement:
+        if self.is_household() or self.is_plot():
+            if self.replacement:
                 return True
         elif self.replacement_container(self, using=None).replacement:
             return True
@@ -21,9 +25,9 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
 
     def potential_replacement(self, using=None):
         plot = None
-        if isinstance(Plot, self.instance):
-            plot = self.instance
-        elif isinstance(Household, self.instance):
+        if self.is_plot():
+            plot = self
+        elif self.is_household():
             plot = self.plot
         else:
             if self.replacement_container(using):
@@ -43,9 +47,6 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
 
     def replacement_container(self, using=None):
         return None
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using', None)
