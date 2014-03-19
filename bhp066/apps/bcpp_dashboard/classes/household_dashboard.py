@@ -1,5 +1,3 @@
-import re
-
 from datetime import datetime, date
 
 from django.conf import settings
@@ -9,11 +7,12 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdEnumerationRefusal
+from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
+
 from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, HouseholdHeadEligibility
+from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from apps.bcpp_rbd.models import RBDEligibility
-from apps.bcpp_household_member.models import HouseholdMember, EnrolmentChecklist, HouseholdInfo, Loss
+from apps.bcpp_household_member.models import Loss
 from apps.bcpp_survey.models import Survey
 
 
@@ -34,11 +33,8 @@ class HouseholdDashboard(Dashboard):
         self._current_member_count = None
         self._enrolment_checklist = None
         self._household_info = None
-<<<<<<< HEAD
         self._household_enumeration_refusal = None
-=======
         self.__eligible_hoh = None
->>>>>>> develop
         self._first_survey = None
         self._survey = None
         self._surveys = None
@@ -47,7 +43,6 @@ class HouseholdDashboard(Dashboard):
         dashboard_models = {'household': Household, 'household_structure': HouseholdStructure}
         super(HouseholdDashboard, self).__init__(dashboard_type, dashboard_id, dashboard_model, dashboard_type_list, dashboard_models)
         self.first_name = kwargs.get('first_name')
-        # self.check_members_have_registered_subject()
         self.mapper_name = kwargs.get('mapper_name')
 
     def add_to_context(self):
@@ -66,13 +61,10 @@ class HouseholdDashboard(Dashboard):
             enrolment_checklist_meta=EnrolmentChecklist._meta,
             rbd_enrolment_checklist_meta=RBDEligibility._meta,
             household_info_meta=HouseholdInfo._meta,
-<<<<<<< HEAD
-            household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
+            household_enumeration_refusal_meta=HouseholdRefusal._meta,
             household_enumeration_refusal=self.household_enumeration_refusal,
-=======
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
             head_household_eligibility=self.head_household_eligibility,
->>>>>>> develop
             plot=self.household.plot,
             household_assessment=self.household_assessment,
             household=self.household,
@@ -125,8 +117,8 @@ class HouseholdDashboard(Dashboard):
     @property
     def household_enumeration_refusal(self):
         self._household_enumeration_refusal = None
-        if HouseholdEnumerationRefusal.objects.filter(household=self.household):
-            self._household_enumeration_refusal = HouseholdEnumerationRefusal.objects.get(household=self.household)
+        if HouseholdRefusal.objects.filter(household=self.household):
+            self._household_enumeration_refusal = HouseholdRefusal.objects.get(household=self.household)
             return self._household_enumeration_refusal
         return self._household_enumeration_refusal
 
