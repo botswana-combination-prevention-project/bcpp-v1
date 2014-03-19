@@ -183,9 +183,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if validation_error:
             raise exception_cls(validation_error)
         #Ensure values used are not changed after capturing enrollment_checklist
-        enrollment_checklist = EnrolmentChecklist.objects.filter(household_member=self.household_member)
+        enrollment_checklist = EnrolmentChecklist.objects.filter(household_member=self)
         if enrollment_checklist.exists():
-            enrollment_checklist[0].matches_household_member_values(exception_cls)
+            enrollment_checklist[0].matches_household_member_values(self.age_in_years)
 
     def natural_key(self):
         if not self.household_structure:

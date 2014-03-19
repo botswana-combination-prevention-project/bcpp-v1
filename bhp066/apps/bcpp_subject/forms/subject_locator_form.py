@@ -9,9 +9,7 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         cleaned_data = super(SubjectLocatorForm, self).clean()
 
         # validating that some contact numbers exist when HicEnrollment form exists.
-        if HicEnrollment.objects.filter(subject_visit = cleaned_data.get('subject_visit', None)).exists():
-            if not cleaned_data.get('subject_cell', None) and not cleaned_data.get('subject_cell_alt', None) and not cleaned_data.get('subject_phone', None):
-                raise forms.ValidationError('An HicEnrollment form already exists for this Subject. Atleast one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+        self.instance.hic_enrollment_checks(forms.ValidationError)
         # validating home_visits
         if cleaned_data.get('home_visit_permission', None) == 'No' and cleaned_data.get('physical_address', None):
             raise forms.ValidationError('If participant has not given permission to make home_visits, do not give physical(home) address details')

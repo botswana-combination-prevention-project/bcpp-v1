@@ -37,10 +37,14 @@ class HivResult (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        self.hic_enrollment_checks()
+        super(HivResult, self).save(*args, **kwargs)
+
+    def hic_enrollment_checks(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
             if self.hiv_result.lower() != 'neg':
-                raise TypeError('An HicEnrollment form already exists for this Subject. So \'hiv_result\' cannot be changed to \'POS\'.')
-        super(HivResult, self).save(*args, **kwargs)
+                raise ValidationError('An HicEnrollment form already exists for this Subject. So \'hiv_result\' cannot be changed to \'POS\'.')
 
     def get_test_code(self):
         return 'HIV'
