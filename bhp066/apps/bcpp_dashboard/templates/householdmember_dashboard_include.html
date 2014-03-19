@@ -118,7 +118,7 @@
 	                    {% for undecided in household_member.undecided_form_label %}
 	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
 	                    {% endfor %}
-	                    {% if household_member.visit_attempts > 3 %}
+	                    {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)
 		                {% endif %}
                     </ol>
@@ -130,27 +130,28 @@
             {% else %}
                     ----
             {% endif %}                
-    </td>
-    <td>
-	    {% if household_member.eligible_htc and household_member.household_stucture.enrolled%}
-		    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
-		     	{% csrf_token %}
-	     		<select name="status" id="status" onchange="this.form.submit()">
-		    		{% for status_key, status in household_member.status_choices_htc %}
-		    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
-			    	{% endfor %}
-				</select>
-			    <input type="hidden" name="household_member" value={{ household_member.id }}>
-			    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
-			    <input type="hidden" name="dashboard_model" value="household_structure">
-			    <input type="hidden" name="dashboard_type" value="household">
-			</form>
-    </td>
-    <td>
-        {% if household_member.eligible_htc and household_member.member_status == 'HTC' %}
-            option not available.
-		{% endif %}
-    </td>
+	    </td>
+	    <td>
+		    {% if household_member.eligible_htc and household_member.household_stucture.enrolled%}
+			    <form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
+			     	{% csrf_token %}
+		     		<select name="status" id="status" onchange="this.form.submit()">
+			    		{% for status_key, status in household_member.status_choices_htc %}
+			    			<option value="{{ status_key }}"  {% if household_member.member_status_partial == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+				    	{% endfor %}
+					</select>
+				    <input type="hidden" name="household_member" value={{ household_member.id }}>
+				    <input type="hidden" name="dashboard_id" value={{ household_structure.id }}>
+				    <input type="hidden" name="dashboard_model" value="household_structure">
+				    <input type="hidden" name="dashboard_type" value="household">
+				</form>
+			{% endif %}
+	    </td>
+	    <td>
+	        {% if household_member.eligible_htc and household_member.member_status == 'HTC' %}
+	            option not available.
+			{% endif %}
+	    </td>
     </tr>
   {% endfor %}
 {% endif %}
