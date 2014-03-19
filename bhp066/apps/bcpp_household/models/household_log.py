@@ -1,7 +1,6 @@
 from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
 from ..choices import YES_NO
 from apps.bcpp_survey.validators import date_in_survey
@@ -10,9 +9,10 @@ from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 from .household_structure import HouseholdStructure
 from .plot import Plot
+from .base_replacement import BaseReplacement
 
 
-class HouseholdLog(BaseDispatchSyncUuidModel):
+class HouseholdLog(BaseReplacement):
     #Household
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -39,7 +39,7 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         app_label = 'bcpp_household'
 
 
-class HouseholdLogEntry(BaseDispatchSyncUuidModel):
+class HouseholdLogEntry(BaseReplacement):
 
     household_log = models.ForeignKey(HouseholdLog)
 

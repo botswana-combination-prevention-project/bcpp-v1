@@ -10,13 +10,13 @@ from edc.audit.audit_trail import AuditTrail
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.choices import RELATIONS
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
+from apps.bcpp_household.models import BaseReplacement
 
 from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
                        HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
@@ -26,7 +26,7 @@ from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
 from ..managers import HouseholdMemberManager
 
 
-class HouseholdMember(BaseDispatchSyncUuidModel):
+class HouseholdMember(BaseReplacement):
 
     household_structure = models.ForeignKey(HouseholdStructure,
         null=True,

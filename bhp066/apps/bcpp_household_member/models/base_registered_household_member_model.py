@@ -3,16 +3,15 @@ from django.db import models
 
 from edc.subject.registration.models import RegisteredSubject
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
-from apps.bcpp_household.models import Plot
+from apps.bcpp_household.models import BaseReplacement, Plot
 
 from .household_member import HouseholdMember
 
 
-class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
+class BaseRegisteredHouseholdMemberModel(BaseReplacement):
 
     """ base for membership form models that need a foreignkey to the registered subject and household_member model"""
 
