@@ -13,7 +13,7 @@ from .base_replacement import BaseReplacement
 
 class Household(BaseReplacement):
 
-    plot = models.ForeignKey(Plot, null=True)  # TODO: field should not be nullable.
+    plot = models.ForeignKey(Plot, null=True)
 
     household_identifier = models.CharField(
         verbose_name='Household Identifier',
@@ -208,6 +208,11 @@ class Household(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
+
+    def replaced(self, using=None):
+        if self.replacement:
+            return True
+        return False
 
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))
