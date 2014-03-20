@@ -8,9 +8,13 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(ResidencyMobilityForm, self).clean()
-
+        instance = None
+        if self.instance.id:
+            instance = self.instance
+        else:
+            instance = HicEnrollment(**self.cleaned_data)
         # validating that residency status is not changed after capturing enrollment checklist
-        self.instance.hic_enrollment_checks(forms.ValidationError)
+        instance.hic_enrollment_checks(forms.ValidationError)
         # validating if other community, you specify
         if cleaned_data.get('cattle_postlands') == 'Other community' and not cleaned_data.get('cattle_postlands_other'):
             raise forms.ValidationError('If participant was staying in another community, specify the community')
