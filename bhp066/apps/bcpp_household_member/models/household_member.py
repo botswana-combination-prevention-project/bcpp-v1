@@ -24,13 +24,10 @@ from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
                        HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
                        HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
                        HOUSEHOLD_MEMBER_REFUSED)
-from ..managers import HouseholdMemberManager
-
-from ..exceptions import MemberStatusError
-
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
-
 from ..classes import HouseholdMemberHelper
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..exceptions import MemberStatusError
+from ..managers import HouseholdMemberManager
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
