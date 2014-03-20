@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
 
 
 class HouseholdMemberHelper(object):
@@ -163,3 +163,31 @@ class HouseholdMemberHelper(object):
                     survey=self.household_member.household_structure.survey,
                     )
         return instance
+
+    @property
+    def member_status_choices(self):
+        if not self.household_member.member_status:
+            raise TypeError('household_member.member_status cannot be None')
+        options = []
+        if self.consented:
+            # consent overrides everything
+            options = [BHS]
+        else:
+            # BHS options
+            if self.household_member.eligible_member:
+                options += [ABSENT, BHS_SCREEN, UNDECIDED, REFUSED]
+            if self.household_member.eligible_subject:
+                options.remove(BHS_SCREEN)
+                options += [ABSENT, BHS_ELIGIBLE, UNDECIDED, REFUSED]
+            if self.household_member.refused:
+                options.remove(UNDECIDED)
+                options.remove(ABSENT)
+                options.append(REFUSED)
+            # HTC options
+            if self.household_member.eligible_htc:
+                options += [HTC, REFUSED_HTC]
+        # append the current member_status
+        options.append(self.household_member.member_status)
+        # sort and remove duplicates
+        options = list(set(options))
+        return [(item, item) for item in options]

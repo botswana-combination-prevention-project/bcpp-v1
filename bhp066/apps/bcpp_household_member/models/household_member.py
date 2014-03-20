@@ -17,12 +17,6 @@ from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION
-# from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
-#                        HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_REFUSED)
 from ..classes import HouseholdMemberHelper
 from ..constants import  ABSENT, REFUSED, UNDECIDED, NOT_ELIGIBLE, HTC
 from ..exceptions import MemberStatusError
@@ -140,7 +134,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         household_member_helper = HouseholdMemberHelper()
         household_member_helper.household_member = self
-        if household_member_helper.consented:
+        if household_member_helper.consented:  # checks if a subject_consent instance exists
             raise MemberStatusError('Household member is consented. Changes are not allowed.')
         else:
             self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
@@ -149,10 +143,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             if not self.household_structure.household.enumerated:  # TODO: put this in the post-save?
                 self.household_structure.household.enumerated = True
                 self.household_structure.household.save()
-            if self.household_structure.enrolled:
-                self.eligible_htc = (self.age_in_years >= 16 and not household_member_helper.consented)
             self.member_status = household_member_helper.calculate_member_status()
             self.reported, self.is_consented = household_member_helper.household_member.reported, household_member_helper.household_member.is_consented
+            if self.household_structure.enrolled and not self.is_consented:
+                self.eligible_htc = False
+                if self.eligible_member:
+                    self.eligible_htc = self.refused
+                else:
+                    self.eligible_htc = (self.age_in_years >= 16)
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def update_plot_eligible_members(self):
@@ -253,7 +251,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def member_status_choices(self):
-        return HOUSEHOLD_MEMBER_PARTICIPATION
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self
+        return household_member_helper.member_status_choices
 
 #     @property
 #     def member_status_dashboard(self):
