@@ -74,10 +74,15 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
 class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
+        instance = None
+        if self.instance.id:
+            instance = self.instance
+        else:
+            instance = SubjectConsent(**self.cleaned_data)
         # Verify values required for HiC enrollment that they are not changed in this form.
-        self.instance.matches_hic_enrollment_values(forms.ValidationError)
+        instance.matches_hic_enrollment_values(forms.ValidationError)
         # Verify the data is identical to that entered in the enrollment checklist for BHS
-        self.instance.enrollment_checklist_checks(forms.ValidationError)
+        instance.enrollment_checklist_checks(forms.ValidationError)
 
         return super(SubjectConsentForm, self).clean()
 
