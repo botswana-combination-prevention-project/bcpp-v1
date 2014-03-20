@@ -60,7 +60,7 @@
     		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 	         {% csrf_token %}
 			    <select name="status" id="status" onchange="this.form.submit()">
-		    		{% for status_key, status_value  in household_member.status_choices %}
+		    		{% for status_key, status_value  in household_member.member_status_choices %}
 		    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
 			    	{% endfor %}
 				</select>
@@ -102,12 +102,12 @@
             	Under age 16, cannot participate at any level.
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
             	Older than age 64. Can participate only in HTC, if atleast one enrolled member.
-            {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
+            {% elif not household_member.is_consented and household_member.member_status != 'NOT_ELIGIBLE' %}
                {% if household_member.member_status == 'ABSENT'%}
                Absentee log (attempts to contact)
                		<ol>
 	                    {% for absentee in household_member.absentee_form_label %}
-	                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_urls|index_dictionary:absentee.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_absentee={{household_member.subject_absentee.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ absentee.0 }}</li></A>
+	                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_urls|index_dictionary:absentee.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_absentee={{household_member.subject_absentee_instance.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ absentee.0 }}</li></A>
 	                    {% endfor %}
 		                {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)
@@ -117,7 +117,7 @@
                Undecided log (attempts to contact)
                		<ol>
 	                    {% for undecided in household_member.undecided_form_label %}
-	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
+	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided_instance.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
 	                    {% endfor %}
 	                    {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)
