@@ -9,7 +9,12 @@ from ..models import EnrolmentChecklist
 class EnrolmentChecklistForm(forms.ModelForm):
 
     def clean(self):
-        self.instance.matches_household_member_values(exception_cls=forms.ValidationError)
+        instance = None
+        if self.instance.id:
+            instance = self.instance
+        else:
+            instance = EnrolmentChecklist(**self.cleaned_data)
+        instance.matches_household_member_values(exception_cls=forms.ValidationError)
 #         if cleaned_data.get('citizen') == 'Yes':
 #             if not cleaned_data.get('legal_marriage') == 'N/A':
 #                 raise forms.ValidationError('Marital status is not applicable, Participant is a citizen.')
