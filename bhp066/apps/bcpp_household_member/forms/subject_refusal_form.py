@@ -8,8 +8,6 @@ class SubjectRefusalForm(BaseMembershipForm):
     def clean(self):
         cleaned_data = super(SubjectRefusalForm, self).clean()
         household_member = cleaned_data.get('household_member', None)
-        if household_member.is_consented_partial:
-            raise forms.ValidationError('You cannot edit a REFUSAL REPORT once a subject has been consented for partial participation.')
         offered_htc = cleaned_data.get('participant_offered_htc')
         if offered_htc is None:
             raise forms.ValidationError('The answer to question 6, must be either \'Yes\' or \' No\''.format(offered_htc))

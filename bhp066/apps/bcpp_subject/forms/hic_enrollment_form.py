@@ -1,20 +1,23 @@
 from django import forms
-from ..models import HicEnrollment, ResidencyMobility, HivResult, SubjectConsent, SubjectLocator
+from ..models import HicEnrollment
 from .base_subject_model_form import BaseSubjectModelForm
 
 
 class HicEnrollmentForm (BaseSubjectModelForm):
 
     def clean(self):
-
-        cleaned_data = self.cleaned_data
-        self.instance.is_permanent_resident()
-        self.instance.is_intended_residency()
-        self.instance.get_hiv_status_today()
-        self.instance.get_dob_consent_datetime()
-        self.instance.is_household_residency()
-        self.instance.is_citizen_or_spouse()
-        self.instance.is_locator_information()
+        instance = None
+        if self.instance.id:
+            instance = self.instance
+        else:
+            instance = HicEnrollment(**self.cleaned_data)
+        instance.is_permanent_resident()
+        instance.is_intended_residency()
+        instance.get_hiv_status_today()
+        instance.get_dob_consent_datetime()
+        instance.is_household_residency()
+        instance.is_citizen_or_spouse()
+        instance.is_locator_information()
 #         # validating a need to specify the participant's preference
 #         if not cleaned_data.get('subject_visit', None).household_member:
 #             raise forms.ValidationError('This form has to be attached by to a household member. Currently it is not.')
