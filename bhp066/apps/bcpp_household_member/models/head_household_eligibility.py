@@ -70,9 +70,7 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
         validation_error = None
         exception_cls = exception_cls or ValidationError
         if self.aged_over_18 == 'yes' and self.household_member.age_in_years < 18:
-            raise ValidationError('This household member is \'{0}\' years old which is not aged 18 or older.'.format(self.household_member.age_in_years))
-        if exception_cls:
-            raise exception_cls(validation_error)
+            raise exception_cls('This household member is \'{0}\' years old which is not aged 18 or older.'.format(self.household_member.age_in_years))
         return True
 
     class Meta:
