@@ -56,6 +56,9 @@ class HouseholdHeadEligibility(BaseReplacement):
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
+    def replacement_container(self, using=None):
+        return self.household_member.household_structure.household
+
     def save(self, *args, **kwargs):
         self.household_member.eligible_hoh = False
         self.matches_household_member_values()

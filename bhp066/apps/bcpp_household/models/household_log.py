@@ -2,15 +2,16 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.core.crypto_fields.fields import EncryptedTextField
-from ..choices import YES_NO
-from apps.bcpp_survey.validators import date_in_survey
-from apps.bcpp_household_member.models import HouseholdMember
+
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
+from ..choices import YES_NO
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
-from .household_structure import HouseholdStructure
-from .household import Household
-from .plot import Plot
 from .base_replacement import BaseReplacement
+from .household import Household
+from .household_structure import HouseholdStructure
+from .plot import Plot
+from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_survey.validators import date_in_survey
 
 
 class HouseholdLog(BaseReplacement):

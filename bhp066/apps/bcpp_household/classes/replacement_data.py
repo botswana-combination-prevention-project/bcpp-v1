@@ -13,20 +13,30 @@ class ReplacementData(object):
             if plot.household_count == 1:
                 household = Household.objects.get(plot=plot)
                 if self.is_hoh_refused(household):
-                    replaced.append(household)
+                    replaced.append([household, 'HOH refusal', self.producer(plot)])
                 else:
                     if self.is_refusal(household):
-                        replaced.append([self.is_refusal(household), 'HOH refusal'])
+                        replaced.append([self.is_refusal(household), 'all members refused', self.producer(plot)])
             if plot.household_count > 1:
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
                     if self.is_hoh_refused(household):
-                        replaced.append([household, 'all members refused'])
+                        replaced.append([household, 'all members refused', self.producer(plot)])
                     else:
                         if self.is_refusal(household):
-                            replaced.append([self.is_refusal(household), 'HOH refusal'])
+                            replaced.append([self.is_refusal(household), 'HOH refusal', self.producer(plot)])
         return replaced
+
+    def producer(self, plot):
+        """Get the producer where the plot is dispatched to."""
+        from edc.device.dispatch.models import DispatchContainerRegister
+        container = None
+        producer = None
+        container = DispatchContainerRegister.objects.get(container_identifier=plot.plot_identifier)
+        if container:
+            producer = producer.producer
+        return producer
 
     def check_absentees_ineligibles(self, plot):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
@@ -42,11 +52,11 @@ class ReplacementData(object):
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
                     if self.is_absent(household):
-                        replaced.append([self.is_absent(household), 'all members are absent'])
+                        replaced.append([self.is_absent(household), 'all members are absent', self.producer(plot)])
                     if self.no_informant(household):
-                        replaced.append([self.no_informant(household), 'no household informant'])
+                        replaced.append([self.no_informant(household), 'no household informant', self.producer(plot)])
                     if self.no_eligible_rep(household):
-                        replaced.append([self.no_eligible_rep(household), 'no eligible members'])
+                        replaced.append([self.no_eligible_rep(household), 'no eligible members', self.producer(plot)])
         return replaced
 
     def is_hoh_refused(self, household):
@@ -129,5 +139,5 @@ class ReplacementData(object):
         elif plot.household_count > 1:
             for household in Household.objects.filter(plot=plot):
                 if not household.household_status == "eligible_representative_present":
-                    replaced.append([household, "invalid replacement"])
+                    replaced.append([household, "invalid replacement", self.producer(plot)])
         return replaced
