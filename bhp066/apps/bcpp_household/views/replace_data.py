@@ -21,11 +21,11 @@ def replace_data(request):
     plots = Plot.objects.filter(Q(selected=2) | Q(selected=1))
     #Get all household to be replaced
     for plot in plots:
-        if ReplacementData().replace_refusals(plot):
-            replacement_data = replacement_data + ReplacementData().replace_refusals(plot)  # replacement of refusals.
+        if ReplacementData().check_refusals(plot):
+            replacement_data = replacement_data + ReplacementData().check_refusals(plot)  # replacement of refusals.
             plot_identifiers.append(plot.plot_identifier)
-        if ReplacementData().replacement_absentees_ineligibles(plot):
-            replacement_data = replacement_data + ReplacementData().replacement_absentees_ineligibles(plot)  # replacement of absentees.
+        if ReplacementData().check_absentees_ineligibles(plot):
+            replacement_data = replacement_data + ReplacementData().check_absentees_ineligibles(plot)  # replacement of absentees.
             plot_identifiers.append(plot.plot_identifier)
         if ReplacementData().is_replacement_valid(plot):
             replacement_data = replacement_data + ReplacementData().is_replacement_valid(plot)  # replacement of an invalid replacement.
