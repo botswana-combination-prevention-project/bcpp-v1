@@ -14,7 +14,7 @@ from ..managers import EnrolmentChecklistManager
 from .household_member import HouseholdMember
 from .loss import Loss
 
-from ..constants import BHS_SCREEN
+from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE
 from ..exceptions import MemberStatusError
 
 
@@ -138,13 +138,17 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        #To fill the eligibility checklist you should be member_status=BHS_SCREEN
         if self.household_member.member_status != BHS_SCREEN:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
+        #Reset member status to NOT_ELIGIBLE until the eligibility checklist passes
         self.household_member.eligible_subject = False
+        self.household_member.member_status = NOT_ELIGIBLE
         age_in_years = relativedelta(date.today(), self.dob).years
         if self.matches_household_member_values():
             if not self.has_loss_reason(age_in_years):
                 self.household_member.eligible_subject = True
+                self.household_member.member_status = BHS_ELIGIBLE
         self.is_eligible = self.household_member.eligible_subject
         self.household_member.eligibility_checklist_filled = True
         self.household_member.save()
