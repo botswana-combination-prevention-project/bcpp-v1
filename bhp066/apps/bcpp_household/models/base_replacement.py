@@ -32,12 +32,12 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
         else:
             if self.replacement_container(using):
                 plot = self.replacement_container(using).plot
-        if ReplacementData().replace_refusals(plot):
-            for item in ReplacementData().replace_refusals(plot):
+        if ReplacementData().check_refusals(plot):
+            for item in ReplacementData().check_refusals(plot):
                 item.replaceble = True
                 item.save()
-        if ReplacementData().replacement_absentees_ineligibles(plot):
-            for item in ReplacementData().replacement_absentees_ineligibles(plot):
+        if ReplacementData().check_absentees_ineligibles(plot):
+            for item in ReplacementData().check_absentees_ineligibles(plot):
                 item.replaceble = True
                 item.save()
         if ReplacementData().is_replacement_valid(plot):
