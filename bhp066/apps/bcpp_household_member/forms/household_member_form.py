@@ -1,15 +1,19 @@
 from django import forms
 
-from base_household_member_form import BaseHouseholdMemberForm
 from ..models import HouseholdMember
+from ..classes import HouseholdMemberHelper
+
+from .base_household_member_form import BaseHouseholdMemberForm
 
 
 class HouseholdMemberForm(BaseHouseholdMemberForm):
 
     def clean(self):
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self.instance
         # only allow one person to be Head of Household
         self.instance.match_eligibility_values(exception_cls=forms.ValidationError)
-        self.instance.calculate_member_status(exception_cls=forms.ValidationError)
+        household_member_helper.calculate_member_status(exception_cls=forms.ValidationError) # TOD): add exceptions back
 #         household_structure = cleaned_data.get('household_structure')
 #         initials = cleaned_data.get('initials')
 #         if cleaned_data.get('eligible_hoh', None):
