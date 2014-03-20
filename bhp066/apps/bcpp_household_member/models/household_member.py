@@ -143,14 +143,21 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             if not self.household_structure.household.enumerated:  # TODO: put this in the post-save?
                 self.household_structure.household.enumerated = True
                 self.household_structure.household.save()
-            self.member_status = household_member_helper.calculate_member_status()
-            self.reported = household_member_helper.household_member.reported
-            if self.household_structure.enrolled and not self.is_consented:
+            self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
+            self.reported = household_member_helper.reported
+            if self.household_structure.enrolled and not self.is_consented:  # TODO: move to helper class
                 self.eligible_htc = False
                 if self.eligible_member:
-                    self.eligible_htc = self.refused
+                    if not self.eligibility_checklist_filled:
+                        self.eligible_htc = self.refused
+                    elif self.eligible_subject:
+                        self.eligible_htc = self.refused
+                    elif not self.eligible_subject and self.eligibility_checklist_filled:
+                        self.eligible_htc = True
                 else:
                     self.eligible_htc = (self.age_in_years >= 16)
+            self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
+            self.reported = household_member_helper.reported
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def update_plot_eligible_members(self):
