@@ -18,6 +18,6 @@ class ReceiveAdmin(BaseModelAdmin):
     list_per_page = 15
 
     def get_readonly_fields(self, request, obj):
-        return ['receive_identifier'] + [field.name for field in obj._meta.fields if field.editable]
+        return ['receive_identifier', 'requisition_model_name', 'clinician_initials'] + [field.name for field in obj._meta.fields if field.editable]
 
 admin.site.register(Receive, ReceiveAdmin)
