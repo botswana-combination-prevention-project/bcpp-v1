@@ -153,7 +153,6 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
     def matches_household_member_values(self, exception_cls=None):
         """Compares shared values on household_member form and returns True if all match."""
         validation_error = None
-        print '*************'+str(self.household_member)
         exception_cls = exception_cls or ValidationError
         age_in_years = relativedelta(date.today(), self.dob).years
         if age_in_years != self.household_member.age_in_years:
