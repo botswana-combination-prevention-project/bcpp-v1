@@ -88,7 +88,7 @@ class HouseholdMemberHelper(object):
         self.household_member.is_consented = SubjectConsent.objects.filter(household_member=self).count() == 1
         return self.household_member.is_consented
 
-    def calculate_member_status(self):
+    def calculate_member_status(self, exception_cls=None):
         """Updates the member status."""
         if not self.household_member.id:
             member_status = NOT_REPORTED
