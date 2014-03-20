@@ -16,7 +16,7 @@ from .plot import Plot
 
 class HouseholdAssessment(BaseReplacement):
 
-    household = models.ForeignKey(Household, null=True)
+    household = models.OneToOneField(Household,)
 
     residency = models.CharField(
         verbose_name='Is anybody living in this Household?',

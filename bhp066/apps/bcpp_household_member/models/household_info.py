@@ -145,6 +145,9 @@ class HouseholdInfo(BaseReplacement):
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
+    def replacement_container(self, using=None):
+        return self.household_structure.household
+
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject
         super(HouseholdInfo, self).save(*args, **kwargs)
