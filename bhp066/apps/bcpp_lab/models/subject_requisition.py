@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
@@ -19,8 +20,6 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
-    entry_meta_data_manager = RequisitionManager(SubjectVisit)
-
     packing_list = models.ForeignKey(PackingList, null=True, blank=True)
 
     aliquot_type = models.ForeignKey(AliquotType)
@@ -28,6 +27,8 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
     panel = models.ForeignKey(Panel)
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+
+    entry_meta_data_manager = RequisitionManager(SubjectVisit)
 
     history = AuditTrail()
 
@@ -40,6 +41,11 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
 
     def get_visit(self):
         return self.subject_visit
+
+    def aliquot(self):
+        url = reverse('admin:bcpp_lab_aliquot_changelist')
+        return """<a href="{url}?q={requisition_identifier}" />aliquot</a>""".format(url=url, requisition_identifier=self.requisition_identifier)
+    aliquot.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_lab'

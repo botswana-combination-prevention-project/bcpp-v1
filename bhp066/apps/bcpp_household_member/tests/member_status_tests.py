@@ -10,7 +10,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import Loss, HouseholdMember, SubjectRefusal, SubjectAbsentee, EnrolmentChecklist
+from apps.bcpp_household_member.models import Loss, HouseholdMember, SubjectRefusal, SubjectAbsentee, EnrolmentChecklist, SubjectConsent
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, SubjectRefusalFactory, SubjectUndecidedFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
@@ -128,6 +128,20 @@ class MemberStatusTests(TestCase):
         household_member = self.enroll_household()
         self.assertTrue(household_member.household_structure.enrolled)
 
+    def test_consented(self):
+        household_member = self.enroll_household()
+        self.assertEqual(household_member.member_status, BHS)
+
+    def test_consented2(self):
+        household_member = self.enroll_household()
+        self.assertEqual(household_member.member_status, BHS)
+        household_member.member_status = BHS_ELIGIBLE
+        household_member.save()
+        subject_consent = SubjectConsent.objects.get(household_member=household_member)
+        subject_consent.save()
+        self.assertEqual(household_member.member_status, BHS)
+
+    
     def test_enrolled_household1(self):
         """Assert is HTC eligible if not BHS eligible based on residency and household is enrolled"""
         household_member = self.enroll_household()
