@@ -7,7 +7,7 @@ from apps.bcpp_household.classes import ReplacementData
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ..models import Household, HouseholdStructure
+from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
 
 from .factories import PlotFactory
 
@@ -17,7 +17,8 @@ class PlotReplcamentMethodTests(TestCase):
     def setUp(self):
         SurveyFactory()
 
-    def test_replace_refusal_plot(self):
+    def test_check_refusal_household1(self):
+        """Check for a refusal for a plot with one household."""
 
         plot = PlotFactory(
                 community='test_community',
@@ -33,13 +34,9 @@ class PlotReplcamentMethodTests(TestCase):
                 gps_minutes_e=44.366660,
                 selected=1)
         household = Household.objects.get(plot=plot)
-        print household
-        household.allowed_to_enumerate = 'no'
-        household.report_datetime = datetime.datetime.now()
-        household.save()
-        h_structure = HouseholdStructure.objects.get(household=household)
+        household_structure = HouseholdStructure.objects.get(household=household)
         member = HouseholdMember(
-                household_structure=h_structure,
+                household_structure=household_structure,
                 first_name='MOSIMANE',
                 initials='MB',
                 gender='M',
@@ -48,15 +45,10 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='REFUSED',
                 study_resident='Yes')
         member.save()
-        print ReplacementData().replace_refusals(plot), "its the 1 returning none"
-        print household, "this is the househod to be returned"
-        print h_structure, "STRUCTURE"
-        print HouseholdMember.objects.filter(household_structure=h_structure), "Members"
-        #refusal with one household
-        print "**************************************************"
-        print "Refusal with 1 household"
-        self.assertEqual(ReplacementData().replace_refusals(plot), [household])
-        print "**************************************************Done"
+        self.assertEqual(ReplacementData().check_refusals(plot), [household])
+
+    def test_check_refusal_household2(self):
+        """Check for refusals for a plot with more than one household."""
 
         plot = PlotFactory(
                 community='test_community',
@@ -73,9 +65,9 @@ class PlotReplcamentMethodTests(TestCase):
                 selected=1)
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
-        h_structure = HouseholdStructure.objects.get(household=household1)
+        household_structure = HouseholdStructure.objects.get(household=household1)
         member1 = HouseholdMember(
-                household_structure=h_structure,
+                household_structure=household_structure,
                 first_name='WANE',
                 initials='WA',
                 gender='M',
@@ -86,7 +78,7 @@ class PlotReplcamentMethodTests(TestCase):
         member1.save()
 
         member2 = HouseholdMember(
-                household_structure=h_structure,
+                household_structure=household_structure,
                 first_name='DANE',
                 initials='DA',
                 gender='M',
@@ -97,9 +89,9 @@ class PlotReplcamentMethodTests(TestCase):
         member2.save()
 
         household2 = households[1]
-        h_structure = HouseholdStructure.objects.get(household=household2)
+        household_structure = HouseholdStructure.objects.get(household=household2)
         member3 = HouseholdMember(
-                household_structure=h_structure,
+                household_structure=household_structure,
                 first_name='GOSIAME',
                 initials='GS',
                 gender='M',
@@ -108,21 +100,40 @@ class PlotReplcamentMethodTests(TestCase):
                 member_status='RESEARCH',
                 study_resident='Yes')
         member3.save()
-        member4 = HouseholdMember(household_structure=h_structure, first_name='THABANG',
+        member4 = HouseholdMember(household_structure=household_structure, first_name='THABANG',
                 initials='TF', gender='F', age_in_years=27, present_today='Yes',
                 member_status='RESEARCH')
         member4.save()
 
-        print "*************************************************"
-        print "refusal tests for 2 household 1 as a refusal"
-        print "*************************************************"
-        self.assertEqual(ReplacementData().replace_refusals(plot), [household1])
-        print "*************************************************Done"
+        self.assertEqual(ReplacementData().check_refusals(plot), [household1])
 
-    def test_replacement_absentees_ineligibles(self):
-        print "*********************************"
-        print "Absentee replacement"
-        print "*****************************************"
+    def test_check_refusal_household3(self):
+        """Test for household refusal by head of household."""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=2,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.7276399,
+                gps_degrees_e=25,
+                gps_minutes_e=44.2782599,
+                selected=1)
+        households = Household.objects.filter(plot=plot)
+        household1 = households[0]
+        household_structure = HouseholdStructure.objects.get(household=household1)
+        household_log = HouseholdLog.objects.create(household_structure=household_structure)
+        household_log_entry = HouseholdLogEntry.objects.create(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
+        household_refusal = HouseholdRefusal.objects.create(household=household1, report_datetime=datetime.datetime.now(), reason='not_interested')
+
+        self.assertEqual(ReplacementData().check_refusals(plot), [household1])
+
+    def test_check_absentees_ineligibles1(self):
+        """""Test for absentees for a plot with one household"""
 
         plot = PlotFactory(
                 community='test_community',
@@ -139,7 +150,7 @@ class PlotReplcamentMethodTests(TestCase):
                 selected=1)
         household = Household.objects.filter(plot=plot)
         h_structure = HouseholdStructure.objects.get(household=household)
-        member = HouseholdMember(
+        member = HouseholdMember.objects.create(
                 household_structure=h_structure,
                 first_name='KGOSANA',
                 initials='KB',
@@ -147,13 +158,15 @@ class PlotReplcamentMethodTests(TestCase):
                 age_in_years=21,
                 present_today='No',
                 member_status='ABSENT')
-        member.save()
         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-        #refusal with one household
-        self.assertEqual(ReplacementData().replacement_absentees_ineligibles(plot), [household])
+
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household])
+
+    def test_check_absentees_ineligibles2(self):
+        """Test for abseentees for a plot with more than one household."""
 
         plot = PlotFactory(
                 community='test_community',
@@ -170,23 +183,22 @@ class PlotReplcamentMethodTests(TestCase):
                 selected=1,
                 access_attempts=0,)
         household = Household.objects.filter(plot=plot)
-        h_structure = HouseholdStructure.objects.get(household=household[0])
-        member = HouseholdMember(
-                household_structure=h_structure,
+        household_structure = HouseholdStructure.objects.get(household=household[0])
+        member = HouseholdMember.objects.create(
+                household_structure=household_structure,
                 first_name='KABELO',
                 initials='KA',
                 gender='M',
                 age_in_years=29,
                 present_today='Yes',
                 member_status='ABSENT')
-        member.save()
         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
 
         member = HouseholdMember(
-                household_structure=h_structure,
+                household_structure=household_structure,
                 first_name='DILO',
                 initials='DA',
                 gender='M',
@@ -199,18 +211,44 @@ class PlotReplcamentMethodTests(TestCase):
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
 
-        h_structure = HouseholdStructure.objects.get(household=household[1])
-        member = HouseholdMember(
-                household_structure=h_structure,
+        household_structure = HouseholdStructure.objects.get(household=household[1])
+        member = HouseholdMember.objects.create(
+                household_structure=household_structure,
                 first_name='BATHO',
                 initials='BS',
                 gender='M',
                 age_in_years=26,
                 present_today='Yes',
                 member_status='RESEARCH')
-        member.save()
-        #A plot with more than one household
-        self.assertEqual(ReplacementData().replacement_absentees_ineligibles(plot), [household[0]])
+
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household[0]])
+
+    def test_check_absentees_ineligibles3(self):
+        """Test for no informant within a household, an absent household."""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=2,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.51276399,
+                gps_degrees_e=25,
+                gps_minutes_e=44.311,
+                selected=1)
+        households = Household.objects.filter(plot=plot)
+        household1 = households[0]
+        household_structure = HouseholdStructure.objects.get(household=household1)
+        household_log = HouseholdLog.objects.create(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
+        household_log_entry2 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_log_entry3 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_assessment = HouseholdAssessment.objects.create(household=household1, residency='No', last_seen_home='1_to_6_months', most_likely=['work_live_school_outside_village', 'away_for_harvesting'])
+
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household1])
 
     def test_evaluate_head_of_household_refusal(self):
         plot = PlotFactory(

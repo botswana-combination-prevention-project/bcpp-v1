@@ -5,7 +5,7 @@ class ReplacementData(object):
     def __init__(self):
         self._replacement_plot = None
 
-    def replace_refusals(self, plot):
+    def check_refusals(self, plot):
         """Check if a plot has household refusals that would make it be replaced."""
         from ..models import Household
         replaced = []
@@ -28,7 +28,7 @@ class ReplacementData(object):
                             replaced.append([self.is_refusal(household), "HOH refusal"])
         return replaced
 
-    def replacement_absentees_ineligibles(self, plot):
+    def check_absentees_ineligibles(self, plot):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
         from ..models import Household
         replaced = []
