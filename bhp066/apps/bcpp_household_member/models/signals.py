@@ -1,10 +1,11 @@
+from django.db.models import get_model
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
+from ..constants import ABSENT, UNDECIDED
+
 from .household_member import HouseholdMember
 from .enrolment_checklist import EnrolmentChecklist
-from .subject_absentee_entry import SubjectAbsenteeEntry
-from .subject_undecided_entry import SubjectUndecidedEntry
 from .base_member_status_model import BaseMemberStatusModel
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 
@@ -30,32 +31,20 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
         if isinstance(instance, HouseholdMember):
             instance.update_registered_subject_on_post_save(**kwargs)  # update HM must not override consent values, if consent exists
             instance.update_household_member_count_on_post_save(sender, using)
-            if instance.member_status == 'ABSENT':
-                # TODO: probably do not need to call this now??
-                instance.subject_absentee
-            if instance.member_status == 'UNDECIDED':
-                # TODO: probably do not need to call this now??
-                instance.subject_undecided
+            if instance.member_status == ABSENT:
+                SubjectAbsentee = get_model('bcpp_household_member', 'SubjectAbsentee')
+                if not SubjectAbsentee.objects.filter(household_member=instance).exists():
+                    SubjectAbsentee.objects.create(household_member=instance, subject_absentee_status=ABSENT)
+            elif instance.member_status == UNDECIDED:
+                SubjectUndecided = get_model('bcpp_household_member', 'SubjectUndecided')
+                if not SubjectUndecided.objects.filter(household_member=instance).exists():
+                    SubjectUndecided.objects.create(household_member=instance, subject_absentee_status=UNDECIDED)
+            else:
+                pass
+
 
 
 @receiver(post_save, weak=False, dispatch_uid='base_household_member_consent_on_post_save')
 def base_household_member_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
-    if isinstance(instance, (BaseMemberStatusModel)):
-        instance.post_save_update_hm_status()  # HM values must either be changed or match that provided on the consent
     if isinstance(instance, BaseRegisteredHouseholdMemberModel):
         instance.confirm_registered_subject_pk_on_post_save()
-
-
-@receiver(post_save, weak=False, dispatch_uid='visit_attempts_on_post_save')
-def visit_attempts_on_post_save(sender, instance, **kwargs):
-    if not kwargs.get('raw', False):
-        household_member = None
-        if isinstance(instance, SubjectAbsenteeEntry):
-            household_member = instance.subject_absentee.household_member
-        if isinstance(instance, SubjectUndecidedEntry):
-            household_member = instance.subject_undecided.household_member
-        if household_member:
-            if household_member.visit_attempts <= 3:
-                household_member.visit_attempts = (SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=household_member).count() +
-                                                   SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=household_member).count())
-                household_member.save()
