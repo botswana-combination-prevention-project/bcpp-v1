@@ -22,7 +22,8 @@ from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
                        HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
                        HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
                        HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
-                       HOUSEHOLD_MEMBER_FULL_PARTICIPATION)
+                       HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+                       HOUSEHOLD_MEMBER_REFUSED)
 from ..managers import HouseholdMemberManager
 
 from ..exceptions import MemberStatusError
@@ -149,7 +150,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
             self.initials = self.initials.upper()
             self.match_eligibility_values()
-            if not self.household_structure.household.enumerated:  # TODO: put this in the post-save
+            if not self.household_structure.household.enumerated:  # TODO: put this in the post-save?
                 self.household_structure.household.enumerated = True
                 self.household_structure.household.save()
             if self.household_structure.enrolled:
@@ -160,7 +161,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def update_plot_eligible_members(self):
         self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
-                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
+            household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier,
+            eligible_member=True).count()
         self.household_structure.household.plot.save()
 
     def match_eligibility_values(self, exception_cls=None):
@@ -254,11 +256,19 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return retval
 
     @property
+    def member_status_dashboard(self):
+        if self.member_status != 'HTC':
+            return self.member_status
+        return 'NOT_ELIGIBLE'
+
+    @property
     def status_choices_full(self):
         """"Returns all choices for bhs participation if an eligible member ."""
         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if not self.is_eligible_member():
+        if not self.eligible_member:
             status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
+        elif self.member_status == 'REFUSED':
+            status_choices = HOUSEHOLD_MEMBER_REFUSED
         return status_choices
 
     @property
@@ -272,6 +282,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 status_choices = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
             elif enrolled == 0:
                 status_choices = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
+        return status_choices
+
+    @property
+    def status_choices_htc(self):
+        status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
         return status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
