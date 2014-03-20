@@ -6,11 +6,10 @@ from edc.base.form.forms import BaseModelForm
 from ..models import EnrolmentChecklist
 
 
-class EnrolmentChecklistForm(BaseModelForm):
+class EnrolmentChecklistForm(forms.ModelForm):
 
     def clean(self):
-        cleaned_data = self.cleaned_data
-        self.instance.match_eligibility_values(forms.ValidationError)
+        self.instance.matches_household_member_values(exception_cls=forms.ValidationError)
 #         if cleaned_data.get('citizen') == 'Yes':
 #             if not cleaned_data.get('legal_marriage') == 'N/A':
 #                 raise forms.ValidationError('Marital status is not applicable, Participant is a citizen.')
@@ -31,7 +30,7 @@ class EnrolmentChecklistForm(BaseModelForm):
 #         if cleaned_data.get('household_member') and cleaned_data.get('initials'):
 #             if not cleaned_data.get('initials') == cleaned_data.get('household_member').initials:
 #                 raise forms.ValidationError('Initials do not match with household member ({0}). Expected {1}.'.format(cleaned_data.get('household_member').first_name, cleaned_data.get('household_member').initials))
-        return cleaned_data
+        return super(EnrolmentChecklistForm, self).clean()
 
     class Meta:
         model = EnrolmentChecklist
