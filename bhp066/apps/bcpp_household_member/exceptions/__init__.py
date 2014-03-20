@@ -1,0 +1,2 @@
+class MemberStatusError(Exception):
+    pass
