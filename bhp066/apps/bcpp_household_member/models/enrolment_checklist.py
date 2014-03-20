@@ -136,10 +136,12 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.household_member.eligible_subject = False
+        self.household_member.member_status = 'NOT_ELIGIBLE'
         age_in_years = relativedelta(date.today(), self.dob).years
         if self.matches_household_member_values(age_in_years):
             if not self.has_loss_reason(age_in_years):
                 self.household_member.eligible_subject = True
+                self.household_member.member_status = 'RESEARCH'
         self.is_eligible = self.household_member.eligible_subject
         self.household_member.eligibility_checklist_filled = True
         self.household_member.save()
