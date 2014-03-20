@@ -42,9 +42,9 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         if first_name and household_member:
             if household_member.first_name != first_name:
                 raise forms.ValidationError("First name does not match. The first name recorded in the household member's information are '%s' but you wrote '%s'" % (household_member.first_name, first_name))
-        if last_name and household_member:
-            if household_member.last_name != last_name:
-                raise forms.ValidationError("Last name does not match. The last name recorded in the household member's information are '%s' but you wrote '%s'" % (household_member.last_name, last_name))
+#         if last_name and household_member:
+#             if household_member.last_name != last_name:
+#                 raise forms.ValidationError("Last name does not match. The last name recorded in the household member's information are '%s' but you wrote '%s'" % (household_member.last_name, last_name))
         gender = cleaned_data.get("gender", None)
         if gender and household_member:
             if household_member.gender != gender:
@@ -82,7 +82,7 @@ class SubjectConsentForm(BaseBcppConsentForm):
         # Verify values required for HiC enrollment that they are not changed in this form.
         instance.matches_hic_enrollment_values(forms.ValidationError)
         # Verify the data is identical to that entered in the enrollment checklist for BHS
-        instance.enrollment_checklist_checks(forms.ValidationError)
+        instance.matches_enrollment_checklist(forms.ValidationError)
 
         return super(SubjectConsentForm, self).clean()
 
