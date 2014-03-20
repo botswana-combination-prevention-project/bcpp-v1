@@ -1,13 +1,10 @@
-from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..exceptions import AlreadyReplaced
 from ..classes import ReplacementData
+from ..exceptions import AlreadyReplaced
 
 
 class BaseReplacement(BaseDispatchSyncUuidModel):
-
-    history = AuditTrail()
 
     def is_plot(self):
         return False
@@ -22,6 +19,9 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
         elif self.replacement_container(self, using=None).replacement:
             return True
         return False
+
+    def related_replacement_items(self):
+        pass
 
     def potential_replacement(self, using=None):
         plot = None
@@ -58,5 +58,7 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
         super(BaseReplacement, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'bcpp_household'
-        ordering = ['-household_identifier', ]
+        abstract = True
+
+
+

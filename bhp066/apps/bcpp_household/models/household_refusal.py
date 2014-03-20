@@ -19,7 +19,7 @@ HOUSEHOLD_REFUSAL = (
 
 class HouseholdRefusal(BaseReplacement):
 
-    household = models.OneToOneField(Household)
+    household = models.OneToOneField(Household, related_name='refusal_household')
 
     report_datetime = models.DateTimeField()
 
