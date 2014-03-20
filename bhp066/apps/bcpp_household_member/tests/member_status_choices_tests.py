@@ -88,6 +88,7 @@ class MemberStatusChoicesTests(TestCase):
         options = [ABSENT, BHS_SCREEN, REFUSED, UNDECIDED]
         options.append(household_member.member_status)
         options = list(set(options))
+        options.sort()
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
@@ -97,6 +98,7 @@ class MemberStatusChoicesTests(TestCase):
         options = [NOT_ELIGIBLE]
         options.append(household_member.member_status)
         options = list(set(options))
+        options.sort()
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
@@ -107,6 +109,7 @@ class MemberStatusChoicesTests(TestCase):
         options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
         options.append(household_member.member_status)
         options = list(set(options))
+        options.sort()
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
@@ -117,6 +120,7 @@ class MemberStatusChoicesTests(TestCase):
         options = [BHS_SCREEN, ABSENT, UNDECIDED, REFUSED]
         options.append(household_member.member_status)
         options = list(set(options))
+        options.sort()
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
@@ -134,6 +138,49 @@ class MemberStatusChoicesTests(TestCase):
         options = [BHS_SCREEN, REFUSED, HTC, REFUSED_HTC]
         options.append(household_member.member_status)
         options = list(set(options))
+        options.sort()
+        member_status_choices = [(item, item) for item in options]
+        self.assertEqual(household_member.member_status_choices, member_status_choices)
+
+    def test_eligible_bhs_enrolled_htc(self):
+        """Assert for eligible for BHS, enrolled, eligible for HTC (household enrolled)."""
+        self.enroll_household()
+        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
+        household_member.member_status = BHS_SCREEN
+        household_member.save()
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        EnrolmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=64),
+            guardian='No',
+            initials=household_member.initials,
+            part_time_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        options = [BHS_ELIGIBLE, ABSENT, UNDECIDED, REFUSED]
+        options.append(household_member.member_status)
+        options = list(set(options))
+        options.sort()
+        member_status_choices = [(item, item) for item in options]
+        self.assertEqual(household_member.member_status_choices, member_status_choices)
+
+    def test_eligible_bhs_enrolled_htc_and_refused_bhs(self):
+        """Assert for eligible for BHS, enrolled, refused, eligible for HTC (household enrolled)."""
+        self.enroll_household()
+        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
+        household_member.member_status = REFUSED
+        household_member.save()
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        SubjectRefusalFactory(household_member=household_member)
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertTrue(household_member.eligible_htc)
+        options = [BHS_SCREEN, REFUSED, HTC, REFUSED_HTC]
+        options.append(household_member.member_status)
+        options = list(set(options))
+        options.sort()
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
@@ -144,6 +191,7 @@ class MemberStatusChoicesTests(TestCase):
         options = [BHS]
         options.append(household_member.member_status)
         options = list(set(options))
+        options.sort()
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
         member_status_choices = [(item, item) for item in options]
