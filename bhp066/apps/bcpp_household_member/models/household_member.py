@@ -16,12 +16,13 @@ from apps.bcpp_household.choices import RELATIONS
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 
-from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
-                       HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
-                       HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-                       HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
-                       HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
-                       HOUSEHOLD_MEMBER_REFUSED)
+from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION
+# from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
+#                        HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
+#                        HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
+#                        HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
+#                        HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+#                        HOUSEHOLD_MEMBER_REFUSED)
 from ..classes import HouseholdMemberHelper
 from ..constants import  ABSENT, REFUSED, UNDECIDED, NOT_ELIGIBLE, HTC
 from ..exceptions import MemberStatusError
@@ -79,7 +80,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     member_status = models.CharField(
         max_length=25,
-        choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
+        choices=HOUSEHOLD_MEMBER_PARTICIPATION,
         null=True,
         editable=False,
         help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
@@ -251,38 +252,42 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return retval
 
     @property
-    def member_status_dashboard(self):
-        if self.member_status != HTC:
-            return self.member_status
-        return NOT_ELIGIBLE
+    def member_status_choices(self):
+        return HOUSEHOLD_MEMBER_PARTICIPATION
 
-    @property
-    def status_choices_full(self):
-        """"Returns all choices for bhs participation if an eligible member ."""
-        status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if not self.eligible_member:
-            status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
-        elif self.member_status == REFUSED:
-            status_choices = HOUSEHOLD_MEMBER_REFUSED
-        return status_choices
-
-    @property
-    def status_choices_partial(self):
-        status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if self.non_bhs_member and self.household_structure.household.enrolled:
-            status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
-        elif self.member_status == REFUSED:
-            enrolled = self.household_structure.number_enrolled
-            if enrolled > 0:
-                status_choices = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
-            elif enrolled == 0:
-                status_choices = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
-        return status_choices
-
-    @property
-    def status_choices_htc(self):
-        status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
-        return status_choices
+#     @property
+#     def member_status_dashboard(self):
+#         if self.member_status != HTC:
+#             return self.member_status
+#         return NOT_ELIGIBLE
+# 
+#     @property
+#     def status_choices_full(self):
+#         """"Returns all choices for bhs participation if an eligible member ."""
+#         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
+#         if not self.eligible_member:
+#             status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
+#         elif self.member_status == REFUSED:
+#             status_choices = HOUSEHOLD_MEMBER_REFUSED
+#         return status_choices
+# 
+#     @property
+#     def status_choices_partial(self):
+#         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
+#         if self.non_bhs_member and self.household_structure.household.enrolled:
+#             status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
+#         elif self.member_status == REFUSED:
+#             enrolled = self.household_structure.number_enrolled
+#             if enrolled > 0:
+#                 status_choices = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
+#             elif enrolled == 0:
+#                 status_choices = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
+#         return status_choices
+# 
+#     @property
+#     def status_choices_htc(self):
+#         status_choices = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
+#         return status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
