@@ -60,7 +60,7 @@
     		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 	         {% csrf_token %}
 			    <select name="status" id="status" onchange="this.form.submit()">
-		    		{% for status_key, status_value  in household_member.status_choices %}
+		    		{% for status_key, status_value  in household_member.member_status_choices %}
 		    			<option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
 			    	{% endfor %}
 				</select>
@@ -77,24 +77,28 @@
     {% comment%} dashboard {% endcomment %}
     <td>    
             {% comment %}DEBUG, remove{% endcomment %}
-            {% if 'BHS' == household_member.member_status and not household_member.eligible_subject %}
-                {% comment %} to be consented, has passed eligibility, show link to eligibility checklist {% endcomment %}
+            {% if 'BHS_SCREEN' == household_member.member_status and not household_member.eligible_subject %}
+                {% comment %} to be consented, once passed eligibility, show link to eligibility checklist {% endcomment %}
                 <span style="color:white;background-color:red;">&nbsp;</span>
                 <A title="Complete the enrolment checklist to confirm eligibility before consent" href="{% url enrolment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility</A>
 
-            {% elif 'BHS' in household_member.member_status and household_member.eligible_subject %}
-                {% comment %} show link to dashboard/consent {% endcomment %}
+            {% elif 'BHS_ELIGIBLE' == household_member.member_status and not household_member.is_consented %}
+                {% comment %} show link to the eligibility checklist {% endcomment %}
             	{% if household_member.household_structure.household.household_identifier|is_dispatched %}
-            		dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{%endif%}
+            		Eligibility Checklist
             	{% else %}
             	    {% if household_member.registered_subject|subject_identifier:' go to consent on dashboard' == 'go to consent on dashboard' %}<span style="color:white;background-color:red;">&nbsp;</span>{% endif %}
-             		{% if not household_member.is_consented %}
-                        <B>Subject is Eligible for consent.</B> Complete consent process. After consent is signed go to the subject consent on the 
-                        <A name="eligible-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">Participant Dashboard</a>
+             		<B>Subject is Eligible for consent.</B> Complete consent process. After consent is signed go to the subject consent on the 
+                    <A name="eligible-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">Participant Dashboard</a>
+            	{% endif %}
+            	
+            {% elif 'BHS' == household_member.member_status and household_member.is_consented %}		
+             		{% comment %} show link to dashboard/consent {% endcomment %}
+             		{% if household_member.household_structure.household.household_identifier|is_dispatched %}
+                        dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{% endif %}
                     {% else %}
              		    Participant Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
                     {% endif %}
-            	{% endif %}
             	
             {% elif household_member.eligibility_checklist_filled and household_member.member_status == 'NOT_ELIGIBLE' %}
             	Failled eligibility checklist, loss form created. Can only participate in HTC, if atleast one enrolled member.
@@ -102,12 +106,12 @@
             	Under age 16, cannot participate at any level.
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
             	Older than age 64. Can participate only in HTC, if atleast one enrolled member.
-            {% elif 'CONSENT' not in household_member.member_status and household_member.member_status in household_member_actions %}
+            {% elif not household_member.is_consented and household_member.member_status != 'NOT_ELIGIBLE' %}
                {% if household_member.member_status == 'ABSENT'%}
                Absentee log (attempts to contact)
                		<ol>
 	                    {% for absentee in household_member.absentee_form_label %}
-	                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_urls|index_dictionary:absentee.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_absentee={{household_member.subject_absentee.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ absentee.0 }}</li></A>
+	                    	<A name="absent-{{household_member.pk}}" href="{{ household_member.absentee_entry_form_urls|index_dictionary:absentee.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_absentee={{household_member.subject_absentee_instance.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ absentee.0 }}</li></A>
 	                    {% endfor %}
 		                {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)
@@ -117,7 +121,7 @@
                Undecided log (attempts to contact)
                		<ol>
 	                    {% for undecided in household_member.undecided_form_label %}
-	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
+	                    	<A name="undecided-{{household_member.pk}}" href="{{ household_member.undecided_entry_form_urls|index_dictionary:undecided.1 }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&subject_undecided={{household_member.subject_undecided_instance.pk}}&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}"><li>{{ undecided.0 }}</li></A>
 	                    {% endfor %}
 	                    {% if household_member.visit_attempts == 3 %}
                				reached maximum visit attempts (absentee + undecided)

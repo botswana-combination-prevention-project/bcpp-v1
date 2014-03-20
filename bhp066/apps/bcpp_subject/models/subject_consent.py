@@ -14,7 +14,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
-from apps.bcpp_household_member.models import EnrolmentChecklist
+from apps.bcpp_household_member.models import EnrolmentChecklist, HouseholdMember
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
@@ -157,6 +157,12 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             household_structure.enrolled = True
             household_structure.enrolled_datetime = datetime.today()
             household_structure.save()
+        if self.pk:
+            household_members = HouseholdMember.objects.filter(household_structure=household_structure).exclude(pk=self.pk)
+        else:
+            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
+        for household_member in household_members:
+            household_member.save()  # recalc member status
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
