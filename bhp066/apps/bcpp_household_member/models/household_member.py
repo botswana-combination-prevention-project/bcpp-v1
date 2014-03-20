@@ -144,7 +144,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 self.household_structure.household.enumerated = True
                 self.household_structure.household.save()
             self.member_status = household_member_helper.calculate_member_status()
-            self.reported, self.is_consented = household_member_helper.household_member.reported, household_member_helper.household_member.is_consented
+            self.reported = household_member_helper.household_member.reported
             if self.household_structure.enrolled and not self.is_consented:
                 self.eligible_htc = False
                 if self.eligible_member:

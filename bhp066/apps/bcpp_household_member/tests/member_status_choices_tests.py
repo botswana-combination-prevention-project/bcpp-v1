@@ -18,7 +18,6 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
 from ..exceptions import MemberStatusError
-from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION
 from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
 
 
@@ -72,6 +71,7 @@ class MemberStatusChoicesTests(TestCase):
             guardian='No',
             initials=household_member.initials,
             part_time_resident='Yes'), EnrolmentChecklist))
+        household_member = HouseholdMember.objects.get(pk=pk)
         SubjectConsentFactory(
             household_member=household_member,
             first_name="ERIK",
@@ -110,7 +110,7 @@ class MemberStatusChoicesTests(TestCase):
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
-    def test_eligible_bhs_and_htc(self):
+    def test_eligible_member_bhs_and_htc(self):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled)."""
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
@@ -121,7 +121,7 @@ class MemberStatusChoicesTests(TestCase):
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
     def test_eligible_bhs_and_htc_and_refused_bhs(self):
-        """Assert for not eligible for BHS but eligible for HTC (household enrolled)."""
+        """Assert for eligible for BHS abd eligible for HTC (household enrolled) and refused BHS."""
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
         household_member.member_status = REFUSED
@@ -136,3 +136,14 @@ class MemberStatusChoicesTests(TestCase):
         options = list(set(options))
         member_status_choices = [(item, item) for item in options]
         self.assertEqual(household_member.member_status_choices, member_status_choices)
+
+    def test_consented(self):
+        """Assert only returns BHS if member is consented."""
+        household_member = self.enroll_household()
+        self.assertTrue(household_member.is_consented)
+        options = [BHS]
+        options.append(household_member.member_status)
+        options = list(set(options))
+        member_status_choices = [(item, item) for item in options]
+        self.assertEqual(household_member.member_status_choices, member_status_choices)
+        member_status_choices = [(item, item) for item in options]
