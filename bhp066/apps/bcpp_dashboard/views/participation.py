@@ -7,7 +7,6 @@ from apps.bcpp_dashboard.views import household_dashboard
 from apps.bcpp_household_member.forms import ParticipationForm
 from apps.bcpp_household_member.models import HouseholdMember, Loss
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry, SubjectRefusal
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
 
 
 @login_required
