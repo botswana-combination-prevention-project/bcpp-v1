@@ -9,7 +9,6 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
 
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_FULL_PARTICIPATION
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrolmentChecklist, HouseholdInfo
 from apps.bcpp_rbd.models import RBDEligibility
 from apps.bcpp_household_member.models import Loss
@@ -50,7 +49,7 @@ class HouseholdDashboard(Dashboard):
 
         self.context.add(
             home='bcpp_survey',
-            household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_FULL_PARTICIPATION],
+            #household_member_actions=[action[0] for action in HOUSEHOLD_MEMBER_PARTICIPATION], get this from the household member
             title='',  # 'A. Household Composition',
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
