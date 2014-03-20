@@ -218,6 +218,9 @@ class Household(BaseReplacement):
     def is_household(self):
         return True
 
+    def is_plot(self):
+        return False
+
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))
         return """<a href="{url}" />structure</a>"""  # .format(url=url)
