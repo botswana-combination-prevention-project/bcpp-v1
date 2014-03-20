@@ -14,6 +14,9 @@ from ..managers import EnrolmentChecklistManager
 from .household_member import HouseholdMember
 from .loss import Loss
 
+from ..constants import BHS_SCREEN
+from ..exceptions import MemberStatusError
+
 
 class EnrolmentChecklist (BaseDispatchSyncUuidModel):
 
@@ -135,22 +138,24 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if self.household_member.member_status != BHS_SCREEN:
+            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         self.household_member.eligible_subject = False
-        self.household_member.member_status = 'NOT_ELIGIBLE'
         age_in_years = relativedelta(date.today(), self.dob).years
-        if self.matches_household_member_values(age_in_years):
+        if self.matches_household_member_values():
             if not self.has_loss_reason(age_in_years):
                 self.household_member.eligible_subject = True
-                self.household_member.member_status = 'RESEARCH'
         self.is_eligible = self.household_member.eligible_subject
         self.household_member.eligibility_checklist_filled = True
         self.household_member.save()
         super(EnrolmentChecklist, self).save(*args, **kwargs)
 
-    def matches_household_member_values(self, age_in_years, exception_cls=None):
+    def matches_household_member_values(self, exception_cls=None):
         """Compares shared values on household_member form and returns True if all match."""
         validation_error = None
+        print '*************'+str(self.household_member)
         exception_cls = exception_cls or ValidationError
+        age_in_years = relativedelta(date.today(), self.dob).years
         if age_in_years != self.household_member.age_in_years:
             validation_error = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, self.household_member.age_in_years)
         if self.household_member.study_resident.lower() != self.part_time_resident.lower():

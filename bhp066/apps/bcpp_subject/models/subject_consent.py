@@ -13,12 +13,15 @@ from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from apps.bcpp_household_member.models import EnrolmentChecklist
+from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
+
 
 # Note below: Mixin fields are added after the abstract class, BaseSubjectConsent, and before
 # the concrete class, SubjectConsent, using the field.contribute_to_class method.
@@ -88,13 +91,34 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
+        if self.household_member.member_status != BHS_ELIGIBLE:
+            raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(BHS_ELIGIBLE, self.household_member.member_status))
+        self.matches_hic_enrollment_values()
         self.is_minor = self.get_is_minor()
         self.matches_enrollment_checklist()
         self.community = self.household_member.household_structure.household.plot.community
         self.enroll_household()
         self.household_member.is_consented = True
+        self.household_member.reported = True
+        self.household_member.member_status = BHS
         self.household_member.save()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
+    def matches_hic_enrollment_values(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
+        if HicEnrollment.objects.filter(subject_visit__household_member=self.household_member).exists():
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
+            if self.dob != hic_enrollment.dob or self.consent_datetime != hic_enrollment.consent_datetime:
+                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
+        if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
+            raise exception_cls('The subject has to be a citizen, or legally married to a citizen to consent.')
+
+    def get_enrollment_checklist_query_set(self):
+        #For every consented individual there has to be an enrollment checklist. Its enforced.
+        return EnrolmentChecklist.objects.filter(household_member=self.household_member)
 
     def matches_enrollment_checklist(self, exception_cls=None):
         """Matches values in this consent against the enrolmnet checklist.
@@ -179,26 +203,6 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
-
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
-
-    def save(self, *args, **kwargs):
-        self.matches_hic_enrollment_values()
-        super(SubjectConsent, self).save(*args, **kwargs)
-
-    def matches_hic_enrollment_values(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit__household_member=self.household_member).exists():
-            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
-            if self.dob != hic_enrollment.dob or self.consent_datetime != hic_enrollment.consent_datetime:
-                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
-        if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
-            raise exception_cls('The subject has to be a citizen, or legally married to a citizen to consent.')
-
-    def get_enrollment_checklist_query_set(self):
-        #For every consented individual there has to be an enrollment checklist. Its enforced.
-        return EnrolmentChecklist.objects.filter(household_member=self.household_member)
 
     class Meta:
         app_label = 'bcpp_subject'
