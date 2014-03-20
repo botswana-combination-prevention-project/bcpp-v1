@@ -111,7 +111,7 @@ class HouseholdMemberHelper(object):
 
     def calculate_member_status_with_hint(self, member_status_hint, exception_cls=None):
         """Updates the member status from the save method using a "hint" or value passed on from the model instance being saved."""
-        if self.consented:
+        if self.household_member.is_consented:
             member_status = BHS
         else:
             member_status = None
@@ -140,26 +140,29 @@ class HouseholdMemberHelper(object):
 
     def calculate_member_status_without_hint(self, exception_cls=None):
         member_status = None
-        if self.household_member.eligible_subject and not self.household_member.refused:
-            member_status = BHS_ELIGIBLE
-        elif self.household_member.eligible_subject and self.household_member.refused and self.household_member.eligible_htc:
-            member_status = HTC_ELIGIBLE
-        elif self.household_member.eligible_member and not self.household_member.eligible_subject and not self.household_member.eligibility_checklist_filled and self.household_member.refused:
-            member_status = HTC_ELIGIBLE
-        elif self.household_member.eligible_member and not self.household_member.eligible_subject and not self.household_member.eligibility_checklist_filled:
-            member_status = BHS_SCREEN
-        elif self.household_member.eligible_member and not self.household_member.eligible_subject and self.household_member.eligibility_checklist_filled and not self.household_member.eligible_htc:
-            member_status = NOT_ELIGIBLE
-        elif self.household_member.eligible_member and not self.household_member.eligible_subject and self.household_member.eligibility_checklist_filled and self.household_member.eligible_htc:
-            member_status = HTC_ELIGIBLE
-        elif self.household_member.eligible_htc and self.household_member.refused:
-            member_status = HTC_ELIGIBLE
-        elif not self.household_member.eligible_member and self.household_member.eligible_htc:
-            member_status = HTC_ELIGIBLE
-        elif not self.household_member.eligible_member and not self.household_member.eligible_htc:
-            member_status = NOT_ELIGIBLE
+        if self.household_member.is_consented:
+            member_status = BHS
         else:
-            pass
+            if self.household_member.eligible_subject and not self.household_member.refused:
+                member_status = BHS_ELIGIBLE
+            elif self.household_member.eligible_subject and self.household_member.refused and self.household_member.eligible_htc:
+                member_status = HTC_ELIGIBLE
+            elif self.household_member.eligible_member and not self.household_member.eligible_subject and not self.household_member.eligibility_checklist_filled and self.household_member.refused:
+                member_status = HTC_ELIGIBLE
+            elif self.household_member.eligible_member and not self.household_member.eligible_subject and not self.household_member.eligibility_checklist_filled:
+                member_status = BHS_SCREEN
+            elif self.household_member.eligible_member and not self.household_member.eligible_subject and self.household_member.eligibility_checklist_filled and not self.household_member.eligible_htc:
+                member_status = NOT_ELIGIBLE
+            elif self.household_member.eligible_member and not self.household_member.eligible_subject and self.household_member.eligibility_checklist_filled and self.household_member.eligible_htc:
+                member_status = HTC_ELIGIBLE
+            elif self.household_member.eligible_htc and self.household_member.refused:
+                member_status = HTC_ELIGIBLE
+            elif not self.household_member.eligible_member and self.household_member.eligible_htc:
+                member_status = HTC_ELIGIBLE
+            elif not self.household_member.eligible_member and not self.household_member.eligible_htc:
+                member_status = NOT_ELIGIBLE
+            else:
+                pass
         return member_status
 
 
