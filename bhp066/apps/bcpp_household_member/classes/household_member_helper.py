@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
 
 
 class HouseholdMemberHelper(object):
@@ -84,9 +84,12 @@ class HouseholdMemberHelper(object):
 
     @property
     def consented(self):
+        """Returns True if the subject has consented.
+
+        ..note:: if the subject consent is in the process of being saved this will return False
+                 while household_member.is_consented will be True. """
         SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
-        self.household_member.is_consented = SubjectConsent.objects.filter(household_member=self).count() == 1
-        return self.household_member.is_consented
+        return SubjectConsent.objects.filter(household_member=self).count() == 1
 
     def calculate_member_status(self, exception_cls=None):
         """Updates the member status."""
@@ -163,3 +166,32 @@ class HouseholdMemberHelper(object):
                     survey=self.household_member.household_structure.survey,
                     )
         return instance
+
+    @property
+    def member_status_choices(self):
+        if not self.household_member.member_status:
+            raise TypeError('household_member.member_status cannot be None')
+        options = []
+        if self.household_member.is_consented:
+            # consent overrides everything
+            options = [BHS]
+        else:
+            # BHS options
+            if self.household_member.eligible_member:
+                options += [ABSENT, BHS_SCREEN, UNDECIDED, REFUSED]
+            if self.household_member.eligible_subject:
+                options.remove(BHS_SCREEN)
+                options += [ABSENT, BHS_ELIGIBLE, UNDECIDED, REFUSED]
+            if self.household_member.refused:
+                options.remove(UNDECIDED)
+                options.remove(ABSENT)
+                options.append(REFUSED)
+            # HTC options
+            if self.household_member.eligible_htc:
+                options += [HTC, REFUSED_HTC]
+        # append the current member_status
+        options.append(self.household_member.member_status)
+        # sort and remove duplicates
+        options = list(set(options))
+        options.sort()
+        return [(item, item) for item in options]
