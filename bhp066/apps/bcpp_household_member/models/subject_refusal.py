@@ -5,6 +5,8 @@ from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
 
 from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
+from apps.bcpp_household_member.constants import REFUSED
+from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -51,14 +53,16 @@ class SubjectRefusal (BaseMemberStatusModel):
     def get_registration_datetime(self):
         return self.report_datetime
 
-    def member_status_string(self):
-        return 'REFUSED'
-
     def save(self, *args, **kwargs):
-        kwargs['reason'] = 'refuse'
-        kwargs['info_source'] = 'subject'
+        if self.household_member.member_status != REFUSED:
+            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
+#         kwargs['reason'] = 'refuse'
+#         kwargs['info_source'] = 'subject'
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
+        self.household_member.refused = True
+        self.household_member.reported = True
+        self.household_member.save()
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:
