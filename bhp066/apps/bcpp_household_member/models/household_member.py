@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
@@ -25,7 +23,7 @@ from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
                        HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
                        HOUSEHOLD_MEMBER_REFUSED)
 from ..classes import HouseholdMemberHelper
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..constants import  ABSENT, REFUSED, UNDECIDED, NOT_ELIGIBLE, HTC
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
@@ -105,7 +103,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
 
-    visit_attempts = models.IntegerField(default=0, help_text="")  # TODO: attempts of what? I see visit_attempts on HH HHS and HHM
+    visit_attempts = models.IntegerField(default=0, help_text="")
 
     target = models.IntegerField(default=0)
 
@@ -254,9 +252,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def member_status_dashboard(self):
-        if self.member_status != 'HTC':
+        if self.member_status != HTC:
             return self.member_status
-        return 'NOT_ELIGIBLE'
+        return NOT_ELIGIBLE
 
     @property
     def status_choices_full(self):
@@ -264,7 +262,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
         if not self.eligible_member:
             status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
-        elif self.member_status == 'REFUSED':
+        elif self.member_status == REFUSED:
             status_choices = HOUSEHOLD_MEMBER_REFUSED
         return status_choices
 
@@ -324,7 +322,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def render_absentee_info(self):
         """Renders the absentee information for the template."""
-        # TODO: model subject absentee should be moved to module bcpp_household_member
         from ..models import SubjectAbsenteeEntry
         render = ['<A href="{0}">add another absentee log entry</A>']
         for subject_absentee_entry, index in enumerate(SubjectAbsenteeEntry(subject_absentee=self.subject_absentee_instance)):
@@ -384,7 +381,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
             elif model._meta.module_name == 'subjectabsentee':
                 model_entry_instances = model_entry.objects.filter(subject_absentee=model_instance).order_by('report_datetime')
-            model_entry_count = model_entry_instances.count()
+            #model_entry_count = model_entry_instances.count()
             for subject_undecided_entry in model_entry_instances:
                 report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'), subject_undecided_entry.id))
             if self.visit_attempts < 3:
