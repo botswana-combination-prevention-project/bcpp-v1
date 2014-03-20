@@ -56,8 +56,8 @@ class SubjectRefusal (BaseMemberStatusModel):
     def save(self, *args, **kwargs):
         if self.household_member.member_status != REFUSED:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
-#         kwargs['reason'] = 'refuse'
-#         kwargs['info_source'] = 'subject'
+        if self.household_member.eligibility_checklist_filled and not self.household_member.eligible_subject:
+            raise MemberStatusError('The Enrolment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         self.household_member.refused = True
@@ -67,7 +67,6 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     class Meta:
         app_label = "bcpp_household_member"
-#         db_table = 'bcpp_subject_subjectrefusal'
         verbose_name = "Refusal Log"
         verbose_name_plural = "Refusal Log"
         ordering = ['household_member']
