@@ -193,4 +193,5 @@ class HouseholdMemberHelper(object):
         options.append(self.household_member.member_status)
         # sort and remove duplicates
         options = list(set(options))
+        options.sort()
         return [(item, item) for item in options]
