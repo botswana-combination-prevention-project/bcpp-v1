@@ -12,20 +12,20 @@ class ReplacementData(object):
         if plot.status == 'residential_habitable':
             if plot.household_count == 1:
                 household = Household.objects.get(plot=plot)
-                if self.is_refused_household(household):
+                if self.is_hoh_refused(household):
                     replaced.append(household)
                 else:
                     if self.is_refusal(household):
-                        replaced.append([self.is_refusal(household), "HOH refusal"])
+                        replaced.append([self.is_refusal(household), 'HOH refusal'])
             if plot.household_count > 1:
                 households = Household.objects.filter(plot=plot)
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
-                    if self.is_refused_household(household):
-                        replaced.append([household, "all members refused"])
+                    if self.is_hoh_refused(household):
+                        replaced.append([household, 'all members refused'])
                     else:
                         if self.is_refusal(household):
-                            replaced.append([self.is_refusal(household), "HOH refusal"])
+                            replaced.append([self.is_refusal(household), 'HOH refusal'])
         return replaced
 
     def check_absentees_ineligibles(self, plot):
@@ -42,14 +42,14 @@ class ReplacementData(object):
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
                     if self.is_absent(household):
-                        replaced.append([self.is_absent(household), "all members are absent"])
+                        replaced.append([self.is_absent(household), 'all members are absent'])
                     if self.no_informant(household):
-                        replaced.append([self.no_informant(household), "no household informant"])
+                        replaced.append([self.no_informant(household), 'no household informant'])
                     if self.no_eligible_rep(household):
-                        replaced.append([self.no_eligible_rep(household), "no eligible members"])
+                        replaced.append([self.no_eligible_rep(household), 'no eligible members'])
         return replaced
 
-    def is_refused_household(self, household):
+    def is_hoh_refused(self, household):
         """Check if head of household refused members to participate."""
         from ..models import HouseholdRefusal
         if household.household_status == 'refused' and HouseholdRefusal.objects.filter(household=household):
