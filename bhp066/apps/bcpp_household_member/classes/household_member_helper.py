@@ -84,9 +84,12 @@ class HouseholdMemberHelper(object):
 
     @property
     def consented(self):
+        """Returns True if the subject has consented.
+
+        ..note:: if the subject consent is in the process of being saved this will return False
+                 while household_member.is_consented will be True. """
         SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
-        self.household_member.is_consented = SubjectConsent.objects.filter(household_member=self).count() == 1
-        return self.household_member.is_consented
+        return SubjectConsent.objects.filter(household_member=self).count() == 1
 
     def calculate_member_status(self, exception_cls=None):
         """Updates the member status."""
@@ -169,7 +172,7 @@ class HouseholdMemberHelper(object):
         if not self.household_member.member_status:
             raise TypeError('household_member.member_status cannot be None')
         options = []
-        if self.consented:
+        if self.household_member.is_consented:
             # consent overrides everything
             options = [BHS]
         else:
@@ -190,4 +193,5 @@ class HouseholdMemberHelper(object):
         options.append(self.household_member.member_status)
         # sort and remove duplicates
         options = list(set(options))
+        options.sort()
         return [(item, item) for item in options]
