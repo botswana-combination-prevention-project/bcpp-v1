@@ -20,6 +20,11 @@ HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
     ('NOT_ELIGIBLE', 'Not Eligible'),
 ]
 
+HOUSEHOLD_MEMBER_REFUSED = [
+    ('RESEARCH', 'BHS'),
+    ('REFUSED', 'Refusal'),
+]
+
 HOUSEHOLD_MEMBER_HTC_PARTICIPATION = [
     ('NOT_REPORTED', '<not reported>'),
     ('HTC', 'HTC'),
