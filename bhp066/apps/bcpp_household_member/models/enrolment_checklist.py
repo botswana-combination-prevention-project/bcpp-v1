@@ -138,7 +138,7 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         self.household_member.eligible_subject = False
         self.household_member.member_status = 'NOT_ELIGIBLE'
         age_in_years = relativedelta(date.today(), self.dob).years
-        if self.matches_household_member_values(age_in_years):
+        if self.matches_household_member_values():
             if not self.has_loss_reason(age_in_years):
                 self.household_member.eligible_subject = True
                 self.household_member.member_status = 'RESEARCH'
@@ -147,10 +147,12 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         self.household_member.save()
         super(EnrolmentChecklist, self).save(*args, **kwargs)
 
-    def matches_household_member_values(self, age_in_years, exception_cls=None):
+    def matches_household_member_values(self, exception_cls=None):
         """Compares shared values on household_member form and returns True if all match."""
         validation_error = None
+        print '*************'+str(self.household_member)
         exception_cls = exception_cls or ValidationError
+        age_in_years = relativedelta(date.today(), self.dob).years
         if age_in_years != self.household_member.age_in_years:
             validation_error = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, self.household_member.age_in_years)
         if self.household_member.study_resident.lower() != self.part_time_resident.lower():
