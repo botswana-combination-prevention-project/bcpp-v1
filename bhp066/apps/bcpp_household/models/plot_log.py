@@ -53,8 +53,12 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
         )
 
     comment = EncryptedTextField(
+        verbose_name="Comments",
+        max_length=250,
         null=True,
         blank=True,
+        help_text=('IMPORTANT: Do not include any names or other personally identifying '
+           'information in this comment')
         )
 
     history = AuditTrail()
