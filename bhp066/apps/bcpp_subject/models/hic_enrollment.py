@@ -17,7 +17,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         verbose_name="Is it okay for the project to visit you every year for the next three years for further questions and testing?",
         max_length=25,
         choices=YES_NO,
-        help_text='If not, not eligible.'
+        help_text='If \'No\', subject is not eligible.'
         )
 
     permanent_resident = models.NullBooleanField(
