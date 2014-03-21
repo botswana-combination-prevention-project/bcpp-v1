@@ -18,12 +18,6 @@ from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION
-# from ..choices import (HOUSEHOLD_MEMBER_HTC_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_NOT_ELIGIBLE,
-#                        HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_RBD_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
-#                        HOUSEHOLD_MEMBER_REFUSED)
 from ..classes import HouseholdMemberHelper
 from ..constants import  ABSENT, REFUSED, UNDECIDED, NOT_ELIGIBLE, HTC
 from ..exceptions import MemberStatusError
@@ -141,7 +135,7 @@ class HouseholdMember(BaseReplacement):
     def save(self, *args, **kwargs):
         household_member_helper = HouseholdMemberHelper()
         household_member_helper.household_member = self
-        if household_member_helper.consented:
+        if household_member_helper.consented:  # checks if a subject_consent instance exists
             raise MemberStatusError('Household member is consented. Changes are not allowed.')
         else:
             self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
@@ -150,10 +144,21 @@ class HouseholdMember(BaseReplacement):
             if not self.household_structure.household.enumerated:  # TODO: put this in the post-save?
                 self.household_structure.household.enumerated = True
                 self.household_structure.household.save()
-            if self.household_structure.enrolled:
-                self.eligible_htc = (self.age_in_years >= 16 and not household_member_helper.consented)
-            self.member_status = household_member_helper.calculate_member_status()
-            self.reported, self.is_consented = household_member_helper.household_member.reported, household_member_helper.household_member.is_consented
+            self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
+            self.reported = household_member_helper.reported
+            if self.household_structure.enrolled and not self.is_consented:  # TODO: move to helper class
+                self.eligible_htc = False
+                if self.eligible_member:
+                    if not self.eligibility_checklist_filled:
+                        self.eligible_htc = self.refused
+                    elif self.eligible_subject:
+                        self.eligible_htc = self.refused
+                    elif not self.eligible_subject and self.eligibility_checklist_filled:
+                        self.eligible_htc = True
+                else:
+                    self.eligible_htc = (self.age_in_years >= 16)
+            self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
+            self.reported = household_member_helper.reported
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def update_plot_eligible_members(self):
@@ -257,7 +262,9 @@ class HouseholdMember(BaseReplacement):
 
     @property
     def member_status_choices(self):
-        return HOUSEHOLD_MEMBER_PARTICIPATION
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self
+        return household_member_helper.member_status_choices
 
 #     @property
 #     def member_status_dashboard(self):
@@ -321,13 +328,17 @@ class HouseholdMember(BaseReplacement):
     @property
     def subject_absentee_instance(self):
         """Returns the subject absentee instance for this member and creates a subject_absentee_instance if it does not exist."""
-        return self.subject_status_factory('SubjectAbsentee', ABSENT)
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self
+        return household_member_helper.subject_status_factory('SubjectAbsentee', ABSENT)
 
     @property
     def subject_undecided_instance(self):
         """Returns the subject undecided instance for this member and creates a subject_undecided_instance if it does not exist."""
         from ..models import SubjectUndecided
-        return self.entry_instance_factory(SubjectUndecided, UNDECIDED)
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self
+        return household_member_helper.subject_status_factory('SubjectUndecided', UNDECIDED)
 
     def render_absentee_info(self):
         """Renders the absentee information for the template."""
