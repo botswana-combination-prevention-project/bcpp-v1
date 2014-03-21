@@ -51,11 +51,6 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, gender))
         return super(BaseBcppConsentForm, self).clean()
 
-
-#     def check_eligibility_filled(self, cleaned_data):  # Defaults to BHS eligibility
-#         if not cleaned_data.get('household_member').eligible_subject:
-#             raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
-
     def age(self, dob):
         return relativedelta(date.today(), dob).years
 
