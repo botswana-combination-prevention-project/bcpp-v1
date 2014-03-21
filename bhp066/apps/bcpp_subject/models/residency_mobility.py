@@ -9,6 +9,7 @@ from apps.bcpp.choices import YES_NO_DWTA, YES_NO, LENGTHRESIDENCE_CHOICE, NIGHT
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
 
+
 class ResidencyMobility (BaseScheduledVisitModel):
 
     """CS002"""
@@ -70,14 +71,14 @@ class ResidencyMobility (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.hic_enrollment_checks()
+        self.hic_enrollment_checks(self, self.subject_visit)
         super(ResidencyMobility, self).save(*args, **kwargs)
 
-    def hic_enrollment_checks(self, exception_cls=None):
+    def hic_enrollment_checks(self, instance, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
-            if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
-                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'permanent_resident\' and \'intend_residency\' cannot be changed.')
+        if HicEnrollment.objects.filter(subject_visit=instance.subject_visit).exists():
+            if instance.permanent_resident.lower() != 'yes' or instance.intend_residency.lower() != 'no':
+                raise exception_cls('An HicEnrollment form exists for this subject. Values for \'permanent_resident\' and \'intend_residency\' cannot be changed.')
 
     def __unicode__(self):
         return unicode(self.subject_visit)
