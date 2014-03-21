@@ -90,7 +90,7 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        self.hic_enrollment_checks(self, self.subject_visit)
+        self.hic_enrollment_checks()
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
         if self.subject_visit:
             if not self.registered_subject:
