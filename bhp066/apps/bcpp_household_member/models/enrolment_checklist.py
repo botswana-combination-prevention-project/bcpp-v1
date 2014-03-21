@@ -113,11 +113,11 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
         )
 
     literacy = models.CharField(
-        verbose_name=("Is the participant LITERATE?, or if ILLITRATE, is there a"
+        verbose_name=("Is the participant LITERATE?, or if ILLITERATE, is there a"
                       "  LITERATE witness available "),
         max_length=10,
         choices=YES_NO,
-        help_text=("If participate is illitrate, confirm there is a literate"
+        help_text=("If participate is illiterate, confirm there is a literate"
                    "witness available otherwise participant will not be enrolled."),
         )
 
@@ -167,6 +167,8 @@ class EnrolmentChecklist (BaseDispatchSyncUuidModel):
             validation_error = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(self.initials, self.household_member.initials)
         if self.household_member.gender != self.gender:
             validation_error = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(self.gender, self.household_member.gender)
+        if self.household_member.is_minor and self.age_in_years >= 18:
+            validation_error = 'Member is not a minor. Got age {0}'.format(age_in_years)
         if validation_error:
             raise exception_cls(validation_error)
         return True

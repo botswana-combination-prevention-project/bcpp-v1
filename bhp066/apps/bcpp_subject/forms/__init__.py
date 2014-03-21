@@ -32,3 +32,4 @@ from .hiv_medical_care_form import HivMedicalCareForm
 from .diagnoses_form import HeartAttackForm, CancerForm, TubercolosisForm, StiForm
 from .clinic_questionnaire_form import ClinicQuestionnaireForm
 from .participation_form import ParticipationForm
+from .tb_symptoms_form import TbSymptomsForm

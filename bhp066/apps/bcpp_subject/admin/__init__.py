@@ -36,3 +36,4 @@ from .hiv_result_documentation_admin import HivResultDocumentationAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .hic_enrollment_admin import HicEnrollmentAdmin
 from .participation_admin import ParticipationAdmin
+from .tb_symptoms_admin import TbSymptomsAdmin
