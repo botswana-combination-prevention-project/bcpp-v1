@@ -243,7 +243,6 @@ class HouseholdMemberHelper(object):
 #             if self.household_member.eligible_htc:
 #                 options += [HTC, REFUSED_HTC]
         # append the current member_status
-        print options
         options.append(self.household_member.member_status)
         # sort and remove duplicates
         options = list(set(options))
