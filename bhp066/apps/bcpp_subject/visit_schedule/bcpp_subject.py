@@ -2,8 +2,6 @@ from collections import OrderedDict
 
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
 
-# from apps.bcpp_lab.models import Panel, AliquotType
-
 from ..models import SubjectVisit, SubjectConsent
 
 
@@ -11,8 +9,6 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
 
     name = 'bcpp subject visit schedule'
     app_label = 'bcpp_subject'
-#     panel_model = Panel
-#     aliquot_type_model = AliquotType
 
     # membership forms
     # (name, model, visible)
@@ -43,7 +39,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
-                # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
+                # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type_alpha_code)
                 RequisitionPanelTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'TEST', 'WB'),
                 RequisitionPanelTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'TEST', 'WB'),
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'STORAGE', 'WB'),

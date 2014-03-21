@@ -6,7 +6,6 @@ from .models import Aliquot, AliquotType, Receive, SubjectRequisition, Profile, 
 
 
 class BaseBcppProfile(LabProfile):
-    profile_group_name = 'bcpp'
     aliquot_model = Aliquot
     aliquot_type_model = AliquotType
     panel_model = Panel
