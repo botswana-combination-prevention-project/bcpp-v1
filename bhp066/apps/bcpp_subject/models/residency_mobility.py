@@ -74,10 +74,10 @@ class ResidencyMobility (BaseScheduledVisitModel):
         self.hic_enrollment_checks(self, self.subject_visit)
         super(ResidencyMobility, self).save(*args, **kwargs)
 
-    def hic_enrollment_checks(self, instance, exception_cls=None):
+    def hic_enrollment_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit=instance.subject_visit).exists():
-            if instance.permanent_resident.lower() != 'yes' or instance.intend_residency.lower() != 'no':
+        if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
+            if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
                 raise exception_cls('An HicEnrollment form exists for this subject. Values for \'permanent_resident\' and \'intend_residency\' cannot be changed.')
 
     def __unicode__(self):
