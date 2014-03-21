@@ -195,19 +195,55 @@ class HouseholdMemberHelper(object):
             options = [BHS]
         else:
             # BHS options
-            if self.household_member.eligible_member:
-                options += [ABSENT, BHS_SCREEN, UNDECIDED, REFUSED]
-            if self.household_member.eligible_subject:
-                options.remove(BHS_SCREEN)
-                options += [ABSENT, BHS_ELIGIBLE, UNDECIDED, REFUSED]
-            if self.household_member.refused:
-                options.remove(UNDECIDED)
-                options.remove(ABSENT)
-                options.append(REFUSED)
-            # HTC options
-            if self.household_member.eligible_htc:
-                options += [HTC, REFUSED_HTC]
+#             if self.household_member.eligible_member:
+#                 options += [ABSENT, BHS_SCREEN, UNDECIDED, REFUSED]
+#             if self.household_member.eligible_subject:
+#                 options.remove(BHS_SCREEN)
+#                 options += [ABSENT, BHS_ELIGIBLE, UNDECIDED, REFUSED]
+#             if self.household_member.refused:
+#                 options.remove(UNDECIDED)
+#                 options.remove(ABSENT)
+#                 options.append(REFUSED)
+#             # HTC options
+#             if self.household_member.eligible_htc:
+#                 options += [HTC, REFUSED_HTC]
+            if ((not self.household_member.eligible_member or self.household_member.eligible_subject is False) 
+                and not self.household_member.eligible_htc):
+                #younger than 16, older than 64, not a study resident
+                #Initially BHS Potential, Failed eligibility checklist
+                #Not eligible for HTC
+                options = [NOT_ELIGIBLE]
+            elif self.household_member.eligible_member and self.household_member.eligible_subject is True:
+                #BHS potential, has filled eligibility checklist and passed it.
+                options = [ABSENT, BHS_ELIGIBLE, UNDECIDED, REFUSED]
+            elif ((not self.household_member.eligible_member or self.household_member.eligible_subject is False) 
+                  and self.household_member.eligible_htc):
+                #Older than 64 and now eligible for HTC
+                #Initially BHS Potential, Failed eligibility checklist and now eligible for HTC
+                options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
+            elif (self.household_member.eligible_member and self.household_member.eligible_subject is None
+                  and not self.household_member.refused):
+                #BHS potential, has not filled eligibility checklist yet, and has not officially refused BHS
+                #Could be ABSENT/UNDECIDED
+                options = [ABSENT, BHS_SCREEN, UNDECIDED, REFUSED]
+            elif self.household_member.refused and not self.household_member.eligible_htc:
+                #A refusal that is not yet eligible for HTC
+                options = [REFUSED, BHS_SCREEN]
+            elif self.household_member.refused and self.household_member.eligible_htc:
+                #A refusal that is now eligible for HTC, dont wana have REFUSED in there, now its only about HTC
+                options = [BHS_SCREEN, HTC_ELIGIBLE, HTC, REFUSED_HTC]
+            else:
+                raise TypeError('ERROR: household_member.refused={0},self.household_member.eligible_htc={1},self.household_member.eligible_member={2} '
+                'should never occur together'.format(self.household_member.refused, self.household_member.eligible_htc, self.household_member.eligible_member))
+#             if self.household_member.refused:
+#                 options.remove(UNDECIDED)
+#                 options.remove(ABSENT)
+#                 options.append(REFUSED)
+#             # HTC options
+#             if self.household_member.eligible_htc:
+#                 options += [HTC, REFUSED_HTC]
         # append the current member_status
+        print options
         options.append(self.household_member.member_status)
         # sort and remove duplicates
         options = list(set(options))
