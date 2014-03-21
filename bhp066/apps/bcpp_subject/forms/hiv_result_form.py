@@ -1,5 +1,5 @@
 from django import forms
-from ..models import HivResult, HicEnrollment
+from ..models import HivResult
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -8,9 +8,13 @@ class HivResultForm (BaseSubjectModelForm):
     def clean(self):
 
         cleaned_data = super(HivResultForm, self).clean()
-
+        instance = None
+        if self.instance.id:
+            instance = self.instance
+        else:
+            instance = HivResult(**self.cleaned_data)
         # validating that hiv_result is not changed after HicEnrollment is filled
-        self.instance.hic_enrollment_checks(forms.ValidationError)
+        instance.hic_enrollment_checks(forms.ValidationError)
         # validating when testing declined
         if cleaned_data.get('hiv_result', None) == 'Declined' and not cleaned_data.get('why_not_tested', None):
             raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing')
