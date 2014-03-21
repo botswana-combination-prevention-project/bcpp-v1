@@ -79,15 +79,17 @@ class HicEnrollment (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.permanent_resident = self.is_permanent_resident()
-        self.intend_residency = self.is_intended_residency()
-        self.hiv_status_today = self.get_hiv_status_today()
-        dob, consent_datetime = self.get_dob_consent_datetime()
-        self.dob = dob
-        self.consent_datetime = consent_datetime
-        self.household_residency = self.is_household_residency()
-        self.citizen_or_spouse = self.is_citizen_or_spouse()
-        self.locator_information = self.is_locator_information()
+        if self.hic_permission.lower() == 'yes':
+            #Only enforce the criteria if subjectt agrees to enroll in HIC
+            self.permanent_resident = self.is_permanent_resident()
+            self.intend_residency = self.is_intended_residency()
+            self.hiv_status_today = self.get_hiv_status_today()
+            dob, consent_datetime = self.get_dob_consent_datetime()
+            self.dob = dob
+            self.consent_datetime = consent_datetime
+            self.household_residency = self.is_household_residency()
+            self.citizen_or_spouse = self.is_citizen_or_spouse()
+            self.locator_information = self.is_locator_information()
         super(HicEnrollment, self).save(*args, **kwargs)
 
     def is_permanent_resident(self, exception_cls=None):
@@ -165,7 +167,7 @@ class HicEnrollment (BaseScheduledVisitModel):
             if subject_locator[0].subject_cell or subject_locator[0].subject_cell_alt or subject_locator[0].subject_phone:
                 return True
             else:
-                raise exception_cls('Please review \'subject_cell\', \'subject_cell_alt\' and \'subject_phone\' in SubjectConsent form before proceeding with this one.')
+                raise exception_cls('Please review \'subject_cell\', \'subject_cell_alt\' and \'subject_phone\' in SubjectLocator form before proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
 
