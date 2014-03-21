@@ -1,5 +1,5 @@
 from django import forms
-from ..models import SubjectLocator, HicEnrollment
+from ..models import SubjectLocator
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -11,7 +11,7 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         if self.instance.id:
             instance = self.instance
         else:
-            instance = HicEnrollment(**self.cleaned_data)
+            instance = SubjectLocator(**self.cleaned_data)
         # validating that some contact numbers exist when HicEnrollment form exists.
         instance.hic_enrollment_checks(forms.ValidationError)
         # validating home_visits
