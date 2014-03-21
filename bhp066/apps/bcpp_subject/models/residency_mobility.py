@@ -71,7 +71,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.hic_enrollment_checks(self, self.subject_visit)
+        self.hic_enrollment_checks()
         super(ResidencyMobility, self).save(*args, **kwargs)
 
     def hic_enrollment_checks(self, exception_cls=None):
