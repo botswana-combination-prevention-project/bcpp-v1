@@ -56,7 +56,7 @@ class HivResult (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.hic_enrollment_checks(self, self.subject_visit)
+        self.hic_enrollment_checks()
         super(HivResult, self).save(*args, **kwargs)
 
     def hic_enrollment_checks(self, subject_visit, exception_cls=None):
