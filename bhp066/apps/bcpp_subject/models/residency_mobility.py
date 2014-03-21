@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
+from apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
 
@@ -25,7 +25,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         verbose_name=_("In the past 12 months, have you typically spent 14 or"
                       " more nights per month in this community? "),
         max_length=10,
-        choices=YES_NO_DWTA,
+        choices=YES_NO,
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
@@ -62,7 +62,6 @@ class ResidencyMobility (BaseScheduledVisitModel):
     cattle_postlands_other = models.CharField(
         verbose_name=_("Give the name of the community"),
         max_length=65,
-        choices=COMMUNITIES,
         null=True,
         blank=True,
         help_text="",

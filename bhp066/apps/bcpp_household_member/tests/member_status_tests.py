@@ -10,7 +10,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import Loss, HouseholdMember, SubjectRefusal, SubjectAbsentee, EnrolmentChecklist, SubjectConsent
+from apps.bcpp_household_member.models import Loss, HouseholdMember, SubjectRefusal, SubjectAbsentee, EnrolmentChecklist
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, SubjectRefusalFactory, SubjectUndecidedFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
@@ -141,7 +141,6 @@ class MemberStatusTests(TestCase):
         subject_consent.save()
         self.assertEqual(household_member.member_status, BHS)
 
-    
     def test_enrolled_household1(self):
         """Assert is HTC eligible if not BHS eligible based on residency and household is enrolled"""
         household_member = self.enroll_household()
@@ -447,3 +446,43 @@ class MemberStatusTests(TestCase):
         self.assertTrue(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
         household_member.save()
+
+    def test_change_household_member11(self):
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        household_member.member_status = BHS_SCREEN
+        household_member.save()
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        household_member = HouseholdMember.objects.get(pk=pk)
+        EnrolmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=20),
+            guardian='No',
+            initials=household_member.initials,
+            part_time_resident='Yes',
+            has_identity='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertTrue(household_member.eligible_subject)
+        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertFalse(household_member.refused)
+        self.assertFalse(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
+        household_member.member_status = REFUSED
+        household_member.save()
+        SubjectRefusalFactory(household_member=household_member)
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, REFUSED)
+        self.assertTrue(household_member.eligible_subject)
+        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.refused)
+        self.assertTrue(household_member.eligible_htc)
