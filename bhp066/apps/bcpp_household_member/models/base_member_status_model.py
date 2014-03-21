@@ -4,7 +4,7 @@ from .base_registered_household_member_model import BaseRegisteredHouseholdMembe
 class BaseMemberStatusModel(BaseRegisteredHouseholdMemberModel):
 
     def __unicode__(self):
-        return '{0} {1}'.format(self.member_status_string().lower(), self.get_report_datetime().strftime('%Y-%m-%d'))
+        return '{0} {1}'.format(self.household_member.member_status.lower(), self.get_report_datetime().strftime('%Y-%m-%d'))
 
     def get_report_datetime(self):
         return self.report_datetime

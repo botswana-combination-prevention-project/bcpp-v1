@@ -21,11 +21,11 @@
  {% for household_log_entry in household_log_entries %}
      <tr class="{% cycle 'row1' 'row2' %}">
      <td>{{ forloop.counter }}.&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'change' household_log_entry.pk %}?household_log={{household_log.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"> {{ household_log_entry.report_datetime|date:"Y-m-d" }}</A></td>
-     <td>{{ household_log_entry.user_created }}{% if household_log_entry.user_modified %} | {{household_log_entry.user_modified}} {%endif%}</td>
+     <td>{{ household_log_entry.user_modified|default:household_log_entry.user_created}}</td>
      <td>{{ household_log_entry.next_appt_datetime|date:"Y-m-d" }}</td>
-     <td>{{ household_log_entry.next_appt_datetime_source }}</td>
-     <td>{{ household_log_entry.comment }}</td>
-     <td>{{ household_log_entry.modified|date:"Y-m-d" }}</td>
+     <td>{{ household_log_entry.get_next_appt_datetime_source_display }}</td>
+     <td>{{ household_log_entry.get_household_status_display }}. {{ household_log_entry.comment }}</td>
+     <td>{{ household_log_entry.modified|default:household_log_entry.created|date:"Y-m-d" }}</td>
      </tr>
  {% endfor %}
  </tbody>
