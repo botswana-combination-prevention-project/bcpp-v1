@@ -323,12 +323,12 @@ class SubjectReferral(BaseSubjectReferral, ExportTrackingFieldsMixin):
             self.last_cd4_test_date = None
 
     def update_vl(self):
-        if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').exists():
-            if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').count() > 1:
+        if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='viral load').exists():
+            if SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='viral load').count() > 1:
                 #  FIXME: should not be possible, but dashboard still allows this (more than one req.per visit)
-                subject_requisition = SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__edc_name='viral load').order_by('created')[0]
+                subject_requisition = SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='viral load').order_by('created')[0]
             else:
-                subject_requisition = SubjectRequisition.objects.get(subject_visit=self.subject_visit, panel__edc_name='viral load')
+                subject_requisition = SubjectRequisition.objects.get(subject_visit=self.subject_visit, panel__name='viral load')
             if subject_requisition.is_drawn == 'Yes':
                 self.vl_sample_drawn = True
                 self.vl_sample_datetime_drawn = subject_requisition.drawn_datetime

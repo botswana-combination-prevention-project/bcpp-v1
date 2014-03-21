@@ -18,7 +18,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         validators=[date_not_before_study_start, date_not_future],
         help_text="Date format is YYYY-MM-DD")
 
-    why_no_participate = models.CharField(
+    reason = models.CharField(
         verbose_name=("We respect your decision to decline. It would help us"
                       " improve the study if you could tell us the main reason"
                       " you do not want to participate in this study?"),
@@ -26,7 +26,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="",
         )
-    why_no_participate_other = OtherCharField()
+    reason_other = OtherCharField()
 
     subject_refusal_status = models.CharField(
         verbose_name="Refusal status",
@@ -44,9 +44,9 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment'))
 
-    participant_offered_htc = models.NullBooleanField(verbose_name="Paticipant offered HTC", default=None, help_text="has the participant been offered HTC?")
-
-    accepted_htc = models.NullBooleanField(verbose_name="Participant accepted HTC", default=None, help_text="did the participant accept HTC?")
+#     participant_offered_htc = models.NullBooleanField(verbose_name="Paticipant offered HTC", default=None, help_text="has the participant been offered HTC?")
+# 
+#     accepted_htc = models.NullBooleanField(verbose_name="Participant accepted HTC", default=None, help_text="did the participant accept HTC?")
 
     history = AuditTrail()
 
