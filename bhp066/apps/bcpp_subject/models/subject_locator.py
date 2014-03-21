@@ -90,18 +90,18 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        self.hic_enrollment_checks()
+        self.hic_enrollment_checks(self, self.subject_visit)
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
         if self.subject_visit:
             if not self.registered_subject:
                 self.registered_subject = self.registered_subject = self.subject_visit.appointment.registered_subject
         super(SubjectLocator, self).save(*args, **kwargs)
 
-    def hic_enrollment_checks(self, exception_cls=None):
+    def hic_enrollment_checks(self, instance, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
-            if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
-                raise exception_cls('An HicEnrollment form already exists for this Subject. Atleast one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+        if HicEnrollment.objects.filter(subject_visit=instance.subject_visit).exists():
+            if not instance.subject_cell and not instance.subject_cell_alt and not self.subject_phone:
+                raise exception_cls('An HicEnrollment form exists for this subject. At least one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
 
     def natural_key(self):
         return self.subject_visit.natural_key()
