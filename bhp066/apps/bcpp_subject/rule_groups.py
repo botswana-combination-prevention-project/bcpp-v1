@@ -1,10 +1,10 @@
-from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic
-from edc.subject.appointment.models import Appointment
+from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
 from edc.subject.registration.models import RegisteredSubject
+
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, HicEnrollment)
+                    HivResult, HivResultDocumentation, Pima)
 
 
 class RegisteredSubjectRuleGroup(RuleGroup):
@@ -375,3 +375,20 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = MedicalDiagnoses
 site_rule_groups.register(MedicalDiagnosesRuleGroup)
+
+
+# class RequisitionRuleGroup(RuleGroup):
+# 
+#     pima = RequisitionRule(
+#         logic=Logic(
+#             predicate=('pima_today', 'equals', 'Yes'),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['microtube'], )
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         source_fk = (SubjectVisit, 'subject_visit')
+#         source_model = Pima
+# site_rule_groups.register(RequisitionRuleGroup)
