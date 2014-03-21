@@ -59,7 +59,7 @@ class HicEnrollment (BaseScheduledVisitModel):
     citizen_or_spouse = models.NullBooleanField(
         default=None,
         # editable=False,
-        help_text=("From Subject Consent. Is paticipant a citizen, or married to citizen with a valid marriage certificate?"),
+        help_text=("From Subject Consent. Is participant a citizen, or married to citizen with a valid marriage certificate?"),
         )
 
     locator_information = models.NullBooleanField(
