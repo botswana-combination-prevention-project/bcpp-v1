@@ -377,18 +377,46 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 site_rule_groups.register(MedicalDiagnosesRuleGroup)
 
 
-# class RequisitionRuleGroup(RuleGroup):
-# 
-#     pima = RequisitionRule(
-#         logic=Logic(
-#             predicate=('pima_today', 'equals', 'Yes'),
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['microtube'], )
-# 
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         source_fk = (SubjectVisit, 'subject_visit')
-#         source_model = Pima
-# site_rule_groups.register(RequisitionRuleGroup)
+class RequisitionRuleGroup(RuleGroup):
+
+    """Ensures no requisitions if HIV result is not POS or IND."""
+    hiv_result3 = RequisitionRule(
+        logic=Logic(
+            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'IND', 'or')),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load', 'Microtube', 'Venous (HIV)', 'ELISA'], )
+
+    """Ensures an RBD, VL and Microtube blood draw requisition if HIV result is POS."""
+    hiv_result2 = RequisitionRule(
+        logic=Logic(
+            predicate=(('hiv_result', 'equals', 'POS'), ),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load', 'Microtube'], )
+
+    """Ensures an ELISA blood draw requisition if HIV result is IND."""
+    hiv_result2 = RequisitionRule(
+        logic=Logic(
+            predicate=(('hiv_result', 'equals', 'IND'), ),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'], )
+
+    """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
+    hiv_result1 = RequisitionRule(
+        logic=Logic(
+            predicate=(('blood_draw_type', 'equals', 'capillary'), ('insufficient_vol', 'equals', 'Yes', 'and')),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'], )
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivResult
+site_rule_groups.register(RequisitionRuleGroup)

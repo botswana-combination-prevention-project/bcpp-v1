@@ -13,7 +13,7 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         else:
             instance = HicEnrollment(**self.cleaned_data)
         # validating that some contact numbers exist when HicEnrollment form exists.
-        instance.hic_enrollment_checks(forms.ValidationError)
+        instance.hic_enrollment_checks(self.instance, forms.ValidationError)
         # validating home_visits
         if cleaned_data.get('home_visit_permission', None) == 'No' and cleaned_data.get('physical_address', None):
             raise forms.ValidationError('If participant has not given permission to make home_visits, do not give physical(home) address details')
