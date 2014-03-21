@@ -91,8 +91,12 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
-        if self.household_member.member_status != BHS_ELIGIBLE:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(BHS_ELIGIBLE, self.household_member.member_status))
+        if not self.id:
+            expected_member_status = BHS_ELIGIBLE
+        else:
+            expected_member_status = BHS
+        if self.household_member.member_status != expected_member_status:
+            raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(expected_member_status, self.household_member.member_status))
         self.matches_hic_enrollment_values()
         self.is_minor = self.get_is_minor()
         self.matches_enrollment_checklist()
