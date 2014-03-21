@@ -75,7 +75,10 @@ class BcppAppConfiguration(BaseAppConfiguration):
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                   PanelTuple('Viral Load', 'TEST', 'WB'),
-                  PanelTuple('Microtube', 'STORAGE', 'WB')],
+                  PanelTuple('Microtube', 'STORAGE', 'WB'),
+                  PanelTuple('ELISA', 'TEST', 'WB'),
+                  PanelTuple('Venous (HIV)', 'TEST', 'WB'),
+                  ],
         'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
                          AliquotTypeTuple('Plasma', 'PL', '32'),
                          AliquotTypeTuple('Buffy Coat', 'BC', '16')]}
@@ -83,7 +86,10 @@ class BcppAppConfiguration(BaseAppConfiguration):
     lab_setup = {'bcpp': {
                      'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                                PanelTuple('Viral Load', 'TEST', 'WB'),
-                               PanelTuple('Microtube', 'STORAGE', 'WB')],
+                               PanelTuple('Microtube', 'STORAGE', 'WB'),
+                               PanelTuple('ELISA', 'TEST', 'WB'),
+                               PanelTuple('Venous (HIV)', 'TEST', 'WB'),
+                               ],
                      'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
                                       AliquotTypeTuple('Plasma', 'PL', '32'),
                                       AliquotTypeTuple('Buffy Coat', 'BC', '16')],
