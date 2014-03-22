@@ -1,14 +1,14 @@
 from django import forms
 
-from .base_rbd_model_form import BaseRBDModelForm
+from ..models import RbdDemographics
 
-from ..models import RBDDemographics
+from .base_subject_model_form import BaseSubjectModelForm
 
 
-class RBDDemographicsForm (BaseRBDModelForm):
+class RbdDemographicsForm (BaseSubjectModelForm):
 
     def clean(self):
-        cleaned_data = super(RBDDemographicsForm, self).clean()
+        cleaned_data = super(RbdDemographicsForm, self).clean()
 
         # validating unmarried
         if cleaned_data.get('marital_status', None) != 'Married' and cleaned_data.get('num_wives', None):
@@ -28,4 +28,4 @@ class RBDDemographicsForm (BaseRBDModelForm):
         return cleaned_data
 
     class Meta:
-        model = RBDDemographics
+        model = RbdDemographics
