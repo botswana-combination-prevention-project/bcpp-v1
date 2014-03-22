@@ -5,6 +5,7 @@ from django.db.models import get_model
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.choices.common import YES_NO
+from edc.base.model.validators import eligible_if_yes
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.models import HouseholdStructure
@@ -30,7 +31,8 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
         verbose_name=("Did you verify that the respondent is aged 18 or older? "),
         max_length=10,
         choices=YES_NO,
-        help_text=("If under 18 participant cannot be head of household."),
+        validators=[eligible_if_yes],
+        help_text=("If No, respondent is under 18 participant and cannot be head of household."),
         )
 
     verbal_script = models.CharField(
@@ -38,6 +40,7 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
                       "to provide household information? "),
         max_length=10,
         choices=YES_NO,
+        validators=[eligible_if_yes],
         help_text=("If No, the participant cannot be head of household."),
         )
 
@@ -58,20 +61,18 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
         return (get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        self.matches_household_member_values(self.household_member)
         self.household_member.eligible_hoh = False
-        self.matches_household_member_values()
-        if self.aged_over_18.lower() == 'yes' or self.verbal_script.lower() == 'yes':
-            self.household_member.eligible_hoh = True
         self.household_member.save()
         super(HouseholdHeadEligibility, self).save(*args, **kwargs)
 
-    def matches_household_member_values(self, exception_cls=None):
+    def matches_household_member_values(self, household_member, exception_cls=None):
         """Compares shared values on household_member form and returns True if all match."""
-        validation_error = None
+        error_msg = None
         exception_cls = exception_cls or ValidationError
-        if self.aged_over_18 == 'yes' and self.household_member.age_in_years < 18:
-            raise exception_cls('This household member is \'{0}\' years old which is not aged 18 or older.'.format(self.household_member.age_in_years))
-        return True
+        if not household_member.age_in_years >= 18:
+            raise exception_cls('Household member must be over 18 years of age. Got {0}.'.format(household_member.age_in_years))
+        return error_msg
 
     class Meta:
         app_label = 'bcpp_household_member'
