@@ -8,5 +8,5 @@ class RBDOffStudy(BaseOffStudy):
 
     class Meta:
         app_label = "bcpp_rbd"
-        verbose_name = "RBD subject Off Study"
-        verbose_name_plural = "RBD Subject Off Study"
+        verbose_name = "RBD Off Study"
+        verbose_name_plural = "RBD Off Study"

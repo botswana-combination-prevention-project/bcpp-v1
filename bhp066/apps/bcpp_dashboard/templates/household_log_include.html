@@ -21,15 +21,29 @@
  {% for household_log_entry in household_log_entries %}
      <tr class="{% cycle 'row1' 'row2' %}">
      <td>{{ forloop.counter }}.&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'change' household_log_entry.pk %}?household_log={{household_log.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"> {{ household_log_entry.report_datetime|date:"Y-m-d" }}</A></td>
-     <td>{{ household_log_entry.user_created }}{% if household_log_entry.user_modified %} | {{household_log_entry.user_modified}} {%endif%}</td>
+     <td>{{ household_log_entry.user_modified|default:household_log_entry.user_created}}</td>
      <td>{{ household_log_entry.next_appt_datetime|date:"Y-m-d" }}</td>
-     <td>{{ household_log_entry.next_appt_datetime_source }}</td>
-     <td>{{ household_log_entry.comment }}</td>
-     <td>{{ household_log_entry.modified|date:"Y-m-d" }}</td>
+     <td>{{ household_log_entry.get_next_appt_datetime_source_display }}</td>
+     <td>{{ household_log_entry.get_household_status_display }}. {{ household_log_entry.comment }}</td>
+     <td>{{ household_log_entry.modified|default:household_log_entry.created|date:"Y-m-d" }}</td>
      </tr>
  {% endfor %}
  </tbody>
  </table>    
  {% endif %}
- <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
+ {{ household_log.household_status }}
+ <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;{% if not household_assessment.vdc_househould_status %}<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>{% endif %}
+ {% if household.enumeration_attempts == 3 and not household_assessment %}
+  <p><A href="{% url household_assessment_meta|admin_urlname:'add' %}?household_assessment={{household_assessment.pk}}&household={{household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add Assessing of Household residency status form</A></p>
+ {% endif %}
+ {% if household_assessment %}
+  <a href="{% url household_assessment_meta|admin_urlname:'change' household_assessment.pk %}?household={{ household.pk }}&household_assessment={{household_assessment.pk}}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Assessing of Household residency status form</a>
+ {% endif %}
+{% if household.household_status == 'refused' %}
+	{% if household_enumeration_refusal %}
+		<p><A href="{% url household_enumeration_refusal_meta|admin_urlname:'change' household_enumeration_refusal.pk %}?household_enumeration_refusal={{household_enumeration_refusal.pk}}&household={{household.pk}}&next=section_url&section_name=household">refusal form</A></p>
+	{% else %}
+		<p><A href="{% url household_enumeration_refusal_meta|admin_urlname:'add' %}?household={{household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;refusal form</A></p>
+	{% endif %}
+{% endif %}
 {% endif %}

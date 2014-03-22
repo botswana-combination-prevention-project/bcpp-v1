@@ -32,12 +32,6 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         return self.consent_datetime
 
     def save(self, *args, **kwargs):
-        from ..models import SubjectConsent
-        from apps.bcpp_rbd.models import RBDConsent
-        if isinstance(self, SubjectConsent) and not self.household_member.eligible_subject:
-            raise ValidationError('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
-        elif isinstance(self, RBDConsent) and not self.household_member.eligible_rbd_subject:
-            raise ValidationError('Subject is not eligible or has not been confirmed eligible for Reseach Blood Draw. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
         if not self.id:
             self.survey = self.household_member.household_structure.survey
             self.registered_subject = self.household_member.registered_subject
@@ -66,7 +60,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         """Users may override to add an additional strategy to detect duplicate identifiers."""
         pass
 
-    def post_save_update_hm_status(self, **kwargs):
+    def post_save_update_registered_subject(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
         if re_pk.match(self.registered_subject.subject_identifier):

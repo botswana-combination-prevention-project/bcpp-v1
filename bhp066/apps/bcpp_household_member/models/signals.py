@@ -1,11 +1,25 @@
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 
-from .household_member import HouseholdMember
-from .subject_absentee_entry import SubjectAbsenteeEntry
-from .subject_undecided_entry import SubjectUndecidedEntry
-from .base_member_status_model import BaseMemberStatusModel
+from ..classes import HouseholdMemberHelper
+
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
+from .household_member import HouseholdMember
+from .subject_refusal import SubjectRefusal
+from .subject_refusal_history import SubjectRefusalHistory
+
+
+@receiver(pre_delete, weak=False, dispatch_uid="subject_refusal_on_pre_delete")
+def subject_refusal_on_pre_delete(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, SubjectRefusal):
+            # update the history model
+            options = {'household_member': instance.household_member,
+                       'survey': instance.survey,
+                       'refusal_date': instance.refusal_date,
+                       'reason': instance.reason,
+                       'reason_other': instance.reason_other}
+            SubjectRefusalHistory.objects.create(**options)
 
 
 @receiver(pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
@@ -16,35 +30,25 @@ def household_member_on_pre_save(sender, instance, **kwargs):
 
 
 @receiver(post_save, weak=False, dispatch_uid="household_member_on_post_save")
-def household_member_on_post_save(sender, instance, **kwargs):
+def household_member_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdMember):
             instance.update_registered_subject_on_post_save(**kwargs)  # update HM must not override consent values, if consent exists
-            instance.update_household_member_count_on_post_save(**kwargs)
-            if instance.member_status == 'ABSENT':
-                # TODO: probably do not need to call this now??
-                instance.subject_absentee
-            if instance.member_status == 'UNDECIDED':
-                # TODO: probably do not need to call this now??
-                instance.subject_undecided
+            instance.update_household_member_count_on_post_save(sender, using)
+            if created:
+                # calculate member status
+                household_member_helper = HouseholdMemberHelper()
+                household_member_helper.household_member = instance
+                instance.member_status = household_member_helper.calculate_new_member_status()
+                instance.save()
+                # has members so confirm household enumerated is True
+                if not instance.household_structure.household.enumerated:
+                    instance.household_structure.household.enumerated = True
+                    instance.household_structure.household.save()
+
 
 
 @receiver(post_save, weak=False, dispatch_uid='base_household_member_consent_on_post_save')
-def base_household_member_consent_on_post_save(sender, instance, **kwargs):
-    if isinstance(instance, (BaseMemberStatusModel)):
-        instance.post_save_update_hm_status()  # HM values must either be changed or match that provided on the consent
+def base_household_member_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
     if isinstance(instance, BaseRegisteredHouseholdMemberModel):
         instance.confirm_registered_subject_pk_on_post_save()
-
-@receiver(post_save, weak=False, dispatch_uid='visit_attempts_on_post_save')
-def visit_attempts_on_post_save(sender, instance, **kwargs):
-    if not kwargs.get('raw', False):
-        if isinstance(instance, SubjectAbsenteeEntry) or isinstance(instance, SubjectUndecidedEntry):
-            if isinstance(instance, SubjectAbsenteeEntry) and instance.subject_absentee:
-                household_member = instance.subject_absentee.household_member
-            elif isinstance(instance, SubjectUndecidedEntry) and instance.subject_undecided:
-                household_member = instance.subject_undecided.household_member
-            if household_member.visit_attempts <= 3:
-                household_member.visit_attempts = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=household_member).count() + \
-                                                  SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=household_member).count()
-                household_member.save()

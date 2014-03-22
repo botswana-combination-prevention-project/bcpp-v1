@@ -1,41 +1,53 @@
 from django.utils.translation import ugettext as _
 
-HOUSEHOLD_MEMBER_FULL_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RESEARCH', 'BHS'),
+from .constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
+
+options = list(set([ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC]))
+
+HOUSEHOLD_MEMBER_PARTICIPATION = [(item, item) for item in options]
+
+# HOUSEHOLD_MEMBER_FULL_PARTICIPATION = [
+#     ('NOT_REPORTED', '<not reported>'),
+#     ('RESEARCH', 'BHS'),
+#     ('RESEARCH', 'BHS_ELIGIBLE'),
+# #     ('HTC', 'HTC'),
+# #     ('RBD', 'RBD only'),
+#     ('ABSENT', 'Absentee'),
+#     ('REFUSED', 'Refusal'),
+#     ('UNDECIDED', 'Undecided'),
+#     #('NOT_ELIGIBLE', 'Not Eligible'),
+# ]
+# 
+# HOUSEHOLD_MEMBER_RBD_PARTICIPATION = [
+#     ('NOT_REPORTED', '<not reported>'),
+#     ('RBD', 'RBD'),
+# ]
+# 
+# HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
+#     ('NOT_ELIGIBLE', 'Not Eligible'),
+# ]
+# 
+# HOUSEHOLD_MEMBER_REFUSED = [
+#     ('RESEARCH', 'BHS'),
+#     ('REFUSED', 'Refusal'),
+# ]
+# 
+# HOUSEHOLD_MEMBER_HTC_PARTICIPATION = [
+#     ('NOT_REPORTED', '<not reported>'),
 #     ('HTC', 'HTC'),
+# ]
+# 
+# HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION = [
+#     ('NOT_REPORTED', '<not reported>'),
 #     ('RBD', 'RBD only'),
-    ('ABSENT', 'Absentee'),
-    ('REFUSED', 'Refusal'),
-    ('UNDECIDED', 'Undecided'),
-    #('NOT_ELIGIBLE', 'Not Eligible'),
-]
-
-HOUSEHOLD_MEMBER_RBD_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RBD', 'RBD'),
-]
-
-HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
-    ('NOT_ELIGIBLE', 'Not Eligible'),
-]
-
-HOUSEHOLD_MEMBER_HTC_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('HTC', 'HTC'),
-]
-
-HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RBD', 'RBD only'),
-    ('HTC', 'HTC'),
-    ('HTC/RBD', 'HTC plus RBD'),
-]
-
-HOUSEHOLD_MEMBER_MINOR = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('NOT_ELIGIBLE', 'Not Eligible'),
-]
+#     ('HTC', 'HTC'),
+#     ('HTC/RBD', 'HTC plus RBD'),
+# ]
+# 
+# HOUSEHOLD_MEMBER_MINOR = [
+#     ('NOT_REPORTED', '<not reported>'),
+#     ('NOT_ELIGIBLE', 'Not Eligible'),
+# ]
 
 ABSENTEE_STATUS = (
     ('ABSENT', _('Absent')),

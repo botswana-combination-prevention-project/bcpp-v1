@@ -21,7 +21,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         )
 
     lifetime_sex_partners = models.IntegerField(
-        verbose_name=_("In your life time, how many different people have you had"
+        verbose_name=_("In your lifetime, how many different people have you had"
                       " sex with?  Please remember to include casual and once-off partners"
                       " (prostitutes and truck drivers) as well as long-term partners"
                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "

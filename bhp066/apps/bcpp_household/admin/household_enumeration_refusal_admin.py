@@ -1,14 +1,14 @@
 from django.contrib import admin
 
-from .base_household_model_admin import BaseHouseholdModelAdmin
+from edc.base.admin.admin import BaseModelAdmin
 
-from ..models import HouseholdEnumerationRefusal, Household
-from ..forms import HouseholdEnumerationRefusalForm
+from ..forms import HouseholdRefusalForm
+from ..models import HouseholdRefusal, Household
 
 
-class HouseholdEnumerationRefusalAdmin(BaseHouseholdModelAdmin):
+class HouseholdRefusalAdmin(BaseModelAdmin):
 
-    form = HouseholdEnumerationRefusalForm
+    form = HouseholdRefusalForm
     date_hierarchy = 'modified'
     list_per_page = 30
 
@@ -29,11 +29,9 @@ class HouseholdEnumerationRefusalAdmin(BaseHouseholdModelAdmin):
 
     search_fields = ('household__household_identifier', 'community', 'id', 'plot__id')
 
-    readonly_fields = ('household',)
-
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household":
             kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household', 0))
-        return super(HouseholdEnumerationRefusalAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(HouseholdRefusalAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(HouseholdEnumerationRefusal, HouseholdEnumerationRefusalAdmin)
+admin.site.register(HouseholdRefusal, HouseholdRefusalAdmin)
