@@ -4,13 +4,13 @@ from edc.base.admin.admin import BaseModelAdmin
 
 from apps.bcpp_household.models import HouseholdStructure
 
-from ..forms import EnrolmentChecklistForm
-from ..models import EnrolmentChecklist, HouseholdMember
+from ..forms import EnrollmentChecklistForm
+from ..models import EnrollmentChecklist, HouseholdMember
 
 
-class EnrolmentChecklistAdmin(BaseModelAdmin):
+class EnrollmentChecklistAdmin(BaseModelAdmin):
 
-    form = EnrolmentChecklistForm
+    form = EnrollmentChecklistForm
 
     instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject. After entering the required items, click SAVE. THE DATA WILL BE EVALUATED BUT NOT SAVED.']
 
@@ -46,6 +46,6 @@ class EnrolmentChecklistAdmin(BaseModelAdmin):
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
         if db_field.name == "household_member":
             kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))
-        return super(EnrolmentChecklistAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(EnrollmentChecklistAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-admin.site.register(EnrolmentChecklist, EnrolmentChecklistAdmin)
+admin.site.register(EnrollmentChecklist, EnrollmentChecklistAdmin)

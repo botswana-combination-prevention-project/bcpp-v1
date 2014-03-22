@@ -9,9 +9,8 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
 
-from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrolmentChecklist, HouseholdInfo
-from apps.bcpp_rbd.models import RBDEligibility
-from apps.bcpp_household_member.models import Loss
+from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo
+from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_survey.models import Survey
 
 
@@ -30,7 +29,6 @@ class HouseholdDashboard(Dashboard):
         self._household_log = None
         self._household_assessment = None
         self._current_member_count = None
-        self._enrolment_checklist = None
         self._household_info = None
         self._household_enumeration_refusal = None
         self.__eligible_hoh = None
@@ -54,11 +52,10 @@ class HouseholdDashboard(Dashboard):
             household_meta=Household._meta,
             household_member_meta=HouseholdMember._meta,
             household_assessment_meta=HouseholdAssessment._meta,
-            loss_meta=Loss._meta,
+            enrollment_loss_meta=EnrollmentLoss._meta,
             household_structure_meta=HouseholdStructure._meta,
             household_log_entry_meta=HouseholdLogEntry._meta,
-            enrolment_checklist_meta=EnrolmentChecklist._meta,
-            rbd_enrolment_checklist_meta=RBDEligibility._meta,
+            enrollment_checklist_meta=EnrollmentChecklist._meta,
             household_info_meta=HouseholdInfo._meta,
             household_enumeration_refusal_meta=HouseholdRefusal._meta,
             household_enumeration_refusal=self.household_enumeration_refusal,
@@ -112,7 +109,7 @@ class HouseholdDashboard(Dashboard):
         if HouseholdInfo.objects.filter(household_structure=self.household_structure):
             self._household_info = HouseholdInfo.objects.get(household_structure=self.household_structure)
         return self._household_info
-    
+
     @property
     def household_enumeration_refusal(self):
         self._household_enumeration_refusal = None
@@ -279,4 +276,3 @@ class HouseholdDashboard(Dashboard):
 #     def get_household_members_as_list(self):
 #         """Returns a list of household members for this dashboard."""
 #         return [hm for hm in self.household_members]
-

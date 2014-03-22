@@ -2,7 +2,7 @@ from .main import *
 
 from .access_to_care_admin import AccessToCareAdmin
 from .cd4_history_admin import Cd4HistoryAdmin
-from .cea_enrolment_checklist_admin import CeaEnrolmentChecklistAdmin
+from .cea_enrollment_checklist_admin import CeaEnrollmentChecklistAdmin
 from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin
 from .community_engagement_admin import CommunityEngagementAdmin
 from .demographics_admin import DemographicsAdmin

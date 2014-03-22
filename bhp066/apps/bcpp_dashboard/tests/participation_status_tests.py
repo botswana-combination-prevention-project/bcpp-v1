@@ -15,7 +15,7 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import HouseholdStructure, Household
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
-from apps.bcpp_household_member.tests.factories import EnrolmentChecklistFactory, HouseholdMemberFactory
+from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory, HouseholdMemberFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -136,7 +136,7 @@ class ParticipationStatusTests(TestCase):
             household_structure=self.household_structure,
             gender='M',
             age_in_years=50)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=50),
@@ -157,7 +157,7 @@ class ParticipationStatusTests(TestCase):
             gender='M',
             age_in_years=50,
             study_resident='Yes')
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=50),

@@ -1,9 +1,9 @@
 from django.contrib import admin
 
 from edc.base.admin.admin import BaseModelAdmin
-from .base_household_model_admin import BaseHouseholdModelAdmin
-from ..models import HouseholdRefusal, Household
+
 from ..forms import HouseholdRefusalForm
+from ..models import HouseholdRefusal, Household
 
 
 class HouseholdRefusalAdmin(BaseModelAdmin):

@@ -54,9 +54,9 @@ class FormsTests(TestCase):
 
         content_type_map = ContentTypeMap.objects.get(content_type__model='SubjectConsent'.lower())
         membership_form = MembershipFormFactory(content_type_map=content_type_map)
-        schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='enrolment', grouping_key='ELIGIBILITY')
+        schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='enrollment', grouping_key='ELIGIBILITY')
         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
-        visit_definition = VisitDefinitionFactory(code='1000', title='Enrolment', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
+        visit_definition = VisitDefinitionFactory(code='1000', title='Enrollment', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
         visit_definition.schedule_group.add(schedule_group)
 
         survey = SurveyFactory()

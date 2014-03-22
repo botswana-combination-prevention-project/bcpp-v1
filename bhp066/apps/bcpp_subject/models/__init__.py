@@ -14,7 +14,7 @@ from .hospital_admission import HospitalAdmission
 from .hiv_health_care_costs import HivHealthCareCosts
 from .labour_market_wages import LabourMarketWages
 from .grant import Grant
-from .cea_enrolment_checklist import CeaEnrolmentChecklist
+from .cea_enrollment_checklist import CeaEnrollmentChecklist
 from .residency_mobility import ResidencyMobility
 from .demographics import Demographics
 from .community_engagement import CommunityEngagement
