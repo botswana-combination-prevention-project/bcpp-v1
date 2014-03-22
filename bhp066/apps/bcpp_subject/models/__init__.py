@@ -59,3 +59,4 @@ from .subject_referral import SubjectReferral
 from .participation import Participation
 from .tb_symptoms import TbSymptoms
 from .signals import *
+from .rbd_demographics import RbdDemographics
