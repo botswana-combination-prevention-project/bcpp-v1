@@ -8,29 +8,29 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'EnrolmentChecklist.is_dob_estimated'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'is_dob_estimated')
+        # Deleting field 'EnrollmentChecklist.is_dob_estimated'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'is_dob_estimated')
 
-        # Deleting field 'EnrolmentChecklist.registered_subject'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'registered_subject_id')
+        # Deleting field 'EnrollmentChecklist.registered_subject'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'registered_subject_id')
 
-        # Adding field 'EnrolmentChecklist.initials'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'initials',
+        # Adding field 'EnrollmentChecklist.initials'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'initials',
                       self.gf('django.db.models.fields.CharField')(default='-', max_length=3, db_index=True),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Adding field 'EnrolmentChecklist.is_dob_estimated'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'is_dob_estimated',
+        # Adding field 'EnrollmentChecklist.is_dob_estimated'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'is_dob_estimated',
                       self.gf('django.db.models.fields.CharField')(max_length=25, null=True),
                       keep_default=False)
 
 
-        # User chose to not deal with backwards NULL issues for 'EnrolmentChecklist.registered_subject'
-        raise RuntimeError("Cannot reverse this migration. 'EnrolmentChecklist.registered_subject' and its values cannot be restored.")
-        # Deleting field 'EnrolmentChecklist.initials'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'initials')
+        # User chose to not deal with backwards NULL issues for 'EnrollmentChecklist.registered_subject'
+        raise RuntimeError("Cannot reverse this migration. 'EnrollmentChecklist.registered_subject' and its values cannot be restored.")
+        # Deleting field 'EnrollmentChecklist.initials'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'initials')
 
 
     models = {
@@ -142,8 +142,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),

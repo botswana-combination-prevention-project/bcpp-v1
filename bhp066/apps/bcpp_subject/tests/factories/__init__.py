@@ -2,7 +2,6 @@ from .base_scheduled_model_factory import BaseScheduledModelFactory
 from .base_scheduled_inline_factory import BaseScheduledInlineModelFactory
 from .residency_mobility_factory import ResidencyMobilityFactory
 from .subject_referral_factory import SubjectReferralFactory
-# from .second_partner_factory import SecondPartnerFactory
 from .stigma_factory import StigmaFactory
 from .access_to_care_factory import AccessToCareFactory
 from .medical_diagnoses_factory import MedicalDiagnosesFactory
@@ -10,12 +9,11 @@ from .subject_consent_factory import SubjectConsentFactory
 from .heart_attack_factory import HeartAttackFactory
 from .cd4_history_factory import Cd4HistoryFactory
 from .pima_factory import PimaFactory
-# from .recent_partner_factory import RecentPartnerFactory
 from .sti_factory import StiFactory
 from .subject_locator_factory import SubjectLocatorFactory
 from .subject_visit_factory import SubjectVisitFactory
 from .non_pregnancy_factory import NonPregnancyFactory
-from .cea_enrolment_checklist_factory import CeaEnrolmentChecklistFactory
+from .cea_enrollment_checklist_factory import CeaEnrollmentChecklistFactory
 from .circumcised_factory import CircumcisedFactory
 from .months_second_partner_factory import MonthsSecondPartnerFactory
 from .reproductive_health_factory import ReproductiveHealthFactory
@@ -23,7 +21,6 @@ from .subject_death_factory import SubjectDeathFactory
 from .months_third_partner_factory import MonthsThirdPartnerFactory
 from .months_recent_partner_factory import MonthsRecentPartnerFactory
 from .labour_market_wages_factory import LabourMarketWagesFactory
-#from .blood_draw_factory import BloodDrawFactory
 from .hiv_result_documentation_factory import HivResultDocumentationFactory
 from .stigma_opinion_factory import StigmaOpinionFactory
 from .grant_factory import GrantFactory
@@ -34,7 +31,6 @@ from .hiv_medical_care_factory import HivMedicalCareFactory
 from .positive_participant_factory import PositiveParticipantFactory
 from .resource_utilization_factory import ResourceUtilizationFactory
 from .hiv_testing_history_factory import HivTestingHistoryFactory
-# from .third_partner_factory import ThirdPartnerFactory
 from .demographics_factory import DemographicsFactory
 from .circumcision_factory import CircumcisionFactory
 from .hiv_care_adherence_factory import HivCareAdherenceFactory

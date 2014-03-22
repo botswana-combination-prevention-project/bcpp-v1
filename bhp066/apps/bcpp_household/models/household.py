@@ -2,13 +2,12 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
-from ..choices import NOT_ENUMERATED_REASONS
+
 from .plot import Plot
 
 

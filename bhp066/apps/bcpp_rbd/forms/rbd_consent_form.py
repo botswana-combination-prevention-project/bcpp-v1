@@ -13,7 +13,7 @@ class RBDConsentForm(MainConsentForm):
 
     def check_elligibility_filled(self, cleaned_data):
         if not cleaned_data.get('household_member').eligible_rbd_subject == True:
-            raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the eligibility checklist first. Got {0}'.format(cleaned_data.get('household_member')))
+            raise forms.ValidationError('Subject is not eligible or has not been confirmed eligible. Complete the enrollment checklist first. Got {0}'.format(cleaned_data.get('household_member')))
 
     def clean(self):
         try:
