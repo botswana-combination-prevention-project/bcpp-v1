@@ -1,3 +1,6 @@
+from datetime import date
+from dateutils import relativedelta
+
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
@@ -82,21 +85,23 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     hiv_history = models.CharField(max_length=25, null=True, editable=False)
 
-    eligible_member = models.NullBooleanField(default=None, editable=False, help_text='just based on what is on this form...')
+    eligible_member = models.NullBooleanField(default=None, editable=False, help_text='eligible to be screened. based on data on this form')
 
-    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
+    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the enrollment checklist if completed")
 
-    eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
+    enrollment_checklist_completed = models.NullBooleanField(default=None, editable=False, help_text="updated when subject completes enrollment checklist regardless of the eligibility outcome.")
 
-    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household eligibility checklist.")
-
-    eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
-
-    reported = models.BooleanField(default=False, editable=False, help_text="")
+    enrollment_loss_completed = models.NullBooleanField(default=None, editable=False, help_text="updated when subject completes enrollment loss.")
 
     refused = models.BooleanField(default=False, editable=False, help_text="")
 
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
+
+    eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
+
+    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household enrollment checklist.")
+
+    reported = models.BooleanField(default=False, editable=False, help_text="")
 
     visit_attempts = models.IntegerField(default=0, help_text="")
 
@@ -139,20 +144,17 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         else:
             self.eligible_member = (self.is_minor or self.is_adult) and self.study_resident == 'Yes'
             self.initials = self.initials.upper()
-            self.match_eligibility_values()
-            if not self.household_structure.household.enumerated:  # TODO: put this in the post-save?
-                self.household_structure.household.enumerated = True
-                self.household_structure.household.save()
+            self.match_eligibility_values(self)
             self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
             self.reported = household_member_helper.reported
             if self.household_structure.enrolled and not self.is_consented:  # TODO: move to helper class
                 self.eligible_htc = False
                 if self.eligible_member:
-                    if not self.eligibility_checklist_filled:
+                    if not self.enrollment_checklist_completed:
                         self.eligible_htc = self.refused
                     elif self.eligible_subject:
                         self.eligible_htc = self.refused
-                    elif not self.eligible_subject and self.eligibility_checklist_filled:
+                    elif not self.eligible_subject and self.enrollment_checklist_completed:
                         self.eligible_htc = True
                 else:
                     self.eligible_htc = (self.age_in_years >= 16)
@@ -166,25 +168,40 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             eligible_member=True).count()
         self.household_structure.household.plot.save()
 
-    def match_eligibility_values(self, exception_cls=None):
-        from .enrolment_checklist import EnrolmentChecklist
-        validation_error = None
+    def match_eligibility_values(self, household_member, exception_cls=None):
+        error_msg = None
         exception_cls = exception_cls or ValidationError
         #Ensure age is not changed after making HoH
-        if self.eligible_hoh and self.age_in_years < 18:
-            validation_error = 'This household member is the head of house. You cannot change their age to less than 18. Got {0}.'.format(self.age_in_years)
-        if validation_error:
-            raise exception_cls(validation_error)
+        if household_member.eligible_hoh and household_member.age_in_years < 18:
+            error_msg = 'This household member is the head of house. You cannot change their age to less than 18. Got {0}.'.format(household_member.age_in_years)
+        if error_msg:
+            raise exception_cls(error_msg)
         #Ensure values used are not changed after capturing enrollment_checklist
-        enrollment_checklist = EnrolmentChecklist.objects.filter(household_member=self)
-        if enrollment_checklist.exists():
-            enrollment_checklist[0].matches_household_member_values(self.age_in_years)
+        if household_member.enrollment_checklist:
+            household_member.enrollment_checklist.matches_household_member_values(household_member, exception_cls)
+
+    @property
+    def enrollment_checklist(self):
+        """Returns the enrollment checklist instance or None."""
+        EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
+        try:
+            EnrollmentChecklist.objects.get(household_member=self)
+        except:
+            return None
+
+    @property
+    def enrollment_options(self):
+        """Returns a dictionary of household member fields that are also on the enrollment checklist (as a convenience)."""
+        return {'gender': self.gender,
+                'dob': date.today() - relativedelta(years=self.age_in_years),
+                'initials': self.initials,
+                'part_time_resident': self.study_resident}
 
     def natural_key(self):
         if not self.household_structure:
-            raise AttributeError("member.household_structure cannot be None for id='\{0}\'".format(self.id))
+            raise AttributeError("household_member.household_structure cannot be None for id='\{0}\'".format(self.id))
         if not self.registered_subject:
-            raise AttributeError("member.registered_subject cannot be None for id='\{0}\'".format(self.id))
+            raise AttributeError("household_member.registered_subject cannot be None for id='\{0}\'".format(self.id))
         return self.household_structure.natural_key() + self.registered_subject.natural_key()
     natural_key.dependencies = ['bcpp_household.householdstructure', 'registration.registeredsubject']
 

@@ -14,6 +14,7 @@ class SubjectUndecided (BaseMemberStatusModel):
         if self.household_member.member_status != UNDECIDED:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(UNDECIDED, self.household_member.member_status))
         self.survey = self.household_member.survey
+        self.registered_subject = self.household_member.registered_subject
         super(SubjectUndecided, self).save(*args, **kwargs)
 
     class Meta:

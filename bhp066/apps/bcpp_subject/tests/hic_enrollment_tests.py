@@ -25,7 +25,7 @@ from edc.subject.appointment.models import Appointment
 
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, HicEnrollmentFactory, SubjectLocatorFactory,ResidencyMobilityFactory,
                                                HivResultFactory)
@@ -68,7 +68,7 @@ class HicEnrollmentTests(TestCase):
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
 
         household_member = HouseholdMemberFactory(age_in_years=16, household_structure=household_structure)
-        enrollmen_checklist = EnrolmentChecklistFactory(household_member=household_member, initials=household_member.initials, gender=household_member.gender)
+        enrollmen_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, gender=household_member.gender)
         subject_consent = SubjectConsentFactory(study_site=study_site, citizen='Yes', household_member=household_member, registered_subject=household_member.registered_subject,
                                                 gender=enrollmen_checklist.gender, dob=enrollmen_checklist.dob, is_literate=enrollmen_checklist.literacy,
                                                 initials=enrollmen_checklist.initials, guardian_name='MJOLIS, MJOLIS')
