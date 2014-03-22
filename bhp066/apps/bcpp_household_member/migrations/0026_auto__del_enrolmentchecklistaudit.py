@@ -8,13 +8,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting model 'EnrolmentChecklistAudit'
-        db.delete_table(u'bcpp_household_member_enrolmentchecklist_audit')
+        # Deleting model 'EnrollmentChecklistAudit'
+        db.delete_table(u'bcpp_household_member_enrollmentchecklist_audit')
 
 
     def backwards(self, orm):
-        # Adding model 'EnrolmentChecklistAudit'
-        db.create_table(u'bcpp_household_member_enrolmentchecklist_audit', (
+        # Adding model 'EnrollmentChecklistAudit'
+        db.create_table(u'bcpp_household_member_enrollmentchecklist_audit', (
             ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, blank=True, db_index=True)),
             ('has_identity', self.gf('django.db.models.fields.CharField')(max_length=10)),
             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, blank=True, db_index=True)),
@@ -23,11 +23,11 @@ class Migration(SchemaMigration):
             ('marriage_certificate', self.gf('django.db.models.fields.CharField')(default='N/A', max_length=3, null=True)),
             ('is_dob_estimated', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
             ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_enrolmentchecklist', to=orm['bcpp_household_member.HouseholdMember'])),
+            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_enrollmentchecklist', to=orm['bcpp_household_member.HouseholdMember'])),
             ('citizen', self.gf('django.db.models.fields.CharField')(max_length=3)),
             ('legal_marriage', self.gf('django.db.models.fields.CharField')(default='N/A', max_length=3, null=True)),
             ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_enrolmentchecklist', to=orm['registration.RegisteredSubject'])),
+            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_enrollmentchecklist', to=orm['registration.RegisteredSubject'])),
             ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True, db_index=True)),
             ('marriage_certificate_no', self.gf('django.db.models.fields.CharField')(max_length=9, null=True, blank=True)),
@@ -37,7 +37,7 @@ class Migration(SchemaMigration):
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('study_resident', self.gf('django.db.models.fields.CharField')(max_length=17)),
         ))
-        db.send_create_signal('bcpp_household_member', ['EnrolmentChecklistAudit'])
+        db.send_create_signal('bcpp_household_member', ['EnrollmentChecklistAudit'])
 
 
     models = {
@@ -149,8 +149,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),

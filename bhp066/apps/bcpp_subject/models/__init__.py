@@ -14,7 +14,7 @@ from .hospital_admission import HospitalAdmission
 from .hiv_health_care_costs import HivHealthCareCosts
 from .labour_market_wages import LabourMarketWages
 from .grant import Grant
-from .cea_enrolment_checklist import CeaEnrolmentChecklist
+from .cea_enrollment_checklist import CeaEnrollmentChecklist
 from .residency_mobility import ResidencyMobility
 from .demographics import Demographics
 from .community_engagement import CommunityEngagement
@@ -57,4 +57,5 @@ from .clinic_questionnaire import ClinicQuestionnaire
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .subject_referral import SubjectReferral
 from .participation import Participation
+from .tb_symptoms import TbSymptoms
 from .signals import *

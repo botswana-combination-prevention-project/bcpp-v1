@@ -1,10 +1,14 @@
 import factory
+
 from datetime import date, datetime
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from ...models import SubjectMoved
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+
+from ...models import SubjectMoved
 
 
 class SubjectMovedFactory(BaseUuidModelFactory):

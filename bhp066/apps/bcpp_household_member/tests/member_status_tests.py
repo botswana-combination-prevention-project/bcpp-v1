@@ -10,15 +10,16 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import Loss, HouseholdMember, SubjectRefusal, SubjectAbsentee, EnrolmentChecklist
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, SubjectRefusalFactory, SubjectUndecidedFactory
+from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, EnrollmentChecklist
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_survey.models import Survey
 
 from ..exceptions import MemberStatusError
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED
 
 
 class TestPlotMapper(Mapper):
@@ -107,13 +108,13 @@ class MemberStatusTests(TestCase):
         household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertTrue(isinstance(EnrolmentChecklistFactory(
+        self.assertTrue(isinstance(EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=18),
             guardian='No',
             initials=household_member.initials,
-            part_time_resident='Yes'), EnrolmentChecklist))
+            part_time_resident='Yes'), EnrollmentChecklist))
         SubjectConsentFactory(
             household_member=household_member,
             first_name="ERIK",
@@ -222,7 +223,7 @@ class MemberStatusTests(TestCase):
             present_today='No',
             study_resident='Yes')
         household_member = HouseholdMember.objects.get(pk=household_member.pk)
-        self.assertRaisesRegexp(MemberStatusError, BHS_SCREEN, EnrolmentChecklistFactory,
+        self.assertRaisesRegexp(MemberStatusError, BHS_SCREEN, EnrollmentChecklistFactory,
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=50),
@@ -243,12 +244,12 @@ class MemberStatusTests(TestCase):
         household_member.created = datetime.today() - timedelta(days=1)
         household_member.save()
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertTrue(isinstance(EnrolmentChecklistFactory(
+        self.assertTrue(isinstance(EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=50),
             initials=household_member.initials,
-            part_time_resident='Yes'), EnrolmentChecklist))
+            part_time_resident='Yes'), EnrollmentChecklist))
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
 
     def test_change_household_member4(self):
@@ -295,7 +296,7 @@ class MemberStatusTests(TestCase):
             study_resident='Yes')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=20),
@@ -323,7 +324,7 @@ class MemberStatusTests(TestCase):
         household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=20),
@@ -356,7 +357,7 @@ class MemberStatusTests(TestCase):
         self.enroll_household()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=20),
@@ -367,7 +368,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertFalse(household_member.eligible_subject)
-        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.enrollment_checklist_completed)
         self.assertFalse(household_member.refused)
         self.assertTrue(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
@@ -388,7 +389,7 @@ class MemberStatusTests(TestCase):
         self.enroll_household()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=20),
@@ -399,7 +400,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertFalse(household_member.eligible_subject)
-        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.enrollment_checklist_completed)
         self.assertFalse(household_member.refused)
         self.assertTrue(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
@@ -420,7 +421,7 @@ class MemberStatusTests(TestCase):
         self.enroll_household()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=20),
@@ -431,7 +432,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertTrue(household_member.eligible_subject)
-        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.enrollment_checklist_completed)
         self.assertFalse(household_member.refused)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
@@ -441,7 +442,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertTrue(household_member.eligible_subject)
-        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.enrollment_checklist_completed)
         self.assertTrue(household_member.refused)
         self.assertTrue(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
@@ -461,7 +462,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=20),
@@ -472,7 +473,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertTrue(household_member.eligible_subject)
-        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.enrollment_checklist_completed)
         self.assertFalse(household_member.refused)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
@@ -483,6 +484,6 @@ class MemberStatusTests(TestCase):
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertEquals(household_member.member_status, REFUSED)
         self.assertTrue(household_member.eligible_subject)
-        self.assertTrue(household_member.eligibility_checklist_filled)
+        self.assertTrue(household_member.enrollment_checklist_completed)
         self.assertTrue(household_member.refused)
         self.assertTrue(household_member.eligible_htc)

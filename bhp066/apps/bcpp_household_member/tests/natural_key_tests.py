@@ -15,9 +15,8 @@ from edc.core.bhp_content_type_map.models import ContentTypeMap
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import HouseholdStructureFactory
 from apps.bcpp_household.models import post_save_on_household, create_household_on_post_save, household_structure_on_post_save
-from .factories import HouseholdMemberFactory, EnrolmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory , SubjectAbsenteeEntryFactory, \
-                        SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, LossFactory
-
+from .factories import (HouseholdMemberFactory, EnrollmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory, SubjectAbsenteeEntryFactory,
+                        SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, EnrollmentLossFactory)
 
 
 class NaturalKeyTests(TestCase):
@@ -29,7 +28,7 @@ class NaturalKeyTests(TestCase):
         """Confirms all models have a natural_key method (except Audit models)"""
         app = get_app('bcpp_household_member')
         for model in get_models(app):
-            if 'Audit' not in model._meta.object_name and  model._meta.object_name != 'EnrolmentChecklist':
+            if 'Audit' not in model._meta.object_name and  model._meta.object_name != 'EnrollmentChecklist':
                 print 'checking for natural key on {0}.'.format(model._meta.object_name)
                 self.assertTrue('natural_key' in dir(model), 'natural key not found in {0}'.format(model._meta.object_name))
 
@@ -37,7 +36,7 @@ class NaturalKeyTests(TestCase):
         """Confirms all models have a get_by_natural_key manager method."""
         app = get_app('bcpp_household_member')
         for model in get_models(app):
-            if 'Audit' not in model._meta.object_name and  model._meta.object_name != 'EnrolmentChecklist':
+            if 'Audit' not in model._meta.object_name and  model._meta.object_name != 'EnrollmentChecklist':
                 print 'checking for get_by_natural_key manager method key on {0}.'.format(model._meta.object_name)
                 self.assertTrue('get_by_natural_key' in dir(model.objects), 'get_by_natural_key key not found in {0}'.format(model._meta.object_name))
 
@@ -74,7 +73,7 @@ class NaturalKeyTests(TestCase):
         loss = LossFactory(household_member = household_member)
         print 'get registered subject'
         registered_subject = RegisteredSubject.objects.get(subject_identifier=household_member.registered_subject.subject_identifier)
-        # enrolment_checklist = EnrolmentChecklistFactory(household_member=household_member)
+        # enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member)
         household_info = HouseholdInfoFactory(household_structure=household_structure, household_member=household_member)
         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
         subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
@@ -91,7 +90,7 @@ class NaturalKeyTests(TestCase):
         instances = []
         instances.append(household_member)
         instances.append(registered_subject)
-        # instances.append(enrolment_checklist)
+        # instances.append(enrollment_checklist)
         instances.append(household_structure)
         instances.append(household_info)
         instances.append(subject_refusal)

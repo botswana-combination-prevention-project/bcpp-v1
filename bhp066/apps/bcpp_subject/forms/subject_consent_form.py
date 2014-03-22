@@ -10,7 +10,7 @@ from edc.core.bhp_variables.models import StudySpecific
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
-from apps.bcpp_household_member.models import EnrolmentChecklist
+from apps.bcpp_household_member.models import EnrollmentChecklist
 
 from ..models import SubjectConsent, HicEnrollment
 
@@ -62,24 +62,20 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         if age > age_settings.maximum_age_of_consent:
             raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(age))
 
-    def accepted_consent_copy(self, cleaned_data):
-        return True
-
 
 class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
+        cleaned_data = super(SubjectConsentForm, self).clean()
+        household_member = cleaned_data.get("household_member")
         instance = None
         if self.instance.id:
             instance = self.instance
         else:
             instance = SubjectConsent(**self.cleaned_data)
-        # Verify values required for HiC enrollment that they are not changed in this form.
-        instance.matches_hic_enrollment_values(forms.ValidationError)
-        # Verify the data is identical to that entered in the enrollment checklist for BHS
-        instance.matches_enrollment_checklist(forms.ValidationError)
+        instance.matches_hic_enrollment(instance, cleaned_data.get('household_member'), forms.ValidationError)
+        instance.matches_enrollment_checklist(instance, cleaned_data.get('household_member'), forms.ValidationError)
 
-        return super(SubjectConsentForm, self).clean()
 
     class Meta:
         model = SubjectConsent
