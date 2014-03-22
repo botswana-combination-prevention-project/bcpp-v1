@@ -15,7 +15,7 @@ from edc.core.bhp_content_type_map.models import ContentTypeMap
 from apps.bcpp_survey.models import Survey
 
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
-from apps.bcpp_household.tests.factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdEnumerationRefusalFactory,
+from apps.bcpp_household.tests.factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
                                                  PlotLogFactory, HouseholdLogFactory)
 
 class NaturalKeyTests(TestCase):
@@ -67,7 +67,7 @@ class NaturalKeyTests(TestCase):
         self.assertEquals(HouseholdStructure.objects.all().count(), 1)
         self.assertEquals(Survey.objects.all().count(), 1)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-        household_enumeration_refusal = HouseholdEnumerationRefusalFactory(household = household)
+        household_enumeration_refusal = HouseholdRefusalFactory(household = household)
 #         household_identifier_history = 
         print 'No. of HOUSEHOLDS_STRUCTURE = '+str(HouseholdStructure.objects.all().count())
         print 'No. of HOUSEHOLDS_LOG = '+str(HouseholdLog.objects.all().count())    
@@ -82,7 +82,7 @@ class NaturalKeyTests(TestCase):
         instances = []
         instances.append(plot)
         instances.append(household)
-        # instances.append(enrolment_checklist)
+        # instances.append(enrollment_checklist)
         instances.append(household_structure)
         instances.append(household_enumeration_refusal)
 #         instances.append(household_identifier_history)

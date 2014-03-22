@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
@@ -121,18 +120,14 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    allowed_to_enumerate = models.CharField(
-        verbose_name='Are you able to enumerate this household?',
-        choices=YES_NO,
-        max_length=25,
-        default='Yes',
-        null=False,
-        editable=True,
-        )
-
     #Indicates that a household has been replaced if its part of twenty percent.
     #For five percent indicates that a household has been used for replacement.
-    replacement = models.BooleanField(default=False, editable=False)
+    replacement =  models.CharField(
+        max_length=25,
+        blank=True,
+        editable=False,
+        db_index=True,
+        )
 
     comment = EncryptedTextField(
         max_length=250,
@@ -154,14 +149,23 @@ class Household(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
+    # see subject_consent save method
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
-    complete = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
+    complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
+
+    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household has been enumerated')
 
     enumeration_attempts = models.IntegerField(
         default=0,
         editable=False,
         help_text='Number of attempts to enumerate a plot to determine it\'s status.'
+        )
+
+    household_status = models.CharField(
+        verbose_name='Household Status',
+        max_length=50,
+        null=True,
         )
 
     objects = HouseholdManager()
@@ -195,16 +199,6 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
- 
-#     def post_save_plot_allowed_to_enumerate(self, instance, created):
-#         """Updates the allowed_to_enumerate field on the plot model."""
-#         plot = Plot.objects.get(plot_identifier=instance.plot.plot_identifier)
-#         if instance.allowed_to_enumerate == 'no':
-#             plot.allowed_to_enumerate = 'no'
-#             plot.save()
-#         else:
-#             plot.allowed_to_enumerate = 'yes'
-#             plot.save()
 
     def get_subject_identifier(self):
         return self.household_identifier

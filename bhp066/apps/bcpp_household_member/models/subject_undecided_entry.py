@@ -23,6 +23,13 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
 
     objects = SubjectUndecidedEntryManager()
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            household_member = self.subject_undecided.household_member
+            household_member.visit_attempts += 1
+            household_member.save()
+        super(SubjectUndecidedEntry, self).save(*args, **kwargs)
+
     def inline_parent(self):
         return self.subject_undecided
 

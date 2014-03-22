@@ -1,9 +1,14 @@
+from django.core.exceptions import ValidationError
 from django.db import models
-from edc.base.model.validators import datetime_not_future
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import datetime_not_future
+from edc.choices import YES_NO_NA
 from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .hic_enrollment import HicEnrollment
 
 
 class HivResult (BaseScheduledVisitModel):
@@ -22,6 +27,22 @@ class HivResult (BaseScheduledVisitModel):
         validators=[datetime_not_future],
         )
 
+    blood_draw_type = models.CharField(
+        verbose_name=("What type of blood was used for the test"),
+        max_length=15,
+        choices=(('capillary', 'Capillary'), ('venous', 'Venous'), ('N/A', 'Not applicable')),
+        default='N/A',
+        help_text="",
+        )
+
+    insufficient_vol = models.CharField(
+        verbose_name='If capillary, is the volume less than 350uL?',
+        max_length=15,
+        choices=YES_NO_NA,
+        default='N/A',
+        help_text='Note: if capillary blood and less than 350uL, an additional venous blood draw is required'
+        )
+
     why_not_tested = models.CharField(
         verbose_name=_("What was the main reason why you did not want HIV testing"
                        " as part of today's visit?"),
@@ -33,6 +54,16 @@ class HivResult (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        self.hic_enrollment_checks()
+        super(HivResult, self).save(*args, **kwargs)
+
+    def hic_enrollment_checks(self, subject_visit, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
+        if HicEnrollment.objects.filter(subject_visit=subject_visit).exists():
+            if self.hiv_result.lower() != 'neg':
+                raise exception_cls('Result cannot be changed. HIC Enrollment form exists for this subject. Got {0}'.format(self.hiv_result))
 
     def get_test_code(self):
         return 'HIV'
