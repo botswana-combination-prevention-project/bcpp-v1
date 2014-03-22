@@ -9,19 +9,19 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Changing field 'EnrolmentChecklist.legal_marriage'
-        db.alter_column('bcpp_household_member_enrolmentchecklist', 'legal_marriage', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
+        # Changing field 'EnrollmentChecklist.legal_marriage'
+        db.alter_column('bcpp_household_member_enrollmentchecklist', 'legal_marriage', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
 
-        # Changing field 'EnrolmentChecklistAudit.legal_marriage'
-        db.alter_column('bcpp_household_member_enrolmentchecklist_audit', 'legal_marriage', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
+        # Changing field 'EnrollmentChecklistAudit.legal_marriage'
+        db.alter_column('bcpp_household_member_enrollmentchecklist_audit', 'legal_marriage', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
 
     def backwards(self, orm):
 
-        # Changing field 'EnrolmentChecklist.legal_marriage'
-        db.alter_column('bcpp_household_member_enrolmentchecklist', 'legal_marriage', self.gf('django.db.models.fields.CharField')(default=0, max_length=3))
+        # Changing field 'EnrollmentChecklist.legal_marriage'
+        db.alter_column('bcpp_household_member_enrollmentchecklist', 'legal_marriage', self.gf('django.db.models.fields.CharField')(default=0, max_length=3))
 
-        # Changing field 'EnrolmentChecklistAudit.legal_marriage'
-        db.alter_column('bcpp_household_member_enrolmentchecklist_audit', 'legal_marriage', self.gf('django.db.models.fields.CharField')(default=0, max_length=3))
+        # Changing field 'EnrollmentChecklistAudit.legal_marriage'
+        db.alter_column('bcpp_household_member_enrollmentchecklist_audit', 'legal_marriage', self.gf('django.db.models.fields.CharField')(default=0, max_length=3))
 
     models = {
         'bcpp_household.household': {
@@ -99,8 +99,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'community_resident': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -123,8 +123,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklistaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'EnrolmentChecklistAudit', 'db_table': "'bcpp_household_member_enrolmentchecklist_audit'"},
+        'bcpp_household_member.enrollmentchecklistaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'EnrollmentChecklistAudit', 'db_table': "'bcpp_household_member_enrollmentchecklist_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -136,7 +136,7 @@ class Migration(SchemaMigration):
             'gender': ('django.db.models.fields.CharField', [], {'max_length': '1', 'null': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrolmentchecklist'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrollmentchecklist'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'is_dob_estimated': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'legal_marriage': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
@@ -145,7 +145,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'omang': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
             'reason_not_eligible': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True'}),
-            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrolmentchecklist'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrollmentchecklist'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})

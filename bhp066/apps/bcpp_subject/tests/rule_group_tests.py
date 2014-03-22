@@ -2,23 +2,26 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
-
+from edc.entry_meta_data.models import ScheduledEntryMetaData
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.models import Appointment
-from edc.subject.appointment.tests.factories import ConfigurationFactory
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
-from edc.entry_meta_data.models import ScheduledEntryMetaData
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.tests.factories import SurveyFactory
+
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import HivCareAdherence, HivTestingHistory, HivTestReview
 from .factories import SubjectConsentFactory, SubjectVisitFactory, HivCareAdherenceFactory
@@ -44,36 +47,20 @@ class RuleGroupTests(TestCase):
     community = 'test_community9'
 
     def setUp(self):
-
-        content_type_map_helper = ContentTypeMapHelper()
-        content_type_map_helper.populate()
-        content_type_map_helper.sync()
-
-        study_specific = StudySpecificFactory()
-        StudySiteFactory()
-        ConfigurationFactory()
-
-        content_type_map = ContentTypeMap.objects.get(content_type__model='SubjectConsent'.lower())
-        ConsentCatalogueFactory(
-            name=self.app_label,
-            consent_type='study',
-            content_type_map=content_type_map,
-            version=1,
-            start_datetime=study_specific.study_start_datetime,
-            end_datetime=datetime(datetime.today().year + 5, 1, 1),
-            add_for_app=self.app_label)
-
-        site_visit_schedules.autodiscover()
-        visit_schedule = site_visit_schedules.get_visit_schedule('bcpp_subject')
-        visit_schedule.build()
-
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
-
-        self.survey = SurveyFactory()
 
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 
-        household_structure = HouseholdStructure.objects.get(household__plot=plot)
+        survey = Survey.objects.all().order_by('datetime_start')[0]
+
+        household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
@@ -87,6 +74,16 @@ class RuleGroupTests(TestCase):
         self.household_member_female.save()
         self.household_member_male.save()
 
+        EnrollmentChecklistFactory(
+            household_member=self.household_member_female,
+            guardian='No',
+            citizen='Yes',
+            **self.household_member_female.enrollment_options)
+        EnrollmentChecklistFactory(
+            household_member=self.household_member_male,
+            guardian='No',
+            citizen='Yes',
+            **self.household_member_male.enrollment_options)
         subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F')
         subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M')
 
