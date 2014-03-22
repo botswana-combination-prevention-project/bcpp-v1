@@ -7,10 +7,10 @@ from edc.base.model.fields import OtherCharField
 from apps.bcpp.choices import MARITALSTATUS_CHOICE
 from apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
 
-from .base_scheduled_rbd_visit_model import BaseScheduledRBDVisitModel
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
-class RBDDemographics (BaseScheduledRBDVisitModel):
+class RbdDemographics (BaseScheduledVisitModel):
 
     religion = models.ManyToManyField(Religion,
         verbose_name=_("What is your religion affiliation?"),
@@ -55,6 +55,6 @@ class RBDDemographics (BaseScheduledRBDVisitModel):
     history = AuditTrail()
 
     class Meta:
-        app_label = 'bcpp_rbd'
+        app_label = 'bcpp_subject'
         verbose_name = "RBD Demographics"
         verbose_name_plural = "RBD Demographics"
