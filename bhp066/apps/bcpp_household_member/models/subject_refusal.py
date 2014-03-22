@@ -44,10 +44,6 @@ class SubjectRefusal (BaseMemberStatusModel):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment'))
 
-#     participant_offered_htc = models.NullBooleanField(verbose_name="Paticipant offered HTC", default=None, help_text="has the participant been offered HTC?")
-# 
-#     accepted_htc = models.NullBooleanField(verbose_name="Participant accepted HTC", default=None, help_text="did the participant accept HTC?")
-
     history = AuditTrail()
 
     def get_registration_datetime(self):
@@ -56,12 +52,11 @@ class SubjectRefusal (BaseMemberStatusModel):
     def save(self, *args, **kwargs):
         if self.household_member.member_status != REFUSED:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
-        if self.household_member.eligibility_checklist_filled and not self.household_member.eligible_subject:
-            raise MemberStatusError('The Enrolment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
+        if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
+            raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         self.household_member.refused = True
-        self.household_member.reported = True
         self.household_member.save()
         super(SubjectRefusal, self).save(*args, **kwargs)
 
