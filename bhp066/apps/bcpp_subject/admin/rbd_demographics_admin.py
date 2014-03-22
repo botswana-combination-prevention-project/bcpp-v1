@@ -1,14 +1,14 @@
 from django.contrib import admin
 
-from ..forms import RBDDemographicsForm
-from ..models import RBDDemographics
+from ..forms import RbdDemographicsForm
+from ..models import RbdDemographics
 
-from .rbd_visit_model_admin import RBDVisitModelAdmin
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class RBDDemographicsAdmin(RBDVisitModelAdmin):
+class RbdDemographicsAdmin(SubjectVisitModelAdmin):
 
-    form = RBDDemographicsForm
+    form = RbdDemographicsForm
     fields = (
         "rbd_visit",
         'religion',
@@ -22,4 +22,4 @@ class RBDDemographicsAdmin(RBDVisitModelAdmin):
     radio_fields = {
         "marital_status": admin.VERTICAL, }
     filter_horizontal = ('live_with', 'religion', 'ethnic')
-admin.site.register(RBDDemographics, RBDDemographicsAdmin)
+admin.site.register(RbdDemographics, RbdDemographicsAdmin)

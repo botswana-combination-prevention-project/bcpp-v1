@@ -1,6 +1,8 @@
 from django.contrib import admin
-from ..models import HivResult
+
 from ..forms import HivResultForm
+from ..models import HivResult
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
