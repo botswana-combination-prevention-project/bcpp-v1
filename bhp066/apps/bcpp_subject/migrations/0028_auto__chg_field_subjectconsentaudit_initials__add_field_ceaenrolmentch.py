@@ -11,46 +11,46 @@ class Migration(SchemaMigration):
 
         # Changing field 'SubjectConsentAudit.initials'
         db.alter_column('bcpp_subject_subjectconsent_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
-        # Adding field 'CeaEnrolmentChecklist.report_datetime'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist', 'report_datetime',
+        # Adding field 'CeaEnrollmentChecklist.report_datetime'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist', 'report_datetime',
                       self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 8, 20, 0, 0)),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklist.legal_marriage'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist', 'legal_marriage',
+        # Adding field 'CeaEnrollmentChecklist.legal_marriage'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist', 'legal_marriage',
                       self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklist.marriage_certificate'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist', 'marriage_certificate',
+        # Adding field 'CeaEnrollmentChecklist.marriage_certificate'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist', 'marriage_certificate',
                       self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklist.marriage_certificate_no'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist', 'marriage_certificate_no',
+        # Adding field 'CeaEnrollmentChecklist.marriage_certificate_no'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist', 'marriage_certificate_no',
                       self.gf('django.db.models.fields.CharField')(max_length=9, null=True, blank=True),
                       keep_default=False)
 
 
         # Changing field 'SubjectConsent.initials'
         db.alter_column('bcpp_subject_subjectconsent', 'initials', self.gf('django.db.models.fields.CharField')(max_length=3, null=True))
-        # Adding field 'CeaEnrolmentChecklistAudit.report_datetime'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist_audit', 'report_datetime',
+        # Adding field 'CeaEnrollmentChecklistAudit.report_datetime'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist_audit', 'report_datetime',
                       self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 8, 20, 0, 0)),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklistAudit.legal_marriage'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist_audit', 'legal_marriage',
+        # Adding field 'CeaEnrollmentChecklistAudit.legal_marriage'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist_audit', 'legal_marriage',
                       self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklistAudit.marriage_certificate'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist_audit', 'marriage_certificate',
+        # Adding field 'CeaEnrollmentChecklistAudit.marriage_certificate'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist_audit', 'marriage_certificate',
                       self.gf('django.db.models.fields.CharField')(max_length=3, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklistAudit.marriage_certificate_no'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist_audit', 'marriage_certificate_no',
+        # Adding field 'CeaEnrollmentChecklistAudit.marriage_certificate_no'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist_audit', 'marriage_certificate_no',
                       self.gf('django.db.models.fields.CharField')(max_length=9, null=True, blank=True),
                       keep_default=False)
 
@@ -59,32 +59,32 @@ class Migration(SchemaMigration):
 
         # Changing field 'SubjectConsentAudit.initials'
         db.alter_column('bcpp_subject_subjectconsent_audit', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
-        # Deleting field 'CeaEnrolmentChecklist.report_datetime'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist', 'report_datetime')
+        # Deleting field 'CeaEnrollmentChecklist.report_datetime'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist', 'report_datetime')
 
-        # Deleting field 'CeaEnrolmentChecklist.legal_marriage'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist', 'legal_marriage')
+        # Deleting field 'CeaEnrollmentChecklist.legal_marriage'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist', 'legal_marriage')
 
-        # Deleting field 'CeaEnrolmentChecklist.marriage_certificate'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist', 'marriage_certificate')
+        # Deleting field 'CeaEnrollmentChecklist.marriage_certificate'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist', 'marriage_certificate')
 
-        # Deleting field 'CeaEnrolmentChecklist.marriage_certificate_no'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist', 'marriage_certificate_no')
+        # Deleting field 'CeaEnrollmentChecklist.marriage_certificate_no'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist', 'marriage_certificate_no')
 
 
         # Changing field 'SubjectConsent.initials'
         db.alter_column('bcpp_subject_subjectconsent', 'initials', self.gf('django.db.models.fields.CharField')(max_length=10, null=True))
-        # Deleting field 'CeaEnrolmentChecklistAudit.report_datetime'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist_audit', 'report_datetime')
+        # Deleting field 'CeaEnrollmentChecklistAudit.report_datetime'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist_audit', 'report_datetime')
 
-        # Deleting field 'CeaEnrolmentChecklistAudit.legal_marriage'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist_audit', 'legal_marriage')
+        # Deleting field 'CeaEnrollmentChecklistAudit.legal_marriage'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist_audit', 'legal_marriage')
 
-        # Deleting field 'CeaEnrolmentChecklistAudit.marriage_certificate'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist_audit', 'marriage_certificate')
+        # Deleting field 'CeaEnrollmentChecklistAudit.marriage_certificate'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist_audit', 'marriage_certificate')
 
-        # Deleting field 'CeaEnrolmentChecklistAudit.marriage_certificate_no'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist_audit', 'marriage_certificate_no')
+        # Deleting field 'CeaEnrollmentChecklistAudit.marriage_certificate_no'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist_audit', 'marriage_certificate_no')
 
 
     models = {
@@ -454,8 +454,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.ceaenrolmentchecklist': {
-            'Meta': {'object_name': 'CeaEnrolmentChecklist'},
+        'bcpp_subject.ceaenrollmentchecklist': {
+            'Meta': {'object_name': 'CeaEnrollmentChecklist'},
             'cd4_count': ('django.db.models.fields.DecimalField', [], {'max_digits': '6', 'decimal_places': '2'}),
             'cd4_date': ('django.db.models.fields.DateField', [], {'max_length': '25'}),
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
@@ -463,7 +463,7 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'date_signed': ('django.db.models.fields.DateTimeField', [], {'max_length': '25'}),
             'diagnosis_date': ('django.db.models.fields.DateField', [], {'max_length': '3'}),
-            'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'enrollment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
@@ -477,8 +477,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.ceaenrolmentchecklistaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CeaEnrolmentChecklistAudit', 'db_table': "'bcpp_subject_ceaenrolmentchecklist_audit'"},
+        'bcpp_subject.ceaenrollmentchecklistaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CeaEnrollmentChecklistAudit', 'db_table': "'bcpp_subject_ceaenrollmentchecklist_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -489,7 +489,7 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'date_signed': ('django.db.models.fields.DateTimeField', [], {'max_length': '25'}),
             'diagnosis_date': ('django.db.models.fields.DateField', [], {'max_length': '3'}),
-            'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'enrollment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
@@ -498,7 +498,7 @@ class Migration(SchemaMigration):
             'marriage_certificate_no': ('django.db.models.fields.CharField', [], {'max_length': '9', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'opportunistic_illness': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_ceaenrolmentchecklist'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_ceaenrollmentchecklist'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})

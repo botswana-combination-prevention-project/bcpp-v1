@@ -17,7 +17,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         verbose_name="Is it okay for the project to visit you every year for the next three years for further questions and testing?",
         max_length=25,
         choices=YES_NO,
-        help_text='If not, not eligible.'
+        help_text='If \'No\', subject is not eligible.'
         )
 
     permanent_resident = models.NullBooleanField(
@@ -59,7 +59,7 @@ class HicEnrollment (BaseScheduledVisitModel):
     citizen_or_spouse = models.NullBooleanField(
         default=None,
         # editable=False,
-        help_text=("From Subject Consent. Is paticipant a citizen, or married to citizen with a valid marriage certificate?"),
+        help_text=("From Subject Consent. Is participant a citizen, or married to citizen with a valid marriage certificate?"),
         )
 
     locator_information = models.NullBooleanField(

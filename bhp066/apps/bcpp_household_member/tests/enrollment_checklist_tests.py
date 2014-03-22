@@ -12,8 +12,7 @@ from edc.subject.registration.models import RegisteredSubject
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import Loss, HouseholdMember
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory
+from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -75,8 +74,8 @@ class EnrollmentChecklistTests(TestCase):
         self.enrollment_checklist.save()
         #self.assertEqual(self.household_member.member_status, 'NOT_ELIGIBLE')
         self.assertFalse(self.household_member.eligible_subject)
-        self.assertEqual(Loss.objects.all().count(),1)
-        Loss.objects.get(household_member=self.household_member).delete()
+        self.assertEqual(EnrollmentLoss.objects.all().count(),1)
+        EnrollmentLoss.objects.get(household_member=self.household_member).delete()
         self.enrollment_checklist.dob = datetime(1994,01,10).date()
         self.household_member.age_in_years = 20
         #self.household_member.member_status = 'BHS'
@@ -88,8 +87,8 @@ class EnrollmentChecklistTests(TestCase):
         #Assert household member ineligible
         #self.assertEqual(self.household_member.member_status, 'NOT_ELIGIBLE')
         self.assertFalse(self.household_member.eligible_subject)
-        self.assertEqual(Loss.objects.all().count(),1)
-        Loss.objects.get(household_member=self.household_member).delete()
+        self.assertEqual(EnrollmentLoss.objects.all().count(),1)
+        EnrollmentLoss.objects.get(household_member=self.household_member).delete()
         self.enrollment_checklist.has_identity = 'Yes'
         self.enrollment_checklist.save()
         #self.household_member.member_status = 'BHS'
@@ -101,8 +100,8 @@ class EnrollmentChecklistTests(TestCase):
         #Assert household member is eligible
         #self.assertEqual(self.household_member.member_status, 'BHS')
         self.assertTrue(self.household_member.eligible_subject)
-        #self.assertEqual(Loss.objects.all().count(),1)
-        #Loss.objects.get(household_member=household_member).delete()
+        #self.assertEqual(EnrollmentLoss.objects.all().count(),1)
+        #EnrollmentLoss.objects.get(household_member=household_member).delete()
         self.enrollment_checklist.citizen = 'Yes'
         self.enrollment_checklist.legal_marriage = 'N/A'
         self.enrollment_checklist.marriage_certificate = 'N/A'
@@ -114,8 +113,8 @@ class EnrollmentChecklistTests(TestCase):
         #Assert household member ineligible
         #self.assertEqual(self.household_member.member_status, 'NOT_ELIGIBLE')
         self.assertFalse(self.household_member.eligible_subject)
-        self.assertEqual(Loss.objects.all().count(),1)
-        Loss.objects.get(household_member=self.household_member).delete()
+        self.assertEqual(EnrollmentLoss.objects.all().count(),1)
+        EnrollmentLoss.objects.get(household_member=self.household_member).delete()
         self.enrollment_checklist.part_time_resident = 'Yes'
         self.enrollment_checklist.save()
         self.household_member.member_status = 'BHS'
@@ -125,8 +124,8 @@ class EnrollmentChecklistTests(TestCase):
         #Assert household member ineligible
         #self.assertEqual(self.household_member.member_status, 'NOT_ELIGIBLE')
         self.assertFalse(self.household_member.eligible_subject)
-        self.assertEqual(Loss.objects.all().count(),1)
-        Loss.objects.get(household_member=self.household_member).delete()
+        self.assertEqual(EnrollmentLoss.objects.all().count(),1)
+        EnrollmentLoss.objects.get(household_member=self.household_member).delete()
         self.enrollment_checklist.literacy = 'Yes'
         self.enrollment_checklist.save()
         #self.household_member.member_status = 'BHS'
@@ -136,8 +135,8 @@ class EnrollmentChecklistTests(TestCase):
         #Assert household member ineligible
         #self.assertEqual(self.household_member.member_status, 'NOT_ELIGIBLE')
         self.assertFalse(self.household_member.eligible_subject)
-        self.assertEqual(Loss.objects.all().count(),1)
-        Loss.objects.get(household_member=self.household_member).delete()
+        self.assertEqual(EnrollmentLoss.objects.all().count(),1)
+        EnrollmentLoss.objects.get(household_member=self.household_member).delete()
         self.enrollment_checklist.household_residency = 'Yes'
         self.enrollment_checklist.save()
         #self.household_member.member_status = 'BHS'
@@ -172,7 +171,7 @@ class EnrollmentChecklistTests(TestCase):
 #         #Assert consent throws errror
 #         self.assertRaises(TypeError, lambda: self.subject_consent.save())
 #         self.enrollment_checklist.guardian = self.enrollment_checklist.initials
-        #Attempt to change gender in consent to whats in enrolment checklist
+        #Attempt to change gender in consent to whats in enrollment checklist
         self.subject_consent.gender = 'F'
         #Assert consent throws error
         self.assertRaises(ValidationError, lambda: self.subject_consent.save())

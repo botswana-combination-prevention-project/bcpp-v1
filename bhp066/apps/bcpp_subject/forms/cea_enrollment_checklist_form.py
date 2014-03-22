@@ -1,9 +1,9 @@
 from django import forms
-from ..models import CeaEnrolmentChecklist
+from ..models import CeaEnrollmentChecklist
 from .base_subject_model_form import BaseSubjectModelForm
 
 
-class CeaEnrolmentChecklistForm (BaseSubjectModelForm):
+class CeaEnrollmentChecklistForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -19,4 +19,4 @@ class CeaEnrolmentChecklistForm (BaseSubjectModelForm):
         return cleaned_data
 
     class Meta:
-        model = CeaEnrolmentChecklist
+        model = CeaEnrollmentChecklist
