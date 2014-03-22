@@ -1,12 +1,12 @@
 from django.contrib import admin
-from ..models import CeaEnrolmentChecklist
-from ..forms import CeaEnrolmentChecklistForm
+from ..models import CeaEnrollmentChecklist
+from ..forms import CeaEnrollmentChecklistForm
 from .registered_subject_model_admin import RegisteredSubjectModelAdmin
 
 
-class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
+class CeaEnrollmentChecklistAdmin(RegisteredSubjectModelAdmin):
 
-    form = CeaEnrolmentChecklistForm
+    form = CeaEnrollmentChecklistForm
     fields = (
         "registered_subject",
         "report_datetime",
@@ -15,7 +15,7 @@ class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "marriage_certificate",
         "marriage_certificate_no",
         "community_resident",
-        "enrolment_reason",
+        "enrollment_reason",
         "cd4_date",
         "cd4_count",
         "opportunistic_illness",
@@ -26,6 +26,6 @@ class CeaEnrolmentChecklistAdmin(RegisteredSubjectModelAdmin):
         "legal_marriage": admin.VERTICAL,
         "marriage_certificate": admin.VERTICAL,
         "community_resident": admin.VERTICAL,
-        "enrolment_reason": admin.VERTICAL,
+        "enrollment_reason": admin.VERTICAL,
         "opportunistic_illness": admin.VERTICAL, }
-admin.site.register(CeaEnrolmentChecklist, CeaEnrolmentChecklistAdmin)
+admin.site.register(CeaEnrollmentChecklist, CeaEnrollmentChecklistAdmin)

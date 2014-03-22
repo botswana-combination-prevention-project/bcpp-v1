@@ -25,10 +25,11 @@ from .education_form import EducationForm
 from .hic_enrollment_form import HicEnrollmentForm
 from .community_engagement_form import CommunityEngagementForm
 from .medical_diagnoses_form import MedicalDiagnosesForm
-from .cea_enrolment_checklist_form import CeaEnrolmentChecklistForm
+from .cea_enrollment_checklist_form import CeaEnrollmentChecklistForm
 from .stigma_form import StigmaForm, StigmaOpinionForm, PositiveParticipantForm
 from .hiv_result_documentation_form import HivResultDocumentationForm
 from .hiv_medical_care_form import HivMedicalCareForm
 from .diagnoses_form import HeartAttackForm, CancerForm, TubercolosisForm, StiForm
 from .clinic_questionnaire_form import ClinicQuestionnaireForm
 from .participation_form import ParticipationForm
+from .tb_symptoms_form import TbSymptomsForm

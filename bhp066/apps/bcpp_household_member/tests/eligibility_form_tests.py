@@ -5,7 +5,7 @@ from edc.map.classes import Mapper
 
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ..forms import EnrolmentChecklistForm
+from ..forms import EnrollmentChecklistForm
 from ..models import HouseholdMember
 
 
@@ -27,7 +27,7 @@ class EligibilityFormTests(SimpleTestCase):
         self.survey = SurveyFactory()
 
     def test_returns_cleaned_data(self):
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {'citizen': 'Yes',
                              'legal_marriage': 'N/A',
                              'marriage_certificate': 'N/A',
@@ -36,7 +36,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_citizen0(self):
         "if citizen, legal marriage info is not applicable"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'Yes',
             'legal_marriage': 'Yes',
@@ -45,7 +45,7 @@ class EligibilityFormTests(SimpleTestCase):
         self.assertRaisesMessage(ValidationError, 'Marital status is not applicable, Participant is a citizen.', form.clean)
 
     def test_is_citizen1(self):
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'Yes',
             'legal_marriage': 'N/A',
@@ -55,7 +55,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_citizen2(self):
         "if citizen, marriage info is not applicable"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'Yes',
             'legal_marriage': 'N/A',
@@ -64,7 +64,7 @@ class EligibilityFormTests(SimpleTestCase):
         self.assertRaisesMessage(ValidationError, 'Marriage Certificate Number is not required, Participant is a citizen.', form.clean)
 
     def test_is_not_citizen1(self):
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'N/A',
@@ -74,7 +74,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_not_citizen2(self):
         "not eligible if not legally married"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'No',
@@ -84,7 +84,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_not_citizen3(self):
         "Missing proof of legal marriage"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'Yes',
@@ -94,7 +94,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_not_citizen4(self):
         "did not indicate is legally married"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'N/A',
@@ -104,7 +104,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_not_citizen5(self):
         "did not indicate marriage certificate number"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'Yes',
@@ -114,7 +114,7 @@ class EligibilityFormTests(SimpleTestCase):
 
     def test_is_not_citizen6(self):
         "has all marriage info, returns cleaned data"
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'Yes',
@@ -127,7 +127,7 @@ class EligibilityFormTests(SimpleTestCase):
         household_member = HouseholdMember()
         household_member.gender = 'M'
         household_member.first_name = 'Martin'
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'household_member': household_member,
             'gender': 'F'}
@@ -139,7 +139,7 @@ class EligibilityFormTests(SimpleTestCase):
         household_member = HouseholdMember()
         household_member.initials = 'ME'
         household_member.first_name = 'Martin'
-        form = EnrolmentChecklistForm()
+        form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'household_member': household_member,
             'initials': 'EE'}

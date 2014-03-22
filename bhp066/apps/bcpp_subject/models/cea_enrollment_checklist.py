@@ -10,7 +10,7 @@ from edc.subject.registration.models import BaseRegisteredSubjectModel
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
 
 
-class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
+class CeaEnrollmentChecklist (BaseRegisteredSubjectModel):
 
     """CE003"""
 
@@ -65,7 +65,7 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
         help_text="if 'NO (or don't want to answer)' STOP participant cannot be enrolled.",
         )
 
-    enrolment_reason = models.CharField(
+    enrollment_reason = models.CharField(
         verbose_name="[Interviewer] What is the reason for enrollment of this participant? ",
         max_length=45,
         choices=ENROLMENT_REASON,
@@ -109,5 +109,5 @@ class CeaEnrolmentChecklist (BaseRegisteredSubjectModel):
 
     class Meta:
         app_label = "bcpp_subject"
-        verbose_name = "CEA Enrolment Checklist"
-        verbose_name_plural = "CEA Enrolment Checklist"
+        verbose_name = "CEA Enrollment Checklist"
+        verbose_name_plural = "CEA Enrollment Checklist"

@@ -20,17 +20,17 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['demographics_id', 'ethnicgroups_id'])
 
-        # Deleting field 'CeaEnrolmentChecklist.mental_capacity'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist', 'mental_capacity')
+        # Deleting field 'CeaEnrollmentChecklist.mental_capacity'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist', 'mental_capacity')
 
-        # Deleting field 'CeaEnrolmentChecklist.incarceration'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist', 'incarceration')
+        # Deleting field 'CeaEnrollmentChecklist.incarceration'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist', 'incarceration')
 
-        # Deleting field 'CeaEnrolmentChecklistAudit.mental_capacity'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist_audit', 'mental_capacity')
+        # Deleting field 'CeaEnrollmentChecklistAudit.mental_capacity'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist_audit', 'mental_capacity')
 
-        # Deleting field 'CeaEnrolmentChecklistAudit.incarceration'
-        db.delete_column('bcpp_subject_ceaenrolmentchecklist_audit', 'incarceration')
+        # Deleting field 'CeaEnrollmentChecklistAudit.incarceration'
+        db.delete_column('bcpp_subject_ceaenrollmentchecklist_audit', 'incarceration')
 
         # Deleting field 'DemographicsAudit.ethnic'
         db.delete_column('bcpp_subject_demographics_audit', 'ethnic')
@@ -45,23 +45,23 @@ class Migration(SchemaMigration):
         # Removing M2M table for field ethnic on 'Demographics'
         db.delete_table(db.shorten_name('bcpp_subject_demographics_ethnic'))
 
-        # Adding field 'CeaEnrolmentChecklist.mental_capacity'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist', 'mental_capacity',
+        # Adding field 'CeaEnrollmentChecklist.mental_capacity'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist', 'mental_capacity',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklist.incarceration'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist', 'incarceration',
+        # Adding field 'CeaEnrollmentChecklist.incarceration'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist', 'incarceration',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklistAudit.mental_capacity'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist_audit', 'mental_capacity',
+        # Adding field 'CeaEnrollmentChecklistAudit.mental_capacity'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist_audit', 'mental_capacity',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
                       keep_default=False)
 
-        # Adding field 'CeaEnrolmentChecklistAudit.incarceration'
-        db.add_column('bcpp_subject_ceaenrolmentchecklist_audit', 'incarceration',
+        # Adding field 'CeaEnrollmentChecklistAudit.incarceration'
+        db.add_column('bcpp_subject_ceaenrollmentchecklist_audit', 'incarceration',
                       self.gf('django.db.models.fields.CharField')(default=0, max_length=3),
                       keep_default=False)
 
@@ -432,8 +432,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.ceaenrolmentchecklist': {
-            'Meta': {'object_name': 'CeaEnrolmentChecklist'},
+        'bcpp_subject.ceaenrollmentchecklist': {
+            'Meta': {'object_name': 'CeaEnrollmentChecklist'},
             'cd4_count': ('django.db.models.fields.DecimalField', [], {'max_digits': '6', 'decimal_places': '2'}),
             'cd4_date': ('django.db.models.fields.DateField', [], {'max_length': '25'}),
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
@@ -441,7 +441,7 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'date_signed': ('django.db.models.fields.DateTimeField', [], {'max_length': '25'}),
             'diagnosis_date': ('django.db.models.fields.DateField', [], {'max_length': '3'}),
-            'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'enrollment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
@@ -451,8 +451,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.ceaenrolmentchecklistaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CeaEnrolmentChecklistAudit', 'db_table': "'bcpp_subject_ceaenrolmentchecklist_audit'"},
+        'bcpp_subject.ceaenrollmentchecklistaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CeaEnrollmentChecklistAudit', 'db_table': "'bcpp_subject_ceaenrollmentchecklist_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -463,13 +463,13 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'date_signed': ('django.db.models.fields.DateTimeField', [], {'max_length': '25'}),
             'diagnosis_date': ('django.db.models.fields.DateField', [], {'max_length': '3'}),
-            'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'enrollment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'silverapple-2.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'opportunistic_illness': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_ceaenrolmentchecklist'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_ceaenrollmentchecklist'", 'to': "orm['bhp_registration.RegisteredSubject']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },

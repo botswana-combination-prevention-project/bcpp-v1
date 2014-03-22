@@ -28,8 +28,8 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'EnrolmentChecklist.revision'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'revision',
+        # Adding field 'EnrollmentChecklist.revision'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'revision',
                       self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True),
                       keep_default=False)
 
@@ -62,8 +62,8 @@ class Migration(SchemaMigration):
         # Deleting field 'Loss.revision'
         db.delete_column(u'bcpp_household_member_loss', 'revision')
 
-        # Deleting field 'EnrolmentChecklist.revision'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'revision')
+        # Deleting field 'EnrollmentChecklist.revision'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'revision')
 
         # Deleting field 'HouseholdMemberAudit.revision'
         db.delete_column(u'bcpp_household_member_householdmember_audit', 'revision')
@@ -186,8 +186,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),

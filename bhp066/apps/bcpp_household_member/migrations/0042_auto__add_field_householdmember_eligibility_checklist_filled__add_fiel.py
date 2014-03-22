@@ -8,23 +8,23 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'HouseholdMember.eligibility_checklist_filled'
-        db.add_column(u'bcpp_household_member_householdmember', 'eligibility_checklist_filled',
+        # Adding field 'HouseholdMember.enrollment_checklist_completed'
+        db.add_column(u'bcpp_household_member_householdmember', 'enrollment_checklist_completed',
                       self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
                       keep_default=False)
 
-        # Adding field 'HouseholdMemberAudit.eligibility_checklist_filled'
-        db.add_column(u'bcpp_household_member_householdmember_audit', 'eligibility_checklist_filled',
+        # Adding field 'HouseholdMemberAudit.enrollment_checklist_completed'
+        db.add_column(u'bcpp_household_member_householdmember_audit', 'enrollment_checklist_completed',
                       self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'HouseholdMember.eligibility_checklist_filled'
-        db.delete_column(u'bcpp_household_member_householdmember', 'eligibility_checklist_filled')
+        # Deleting field 'HouseholdMember.enrollment_checklist_completed'
+        db.delete_column(u'bcpp_household_member_householdmember', 'enrollment_checklist_completed')
 
-        # Deleting field 'HouseholdMemberAudit.eligibility_checklist_filled'
-        db.delete_column(u'bcpp_household_member_householdmember_audit', 'eligibility_checklist_filled')
+        # Deleting field 'HouseholdMemberAudit.enrollment_checklist_completed'
+        db.delete_column(u'bcpp_household_member_householdmember_audit', 'enrollment_checklist_completed')
 
 
     models = {
@@ -152,8 +152,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),
@@ -238,7 +238,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-created']", 'unique_together': "(('household_structure', 'first_name', 'initials'), ('registered_subject', 'household_structure'))", 'object_name': 'HouseholdMember'},
             'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'db_index': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'eligibility_checklist_filled': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'enrollment_checklist_completed': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_member': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_rbd_subject': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_subject': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
@@ -270,7 +270,7 @@ class Migration(SchemaMigration):
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'db_index': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'eligibility_checklist_filled': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'enrollment_checklist_completed': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_member': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_rbd_subject': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'eligible_subject': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),

@@ -2,8 +2,6 @@ import factory
 
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
-# from apps.bcpp_household.tests.factories import HouseholdStructureFactory
-
 from ...models import HouseholdMember
 
 
@@ -17,5 +15,3 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     present_today = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     study_resident = 'Yes'
     target = 20
-#     member_status = 'NOT_REPORTED'
-#     household_structure = factory.SubFactory(HouseholdStructureFactory)
