@@ -135,8 +135,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),

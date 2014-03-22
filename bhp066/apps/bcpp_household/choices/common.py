@@ -54,7 +54,13 @@ HOUSEHOLD_STATUS = (
     ('eligible_representative_present', 'HOH or eligible representative present'),
     ('eligible_representative_absent', 'HOH or eligible representative absent, ineligible household member present'),
     ('no_household_informant', 'No household informant'),
+    ('refused', 'refused'),
     )
+
+NOT_ENUMERATED_REASONS = (
+        ('HOH_refued', 'HOH refusal'),
+        ('no_household_informant', 'No Household Informant'),
+)
 
 HOUSEHOLD_COMPLETION_STATUS = (
     ('complete', 'Complete'),
@@ -144,5 +150,11 @@ RELATIONS = (
     ('EMPLOYEE', 'Employee'),
     ('UNKNOWN', 'UNKNOWN'),
     )
+RESIDENT_LAST_SEEN = (
+        ('more_than_a_year', 'More than one year ago '),
+        ('1_to_6_months', '1-6 months ago'),
+        ('7_to_12_months', '7- 12 months'),
+        ('less_than_a_month_ago', 'Less than a month ago'),
+)
 
-NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'HBC'), ('other', 'Other'))
+NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))

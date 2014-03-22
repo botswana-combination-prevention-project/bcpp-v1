@@ -8,11 +8,11 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting field 'EnrolmentChecklist.study_resident'
-        db.rename_column(u'bcpp_household_member_enrolmentchecklist', 'study_resident', 'study_resident_3')
+        # Deleting field 'EnrollmentChecklist.study_resident'
+        db.rename_column(u'bcpp_household_member_enrollmentchecklist', 'study_resident', 'study_resident_3')
 
-        # Adding field 'EnrolmentChecklist.study_resident_14'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'study_resident_14',
+        # Adding field 'EnrollmentChecklist.study_resident_14'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'study_resident_14',
                       self.gf('django.db.models.fields.CharField')(default='DWTA', max_length=10),
                       keep_default=False)
 
@@ -127,8 +127,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),
