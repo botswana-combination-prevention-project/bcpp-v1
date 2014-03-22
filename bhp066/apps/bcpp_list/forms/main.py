@@ -3,7 +3,7 @@ from apps.bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith
                               NeighbourhoodProblems, CircumcisionBenefits,
                               FamilyPlanning, MedicalCareAccess, PartnerResidency,
                               HeartDisease, Diagnoses, Religion, EthnicGroups,
-                              ReferredTo, ReferredFor, StiIllnesses)
+                              ReferredTo, ReferredFor, StiIllnesses, ResidentMostLikely)
 
 
 class ElectricalAppliancesForm (BaseModelForm):
@@ -159,3 +159,14 @@ class StiIllnesses (BaseModelForm):
 
     class Meta:
         model = StiIllnesses
+
+
+class ResidentMostLikely (BaseModelForm):
+
+    def clean(self):
+
+        cleaned_data = self.cleaned_data
+        return cleaned_data
+
+    class Meta:
+        model = ResidentMostLikely

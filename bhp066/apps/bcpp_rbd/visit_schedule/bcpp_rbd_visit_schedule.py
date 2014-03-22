@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
-from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionTuple
+from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
+
+from apps.bcpp_lab.models import Panel, AliquotType
 
 from ..models import RBDVisit, RBDConsent
 
@@ -9,6 +11,8 @@ class BcppRBDVisitSchedule(VisitScheduleConfiguration):
 
     name = 'rbd visit schedule'
     app_label = 'bcpp_rbd'
+    panel_model = Panel
+    aliquot_type_model = AliquotType
     # membership forms
     # (name, model, visible)
     membership_forms = OrderedDict({
@@ -39,7 +43,7 @@ class BcppRBDVisitSchedule(VisitScheduleConfiguration):
             'instructions': None,
             'requisitions': (
                 # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
-                RequisitionTuple(10L, u'bcpp_lab', u'rbdrequisition', 'Research Blood Draw', 'Research Blood Draw', 'TEST', 'WB'),
+                RequisitionPanelTuple(10L, u'bcpp_lab', u'rbdrequisition', 'Research Blood Draw', 'TEST', 'WB'),
                 ),
             'entries': (
                 EntryTuple(10L, u'bcpp_rbd', u'rbdlocator'),
@@ -48,4 +52,4 @@ class BcppRBDVisitSchedule(VisitScheduleConfiguration):
         }
     )
 
-site_visit_schedules.register(BcppRBDVisitSchedule)
+#site_visit_schedules.register(BcppRBDVisitSchedule)
