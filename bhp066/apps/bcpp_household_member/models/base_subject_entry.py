@@ -3,6 +3,7 @@ from django.db import models
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.core.crypto_fields.fields import EncryptedCharField
+from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.models import Plot
@@ -35,17 +36,16 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
     contact_details = EncryptedCharField(
         null=True,
         blank=True,
-        editable=False,
+        #editable=False,
         help_text=('Information that can be used to contact someone, '
                    'preferrably the subject, to confirm the appointment'),
         )
 
-    comment = models.TextField(
+    comment = EncryptedTextField(
         verbose_name="Comments",
         max_length=250,
         blank=True,
         null=True,
-        editable=False,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
            'information in this comment')
         )

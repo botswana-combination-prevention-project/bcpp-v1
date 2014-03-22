@@ -46,13 +46,6 @@ class SubjectMoved(BaseMemberStatusModel):
 
     history = AuditTrail()
 
-    def member_status_string(self):
-        return 'MOVED'
-
-    def post_save_update_hm_status(self):
-        self.household_member.lives_in_household = 'No'
-        super(SubjectMoved, self).post_save_update_hm_status()
-
     def save(self, *args, **kwargs):
         kwargs['reason'] = 'moved'
         kwargs['info_source'] = 'subject'

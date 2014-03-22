@@ -14,7 +14,7 @@ class HouseholdStructureManager(models.Manager):
     def fetch_household_members(self, household_structure):
         """Gets (or creates) members for the given household structure.
 
-        .. note:: this calls for the members from the household dashboard."""
+        .. note:: this calls for the members from the household dashboard. (which is stupid)"""
         from apps.bcpp_dashboard.classes import HouseholdDashboard
         dashboard_type = 'household'
         dashboard_model = 'household_structure'

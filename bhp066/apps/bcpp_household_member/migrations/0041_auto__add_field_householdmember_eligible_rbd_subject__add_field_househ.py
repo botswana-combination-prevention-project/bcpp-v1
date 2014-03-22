@@ -8,15 +8,16 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        pass
         # Adding field 'HouseholdMember.eligible_rbd_subject'
-        db.add_column(u'bcpp_household_member_householdmember', 'eligible_rbd_subject',
-                      self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'HouseholdMemberAudit.eligible_rbd_subject'
-        db.add_column(u'bcpp_household_member_householdmember_audit', 'eligible_rbd_subject',
-                      self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
-                      keep_default=False)
+#         db.add_column(u'bcpp_household_member_householdmember', 'eligible_rbd_subject',
+#                       self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
+#                       keep_default=False)
+# 
+#         # Adding field 'HouseholdMemberAudit.eligible_rbd_subject'
+#         db.add_column(u'bcpp_household_member_householdmember_audit', 'eligible_rbd_subject',
+#                       self.gf('django.db.models.fields.NullBooleanField')(default=None, null=True, blank=True),
+#                       keep_default=False)
 
 
     def backwards(self, orm):
@@ -152,8 +153,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'dob': ('django.db.models.fields.DateField', [], {'null': 'True'}),

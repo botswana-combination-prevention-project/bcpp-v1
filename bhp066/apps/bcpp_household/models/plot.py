@@ -118,7 +118,7 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         decimal_places=4,
         )
-    # TODO: need to be encrypted!!!!!
+
     gps_lon = EncryptedDecimalField(
         verbose_name='longitude',
         max_digits=10,
@@ -126,7 +126,6 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
-    # TODO: need to be encrypted!!!!!
     gps_lat = EncryptedDecimalField(
         verbose_name='latitude',
         max_digits=10,
@@ -134,7 +133,6 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
-    # TODO: need to be encrypted!!!!!
     gps_target_lon = EncryptedDecimalField(
         verbose_name='target waypoint longitude',
         max_digits=10,
@@ -142,7 +140,6 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
-    # TODO: need to be encrypted!!!!!
     gps_target_lat = EncryptedDecimalField(
         verbose_name='target waypoint latitude',
         max_digits=10,
@@ -170,7 +167,12 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replacement = models.BooleanField(default=False, editable=False)
+    replacement = models.CharField(
+        max_length=25,
+        blank=True,
+        editable=False,
+        null=True
+        )
 
     device_id = models.CharField(
         max_length=2,
@@ -349,7 +351,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return 'Not Dispatched'
 
     def is_server(self):
-        if Device().get_device_id() == '99':
+        if Device().device_id == '99':
             return True
         return False
 

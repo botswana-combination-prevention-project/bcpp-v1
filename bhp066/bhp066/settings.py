@@ -19,6 +19,9 @@ STATIC_ROOT = PROJECT_DIR.child('static')
 TEMPLATE_DIRS = (
     PROJECT_DIR.child('templates'),
     )
+FIXTURE_DIRS = (
+    PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
+    )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
@@ -28,7 +31,7 @@ KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
 #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 #KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
@@ -107,7 +110,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_dvp',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -240,7 +243,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    #'django_extensions',
+    'django_extensions',   # DONT TOUCH!!
     'django_databrowse',
     'dajaxice',
     'storages',
@@ -322,6 +325,7 @@ INSTALLED_APPS = (
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
+    'edc.lab.lab_profile',
 
     'lis.labeling',
     'lis.core.lab_common',
@@ -356,17 +360,16 @@ INSTALLED_APPS = (
     'apps.bcpp_stats',
     'apps.bcpp_household',
     'apps.bcpp_subject',
-    'apps.bcpp_rbd',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
     'apps.bcpp_survey',
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
-    'apps.bcpp_clinic_lab',
-    'apps.bcpp_clinic',
-    'apps.clinic',
-    'apps.bcpp_clinic_dashboard',
+#     'apps.bcpp_clinic_lab',
+#     'apps.bcpp_clinic',
+#     'apps.clinic',
+#     'apps.bcpp_clinic_dashboard',
     'tastypie',
 )
 
@@ -435,6 +438,7 @@ GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
 VERIFY_GPS = False
 
 # edc.lab
+LAB_SECTION = 'bcpp_lab'
 LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'
