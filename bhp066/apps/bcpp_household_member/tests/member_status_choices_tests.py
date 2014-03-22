@@ -10,15 +10,14 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import Loss, HouseholdMember, SubjectRefusal, SubjectAbsentee, EnrolmentChecklist
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrolmentChecklistFactory, SubjectRefusalFactory, SubjectUndecidedFactory
+from apps.bcpp_household_member.models import HouseholdMember, EnrollmentChecklist
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from ..exceptions import MemberStatusError
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED, REFUSED_HTC
 
 
 class TestPlotMapper(Mapper):
@@ -64,13 +63,13 @@ class MemberStatusChoicesTests(TestCase):
         household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertTrue(isinstance(EnrolmentChecklistFactory(
+        self.assertTrue(isinstance(EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=18),
             guardian='No',
             initials=household_member.initials,
-            part_time_resident='Yes'), EnrolmentChecklist))
+            part_time_resident='Yes'), EnrollmentChecklist))
         household_member = HouseholdMember.objects.get(pk=pk)
         SubjectConsentFactory(
             household_member=household_member,
@@ -150,7 +149,7 @@ class MemberStatusChoicesTests(TestCase):
         household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        EnrolmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=64),
