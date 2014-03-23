@@ -187,11 +187,13 @@ class MemberStatusTests(TestCase):
             age_in_years=50,
             present_today='No',
             study_resident='Yes')
-#         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, ABSENT)
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, ABSENT)
         self.assertEquals(SubjectAbsentee.objects.filter(household_member=household_member).count(), 1)
 
     def test_change_household_member1(self):
-        """Asserts that an eligible member present today but then set to no present today is left as BHS_SCREEN"""
+        """Asserts that an eligible member present today but then set to no present today is  BHS_SCREEN"""
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             gender='M',
@@ -200,8 +202,13 @@ class MemberStatusTests(TestCase):
             study_resident='Yes')
         household_member.present_today = 'No'
         household_member.save()
-        self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 0)
-        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, BHS_SCREEN)
+        self.assertEqual(SubjectAbsentee.objects.filter(household_member=household_member).count(), 1)
+        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, ABSENT)
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        household_member.member_status = BHS_SCREEN
+        household_member.save()
+        self.assertEqual(household_member.member_status, BHS_SCREEN)
 
     def test_change_household_member2(self):
         """Asserts that an eligible member not present today is automatically ABSENT"""
