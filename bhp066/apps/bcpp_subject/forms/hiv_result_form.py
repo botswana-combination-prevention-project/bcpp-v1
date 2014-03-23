@@ -14,7 +14,7 @@ class HivResultForm (BaseSubjectModelForm):
         else:
             instance = HivResult(**self.cleaned_data)
         # validating that hiv_result is not changed after HicEnrollment is filled
-        instance.hic_enrollment_checks(cleaned_data.get('subject_visit'), forms.ValidationError)
+        instance.hic_enrollment_checks(forms.ValidationError)
         # validating when testing declined
         if cleaned_data.get('hiv_result', None) == 'Declined' and not cleaned_data.get('why_not_tested', None):
             raise forms.ValidationError('If participant has declined testing, provide reason participant declined testing')
