@@ -94,6 +94,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     refused = models.BooleanField(default=False, editable=False, help_text="")
 
+    htc = models.BooleanField(default=False, editable=False, help_text="updated when subject completes Htc")
+
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
 
     eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
@@ -181,6 +183,16 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         except:
             enrollment_checklist = None
         return enrollment_checklist
+
+    @property
+    def subject_htc(self):
+        """Returns the SubjectHtc instance or None."""
+        SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
+        try:
+            subject_htc = SubjectHtc.objects.get(household_member=self)
+        except:
+            subject_htc = None
+        return subject_htc
 
     @property
     def enrollment_options(self):
