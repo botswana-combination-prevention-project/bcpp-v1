@@ -18,6 +18,7 @@ from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdL
 from apps.bcpp_household.tests.factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
                                                  PlotLogFactory, HouseholdLogFactory)
 
+
 class NaturalKeyTests(TestCase):
 
     def test_p1(self):
@@ -60,29 +61,29 @@ class NaturalKeyTests(TestCase):
         community = site_mappers.get_as_list()[0]
         site_mappers.autodiscover()
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
-        print 'No. of SURVEY = '+str(Survey.objects.all().count()) 
+        print 'No. of SURVEY = ' + str(Survey.objects.all().count())
         plot = PlotFactory(community=mapper().get_map_area())
-        print 'No. of HOUSEHOLDS = '+str(Household.objects.all().count())    
+        print 'No. of HOUSEHOLDS = ' + str(Household.objects.all().count())
         household = Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 1)
         self.assertEquals(Survey.objects.all().count(), 1)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-        household_enumeration_refusal = HouseholdRefusalFactory(household = household)
-#         household_identifier_history = 
-        print 'No. of HOUSEHOLDS_STRUCTURE = '+str(HouseholdStructure.objects.all().count())
-        print 'No. of HOUSEHOLDS_LOG = '+str(HouseholdLog.objects.all().count())    
-        household_log = HouseholdLog.objects.get(household_structure = household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_log = household_log, report_datetime = datetime.now())
-        household_log_entry2 = HouseholdLogEntryFactory(household_log = household_log, report_datetime = datetime.now() + timedelta(days=1))
-#         plot_identifier_history = 
-        plot_log = PlotLogFactory(plot = plot)
-        plot_log_entry1 = PlotLogEntryFactory(plot_log = plot_log, report_datetime = datetime.now())
-        plot_log_entry2 = PlotLogEntryFactory(plot_log = plot_log, report_datetime = datetime.now() + timedelta(days=1))
+        household_enumeration_refusal = HouseholdRefusalFactory(household=household)
+#         household_identifier_history =
+        print 'No. of HOUSEHOLDS_STRUCTURE = ' + str(HouseholdStructure.objects.all().count())
+        print 'No. of HOUSEHOLDS_LOG = ' + str(HouseholdLog.objects.all().count())
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=datetime.now())
+        household_log_entry2 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=datetime.now() + timedelta(days=1))
+#         plot_identifier_history =
+        plot_log = PlotLogFactory(plot=plot)
+        plot_log_entry1 = PlotLogEntryFactory(plot_log=plot_log, report_datetime=datetime.now())
+        plot_log_entry2 = PlotLogEntryFactory(plot_log=plot_log, report_datetime=datetime.now() + timedelta(days=1))
 
         instances = []
         instances.append(plot)
         instances.append(household)
-        # instances.append(enrolment_checklist)
+        # instances.append(enrollment_checklist)
         instances.append(household_structure)
         instances.append(household_enumeration_refusal)
 #         instances.append(household_identifier_history)

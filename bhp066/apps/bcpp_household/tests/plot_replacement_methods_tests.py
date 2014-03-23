@@ -22,18 +22,18 @@ class PlotReplcamentMethodTests(TestCase):
         """Check for a refusal for a plot with one household."""
 
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status='residential_habitable',
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.5666599,
-                gps_degrees_e=25,
-                gps_minutes_e=44.366660,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status='residential_habitable',
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599,
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household)
         member = HouseholdMember(
