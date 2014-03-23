@@ -32,8 +32,8 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdMember):
             instance.update_registered_subject_on_post_save(**kwargs)  # update HM must not override consent values, if consent exists
-            instance.update_household_member_count_on_post_save(sender, using)
             if created:
+                instance.update_household_member_count_on_post_save(sender, using)
                 # has members so confirm household enumerated is True
                 if not instance.household_structure.household.enumerated:
                     instance.household_structure.household.enumerated = True
