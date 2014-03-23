@@ -1,5 +1,5 @@
 from .household_member_factory import HouseholdMemberFactory
-from .enrolment_checklist_factory import EnrolmentChecklistFactory
+from .enrollment_checklist_factory import EnrollmentChecklistFactory
 from .household_info_factory import HouseholdInfoFactory
 from .subject_absentee_factory import SubjectAbsenteeFactory
 from .subject_absentee_entry_factory import SubjectAbsenteeEntryFactory
@@ -7,4 +7,4 @@ from .subject_moved_factory import SubjectMovedFactory
 from .subject_refusal_factory import SubjectRefusalFactory
 from .subject_undecided_factory import SubjectUndecidedFactory
 from .subject_undecided_entry_factory import SubjectUndecidedEntryFactory
-from .loss_factory import LossFactory
+from .enrollment_loss_factory import EnrollmentLossFactory

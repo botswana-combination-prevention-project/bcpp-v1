@@ -2,11 +2,11 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
+
 from .plot import Plot
 from .base_replacement import BaseReplacement
 
