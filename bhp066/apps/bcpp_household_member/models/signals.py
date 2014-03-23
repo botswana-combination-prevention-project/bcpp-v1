@@ -1,8 +1,6 @@
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 
-from ..classes import HouseholdMemberHelper
-
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 from .household_member import HouseholdMember
 from .subject_refusal import SubjectRefusal
@@ -36,16 +34,10 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
             instance.update_registered_subject_on_post_save(**kwargs)  # update HM must not override consent values, if consent exists
             instance.update_household_member_count_on_post_save(sender, using)
             if created:
-                # calculate member status
-                household_member_helper = HouseholdMemberHelper()
-                household_member_helper.household_member = instance
-                instance.member_status = household_member_helper.calculate_new_member_status()
-                instance.save()
                 # has members so confirm household enumerated is True
                 if not instance.household_structure.household.enumerated:
                     instance.household_structure.household.enumerated = True
                     instance.household_structure.household.save()
-
 
 
 @receiver(post_save, weak=False, dispatch_uid='base_household_member_consent_on_post_save')

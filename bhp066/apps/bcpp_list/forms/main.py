@@ -1,9 +1,9 @@
 from edc.base.form.forms import BaseModelForm
 from apps.bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
-                              NeighbourhoodProblems, CircumcisionBenefits,
-                              FamilyPlanning, MedicalCareAccess, PartnerResidency,
-                              HeartDisease, Diagnoses, Religion, EthnicGroups,
-                              ReferredTo, ReferredFor, StiIllnesses, ResidentMostLikely)
+                                   NeighbourhoodProblems, CircumcisionBenefits,
+                                   FamilyPlanning, MedicalCareAccess, PartnerResidency,
+                                   HeartDisease, Diagnoses, Religion, EthnicGroups,
+                                   StiIllnesses, ResidentMostLikely)
 
 
 class ElectricalAppliancesForm (BaseModelForm):
@@ -141,18 +141,6 @@ class EthnicGroupsForm (BaseModelForm):
 
     class Meta:
         model = EthnicGroups
-
-
-class ReferredForForm (BaseModelForm):
-
-    class Meta:
-        model = ReferredFor
-
-
-class ReferredToForm (BaseModelForm):
-
-    class Meta:
-        model = ReferredTo
 
 
 class StiIllnesses (BaseModelForm):

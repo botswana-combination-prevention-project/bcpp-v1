@@ -26,6 +26,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'plot',
         'survey',
         'house',
+        'enrolled',
         'dashboard',
         'members',
         'logs',

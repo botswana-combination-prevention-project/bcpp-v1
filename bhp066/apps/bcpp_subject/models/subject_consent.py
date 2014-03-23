@@ -100,11 +100,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
         self.matches_enrollment_checklist(self, self.household_member)
         self.matches_hic_enrollment()
-        self.enroll_household()
-
         self.community = self.household_member.household_structure.household.plot.community
         self.household_member.is_consented = True
-        self.household_member.member_status = BHS
         self.household_member.save()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
@@ -144,23 +141,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         if not household_member.eligible_subject:
             raise exception_cls('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
-
-    def enroll_household(self):
-        """Updates the household structure as enrolled if the member consents.
-
-        ..note:: household structure will update the household as enrolled."""
-        # household_structure is enrolled if a member consents
-        household_structure = self.household_member.household_structure
-        if not household_structure.enrolled:
-            household_structure.enrolled = True
-            household_structure.enrolled_datetime = datetime.today()
-            household_structure.save()
-        if self.pk:
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure).exclude(pk=self.pk)
-        else:
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
-        for household_member in household_members:
-            household_member.save()  # recalc member status
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code

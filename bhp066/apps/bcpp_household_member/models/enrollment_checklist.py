@@ -141,38 +141,35 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         #To fill the enrollment checklist you should be member_status=BHS_SCREEN
         if self.household_member.member_status != BHS_SCREEN:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
-        #Reset member status to NOT_ELIGIBLE until the enrollment checklist passes
         self.is_eligible = False
-        self.household_member.member_status = NOT_ELIGIBLE
-        if self.matches_household_member_values(self.household_member):
-            if not self.eligible_for_enrollment():
+        if self.matches_household_member_values(self, self.household_member):
+            if not self.enrollment_loss():
                 self.is_eligible = True
-                self.household_member.member_status = BHS_ELIGIBLE
         self.household_member.eligible_subject = self.is_eligible
         self.household_member.enrollment_checklist_completed = True
         self.household_member.save()
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
-    def matches_household_member_values(self, household_member, exception_cls=None):
+    def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
         """Compares shared values on household_member form and returns True if all match."""
         error_msg = None
         exception_cls = exception_cls or ValidationError
-        age_in_years = relativedelta(date.today(), household_member.dob).years
-        if age_in_years != household_member.household_member.age_in_years:
-            error_msg = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, household_member.household_member.age_in_years)
-        if household_member.household_member.study_resident.lower() != household_member.part_time_resident.lower():
-            error_msg = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(household_member.part_time_resident, household_member.household_member.study_resident)
-        if household_member.household_member.initials.lower() != household_member.initials.lower():
-            error_msg = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(household_member.initials, household_member.household_member.initials)
-        if household_member.household_member.gender != household_member.gender:
-            error_msg = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(household_member.gender, household_member.household_member.gender)
-        if household_member.household_member.is_minor and household_member.age_in_years >= 18:
-            error_msg = 'Member is not a minor. Got age {0}'.format(age_in_years)
+        age_in_years = relativedelta(date.today(), enrollment_checklist.dob).years
+        if age_in_years != household_member.age_in_years:
+            error_msg = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, household_member.age_in_years)
+        if household_member.study_resident.lower() != enrollment_checklist.part_time_resident.lower():
+            error_msg = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.part_time_resident, household_member.study_resident)
+        if household_member.initials.lower() != enrollment_checklist.initials.lower():
+            error_msg = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.initials, household_member.initials)
+        if household_member.gender != enrollment_checklist.gender:
+            error_msg = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.gender, household_member.gender)
+        if household_member.is_minor and age_in_years >= 18:
+            error_msg = 'Member is a minor. Got age {0}'.format(age_in_years)
         if error_msg:
             raise exception_cls(error_msg)
         return True
 
-    def eligible_for_enrollment(self):
+    def enrollment_loss(self):
         """Creates or updates (or deletes) the enrollment loss based on the reason for noot passing the enrollment checklist."""
         reason = []
         age_in_years = relativedelta(date.today(), self.dob).years
