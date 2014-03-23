@@ -13,7 +13,6 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.choices import RELATIONS
 from apps.bcpp_household.models import BaseReplacement
-from apps.bcpp_household.models import Household
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 
