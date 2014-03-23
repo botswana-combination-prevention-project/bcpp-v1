@@ -9,7 +9,9 @@ class EnrollmentChecklistForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        self.instance.matches_household_member_values(self.instance, cleaned_data.get('household_member'), forms.ValidationError)
+        if cleaned_data.get('household_member').is_consented:
+            raise forms.ValidationError('Household member has consented. Enrollment Checklist may not be modified')
+        self.instance.matches_household_member_values(EnrollmentChecklist(**cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
         if cleaned_data.get('citizen') == 'Yes':
             if not cleaned_data.get('legal_marriage') == 'N/A':
                 raise forms.ValidationError('Marital status is not applicable, Participant is a citizen.')
