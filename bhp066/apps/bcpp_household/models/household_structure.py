@@ -32,9 +32,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     member_count = models.IntegerField(default=0, editable=False)
 
-    enrolled = models.NullBooleanField(default=None, editable=False)
+    enrolled = models.NullBooleanField(default=None, editable=False, help_text='enrolled by the subject consent of a household_member')
 
-    enrolled_datetime = models.DateTimeField(null=True, editable=False)
+    enrolled_household_member = models.CharField(max_length=36, null=True, editable=False, help_text='pk of consenting household_member that triggered the enroll')
+
+    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime household_structure enrolled')
 
     enrolled_member_count = models.IntegerField(default=0, editable=False)
 

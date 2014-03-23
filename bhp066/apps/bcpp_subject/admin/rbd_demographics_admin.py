@@ -10,7 +10,7 @@ class RbdDemographicsAdmin(SubjectVisitModelAdmin):
 
     form = RbdDemographicsForm
     fields = (
-        "rbd_visit",
+        "subject_visit",
         'religion',
         'religion_other',
         'ethnic',
