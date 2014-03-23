@@ -79,13 +79,15 @@
  
     {% comment%} dashboard {% endcomment %}
     <td>    
+            {{ household_member.member_status }}
             {% comment %}DEBUG, remove{% endcomment %}
-            {% if household_member.eligible_member and not household_member.enrollment_checklist and not household_member.eligible_subject %}
+
+            {% if household_member.member_status == 'BHS_SCREEN' %}
                 {% comment %} to be consented, once passed eligibility, show link to enrollment checklist {% endcomment %}
                 <span style="color:white;background-color:red;">&nbsp;</span>
                 <A title="Complete the enrollment checklist to confirm eligibility before consent" href="{% url enrollment_checklist_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Check eligibility{%if household_member.is_minor %} (minor) {%endif %}</A>
 
-            {% elif household_member.eligible_member and household_member.enrollment_checklist and household_member.eligible_subject and not household_member.is_consented  %}
+            {% elif household_member.member_status == 'BHS_ELIGIBLE'  %}
                 {% comment %} show link to the enrollment checklist {% endcomment %}
             	{% if household_member.household_structure.household.household_identifier|is_dispatched%}
             		Enrollment Checklist
@@ -100,7 +102,8 @@
             	          &nbsp;to complete the Subject Consent.
             	    </ol>
             	{% endif %}
-            {% elif household_member.eligible_member and household_member.eligible_subject and household_member.is_consented %}		
+
+            {% elif household_member.member_status == 'BHS' %}		
              		{% comment %} show link to dashboard/consent {% endcomment %}
              		{% if household_member.household_structure.household.household_identifier|is_dispatched %}
                         dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{% endif %}
@@ -110,10 +113,13 @@
             	
             {% elif household_member.enrollment_checklist_completed and household_member.member_status == 'NOT_ELIGIBLE' %}
             	Member has not passed the enrollment checklist, an enrollment loss form has been created.
+
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
             	Under age 16, cannot participate at any level.
+
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
             	Older than age 64.
+
             {% elif not household_member.is_consented and household_member.member_status != 'NOT_ELIGIBLE' %}
                {% if household_member.member_status == 'ABSENT'%}
                Absentee log (attempts to contact)
