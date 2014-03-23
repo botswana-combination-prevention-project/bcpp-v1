@@ -99,9 +99,9 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
 
     def hic_enrollment_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit = self.subject_visit).exists():
+        if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
             if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
-                raise exception_cls('An HicEnrollment form already exists for this Subject. Atleast one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+                raise exception_cls('An HicEnrollment form exists for this subject. At least one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
 
     def natural_key(self):
         return self.subject_visit.natural_key()

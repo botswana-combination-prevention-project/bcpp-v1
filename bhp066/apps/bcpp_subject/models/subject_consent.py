@@ -14,7 +14,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
-from apps.bcpp_household_member.models import EnrolmentChecklist, HouseholdMember
+from apps.bcpp_household_member.models import EnrollmentChecklist, HouseholdMember
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
@@ -91,23 +91,24 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
-        if self.household_member.member_status != BHS_ELIGIBLE:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(BHS_ELIGIBLE, self.household_member.member_status))
-        self.matches_hic_enrollment_values()
-        self.is_minor = self.get_is_minor()
-        self.matches_enrollment_checklist()
+        if not self.id:
+            expected_member_status = BHS_ELIGIBLE
+        else:
+            expected_member_status = BHS
+        if self.household_member.member_status != expected_member_status:
+            raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(expected_member_status, self.household_member.member_status))
+
+        self.matches_enrollment_checklist(self, self.household_member)
+        self.matches_hic_enrollment()
         self.community = self.household_member.household_structure.household.plot.community
-        self.enroll_household()
         self.household_member.is_consented = True
-        self.household_member.reported = True
-        self.household_member.member_status = BHS
         self.household_member.save()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
 
-    def matches_hic_enrollment_values(self, exception_cls=None):
+    def matches_hic_enrollment(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit__household_member=self.household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
@@ -116,53 +117,30 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
             raise exception_cls('The subject has to be a citizen, or legally married to a citizen to consent.')
 
-    def get_enrollment_checklist_query_set(self):
-        #For every consented individual there has to be an enrollment checklist. Its enforced.
-        return EnrolmentChecklist.objects.filter(household_member=self.household_member)
-
-    def matches_enrollment_checklist(self, exception_cls=None):
-        """Matches values in this consent against the enrolmnet checklist.
+    def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
+        """Matches values in this consent against the enrollment checklist.
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
         exception_cls = exception_cls or ValidationError
-        enrollment_checklist = self.get_enrollment_checklist_query_set()
-        if enrollment_checklist.count() != 1:
-            raise exception_cls('There should be 1 enrollment checklist for individual prior to consenting. Got {0}'.format(enrollment_checklist.count()))
-        else:
-            enrollment_checklist = enrollment_checklist[0]
-        if enrollment_checklist.dob != self.dob:
+        if not EnrollmentChecklist.objects.filter(household_member=household_member).exists():
+            raise exception_cls('Enrollment Checklist not found. The Enrollment Checklist is required before consent.')
+        enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
+        if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
-        if enrollment_checklist.initials != self.initials:
+        if enrollment_checklist.initials != subject_consent.initials:
             raise exception_cls('Initials do not match those on the enrollment checklist')
-        if enrollment_checklist.guardian.lower() == 'yes' and not (self.is_minor.lower() == 'yes' and self.guardian_name):
-            raise exception_cls('Enrollment checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
-        if enrollment_checklist.gender != self.gender:
+        if enrollment_checklist.guardian.lower() == 'yes' and not (subject_consent.is_minor.lower() == 'yes' and subject_consent.guardian_name):
+            raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
+        if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
-        if enrollment_checklist.citizen != self.citizen:
-            raise exception_cls('Enrollment checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+        if enrollment_checklist.citizen != subject_consent.citizen:
+            raise exception_cls('Enrollment Checklist indicates that this subject is a citizen, but the consent does not indicate this.')
         if ((enrollment_checklist.legal_marriage.lower() == 'yes' and enrollment_checklist.marriage_certificate.lower() == 'yes') and
-                not (self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'yes')):
-            raise exception_cls('Enrollment checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
-        if not self.household_member.eligible_subject:
-            raise exception_cls('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(self.household_member))
+                not (subject_consent.legal_marriage.lower() == 'yes' and subject_consent.marriage_certificate.lower() == 'yes')):
+            raise exception_cls('Enrollment Checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
+        if not household_member.eligible_subject:
+            raise exception_cls('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
-
-    def enroll_household(self):
-        """Updates the household structure as enrolled if the member consents.
-
-        ..note:: household structure will update the household as enrolled."""
-        # household_structure is enrolled if a member consents
-        household_structure = self.household_member.household_structure
-        if not household_structure.enrolled:
-            household_structure.enrolled = True
-            household_structure.enrolled_datetime = datetime.today()
-            household_structure.save()
-        if self.pk:
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure).exclude(pk=self.pk)
-        else:
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
-        for household_member in household_members:
-            household_member.save()  # recalc member status
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
@@ -183,10 +161,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                   as well as the results of tests we perform."""
         return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
 
-    def get_is_minor(self):
-        if self.age == 16 or self.age == 17:
-            return 'Yes'
-        return 'No'
+    @property
+    def minor(self):
+        return self.age >= 16 and self.age <= 17
 
     @property
     def age(self):
