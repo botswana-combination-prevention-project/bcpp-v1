@@ -22,10 +22,10 @@ class ReplacementData(object):
                 for household in households:
                     #Does this current household qualify the plot to be replaced?
                     if self.is_hoh_refused(household):
-                        replaced.append([household, 'all members refused', self.producer(plot)])
+                        replaced.append([household, 'HOH refusal', self.producer(plot)])
                     else:
                         if self.is_refusal(household):
-                            replaced.append([self.is_refusal(household), 'HOH refusal', self.producer(plot)])
+                            replaced.append([self.is_refusal(household), 'all members refused', self.producer(plot)])
         return replaced
 
     def producer(self, plot):
@@ -33,8 +33,8 @@ class ReplacementData(object):
         from edc.device.dispatch.models import DispatchContainerRegister
         container = None
         producer = None
-        container = DispatchContainerRegister.objects.get(container_identifier=plot.plot_identifier)
-        if container:
+        if DispatchContainerRegister.objects.filter(container_identifier=plot.plot_identifier):
+            container = DispatchContainerRegister.objects.get(container_identifier=plot.plot_identifier)
             producer = producer.producer
         return producer
 
@@ -125,19 +125,28 @@ class ReplacementData(object):
                         replacement_household = household
         return replacement_household
 
+    def replacement_reason(self, replacement_item):
+        """check the reason why a plot or household is being replaced."""
+        from ..models import Plot
+        from ..models import Household
+        reason = None
+        if self.is_absent(replacement_item):
+            reason = 'all members are absent'
+        elif self.is_hoh_refused(replacement_item):
+            reason = 'HOH refusal'
+        elif self.no_eligible_rep(replacement_item):
+            reason = 'no eligible members'
+#         elif isinstance(Plot, replacement_item):
+#             if self.is_replacement_valid(replacement_item):
+#                 reason = 'invalid replacement'
+        return reason
+
     def is_replacement_valid(self, plot):
         """Check if a plot used to replace a household is valid after the plot has been confirmed.
 
             If the plot is not valid the replace the plot.
         """
-        from ..models import Household
         replaced = []
-        if plot.replacing_household and plot.status in ['residential_not_habitable', 'non-residential']:
+        if plot.replacement and plot.status in ['residential_not_habitable', 'non-residential']:
             replaced.append([plot, "invalid replacement"])
-        if plot.household_count == 1 and not Household.objects.get(plot=plot).household_status == "eligible_representative_present":
-            replaced.append([Household.objects.get(plot=plot), "invalid replacement"])
-        elif plot.household_count > 1:
-            for household in Household.objects.filter(plot=plot):
-                if not household.household_status == "eligible_representative_present":
-                    replaced.append([household, "invalid replacement", self.producer(plot)])
         return replaced

@@ -7,11 +7,8 @@ from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..choices import YES_NO
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 from .base_replacement import BaseReplacement
-from .household import Household
 from .household_structure import HouseholdStructure
 from .plot import Plot
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.validators import date_in_survey
 
 
 class HouseholdLog(BaseReplacement):
@@ -99,7 +96,7 @@ class HouseholdLogEntry(BaseReplacement):
         return True
 
     def replacement_container(self, using=None):
-        return self.hosehold_log.household_structure.household
+        return self.household_log.household_structure.household
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
