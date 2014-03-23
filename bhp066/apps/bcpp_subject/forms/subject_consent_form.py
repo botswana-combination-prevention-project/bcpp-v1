@@ -70,6 +70,5 @@ class SubjectConsentForm(BaseBcppConsentForm):
         self.instance.matches_enrollment_checklist(SubjectConsent(**self.cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
         self.instance.matches_hic_enrollment(SubjectConsent(**self.cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
 
-
     class Meta:
         model = SubjectConsent
