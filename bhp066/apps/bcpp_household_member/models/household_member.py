@@ -14,7 +14,7 @@ from edc.core.crypto_fields.utils import mask_encrypted
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.choices import RELATIONS
+#from apps.bcpp_household.choices import RELATIONS
 from apps.bcpp_household.models import BaseReplacement
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
