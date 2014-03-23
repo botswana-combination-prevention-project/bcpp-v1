@@ -207,7 +207,6 @@ class MemberStatusChoicesTests(TestCase):
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        print member_status_choices
-        print household_member.member_status_choices
+#         print member_status_choices
+#         print household_member.member_status_choices
         self.assertEqual(household_member.member_status_choices, member_status_choices)
-        
