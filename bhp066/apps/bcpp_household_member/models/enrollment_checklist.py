@@ -138,9 +138,12 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        #To fill the enrollment checklist you should be member_status=BHS_SCREEN
-        if self.household_member.member_status != BHS_SCREEN:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
+        if not self.pk:
+            if self.household_member.member_status != BHS_SCREEN:
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
+        else:
+            if self.household_member.member_status not in [BHS_ELIGIBLE, BHS_SCREEN]:
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
         if self.matches_household_member_values(self, self.household_member):
             if not self.enrollment_loss():
