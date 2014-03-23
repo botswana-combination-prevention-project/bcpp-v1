@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -176,14 +176,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             raise exception_cls(error_msg)
         #Ensure values used are not changed after capturing enrollment_checklist
         if household_member.enrollment_checklist:
-            household_member.enrollment_checklist.matches_household_member_values(household_member, exception_cls)
+            household_member.enrollment_checklist.matches_household_member_values(household_member.enrollment_checklist, household_member, exception_cls)
 
     @property
     def enrollment_checklist(self):
         """Returns the enrollment checklist instance or None."""
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
         try:
-            EnrollmentChecklist.objects.get(household_member=self)
+            return EnrollmentChecklist.objects.get(household_member=self)
         except:
             return None
 
