@@ -103,6 +103,11 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         self.community = self.household_member.household_structure.household.plot.community
         self.household_member.is_consented = True
         self.household_member.save()
+        if not self.household_member.household_structure.enrolled:
+            # recalculate household_member.member_status
+            household_members = HouseholdMember.objects.filter(household_structure=self.household_member.household_structure).exclude(pk=self.household_member.pk)
+            for household_member in household_members:
+                household_member.save()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
