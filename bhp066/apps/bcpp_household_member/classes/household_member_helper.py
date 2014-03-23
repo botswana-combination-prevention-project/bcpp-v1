@@ -302,7 +302,7 @@ class HouseholdMemberHelper(object):
         if not self.household_member.member_status:
             raise TypeError('household_member.member_status cannot be None')
         options = []
-        if self.consented:
+        if self.consenting or self.consented:
             # consent overrides everything
             options = [BHS]
         else:
