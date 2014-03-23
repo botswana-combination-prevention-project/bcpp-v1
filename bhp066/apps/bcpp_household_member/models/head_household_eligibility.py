@@ -62,7 +62,7 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.matches_household_member_values(self.household_member)
-        self.household_member.eligible_hoh = False
+        self.household_member.eligible_hoh = True
         self.household_member.save()
         super(HouseholdHeadEligibility, self).save(*args, **kwargs)
 
