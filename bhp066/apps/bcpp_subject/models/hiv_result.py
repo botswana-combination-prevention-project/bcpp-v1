@@ -59,9 +59,9 @@ class HivResult (BaseScheduledVisitModel):
         self.hic_enrollment_checks()
         super(HivResult, self).save(*args, **kwargs)
 
-    def hic_enrollment_checks(self, subject_visit, exception_cls=None):
+    def hic_enrollment_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit=subject_visit).exists():
+        if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
             if self.hiv_result.lower() != 'neg':
                 raise exception_cls('Result cannot be changed. HIC Enrollment form exists for this subject. Got {0}'.format(self.hiv_result))
 
