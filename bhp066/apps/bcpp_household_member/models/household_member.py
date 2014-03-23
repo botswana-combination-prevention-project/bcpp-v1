@@ -136,7 +136,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.gender)
 
     def save(self, *args, **kwargs):
-        self.match_enrollment_checklist_values(self)
         if not self.id:
             if not self.household_structure.household.enumerated:
                 self.household_structure.household.enumerated = True
@@ -156,7 +155,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
         ..note:: household structure will update the household as enrolled and the household members
                 will be recalculated in the household_structure post-save signal."""
-        # household_structure is enrolled if a member consents
         household_structure = self.household_structure
         if not household_structure.enrolled:
             household_structure.enrolled = True
@@ -171,25 +169,18 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.household_structure.household.plot.save()
 
     def match_enrollment_checklist_values(self, household_member, exception_cls=None):
-        error_msg = None
-        exception_cls = exception_cls or ValidationError
-        #Ensure age is not changed after making HoH
-        if household_member.eligible_hoh and household_member.age_in_years < 18:
-            error_msg = 'This household member completed the HoH questionnaire. You cannot change their age to less than 18. Got {0}.'.format(household_member.age_in_years)
-        if error_msg:
-            raise exception_cls(error_msg)
-        #Ensure values used are not changed after capturing enrollment_checklist
         if household_member.enrollment_checklist:
-            household_member.enrollment_checklist.matches_household_member_values(household_member, exception_cls)
+            household_member.enrollment_checklist.matches_household_member_values(household_member.enrollment_checklist, household_member, exception_cls)
 
     @property
     def enrollment_checklist(self):
         """Returns the enrollment checklist instance or None."""
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
         try:
-            EnrollmentChecklist.objects.get(household_member=self)
+            enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self)
         except:
-            return None
+            enrollment_checklist = None
+        return enrollment_checklist
 
     @property
     def enrollment_options(self):

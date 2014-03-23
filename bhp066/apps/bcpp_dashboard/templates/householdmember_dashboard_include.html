@@ -79,7 +79,6 @@
  
     {% comment%} dashboard {% endcomment %}
     <td>    
-            {{ household_member.member_status }}
             {% comment %}DEBUG, remove{% endcomment %}
 
             {% if household_member.member_status == 'BHS_SCREEN' %}
@@ -93,7 +92,7 @@
             		Enrollment Checklist
             	{% else %}
             	    {% if household_member.registered_subject|subject_identifier:' go to consent on dashboard' == 'go to consent on dashboard' %}<span style="color:white;background-color:red;">&nbsp;</span>{% endif %}
-             		<B>Subject is <A href="{% url enrollment_checklist_meta|admin_urlname:'change' household_member.enrollment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">
+             		<B>Subject is <A title="link to the Enrollment Checklist" href="{% url enrollment_checklist_meta|admin_urlname:'change' household_member.enrollment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">
              		 Eligible</A> for consent.</B>
              		<ol>
              		  <li>Complete consent process. 
