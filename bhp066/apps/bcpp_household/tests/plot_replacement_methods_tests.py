@@ -20,18 +20,18 @@ class PlotReplcamentMethodTests(TestCase):
     def test_replace_refusal_plot(self):
 
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status='residential_habitable',
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.5666599,
-                gps_degrees_e=25,
-                gps_minutes_e=44.366660,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status='residential_habitable',
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599,
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660,
+            selected=1)
         household = Household.objects.get(plot=plot)
         print household
         household.allowed_to_enumerate = 'no'
@@ -39,14 +39,14 @@ class PlotReplcamentMethodTests(TestCase):
         household.save()
         h_structure = HouseholdStructure.objects.get(household=household)
         member = HouseholdMember(
-                household_structure=h_structure,
-                first_name='MOSIMANE',
-                initials='MB',
-                gender='M',
-                age_in_years=24,
-                present_today='Yes',
-                member_status='REFUSED',
-                study_resident='Yes')
+            household_structure=h_structure,
+            first_name='MOSIMANE',
+            initials='MB',
+            gender='M',
+            age_in_years=24,
+            present_today='Yes',
+            member_status='REFUSED',
+            study_resident='Yes')
         member.save()
         print ReplacementData().replace_refusals(plot), "its the 1 returning none"
         print household, "this is the househod to be returned"

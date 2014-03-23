@@ -58,11 +58,11 @@ class MemberStatusChoicesTests(TestCase):
 
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18, study_resident='Yes', household_structure=self.household_structure)
-        household_member.member_status = 'BHS_SCREEN'
-        household_member.created = datetime.today() - timedelta(days=1)
-        household_member.save()
+#         household_member.member_status = 'BHS_SCREEN'
+#         household_member.created = datetime.today() - timedelta(days=1)
+#         household_member.save()
         pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
+#         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertTrue(isinstance(EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -79,7 +79,9 @@ class MemberStatusChoicesTests(TestCase):
             dob=date.today() - relativedelta(years=18),
             initials=household_member.initials)
         household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, BHS)
         self.household_structure = household_member.household_structure
+        self.assertTrue(household_member.household_structure.enrolled)
         return household_member
 
     def test_new_eligible_member(self):
@@ -205,5 +207,7 @@ class MemberStatusChoicesTests(TestCase):
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
+        print member_status_choices
+        print household_member.member_status_choices
         self.assertEqual(household_member.member_status_choices, member_status_choices)
-        member_status_choices = [(item, item) for item in options]
+        
