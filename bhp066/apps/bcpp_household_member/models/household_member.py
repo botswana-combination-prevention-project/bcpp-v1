@@ -137,7 +137,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.match_enrollment_checklist_values(self)
-        if self.id:
+        if not self.id:
+            if not self.household_structure.household.enumerated:
+                self.household_structure.household.enumerated = True
+                self.household_structure.household.save()
+        else:
             household_member_helper = HouseholdMemberHelper(self)
             if household_member_helper.consented:
                 raise MemberStatusError('Household member is consented. Changes are not allowed. Perhaps catch this in the form.')
