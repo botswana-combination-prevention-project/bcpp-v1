@@ -66,16 +66,10 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
 class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
-        cleaned_data = super(SubjectConsentForm, self).clean()
-        household_member = cleaned_data.get("household_member")
-        instance = None
-        if self.instance.id:
-            instance = self.instance
-        else:
-            instance = SubjectConsent(**self.cleaned_data)
-        instance.matches_hic_enrollment(instance, cleaned_data.get('household_member'), forms.ValidationError)
-        instance.matches_enrollment_checklist(instance, cleaned_data.get('household_member'), forms.ValidationError)
-
+        cleaned_data = self.cleaned_data
+        self.instance.matches_hic_enrollment(self.populated_instance(), cleaned_data.get('household_member'), forms.ValidationError)
+        self.instance.matches_enrollment_checklist(self.populated_instance(), cleaned_data.get('household_member'), forms.ValidationError)
+        return super(SubjectConsentForm, self).clean()
 
     class Meta:
         model = SubjectConsent
