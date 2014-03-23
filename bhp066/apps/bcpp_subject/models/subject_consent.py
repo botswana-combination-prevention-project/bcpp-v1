@@ -115,12 +115,11 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit__household_member=subject_consent.household_member).exists():
-            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
-            if subject_consent.dob != hic_enrollment.dob or subject_consent.consent_datetime != hic_enrollment.consent_datetime:
+
+        if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
+            if self.dob != hic_enrollment.dob or subject_consent.consent_datetime != hic_enrollment.consent_datetime:
                 raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
-        if not (subject_consent.citizen or (subject_consent.legal_marriage and  subject_consent.marriage_certificate)):
-            raise exception_cls('The subject has to be a citizen, or legally married to a citizen to consent.')
 
     def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
         """Matches values in this consent against the enrollment checklist.
