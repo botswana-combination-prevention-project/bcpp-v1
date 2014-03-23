@@ -99,7 +99,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(expected_member_status, self.household_member.member_status))
 
         self.matches_enrollment_checklist(self, self.household_member)
-        self.matches_hic_enrollment()
+        self.matches_hic_enrollment(self, self.household_member)
         self.community = self.household_member.household_structure.household.plot.community
         self.household_member.is_consented = True
         self.household_member.save()
@@ -115,6 +115,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
+
         if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
             if self.dob != hic_enrollment.dob or subject_consent.consent_datetime != hic_enrollment.consent_datetime:

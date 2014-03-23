@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
