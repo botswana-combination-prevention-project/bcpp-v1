@@ -2,14 +2,15 @@ import datetime
 
 from django.test import TestCase
 
-from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household.classes import ReplacementData
+from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
 
-from .factories import PlotFactory, HouseholdFactory
+from .factories import HouseholdFactory
+from .factories import PlotFactory
 
 
 class PlotReplcamentMethodTests(TestCase):
@@ -66,9 +67,11 @@ class PlotReplcamentMethodTests(TestCase):
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
         household_structure = HouseholdStructure.objects.get(household=household1)
-        household_log = HouseholdLog.objects.create(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
-        member1 = HouseholdMember.objects.create(
+        household_log = HouseholdLog(household_structure=household_structure)
+        household_log.save()
+        household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
+        household_log_entry1.save()
+        member1 = HouseholdMember(
                 household_structure=household_structure,
                 first_name='WANE',
                 initials='WA',
@@ -77,8 +80,9 @@ class PlotReplcamentMethodTests(TestCase):
                 present_today='Yes',
                 member_status='REFUSED',
                 study_resident='Yes')
+        member1.save()
 
-        member2 = HouseholdMember.objects.create(
+        member2 = HouseholdMember(
                 household_structure=household_structure,
                 first_name='DANE',
                 initials='DA',
@@ -87,6 +91,7 @@ class PlotReplcamentMethodTests(TestCase):
                 present_today='Yes',
                 member_status='REFUSED',
                 study_resident='Yes')
+        member2.save()
 
         household2 = households[1]
         household_structure = HouseholdStructure.objects.get(household=household2)
@@ -126,9 +131,12 @@ class PlotReplcamentMethodTests(TestCase):
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
         household_structure = HouseholdStructure.objects.get(household=household1)
-        household_log = HouseholdLog.objects.create(household_structure=household_structure)
-        household_log_entry = HouseholdLogEntry.objects.create(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
-        household_refusal = HouseholdRefusal.objects.create(household=household1, report_datetime=datetime.datetime.now(), reason='not_interested')
+        household_log = HouseholdLog(household_structure=household_structure)
+        household_log.save()
+        household_log_entry = HouseholdLogEntry(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
+        household_log_entry.save()
+        household_refusal = HouseholdRefusal(household=household1, report_datetime=datetime.datetime.now(), reason='not_interested')
+        household_refusal.save()
 
         self.assertEqual(ReplacementData().check_refusals(plot), [household1, 'HOH refusal'])
 
@@ -150,7 +158,7 @@ class PlotReplcamentMethodTests(TestCase):
                 selected=1)
         household = Household.objects.filter(plot=plot)
         h_structure = HouseholdStructure.objects.get(household=household)
-        member = HouseholdMember.objects.create(
+        member = HouseholdMember(
                 household_structure=h_structure,
                 first_name='KGOSANA',
                 initials='KB',
@@ -158,6 +166,7 @@ class PlotReplcamentMethodTests(TestCase):
                 age_in_years=21,
                 present_today='No',
                 member_status='ABSENT')
+        member.save()
         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
@@ -212,7 +221,7 @@ class PlotReplcamentMethodTests(TestCase):
         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
 
         household_structure = HouseholdStructure.objects.get(household=household[1])
-        member = HouseholdMember.objects.create(
+        member = HouseholdMember(
                 household_structure=household_structure,
                 first_name='BATHO',
                 initials='BS',
@@ -220,6 +229,7 @@ class PlotReplcamentMethodTests(TestCase):
                 age_in_years=26,
                 present_today='Yes',
                 member_status='RESEARCH')
+        member.save()
 
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household[0], 'all members are absent'])
 
@@ -242,11 +252,16 @@ class PlotReplcamentMethodTests(TestCase):
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
         household_structure = HouseholdStructure.objects.get(household=household1)
-        household_log = HouseholdLog.objects.create(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
-        household_log_entry2 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-        household_log_entry3 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-        household_assessment = HouseholdAssessment.objects.create(household=household1, residency='No', last_seen_home='1_to_6_months', most_likely=['work_live_school_outside_village', 'away_for_harvesting'])
+        household_log = HouseholdLog(household_structure=household_structure)
+        household_log.save()
+        household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
+        household_log_entry1.save()
+        household_log_entry2 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_log_entry2.save()
+        household_log_entry3 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_log_entry3.save()
+        household_assessment = HouseholdAssessment(household=household1, residency='No', last_seen_home='1_to_6_months', most_likely=['work_live_school_outside_village', 'away_for_harvesting'])
+        household_assessment.save()
 
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household1, 'no household informant'])
 
@@ -269,11 +284,16 @@ class PlotReplcamentMethodTests(TestCase):
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
         household_structure = HouseholdStructure.objects.get(household=household1)
-        household_log = HouseholdLog.objects.create(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
-        household_log_entry2 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-        household_log_entry3 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_log = HouseholdLog(household_structure=household_structure)
+        household_log.save()
+        household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
+        household_log_entry1.save()
+        household_log_entry2 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_log_entry2()
+        household_log_entry3 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
+        household_log_entry3.save()
         household_assessment = HouseholdAssessment.objects.create(household=household1, residency='No', last_seen_home='1_to_6_months', most_likely=['work_live_school_outside_village', 'away_for_harvesting'])
+        household_assessment.save()
 
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household1, 'no household informant'])
 
@@ -282,9 +302,12 @@ class PlotReplcamentMethodTests(TestCase):
 
         household = HouseholdFactory()
         household_structure = HouseholdStructure.objects.get(household=household)
-        household_log = HouseholdLog.objects.create(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
-        household_refusal = HouseholdRefusal.objects.create(household=household, report_datetime=datetime.datetime.now(), reason='not_interested')
+        household_log = HouseholdLog(household_structure=household_structure)
+        household_log.save()
+        household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
+        household_log_entry1.save()
+        household_refusal = HouseholdRefusal(household=household, report_datetime=datetime.datetime.now(), reason='not_interested')
+        household_refusal.save()
 
         self.assertEqual(ReplacementData().is_hoh_refused(household), household)
 
@@ -293,9 +316,11 @@ class PlotReplcamentMethodTests(TestCase):
 
         household = HouseholdFactory()
         household_structure = HouseholdStructure.objects.get(household=household)
-        household_log = HouseholdLog.objects.create(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntry.objects.create(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
-        member1 = HouseholdMember.objects.create(
+        household_log = HouseholdLog(household_structure=household_structure)
+        household_log.save()
+        household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
+        household_log_entry1.save()
+        member1 = HouseholdMember(
                 household_structure=household_structure,
                 first_name='KIM',
                 initials='KK',
@@ -304,8 +329,9 @@ class PlotReplcamentMethodTests(TestCase):
                 present_today='Yes',
                 member_status='REFUSED',
                 study_resident='Yes')
+        member1.save()
 
-        member2 = HouseholdMember.objects.create(
+        member2 = HouseholdMember(
                 household_structure=household_structure,
                 first_name='PAUL',
                 initials='PR',
@@ -314,4 +340,5 @@ class PlotReplcamentMethodTests(TestCase):
                 present_today='Yes',
                 member_status='REFUSED',
                 study_resident='Yes')
+        member2.save()
         self.assertEqual(ReplacementData().is_refusal(household), household)
