@@ -26,14 +26,14 @@ class EnrollmentChecklistForm(BaseModelForm):
                 raise forms.ValidationError('Participant is legally married to a Botswana citizen, please provide the marriage certificate as proof?')
             if cleaned_data.get('legal_marriage') == 'Yes' and cleaned_data.get('marriage_certificate') == 'Yes':
                 raise forms.ValidationError('Participant is legally married to a Botswana citizen, please provide the marriage certificate number?')
-        if cleaned_data.get('household_member') and cleaned_data.get('gender'):
-            if not cleaned_data.get('gender') == cleaned_data.get('household_member').gender:
-                raise forms.ValidationError('Gender does not match with household member ({0})'.format(cleaned_data.get('household_member').first_name))
-        if cleaned_data.get('household_member') and cleaned_data.get('initials'):
-            if not cleaned_data.get('initials') == cleaned_data.get('household_member').initials:
-                raise forms.ValidationError('Initials do not match with household member ({0}). Expected {1}.'.format(cleaned_data.get('household_member').first_name, cleaned_data.get('household_member').initials))
-        if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('household_member').is_minor:
-            raise forms.ValidationError('Subject is not a minor. Got {0} years'.format(cleaned_data.get('household_member').age_in_years))
+#         if cleaned_data.get('household_member') and cleaned_data.get('gender'):
+#             if not cleaned_data.get('gender') == cleaned_data.get('household_member').gender:
+#                 raise forms.ValidationError('Gender does not match with household member ({0})'.format(cleaned_data.get('household_member').first_name))
+#         if cleaned_data.get('household_member') and cleaned_data.get('initials'):
+#             if not cleaned_data.get('initials') == cleaned_data.get('household_member').initials:
+#                 raise forms.ValidationError('Initials do not match with household member ({0}). Expected {1}.'.format(cleaned_data.get('household_member').first_name, cleaned_data.get('household_member').initials))
+#         if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('household_member').is_minor:
+#             raise forms.ValidationError('Subject is not a minor. Got {0} years'.format(cleaned_data.get('household_member').age_in_years))
         return super(EnrollmentChecklistForm, self).clean()
 
     class Meta:
