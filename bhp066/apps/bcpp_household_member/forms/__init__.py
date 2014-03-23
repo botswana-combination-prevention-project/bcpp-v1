@@ -9,3 +9,4 @@ from .subject_moved_form import SubjectMovedForm
 from .subject_refusal_form import SubjectRefusalForm
 from .subject_undecided_form import SubjectUndecidedEntryForm, SubjectUndecidedForm
 from .enrollment_loss_form import EnrollmentLossForm
+from .subject_htc_form import SubjectHtcForm
