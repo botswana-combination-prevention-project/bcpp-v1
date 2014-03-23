@@ -24,8 +24,13 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         widget=AdminRadioSelect(renderer=AdminRadioFieldRenderer))
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(BaseBcppConsentForm, self).clean()
+
         household_member = cleaned_data.get("household_member")
+
+        if not household_member:
+            raise forms.ValidationError("Please select the household member.")
+
         self.study_specifics_checks(cleaned_data.get('dob'))
 
         # check for duplicate identity
@@ -49,7 +54,7 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         if gender and household_member:
             if household_member.gender != gender:
                 raise forms.ValidationError("Gender does not match. The gender recorded in the household member's information is '%s' but you wrote '%s'" % (household_member.gender, gender))
-        return super(BaseBcppConsentForm, self).clean()
+        return cleaned_data
 
     def age(self, dob):
         return relativedelta(date.today(), dob).years
@@ -66,10 +71,10 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
 class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
-        cleaned_data = self.cleaned_data
-        self.instance.matches_hic_enrollment(self.populated_instance(), cleaned_data.get('household_member'), forms.ValidationError)
-        self.instance.matches_enrollment_checklist(self.populated_instance(), cleaned_data.get('household_member'), forms.ValidationError)
-        return super(SubjectConsentForm, self).clean()
+        cleaned_data = super(SubjectConsentForm, self).clean()
+        self.instance.matches_enrollment_checklist(SubjectConsent(**self.cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
+        self.instance.matches_hic_enrollment(SubjectConsent(**self.cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
+        return cleaned_data
 
     class Meta:
         model = SubjectConsent
