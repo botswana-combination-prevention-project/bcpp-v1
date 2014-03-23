@@ -32,6 +32,11 @@ def household_structure_on_post_save(sender, instance, **kwargs):
         if isinstance(instance, HouseholdStructure):
             instance.create_household_log_on_post_save(**kwargs)
             instance.fetch_and_count_members_on_post_save(**kwargs)
+            if instance.enrolled:
+                # recalculate household_member.member_status
+                household_members = HouseholdMember.objects.filter(household_structure=instance).exclude(pk=instance.enrolled_household_member)
+                for household_member in household_members:
+                    household_member.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid="create_household_on_post_save")

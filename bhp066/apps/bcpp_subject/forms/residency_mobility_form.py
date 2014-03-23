@@ -1,5 +1,5 @@
 from django import forms
-from ..models import ResidencyMobility, HicEnrollment
+from ..models import ResidencyMobility
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -12,7 +12,7 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
         if self.instance.id:
             instance = self.instance
         else:
-            instance = HicEnrollment(**self.cleaned_data)
+            instance = ResidencyMobility(**self.cleaned_data)
         # validating that residency status is not changed after capturing enrollment checklist
         instance.hic_enrollment_checks(forms.ValidationError)
         # validating if other community, you specify

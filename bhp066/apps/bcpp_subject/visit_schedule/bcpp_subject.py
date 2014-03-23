@@ -43,8 +43,11 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 RequisitionPanelTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'TEST', 'WB'),
                 RequisitionPanelTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'TEST', 'WB'),
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'STORAGE', 'WB'),
+                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Venous (HIV)', 'TEST', 'WB'),
+                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB')
                 ),
             'entries': (
+                EntryTuple(10L, u'bcpp_subject', u'participation'),
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator'),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility'),
                 EntryTuple(30L, u'bcpp_subject', u'communityengagement'),
