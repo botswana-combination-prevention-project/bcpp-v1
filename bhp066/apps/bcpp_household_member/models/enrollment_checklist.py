@@ -157,13 +157,13 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         age_in_years = relativedelta(date.today(), enrollment_checklist.dob).years
         if age_in_years != household_member.age_in_years:
             error_msg = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, household_member.age_in_years)
-        if household_member.study_resident.lower() != enrollment_checklist.part_time_resident.lower():
+        elif household_member.study_resident.lower() != enrollment_checklist.part_time_resident.lower():
             error_msg = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.part_time_resident, household_member.study_resident)
-        if household_member.initials.lower() != enrollment_checklist.initials.lower():
+        elif household_member.initials.lower() != enrollment_checklist.initials.lower():
             error_msg = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.initials, household_member.initials)
-        if household_member.gender != enrollment_checklist.gender:
+        elif household_member.gender != enrollment_checklist.gender:
             error_msg = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.gender, household_member.gender)
-        if household_member.is_minor and age_in_years >= 18:
+        elif household_member.is_minor and age_in_years >= 18:
             error_msg = 'Member is a minor. Got age {0}'.format(age_in_years)
         if error_msg:
             raise exception_cls(error_msg)
