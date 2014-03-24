@@ -121,7 +121,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['positiveparticipant', 'hivcareadherence'])
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -130,10 +130,11 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-
+    #TODO: including this other_response leads to results from rules from above being reset, prety much its wrong.
+    #but we still need a way to handle 'IND', 'UNK',
     other_response = ScheduledDataRule(
         logic=Logic(
-            predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'and')),
+            predicate=(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
@@ -161,13 +162,13 @@ class HivTestReviewRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-
-    other_responses = ScheduledDataRule(
-        logic=Logic(
-            predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'and')),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
+    
+#     other_responses = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'and')),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
 #     if_recorded_result_not_positive = ScheduledDataRule(

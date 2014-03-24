@@ -182,7 +182,7 @@ class Household(BaseReplacement):
 
     def natural_key(self):
         return (self.household_identifier,)
-    natural_key.dependencies = ['bcpp_household.plot', ]
+    natural_key.dependencies = ['bcpp_household.household', ]
 
     def post_save_update_identifier(self, instance, created):
         """Updates the identifier field if this is a new instance."""
