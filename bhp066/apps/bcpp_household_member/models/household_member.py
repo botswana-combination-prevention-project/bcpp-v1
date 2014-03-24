@@ -44,7 +44,7 @@ class HouseholdMember(BaseReplacement):
 
     first_name = EncryptedFirstnameField(
         verbose_name='First name',
-        validators=[RegexValidator("^[a-zA-Z]{1,250}$", "Ensure first name does not contain any spaces or numbers")],
+        validators=[RegexValidator("^[A-Z]{1,250}$", "Ensure first name is only CAPS and does not contain any spaces or numbers")],
         db_index=True)
 
     initials = models.CharField('Initials',
@@ -52,7 +52,7 @@ class HouseholdMember(BaseReplacement):
         validators=[
             MinLengthValidator(2),
             MaxLengthValidator(3),
-            RegexValidator("^[A-Za-z]{1,3}$", "Must be 2 or 3 letters. No spaces or numbers allowed.")],
+            RegexValidator("^[A-Z]{1,3}$", "Must be Only CAPS and 2 or 3 letters. No spaces or numbers allowed.")],
         db_index=True)
 
     gender = models.CharField(

@@ -10,7 +10,7 @@ from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE
+from ..constants import BHS_SCREEN, BHS_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
 
@@ -27,7 +27,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         validators=[
             MinLengthValidator(2),
             MaxLengthValidator(3),
-            RegexValidator("^[A-Za-z]{1,3}$", "Must be 2 or 3 letters. No spaces or numbers allowed.")],
+            RegexValidator("^[A-Z]{1,3}$", "Must be Only CAPS and 2 or 3 letters. No spaces or numbers allowed.")],
         db_index=True)
 
     dob = models.DateField(
