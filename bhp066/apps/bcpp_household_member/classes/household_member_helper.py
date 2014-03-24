@@ -180,7 +180,7 @@ class HouseholdMemberHelper(object):
                 elif self.eligible_member:
                     if not self.enrollment_checklist_completed and self.refused:
                         self._eligible_htc = True
-                    elif self.enrollment_checklist_completed and not self.eligible_subject and self.member_status_member_status_consented:
+                    elif self.enrollment_checklist_completed and not self.eligible_subject:
                         self._eligible_htc = True
                     elif self.enrollment_checklist_completed and self.eligible_subject and self.refused:
                         self._eligible_htc = True
