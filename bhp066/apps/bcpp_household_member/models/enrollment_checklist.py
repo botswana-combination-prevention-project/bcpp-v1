@@ -138,9 +138,12 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        #To fill the enrollment checklist you should be member_status=BHS_SCREEN
-        if self.household_member.member_status != BHS_SCREEN:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
+        if not self.pk:
+            if self.household_member.member_status != BHS_SCREEN:
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
+        else:
+            if self.household_member.member_status not in [BHS_ELIGIBLE, BHS_SCREEN]:
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
         if self.matches_household_member_values(self, self.household_member):
             if not self.enrollment_loss():
@@ -157,13 +160,13 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         age_in_years = relativedelta(date.today(), enrollment_checklist.dob).years
         if age_in_years != household_member.age_in_years:
             error_msg = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, household_member.age_in_years)
-        if household_member.study_resident.lower() != enrollment_checklist.part_time_resident.lower():
+        elif household_member.study_resident.lower() != enrollment_checklist.part_time_resident.lower():
             error_msg = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.part_time_resident, household_member.study_resident)
-        if household_member.initials.lower() != enrollment_checklist.initials.lower():
+        elif household_member.initials.lower() != enrollment_checklist.initials.lower():
             error_msg = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.initials, household_member.initials)
-        if household_member.gender != enrollment_checklist.gender:
+        elif household_member.gender != enrollment_checklist.gender:
             error_msg = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.gender, household_member.gender)
-        if household_member.is_minor and age_in_years >= 18:
+        elif household_member.is_minor and age_in_years >= 18:
             error_msg = 'Member is a minor. Got age {0}'.format(age_in_years)
         if error_msg:
             raise exception_cls(error_msg)
