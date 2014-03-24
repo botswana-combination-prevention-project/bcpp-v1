@@ -102,12 +102,26 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresultdocumentation'])
 
+#     verbal_hiv_result_and_documentation = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['hivcareadherence'])
+
+    verbal_hiv_result_for_hic = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'ne', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hicenrollment', 'hivresult'])
+
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', ])
+        target_model=['positiveparticipant', 'hivcareadherence'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -116,10 +130,10 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    # TODO: this looks WRONG!!
+
     other_response = ScheduledDataRule(
         logic=Logic(
-            predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
+            predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'and')),
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
@@ -147,10 +161,10 @@ class HivTestReviewRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    # TODO: this looks WRONG!!
+
     other_responses = ScheduledDataRule(
         logic=Logic(
-            predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'or')),
+            predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'and')),
             consequence='not_required',
             alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
@@ -210,13 +224,20 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
-#   confirms therapy then requires pima form ???????? Or does it mean, on therapy, no pima????
-    arv_evidence = ScheduledDataRule(
+    #What if they are HIV + but not on ARV, then PIMA is not required???,seems odd.
+    on_arv = ScheduledDataRule(
         logic=Logic(
-            predicate=('arv_evidence', 'equals', 'Yes'),
-            consequence='not_required',
-            alternative='new'),
+            predicate=('on_arv', 'equals', 'Yes'),
+            consequence='new',
+            alternative='not_required'),
         target_model=['pima'])
+    
+#     arv_evidence = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('arv_evidence', 'equals', 'Yes'),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['pima'])
 
     class Meta:
         app_label = 'bcpp_subject'
