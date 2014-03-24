@@ -16,11 +16,10 @@ def participation(request, **kwargs):
             household_member = HouseholdMember.objects.get(pk=form.cleaned_data.get('household_member'))
             if form.cleaned_data.get('status'):
                 household_member.member_status = form.cleaned_data.get('status')
-                try:
-                    household_member.save()
-                except ValidationError as e:
-                    error_messages = e.message
-                    messages.add_message(request, messages.ERROR, error_messages)
+                household_member.save()
+#                 except ValidationError as e:
+#                     error_messages = e.message
+#                     messages.add_message(request, messages.ERROR, error_messages)
             dashboard_type = form.cleaned_data.get('dashboard_type')
             dashboard_model = form.cleaned_data.get('dashboard_model')
             dashboard_id = form.cleaned_data.get('dashboard_id')
