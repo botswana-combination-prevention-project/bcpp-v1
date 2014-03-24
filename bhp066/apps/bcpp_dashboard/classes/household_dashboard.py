@@ -58,8 +58,8 @@ class HouseholdDashboard(Dashboard):
             enrollment_checklist_meta=EnrollmentChecklist._meta,
             subject_htc_meta=SubjectHtc._meta,
             household_info_meta=HouseholdInfo._meta,
-            household_enumeration_refusal_meta=HouseholdRefusal._meta,
-            household_enumeration_refusal=self.household_enumeration_refusal,
+            household_refusal_meta=HouseholdRefusal._meta,
+            household_refusal=self.household_refusal,
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
             head_household_eligibility=self.head_household_eligibility,
             plot=self.household.plot,
@@ -112,12 +112,12 @@ class HouseholdDashboard(Dashboard):
         return self._household_info
 
     @property
-    def household_enumeration_refusal(self):
-        self._household_enumeration_refusal = None
+    def household_refusal(self):
+        self._household_refusal = None
         if HouseholdRefusal.objects.filter(household=self.household):
-            self._household_enumeration_refusal = HouseholdRefusal.objects.get(household=self.household)
+            self._household_refusal = HouseholdRefusal.objects.get(household=self.household)
             return self._household_enumeration_refusal
-        return self._household_enumeration_refusal
+        return self._household_refusal
 
     @property
     def any_eligible_hoh(self):

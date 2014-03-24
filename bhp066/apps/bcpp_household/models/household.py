@@ -210,11 +210,6 @@ class Household(BaseReplacement):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
 
-    def replaced(self, using=None):
-        if self.replacement:
-            return True
-        return False
-
     def is_household(self):
         return True
 
