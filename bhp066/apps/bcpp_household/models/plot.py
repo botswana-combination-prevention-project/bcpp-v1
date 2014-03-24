@@ -362,8 +362,8 @@ class Plot(BaseReplacement):
 
     def replaced(self, using=None):
         if self.replacement:
-            return True
-        return False
+            return self
+        return None
 
     def is_plot(self):
         return True
