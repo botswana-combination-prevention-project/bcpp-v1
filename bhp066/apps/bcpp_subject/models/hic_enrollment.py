@@ -173,5 +173,5 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     class Meta:
         app_label = 'bcpp_subject'
-        verbose_name = "Hic Enrollement"
-        verbose_name_plural = "Hic Enrollement"
+        verbose_name = "Hic Enrollment"
+        verbose_name_plural = "Hic Enrollment"
