@@ -7,7 +7,7 @@ class ReplacementData(object):
 
     def check_refusals(self, plot):
         """Check if a plot has household refusals that would make it be replaced."""
-        from ..models import Household
+        from apps.bcpp_household.models import Household
         replaced = []
         if plot.status == 'residential_habitable':
             if plot.household_count == 1:
@@ -40,7 +40,7 @@ class ReplacementData(object):
 
     def check_absentees_ineligibles(self, plot):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
-        from ..models import Household
+        from apps.bcpp_household.models import Household
         replaced = []
         if plot.status == 'residential_habitable':
             if plot.household_count == 1:  # We will replace if all eligible members are absent 3 times
@@ -61,7 +61,7 @@ class ReplacementData(object):
 
     def is_hoh_refused(self, household):
         """Check if head of household refused members to participate."""
-        from ..models import HouseholdRefusal
+        from apps.bcpp_household.models import HouseholdRefusal
         if household.household_status == 'refused' and HouseholdRefusal.objects.filter(household=household):
             return True
         return False
@@ -76,13 +76,13 @@ class ReplacementData(object):
 
     def is_refusal(self, household):
         """Check if the all household member are refusals"""
-        from ..models import HouseholdStructure
+        from apps.bcpp_household.models import HouseholdStructure
         from apps.bcpp_household_member.models import HouseholdMember
         replacement_household = None
         members = None
         if household.enumerated:
-            h_structure = HouseholdStructure.objects.get(household=household)
-            members = HouseholdMember.objects.filter(household_structure=h_structure)
+            household_structure = HouseholdStructure.objects.filter(household=household).orderby('created')
+            members = HouseholdMember.objects.filter(household_structure=household_structure[0])
             #All eligible members refused
             members_status_list = []
             for member in members:
@@ -110,7 +110,7 @@ class ReplacementData(object):
 
     def is_absent(self, household):
         """Check if all members of a household are absent"""
-        from ..models import HouseholdStructure
+        from apps.bcpp_household.models import HouseholdStructure
         from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
         replacement_household = None
         members = None
@@ -127,8 +127,6 @@ class ReplacementData(object):
 
     def replacement_reason(self, replacement_item):
         """check the reason why a plot or household is being replaced."""
-        from ..models import Plot
-        from ..models import Household
         reason = None
         if self.is_absent(replacement_item):
             reason = 'all members are absent'
