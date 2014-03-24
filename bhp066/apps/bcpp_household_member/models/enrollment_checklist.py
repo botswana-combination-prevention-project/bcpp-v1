@@ -10,7 +10,7 @@ from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE
+from ..constants import BHS_SCREEN, BHS_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
 
