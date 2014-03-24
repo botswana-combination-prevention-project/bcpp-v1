@@ -86,7 +86,7 @@ class NaturalKeyTests(TestCase):
         instances.append(household)
         # instances.append(enrollment_checklist)
         instances.append(household_structure)
-        #instances.append(household_refusal)
+        instances.append(household_refusal)
 #         instances.append(household_identifier_history)
         instances.append(household_log)
         instances.append(plot_log_entry1)
