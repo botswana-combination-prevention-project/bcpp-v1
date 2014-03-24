@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from django.test import TestCase
 from django.core import serializers
 from edc.core.crypto_fields.classes import FieldCryptor
@@ -14,7 +14,7 @@ from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from apps.bcpp_survey.models import Survey
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal
 from apps.bcpp_household.tests.factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
                                                  PlotLogFactory, HouseholdLogFactory)
 
@@ -68,13 +68,14 @@ class NaturalKeyTests(TestCase):
         self.assertEquals(HouseholdStructure.objects.all().count(), 1)
         self.assertEquals(Survey.objects.all().count(), 1)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-        household_enumeration_refusal = HouseholdRefusalFactory(household=household)
+        household_refusal = HouseholdRefusalFactory(household=household)
+        print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
 #         household_identifier_history =
         print 'No. of HOUSEHOLDS_STRUCTURE = ' + str(HouseholdStructure.objects.all().count())
         print 'No. of HOUSEHOLDS_LOG = ' + str(HouseholdLog.objects.all().count())
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=datetime.now())
-        household_log_entry2 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=datetime.now() + timedelta(days=1))
+        household_log_entry1 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=date.today())
+        household_log_entry2 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=date.today() + timedelta(days=1))
 #         plot_identifier_history =
         plot_log = PlotLogFactory(plot=plot)
         plot_log_entry1 = PlotLogEntryFactory(plot_log=plot_log, report_datetime=datetime.now())
@@ -85,7 +86,7 @@ class NaturalKeyTests(TestCase):
         instances.append(household)
         # instances.append(enrollment_checklist)
         instances.append(household_structure)
-        instances.append(household_enumeration_refusal)
+        #instances.append(household_refusal)
 #         instances.append(household_identifier_history)
         instances.append(household_log)
         instances.append(plot_log_entry1)
