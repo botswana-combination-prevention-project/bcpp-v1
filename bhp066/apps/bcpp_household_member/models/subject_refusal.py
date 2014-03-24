@@ -62,6 +62,6 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     class Meta:
         app_label = "bcpp_household_member"
-        verbose_name = "Refusal Log"
-        verbose_name_plural = "Refusal Log"
+        verbose_name = "Subject Refusal"
+        verbose_name_plural = "Subject Refusal"
         ordering = ['household_member']
