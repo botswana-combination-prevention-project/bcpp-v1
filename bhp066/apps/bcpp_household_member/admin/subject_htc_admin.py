@@ -17,21 +17,27 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member',
         'report_datetime',
         'offered',
-        'outcome',
+        'accepted',
+        'refusal_reason',
+        'hiv_result',
+        'referred',
+        'referral_clinic',
         'comment')
 
     radio_fields = {
         "offered": admin.VERTICAL,
-        "outcome": admin.VERTICAL,
+        "accepted": admin.VERTICAL,
+        "hiv_result": admin.VERTICAL,
+        "referred": admin.VERTICAL,
         }
 
-    list_display = ('household_member', 'report_datetime', 'offered', 'outcome', )
+    list_display = ('household_member', 'report_datetime', 'offered', 'accepted', 'referred')
 
     search_fields = [
         'household_member__first_name',
         'household_member__household_structure__household__household_identifier']
 
-    list_filter = ('report_datetime', 'offered', 'outcome', )
+    list_filter = ('report_datetime', 'offered', 'accepted', 'referred')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
