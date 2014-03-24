@@ -31,14 +31,12 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'members',
         'logs',
         'progress',
-        'member_count',
         'modified',
         'user_modified',
         'hostname_modified')
     list_filter = (
         'survey',
         'progress',
-        'member_count',
         'enrolled',
         'enrolled_datetime',
         'modified',
