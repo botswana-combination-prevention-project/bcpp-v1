@@ -17,7 +17,7 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED, REFUSED_HTC
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED 
 
 
 class TestPlotMapper(Mapper):
@@ -58,11 +58,7 @@ class MemberStatusChoicesTests(TestCase):
 
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18, study_resident='Yes', household_structure=self.household_structure)
-#         household_member.member_status = 'BHS_SCREEN'
-#         household_member.created = datetime.today() - timedelta(days=1)
-#         household_member.save()
         pk = household_member.pk
-#         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertTrue(isinstance(EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -91,7 +87,10 @@ class MemberStatusChoicesTests(TestCase):
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        self.assertEqual(household_member.member_status_choices, member_status_choices)
+        x = household_member.member_status_choices
+        print x
+        print member_status_choices
+        self.assertEqual(x, member_status_choices)
 
     def test_not_eligible_member(self):
         """Assert for not eligible for BHS and HTC (household not enrolled)."""
@@ -107,7 +106,7 @@ class MemberStatusChoicesTests(TestCase):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled)."""
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='No', household_structure=self.household_structure)
-        options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
+        options = [HTC_ELIGIBLE, HTC]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
@@ -117,31 +116,41 @@ class MemberStatusChoicesTests(TestCase):
     def test_eligible_member_bhs_and_htc(self):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled)."""
         self.enroll_household()
-        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
-        options = [BHS_SCREEN, ABSENT, UNDECIDED, REFUSED]
+        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=78, study_resident='Yes', household_structure=self.household_structure)
+        self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
+        options = [HTC_ELIGIBLE, HTC]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        self.assertEqual(household_member.member_status_choices, member_status_choices)
+        x = household_member.member_status_choices
+#         print x
+#         print member_status_choices
+        self.assertEqual(x, member_status_choices)
 
     def test_eligible_bhs_and_htc_and_refused_bhs(self):
-        """Assert for eligible for BHS abd eligible for HTC (household enrolled) and refused BHS."""
+        """Assert for eligible for BHS, household is enrolled, and eligible for HTC since has refused BHS."""
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
         household_member.member_status = REFUSED
         household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, REFUSED)
         SubjectRefusalFactory(household_member=household_member)
         household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, REFUSED)
+        self.assertTrue(household_member.refused)
         self.assertTrue(household_member.eligible_htc)
-        options = [BHS_SCREEN, HTC_ELIGIBLE, HTC, REFUSED_HTC]
+        options = [HTC_ELIGIBLE, HTC, ]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        self.assertEqual(household_member.member_status_choices, member_status_choices)
+        x = household_member.member_status_choices
+#         print x
+#         print member_status_choices
+        self.assertEqual(x, member_status_choices)
 
     def test_eligible_bhs(self):
         """Assert for eligible for BHS, household enrolled."""
@@ -160,43 +169,28 @@ class MemberStatusChoicesTests(TestCase):
             part_time_resident='Yes')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        options = [BHS_ELIGIBLE, ABSENT, UNDECIDED, REFUSED]
+        options = [BHS, BHS_ELIGIBLE, REFUSED]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        self.assertEqual(household_member.member_status_choices, member_status_choices)
+        x = household_member.member_status_choices
+#         print x
+#         print member_status_choices
+        self.assertEqual(x, member_status_choices)
 
-    def test_invalid_conditions(self):
-        """Assert for failure to pick up valid tuple condition, an in-eligible_member that is also a refusal"""
-        self.enroll_household()
-        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='No', household_structure=self.household_structure)
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
-        household_member.member_status = REFUSED
-        household_member.save()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertRaises(TypeError, lambda: SubjectRefusalFactory(household_member=household_member))
-        print household_member.member_status
-        #Test below commented out caz its similar to 'test_eligible_bhs_and_htc_and_refused_bhs'
-#     def test_eligible_bhs_enrolled_htc_and_refused_bhs(self):
-#         """Assert for eligible for BHS, enrolled, refused, eligible for HTC (household enrolled)."""
+#     def test_invalid_conditions(self):
+#         """Assert for failure to pick up valid tuple condition, an in-eligible_member that is also a refusal"""
 #         self.enroll_household()
-#         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
+#         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='No', household_structure=self.household_structure)
+#         pk = household_member.pk
+#         household_member = HouseholdMember.objects.get(pk=pk)
 #         household_member.member_status = REFUSED
 #         household_member.save()
 #         pk = household_member.pk
 #         household_member = HouseholdMember.objects.get(pk=pk)
-#         SubjectRefusalFactory(household_member=household_member)
-#         household_member = HouseholdMember.objects.get(pk=pk)
-#         self.assertTrue(household_member.eligible_htc)
-#         options = [BHS_SCREEN, HTC_ELIGIBLE, HTC, REFUSED_HTC]
-#         options.append(household_member.member_status)
-#         options = list(set(options))
-#         options.sort()
-#         member_status_choices = [(item, item) for item in options]
-#         self.assertEqual(household_member.member_status_choices, member_status_choices)
+#         self.assertRaises(TypeError, lambda: SubjectRefusalFactory(household_member=household_member))
+#         print household_member.member_status
 
     def test_consented(self):
         """Assert only returns BHS if member is consented."""

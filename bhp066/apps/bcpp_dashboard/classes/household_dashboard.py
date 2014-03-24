@@ -9,7 +9,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
 
-from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo
+from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_survey.models import Survey
 
@@ -56,6 +56,7 @@ class HouseholdDashboard(Dashboard):
             household_structure_meta=HouseholdStructure._meta,
             household_log_entry_meta=HouseholdLogEntry._meta,
             enrollment_checklist_meta=EnrollmentChecklist._meta,
+            subject_htc_meta=SubjectHtc._meta,
             household_info_meta=HouseholdInfo._meta,
             household_enumeration_refusal_meta=HouseholdRefusal._meta,
             household_enumeration_refusal=self.household_enumeration_refusal,
