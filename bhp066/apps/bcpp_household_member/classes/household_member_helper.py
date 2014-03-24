@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
 
 
 class HouseholdMemberHelper(object):
@@ -193,6 +193,11 @@ class HouseholdMemberHelper(object):
         return self._eligible_htc
 
     @property
+    def subject_htc(self):
+        SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
+        return SubjectHtc.objects.filter(household_member=self).exists()
+
+    @property
     def eligible_member(self):
         return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes')
 
@@ -317,9 +322,12 @@ class HouseholdMemberHelper(object):
                     if not self.eligible_htc:
                         options = [NOT_ELIGIBLE]
                     else:
-                        options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
+                        if self.subject_htc:
+                            options = [HTC]
+                        else:
+                            options = [HTC_ELIGIBLE, HTC]
             elif self.eligible_member:
-                options = [ABSENT, BHS_SCREEN, BHS_ELIGIBLE, BHS, UNDECIDED, REFUSED, BHS_LOSS, HTC, HTC_ELIGIBLE, REFUSED_HTC]
+                options = [ABSENT, BHS_SCREEN, BHS_ELIGIBLE, BHS, UNDECIDED, REFUSED, BHS_LOSS, HTC, HTC_ELIGIBLE]
                 if self.eligible_subject:
                         options.remove(BHS_LOSS)
                         options.remove(BHS_SCREEN)
@@ -331,7 +339,6 @@ class HouseholdMemberHelper(object):
                         if not self.refused:
                             options.remove(HTC)
                             options.remove(HTC_ELIGIBLE)
-                            options.remove(REFUSED_HTC)
                 if not self.eligible_subject:
                     options.remove(BHS_ELIGIBLE)
                     options.remove(BHS)
@@ -346,7 +353,7 @@ class HouseholdMemberHelper(object):
                 if not self.enrollment_checklist_completed:
                     options.remove(BHS_LOSS)
                 if not self.eligible_htc:
-                    options = [opt for opt in options if opt not in [HTC_ELIGIBLE, HTC, REFUSED_HTC]]
+                    options = [opt for opt in options if opt not in [HTC_ELIGIBLE, HTC]]
             else:
                 raise TypeError('ERROR: household_member.refused={0},self.household_member.eligible_htc={1},self.household_member.eligible_member={2} '
                 'should never occur together'.format(self.refused, self.eligible_htc, self.eligible_member))
