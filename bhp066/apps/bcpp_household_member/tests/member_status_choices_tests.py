@@ -17,7 +17,7 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED, REFUSED_HTC
+from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED 
 
 
 class TestPlotMapper(Mapper):
@@ -106,7 +106,7 @@ class MemberStatusChoicesTests(TestCase):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled)."""
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='No', household_structure=self.household_structure)
-        options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
+        options = [HTC_ELIGIBLE, HTC]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
@@ -118,7 +118,7 @@ class MemberStatusChoicesTests(TestCase):
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=78, study_resident='Yes', household_structure=self.household_structure)
         self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
-        options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
+        options = [HTC_ELIGIBLE, HTC]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
@@ -142,7 +142,7 @@ class MemberStatusChoicesTests(TestCase):
         self.assertEqual(household_member.member_status, REFUSED)
         self.assertTrue(household_member.refused)
         self.assertTrue(household_member.eligible_htc)
-        options = [HTC_ELIGIBLE, HTC, REFUSED_HTC]
+        options = [HTC_ELIGIBLE, HTC, ]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
