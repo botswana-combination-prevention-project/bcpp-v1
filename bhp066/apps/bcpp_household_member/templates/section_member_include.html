@@ -21,9 +21,9 @@
         
         <td>
         {% if hm.is_consented%}
-            {{ hm.member_status_full }}
+            {{ hm.member_status }}
         {% else %}
-            {{ hm.member_status_full }}
+            {{ hm.member_status }}
         {% endif %}</td>
         
         <td>{{hm.age_in_years}}{{ hm.gender }} {{hm.hiv_status}}</td>
