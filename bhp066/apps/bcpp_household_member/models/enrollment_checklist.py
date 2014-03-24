@@ -27,7 +27,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         validators=[
             MinLengthValidator(2),
             MaxLengthValidator(3),
-            RegexValidator("^[A-Za-z]{1,3}$", "Must be 2 or 3 letters. No spaces or numbers allowed.")],
+            RegexValidator("^[A-Z]{1,3}$", "Must be Only CAPS and 2 or 3 letters. No spaces or numbers allowed.")],
         db_index=True)
 
     dob = models.DateField(
