@@ -111,9 +111,9 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     verbal_hiv_result_for_hic = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'ne', 'POS'),
-            consequence='new',
-            alternative='not_required'),
+            predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
         target_model=['hicenrollment', 'hivresult'])
 
     verbal_hiv_result = ScheduledDataRule(
@@ -136,7 +136,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         logic=Logic(
             predicate=(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or')),
             consequence='not_required',
-            alternative='new'),
+            alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     class Meta:
@@ -162,13 +162,12 @@ class HivTestReviewRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    
-#     other_responses = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'and')),
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
+    other_responses = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('recorded_hiv_result', 'equals', 'IND'), ('recorded_hiv_result', 'equals', 'UNK', 'or'), ('recorded_hiv_result', 'equals', 'not_answering', 'or')),
+            consequence='not_required',
+            alternative='none'),
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
 #     if_recorded_result_not_positive = ScheduledDataRule(
