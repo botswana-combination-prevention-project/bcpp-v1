@@ -20,14 +20,14 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'why_no_arv_other',
         'first_arv',
         'on_arv',
+        'arv_evidence',
         'clinic_receiving_from',
         'next_appointment_date',
         'arv_stop_date',
         'arv_stop',
         'arv_stop_other',
         'adherence_4_day',
-        'adherence_4_wk',
-        'arv_evidence')
+        'adherence_4_wk')
     radio_fields = {
         "medical_care": admin.VERTICAL,
         "no_medical_care": admin.VERTICAL,
