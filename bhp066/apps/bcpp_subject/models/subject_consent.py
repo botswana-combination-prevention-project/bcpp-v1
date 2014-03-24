@@ -102,8 +102,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         self.matches_hic_enrollment(self, self.household_member)
         self.community = self.household_member.household_structure.household.plot.community
         self.household_member.is_consented = True
+        old_enrolled = self.household_member.household_structure.enrolled
         self.household_member.save()
-        if not self.household_member.household_structure.enrolled:
+        if self.household_member.household_structure.enrolled and not old_enrolled:
             # recalculate household_member.member_status
             household_members = HouseholdMember.objects.filter(household_structure=self.household_member.household_structure).exclude(pk=self.household_member.pk)
             for household_member in household_members:
