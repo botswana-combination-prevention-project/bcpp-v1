@@ -95,6 +95,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         verbose_name=_('Which clinic facility are you already receiving therapy from?'),
         default=None,
         null=True,
+        blank=True,
         max_length=50,
         help_text=""
         )
@@ -103,6 +104,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
          verbose_name=_("When is your next appointment at this facility?"),
          default=None,
          null=True,
+         blank=True,
          help_text=""
          )
 
