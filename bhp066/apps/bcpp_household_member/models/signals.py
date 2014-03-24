@@ -31,6 +31,7 @@ def enrollment_checklist_on_pre_delete(sender, instance, **kwargs):
             household_member.eligible_subject = False
             household_member.save()
 
+
 @receiver(pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
 def household_member_on_pre_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
