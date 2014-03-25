@@ -57,7 +57,7 @@ class MonthsRecentPartnerAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdm
                              " sexual partner in the past 12 months. It may be"
                              " helpful for respondent to give initials or"
                              " nickname, but DO NOT write down or otherwise"
-                             "record this information. "), 
+                             "record this information. "),
                              _("Read to Participant: I am now going to ask you"
                              " about your most recent sexual partners. I will"
                              " start with your last or most recent sexual partner.")]
@@ -67,11 +67,12 @@ admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsSecondPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
+# NOTE: this is not a supplemental form, it should be filled in based on the responses in FirstPartner.
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -123,11 +124,12 @@ admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
+# NOTE: this is not a supplemental form, it should be filled in based on the responses in SecondPartner.
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',

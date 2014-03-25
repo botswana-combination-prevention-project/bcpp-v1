@@ -11,8 +11,9 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HivResultDocumentation (BaseScheduledVisitModel):
 
-    """CS002 - for usage only and if only patient has other result for HIV"""
+    """this form is stupid"""
 
+    # base on question from hiv test history
     result_date = models.DateField(
         verbose_name=("What is the recorded date of this previous HIV test (or of the document that provides supporting evidence of HIV infection)?"),
         validators=[date_not_future],
