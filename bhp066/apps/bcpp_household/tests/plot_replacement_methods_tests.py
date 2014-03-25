@@ -36,7 +36,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class PlotReplcamentMethodTests(TestCase):
+class PlotReplacementTests(TestCase):
 
     def setUp(self):
         try:
