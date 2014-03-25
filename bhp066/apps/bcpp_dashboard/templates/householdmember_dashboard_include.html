@@ -148,9 +148,12 @@
                {% elif household_member.member_status == 'HTC' or household_member.member_status == 'HTC_ELIGIBLE' or household_member.member_status == 'REFUSED_HTC' %}
                     {% if household_member.subject_htc %}
                         <A title="HTC" href="{% url subject_htc_meta|admin_urlname:'change' household_member.subject_htc.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">HTC {% if household_member.subject_htc.offered %}{{ household_member.subject_htc.outcome }} {% endif %}</A>
+                    	<ol>
+             		  		<li>Proceed to complete HTC intake form.
+             		  	</ol>
                     {% else %} 
                         <A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
-                     {% endif %}
+                    {% endif %}
                {%endif%}
             {% else %}
                     ----
