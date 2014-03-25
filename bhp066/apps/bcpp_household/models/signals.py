@@ -1,14 +1,14 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from apps.bcpp_household_member.models import HouseholdMember
+
 from .household import Household
+from .household_enumeration_refusal import HouseholdEnumerationRefusal
 from .household_log import HouseholdLogEntry
+from .household_structure import HouseholdStructure
 from .plot import Plot
 from .plot_log import PlotLogEntry
-from .household_structure import HouseholdStructure
-from .household_refusal import HouseholdRefusal
-
-from apps.bcpp_household_member.models import HouseholdMember
 
 
 @receiver(pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
@@ -77,10 +77,11 @@ def household_enumeration_attempts_on_post_save(sender, instance, created, **kwa
                 household.save()
 
 
-@receiver(post_save, weak=False, dispatch_uid='delete_household_refusal_on_post_save')
-def delete_household_refusal(sender, instance, created, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid='delete_household_enumeration_refusal_on_post_save')
+def delete_household_enumeration_refusal(sender, instance, created, **kwargs):
+    """HouseholdEnumerationRefusal should be deleted if household_status.refused = False."""
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
             household = instance.household_log.household_structure.household
-            if not instance.household_status == 'refused':  # TODO: what if more than one HH.household_status == refused????
-                HouseholdRefusal.objects.filter(household=household).delete()
+            if not instance.household_status == 'refused':
+                HouseholdEnumerationRefusal.objects.filter(household=household).delete()

@@ -1,3 +1,4 @@
+from apps.bcpp_household.constants import ELIGIBLE_REPRESENTATIVE_ABSENT
 
 
 class ReplacementData(object):
@@ -61,15 +62,15 @@ class ReplacementData(object):
 
     def is_hoh_refused(self, household):
         """Check if head of household refused members to participate."""
-        from apps.bcpp_household.models import HouseholdRefusal
-        if household.household_status == 'refused' and HouseholdRefusal.objects.filter(household=household):
+        from apps.bcpp_household.models import HouseholdEnumerationRefusal
+        if household.reason_not_enumerated == 'refused' and HouseholdEnumerationRefusal.objects.filter(household=household):
             return True
         return False
 
     def no_eligible_rep(self, household):
         replacement_household = None
         if household.enumeration_attempts == 3:
-            if household.household_status == 'eligible_representative_absent':
+            if household.reason_not_enumerated == ELIGIBLE_REPRESENTATIVE_ABSENT:
                 replacement_household = household
                 return replacement_household
         return replacement_household
@@ -104,7 +105,7 @@ class ReplacementData(object):
         if household.enumeration_attempts == 3:
             household_assessment = HouseholdAssessment.objects.filter(household=household)
             if household_assessment:
-                    if household.household_status == 'no_household_informant' and household_assessment[0].vdc_househould_status in ['rarely_there', 'seasonally_there']:
+                    if household.reason_not_enumerated == 'no_household_informant' and household_assessment[0].vdc_househould_status in ['rarely_there', 'seasonally_there']:
                         replacement_household = household
         return replacement_household
 
