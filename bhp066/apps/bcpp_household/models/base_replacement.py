@@ -27,7 +27,7 @@ class BaseReplacement(BaseDispatchSyncUuidModel):
             if self.replacement_container(using):
                 plot = self.replacement_container(using).plot
         if ReplacementData().check_refusals(plot):
-            for item in ReplacementData().check_refusals(plot):  #item is a household or a plot
+            for item in ReplacementData().check_refusals(plot):  # item is a household or a plot
                 item[0].replaceble = True
                 item[0].save()
         if ReplacementData().check_absentees_ineligibles(plot):

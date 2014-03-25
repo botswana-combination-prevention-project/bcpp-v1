@@ -14,7 +14,7 @@ from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
 from apps.bcpp.choices import COMMUNITIES
-
+from ..classes import ReplacementData
 from .base_replacement import BaseReplacement
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
@@ -245,7 +245,7 @@ class Plot(BaseReplacement):
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
         if self.household_count > 9:
             raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
-        # if self.community does not get valid mapper, will raise an error that should be caught in forms.py
+        # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
