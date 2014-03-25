@@ -81,7 +81,7 @@ class ReplacementData(object):
         replacement_household = None
         members = None
         if household.enumerated:
-            household_structure = HouseholdStructure.objects.filter(household=household).orderby('created')
+            household_structure = HouseholdStructure.objects.filter(household=household, survey=)
             members = HouseholdMember.objects.filter(household_structure=household_structure[0])
             #All eligible members refused
             members_status_list = []
@@ -110,13 +110,13 @@ class ReplacementData(object):
 
     def is_absent(self, household):
         """Check if all members of a household are absent"""
-        from apps.bcpp_household.models import HouseholdStructure
+        from ..models import HouseholdStructure
         from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
         replacement_household = None
         members = None
         if household.enumerated:
-            h_structure = HouseholdStructure.objects.get(household=household)
-            members = HouseholdMember.objects.filter(household_structure=h_structure)
+            household_structure = HouseholdStructure.objects.get(household=household)
+            members = HouseholdMember.objects.filter(household_structure=household_structure)
             for member in members:
                 if member.age_in_years >= 16 and member.study_resident == 'Yes' and member.member_status == 'ABSENT':
                     sub_absentee = SubjectAbsentee.objects.get(household_member=member)
@@ -146,5 +146,5 @@ class ReplacementData(object):
         """
         replaced = []
         if plot.replacement and plot.status in ['residential_not_habitable', 'non-residential']:
-            replaced.append([plot, "invalid replacement"])
+            replaced.append([plot, "invalid replacement", self.producer()])
         return replaced
