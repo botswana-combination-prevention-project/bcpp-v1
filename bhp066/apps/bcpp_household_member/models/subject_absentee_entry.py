@@ -30,6 +30,7 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
             household_member.save()
         super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
 
+    @property
     def inline_parent(self):
         return self.subject_absentee
 

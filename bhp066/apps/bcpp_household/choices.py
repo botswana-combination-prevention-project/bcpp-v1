@@ -1,3 +1,5 @@
+from .constants import ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION
+
 BCPP_VILLAGES = (
     (1, 'Dikwididi'),
     (2, 'Gabane'),
@@ -50,12 +52,7 @@ PLOT_LOG_STATUS = (
     ('INACCESSIBLE', 'Inaccessible'),
 )
 
-HOUSEHOLD_STATUS = (
-    ('eligible_representative_present', 'HOH or eligible representative present'),
-    ('eligible_representative_absent', 'HOH or eligible representative absent, ineligible household member present'),
-    ('no_household_informant', 'No household informant'),
-    ('refused', 'refused'),
-    )
+HOUSEHOLD_STATUS = (ELIGIBLE_REPRESENTATIVE_PRESENT + ELIGIBLE_REPRESENTATIVE_ABSENT + NO_HOUSEHOLD_INFORMANT + REFUSED_ENUMERATION)
 
 NOT_ENUMERATED_REASONS = (
         ('HOH_refued', 'HOH refusal'),

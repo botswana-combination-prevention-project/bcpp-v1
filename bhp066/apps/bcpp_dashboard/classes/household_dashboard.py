@@ -7,10 +7,10 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
-
-from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
+from apps.bcpp_household.constants import NO_HOUSEHOLD_INFORMANT
+from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdEnumerationRefusal)
 from apps.bcpp_household_member.models import EnrollmentLoss
+from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_survey.models import Survey
 
 
@@ -58,8 +58,8 @@ class HouseholdDashboard(Dashboard):
             enrollment_checklist_meta=EnrollmentChecklist._meta,
             subject_htc_meta=SubjectHtc._meta,
             household_info_meta=HouseholdInfo._meta,
-            household_refusal_meta=HouseholdRefusal._meta,
-            household_refusal=self.household_refusal,
+            household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
+            household_enumeration_refusal=self.household_enumeration_refusal,
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
             head_household_eligibility=self.head_household_eligibility,
             plot=self.household.plot,
@@ -93,7 +93,7 @@ class HouseholdDashboard(Dashboard):
                 if self.household_assessment.vdc_househould_status:
                     return False
             elif HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
-                if HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).household_status == 'no_household_informant':
+                if HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).reason_not_enumerated == NO_HOUSEHOLD_INFORMANT:
                     return False
         return True
 
@@ -112,12 +112,12 @@ class HouseholdDashboard(Dashboard):
         return self._household_info
 
     @property
-    def household_refusal(self):
-        self._household_refusal = None
-        if HouseholdRefusal.objects.filter(household=self.household):
-            self._household_refusal = HouseholdRefusal.objects.get(household=self.household)
+    def household_enumeration_refusal(self):
+        self._household_enumeration_refusal = None
+        if HouseholdEnumerationRefusal.objects.filter(household=self.household):
+            self._household_enumeration_refusal = HouseholdEnumerationRefusal.objects.get(household=self.household)
             return self._household_enumeration_refusal
-        return self._household_refusal
+        return self._household_enumeration_refusal
 
     @property
     def any_eligible_hoh(self):
