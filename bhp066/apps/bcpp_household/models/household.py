@@ -6,6 +6,7 @@ from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalF
 
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
+from ..classes import ReplacementData
 
 from .plot import Plot
 from .base_replacement import BaseReplacement
