@@ -3,6 +3,7 @@ from django.db import models
 
 class HouseholdRefusalManager(models.Manager):
 
-    def natural_key(self):
-        return self.household.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_household.household']
+    def get_by_natural_key(self, household_identifier):
+        Household = models.get_model('bcpp_household', 'Household')
+        household = Household.objects.get_by_natural_key(household_identifier)
+        return self.get(household=household)

@@ -16,7 +16,7 @@ def replace_data(request):
     replacement_data = []
     replace_str = ''
     template = 'replacement_data.html'
-    plots = Plot.objects.filter(Q(selected=2) | Q(selected=1))
+    plots = Plot.objects.filter(selected__in=[1, 2])
     #Get all household to be replaced
     for plot in plots:
         if ReplacementData().check_refusals(plot):

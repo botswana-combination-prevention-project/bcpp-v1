@@ -84,6 +84,33 @@ class PlotReplcamentMethodTests(TestCase):
             study_resident='Yes')
         self.assertEqual(ReplacementData().check_refusals(plot), [[household, 'all members refused', None]])
 
+    def test_check_refusal_household1a(self):
+        """Asserts that a household of refused members is replaceble but if deleted is not replaceable."""
+
+        plot = PlotFactory(
+            community='test_community11',
+            household_count=1,
+            status='residential_habitable',
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599,
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660,
+            selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_member = self.household_member_refused_factory(
+            household_structure=household_structure,
+            gender='M',
+            age_in_years=50,
+            present_today='Yes',
+            study_resident='Yes')
+        household_member.delete()
+        self.assertIsNone(ReplacementData().check_refusals(plot))
+
     def test_check_refusal_household2(self):
         """Asserts that a household of 3 refused members is replaceble."""
 
