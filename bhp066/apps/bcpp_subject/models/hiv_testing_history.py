@@ -30,6 +30,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="(verbal response)",
         )
 
+    #NOTE: this field triggers HivTestReview
     has_record = models.CharField(
         verbose_name=_("Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
                       " other] available to review?"),
@@ -50,6 +51,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="(verbal response)",
         )
 
+    #NOTE: this field triggers HivResultDocumentation
     other_record = models.CharField(
         verbose_name=_("Do you have any other available documentation of positive HIV status?"),
         max_length=3,
