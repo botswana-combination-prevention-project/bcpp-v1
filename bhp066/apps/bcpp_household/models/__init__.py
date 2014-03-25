@@ -6,7 +6,7 @@ from .household import Household
 from .household_assessment import HouseholdAssessment
 from .household_identifier_history import HouseholdIdentifierHistory
 from .household_log import *
-from .household_refusal import HouseholdRefusal
+from .household_enumeration_refusal import HouseholdEnumerationRefusal
 from .household_structure import HouseholdStructure
 from .plot import Plot
 from .plot_identifier_history import PlotIdentifierHistory
