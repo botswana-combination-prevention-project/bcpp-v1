@@ -141,7 +141,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
-            raise exception_cls('Enrollment Checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+            raise exception_cls('Answer to whether this subject a citizen, does not match that in enrollment checklist.')
+        if (enrollment_checklist.literacy.lower() == 'yes' and not 
+            (subject_consent.is_literate.lower() == 'yes' or (subject_consent.is_literate.lower() == 'no') and subject_consent.witness_name)):
+            raise exception_cls('Answer to whether this subject is literate/not literate but with a literate witness, does not match that in enrollment checklist.')
         if ((enrollment_checklist.legal_marriage.lower() == 'yes' and enrollment_checklist.marriage_certificate.lower() == 'yes') and
                 not (subject_consent.legal_marriage.lower() == 'yes' and subject_consent.marriage_certificate.lower() == 'yes')):
             raise exception_cls('Enrollment Checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
