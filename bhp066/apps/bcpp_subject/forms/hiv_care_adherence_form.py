@@ -30,6 +30,12 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         # if you are not taking any arv's do not indicate that you have missed taking medication
         if cleaned_data.get('on_arv', None) == 'No' and cleaned_data.get('adherence_4_day'):
             raise forms.ValidationError('You do not have to indicate missed medication because you are not taking any ARV\'s')
+        # if you are currently on arv's do not give the date you stopped taking arv
+        if cleaned_data.get('on_arv', None) == 'Yes' and cleaned_data.get('arv_stop_date'):
+            raise forms.ValidationError('Do not indicate arv stop date if subject is currently taking ARV\'s')
+        # if you are not currently on arv's you have to give the date you stopped taking arv
+        if cleaned_data.get('arv_naive', None) == 'Yes' and cleaned_data.get('on_arv', None) == 'No' and not cleaned_data.get('arv_stop_date'):
+            raise forms.ValidationError('You have to indicate arv stop date if subject was on ARV and is NOT currently taking ARV\'s')
         # if currently taking arv's, how well has participant been taking medication
         if cleaned_data.get('on_arv', None) == 'Yes' and not cleaned_data.get('adherence_4_wk'):
             raise forms.ValidationError('If participant is currently taking ARV\'s, how well has he/she been taking the medication this past week?')
