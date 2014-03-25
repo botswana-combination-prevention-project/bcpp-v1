@@ -1,5 +1,25 @@
 from django.utils.translation import ugettext as _
 
+REFERRAL_CODES = (
+    ('TST-CD4', 'POS any, need CD4 testing'),
+    ('TST-HIV', 'HIV test'),
+    ('HIV-IND', 'HIV re-test (IND)'),
+    ('MASA', 'Known POS, MASA continued care'),
+    ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
+    ('SMC-NEG', 'SMC'),
+    ('NEG!-PR', 'NEG today, Pregnant'),
+    ('POS!-PR', 'POS today, Pregnant'),
+    ('POS#-AN', 'Known POS, Pregnant, on ART (ANC)'),
+    ('POS#-PR', 'Known POS, Pregnant, not on ART'),
+    ('POS!-HI', 'POS today, not on ART, high CD4)'),
+    ('POS!-LO', 'POS today, not on ART, low CD4)'),
+    ('POS#-HI', 'Known POS, not on ART, high CD4)'),
+    ('POS#-LO', 'Known POS, not on ART, low CD4)'),
+    ('NOT-REF', 'Not referred'),
+    ('ERROR', 'Error'),
+)
+
+
 VISIT_INFO_SOURCE = [
     ('subject', '1. Subject'),
     ('other_member', '2. Other household member'),
