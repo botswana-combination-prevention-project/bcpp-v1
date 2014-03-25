@@ -81,7 +81,7 @@ class ReplacementData(object):
         replacement_household = None
         members = None
         if household.enumerated:
-            household_structure = HouseholdStructure.objects.filter(household=household, survey=)
+            household_structure = HouseholdStructure.objects.filter(household=household)
             members = HouseholdMember.objects.filter(household_structure=household_structure[0])
             #All eligible members refused
             members_status_list = []
