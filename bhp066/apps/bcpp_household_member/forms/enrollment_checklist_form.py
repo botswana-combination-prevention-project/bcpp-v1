@@ -33,7 +33,7 @@ class EnrollmentChecklistForm(BaseModelForm):
                 raise forms.ValidationError('Participant is a non-citizen married to a citizen, indicate if he/she produced marriage certificate as proof.')
             if cleaned_data.get('legal_marriage') == 'No' and cleaned_data.get('marriage_certificate') == 'Yes':
                 raise forms.ValidationError('Participant is a non-citizen NOT married to a citizen, there cannot be a marriage certificate.')
-            age_in_years = relativedelta(date.today(), cleaned_data.get('dob')).years
+        age_in_years = relativedelta(date.today(), cleaned_data.get('dob')).years
         if age_in_years in [16, 17] and cleaned_data.get('is_minor') == 'N/A':
             raise forms.ValidationError('Subject a minor. Got {0} years. Answer to \'if minor, is there guardian available\', cannot be N/A.'.format(age_in_years))
         if age_in_years > 17 and not cleaned_data.get('guardian') == 'N/A':
