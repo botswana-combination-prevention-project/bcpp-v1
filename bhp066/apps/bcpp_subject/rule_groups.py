@@ -109,13 +109,23 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 #             alternative='not_required'),
 #         target_model=['hivcareadherence'])
 
+    #Verbal hiv posetive with documentation, then Microtube is not reuired.
     microtube_known_pos = RequisitionRule(
         logic=Logic(
             predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
             consequence='not_required',
             alternative='new'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'], )
+        target_requisition_panels=['Microtube'],)
+
+    #Verbal posetive, then RBD and VL are required.
+    rbd_vl_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'equals', 'POS')),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load',])
 
     verbal_hiv_result_for_hic = ScheduledDataRule(
         logic=Logic(
