@@ -5,7 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 
 from ..managers import HouseholdRefusalManager
-from .household import Household
+from .household_structure import HouseholdStructure
 from .plot import Plot
 from .base_replacement import BaseReplacement
 
@@ -19,7 +19,7 @@ HOUSEHOLD_REFUSAL = (
 
 class HouseholdRefusal(BaseReplacement):
 
-    household = models.OneToOneField(Household, related_name='refusal_household')
+    household_structure = models.OneToOneField(HouseholdStructure)
 
     report_datetime = models.DateTimeField()
 
