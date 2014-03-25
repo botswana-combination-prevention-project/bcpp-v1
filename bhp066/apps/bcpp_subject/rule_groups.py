@@ -109,6 +109,14 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 #             alternative='not_required'),
 #         target_model=['hivcareadherence'])
 
+    microtube_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'], )
+
     verbal_hiv_result_for_hic = ScheduledDataRule(
         logic=Logic(
             predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
@@ -130,8 +138,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    #TODO: including this other_response leads to results from rules from above being reset, prety much its wrong.
-    #but we still need a way to handle 'IND', 'UNK',
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or')),
