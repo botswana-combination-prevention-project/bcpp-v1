@@ -17,7 +17,7 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdEnumerationRefusal, HouseholdAssessment
 
 from .factories import HouseholdFactory
 from .factories import PlotFactory
@@ -220,7 +220,7 @@ class PlotReplacementTests(TestCase):
 #         household_structure = HouseholdStructure.objects.filter(household=household1).order_by('created')
 #         household_log = HouseholdLog(household_structure=household_structure[0])
 #         household_log.save()
-#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
+#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT, report_datetime=datetime.datetime.now())
 #         household_log_entry1.save()
 #         member1 = HouseholdMember(
 #                 household_structure=household_structure[0],
@@ -286,8 +286,8 @@ class PlotReplacementTests(TestCase):
 #         household_log.save()
 #         household_log_entry = HouseholdLogEntry(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
 #         household_log_entry.save()
-#         household_refusal = HouseholdRefusal(household=household1, report_datetime=datetime.datetime.now(), reason='not_interested')
-#         household_refusal.save()
+#         household_enumeration_refusal = HouseholdEnumerationRefusal(household=household1, report_datetime=datetime.datetime.now(), reason='not_interested')
+#         household_enumeration_refusal.save()
 # 
 #         self.assertEqual(ReplacementData().check_refusals(plot), [household1, 'HOH refusal'])
 # 
@@ -457,8 +457,8 @@ class PlotReplacementTests(TestCase):
 #         household_log.save()
 #         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
 #         household_log_entry1.save()
-#         household_refusal = HouseholdRefusal(household=household, report_datetime=datetime.datetime.now(), reason='not_interested')
-#         household_refusal.save()
+#         household_enumeration_refusal = HouseholdEnumerationRefusal(household=household, report_datetime=datetime.datetime.now(), reason='not_interested')
+#         household_enumeration_refusal.save()
 # 
 #         self.assertEqual(ReplacementData().is_hoh_refused(household), household)
 # 
@@ -469,7 +469,7 @@ class PlotReplacementTests(TestCase):
 #         household_structure = HouseholdStructure.objects.get(household=household)
 #         household_log = HouseholdLog(household_structure=household_structure)
 #         household_log.save()
-#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
+#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT, report_datetime=datetime.datetime.now())
 #         household_log_entry1.save()
 #         member1 = HouseholdMember(
 #                 household_structure=household_structure,

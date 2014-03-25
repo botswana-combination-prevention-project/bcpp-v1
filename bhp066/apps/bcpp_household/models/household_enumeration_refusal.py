@@ -1,11 +1,13 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 
-from ..managers import HouseholdRefusalManager
-from .household import Household
+
+from ..managers import HouseholdEnumerationRefusalManager
+from .household_structure import HouseholdStructure
 from .plot import Plot
 from .base_replacement import BaseReplacement
 
@@ -17,9 +19,9 @@ HOUSEHOLD_REFUSAL = (
 )
 
 
-class HouseholdRefusal(BaseReplacement):
+class HouseholdEnumerationRefusal(BaseReplacement):
 
-    household = models.OneToOneField(Household, related_name='refusal_household')
+    household_structure = models.OneToOneField(HouseholdStructure)
 
     report_datetime = models.DateTimeField()
 
@@ -42,9 +44,15 @@ class HouseholdRefusal(BaseReplacement):
         null=True,
         )
 
-    objects = HouseholdRefusalManager()
+    objects = HouseholdEnumerationRefusalManager()
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        if self.household_structure.enrolled:
+            raise ValidationError('Household is enrolled.')
+        self.household_structure.refused_enumeration = True
+        super(HouseholdEnumerationRefusal, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.household.natural_key()

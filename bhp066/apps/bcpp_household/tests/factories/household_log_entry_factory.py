@@ -11,4 +11,4 @@ class HouseholdLogEntryFactory(BaseUuidModelFactory):
     household_log = factory.SubFactory(HouseholdLogFactory)
     report_datetime = datetime.now()
     next_appt_datetime_source = factory.Sequence(lambda n: 'hbc{0}'.format(n))
-    household_status = 'eligible_representative_present'
+    household_status = ELIGIBLE_REPRESENTATIVE_PRESENT
