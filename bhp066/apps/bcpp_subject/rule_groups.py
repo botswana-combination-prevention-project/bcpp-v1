@@ -109,11 +109,19 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 #             alternative='not_required'),
 #         target_model=['hivcareadherence'])
 
+    microtube_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'], )
+
     verbal_hiv_result_for_hic = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'ne', 'POS'),
-            consequence='new',
-            alternative='not_required'),
+            predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
         target_model=['hicenrollment', 'hivresult'])
 
     verbal_hiv_result = ScheduledDataRule(
@@ -130,13 +138,11 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    #TODO: including this other_response leads to results from rules from above being reset, prety much its wrong.
-    #but we still need a way to handle 'IND', 'UNK',
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or')),
             consequence='not_required',
-            alternative='new'),
+            alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     class Meta:
@@ -162,13 +168,12 @@ class HivTestReviewRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    
-#     other_responses = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'and')),
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
+    other_responses = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('recorded_hiv_result', 'equals', 'IND'), ('recorded_hiv_result', 'equals', 'UNK', 'or'), ('recorded_hiv_result', 'equals', 'not_answering', 'or')),
+            consequence='not_required',
+            alternative='none'),
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
 #     if_recorded_result_not_positive = ScheduledDataRule(
@@ -225,14 +230,15 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
+
     #What if they are HIV + but not on ARV, then PIMA is not required???,seems odd.
     on_arv = ScheduledDataRule(
         logic=Logic(
-            predicate=('on_arv', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
+            predicate=(('on_arv', 'equals', 'Yes'), ('arv_evidence', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
         target_model=['pima'])
-    
+
 #     arv_evidence = ScheduledDataRule(
 #         logic=Logic(
 #             predicate=('arv_evidence', 'equals', 'Yes'),
