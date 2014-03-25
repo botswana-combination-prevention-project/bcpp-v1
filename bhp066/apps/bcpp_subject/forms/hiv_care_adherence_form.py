@@ -44,7 +44,6 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         if cleaned_data.get('on_arv') == 'Yes' and not cleaned_data.get('arv_evidence'):
             raise forms.ValidationError('If participant is on ARV, have you made this confirmation, seen any form of evidence?')
 
-
         return cleaned_data
 
     class Meta:
