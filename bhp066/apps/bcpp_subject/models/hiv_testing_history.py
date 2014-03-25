@@ -1,10 +1,13 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
+from edc.audit.audit_trail import AuditTrail
+from edc.choices import  YES_NO_NA
+
+from apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 
 from ..choices import YES_NO_RECORD_REFUSAL
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -51,8 +54,8 @@ class HivTestingHistory (BaseScheduledVisitModel):
         verbose_name=_("Do you have any other available documentation of positive HIV status?"),
         max_length=3,
         null=True,
-        blank=True,
-        choices=YES_NO,
+        blank=False,
+        choices=YES_NO_NA,
         help_text="This documentation refers to: PMTCT prescription, ART, CD4 count record, lab result for.. etc",
         )
 

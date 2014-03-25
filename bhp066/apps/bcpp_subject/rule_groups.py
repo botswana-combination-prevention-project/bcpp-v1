@@ -224,14 +224,15 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
+
     #What if they are HIV + but not on ARV, then PIMA is not required???,seems odd.
     on_arv = ScheduledDataRule(
         logic=Logic(
-            predicate=('on_arv', 'equals', 'Yes'),
-            consequence='new',
-            alternative='not_required'),
+            predicate=(('on_arv', 'equals', 'Yes'), ('arv_evidence', 'equals', 'Yes')),
+            consequence='not_required',
+            alternative='new'),
         target_model=['pima'])
-    
+
 #     arv_evidence = ScheduledDataRule(
 #         logic=Logic(
 #             predicate=('arv_evidence', 'equals', 'Yes'),
