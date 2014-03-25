@@ -21,7 +21,7 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant has tested before, let us know the last time he/she tested.')
 
         if cleaned_data.get('has_tested') == 'Yes' and not cleaned_data.get('has_record'):
-            raise forms.ValidationError('If participant has tested, is a record is available? Got None.')
+            raise forms.ValidationError('If participant has tested, is a record available? Got None.')
 
         return cleaned_data
 
