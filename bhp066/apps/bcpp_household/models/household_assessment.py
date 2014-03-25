@@ -10,13 +10,13 @@ from apps.bcpp_household.managers import HouseholdAssessmentManager
 from ..choices import RESIDENT_LAST_SEEN
 
 from .base_replacement import BaseReplacement
-from .household import Household
+from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
 class HouseholdAssessment(BaseReplacement):
 
-    household = models.OneToOneField(Household,)
+    household_structure = models.OneToOneField(HouseholdStructure)
 
     residency = models.CharField(
         verbose_name='Is anybody living in this Household?',

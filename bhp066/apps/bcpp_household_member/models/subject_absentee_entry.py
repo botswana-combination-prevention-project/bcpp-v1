@@ -27,6 +27,9 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
         if not self.id:
             household_member = self.subject_absentee.household_member
             household_member.visit_attempts += 1
+            household_member.absent = False
+            if household_member.visit_attempts >= 3:
+                household_member.absent = True
             household_member.save()
         super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
 
