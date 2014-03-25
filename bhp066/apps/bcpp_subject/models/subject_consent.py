@@ -119,8 +119,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
         if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
-            if self.dob != hic_enrollment.dob or subject_consent.consent_datetime != hic_enrollment.consent_datetime:
-                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
+            #consent_datetime does not exist in cleaned_data as it not editable.
+            #if subject_consent.dob != hic_enrollment.dob or subject_consent.consent_datetime != hic_enrollment.consent_datetime:
+            if subject_consent.dob != hic_enrollment.dob:
+                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' cannot be changed.')
 
     def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
         """Matches values in this consent against the enrollment checklist.
@@ -139,7 +141,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
-            raise exception_cls('Enrollment Checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+            raise exception_cls('Answer to whether this subject a citizen, does not match that in enrollment checklist.')
+        if (enrollment_checklist.literacy.lower() == 'yes' and not 
+            (subject_consent.is_literate.lower() == 'yes' or (subject_consent.is_literate.lower() == 'no') and subject_consent.witness_name)):
+            raise exception_cls('Answer to whether this subject is literate/not literate but with a literate witness, does not match that in enrollment checklist.')
         if ((enrollment_checklist.legal_marriage.lower() == 'yes' and enrollment_checklist.marriage_certificate.lower() == 'yes') and
                 not (subject_consent.legal_marriage.lower() == 'yes' and subject_consent.marriage_certificate.lower() == 'yes')):
             raise exception_cls('Enrollment Checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
