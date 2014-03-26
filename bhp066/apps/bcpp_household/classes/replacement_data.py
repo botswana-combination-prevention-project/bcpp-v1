@@ -26,7 +26,7 @@ class ReplacementData(object):
             producer = producer.producer
         return producer
 
-    def check_absentees_ineligibles(self, plot):
+    def check_absentees_ineligibles(self, plot, household, household_structure):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = []

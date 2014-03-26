@@ -24,6 +24,7 @@ from .factories import PlotFactory
 from .factories import HouseholdRefusalFactory
 from .factories import HouseholdLogFactory
 from .factories import HouseholdLogEntryFactory
+from .factories import HouseholdAssessmentFactory
 
 
 class TestPlotMapper(Mapper):
@@ -366,10 +367,8 @@ class PlotReplacementTests(TestCase):
         household_refusal = HouseholdRefusalFactory(household_structure=household_structure1, report_datetime=datetime.now(), reason='not_interested')
         self.assertEqual(ReplacementData().check_refusals(plot, household1, household_structure1), [[household1, 'HOH refusal', None]])
 
-
     def test_check_absentees_ineligibles1(self):
-        """"Asserts a household 1 member that is absent that is replaceble"""
-
+        """Asserts a household 1 member that is absent that is replaceble"""
         plot = PlotFactory(
                 community='test_community',
                 household_count=1,
@@ -394,7 +393,7 @@ class PlotReplacementTests(TestCase):
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [household, 'all members are absent', None])
 
     def test_check_absentees_ineligibles2(self):
-        """"Asserts a household multiple members that are absent that its replaceble."""
+        """Asserts a household multiple members that are absent that its replaceble."""
 
         plot = PlotFactory(
                 community='test_community',
@@ -432,7 +431,7 @@ class PlotReplacementTests(TestCase):
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [household, 'all members are absent', None])
 
     def test_check_absentees_ineligibles3(self):
-        """"Asserts a household 3 members absent and 2 not absent that is not replaceble."""
+        """Asserts a household 3 members absent and 2 not absent that is not replaceble."""
 
         plot = PlotFactory(
                 community='test_community',
@@ -482,7 +481,7 @@ class PlotReplacementTests(TestCase):
         self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
 
     def test_check_absentees_ineligibles4(self):
-        """"Asserts a household with no 'no informant' that is replaceble"""
+        """Asserts a household with no 'no informant' that is replaceble"""
 
         plot = PlotFactory(
                 community='test_community',
@@ -500,8 +499,9 @@ class PlotReplacementTests(TestCase):
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [household, 'all members are absent', None])
+
     def test_check_absentees_ineligibles5(self):
-        """"Asserts a household with no 'no informant' that is replaceble"""
+        """Asserts a household with no 'no informant' with a household assessment form status being seasonally occupied that is replaceble"""
 
         plot = PlotFactory(
                 community='test_community',
@@ -521,13 +521,306 @@ class PlotReplacementTests(TestCase):
         household_log1 = HouseholdLogFactory(household_structure=household_structure)
         household_log2 = HouseholdLogFactory(household_structure=household_structure)
         household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log1.save()
-        household_log2.save()
-        household_log3.save()
-        HouseholdLogEntry(household_structure=household_log1, household_status='no_informant', report_datetime=datetime.now())
-        HouseholdLogEntry(household_structure=household_log2, household_status='no_informant', report_datetime=datetime.now())
-        HouseholdLogEntry(household_structure=household_log3, household_status='no_informant', report_datetime=datetime.now())
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
+        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='4_weeks_a_year')  # Status value becomes seasonally occupied
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [household, 'no household informant', None])
 
+    def test_check_absentees_ineligibles6(self):
+        """Asserts a household with no 'no informant' with a household assessment form status being rarely occupied that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
+        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='1_night_less_than_4_weeks_year')  # Status value becomes rarely occupied
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [household, 'no household informant', None])
+
+    def test_check_absentees_ineligibles7(self):
+        """Asserts a household with no 'no informant' with a household assessment form status being never occupied that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
+        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='never_spent_1_day_over_a_year')  # Status value becomes never occupied
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles8(self):
+        """Asserts a household with no 'no informant' with a household assessment form status being 'None' that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
+        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='dont_know')  # Status value becomes None
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles9(self):
+        """Asserts a household with no 'no informant' with 2 attempts of enumeration that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles10(self):
+        """Asserts a household with no 'no informant' with 1 attempts of enumeration that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='no_household_informant',)
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles11(self):
+        """Asserts a household with present member that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_present',)
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles12(self):
+        """Asserts a household with 3 household log entries the last 1 with present status that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='eligible_representative_present')
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles13(self):
+        """Asserts a household with 3 enumeration attempts with no eligible representative present, that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='eligible_representative_absent',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='eligible_representative_absent')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='eligible_representative_absent')
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [[household, 'no eligible members', None]])
+
+    def test_check_absentees_ineligibles14(self):
+        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_absent')
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles15(self):
+        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='eligible_representative_absent',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='eligible_representative_absent')
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
+
+    def test_check_absentees_ineligibles16(self):
+        """Asserts a household with 3 enumeration attempts with 2 no household informant and no eligible representative present that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
+        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='eligible_representative_absent',)
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [[household, 'no eligible members', None]])
+
+    def test_check_absentees_ineligibles17(self):
+        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLogFactory(household_structure=household_structure)
+        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_absent',)
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
 
 #     def test_check_absentees_ineligibles2(self):
 #         """Test for abseentees for a plot with more than one household."""

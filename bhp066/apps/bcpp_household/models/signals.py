@@ -53,17 +53,6 @@ def plot_access_attempts_on_post_save(sender, instance, created, **kwargs):
                 raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
 
 
-@receiver(post_save, weak=False, dispatch_uid='household_visit_attempts_on_post_save')
-def household_visit_attempts_on_post_save(sender, instance, created, **kwargs):
-    if not kwargs.get('raw', False):
-        if isinstance(instance, HouseholdLogEntry):
-            household = instance.household_log.household_structure.household
-            if not household.enumerated and instance.household_status == 'no_household_informant':
-                enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
-                household.enumeration_attempts = enumeration_attempts
-                household.save()
-
-
 @receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
 def household_enumeration_attempts_on_post_save(sender, instance, created, **kwargs):
     if not kwargs.get('raw', False):
@@ -71,7 +60,7 @@ def household_enumeration_attempts_on_post_save(sender, instance, created, **kwa
             household = instance.household_log.household_structure.household
             household_structure = instance.household_log.household_structure
             household_members = HouseholdMember.objects.filter(household_structure=household_structure)
-            if not household_members and instance.household_status == 'no_household_informant':
+            if not household_members and instance.household_status in ['no_household_informant', 'eligible_representative_absent']:
                 enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
                 household.enumeration_attempts = enumeration_attempts
                 household.save()
