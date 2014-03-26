@@ -27,7 +27,9 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'appointment':
             {'allowed_iso_weekdays': '1234567',
              'use_same_weekday': True,
-             'default_appt_type': 'default'},
+             'default_appt_type': 'default',
+             'appointments_per_day_max': 20,
+             'appointments_days_forward': 15},
         }
 
     study_variables_setup = {
