@@ -30,11 +30,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'default_appt_type': 'default'},
         }
 
-    appointment_configuration = {
-                'allowed_iso_weekdays': '1234567',
-                'use_same_weekday': True,
-                'default_appt_type': 'default'}
-
     study_variables_setup = {
                 'protocol_number': 'BHP066',
                 'protocol_code': '066',
