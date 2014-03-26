@@ -32,7 +32,14 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
         max_length=10,
         choices=YES_NO,
         validators=[eligible_if_yes],
-        help_text=("If No, respondent is under 18 participant and cannot be head of household."),
+        help_text="If 'NO' respondent cannot serve as Household Head/Representative.",
+        )
+
+    household_residency = models.CharField(
+        verbose_name='Does the respondent typically spend more nights on average in this household than in any other household in the same community?',
+        max_length=3,
+        choices=YES_NO,
+        help_text="If 'NO' respondent cannot serve as Household Head/Representative.",
         )
 
     verbal_script = models.CharField(
@@ -41,7 +48,7 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
         max_length=10,
         choices=YES_NO,
         validators=[eligible_if_yes],
-        help_text=("If No, the participant cannot be head of household."),
+        help_text="If 'NO' respondent cannot serve as Household Head/Representative.",
         )
 
     objects = HouseholdHeadEligibilityManager()
