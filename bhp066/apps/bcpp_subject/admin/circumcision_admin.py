@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
-from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+#from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
+#from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..models import Circumcision, Circumcised, Uncircumcised
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
@@ -29,16 +29,16 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
-class CircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
-    supplemental_fields = SupplementalFields(
-        ("circumcised",
-        "health_benefits_smc",
-        'where_circ',
-        'where_circ_other',
-        'why_circ',
-        'why_circ_other'), p=0.18, group='MC', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'where_circ',
+#         'where_circ_other',
+#         'why_circ',
+#         'why_circ_other'), p=0.18, group='MC', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         "circumcised",
@@ -57,17 +57,17 @@ class CircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
 admin.site.register(Circumcised, CircumcisedAdmin)
 
 
-class UncircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class UncircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = UncircumcisedForm
-    supplemental_fields = SupplementalFields(
-        ("circumcised",
-        "health_benefits_smc",
-        'reason_circ',
-        'reason_circ_other',
-        'future_reasons_smc',
-        'service_facilities',
-        'aware_free'), p=0.18, group='MC', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'reason_circ',
+#         'reason_circ_other',
+#         'future_reasons_smc',
+#         'service_facilities',
+#         'aware_free'), p=0.18, group='MC', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         "circumcised",
