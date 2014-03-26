@@ -6,27 +6,15 @@ class ReplacementData(object):
     def __init__(self):
         self._replacement_plot = None
 
-    def check_refusals(self, plot):
+    def check_refusals(self, plot, household, household_structure):
         """Check if a plot has household refusals that would make it be replaced."""
-        from apps.bcpp_household.models import Household
         replaced = []
         if plot.status == 'residential_habitable':
-            if plot.household_count == 1:
-                household = Household.objects.get(plot=plot)
                 if self.is_hoh_refused(household):
                     replaced.append([household, 'HOH refusal', self.producer(plot)])
                 else:
                     if self.is_refusal(household):
                         replaced.append([self.is_refusal(household), 'all members refused', self.producer(plot)])
-            if plot.household_count > 1:
-                households = Household.objects.filter(plot=plot)
-                for household in households:
-                    #Does this current household qualify the plot to be replaced?
-                    if self.is_hoh_refused(household):
-                        replaced.append([household, 'HOH refusal', self.producer(plot)])
-                    else:
-                        if self.is_refusal(household):
-                            replaced.append([self.is_refusal(household), 'all members refused', self.producer(plot)])
         return replaced
 
     def producer(self, plot):
@@ -39,7 +27,7 @@ class ReplacementData(object):
             producer = producer.producer
         return producer
 
-    def check_absentees_ineligibles(self, plot):
+    def check_absentees_ineligibles(self, plot, household, household_structure):
         """Check if a plot has absentees and ineligibles that would make it be replaced."""
         from apps.bcpp_household.models import Household
         replaced = []
