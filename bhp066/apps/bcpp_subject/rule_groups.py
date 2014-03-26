@@ -462,21 +462,21 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('heart_attack_record', 'equals', 'Yes'), ('heart_attack_record', 'equals', 'No', 'or')),
+            predicate=('heart_attack_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['heartattack'])
 
     cancer_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('cancer_record', 'equals', 'Yes'), ('cancer_record', 'equals', 'Yes', 'or')),
+            predicate=('cancer_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
 
     tb_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
+            predicate=('tb_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['tubercolosis'])
