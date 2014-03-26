@@ -38,8 +38,6 @@ class HouseholdStructure(BaseReplacement):
 
     enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if hoh household refusal form is completed')
 
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if hoh household refusal form is completed')
-
     objects = HouseholdStructureManager()
 
     history = AuditTrail()
