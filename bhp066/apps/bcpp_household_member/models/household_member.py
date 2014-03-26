@@ -107,6 +107,8 @@ class HouseholdMember(BaseReplacement):
 
     visit_attempts = models.IntegerField(default=0, help_text="")
 
+    absent = models.BooleanField(default=False, editable=False, help_text="Updated by the subject absentee log")
+
     target = models.IntegerField(default=0)
 
     relation = models.CharField(

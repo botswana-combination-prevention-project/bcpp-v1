@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 
-
 from ..managers import HouseholdEnumerationRefusalManager
 from .household_structure import HouseholdStructure
 from .plot import Plot
