@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
-from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+# from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
+# from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..forms import MonthsRecentPartnerForm, MonthsSecondPartnerForm, MonthsThirdPartnerForm
 from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
@@ -11,14 +11,14 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 #Recent/ Second/ Third partners [SH]: 10% in pretest, 9% in BHS and all follow-up
-class MonthsRecentPartnerAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsRecentPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -68,11 +68,11 @@ admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsSecondPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',
@@ -125,11 +125,11 @@ admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
-    supplemental_fields = SupplementalFields(
-        ('first_haart',
-        'first_disclose',
-        'first_condom_freq',
-        'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ('first_haart',
+#         'first_disclose',
+#         'first_condom_freq',
+#         'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',

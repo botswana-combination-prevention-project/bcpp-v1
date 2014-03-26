@@ -411,10 +411,6 @@ SOUTH_LOGGING_ON = True
 # dajax
 DAJAXICE_MEDIA_PREFIX = "dajaxice"
 
-# edc.subject.appointment
-APPOINTMENTS_PER_DAY_MAX = 20
-APPOINTMENTS_DAYS_FORWARD = 15
-
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
 SUBJECT_TYPES = ['subject']

@@ -20,10 +20,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).__init__()
         self.update_or_create_survey()
 
-    appointment_configuration = {
-                'allowed_iso_weekdays': '1234567',
-                'use_same_weekday': True,
-                'default_appt_type': 'default'}
+    global_configuration = {
+        'dashboard':
+            {'show_not_required': True,
+            'allow_additional_requisitions': False},
+        'appointment':
+            {'allowed_iso_weekdays': '1234567',
+             'use_same_weekday': True,
+             'default_appt_type': 'default',
+             'appointments_per_day_max': 20,
+             'appointments_days_forward': 15},
+        }
 
     study_variables_setup = {
                 'protocol_number': 'BHP066',
