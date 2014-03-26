@@ -10,32 +10,24 @@ class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
     form = HouseholdAssessmentForm
 
     fields = (
-        'household',
+        'household_structure',
         'residency',
         'member_count',
-        'citizen',
-        'how_many',
-        'possible_eligibles',
-        'how_many_members',
-        'original_community',
-        'original_community_other',
+        'eligibles',
+        'ineligibble_reason',
         'last_seen_home',
-        'most_likely',
         )
-
-#     list_display = ('household', 'residency', 'member_count', 'citizen', 'how_many', 'original_community',)
 
     radio_fields = {
         'residency': admin.VERTICAL,
-        'citizen': admin.VERTICAL,
-        'possible_eligibles': admin.VERTICAL,
-        'original_community': admin.VERTICAL,
+        'member_count': admin.VERTICAL,
+        'eligibles': admin.VERTICAL,
+        'ineligibble_reason': admin.VERTICAL,
         'last_seen_home': admin.VERTICAL,
         }
-    filter_horizontal = ('most_likely',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household":
-            kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household', 0))
+        if db_field.name == "household_structure":
+            kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household_structure', 0))
         return super(HouseholdAssessmentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(HouseholdAssessment, HouseholdAssessmentAdmin)
