@@ -111,12 +111,17 @@ SUB_SECTIONS = (
     ('11', '11'),
 )
 
+INELIGIBLE_REASON = (
+    ('non_citizen', 'Non-Citizen(s)'),
+    ('age_ineligible', 'Not of eligible age'),
+    ('other', 'Other'),
+    )
 
 RESIDENT_LAST_SEEN = (
-        ('more_than_a_year', 'More than one year ago '),
-        ('1_to_6_months', '1-6 months ago'),
-        ('7_to_12_months', '7- 12 months'),
-        ('less_than_a_month_ago', 'Less than a month ago'),
+        ('4_weeks_a_year', 'Spends at least 4 weeks in a household over the course of the past year '),
+        ('1_night_less_than_4_weeks_year', 'spends at least 1 night be probably less than 4 weeks/year in the household'),
+        ('never_spent_1_day_over_a_year', 'did not even spend 1 night in the household over the past year'),
+        ('dont_know', 'Don\'t know'),
 )
 
 NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))
