@@ -822,171 +822,56 @@ class PlotReplacementTests(TestCase):
         household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_absent',)
         self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot, household, household_structure))
 
-#     def test_check_absentees_ineligibles2(self):
-#         """Test for abseentees for a plot with more than one household."""
-# 
-#         plot = PlotFactory(
-#                 community='test_community',
-#                 household_count=2,
-#                 status='residential_habitable',
-#                 eligible_members=3,
-#                 description="A blue house with yellow screen wall",
-#                 time_of_week='Weekdays',
-#                 time_of_day='Morning',
-#                 gps_degrees_s=25,
-#                 gps_minutes_s=0.88457999,
-#                 gps_degrees_e=25,
-#                 gps_minutes_e=44.9277000,
-#                 selected=1,
-#                 access_attempts=0,)
-#         household = Household.objects.filter(plot=plot)
-#         household_structure = HouseholdStructure.objects.get(household=household[0])
-#         member = HouseholdMember.objects.create(
-#                 household_structure=household_structure,
-#                 first_name='KABELO',
-#                 initials='KA',
-#                 gender='M',
-#                 age_in_years=29,
-#                 present_today='Yes',
-#                 member_status='ABSENT')
-#         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-# 
-#         member = HouseholdMember(
-#                 household_structure=household_structure,
-#                 first_name='DILO',
-#                 initials='DA',
-#                 gender='M',
-#                 age_in_years=25,
-#                 present_today='Yes',
-#                 member_status='ABSENT')
-#         member.save()
-#         sub_absentee = SubjectAbsentee.objects.get(household_member=member)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-#         SubjectAbsenteeEntry.objects.filter(subject_absentee=sub_absentee)
-# 
-#         household_structure = HouseholdStructure.objects.get(household=household[1])
-#         member = HouseholdMember(
-#                 household_structure=household_structure,
-#                 first_name='BATHO',
-#                 initials='BS',
-#                 gender='M',
-#                 age_in_years=26,
-#                 present_today='Yes',
-#                 member_status='RESEARCH')
-#         member.save()
-# 
-#         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household[0], 'all members are absent'])
-# 
-#     def test_check_absentees_ineligibles3(self):
-#         """Test for no informant within a household, an absent household that members are seasonally around."""
-# 
-#         plot = PlotFactory(
-#                 community='test_community',
-#                 household_count=2,
-#                 status='residential_habitable',
-#                 eligible_members=3,
-#                 description="A blue house with yellow screen wall",
-#                 time_of_week='Weekdays',
-#                 time_of_day='Morning',
-#                 gps_degrees_s=25,
-#                 gps_minutes_s=0.51276399,
-#                 gps_degrees_e=25,
-#                 gps_minutes_e=44.311,
-#                 selected=1)
-#         households = Household.objects.filter(plot=plot)
-#         household1 = households[0]
-#         household_structure = HouseholdStructure.objects.get(household=household1)
-#         household_log = HouseholdLog(household_structure=household_structure)
-#         household_log.save()
-#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
-#         household_log_entry1.save()
-#         household_log_entry2 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-#         household_log_entry2.save()
-#         household_log_entry3 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-#         household_log_entry3.save()
-#         household_assessment = HouseholdAssessment(household=household1, residency='No', last_seen_home='1_to_6_months', most_likely=['work_live_school_outside_village', 'away_for_harvesting'])
-#         household_assessment.save()
-# 
-#         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household1, 'no household informant'])
-# 
-#     def test_check_absentees_ineligibles4(self):
-#         """Test for no informant within a household, an absent household with members that are rarely there."""
-# 
-#         plot = PlotFactory(
-#                 community='test_community',
-#                 household_count=2,
-#                 status='residential_habitable',
-#                 eligible_members=3,
-#                 description="A blue house with yellow screen wall",
-#                 time_of_week='Weekdays',
-#                 time_of_day='Morning',
-#                 gps_degrees_s=25,
-#                 gps_minutes_s=0.593,
-#                 gps_degrees_e=25,
-#                 gps_minutes_e=44.999,
-#                 selected=1)
-#         households = Household.objects.filter(plot=plot)
-#         household1 = households[0]
-#         household_structure = HouseholdStructure.objects.get(household=household1)
-#         household_log = HouseholdLog(household_structure=household_structure)
-#         household_log.save()
-#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now())
-#         household_log_entry1.save()
-#         household_log_entry2 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-#         household_log_entry2()
-#         household_log_entry3 = HouseholdLogEntry(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.datetime.now() + datetime.timedelta(days=1))
-#         household_log_entry3.save()
-#         household_assessment = HouseholdAssessment.objects.create(household=household1, residency='No', last_seen_home='1_to_6_months', most_likely=['work_live_school_outside_village', 'away_for_harvesting'])
-#         household_assessment.save()
-# 
-#         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [household1, 'no household informant'])
-# 
-#     def test_is_hoh_refused(self):
-#         """Test for a head of household refusal."""
-# 
-#         household = HouseholdFactory()
-#         household_structure = HouseholdStructure.objects.get(household=household)
-#         household_log = HouseholdLog(household_structure=household_structure)
-#         household_log.save()
-#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='refused', report_datetime=datetime.datetime.now())
-#         household_log_entry1.save()
-#         household_refusal = HouseholdRefusal(household=household, report_datetime=datetime.datetime.now(), reason='not_interested')
-#         household_refusal.save()
-# 
-#         self.assertEqual(ReplacementData().is_hoh_refused(household), household)
-# 
-#     def test_is_refusal(self):
-#         """Test for household memebers reefusing."""
-# 
-#         household = HouseholdFactory()
-#         household_structure = HouseholdStructure.objects.get(household=household)
-#         household_log = HouseholdLog(household_structure=household_structure)
-#         household_log.save()
-#         household_log_entry1 = HouseholdLogEntry(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.datetime.now())
-#         household_log_entry1.save()
-#         member1 = HouseholdMember(
-#                 household_structure=household_structure,
-#                 first_name='KIM',
-#                 initials='KK',
-#                 gender='M',
-#                 age_in_years=25,
-#                 present_today='Yes',
-#                 member_status='REFUSED',
-#                 study_resident='Yes')
-#         member1.save()
-# 
-#         member2 = HouseholdMember(
-#                 household_structure=household_structure,
-#                 first_name='PAUL',
-#                 initials='PR',
-#                 gender='M',
-#                 age_in_years=25,
-#                 present_today='Yes',
-#                 member_status='REFUSED',
-#                 study_resident='Yes')
-#         member2.save()
-#         self.assertEqual(ReplacementData().is_refusal(household), household)
+    def test_is_replacement_valid1(self):
+        """Asserts a plot is non residential is a valid replacement."""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=0,
+                status='non-residential',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=2)
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [plot, 'invalid replacement', None])
+
+    def test_is_replacement_valid2(self):
+        """Asserts a plot is residential not habitable is a valid replacement."""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=0,
+                status='residential_not_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=2)
+        self.assertEqual(ReplacementData().check_absentees_ineligibles(plot), [plot, 'invalid replacement', None])
+
+    def test_is_replacement_valid3(self):
+        """Asserts a plot is residential habitable is a valid replacement."""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=0,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=2)
+        self.assertIsNone(ReplacementData().check_absentees_ineligibles(plot))
