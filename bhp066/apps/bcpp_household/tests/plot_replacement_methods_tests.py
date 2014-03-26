@@ -500,6 +500,34 @@ class PlotReplacementTests(TestCase):
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.assertEqual(ReplacementData().check_absentees_ineligibles(plot, household, household_structure), [household, 'all members are absent', None])
+    def test_check_absentees_ineligibles5(self):
+        """"Asserts a household with no 'no informant' that is replaceble"""
+
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log1 = HouseholdLogFactory(household_structure=household_structure)
+        household_log2 = HouseholdLogFactory(household_structure=household_structure)
+        household_log3 = HouseholdLogFactory(household_structure=household_structure)
+        household_log1.save()
+        household_log2.save()
+        household_log3.save()
+        HouseholdLogEntry(household_structure=household_log1, household_status='no_informant', report_datetime=datetime.now())
+        HouseholdLogEntry(household_structure=household_log2, household_status='no_informant', report_datetime=datetime.now())
+        HouseholdLogEntry(household_structure=household_log3, household_status='no_informant', report_datetime=datetime.now())
+
 
 #     def test_check_absentees_ineligibles2(self):
 #         """Test for abseentees for a plot with more than one household."""

@@ -9,3 +9,5 @@ class HouseholdAssessmentFactory(BaseUuidModelFactory):
     FACTORY_FOR = HouseholdAssessment
 
     household_sturcture = factory.SubFactory(HouseholdStructureFactory)
+    residency = 'No'
+    last_seen_home = 'less_than_a_month_ago'
