@@ -3,7 +3,7 @@ from django.contrib import admin
 from edc.base.admin.admin import BaseModelAdmin
 
 from ..forms import HouseholdEnumerationRefusalForm
-from ..models import HouseholdEnumerationRefusal, Household
+from ..models import HouseholdEnumerationRefusal, HouseholdStructure
 
 
 class HouseholdEnumerationRefusalAdmin(BaseModelAdmin):
@@ -13,7 +13,7 @@ class HouseholdEnumerationRefusalAdmin(BaseModelAdmin):
     list_per_page = 30
 
     fields = (
-        'household',
+        'household_structure',
         'report_datetime',
         'reason',
         'reason_other',
@@ -23,15 +23,15 @@ class HouseholdEnumerationRefusalAdmin(BaseModelAdmin):
         'reason': admin.VERTICAL,
         }
 
-    list_display = ('household', 'report_datetime', 'created')
+    list_display = ('household_structure', 'report_datetime', 'created')
 
     list_filter = ('report_datetime', 'created',)
 
-    search_fields = ('household__household_identifier', 'community', 'id', 'plot__id')
+    search_fields = ('household_structure__household__household_identifier', 'community', 'id', 'plot__id')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household":
-            kwargs["queryset"] = Household.objects.filter(id__exact=request.GET.get('household', 0))
+        if db_field.name == "household_structure":
+            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
         return super(HouseholdEnumerationRefusalAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(HouseholdEnumerationRefusal, HouseholdEnumerationRefusalAdmin)

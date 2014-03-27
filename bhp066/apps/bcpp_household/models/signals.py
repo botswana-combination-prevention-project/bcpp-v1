@@ -1,14 +1,17 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 
 from apps.bcpp_household_member.models import HouseholdMember
 
 from .household import Household
 from .household_enumeration_refusal import HouseholdEnumerationRefusal
+from .household_enumeration_refusal import HouseholdEnumerationRefusalHistory
 from .household_log import HouseholdLogEntry
 from .household_structure import HouseholdStructure
 from .plot import Plot
 from .plot_log import PlotLogEntry
+
+from ..constants import ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT
 
 
 @receiver(pre_save, weak=False, dispatch_uid="check_for_survey_on_pre_save")
@@ -53,24 +56,37 @@ def plot_access_attempts_on_post_save(sender, instance, created, **kwargs):
                 raise TypeError('Have more than 3 log entries for {0}'.format(instance.plot_log.plot))
 
 
-@receiver(post_save, weak=False, dispatch_uid='household_enumeration_attempts_on_post_save')
-def household_enumeration_attempts_on_post_save(sender, instance, created, **kwargs):
+@receiver(post_delete, weak=False, dispatch_uid="household_enumeration_refusal_on_delete")
+def household_enumeration_refusal_on_delete(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdEnumerationRefusal):
+            # update the history model
+            options = {'household_member': instance.household_member,
+                       'survey': instance.survey,
+                       'refusal_date': instance.refusal_date,
+                       'reason': instance.reason,
+                       'reason_other': instance.reason_other}
+            HouseholdEnumerationRefusalHistory.objects.create(**options)
+            household_member = instance.household_member
+            household_member.refused_enumeration = False
+            household_member.save()
+
+
+@receiver(post_save, weak=False, dispatch_uid='household_enumeration_on_past_save')
+def household_enumeration_on_past_save(sender, instance, created, **kwargs):
+    """HouseholdEnumerationRefusal should be deleted if household_status.refused = False, updates enumaration attempts and no_elgible_members."""
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdLogEntry):
-            household = instance.household_log.household_structure.household
             household_structure = instance.household_log.household_structure
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
-            if not household_members and instance.household_status in ['no_household_informant', 'eligible_representative_absent']:
-                enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure__household=household).count()
-                household.enumeration_attempts = enumeration_attempts
-                household.save()
-
-
-@receiver(post_save, weak=False, dispatch_uid='delete_household_enumeration_refusal_on_post_save')
-def delete_household_enumeration_refusal(sender, instance, created, **kwargs):
-    """HouseholdEnumerationRefusal should be deleted if household_status.refused = False."""
-    if not kwargs.get('raw', False):
-        if isinstance(instance, HouseholdLogEntry):
+            if created:
+                household_structure.enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).count()
             household = instance.household_log.household_structure.household
             if not instance.household_status == 'refused':
                 HouseholdEnumerationRefusal.objects.filter(household=household).delete()
+            # update enumeration attempts
+            if not household_structure.enumerated and instance.household_status in [ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT]:
+                household_structure.failed_enumeration_attempts = HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).count()
+            # update if no eligible members
+            if household_structure.failed_enumeration_attempts >= 3 and not household_structure.eligible_members:
+                household_structure.eligible_members = False
+            household_structure.save()

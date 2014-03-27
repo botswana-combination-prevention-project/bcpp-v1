@@ -34,6 +34,8 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
+    history = AuditTrail()
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-replacing_item', ]
