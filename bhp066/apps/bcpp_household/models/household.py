@@ -6,7 +6,6 @@ from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalF
 
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
-from ..classes import ReplacementData
 
 from .plot import Plot
 from .base_replacement import BaseReplacement
@@ -156,7 +155,7 @@ class Household(BaseReplacement):
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
 
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household has been enumerated')
+    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
 
     enumeration_attempts = models.IntegerField(
         default=0,
@@ -164,7 +163,7 @@ class Household(BaseReplacement):
         help_text='Number of attempts to enumerate a plot to determine it\'s status.'
         )
 
-    household_status = models.CharField(
+    reason_not_enumerated = models.CharField(
         verbose_name='Household Status',
         max_length=50,
         null=True,
@@ -215,6 +214,13 @@ class Household(BaseReplacement):
         return True
 
     def is_plot(self):
+        return False
+
+    @property
+    def replaced(self):
+        """"Returns True is the household has been replaced."""
+        if self.replacement:
+            return True
         return False
 
     def structure(self):

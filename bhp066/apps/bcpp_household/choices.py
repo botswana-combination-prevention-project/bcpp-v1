@@ -1,3 +1,10 @@
+from .constants import ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION
+
+options = list(set([ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION]))
+options.sort()
+HOUSEHOLD_STATUS = [(item, item) for item in options]
+
+
 BCPP_VILLAGES = (
     (1, 'Dikwididi'),
     (2, 'Gabane'),
@@ -49,13 +56,6 @@ PLOT_LOG_STATUS = (
     ('ACCESSIBLE', 'Accessible'),
     ('INACCESSIBLE', 'Inaccessible'),
 )
-
-HOUSEHOLD_STATUS = (
-    ('eligible_representative_present', 'HOH or eligible representative present'),
-    ('eligible_representative_absent', 'HOH or eligible representative absent, ineligible household member present'),
-    ('no_household_informant', 'No household informant'),
-    ('refused', 'refused'),
-    )
 
 NOT_ENUMERATED_REASONS = (
         ('HOH_refued', 'HOH refusal'),
