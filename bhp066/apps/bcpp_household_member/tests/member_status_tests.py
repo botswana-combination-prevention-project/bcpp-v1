@@ -13,6 +13,7 @@ from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, EnrollmentChecklist
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_subject.models import SubjectConsent

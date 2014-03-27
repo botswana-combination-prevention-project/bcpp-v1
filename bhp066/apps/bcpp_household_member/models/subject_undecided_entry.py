@@ -30,6 +30,7 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
             household_member.save()
         super(SubjectUndecidedEntry, self).save(*args, **kwargs)
 
+    @property
     def inline_parent(self):
         return self.subject_undecided
 
