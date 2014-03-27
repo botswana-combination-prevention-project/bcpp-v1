@@ -2,10 +2,10 @@ from django import forms
 
 from edc.base.form.forms import BaseModelForm
 
-from ..models import HouseholdRefusal
+from ..models import HouseholdEnumerationRefusal
 
 
-class HouseholdRefusalForm(BaseModelForm):
+class HouseholdEnumerationRefusalForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -14,4 +14,4 @@ class HouseholdRefusalForm(BaseModelForm):
         return cleaned_data
 
     class Meta:
-        model = HouseholdRefusal
+        model = HouseholdEnumerationRefusal

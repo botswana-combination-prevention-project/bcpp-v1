@@ -33,6 +33,7 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
             household_member.save()
         super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
 
+    @property
     def inline_parent(self):
         return self.subject_absentee
 
@@ -42,7 +43,6 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
 
     class Meta:
         app_label = 'bcpp_household_member'
-#         db_table = 'bcpp_subject_subjectabsenteeentry'
         verbose_name = "Subject Absentee Entry"
         verbose_name_plural = "Subject Absentee Entries"
         unique_together = ('subject_absentee', 'report_datetime')

@@ -87,9 +87,8 @@ class HouseholdLogEntry(BaseReplacement):
     def save(self, *args, **kwargs):
         household = self.household_log.household_structure.household
         if self.household_status:
-            household.household_status = self.household_status
+            household.reason_not_enumerated = self.household_status
         household.save()
-
         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
