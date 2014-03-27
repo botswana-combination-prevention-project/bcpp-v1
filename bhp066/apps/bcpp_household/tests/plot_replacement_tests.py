@@ -17,11 +17,11 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdEnumerationRefusal, HouseholdAssessment
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
 
 from .factories import HouseholdFactory
 from .factories import PlotFactory
-from .factories import HouseholdEnumerationRefusalFactory
+from .factories import HouseholdRefusalFactory
 from .factories import HouseholdLogFactory
 from .factories import HouseholdLogEntryFactory
 from .factories import HouseholdAssessmentFactory
@@ -100,7 +100,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [])
-        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
     def test_check_refusal_household1a(self):
         """Asserts that a household of refused members is replaceble but if deleted is not replaceable."""

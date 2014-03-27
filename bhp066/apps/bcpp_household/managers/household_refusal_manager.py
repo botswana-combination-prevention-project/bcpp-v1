@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class HouseholdEnumerationRefusalManager(models.Manager):
+class HouseholdRefusalManager(models.Manager):
 
     def get_by_natural_key(self, household_identifier):
         Household = models.get_model('bcpp_household', 'Household')
