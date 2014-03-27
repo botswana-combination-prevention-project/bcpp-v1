@@ -7,7 +7,7 @@ from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 from edc.base.model.fields import UUIDField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..managers import HouseholdEnumerationRefusalManager, HouseholdEnumerationRefusalHistoryManager
+from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -21,7 +21,7 @@ HOUSEHOLD_REFUSAL = (
 )
 
 
-class BaseHouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
+class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -50,7 +50,7 @@ class BaseHouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
         if self.household_structure.enrolled:
             raise ValidationError('Household is enrolled.')
         self.household_structure.refused_enumeration = True
-        super(HouseholdEnumerationRefusal, self).save(*args, **kwargs)
+        super(HouseholdRefusal, self).save(*args, **kwargs)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -62,9 +62,9 @@ class BaseHouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
         abstract = True
 
 
-class HouseholdEnumerationRefusal(BaseHouseholdEnumerationRefusal):
+class HouseholdRefusal(BaseHouseholdRefusal):
 
-    objects = HouseholdEnumerationRefusalManager()
+    objects = HouseholdRefusalManager()
 
     history = AuditTrail()
 
@@ -77,11 +77,11 @@ class HouseholdEnumerationRefusal(BaseHouseholdEnumerationRefusal):
         ordering = ['household_structure', ]
 
 
-class HouseholdEnumerationRefusalHistory(BaseHouseholdEnumerationRefusal):
+class HouseholdRefusalHistory(BaseHouseholdRefusal):
 
     transaction = UUIDField()
 
-    objects = HouseholdEnumerationRefusalHistoryManager()
+    objects = HouseholdRefusalHistoryManager()
 
     history = AuditTrail()
 

@@ -7,5 +7,5 @@ from .community_manager import CommunityManager
 from .plot_manager import PlotManager
 from .plot_log_manager import PlotLogManager, PlotLogEntryManager
 from .household_assessment_manager import HouseholdAssessmentManager
-from .household_enumeration_refusal_manager import HouseholdEnumerationRefusalManager
-from .household_enumeration_refusal_history_manager import HouseholdEnumerationRefusalHistoryManager
+from .household_refusal_manager import HouseholdRefusalManager
+from .household_refusal_history_manager import HouseholdRefusalHistoryManager
