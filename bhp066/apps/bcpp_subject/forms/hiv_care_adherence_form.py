@@ -12,14 +12,8 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         # if no medical care, explain why not
         if cleaned_data.get('medical_care', None) == 'No' and not cleaned_data.get('no_medical_care'):
             raise forms.ValidationError('If participant has not received any medical care, please give reason why not')
-        # if never taken arv's give reason why
-        if cleaned_data.get('ever_recommended_arv', None) == 'No' and not cleaned_data.get('why_no_arv'):
-            raise forms.ValidationError('If participant has not taken any ARV\'s, give the main reason why not')
         if cleaned_data.get('why_no_arv', None) == 'Other' and not cleaned_data.get('why_no_arv_other'):
             raise forms.ValidationError('If participant reason for not taking ARV\'s is \'OTHER\', specify reason why not started ARV\'s?')
-        # if partipant has taken arv's, give date when these were started
-        if cleaned_data.get('ever_recommended_arv', None) == 'Yes' and not cleaned_data.get('first_arv'):
-            raise forms.ValidationError('If participant has taken ARV\'s, give the date when these were first started.')
         # if taking arv's have you missed any
         if cleaned_data.get('on_arv', None) == 'Yes' and not cleaned_data.get('adherence_4_day'):
             raise forms.ValidationError('If participant is taking ARV\'s, have they skipped/ missed taking any? Please indicate')
@@ -36,6 +30,15 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         # if you are not currently on arv's you have to give the date you stopped taking arv
         if cleaned_data.get('arv_naive', None) == 'Yes' and cleaned_data.get('on_arv', None) == 'No' and not cleaned_data.get('arv_stop_date'):
             raise forms.ValidationError('You have to indicate arv stop date if subject was on ARV and is NOT currently taking ARV\'s')
+        # if partipant has taken arv's, give date when these were started
+        if cleaned_data.get('arv_naive', None) == 'Yes' and not cleaned_data.get('first_arv'):
+            raise forms.ValidationError('If participant has taken ARV\'s, give the date when these were first started.')
+        # if participant has never taken ARV's, dont give a reason why they stopped.
+        if cleaned_data.get('arv_naive', None) == 'Yes' and cleaned_data.get('why_no_arv'):
+            raise forms.ValidationError('If participant has NEVER taken ARV\'s, reason why they stopped should be \'None\'.')
+        # if was recommended to take arv's but never taken arv's give reason why
+        if cleaned_data.get('ever_recommended_arv', None) == 'Yes' and cleaned_data.get('arv_naive', None) == 'No' and not cleaned_data.get('why_no_arv'):
+            raise forms.ValidationError('If participant has not taken any ARV\'s, give the main reason why not')
         # if currently taking arv's, how well has participant been taking medication
         if cleaned_data.get('on_arv', None) == 'Yes' and not cleaned_data.get('adherence_4_wk'):
             raise forms.ValidationError('If participant is currently taking ARV\'s, how well has he/she been taking the medication this past week?')

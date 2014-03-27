@@ -77,10 +77,10 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         return self.household.natural_key()
-    natural_key.dependencies = ['bcpp_household.household']
+    natural_key.dependencies = ['bcpp_household.household_structure']
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household__plot__plot_identifier')
+        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     @property
     def vdc_househould_status(self):
