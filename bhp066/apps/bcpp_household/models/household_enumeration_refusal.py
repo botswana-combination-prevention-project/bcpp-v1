@@ -4,11 +4,14 @@ from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
+from edc.base.model.fields import UUIDField
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..managers import HouseholdEnumerationRefusalManager
+from ..managers import HouseholdEnumerationRefusalManager, HouseholdEnumerationRefusalHistoryManager
+
 from .household_structure import HouseholdStructure
 from .plot import Plot
-from .base_replacement import BaseReplacement
+
 
 HOUSEHOLD_REFUSAL = (
     ('not_interested', 'Not Interested'),
@@ -18,7 +21,7 @@ HOUSEHOLD_REFUSAL = (
 )
 
 
-class HouseholdEnumerationRefusal(BaseReplacement):
+class BaseHouseholdEnumerationRefusal(BaseDispatchSyncUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -43,28 +46,47 @@ class HouseholdEnumerationRefusal(BaseReplacement):
         null=True,
         )
 
-    objects = HouseholdEnumerationRefusalManager()
-
-    history = AuditTrail()
-
     def save(self, *args, **kwargs):
         if self.household_structure.enrolled:
             raise ValidationError('Household is enrolled.')
         self.household_structure.refused_enumeration = True
         super(HouseholdEnumerationRefusal, self).save(*args, **kwargs)
 
+    def dispatch_container_lookup(self, using=None):
+        return (Plot, 'household_structure__household__plot__plot_identifier')
+
+    def __unicode__(self):
+        return unicode(self.household_structure) + '(' + unicode(self.report_datetime) + ')'
+
+    class Meta:
+        abstract = True
+
+
+class HouseholdEnumerationRefusal(BaseHouseholdEnumerationRefusal):
+
+    objects = HouseholdEnumerationRefusalManager()
+
+    history = AuditTrail()
+
     def natural_key(self):
         return self.household_structure.natural_key()
     natural_key.dependencies = ['bcpp_household.household_structure']
 
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_structure__household__plot__plot_identifier')
+    class Meta:
+        app_label = 'bcpp_household'
+        ordering = ['household_structure', ]
 
-    def replacement_container(self, using=None):
-        return self.household
 
-    def __unicode__(self):
-        return unicode(self.household_structure) + '(' + unicode(self.report_datetime) + ')'
+class HouseholdEnumerationRefusalHistory(BaseHouseholdEnumerationRefusal):
+
+    transaction = UUIDField()
+
+    objects = HouseholdEnumerationRefusalHistoryManager()
+
+    history = AuditTrail()
+
+    def natural_key(self):
+        return (self.transaction, )
 
     class Meta:
         app_label = 'bcpp_household'

@@ -1,18 +1,19 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.core.crypto_fields.fields import EncryptedTextField
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
-from ..choices import YES_NO
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
-from .base_replacement import BaseReplacement
+
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdLog(BaseReplacement):
-    #Household
+class HouseholdLog(BaseDispatchSyncUuidModel):
+
     household_structure = models.OneToOneField(HouseholdStructure)
 
     history = AuditTrail()
@@ -24,9 +25,6 @@ class HouseholdLog(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
-
-    def replacement_container(self, using=None):
-        return self.household_structure.household
 
     def natural_key(self):
         return self.household_structure.natural_key()
@@ -41,7 +39,7 @@ class HouseholdLog(BaseReplacement):
         app_label = 'bcpp_household'
 
 
-class HouseholdLogEntry(BaseReplacement):
+class HouseholdLogEntry(BaseDispatchSyncUuidModel):
 
     household_log = models.ForeignKey(HouseholdLog)
 
@@ -54,6 +52,7 @@ class HouseholdLogEntry(BaseReplacement):
         max_length=50,
         choices=HOUSEHOLD_STATUS,
         null=True,
+        blank=False,
         )
 
     next_appt_datetime = models.DateTimeField(
@@ -85,17 +84,10 @@ class HouseholdLogEntry(BaseReplacement):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def save(self, *args, **kwargs):
-        household = self.household_log.household_structure.household
-        if self.household_status:
-            household.reason_not_enumerated = self.household_status
-        household.save()
         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
-
-    def replacement_container(self, using=None):
-        return self.household_log.household_structure.household
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')

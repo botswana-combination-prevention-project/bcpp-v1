@@ -10,12 +10,13 @@ from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.device.classes import Device
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
+
 from apps.bcpp.choices import COMMUNITIES
-from ..classes import ReplacementData
-from .base_replacement import BaseReplacement
+
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
@@ -29,7 +30,7 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(BaseReplacement):
+class Plot(BaseDispatchSyncUuidModel):
 
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
@@ -167,14 +168,12 @@ class Plot(BaseReplacement):
         editable=False,
         )
 
-    replacement = models.CharField(
+    replaces = models.CharField(
         max_length=25,
         blank=True,
         editable=False,
-        null=True
+        help_text=("plot or household identifier that this plot replaced."),
         )
-
-    replaceble = models.BooleanField(default=False, editable=False, help_text='Set to True if the plot is a potential replacement')
 
     device_id = models.CharField(
         max_length=2,
@@ -227,6 +226,14 @@ class Plot(BaseReplacement):
         )
 
     bhs = models.NullBooleanField(editable=False)
+
+    replaces = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot or household that this plot replaces',
+        editable=False,
+        )
 
     objects = PlotManager()
 
@@ -360,14 +367,6 @@ class Plot(BaseReplacement):
     def is_dispatch_container_model(self):
         return True
 
-    def replaced(self, using=None):
-        if self.replacement:
-            return self
-        return None
-
-    def is_plot(self):
-        return True
-
     def dispatched_as_container_identifier_attr(self):
         return 'plot_identifier'
 
@@ -425,7 +424,7 @@ class Plot(BaseReplacement):
     @property
     def log_entry_form_urls(self):
         """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
-        from .plot_log import PlotLog, PlotLogEntry
+        from .plot_log import PlotLogEntry
         entry_urls = {}
         plot_log = self.plot_log
         for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):
