@@ -6,8 +6,9 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.subject.registration.models import RegisteredSubject
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import BaseReplacement, HouseholdStructure
+from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_list.models import ElectricalAppliances, TransportMode
 from apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
@@ -16,7 +17,7 @@ from ..managers import HouseholdInfoManager
 from .household_member import HouseholdMember
 
 
-class HouseholdInfo(BaseReplacement):
+class HouseholdInfo(BaseDispatchSyncUuidModel):
     """Collects information from the Head of Household on household economic status."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -144,9 +145,6 @@ class HouseholdInfo(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
-
-    def replacement_container(self, using=None):
-        return self.household_structure.household
 
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject

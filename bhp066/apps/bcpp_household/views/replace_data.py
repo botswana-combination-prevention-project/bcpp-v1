@@ -4,11 +4,11 @@ from django.db.models import Q
 
 from edc.device.dispatch.models import DispatchContainerRegister
 
-from ..models import Plot, Household
+from ..models import HouseholdStructure
 from ..classes import ReplacementData
 
 
-def replace_data(request):
+def replace_data(request, survey):
     """Get all plots to be replaced.
 
     Filter plots to be replaced by calling replacement methods that return replacement household.
@@ -16,16 +16,15 @@ def replace_data(request):
     replacement_data = []
     replace_str = ''
     template = 'replacement_data.html'
-    plots = Plot.objects.filter(selected__in=[1, 2])
+    household_structures = HouseholdStructure.objects.filter(household__plot__selected__in=[1, 2])
+    
     #Get all household to be replaced
-    for plot in plots:
-        if ReplacementData().check_refusals(plot):
-            replacement_data = replacement_data + ReplacementData().check_refusals(plot)  # replacement of refusals.
-        if ReplacementData().check_absentees_ineligibles(plot):
-            replacement_data = replacement_data + ReplacementData().check_absentees_ineligibles(plot)  # replacement of absentees.
-        if ReplacementData().is_replacement_valid(plot):
-            replacement_data = replacement_data + ReplacementData().is_replacement_valid(plot)  # replacement of an invalid replacement.
+    replacement_data = ReplacementData(survey).get_replaceable_items_for_view()
+
+    
     replacement_count = len(replacement_data)
+    
+    #[household, reason, producer]
     for item in replacement_data:
         if isinstance(item[0], Plot):
             replace_str = replace_str + ',' + item[0].plot_identifier

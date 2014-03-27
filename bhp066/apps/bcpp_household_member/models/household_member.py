@@ -1,7 +1,6 @@
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
@@ -13,20 +12,19 @@ from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-#from apps.bcpp_household.choices import RELATIONS
-from apps.bcpp_household.models import BaseReplacement
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import  ABSENT, REFUSED, UNDECIDED, NOT_ELIGIBLE, HTC
+from ..constants import  ABSENT, UNDECIDED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
 
-class HouseholdMember(BaseReplacement):
+class HouseholdMember(BaseDispatchSyncUuidModel):
 
     household_structure = models.ForeignKey(HouseholdStructure,
         null=True,
@@ -87,23 +85,23 @@ class HouseholdMember(BaseReplacement):
 
     eligible_member = models.NullBooleanField(default=None, editable=False, help_text='eligible to be screened. based on data on this form')
 
-    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the enrollment checklist if completed")
+    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the enrollment checklist save method only. True if subject passes the eligibility criteria.")
 
-    enrollment_checklist_completed = models.NullBooleanField(default=None, editable=False, help_text="updated when subject completes enrollment checklist regardless of the eligibility outcome.")
+    enrollment_checklist_completed = models.NullBooleanField(default=None, editable=False, help_text="updated by enrollment checklist only (regardless of the eligibility outcome).")
 
-    enrollment_loss_completed = models.NullBooleanField(default=None, editable=False, help_text="updated when subject completes enrollment loss.")
+    enrollment_loss_completed = models.NullBooleanField(default=None, editable=False, help_text="updated by enrollment loss save method only.")
 
-    refused = models.BooleanField(default=False, editable=False, help_text="")
+    refused = models.BooleanField(default=False, editable=False, help_text="updated by subject refusal save method only")
 
-    htc = models.BooleanField(default=False, editable=False, help_text="updated when subject completes Htc")
+    htc = models.BooleanField(default=False, editable=False, help_text="updated by the subject HTC save method only")
 
-    is_consented = models.BooleanField(default=False, editable=False, help_text="updated in subject consent save method")
+    is_consented = models.BooleanField(default=False, editable=False, help_text="updated by the subject consent save method only")
 
     eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
 
-    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household enrollment checklist.")
+    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household enrollment checklist only.")
 
-    reported = models.BooleanField(default=False, editable=False, help_text="")
+    reported = models.BooleanField(default=False, editable=False, help_text="update by any of subject absentee, undecided, refusal")
 
     visit_attempts = models.IntegerField(default=0, help_text="")
 
@@ -232,9 +230,6 @@ class HouseholdMember(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
-
-    def replacement_container(self, using=None):
-        return self.household_structure.household
 
     def update_hiv_history_on_pre_save(self, **kwargs):
         """Updates from lab_tracker."""
