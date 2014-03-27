@@ -1,10 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 
-from ..managers import HouseholdRefusalManager
+from ..managers import HouseholdEnumerationRefusalManager
 from .household_structure import HouseholdStructure
 from .plot import Plot
 from .base_replacement import BaseReplacement
@@ -17,7 +18,7 @@ HOUSEHOLD_REFUSAL = (
 )
 
 
-class HouseholdRefusal(BaseReplacement):
+class HouseholdEnumerationRefusal(BaseReplacement):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -42,23 +43,29 @@ class HouseholdRefusal(BaseReplacement):
         null=True,
         )
 
-    objects = HouseholdRefusalManager()
+    objects = HouseholdEnumerationRefusalManager()
 
     history = AuditTrail()
 
+    def save(self, *args, **kwargs):
+        if self.household_structure.enrolled:
+            raise ValidationError('Household is enrolled.')
+        self.household_structure.refused_enumeration = True
+        super(HouseholdEnumerationRefusal, self).save(*args, **kwargs)
+
     def natural_key(self):
-        return self.household.natural_key()
-    natural_key.dependencies = ['bcpp_household.household']
+        return self.household_structure.natural_key()
+    natural_key.dependencies = ['bcpp_household.household_structure']
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household__plot__plot_identifier')
+        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     def replacement_container(self, using=None):
         return self.household
 
     def __unicode__(self):
-        return unicode(self.household) + '(' + unicode(self.report_datetime) + ')'
+        return unicode(self.household_structure) + '(' + unicode(self.report_datetime) + ')'
 
     class Meta:
         app_label = 'bcpp_household'
-        ordering = ['household', ]
+        ordering = ['household_structure', ]
