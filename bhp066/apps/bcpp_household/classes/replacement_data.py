@@ -95,17 +95,16 @@ class ReplacementData(object):
         return replacement_household
 
     def replacement_reason(self, household, household_structure):
-        """check the reason why a plot or household is being replaced."""
+        """check the reason why a household is being replaced."""
         reason = None
         if self.is_absent(household, household_structure):
             reason = 'all members are absent'
         elif self.is_hoh_refused(household):
             reason = 'HOH refusal'
-        elif self.no_eligible_rep(replacement_item):
+        elif self.no_eligible_rep(household):
             reason = 'no eligible members'
-#         elif isinstance(Plot, replacement_item):
-#             if self.is_replacement_valid(replacement_item):
-#                 reason = 'invalid replacement'
+        elif self.is_refusal(self, household, household_structure):
+            reason = 'all members refused'
         return reason
 
     def is_replacement_valid(self, plot):
