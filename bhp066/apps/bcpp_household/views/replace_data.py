@@ -1,11 +1,8 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db.models import Q
 
-from edc.device.dispatch.models import DispatchContainerRegister
-
-from ..models import HouseholdStructure
-from ..classes import ReplacementData
+from ..models import Household, Plot
+from ..helpers import ReplacementHelper
 
 
 def replace_data(request, survey):
@@ -13,18 +10,10 @@ def replace_data(request, survey):
 
     Filter plots to be replaced by calling replacement methods that return replacement household.
     """
-    replacement_data = []
     replace_str = ''
     template = 'replacement_data.html'
-    household_structures = HouseholdStructure.objects.filter(household__plot__selected__in=[1, 2])
-    
-    #Get all household to be replaced
-    replacement_data = ReplacementData(survey).get_replaceable_items_for_view()
-
-    
-    replacement_count = len(replacement_data)
-    
-    #[household, reason, producer]
+    replacement_data = ReplacementHelper(survey).replaceable_households(survey)
+#     replacement_data = ReplacementHelper(survey).replaceable_households(survey)
     for item in replacement_data:
         if isinstance(item[0], Plot):
             replace_str = replace_str + ',' + item[0].plot_identifier
@@ -34,7 +23,7 @@ def replace_data(request, survey):
             template, {
                 'replacement_data': replacement_data,
                 'replace_str': replace_str,
-                'replacement_count': replacement_count,
+                'replacement_count': len(replacement_data),
                 },
                 context_instance=RequestContext(request)
             )

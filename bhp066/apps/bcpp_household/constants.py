@@ -1,6 +1,6 @@
 ELIGIBLE_REPRESENTATIVE_ABSENT = 'eligible_representative_absent'
 ELIGIBLE_REPRESENTATIVE_PRESENT = 'eligible_representative_present'
-NON_RESIDENTIAL = 'non-residential'
+NON_RESIDENTIAL = 'non_residential'
 NO_HOUSEHOLD_INFORMANT = 'no_household_informant'
 REFUSED_ENUMERATION = 'refused'
 RESIDENTIAL_HABITABLE = 'residential_habitable'
