@@ -7,8 +7,7 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.constants import NO_HOUSEHOLD_INFORMANT
-from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdEnumerationRefusal)
+from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
 from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_survey.models import Survey
@@ -30,7 +29,7 @@ class HouseholdDashboard(Dashboard):
         self._household_assessment = None
         self._current_member_count = None
         self._household_info = None
-        self._household_enumeration_refusal = None
+        self._household_refusal = None
         self.__eligible_hoh = None
         self._first_survey = None
         self._survey = None
@@ -58,8 +57,8 @@ class HouseholdDashboard(Dashboard):
             enrollment_checklist_meta=EnrollmentChecklist._meta,
             subject_htc_meta=SubjectHtc._meta,
             household_info_meta=HouseholdInfo._meta,
-            household_enumeration_refusal_meta=HouseholdEnumerationRefusal._meta,
-            household_enumeration_refusal=self.household_enumeration_refusal,
+            household_refusal_meta=HouseholdRefusal._meta,
+            household_refusal=self.household_refusal,
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
             head_household_eligibility=self.head_household_eligibility,
             plot=self.household.plot,
@@ -75,7 +74,7 @@ class HouseholdDashboard(Dashboard):
             survey=self.survey,
             rendered_surveys=self.render_surveys(),
             allow_edit_members=self.allow_edit_members(),
-            has_household_log_entry=self.has_household_log_entry(),
+            has_household_log_entry=self.has_household_log_entry,
             household_info=self.household_info,
             eligible_hoh=self.any_eligible_hoh,
             mapper_name=self.mapper_name,
@@ -83,25 +82,23 @@ class HouseholdDashboard(Dashboard):
             household_dashboard_url=self.dashboard_url_name,
             )
 
+    @property
     def has_household_log_entry(self):
         """Confirms there is an househol_log_entry for today."""
         today = date.today()
+        has_household_log_entry = False
         if self.household_log:
-            if not HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
-                return False
-            elif HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day) and self.household_assessment:
-                if self.household_assessment.vdc_househould_status:
-                    return False
-            elif HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day):
-                if HouseholdLogEntry.objects.get(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).reason_not_enumerated == NO_HOUSEHOLD_INFORMANT:
-                    return False
-        return True
+            if HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).exists():
+                has_household_log_entry = True
+                if self.household_assessment:
+                    has_household_log_entry = False
+        return has_household_log_entry
 
     @property
     def household_assessment(self):
         self._household_assessment = None
-        if HouseholdAssessment.objects.filter(household=self.household):
-            self._household_assessment = HouseholdAssessment.objects.get(household=self.household)
+        if HouseholdAssessment.objects.filter(household_structure=self.household_structure):
+            self._household_assessment = HouseholdAssessment.objects.get(household_structure=self.household_structure)
         return self._household_assessment
 
     @property
@@ -112,12 +109,12 @@ class HouseholdDashboard(Dashboard):
         return self._household_info
 
     @property
-    def household_enumeration_refusal(self):
-        self._household_enumeration_refusal = None
-        if HouseholdEnumerationRefusal.objects.filter(household=self.household):
-            self._household_enumeration_refusal = HouseholdEnumerationRefusal.objects.get(household=self.household)
-            return self._household_enumeration_refusal
-        return self._household_enumeration_refusal
+    def household_refusal(self):
+        self._household_refusal = None
+        if HouseholdRefusal.objects.filter(household_structure=self.household_structure):
+            self._household_refusal = HouseholdRefusal.objects.get(household_structure=self.household_structure)
+            return self._household_refusal
+        return self._household_refusal
 
     @property
     def any_eligible_hoh(self):
@@ -208,10 +205,10 @@ class HouseholdDashboard(Dashboard):
     @property
     def household_log(self):
         if not self._household_log:
-            if not HouseholdLog.objects.filter(household_structure=self.household_structure):
-                self._household_log = HouseholdLog.objects.create(household_structure=self.household_structure)
-            else:
+            try:
                 self._household_log = HouseholdLog.objects.get(household_structure=self.household_structure)
+            except HouseholdLog.DoesNotExist:
+                self._household_log = HouseholdLog.objects.create(household_structure=self.household_structure)
         return self._household_log
 
     @property

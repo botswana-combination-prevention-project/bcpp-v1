@@ -12,6 +12,7 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     list_filter = ('household_log__household_structure__survey', 'report_datetime', 'next_appt_datetime')
     radio_fields = {
         "next_appt_datetime_source": admin.VERTICAL,
+        "household_status": admin.VERTICAL,
         }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
