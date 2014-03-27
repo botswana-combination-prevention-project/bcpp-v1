@@ -1,4 +1,4 @@
-from django.contrib.comments import get_model
+from django.db.models import get_model
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -38,11 +38,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     enumerated = models.BooleanField(default=False, editable=False, help_text='Set to True when first household_member is enumerated')
 
-    enumeration_attempts = models.IntegerField(editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
+    enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
 
     refused_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household enumeration refusal save method only')
 
-    failed_enumeration_attempts = models.IntegerField(editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of failed attempts to enumerate a household_structure.')
+    failed_enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of failed attempts to enumerate a household_structure.')
 
     failed_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
 

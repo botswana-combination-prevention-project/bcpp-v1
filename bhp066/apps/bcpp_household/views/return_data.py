@@ -7,10 +7,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from ..classes import ReplacementData
-from ..models import Household
-from ..models import Plot
-from ..models import ReplacementHistory
+from ..helpers import ReplacementHelper
+from ..models import Household, Plot, ReplacementHistory
 
 
 def return_data(request):
@@ -45,10 +43,10 @@ def return_data(request):
                     if not replacing_plot.replacement:
                         if Household.objects.get(household_identifier=item):
                             household = Household.objects.get(household_identifier=item)
-                            replacement_reason = ReplacementData().replacement_reason(household)
+                            replacement_reason = ReplacementHelper().replacement_reason(household)
                         else:
                             plot = Plot.objects.get(plot_identifier=item)
-                            replacement_reason = ReplacementData().replacement_reason(plot)
+                            replacement_reason = ReplacementHelper().replacement_reason(plot)
                         if household:
                             replacement_data_list.append(replacing_plot.plot_identifier)
                             household.replacement = replacing_plot.plot_identifier
@@ -92,7 +90,7 @@ def return_data(request):
                             replacing_plot.replacement = item.household_identifier
                             replacing_plot.save()
                     elif not item.is_dispatched:
-                        plot = Plot.objects.get(household_identifier=house.replacement_plot)
+                        plot = Plot.objects.get(household_identifier=household.replacement_plot)
                         replacement_data_list.append(plot.plot_identifier)
                 pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_data_list})).values_list('pk')
                 selected = list(itertools.chain(*pks))

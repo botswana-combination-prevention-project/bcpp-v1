@@ -13,14 +13,14 @@ class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
         'residency',
         'member_count',
         'eligibles',
-        'ineligibble_reason',
+        'ineligible_reason',
         'last_seen_home',
         )
 
     radio_fields = {
         'residency': admin.VERTICAL,
         'eligibles': admin.VERTICAL,
-        'ineligibble_reason': admin.VERTICAL,
+        'ineligible_reason': admin.VERTICAL,
         'last_seen_home': admin.VERTICAL,
         }
 
