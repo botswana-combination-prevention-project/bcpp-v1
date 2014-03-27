@@ -3,15 +3,15 @@ from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
 
 from .plot import Plot
-from .base_replacement import BaseReplacement
 
 
-class Household(BaseReplacement):
+class Household(BaseDispatchSyncUuidModel):
 
     plot = models.ForeignKey(Plot, null=True)
 
@@ -120,14 +120,6 @@ class Household(BaseReplacement):
         editable=False,
         )
 
-    #Store a plot identifier that replaces a household
-    replacement = models.CharField(
-        max_length=25,
-        blank=True,
-        editable=False,
-        db_index=True,
-        )
-
     replaceble = models.BooleanField(default=False, editable=False, help_text='Set to True if the household is a potential replacement')
 
     comment = EncryptedTextField(
@@ -150,18 +142,12 @@ class Household(BaseReplacement):
         default='unconfirmed',
         editable=False)
 
-    # see subject_consent save method
+    # updated by subject_consent save method
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
 
     enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
-
-    enumeration_attempts = models.IntegerField(
-        default=0,
-        editable=False,
-        help_text='Number of attempts to enumerate a plot to determine it\'s status.'
-        )
 
     reason_not_enumerated = models.CharField(
         verbose_name='Household Status',
@@ -209,19 +195,6 @@ class Household(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
-
-    def is_household(self):
-        return True
-
-    def is_plot(self):
-        return False
-
-    @property
-    def replaced(self):
-        """"Returns True is the household has been replaced."""
-        if self.replacement:
-            return True
-        return False
 
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))

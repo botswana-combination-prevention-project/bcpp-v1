@@ -8,14 +8,14 @@ from edc.choices.common import YES_NO
 from edc.base.model.validators import eligible_if_yes
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import BaseReplacement, HouseholdStructure
+from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdHeadEligibilityManager
 
 from .household_member import HouseholdMember
 
 
-class HouseholdHeadEligibility(BaseReplacement):
+class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
     """Determines if the household member is eligible to be treated as head of household."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
@@ -66,9 +66,6 @@ class HouseholdHeadEligibility(BaseReplacement):
 
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
-
-    def replacement_container(self, using=None):
-        return self.household_member.household_structure.household
 
     def save(self, *args, **kwargs):
         self.matches_household_member_values(self.household_member)

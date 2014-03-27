@@ -55,7 +55,7 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
         if self.in_replaced_household:
             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         else:
-            self.update_replaceable()
+            self.update_replacement_data()
         super(BaseSubjectEntry, self).save(*args, **kwargs)
 
     @property
@@ -63,12 +63,12 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
         """Returns True if the household for this entry is "replaced"""""
         return self.inline_parent.household_member.household_structure.household.replaced
 
-    def update_replaceable(self, using=None):
+    def update_replacement_data(self, using=None):
         plot = self.inline_parent.household_member.household_structure.household.plot
         household = self.inline_parent.household_member.household_structure.household
         household_structure = self.inline_parent.household_member.household_structure
         
-        if ReplacementData().check_refusals(plot, household, household_structure):
+        if ReplacementData(household_structure).check_refusals():
             for item in ReplacementData().check_refusals(plot):  # item is a household or a plot
                 item[0].replaceble = True
                 item[0].save()
@@ -80,7 +80,6 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
             for item in ReplacementData().is_replacement_valid(plot):
                 item[0].replaceble = True
                 item[0].save()
-
 
     def dispatch_container_lookup(self):
         field = None

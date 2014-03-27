@@ -3,18 +3,19 @@ from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_DONT_KNOW
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_list.models import ResidentMostLikely
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
 from ..choices import INELIGIBLE_REASON
 from ..choices import RESIDENT_LAST_SEEN
-from .base_replacement import BaseReplacement
+from ..constants import RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS
+
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdAssessment(BaseReplacement):
+class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
@@ -41,7 +42,7 @@ class HouseholdAssessment(BaseReplacement):
         editable=True,
         )
 
-    ineligibble_reason = models.CharField(
+    ineligible_reason = models.CharField(
         verbose_name="If no members are eligible for this study, please state the reason for ineligility.",
         null=True,
         max_length=25,
@@ -65,15 +66,21 @@ class HouseholdAssessment(BaseReplacement):
 
     history = AuditTrail()
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.household_structure.failed_enumeration = True
+        self.household_structure.no_informant = False
+        if self.last_seen_home in [RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS]:
+            self.household_structure.no_informant = True
+        self.household_structure.save()
+        super(HouseholdAssessment, self).save(*args, **kwargs)
+
     def natural_key(self):
         return self.household.natural_key()
     natural_key.dependencies = ['bcpp_household.household']
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household__plot__plot_identifier')
-
-    def replacement_container(self, using=None):
-        return self.household
 
     @property
     def vdc_househould_status(self):

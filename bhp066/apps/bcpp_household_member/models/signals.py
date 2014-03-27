@@ -40,6 +40,10 @@ def household_member_on_pre_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdMember):
             instance.update_hiv_history_on_pre_save(**kwargs)
+            # update tell household structure we have eligible members
+            if instance.eligible_member:
+                instance.household_structure.eligible_members = True
+                instance.household_structure.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid="household_member_on_post_save")
@@ -47,6 +51,17 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdMember):
             instance.update_registered_subject_on_post_save(**kwargs)
+
+
+@receiver(post_delete, weak=False, dispatch_uid="household_member_on_post_delete")
+def household_member_on_post_delete(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdMember):
+            # check that household_structure still has eligible members
+            if instance.eligible_member:
+                if not HouseholdMember.objects.filter(household_structure=instance.household_structure, eligible_member=True):
+                    instance.household_structure.eligible_members = False
+                    instance.household_structure.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='base_household_member_consent_on_post_save')

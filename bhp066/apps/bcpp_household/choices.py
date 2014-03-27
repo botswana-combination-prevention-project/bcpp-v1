@@ -1,8 +1,10 @@
-from .constants import ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION
+from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
+                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS,
+                        NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT)
 
 options = list(set([ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION]))
 options.sort()
-HOUSEHOLD_STATUS = [(item, item) for item in options]
+HOUSEHOLD_STATUS = [(item, item) for item in options]  # converted from ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION
 
 
 BCPP_VILLAGES = (
@@ -47,9 +49,9 @@ INFO_PROVIDER = (
     ('OTHER', 'Other'))
 
 PLOT_STATUS = (
-    ('non-residential', 'non-residential'),
-    ('residential_not_habitable', 'residential, not-habitable'),
-    ('residential_habitable', 'residential, habitable'),
+    (NON_RESIDENTIAL, 'non-residential'),
+    (RESIDENTIAL_NOT_HABITABLE, 'residential, not-habitable'),
+    (RESIDENTIAL_HABITABLE, 'residential, habitable'),
     )
 
 PLOT_LOG_STATUS = (
@@ -58,7 +60,7 @@ PLOT_LOG_STATUS = (
 )
 
 NOT_ENUMERATED_REASONS = (
-        ('HOH_refued', 'HOH refusal'),
+        ('hoh_refused', 'HOH refusal'),
         ('no_household_informant', 'No Household Informant'),
 )
 
@@ -69,25 +71,15 @@ HOUSEHOLD_COMPLETION_STATUS = (
 
 
 STATUS = (
-    ('WITHIN_BCPP_AREA', 'In BCPP Village'),
-    ('MOVED', 'No longer lives here'),
-    ('DECEASED', 'Deceased'),
+    ('within_bcpp_area', 'In BCPP Village'),
+    ('moved', 'No longer lives here'),
+    ('deceased', 'Deceased'),
     ("OTHER", 'Other'),
 )
 
 SELECTED = (
-            (1, 'twenty_percent'),
-            (2, 'five_percent'),
-)
-
-ENUMERATION_STATUS = (
-    ('yes', 'Yes'),
-    ('no', 'No')
-)
-
-YES_NO = (
-    ('yes', 'Yes'),
-    ('no', 'No')
+    (TWENTY_PERCENT, 'twenty_percent'),
+    (FIVE_PERCENT, 'five_percent'),
 )
 
 SECTIONS = (
@@ -118,8 +110,8 @@ INELIGIBLE_REASON = (
     )
 
 RESIDENT_LAST_SEEN = (
-        ('4_weeks_a_year', 'Spends at least 4 weeks in a household over the course of the past year '),
-        ('1_night_less_than_4_weeks_year', 'spends at least 1 night be probably less than 4 weeks/year in the household'),
+        (RESIDENT_LAST_SEEN_4WKS, 'Spends at least 4 weeks in a household over the course of the past year '),
+        (RESIDENT_LAST_SEEN_LESS_4WKS, 'spends at least 1 night be probably less than 4 weeks/year in the household'),
         ('never_spent_1_day_over_a_year', 'did not even spend 1 night in the household over the past year'),
         ('dont_know', 'Don\'t know'),
 )

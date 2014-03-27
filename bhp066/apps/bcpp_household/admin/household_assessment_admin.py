@@ -1,6 +1,5 @@
 from django.contrib import admin
 from apps.bcpp_household.forms import HouseholdAssessmentForm
-from apps.bcpp_household.actions import process_dispatch
 from apps.bcpp_household.models import HouseholdAssessment, Household
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
@@ -20,7 +19,6 @@ class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
 
     radio_fields = {
         'residency': admin.VERTICAL,
-        'member_count': admin.VERTICAL,
         'eligibles': admin.VERTICAL,
         'ineligibble_reason': admin.VERTICAL,
         'last_seen_home': admin.VERTICAL,
