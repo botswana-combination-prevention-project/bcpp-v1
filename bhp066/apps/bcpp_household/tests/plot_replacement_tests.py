@@ -7,7 +7,7 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers, Mapper
 
-from apps.bcpp_household.classes import ReplacementData
+from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
 from apps.bcpp_household_member.constants import REFUSED, ABSENT
@@ -21,7 +21,7 @@ from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdL
 
 from .factories import HouseholdFactory
 from .factories import PlotFactory
-from .factories import HouseholdRefusalFactory
+from .factories import HouseholdEnumerationRefusalFactory
 from .factories import HouseholdLogFactory
 from .factories import HouseholdLogEntryFactory
 from .factories import HouseholdAssessmentFactory
@@ -92,13 +92,15 @@ class PlotReplacementTests(TestCase):
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='M',
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        self.assertEqual(ReplacementData().check_refusals(plot, household, household_structure), [[household, 'all members refused', None]])
+        replacement_helper = ReplacementHelper()
+        self.assertEquals(replacement_helper.replaceable_plots(), [])
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_check_refusal_household1a(self):
         """Asserts that a household of refused members is replaceble but if deleted is not replaceable."""

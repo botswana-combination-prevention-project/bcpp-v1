@@ -55,7 +55,7 @@ class ReplacementHelper(object):
     @property
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot."""
-        self.replaceable = False
+        replaceable = False
         if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused):
             replaceable = True
         if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.all_eligible_members_absent):
@@ -69,7 +69,7 @@ class ReplacementHelper(object):
     @property
     def replaceable_plot(self):
         """Returns True if a plot meets the criteria to be replaced by a plot."""
-        self.replaceable = False
+        replaceable = False
         if self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
             replaceable = True
         return replaceable

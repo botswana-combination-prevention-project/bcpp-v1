@@ -6,7 +6,6 @@ from .household_structure_factory import HouseholdStructureFactory
 from .plot_factory import PlotFactory
 from .plot_log_factory import PlotLogFactory
 from .plot_log_entry_factory import PlotLogEntryFactory
-from .household_enumeration_factory import HouseholdEnumerationRefusalFactory
-from .household_refusal_factory import HouseholdRefusalFactory
+from .household_enumeration_refusal_factory import HouseholdEnumerationRefusalFactory
 from .plot_identifier_factory import PlotIdentifierHistoryFactory
 from .household_assessment_factory import HouseholdAssessmentFactory
