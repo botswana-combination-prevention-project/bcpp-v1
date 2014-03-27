@@ -67,13 +67,21 @@ class HouseholdAssessment(BaseReplacement):
 
     def natural_key(self):
         return self.household.natural_key()
-    natural_key.dependencies = ['bcpp_household.household']
+    natural_key.dependencies = ['bcpp_household.household_structure']
 
     def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household__plot__plot_identifier')
+        return (Plot, 'household_structure__household__plot__plot_identifier')
 
     def replacement_container(self, using=None):
-        return self.household
+        return self.household_structure.household
+
+    def save(self, *args, **kwargs):
+        household_structure = self.household_log.household_structure.household
+        household_structure.no_informant = False
+        if self.last_seen_home in ['4_weeks_a_year', '1_night_less_than_4_weeks_year']:
+            household_structure.no_informant = True
+        household_structure.save()
+        super(HouseholdAssessment, self).save(*args, **kwargs)
 
     @property
     def vdc_househould_status(self):
