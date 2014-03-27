@@ -3,7 +3,7 @@ from .community import Community
 from .gps_device import GpsDevice
 from .household import Household
 from .household_assessment import HouseholdAssessment
-from .household_enumeration_refusal import HouseholdEnumerationRefusal
+from .household_refusal import HouseholdRefusal
 from .household_identifier_history import HouseholdIdentifierHistory
 from .household_log import *
 from .household_structure import HouseholdStructure
