@@ -3,7 +3,8 @@ from django.utils.translation import ugettext as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 from apps.bcpp_list.models import PartnerResidency
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE, LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE
+from apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE, LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, 
+                               FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE, AGE_RANGES)
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -57,12 +58,10 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         help_text="",
         )
 
-    first_exchange = models.IntegerField(
+    first_exchange = models.CharField(
         verbose_name=_("To the best of your knowledge, how old is this person?"),
-        max_length=3,
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(10), MaxValueValidator(140)],
+        max_length=40,
+        choices=AGE_RANGES,
         help_text=("Note: If participant does not want to answer, leave blank."),
         )
 
