@@ -5,5 +5,5 @@ from .household_log_admin import HouseholdLogAdmin, HouseholdLogEntryAdmin
 from .household_structure_admin import HouseholdStructureAdmin
 from .plot_admin import PlotAdmin
 from .plot_log_admin import PlotLogEntryAdmin, PlotLogAdmin
-from .household_enumeration_refusal_admin import HouseholdRefusalAdmin
+from .household_refusal_admin import HouseholdRefusalAdmin
 from .household_assessment_admin import HouseholdAssessmentAdmin

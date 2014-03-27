@@ -23,7 +23,6 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 admin.autodiscover()
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
-#BcppClinicConfiguration()
 BcppAppConfiguration()
 site_mappers.autodiscover()
 site_visit_schedules.autodiscover()

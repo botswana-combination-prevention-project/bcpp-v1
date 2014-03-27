@@ -13,7 +13,7 @@ from .plot import Plot
 
 class Household(BaseDispatchSyncUuidModel):
 
-    plot = models.ForeignKey(Plot, null=True)  # TODO: field should not be nullable.
+    plot = models.ForeignKey(Plot, null=True)
 
     household_identifier = models.CharField(
         verbose_name='Household Identifier',
@@ -120,14 +120,7 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    #Indicates that a household has been replaced if its part of twenty percent.
-    #For five percent indicates that a household has been used for replacement.
-    replacement =  models.CharField(
-        max_length=25,
-        blank=True,
-        editable=False,
-        db_index=True,
-        )
+    replaceble = models.BooleanField(default=False, editable=False, help_text='Set to True if the household is a potential replacement')
 
     comment = EncryptedTextField(
         max_length=250,
@@ -149,20 +142,14 @@ class Household(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
-    # see subject_consent save method
+    # updated by subject_consent save method
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
 
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household has been enumerated')
+    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
 
-    enumeration_attempts = models.IntegerField(
-        default=0,
-        editable=False,
-        help_text='Number of attempts to enumerate a plot to determine it\'s status.'
-        )
-
-    household_status = models.CharField(
+    reason_not_enumerated = models.CharField(
         verbose_name='Household Status',
         max_length=50,
         null=True,
