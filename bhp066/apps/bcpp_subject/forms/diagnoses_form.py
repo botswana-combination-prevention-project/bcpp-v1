@@ -30,6 +30,11 @@ class StiForm (BaseSubjectModelForm):
 #         if cleaned_data.get('sti_date'):
 #             if cleaned_data.get('sti_date') > date.today():
 #                 raise forms.ValidationError('The STI diagnoses date date cannot be greater than today\'s date. Please correct.')
+        #It None in diagnosis, then ensure no date is entered.
+        if ((cleaned_data.get('sti_dx') is None or cleaned_data.get('sti_dx')[0].name == 'None') and ((cleaned_data.get('wasting_date') is not None) or 
+            (cleaned_data.get('yeast_infection_date') is not None) or (cleaned_data.get('pneumonia_date') is not None) or (cleaned_data.get('pcp_date') is not None) or
+            (cleaned_data.get('herpes_date') is not None) or (cleaned_data.get('diarrhoea_date') is not None))):
+            raise forms.ValidationError('If participant has never had any illness, then do not provide any dates.')
         #wasting
         if cleaned_data.get('sti_dx')[0].name == 'Severe weight loss (wasting) - more than 10% of body weight' and not cleaned_data.get('wasting_date'):
             raise forms.ValidationError('If participant has ever been diagnosed with wasting, what is the date of diagnosis?')
