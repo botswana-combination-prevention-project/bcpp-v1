@@ -36,7 +36,9 @@ class HouseholdStructure(BaseReplacement):
 
     enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime household_structure enrolled')
 
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if hoh household refusal form is completed')
+    refused_enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if hoh household refusal form is completed')
+
+    no_informant = models.BooleanField(default=False, editable=False, help_text='Set to true if there is no household informant and the household assessment form is completed')
 
     objects = HouseholdStructureManager()
 
