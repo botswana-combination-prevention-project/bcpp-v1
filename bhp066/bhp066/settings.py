@@ -1,6 +1,7 @@
 import os
 import platform
 import sys
+import socket
 
 from unipath import Path
 
@@ -27,12 +28,22 @@ CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
-#KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-#KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-# KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
-#KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
+if socket.gethostname() == 'mac.local':
+    KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+elif socket.gethostname() == 'ckgathi':
+    KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+else:
+    #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
+    
+    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    #KEY_PATH = '/Volumes/keys'
+    #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+    #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
+    #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    #KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -110,7 +121,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_dev',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -248,7 +259,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -426,7 +437,7 @@ FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
 CURRENT_COMMUNITY = 'otse'
-CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
+CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
