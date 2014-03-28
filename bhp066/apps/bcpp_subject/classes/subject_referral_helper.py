@@ -5,6 +5,7 @@ from ..models import (SubjectConsent, HivResult, Pima, HivTestReview, Cd4History
 
 from ..choices import REFERRAL_CODES
 from _mysql import result
+from apps.bcpp_subject.models.hiv_result_documentation import HivResultDocumentation
 
 
 class SubjectReferralHelper(object):
@@ -16,6 +17,7 @@ class SubjectReferralHelper(object):
         self.last_cd4_result_datetime = None
         self.vl_sample_datetime_drawn = None
         self.todays_result_datetime = None
+        self.documented_verbal_hiv_result_date = None
         self.instance = instance
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member
@@ -72,6 +74,10 @@ class SubjectReferralHelper(object):
                         self._referral_code_list.append('ERROR')
                     elif self.cd4_result <= 350:
                         self._referral_code_list.append('ERROR')
+
+        # refer if on art and known positive to get VL, and o get outsiders to transfer care
+        # referal date is the next appointment date if on art
+
         if self._referral_code_list:
             self._referral_code_list = list(set((self._referral_code_list)))
             self._referral_code_list.sort()
@@ -84,7 +90,7 @@ class SubjectReferralHelper(object):
     @property
     def hiv_result(self):
         """Returns the hiv status considering today\'s result, the last documented result and a verbal result with or without indirect documentation."""
-        return self.todays_hiv_result or self.last_hiv_result or self.verbal_hiv_result
+        return self.todays_hiv_result or self.last_hiv_result or self.documented_verbal_hiv_result or self.verbal_hiv_result
 
     @property
     def hiv_result_datetime(self):
@@ -113,6 +119,17 @@ class SubjectReferralHelper(object):
         except HivTestReview.DoesNotExist:
             result = None
             self.last_hiv_test_date = None
+        return result
+
+    def documented_verbal_hiv_result(self):
+        """Returns an hiv result based on the confirmation of the verbal result by documention."""
+        try:
+            hiv_result_documentation = HivResultDocumentation.objects.get(subject_visit=self.subject_visit, recorded_hiv_result__in=['POS', 'NEG', 'IND'])
+            result = hiv_result_documentation.recorded_hiv_result
+            self.documented_verbal_hiv_result_date = hiv_result_documentation.result_date
+        except HivResultDocumentation.DoesNotExist:
+            result = None
+            self.documented_verbal_hiv_result_date = None
         return result
 
     @property

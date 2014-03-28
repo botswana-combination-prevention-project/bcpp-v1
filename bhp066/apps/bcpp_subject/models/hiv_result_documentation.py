@@ -23,7 +23,8 @@ class HivResultDocumentation (BaseScheduledVisitModel):
     result_recorded = models.CharField(
         verbose_name=("What is the recorded HIV status indicated by this additional document?"),
         max_length=30,
-        choices=RECORDEDHIVRESULT_CHOICE,
+        choices=RECORDEDHIVRESULT_CHOICE,  # this is always POSITIVE!!
+        default='POS',
         help_text="",
         )
 
