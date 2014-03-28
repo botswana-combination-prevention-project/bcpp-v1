@@ -127,7 +127,8 @@ class PlotReplacementTests(TestCase):
             present_today='Yes',
             study_resident='Yes')
         household_member.delete()
-        self.assertIsNone(ReplacementData().check_refusals(plot, household, household_structure))
+        replacement_helper = ReplacementHelper()
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
     def test_check_refusal_household2(self):
         """Asserts that a household of 3 refused members is replaceble."""
