@@ -97,7 +97,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             expected_member_status = BHS
         if self.household_member.member_status != expected_member_status:
             raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(expected_member_status, self.household_member.member_status))
-
+        if self.minor:
+            self.is_minor = 'Yes'
+        else:
+            self.is_minor = 'No'
         self.matches_enrollment_checklist(self, self.household_member)
         self.matches_hic_enrollment(self, self.household_member)
         self.community = self.household_member.household_structure.household.plot.community
@@ -136,7 +139,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
             raise exception_cls('Initials do not match those on the enrollment checklist')
-        if enrollment_checklist.guardian.lower() == 'yes' and not (subject_consent.is_minor.lower() == 'yes' and subject_consent.guardian_name):
+        if enrollment_checklist.guardian.lower() == 'yes' and not (subject_consent.minor and subject_consent.guardian_name):
             raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
