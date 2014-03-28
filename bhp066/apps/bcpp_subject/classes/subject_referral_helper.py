@@ -1,4 +1,3 @@
-from edc.subject.appointment.constants import DONE
 from apps.bcpp_lab.models import SubjectRequisition
 
 from ..models import (SubjectConsent, HivResult, Pima, HivTestReview, Cd4History, ResidencyMobility,
@@ -131,7 +130,7 @@ class SubjectReferralHelper(object):
         """Returns True if tested today.
 
         ...note: if the result is verbal without any documentation the subject will be tested today and if POS considered a new POS (POS!)."""
-        if self.todays_hiv_result == 'POS' or (self.verbal_hiv_result == 'POS' and self.todays_hiv_result == 'POS'):
+        if self.todays_hiv_result == 'POS' and not (self.verbal_hiv_result == 'POS' and self.todays_hiv_result == 'POS'):
             return True
         return False
 
