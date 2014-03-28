@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from edc.core.bhp_common.utils import convert_from_camel
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.models import ContentTypeMap
@@ -29,7 +28,6 @@ class FormsTests(TestCase):
         site_lab_tracker.autodiscover()
         study_specific = StudySpecificFactory()
         StudySiteFactory()
-        ConfigurationFactory()
 
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()

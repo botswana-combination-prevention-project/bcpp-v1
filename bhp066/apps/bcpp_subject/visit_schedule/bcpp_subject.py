@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
-from edc.utils.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL
+from edc.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL
 
 from ..models import SubjectVisit, SubjectConsent
 
@@ -40,7 +40,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
-                # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type_alpha_code)
+                # (entry_order app_label model_name requisition_panel_name panel_type aliquot_type_alpha_code default_entry_status additional)
                 RequisitionPanelTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL),
                 RequisitionPanelTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL),
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'STORAGE', 'WB', REQUIRED, NOT_ADDITIONAL),
@@ -48,6 +48,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL)
                 ),
             'entries': (
+                #  order app_label model_name default_entry_status additional
                 EntryTuple(10L, u'bcpp_subject', u'participation', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),

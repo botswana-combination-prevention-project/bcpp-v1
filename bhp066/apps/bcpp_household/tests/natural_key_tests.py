@@ -9,7 +9,6 @@ from edc.device.sync.classes import SerializeToTransaction
 from edc.map.classes import site_mappers
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from apps.bcpp_survey.models import Survey
@@ -40,7 +39,6 @@ class NaturalKeyTests(TestCase):
         site_lab_tracker.autodiscover()
         StudySpecificFactory()
         StudySiteFactory()
-        ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
