@@ -159,12 +159,14 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
+    @property
     def defaulter(self):
         """Returns true if subject is an ARV defaulter."""
         if self.arv_evidence == 'Yes' and self.on_arv == 'No':
             return True
         return None
 
+    @property
     def on_art(self):
         if self.on_arv == 'Yes':
             return True
