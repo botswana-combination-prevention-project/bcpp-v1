@@ -8,7 +8,7 @@ from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 from .factories import (SubjectReferralFactory, ReproductiveHealthFactory,
                                                HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
                                                PimaFactory, HivTestReviewFactory,
-                                               Cd4HistoryFactory)
+                                               Cd4HistoryFactory, HivTestingHistoryFactory)
 
 
 class TestPlotMapper(Mapper):
@@ -298,6 +298,18 @@ class ReferralTests(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertIn('POS!-LO', subject_referral.referral_code)
+
+    def tests_referred_verbal1(self):
+        """if new pos, low PIMA CD4 and not on art, """
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('TST-HIV', subject_referral.referral_code)
 
     def tests_referred_masa2(self):
         """if new pos, high PIMA CD4 and on art, """
