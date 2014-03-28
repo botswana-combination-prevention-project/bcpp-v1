@@ -343,20 +343,20 @@ site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
 class TodaysHivRuleGroup(RuleGroup):
-# #   confirms pima required only when HIV result from today is positive
-#     hiv_result = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('hiv_result', 'equals', 'POS'),
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['pima'])
-# 
-#     hic_enrollement = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['hicenrollment'])
+#   confirms pima required only when HIV result from today is positive
+    hiv_result = ScheduledDataRule(
+        logic=Logic(
+            predicate=('hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
+ 
+    hic_enrollement = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hicenrollment'])
     pass
 
     class Meta:
@@ -532,22 +532,6 @@ class RequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
-
-    #confirms pima required only when HIV result from today is positive
-    hiv_result = ScheduledDataRule(
-        logic=Logic(
-            predicate=('hiv_result', 'equals', 'POS'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pima'])
-
-    #Hic Enrollment only for NEG.
-    hic_enrollement = ScheduledDataRule(
-        logic=Logic(
-            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hicenrollment'])
 
 #     hiv_result4 = RequisitionRule(
 #         logic=Logic(
