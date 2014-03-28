@@ -404,6 +404,16 @@ FIRSTDISCLOSE_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
+AGE_RANGES = (
+        (('less or equal to 18 years old'), _('less or equal to 18 years old')),
+        (('19-29'), _('19-29 years old')),
+        (('30-39'), _('30-39 years old')),
+        (('40-49'), _('40-49 years old')),
+        (('50-59'), _('50-59 years old')),
+        (('50-59'), _('50-59 years old')),
+        (('Not sure'), _('Not sure'))
+    )
+
 FIRSTCONDOMFREQ_CHOICE = (
         ('All of the time', _('All of the time')),
         ('Sometimes', _('Sometimes')),

@@ -152,7 +152,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+#     'south',
 
     'edc.apps.admin_supplemental_fields',
 

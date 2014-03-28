@@ -178,7 +178,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdenumerationrefusal': {
-            'Meta': {'ordering': "['household']", 'object_name': 'HouseholdEnumerationRefusal'},
+            'Meta': {'ordering': "['household']", 'object_name': 'HouseholdRefusal'},
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'ckgathi'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -194,7 +194,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdenumerationrefusalaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdEnumerationRefusalAudit', 'db_table': "u'bcpp_household_householdenumerationrefusal_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdRefusalAudit', 'db_table': "u'bcpp_household_householdenumerationrefusal_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),

@@ -14,6 +14,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
+
 from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -167,11 +168,11 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replacement = models.CharField(
+    replaces = models.CharField(
         max_length=25,
         blank=True,
         editable=False,
-        null=True
+        help_text=("plot or household identifier that this plot replaced."),
         )
 
     device_id = models.CharField(
@@ -226,6 +227,14 @@ class Plot(BaseDispatchSyncUuidModel):
 
     bhs = models.NullBooleanField(editable=False)
 
+    replaces = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot or household that this plot replaces',
+        editable=False,
+        )
+
     objects = PlotManager()
 
     history = AuditTrail()
@@ -243,7 +252,7 @@ class Plot(BaseDispatchSyncUuidModel):
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
         if self.household_count > 9:
             raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
-        # if self.community does not get valid mapper, will raise an error that should be caught in forms.py
+        # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
@@ -415,7 +424,7 @@ class Plot(BaseDispatchSyncUuidModel):
     @property
     def log_entry_form_urls(self):
         """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
-        from .plot_log import PlotLog, PlotLogEntry
+        from .plot_log import PlotLogEntry
         entry_urls = {}
         plot_log = self.plot_log
         for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):

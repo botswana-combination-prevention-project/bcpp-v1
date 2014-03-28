@@ -1,6 +1,6 @@
+from django.db.models import get_model
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import get_model
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -36,6 +36,20 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime household_structure enrolled')
 
+    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to True when first household_member is enumerated')
+
+    enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
+
+    refused_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household enumeration refusal save method only')
+
+    failed_enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of failed attempts to enumerate a household_structure.')
+
+    failed_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
+
+    no_informant = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
+
+    eligible_members = models.BooleanField(default=False, editable=False, help_text='Updated by household member save method and post_delete')
+
     objects = HouseholdStructureManager()
 
     history = AuditTrail()
@@ -58,6 +72,22 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
+
+    @property
+    def all_eligible_members_absent(self):
+        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
+        if self.enumerated:
+            eligible_member_count = HouseholdMember.objects.filter(household_structure=self.household_structure, eligble_member=True).count()
+            return eligible_member_count == HouseholdMember.objects.filter(household_structure=self.household_structure, eligble_member=True, absent=True).count()
+        return False
+
+    @property
+    def all_eligible_members_refused(self):
+        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
+        if self.enumerated:
+            eligible_member_count = HouseholdMember.objects.filter(household_structure=self.household_structure, eligble_member=True).count()
+            return eligible_member_count == HouseholdMember.objects.filter(household_structure=self.household_structure, eligble_member=True, refused=True).count()
+        return False
 
     @property
     def member_count(self):
