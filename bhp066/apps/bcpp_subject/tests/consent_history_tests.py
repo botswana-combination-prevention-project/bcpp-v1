@@ -4,7 +4,6 @@ from django.test import TestCase
 
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.map.classes import site_mappers
-from edc.subject.appointment.models import Configuration
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
@@ -23,7 +22,6 @@ class ConsentHistoryTests(TestCase):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        Configuration.objects.create()
         print 'get a community name from the mapper classes'
         community = site_mappers.get_as_list()[0]
         print 'create a new survey'
