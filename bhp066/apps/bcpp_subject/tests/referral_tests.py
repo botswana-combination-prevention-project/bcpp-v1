@@ -297,7 +297,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('ERROR', subject_referral.referral_code)
+        self.assertIn('POS!-LO', subject_referral.referral_code)
 
     def tests_referred_masa2(self):
         """if new pos, high PIMA CD4 and on art, """
