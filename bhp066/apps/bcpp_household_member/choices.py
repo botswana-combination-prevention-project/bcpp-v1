@@ -45,7 +45,7 @@ MALE_RELATIONS = [
     ('nephew', 'Nephew'),
     ('father-in-law', 'Father-in-law'),
     ('son-in-law', 'Son-in-law'),
-    ('brother in-law', 'Brother in-law'),
+    ('brother-in-law', 'Brother in-law'),
     ]
 
 

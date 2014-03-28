@@ -4,6 +4,8 @@ from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp.choices import YES_NO
 
+from ..managers import TbSymptomsManager
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -50,6 +52,8 @@ class TbSymptoms (BaseScheduledVisitModel):
         choices=YES_NO,
         help_text="",
         )
+
+    objects = TbSymptomsManager()
 
     history = AuditTrail()
 
