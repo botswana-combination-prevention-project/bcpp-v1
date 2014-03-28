@@ -3,7 +3,17 @@ from django.forms import ValidationError
 
 from edc.map.classes import Mapper
 
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+
+from edc.subject.lab_tracker.classes import site_lab_tracker
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_household.models import Household, HouseholdStructure
+from apps.bcpp_household.tests.factories import PlotFactory
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from apps.bcpp_survey.models import Survey
 
 from ..forms import EnrollmentChecklistForm
 from ..models import HouseholdMember
@@ -24,7 +34,18 @@ class OtsePlotMapper(Mapper):
 class EligibilityFormTests(SimpleTestCase):
 
     def setUp(self):
-        self.survey = SurveyFactory()
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
+
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
+        household = Household.objects.get(plot=plot)
+        self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
 
     def test_returns_cleaned_data(self):
         form = EnrollmentChecklistForm()
