@@ -5,10 +5,10 @@ from edc.map.classes import Mapper, site_mappers
 from apps.bcpp_lab.models import AliquotType, Panel
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
-from .factories import (SubjectReferralFactory, ReproductiveHealthFactory,
-                                               HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
-                                               PimaFactory, HivTestReviewFactory,
-                                               Cd4HistoryFactory, HivTestingHistoryFactory)
+from .factories import (
+    SubjectReferralFactory, ReproductiveHealthFactory,
+    HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
+    PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory)
 
 
 class TestPlotMapper(Mapper):
@@ -120,7 +120,6 @@ class ReferralTests(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
-        Cd4HistoryFactory(subject_visit=self.subject_visit_female, last_cd4_count=349)
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
         subject_referral = SubjectReferralFactory(
@@ -134,8 +133,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
-        Cd4HistoryFactory(subject_visit=self.subject_visit_female, last_cd4_count=351)
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
@@ -365,6 +363,20 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertIn('MASA', subject_referral.referral_code)
 
+    def tests_referred_verbal6(self):
+        """"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('MASA', subject_referral.referral_code)
+
+    
     def tests_referred_masa2(self):
         """if new pos, high PIMA CD4 and on art, """
         report_datetime = datetime.today()
