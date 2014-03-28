@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext as _
 
 REFERRAL_CODES = (
+    ('pending', '<data collection in progress>'),
     ('TST-CD4', 'POS any, need CD4 testing'),
     ('TST-HIV', 'HIV test'),
     ('HIV-IND', 'HIV re-test (IND)'),
