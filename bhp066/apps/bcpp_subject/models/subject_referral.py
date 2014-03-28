@@ -7,17 +7,15 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
-
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_subject.classes import SubjectReferralHelper
-
 from edc.map.classes import site_mappers
 
+from apps.bcpp.choices import COMMUNITIES
+
+
 from ..choices import REFERRAL_CODES
+from ..classes import SubjectReferralHelper
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
-
-site_mappers.autodiscover()  # TODO: Why?
 
 
 class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
@@ -206,6 +204,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         verbose_name='Referral Code',
         max_length=50,
         choices=REFERRAL_CODES,
+        default='pending',
         help_text="list of referral codes updated internally, comma separated."
         )
 
