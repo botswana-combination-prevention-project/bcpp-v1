@@ -352,6 +352,19 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertIn('POS#-HI', subject_referral.referral_code)
 
+    def tests_referred_verbal5(self):
+        """"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('MASA', subject_referral.referral_code)
+
     def tests_referred_masa2(self):
         """if new pos, high PIMA CD4 and on art, """
         report_datetime = datetime.today()
