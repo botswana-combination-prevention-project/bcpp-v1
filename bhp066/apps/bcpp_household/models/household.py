@@ -120,7 +120,13 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replaceble = models.BooleanField(default=False, editable=False, help_text='Set to True if the household is a potential replacement')
+    replaced_by = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot that this household is replaced with',
+        editable=False,
+        )
 
     comment = EncryptedTextField(
         max_length=250,
