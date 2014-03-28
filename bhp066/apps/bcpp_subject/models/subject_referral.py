@@ -16,6 +16,9 @@ from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .tb_symptoms import TbSymptoms
+
+site_mappers.autodiscover()
 
 
 class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
@@ -37,7 +40,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_clinic = models.CharField(
         max_length=50,
         choices=COMMUNITIES,
-        default=site_mappers.get_current_mapper().map_area,
+        #default=site_mappers.get_current_mapper().map_area,
         )
 
     referral_clinic_other = models.CharField(
@@ -188,6 +191,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text='from residence and mobility "intend_residency"'
         )
 
+    tb_symptoms = models.CharField(
+        max_length=100,
+        null=True,
+        editable=False,
+        help_text='list of symptoms from tb_symptoms'
+        )
+
     referred_from_bhs = models.NullBooleanField(
         default=None,
         editable=False,
@@ -230,7 +240,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         return '{0} {1} {2}'.format(self.referral_code, self.referral_appt_date, self.referral_clinic)
 
     def save(self, *args, **kwargs):
-        self = SubjectReferralHelper(self).update()
+        self.referral_clinic = site_mappers.get_current_mapper().map_area
+        self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
+        self.referral_code = SubjectReferralHelper(self).referral_code
         super(SubjectReferral, self).save(*args, **kwargs)
 
     def update_export_mixin_fields(self):
