@@ -7,9 +7,9 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
-from apps.bcpp_household.choices import INELIGIBLE_REASON
-from apps.bcpp_household.choices import RESIDENT_LAST_SEEN
-from apps.bcpp_household.constants import RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS
+from ..choices import INELIGIBLE_REASON
+from ..choices import RESIDENT_LAST_SEEN
+from ..constants import RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
