@@ -411,6 +411,7 @@ AGE_RANGES = (
         (('40-49'), _('40-49 years old')),
         (('50-59'), _('50-59 years old')),
         (('50-59'), _('50-59 years old')),
+        (('60 or older'), _('60 year or older')),
         (('Not sure'), _('Not sure'))
     )
 

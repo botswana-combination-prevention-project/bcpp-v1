@@ -16,7 +16,7 @@ from apps.bcpp_household.tests.factories import HouseholdStructureFactory
 from apps.bcpp_household.models import post_save_on_household, create_household_on_post_save, household_structure_on_post_save
 from .factories import (HouseholdMemberFactory, EnrollmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory, SubjectAbsenteeEntryFactory,
                         SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, EnrollmentLossFactory)
-from apps.bcpp_household_member.models import EnrollmentLoss
+from apps.bcpp_household_member.models import EnrollmentLoss, SubjectRefusalHistory
 
 class NaturalKeyTests(TestCase):
 
@@ -74,6 +74,7 @@ class NaturalKeyTests(TestCase):
         from .factories import SubjectRefusalFactory
         household_member.member_status = 'REFUSED'
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
+        subject_refusal_history = SubjectRefusalHistory.objects.get(household_member=household_member)
         print 'Enrollment Loss count='+str(EnrollmentLoss.objects.all().count())
         household_member.member_status = 'BHS_SCREEN'
         enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='No')
@@ -97,9 +98,9 @@ class NaturalKeyTests(TestCase):
         instances.append(household_structure)
         instances.append(household_info)
         instances.append(subject_refusal)
+        instances.append(subject_refusal_history)
         #instances.append(loss)
         instances.append(subject_moved)
-
         instances.append(subject_absentee_entry)
         instances.append(subject_undecided_entry)
         instances.append(subject_absentee_entry1)
