@@ -9,7 +9,6 @@ from django.test import TestCase
 
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.map.classes import Mapper, site_mappers
-from edc.subject.appointment.tests.factories import ConfigurationFactory
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
@@ -40,7 +39,6 @@ class FormsTests(TestCase):
     def setUp(self):
         StudySpecificFactory()
         StudySiteFactory()
-        ConfigurationFactory()
         self.survey = SurveyFactory()
         self.plot = PlotFactory(community='test_community2', household_count=1, status='occupied')
         self.household_structure = HouseholdStructure.objects.get(household__plot=self.plot)

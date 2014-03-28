@@ -1,13 +1,17 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
+from edc.base.model.fields import UUIDField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..managers import HouseholdRefusalManager
-from .household import Household
+from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
+
+from .household_structure import HouseholdStructure
 from .plot import Plot
+
 
 HOUSEHOLD_REFUSAL = (
     ('not_interested', 'Not Interested'),
@@ -17,9 +21,9 @@ HOUSEHOLD_REFUSAL = (
 )
 
 
-class HouseholdRefusal(BaseDispatchSyncUuidModel):
+class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
 
-    household = models.OneToOneField(Household)
+    household_structure = models.OneToOneField(HouseholdStructure)
 
     report_datetime = models.DateTimeField()
 
@@ -42,20 +46,48 @@ class HouseholdRefusal(BaseDispatchSyncUuidModel):
         null=True,
         )
 
+    def save(self, *args, **kwargs):
+        if self.household_structure.enrolled:
+            raise ValidationError('Household is enrolled.')
+        self.household_structure.refused_enumeration = True
+        super(HouseholdRefusal, self).save(*args, **kwargs)
+
+    def dispatch_container_lookup(self, using=None):
+        return (Plot, 'household_structure__household__plot__plot_identifier')
+
+    def __unicode__(self):
+        return unicode(self.household_structure) + '(' + unicode(self.report_datetime) + ')'
+
+    class Meta:
+        abstract = True
+
+
+class HouseholdRefusal(BaseHouseholdRefusal):
+
     objects = HouseholdRefusalManager()
 
     history = AuditTrail()
 
     def natural_key(self):
-        return self.household.natural_key()
-    natural_key.dependencies = ['bcpp_household.household']
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household__plot__plot_identifier')
-
-    def __unicode__(self):
-        return unicode(self.household) + '(' + unicode(self.report_datetime) + ')'
+        return self.household_structure.natural_key()
+    natural_key.dependencies = ['bcpp_household.household_structure']
 
     class Meta:
         app_label = 'bcpp_household'
-        ordering = ['household', ]
+        ordering = ['household_structure', ]
+
+
+class HouseholdRefusalHistory(BaseHouseholdRefusal):
+
+    transaction = UUIDField()
+
+    objects = HouseholdRefusalHistoryManager()
+
+    history = AuditTrail()
+
+    def natural_key(self):
+        return (self.transaction, )
+
+    class Meta:
+        app_label = 'bcpp_household'
+        ordering = ['household_structure', ]
