@@ -62,7 +62,7 @@ class SubjectReferralHelper(object):
                     elif self.cd4_result <= 350:
                         self._referral_code_list.append('POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
                 elif self.on_art:
-                    if self.is_defaulter():
+                    if self.defaulter:
                         self._referral_code_list.append('MASA-DF')
                     if self.pregnant:
                         self._referral_code_list.append('POS#-AN')
