@@ -61,7 +61,7 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
     @property
     def in_replaced_household(self):
         """Returns True if the household for this entry is "replaced"""""
-        return self.inline_parent.household_member.household_structure.household.replaced
+        return self.inline_parent.household_member.household_structure.household.replaced_by
 
     def dispatch_container_lookup(self):
         field = None
