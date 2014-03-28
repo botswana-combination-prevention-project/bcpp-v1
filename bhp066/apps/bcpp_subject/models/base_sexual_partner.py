@@ -29,6 +29,8 @@ class BaseSexualPartner (BaseScheduledVisitModel):
     third_last_sex_calc = models.IntegerField(
         verbose_name=_("Give the number of days/months since last had sex with this person."),
         max_length=2,
+        null=True,
+        blank=True,
         help_text="e.g. if last sex was last night, then it should be recorded as 1 day",
         )
 
@@ -41,6 +43,8 @@ class BaseSexualPartner (BaseScheduledVisitModel):
     first_first_sex_calc = models.IntegerField(
         verbose_name=_("Give the number of days/months/years since first had sex with this person."),
         max_length=2,
+        null=True,
+        blank=True,
         help_text="e.g. if first sex was last night, then it should be recorded as 1 day",
         )
 
@@ -85,6 +89,8 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         verbose_name=_("During the last 3 months [of your relationship, if it has ended] how many "
                         "times did you have sex with this partner?"),
         max_length=2,
+        null=True,
+        blank=True,
         help_text="",
         )
 
