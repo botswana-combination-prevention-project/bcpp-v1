@@ -11,6 +11,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HivTestReview (BaseScheduledVisitModel):
 
+    """Complete this form if HivTestingHistory.has_record."""
+
     hiv_test_date = models.DateField(
         verbose_name=("What was the recorded date of the last HIV test?"),
         validators=[date_not_future],
