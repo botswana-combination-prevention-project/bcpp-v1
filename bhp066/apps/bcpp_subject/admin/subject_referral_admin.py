@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from edc.export.actions import export_as_csv_action
 
-from ..models import SubjectReferral
+from ..models import SubjectReferral, SubjectReferralReview
 from ..forms import SubjectReferralForm
 from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
 
