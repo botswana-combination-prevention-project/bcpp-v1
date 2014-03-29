@@ -41,6 +41,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         max_length=50,
         choices=COMMUNITIES,
         #default=site_mappers.get_current_mapper().map_area,
+        help_text='Subject has been referred to this clinic. If other specify below.'
         )
 
     referral_clinic_other = models.CharField(
@@ -61,82 +62,97 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         editable=False,
         )
 
-    hiv_result = models.CharField(
-        max_length=50,
+    citizen_spouse = models.NullBooleanField(
+        default=None,
         null=True,
         editable=False,
         )
 
+    hiv_result = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        help_text='HIV status as determined by the field RA either by testing or using a combination of verbal response and documentation. See alos new_pos.'
+        )
+
     hiv_result_datetime = models.DateTimeField(
          null=True,
+        help_text='HIV result datetime either from today\'s test or documentation provided by the subject . See also new_pos.'
          )
 
     new_pos = models.NullBooleanField(
         default=None,
         null=True,
         editable=False,
-        help_text="new POS diagnosis"
+        help_text="True if subject is newly diagnosed POS"
         )
 
     last_hiv_result = models.CharField(
         max_length=50,
         null=True,
         editable=False,
+        help_text="A documented previous HIV result provided by the subject"
         )
 
     verbal_hiv_result = models.CharField(
         max_length=50,
         null=True,
         editable=False,
-        help_text='from HivTestingHistory.verbal_result'
+        help_text='from HivTestingHistory.verbal_result. HIV status as verbally provided by subject. See also if this result is supported by direct and indirect documentation.'
         )
 
-    hiv_pos_document = models.CharField(
+    direct_hiv_documentation = models.CharField(
         max_length=50,
         null=True,
         editable=False,
-        help_text='from HivTestingHistory.other_record'
+        help_text='from HivTestingHistory.has_record. A document that confirms the subject\'s verbally provided POS result. See also last_hiv_result.'
+        )
+
+    indirect_hiv_documentation = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        help_text='from HivTestingHistory.other_record. A document that suggests the subject is HIV POS.'
         )
 
     last_hiv_test_date = models.DateTimeField(
          null=True,
          )
 
-    last_cd4_result = models.CharField(
-        max_length=50,
-        null=True,
-        editable=False,
-        )
-
-    last_cd4_test_date = models.DateTimeField(
-         null=True,
-         )
+#     last_cd4_result = models.CharField(
+#         max_length=50,
+#         null=True,
+#         editable=False,
+#         )
+# 
+#     last_cd4_test_date = models.DateTimeField(
+#          null=True,
+#          )
 
     on_art = models.NullBooleanField(
         default=None,
         null=True,
         editable=False,
-        help_text="from hiv_care_adherence."
+        help_text="from hiv_care_adherence. True if subject claims to be on ARV. See also art_documentation."
         )
 
-    on_art_document = models.CharField(
+    art_documentation = models.CharField(
         max_length=50,
         null=True,
         editable=False,
-        help_text='from HivTestingHistory.other_record'
-        )
+        help_text='from HivCarAdherence.arv_evidence. Yes if Field RA has seen documents that shows subject is on ARV\'s. Overrides on_art value if Yes')
 
-    clinic_receiving_from = models.CharField(
+    arv_clinic = models.CharField(
         default=None,
         null=True,
         max_length=50,
-        help_text="from hiv_care_adherence."
+        help_text="from hiv_care_adherence. The ARV clinic where subject currently receives care"
         )
 
-    next_appointment_date = models.DateField(
+    next_arv_clinic_appointment_date = models.DateField(
          default=None,
          null=True,
-         help_text="from hiv_care_adherence."
+         help_text="from hiv_care_adherence. Next appointment date at the subject's ARV clinic."
          )
 
     cd4_result = models.DecimalField(
@@ -144,11 +160,12 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         editable=False,
         max_digits=6,
         decimal_places=2,
-        help_text='from Pima',
+        help_text='from Pima. Today\'s CD4 result',
         )
 
     cd4_result_datetime = models.DateTimeField(
         null=True,
+        editable=False,
         help_text='from Pima',
         )
 
@@ -156,11 +173,12 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         default=None,
         null=True,
         editable=False,
-        help_text='from SubjectRequisition',
+        help_text='from SubjectRequisition. True if a viral load sample was drawn in the household',
         )
 
-    vl_sample_datetime_drawn = models.DateTimeField(
+    vl_sample_drawn_datetime = models.DateTimeField(
         null=True,
+        editable=False,
         help_text='from SubjectRequisition',
          )
 
@@ -202,7 +220,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         default=None,
         editable=False,
         null=True,
-        help_text='referred by an RA',
+        help_text='Subject was handed a referral slip by the field RA',
         )
 
     urgent_referral = models.NullBooleanField(
@@ -240,7 +258,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         return '{0} {1} {2}'.format(self.referral_code, self.referral_appt_date, self.referral_clinic)
 
     def save(self, *args, **kwargs):
-        self.referral_clinic = site_mappers.get_current_mapper().map_area
+        if not self.referral_clinic:
+            self.referral_clinic = site_mappers.get_current_mapper().map_area
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         self.referral_code = SubjectReferralHelper(self).referral_code
         super(SubjectReferral, self).save(*args, **kwargs)
