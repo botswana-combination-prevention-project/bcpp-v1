@@ -11,7 +11,7 @@ from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListF
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 # for subject_visit in SubjectVisit.objects.all():
-#     SubjectReferral.objects.create(subject_visit=subject_visit, report_datetime=subject_visit.get_report_datetime(), subject_referred='Yes', referral_clinic='otse', referral_appt_date=datetime(2014,4,7))
+#     SubjectReferral.objects.create(subject_visit=subject_visit, report_datetime=subject_visit.get_report_datetime(), subject_referred='Yes', referral_clinic='Otse', referral_appt_date=datetime(2014,4,7))
 
 class SubjectReferralAdmin(SubjectVisitModelAdmin):
 
