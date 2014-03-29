@@ -311,6 +311,7 @@ INSTALLED_APPS = (
     'edc.map',
 
     'edc.testing',
+    'edc.utils',
 
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',

@@ -293,3 +293,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = 'Subject Referral'
+
+
+class SubjectReferralReview(SubjectReferral):
+
+    def save(self, *args, **kwargs):
+        pass
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        proxy = True
