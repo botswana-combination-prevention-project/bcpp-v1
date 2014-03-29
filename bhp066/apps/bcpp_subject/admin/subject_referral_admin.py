@@ -10,6 +10,8 @@ from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListF
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
+# for subject_visit in SubjectVisit.objects.all():
+#     SubjectReferral.objects.create(subject_visit=subject_visit, report_datetime=subject_visit.get_report_datetime(), subject_referred='Yes', referral_clinic='otse', referral_appt_date=datetime(2014,4,7))
 
 class SubjectReferralAdmin(SubjectVisitModelAdmin):
 
@@ -66,6 +68,23 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                 ),
                 'export_as_csv_action',
                 "Export Referrals to CSV")
+        actions['export_as_pipe_action'] = (  # This is a django SortedDict (function, name, short_description)
+            export_as_csv_action(
+                delimiter='|',
+                encrypt=False,
+                exclude=['id', 'exported', 'exported_datetime', self.visit_model_foreign_key, 'revision', 'hostname_created', 'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', 'comment'],
+                extra_fields=OrderedDict(
+                    {'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
+                     'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
+                     'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
+                     'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
+                     'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
+                     'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
+                     'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
+                     })
+                ),
+                'export_as_pipe_action',
+                "Export Referrals to Pipe delimited file")
         return actions
 
 admin.site.register(SubjectReferral, SubjectReferralAdmin)

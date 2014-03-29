@@ -424,15 +424,15 @@ class SubjectReferralHelper(object):
         return self._on_art
 
     @property
-    def art_documentation(self):
+    def arv_documentation(self):
         try:
-            art_documentation = self.hiv_care_adherence_instance.arv_evidence == 'Yes'
+            arv_documentation = self.hiv_care_adherence_instance.arv_evidence == 'Yes'
         except AttributeError:
-            art_documentation = None
-        return art_documentation
+            arv_documentation = None
+        return arv_documentation
 
     @property
-    def current_arv_clinic(self):
+    def arv_clinic(self):
         clinic_receiving_from = None
         try:
             clinic_receiving_from = self.hiv_care_adherence_instance.clinic_receiving_from
@@ -468,10 +468,6 @@ class SubjectReferralHelper(object):
     @property
     def referral_clinic(self):
         return self.instance.referral_clinic if self.instance.referral_clinic != 'OTHER' else self.instance.referral_clinic_other
-
-    @property
-    def arv_clinic(self):
-        return self.instance.arv_clinic
 
     @property
     def urgent_referral(self):
