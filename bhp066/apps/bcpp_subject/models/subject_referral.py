@@ -136,7 +136,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text="from hiv_care_adherence. True if subject claims to be on ARV. See also art_documentation."
         )
 
-    art_documentation = models.CharField(
+    arv_documentation = models.CharField(
         max_length=50,
         null=True,
         editable=False,
@@ -216,13 +216,6 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text='list of symptoms from tb_symptoms'
         )
 
-    referred_from_bhs = models.NullBooleanField(
-        default=None,
-        editable=False,
-        null=True,
-        help_text='Subject was handed a referral slip by the field RA',
-        )
-
     urgent_referral = models.NullBooleanField(
         default=None,
         null=True,
@@ -255,13 +248,15 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0} {1} {2}'.format(self.referral_code, self.referral_appt_date, self.referral_clinic)
+        return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)
 
     def save(self, *args, **kwargs):
-        if not self.referral_clinic:
-            self.referral_clinic = site_mappers.get_current_mapper().map_area
+        #if not self.referral_clinic:
+        #    self.referral_clinic = site_mappers.get_current_mapper().map_area
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
-        self.referral_code = SubjectReferralHelper(self).referral_code
+        #self.referral_code = SubjectReferralHelper(self).referral_code
+        for field, value in SubjectReferralHelper(self).subject_referral.iteritems():
+            setattr(self, field, value)
         super(SubjectReferral, self).save(*args, **kwargs)
 
     def update_export_mixin_fields(self):
