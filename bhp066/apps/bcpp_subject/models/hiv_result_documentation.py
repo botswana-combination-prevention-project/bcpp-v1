@@ -11,7 +11,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HivResultDocumentation (BaseScheduledVisitModel):
 
-    """this form is stupid"""
+    """"""
 
     # base on question from hiv test history
     result_date = models.DateField(
