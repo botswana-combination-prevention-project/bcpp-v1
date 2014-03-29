@@ -227,11 +227,11 @@ class Plot(BaseDispatchSyncUuidModel):
 
     bhs = models.NullBooleanField(editable=False)
 
-    replaces = models.CharField(
+    replaced_by = models.CharField(
         max_length=25,
         null=True,
         verbose_name='Identifier',
-        help_text=u'The identifier of the plot or household that this plot replaces',
+        help_text=u'The identifier of the plot that this plot is replaced by',
         editable=False,
         )
 
