@@ -49,6 +49,10 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
     def get_visit(self):
         return self.subject_visit
 
+    @classmethod
+    def visit_model(self):
+        return SubjectVisit
+
     def is_dispatched_item_within_container(self, using=None):
         return (('bcpp_household', 'plot'), 'subject_visit__household_member__household_structure__household__plot')
 

@@ -3,7 +3,8 @@ from django.utils.translation import ugettext as _
 
 from ..models import ReproductiveHealth
 from ..forms import ReproductiveHealthForm
-from . import SubjectVisitModelAdmin
+
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class ReproductiveHealthAdmin(SubjectVisitModelAdmin):

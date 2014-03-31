@@ -1,22 +1,31 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
+from dateutils import relativedelta
 
 from django.test import TestCase
 
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.models import Appointment
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.entry.tests.factories import EntryFactory
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
+from edc.core.bhp_variables.models import StudySite
 
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Plot, Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from apps.bcpp_survey.models import Survey
 
 
 class BaseScheduledModelTestCase(TestCase):
@@ -25,50 +34,58 @@ class BaseScheduledModelTestCase(TestCase):
     community = None
 
     def setUp(self):
-        self.survey = SurveyFactory()
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration()
         site_lab_tracker.autodiscover()
-        study_specific = StudySpecificFactory()
-        StudySiteFactory()
-        content_type_map_helper = ContentTypeMapHelper()
-        content_type_map_helper.populate()
-        content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(content_type__model='SubjectConsent'.lower())
-        ConsentCatalogueFactory(
-            name=self.app_label,
-            consent_type='study',
-            content_type_map=content_type_map,
-            version=1,
-            start_datetime=study_specific.study_start_datetime,
-            end_datetime=datetime(datetime.today().year + 5, 1, 1),
-            add_for_app=self.app_label)
-        membership_form = MembershipFormFactory(content_type_map=content_type_map)
-        schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='survey', grouping_key='SURVEY')
-        visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
-        visit_definition = VisitDefinitionFactory(code='T0', title='T0', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
-        visit_definition.schedule_group.add(schedule_group)
+        BcppSubjectVisitSchedule().build()
 
-        # add entries
-        content_type_map = ContentTypeMap.objects.get(app_label='testing', model='testscheduledmodel1')
-        EntryFactory(content_type_map=content_type_map, visit_definition=self.visit_definition, entry_order=100, entry_category='clinic')
-
-        plot = PlotFactory(community=self.community, household_count=1, status='occupied')
-        self.assertEqual(Plot.objects.all().count(), 1)
-        self.assertEqual(Household.objects.all().count(), 1)
-        self.assertEqual(HouseholdStructure.objects.all().count(), 1)
-        household_structure = HouseholdStructure.objects.get(household__plot=plot)
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
-        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, gender='F')
-        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, gender='M')
-        self.household_member_female.eligible_member = True
-        self.household_member_male.eligible_member = True
-        self.household_member_female.eligible_subject = True
-        self.household_member_male.eligible_subject = True
+        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, first_name='SUE', initials='SW', gender='F', age_in_years=25, study_resident='Yes', relation='sister')
+        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, first_name='ERIK', initials='EW', gender='M', age_in_years=25, study_resident='Yes', relation='brother')
         self.household_member_female.save()
         self.household_member_male.save()
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F')
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M')
+
+        enrollment_male = EnrollmentChecklistFactory(
+            household_member=self.household_member_male,
+            initials=self.household_member_male.initials,
+            gender=self.household_member_male.gender,
+            dob=date.today() - relativedelta(years=self.household_member_male.age_in_years),
+            guardian='No',
+            part_time_resident='Yes')
+        enrollment_female = EnrollmentChecklistFactory(
+            household_member=self.household_member_female,
+            initials=self.household_member_female.initials,
+            gender=self.household_member_female.gender,
+            dob=date.today() - relativedelta(years=self.household_member_female.age_in_years),
+            guardian='No',
+            part_time_resident='Yes')
+
+        subject_consent_female = SubjectConsentFactory(
+            household_member=self.household_member_female,
+            gender='F',
+            dob=enrollment_female.dob,
+            first_name='SUE',
+            last_name='W',
+            initials=enrollment_female.initials,
+            study_site=StudySite.objects.get(site_code='14'))
+        subject_consent_male = SubjectConsentFactory(
+            household_member=self.household_member_male,
+            gender='M',
+            dob=enrollment_male.dob,
+            first_name='ERIK',
+            last_name='W',
+            initials=enrollment_male.initials,
+            study_site=StudySite.objects.get(site_code='14'))
+
         #FIXME: need this to be fixed, not getting gender right!
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
@@ -76,3 +93,4 @@ class BaseScheduledModelTestCase(TestCase):
         self.subject_visit_female = SubjectVisitFactory(appointment=appointment_female, household_member=self.household_member_female)
         appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male)
         self.subject_visit_male = SubjectVisitFactory(appointment=appointment_male, household_member=self.household_member_male)
+
