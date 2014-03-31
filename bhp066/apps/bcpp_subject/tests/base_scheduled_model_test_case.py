@@ -1,5 +1,5 @@
 from datetime import datetime, date, timedelta
-from dateutils import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
