@@ -56,14 +56,15 @@ class ReplacementHelper(object):
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot."""
         replaceable = False
-        if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused):
-            replaceable = True
-        if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.all_eligible_members_absent):
-            replaceable = True
-        if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.failed_enumeration and self.household_structure.no_informant):
-            replaceable = True
-        if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.failed_enumeration and not self.household_structure.eligible_members):
-            replaceable = True
+        if self.plot.status == RESIDENTIAL_HABITABLE:
+            if self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused:
+                replaceable = True
+            elif self.household_structure.eligible_representative_absent or self.household_structure.all_eligible_members_absent:
+                replaceable = True
+            elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
+                replaceable = True
+#         if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.failed_enumeration and not self.household_structure.eligible_members):
+#             replaceable = True
         return replaceable
 
     @property
@@ -80,7 +81,7 @@ class ReplacementHelper(object):
         for household_structure in HouseholdStructure.objects.filter(survey=survey):
             self.household_structure = household_structure
             if self.replaceable_household:
-                replaceable_households.append(self.household)
+                replaceable_households.append(household_structure.household)
         return replaceable_households
 
     def replaceable_plots(self):

@@ -53,7 +53,7 @@ class ReplacementTests(TestCase):
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
 
-    def test_replacement_helper1(self, **kwargs):
+    def test_replacement_plot1(self, **kwargs):
         plot = PlotFactory(
             community='test_community12',
             household_count=1,
@@ -71,7 +71,7 @@ class ReplacementTests(TestCase):
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [plot])
 
-    def test_replacement_helper2(self, **kwargs):
+    def test_replacement_plot2(self, **kwargs):
         plot = PlotFactory(
             community='test_community12',
             household_count=0,
@@ -89,7 +89,7 @@ class ReplacementTests(TestCase):
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [])
 
-    def test_replacement_helper3(self, **kwargs):
+    def test_replacement_plot3(self, **kwargs):
         plot = PlotFactory(
             community='test_community12',
             household_count=1,
