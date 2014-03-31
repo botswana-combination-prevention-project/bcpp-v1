@@ -50,7 +50,7 @@
         </div>
 
         <div id="household_structure_status_marquee">
-            Status {{ household_structure.status }}
+            <B>Household Status:</B> {% if household_structure.enrolled %} <b><span style="color:green">Enrolled</span></b> {% else %} (not enrolled) {% endif %}
         </div>
 
     {% endblock %}
@@ -59,8 +59,10 @@
         {% if household_members %}
             {% if household_info %}
                 <p style="clear:both;font-size:11px;"><a href="{% url household_info_meta|admin_urlname:'change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information from {{household_info.household_member.get_relation_display }} {{household_info.household_member.first_name|encrypted }}</a></p>
-            {% else %}
-                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from Head of Household or a Representative</a></p>
+            {% elif not household_info and not eligible_hoh %}
+            	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url head_household_eligibility_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
+            {% elif not household_info and eligible_hoh %}
+                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information from {{head_household_eligibility.household_member.get_relation_display }} {{head_household_eligibility.household_member.first_name|encrypted }}</a></p>
             {% endif %}
         {% endif %}
       {% endblock %}
@@ -73,7 +75,9 @@
             
             <table><tr><td>
                 {% if has_household_log_entry and not household_members %}<span style="background-color:red;">&nbsp;</span>{% endif %}
-                <A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A>
+                {% if not household.reason_not_enumerated == 'refused' %}
+                	<A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A>
+            	{% endif %}
             </td></tr></table>
         {% endif %}
     {% endif%}  

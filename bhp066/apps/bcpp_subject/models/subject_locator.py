@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
@@ -13,6 +14,7 @@ from apps.bcpp_household.models  import Plot
 from ..managers import ScheduledModelManager
 from ..models import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
+from .hic_enrollment import HicEnrollment
 
 
 class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
@@ -88,11 +90,18 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        self.hic_enrollment_checks()
         # as long as locator is on a visit schedule, need to update self.registered_subject manually
         if self.subject_visit:
             if not self.registered_subject:
                 self.registered_subject = self.registered_subject = self.subject_visit.appointment.registered_subject
         super(SubjectLocator, self).save(*args, **kwargs)
+
+    def hic_enrollment_checks(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
+        if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
+            if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
+                raise exception_cls('An HicEnrollment form exists for this subject. At least one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
 
     def natural_key(self):
         return self.subject_visit.natural_key()

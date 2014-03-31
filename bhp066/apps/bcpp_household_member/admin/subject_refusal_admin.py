@@ -13,30 +13,21 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member',
         'report_datetime',
         'refusal_date',
-        'why_no_participate',
-        'why_no_participate_other',
-        'participant_offered_htc',
-        'accepted_htc',
+        'reason',
+        'reason_other',
         'comment')
 
     radio_fields = {
-        "why_no_participate": admin.VERTICAL,
+        "reason": admin.VERTICAL,
         }
 
-    list_display = (
-        'why_no_participate',
-        'participant_offered_htc',
-        'accepted_htc')
+    list_display = ('reason', )
 
     search_fields = [
         'household_member__first_name',
-        'household_member__household_structure__household__household_identifier',
-        'participant_offered_htc']
+        'household_member__household_structure__household__household_identifier']
 
-    list_filter = (
-        'why_no_participate',
-        'participant_offered_htc',
-        'accepted_htc')
+    list_filter = ('reason', )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

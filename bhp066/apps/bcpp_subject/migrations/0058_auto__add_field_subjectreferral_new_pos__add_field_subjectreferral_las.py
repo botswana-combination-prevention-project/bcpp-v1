@@ -579,8 +579,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.ceaenrolmentchecklist': {
-            'Meta': {'object_name': 'CeaEnrolmentChecklist'},
+        'bcpp_subject.ceaenrollmentchecklist': {
+            'Meta': {'object_name': 'CeaEnrollmentChecklist'},
             'cd4_count': ('django.db.models.fields.DecimalField', [], {'max_digits': '6', 'decimal_places': '2'}),
             'cd4_date': ('django.db.models.fields.DateField', [], {'max_length': '25'}),
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
@@ -588,7 +588,7 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'date_signed': ('django.db.models.fields.DateTimeField', [], {'max_length': '25'}),
             'diagnosis_date': ('django.db.models.fields.DateField', [], {'max_length': '3'}),
-            'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'enrollment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
@@ -603,8 +603,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_subject.ceaenrolmentchecklistaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CeaEnrolmentChecklistAudit', 'db_table': "u'bcpp_subject_ceaenrolmentchecklist_audit'"},
+        'bcpp_subject.ceaenrollmentchecklistaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CeaEnrollmentChecklistAudit', 'db_table': "u'bcpp_subject_ceaenrollmentchecklist_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -615,7 +615,7 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'date_signed': ('django.db.models.fields.DateTimeField', [], {'max_length': '25'}),
             'diagnosis_date': ('django.db.models.fields.DateField', [], {'max_length': '3'}),
-            'enrolment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
+            'enrollment_reason': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
@@ -624,7 +624,7 @@ class Migration(SchemaMigration):
             'marriage_certificate_no': ('django.db.models.fields.CharField', [], {'max_length': '9', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'opportunistic_illness': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_ceaenrolmentchecklist'", 'to': "orm['registration.RegisteredSubject']"}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_ceaenrollmentchecklist'", 'to': "orm['registration.RegisteredSubject']"}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),

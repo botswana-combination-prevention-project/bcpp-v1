@@ -27,6 +27,7 @@ class Grant(BaseScheduledInlineModel):
 
     objects = GrantManager()
 
+    @property
     def inline_parent(self):
         return self.labour_market_wages
 

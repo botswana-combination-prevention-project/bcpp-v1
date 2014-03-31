@@ -1,25 +1,27 @@
-from datetime import datetime
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 
-from django.db import models
+from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
-from django.core.urlresolvers import reverse
+from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
+from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
+from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
-from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
-from edc.subject.lab_tracker.classes import site_lab_tracker
 
-from apps.bcpp_household.choices import RELATIONS
-from apps.bcpp_household.models import Plot
 from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.models import Plot
 
+from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
+from ..classes import HouseholdMemberHelper
+from ..constants import  ABSENT, UNDECIDED
+from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
-from ..choices import (HOUSEHOLD_MEMBER_FULL_PARTICIPATION, HOUSEHOLD_MEMBER_HTC_PARTICIPATION, HOUSEHOLD_MEMBER_MINOR, HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-                    HOUSEHOLD_MEMBER_NOT_ELIGIBLE, HOUSEHOLD_MEMBER_RBD_PARTICIPATION)
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -40,7 +42,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     first_name = EncryptedFirstnameField(
         verbose_name='First name',
-        validators=[RegexValidator("^[a-zA-Z]{1,250}$", "Ensure first name does not contain any spaces or numbers")],
+        validators=[RegexValidator("^[A-Z]{1,250}$", "Ensure first name is only CAPS and does not contain any spaces or numbers")],
         db_index=True)
 
     initials = models.CharField('Initials',
@@ -48,7 +50,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         validators=[
             MinLengthValidator(2),
             MaxLengthValidator(3),
-            RegexValidator("^[A-Za-z]{1,3}$", "Must be 2 or 3 letters. No spaces or numbers allowed.")],
+            RegexValidator("^[A-Z]{1,3}$", "Must be Only CAPS and 2 or 3 letters. No spaces or numbers allowed.")],
         db_index=True)
 
     gender = models.CharField(
@@ -71,39 +73,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         choices=YES_NO,
         db_index=True)
 
-    member_status_full = models.CharField(
-        max_length=25,
-        choices=HOUSEHOLD_MEMBER_FULL_PARTICIPATION,
-        null=True,
-        editable=False,
-        default='NOT_REPORTED',
-        help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
-        db_index=True)
-
-    member_status_partial = models.CharField(
-        max_length=25,
-        choices=HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION,
-        null=True,
-        editable=False,
-        default='NOT_REPORTED',
-        help_text='RBD, HTC or RBC/HTC',
-        db_index=True)
-
-    hiv_history = models.CharField(max_length=25, null=True, editable=False)
-
-    eligible_member = models.NullBooleanField(default=None, editable=False, help_text='just based on what is on this form...')
-
-    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the bhs eligibility checklist if completed")
-
-    eligible_rbd_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the research blood draw eligibility checklist if completed")
-
-    #Keep track of wherether the elilibility form has been filled before
-    eligibility_checklist_filled = models.NullBooleanField(default=None, editable=False)
-
-    visit_attempts = models.IntegerField(default=0)
-
-    target = models.IntegerField(default=0)
-
     relation = models.CharField(
         verbose_name="Relation to head of household",
         max_length=35,
@@ -119,32 +88,48 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text=("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
-                  "spent 3 or more nights per month in this community. "
-                  "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
+                  "spent 3 or more nights per month in this community."),
         )
+
+    member_status = models.CharField(
+        max_length=25,
+        choices=HOUSEHOLD_MEMBER_PARTICIPATION,
+        null=True,
+        editable=False,
+        help_text='RESEARCH, ABSENT, REFUSED, UNDECIDED',
+        db_index=True)
+
+    hiv_history = models.CharField(max_length=25, null=True, editable=False)
+
+    eligible_member = models.NullBooleanField(default=None, editable=False, help_text='eligible to be screened. based on data on this form')
+
+    eligible_subject = models.NullBooleanField(default=None, editable=False, help_text="updated by the enrollment checklist save method only. True if subject passes the eligibility criteria.")
+
+    enrollment_checklist_completed = models.NullBooleanField(default=None, editable=False, help_text="updated by enrollment checklist only (regardless of the eligibility outcome).")
+
+    enrollment_loss_completed = models.NullBooleanField(default=None, editable=False, help_text="updated by enrollment loss save method only.")
+
+    refused = models.BooleanField(default=False, editable=False, help_text="updated by subject refusal save method only")
+
+    htc = models.BooleanField(default=False, editable=False, help_text="updated by the subject HTC save method only")
+
+    is_consented = models.BooleanField(default=False, editable=False, help_text="updated by the subject consent save method only")
+
+    eligible_htc = models.NullBooleanField(default=None, editable=False, help_text="")
+
+    eligible_hoh = models.NullBooleanField(default=None, editable=False, help_text="updated by the head of household enrollment checklist only.")
+
+    reported = models.BooleanField(default=False, editable=False, help_text="update by any of subject absentee, undecided, refusal")
+
+    visit_attempts = models.IntegerField(default=0, help_text="")
+
+    absent = models.BooleanField(default=False, editable=False, help_text="Updated by the subject absentee log")
+
+    target = models.IntegerField(default=0)
 
     objects = HouseholdMemberManager()
 
     history = AuditTrail()
-
-    def save(self, *args, **kwargs):
-        self.eligible_member = self.is_eligible()
-        self.initials = self.initials.upper()
-        if self.eligible_member:
-            self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
-                                    household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier, eligible_member=True).count()
-            self.household_structure.household.plot.save()
-        else:
-            self.member_status_full = 'NOT_ELIGIBLE'
-        super(HouseholdMember, self).save(*args, **kwargs)
-
-    def natural_key(self):
-        if not self.household_structure:
-            raise AttributeError("member.household_structure cannot be None for id='\{0}\'".format(self.id))
-        if not self.registered_subject:
-            raise AttributeError("member.registered_subject cannot be None for id='\{0}\'".format(self.id))
-        return self.household_structure.natural_key() + self.registered_subject.natural_key()
-    natural_key.dependencies = ['bcpp_household.householdstructure', 'registration.registeredsubject']
 
     def __unicode__(self):
         return '{0} {1} {2}{3}'.format(
@@ -153,62 +138,95 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.age_in_years,
             self.gender)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if not self.household_structure.household.enumerated:
+                self.household_structure.household.enumerated = True
+                self.household_structure.household.save()
+        else:
+            household_member_helper = HouseholdMemberHelper(self)
+            if household_member_helper.consented:
+                raise MemberStatusError('Household member is consented. Changes are not allowed. Perhaps catch this in the form.')
+            self.eligible_member = household_member_helper.eligible_member
+            self.eligible_htc = household_member_helper.eligible_htc
+            self.reported = household_member_helper.reported
+            self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
+        super(HouseholdMember, self).save(*args, **kwargs)
+
+    def enroll_household(self):
+        """Updates the household structure as enrolled if the member consents.
+
+        ..note:: household structure will update the household as enrolled and the household members
+                will be recalculated in the household_structure post-save signal."""
+        household_structure = self.household_structure
+        if not household_structure.enrolled:
+            household_structure.enrolled = True
+            household_structure.enrolled_household_member = self.pk
+            household_structure.enrolled_datetime = datetime.today()
+            household_structure.save()
+
+    def update_plot_eligible_members(self):
+        self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
+            household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier,
+            eligible_member=True).count()
+        self.household_structure.household.plot.save()
+
+    def match_enrollment_checklist_values(self, household_member, exception_cls=None):
+        if household_member.enrollment_checklist:
+            household_member.enrollment_checklist.matches_household_member_values(household_member.enrollment_checklist, household_member, exception_cls)
+
+    @property
+    def enrollment_checklist(self):
+        """Returns the enrollment checklist instance or None."""
+        EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
+        try:
+            enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self)
+        except:
+            enrollment_checklist = None
+        return enrollment_checklist
+
+    @property
+    def subject_htc(self):
+        """Returns the SubjectHtc instance or None."""
+        SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
+        try:
+            subject_htc = SubjectHtc.objects.get(household_member=self)
+        except:
+            subject_htc = None
+        return subject_htc
+
+    @property
+    def enrollment_options(self):
+        """Returns a dictionary of household member fields that are also on the enrollment checklist (as a convenience)."""
+        return {'gender': self.gender,
+                'dob': date.today() - relativedelta(years=self.age_in_years),
+                'initials': self.initials,
+                'part_time_resident': self.study_resident}
+
+    def natural_key(self):
+        if not self.household_structure:
+            raise AttributeError("household_member.household_structure cannot be None for id='\{0}\'".format(self.id))
+        if not self.registered_subject:
+            raise AttributeError("household_member.registered_subject cannot be None for id='\{0}\'".format(self.id))
+        return self.household_structure.natural_key() + self.registered_subject.natural_key()
+    natural_key.dependencies = ['bcpp_household.householdstructure', 'registration.registeredsubject']
+
     @property
     def survey(self):
         return self.household_structure.survey
 
+    @property
     def is_minor(self):
         return (self.age_in_years >= 16 and self.age_in_years <= 17)
 
+    @property
     def is_adult(self):
         return (self.age_in_years >= 18 and self.age_in_years <= 64)
 
-    def is_eligible(self):
-        "Returns if the subject is eligible or ineligible based on age and residency"
-        if self.is_minor() and self.study_resident == 'Yes':
-            return True
-        elif self.is_adult() and self.study_resident == 'Yes':
-            return True
-        else:
-            return False
-
     @property
-    def non_bhs_member(self):
-        "Those participants that where never BHS potentials to start with, or failed the BHS eligibility checklist."
-        if not self.is_eligible():  # evaluated before eligibility checklist for BHS is ran,just fro household meber values eg age < 16..
-            return True
-        if self.member_status_full == 'NOT_ELIGIBLE':  # Sometimes set after a more strict criteria of the BHS eligibility checklist, e.g non citizen not married to citizen.
-            return True
-        return False
-
-    @property
-    def is_consented(self):
-        "Returns True or False based on search for a consent instance related to this household member"
-        from edc.subject.consent.models import BaseConsent
-        has_consent_instance = False
-        for any_model_cls in models.get_models():
-            if issubclass(any_model_cls, BaseConsent):
-                consent_model_cls = any_model_cls
-                if 'household_member' in dir(consent_model_cls):
-                    if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
-                        has_consent_instance = True
-                        break
-        return has_consent_instance
-
-    @property
-    def is_consented_partial(self):
-        "Returns True or False based on search for a partial participation consent instance related to this household member"
-        from apps.bcpp_rbd.models import RBDConsent
-        from apps.bcpp_htc_subject.models import HtcSubjectConsent
-        has_partial_consent_instance = False
-        for any_model_cls in models.get_models():
-            if issubclass(any_model_cls, RBDConsent) or issubclass(any_model_cls, HtcSubjectConsent):
-                consent_model_cls = any_model_cls
-                if 'household_member' in dir(consent_model_cls):
-                    if consent_model_cls.objects.filter(household_member__id=self.id, household_member__household_structure__survey__id=self.household_structure.survey.id):
-                        has_partial_consent_instance = True
-                        break
-        return has_partial_consent_instance 
+    def is_htc_only(self):
+        """Returns True if subject has participated by accepting HTC only."""
+        pass
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
@@ -217,11 +235,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Updates from lab_tracker."""
         self.hiv_history = self.get_hiv_history()
 
-    def update_household_member_count_on_post_save(self, **kwargs):
+    def update_household_member_count_on_post_save(self, sender, using=None):
         """Updates the member count on the household_structure model."""
-        using = kwargs.get('using', None)
-        self.household_structure.member_count = self.__class__.objects.filter(household_structure=self.household_structure).count()
+        household_members = sender.objects.using(using).filter(household_structure=self.household_structure)
+        self.household_structure.member_count = household_members.count()
+        self.household_structure.enrolled_member_count = len([household_member for household_member in household_members if household_member.is_consented])
         self.household_structure.save(using=using)
+        self.update_plot_eligible_members()
 
     def update_registered_subject_on_post_save(self, **kwargs):
         using = kwargs.get('using', None)
@@ -260,35 +280,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return retval
 
     @property
-    def status_choices(self):
-        status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if (self.age_in_years < 16) or not self.is_eligible():
-            status_choices = HOUSEHOLD_MEMBER_NOT_ELIGIBLE
-        else:
-            status_choices = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        return status_choices
-
-    @property
-    def status_choices_partial(self):
-        status_choices_p = HOUSEHOLD_MEMBER_FULL_PARTICIPATION
-        if self.non_bhs_member and self.household_structure.number_enrolled > 0:
-            status_choices_p = HOUSEHOLD_MEMBER_HTC_PARTICIPATION
-        elif self.member_status_full == 'REFUSED':
-            enrolled = self.household_structure.number_enrolled 
-            if enrolled > 0:
-                status_choices_p = HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION
-            elif enrolled == 0:
-                status_choices_p = HOUSEHOLD_MEMBER_RBD_PARTICIPATION
-        return status_choices_p
-
-    @property
-    def member_status(self):
-#         if self.member_status_full in ['NOT_ELIGIBLE', 'REFUSED']:
-#             ret = self.member_status_partial
-#         else:
-#             ret = self.member_status_full
-#         return ret
-        return self.member_status_full
+    def member_status_choices(self):
+        return HouseholdMemberHelper(self).member_status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
@@ -316,37 +309,25 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return url
 
     @property
-    def subject_absentee(self):
-        """Returns the subject absentee instance for this member and creates a subject_absentee if it does not exist."""
-        from ..models import SubjectAbsentee
-        return self.entry_instance_factory(SubjectAbsentee, 'ABSENT')
+    def subject_absentee_instance(self):
+        """Returns the subject absentee instance for this member and creates a subject_absentee_instance if it does not exist."""
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self
+        return household_member_helper.subject_status_factory('SubjectAbsentee', ABSENT)
 
     @property
-    def subject_undecided(self):
-        """Returns the subject undecided instance for this member and creates a subject_undecided if it does not exist."""
+    def subject_undecided_instance(self):
+        """Returns the subject undecided instance for this member and creates a subject_undecided_instance if it does not exist."""
         from ..models import SubjectUndecided
-        return self.entry_instance_factory(SubjectUndecided, 'UNDECIDED')
-
-    def entry_instance_factory(self, entry_parent_model, member_status):
-        instance = None
-        try:
-            instance = entry_parent_model.objects.get(household_member=self)
-        except entry_parent_model.DoesNotExist:
-            if self.member_status == member_status:
-                instance = entry_parent_model.objects.create(
-                    report_datetime=datetime.today(),
-                    registered_subject=self.registered_subject,
-                    household_member=self,
-                    survey=self.household_structure.survey,
-                    )
-        return instance
+        household_member_helper = HouseholdMemberHelper()
+        household_member_helper.household_member = self
+        return household_member_helper.subject_status_factory('SubjectUndecided', UNDECIDED)
 
     def render_absentee_info(self):
         """Renders the absentee information for the template."""
-        # TODO: model subject absentee should be moved to module bcpp_household_member
         from ..models import SubjectAbsenteeEntry
         render = ['<A href="{0}">add another absentee log entry</A>']
-        for subject_absentee_entry, index in enumerate(SubjectAbsenteeEntry(subject_absentee=self.subject_absentee)):
+        for subject_absentee_entry, index in enumerate(SubjectAbsenteeEntry(subject_absentee=self.subject_absentee_instance)):
             url = reverse('admin:bcpp_subject_subjectabsenteeenty_change')
             render.update('<A href="{0}">{1}</A>'.format(url, subject_absentee_entry))
         if index < 3:  # not allowed more than three subject absentee entries
@@ -363,7 +344,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Returns a url or urls to the subjectabsenteeentry(s) if an instance(s) exists."""
         SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
         absentee_entry_urls = {}
-        subject_absentee = self.subject_absentee
+        subject_absentee = self.subject_absentee_instance
         for entry in SubjectAbsenteeEntry.objects.filter(subject_absentee=subject_absentee).order_by('report_datetime'):
             absentee_entry_urls[entry.pk] = self._get_form_url('subjectabsenteeentry', entry.pk)
         add_url_2 = self._get_form_url('subjectabsenteeentry', model_pk=None, add_url=True)
@@ -381,7 +362,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Returns a url or urls to the subjectundecidedentry(s) if an instance(s) exists."""
         SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'subjectundecidedentry')
         undecided_entry_urls = {}
-        subject_undecided = self.subject_undecided
+        subject_undecided = self.subject_undecided_instance
         for entry in SubjectUndecidedEntry.objects.filter(subject_undecided=subject_undecided).order_by('report_datetime'):
             undecided_entry_urls[entry.pk] = self._get_form_url('subjectundecidedentry', entry.pk)
         add_url_2 = self._get_form_url('subjectundecidedentry', model_pk=None, add_url=True)
@@ -403,7 +384,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
             elif model._meta.module_name == 'subjectabsentee':
                 model_entry_instances = model_entry.objects.filter(subject_absentee=model_instance).order_by('report_datetime')
-            model_entry_count = model_entry_instances.count()
+            #model_entry_count = model_entry_instances.count()
             for subject_undecided_entry in model_entry_instances:
                 report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'), subject_undecided_entry.id))
             if self.visit_attempts < 3:

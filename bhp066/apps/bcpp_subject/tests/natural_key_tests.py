@@ -12,7 +12,6 @@ from edc.core.crypto_fields.classes import FieldCryptor
 from edc.device.sync.classes import SerializeToTransaction
 from edc.map.classes import site_mappers
 from edc.subject.appointment.tests.factories import AppointmentFactory
-from edc.subject.appointment.tests.factories import ConfigurationFactory
 from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
@@ -55,7 +54,6 @@ class NaturalKeyTests(TestCase):
         site_visit_schedules.autodiscover()
         StudySpecificFactory()
         study_site = StudySiteFactory()
-        ConfigurationFactory()
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()  

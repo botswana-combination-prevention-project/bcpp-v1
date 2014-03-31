@@ -17,10 +17,16 @@
 				<th>Household to return</th>
 				<th>Return</th>
 			</thead>
-		{% for household in replacement_data %}
+		{% for item, reason, producer in replacement_data %}
 			<tr>
-				<td>{{ household }}</td>
-				<td><a href="{% url 'return_data_url' %}/?household_identifier={{ household.household_identifier }}">return</a></td>
+				<td>{{ item }}</td>
+				<td>{{ reason }}</td>
+				<td>{{ producer }}</td>
+				{% if item.is_plot %}
+				<td><a href="{% url 'return_data_url' %}/?item_identifier={{ item.plot_identifier }}">return</a></td>
+				{% else %}
+				<td><a href="{% url 'return_data_url' %}/?item_identifier={{ item.household_identifier }}">return</a></td>
+				{% endif %}
 			</tr>
 		{% endfor %}
 		<tr><td colspan=3><a href="{% url 'return_data_url' %}?replace_str={{ replace_str }}"><b>Return All</b></a></td></tr>
@@ -29,5 +35,4 @@
 	{% else %}
 		<b>No households qualify for replacement.</b>
 	{%endif%}
-
 {% endblock %}
