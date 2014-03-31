@@ -39,14 +39,15 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return self.targeted_qs().filter(householdstructure__householdlog__isnull=False)
 
     def enumerated_qs(self):
-        return self.targeted_qs().filter(householdstructure__member_count__gte=1)
+        return self.targeted_qs().filter(householdstructure__enumerated=True)
 
     def eligible_qs(self):
         return self.targeted_qs().filter(householdstructure__householdmember__eligible_member=True)
 
     def all_refused_qs(self):
-        actions = [item[0] for item in member_actions if item[0] != 'REFUSED']
-        return self.visited_qs().exclude(householdstructure__householdmember__member_status_full__in=actions)
+        #actions = [item[0] for item in member_actions if item[0] != 'REFUSED']
+        #return self.visited_qs().exclude(householdstructure__householdmember__member_status_full__in=actions)
+        return self.visited_qs().filter(householdstructure__householdmember__refused=True)
 
     def age_elegible_qs(self):
         return self.enumerated_qs().filter(householdstructure__householdmember__eligible_member=True)
