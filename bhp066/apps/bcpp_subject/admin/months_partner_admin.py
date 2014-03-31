@@ -58,7 +58,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
                              " sexual partner in the past 12 months. It may be"
                              " helpful for respondent to give initials or"
                              " nickname, but DO NOT write down or otherwise"
-                             "record this information. "), 
+                             "record this information. "),
                              _("Read to Participant: I am now going to ask you"
                              " about your most recent sexual partners. I will"
                              " start with your last or most recent sexual partner.")]
@@ -66,7 +66,7 @@ admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 
 
 class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
-
+# NOTE: this is not a supplemental form, it should be filled in based on the responses in SecondPartner.
     form = MonthsSecondPartnerForm
 #     supplemental_fields = SupplementalFields(
 #         ('first_haart',
@@ -125,6 +125,7 @@ admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
+# NOTE: this is not a supplemental form, it should be filled in based on the responses in SecondPartner.
 #     supplemental_fields = SupplementalFields(
 #         ('first_haart',
 #         'first_disclose',

@@ -175,6 +175,14 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=("plot or household identifier that this plot replaced."),
         )
 
+    replaced_by = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot that this plot replaces',
+        editable=False,
+        )
+
     device_id = models.CharField(
         max_length=2,
         null=True,

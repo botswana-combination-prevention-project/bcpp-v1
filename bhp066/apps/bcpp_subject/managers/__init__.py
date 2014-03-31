@@ -2,3 +2,4 @@ from .base_registered_household_member_model_manager import BaseRegisteredHouseh
 from .scheduled_model_manager import ScheduledModelManager
 from .grant_manager import GrantManager
 from .consent_history_manager import ConsentHistoryManager
+from .tb_symptoms_manager import TbSymptomsManager
