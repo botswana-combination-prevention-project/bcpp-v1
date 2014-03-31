@@ -9,7 +9,7 @@ from apps.bcpp_household.managers import HouseholdAssessmentManager
 
 from ..choices import INELIGIBLE_REASON
 from ..choices import RESIDENT_LAST_SEEN
-from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED
+from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED
 
 from .household_structure import HouseholdStructure
 from .plot import Plot

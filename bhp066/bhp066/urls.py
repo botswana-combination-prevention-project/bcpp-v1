@@ -74,8 +74,9 @@ urlpatterns += patterns('',
 # )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
-        include('edc.audit.urls'), name="section_url_name"),
+#     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
+#         include('edc.audit.urls'), name="section_url_name"),
+    url(r'^audit_trail/', include('edc.audit.urls'), name="audit_trail_url_name"),
 )
 
 urlpatterns += patterns('',
