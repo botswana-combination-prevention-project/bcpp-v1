@@ -124,7 +124,9 @@ class Household(BaseDispatchSyncUuidModel):
         max_length=25,
         null=True,
         verbose_name='Identifier',
+
         help_text=u'The identifier of the plot that this household is replaced by',
+
         editable=False,
         )
 
