@@ -1,36 +1,29 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db.models import Q
 
-from ..models import Plot, Household
-from ..classes import ReplacementData
+from ..models import Household, Plot
+from ..helpers import ReplacementHelper
 
-def replace_data(request):
+
+def replace_data(request, survey):
     """Get all plots to be replaced.
 
     Filter plots to be replaced by calling replacement methods that return replacement household.
     """
-    replacement_data = []
     replace_str = ''
-    replacement_count = 0
     template = 'replacement_data.html'
-    plots = Plot.objects.filter(Q(selected=2) | Q(selected=1))
-    #Get all household to be replaced
-    for plot in plots:
-        if ReplacementData().replace_refusals(plot):
-            replacement_data = replacement_data + ReplacementData().replace_refusals(plot)
-        if ReplacementData().replacement_absentees_ineligibles(plot):
-            replacement_data = replacement_data + ReplacementData().replacement_absentees_ineligibles(plot)
-    replacement_count = len(replacement_data)
-    for household in replacement_data:
-        replace_str = replace_str + ',' + household.household_identifier
-        household.replacement = True
-        household.save()
+    replacement_data = ReplacementHelper(survey).replaceable_households(survey)
+#     replacement_data = ReplacementHelper(survey).replaceable_households(survey)
+    for item in replacement_data:
+        if isinstance(item[0], Plot):
+            replace_str = replace_str + ',' + item[0].plot_identifier
+        elif isinstance(item[0], Household):
+            replace_str = replace_str + ',' + item[0].household_identifier
     return render_to_response(
             template, {
                 'replacement_data': replacement_data,
                 'replace_str': replace_str,
-                'replacement_count': replacement_count,
+                'replacement_count': len(replacement_data),
                 },
                 context_instance=RequestContext(request)
             )

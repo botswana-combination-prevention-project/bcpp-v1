@@ -1,5 +1,0 @@
-# updated 20140310
-python manage.py dumpdata --indent 2 auth.user > auth_user.json
-python manage.py dumpdata --indent 2 auth.group > auth_group.json
-python manage.py dumpdata --indent 2 bcpp_list > bcpp_list.json
-python manage.py dumpdata --indent 2 lab_clinic_api.aliquotcondition lab_clinic_api.aliquottype lab_clinic_api.testcodegroup lab_clinic_api.testcode  > lab_clinic_api.json

@@ -1,11 +1,13 @@
 from django.db import models
 
 from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.core.crypto_fields.fields import EncryptedCharField
+from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import Plot
+from apps.bcpp_household.models import  Plot
+from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -14,8 +16,8 @@ from ..choices import NEXT_APPOINTMENT_SOURCE
 
 class BaseSubjectEntry(BaseDispatchSyncUuidModel):
     """For absentee and undecided log models."""
-    report_datetime = models.DateTimeField("Report date",
-        validators=[datetime_not_before_study_start, datetime_not_future],
+    report_datetime = models.DateField("Report date",
+        validators=[date_not_before_study_start, date_not_future],
         )
 
     reason_other = OtherCharField()
@@ -35,20 +37,31 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
     contact_details = EncryptedCharField(
         null=True,
         blank=True,
-        editable=False,
+        #editable=False,
         help_text=('Information that can be used to contact someone, '
                    'preferrably the subject, to confirm the appointment'),
         )
 
-    comment = models.TextField(
+    comment = EncryptedTextField(
         verbose_name="Comments",
         max_length=250,
         blank=True,
         null=True,
-        editable=False,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
            'information in this comment')
         )
+
+    def save(self, *args, **kwargs):
+#         if self.in_replaced_household:
+#             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+#         else:
+#             self.update_replacement_data()
+        super(BaseSubjectEntry, self).save(*args, **kwargs)
+
+    @property
+    def in_replaced_household(self):
+        """Returns True if the household for this entry is "replaced"""""
+        return self.inline_parent.household_member.household_structure.household.replaced_by
 
     def dispatch_container_lookup(self):
         field = None

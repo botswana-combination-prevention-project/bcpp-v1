@@ -9,7 +9,6 @@ from django.test import TestCase
 
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.map.classes import Mapper, site_mappers
-from edc.subject.appointment.tests.factories import ConfigurationFactory
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
@@ -40,7 +39,6 @@ class FormsTests(TestCase):
     def setUp(self):
         StudySpecificFactory()
         StudySiteFactory()
-        ConfigurationFactory()
         self.survey = SurveyFactory()
         self.plot = PlotFactory(community='test_community2', household_count=1, status='occupied')
         self.household_structure = HouseholdStructure.objects.get(household__plot=self.plot)
@@ -263,11 +261,11 @@ class FormsTests(TestCase):
 #         adminuser.save()
 #         self.client.login(username=adminuser.username, password='pass')
 # 
-#         content_type_map = ContentTypeMap.objects.get(content_type__model='EnrolmentChecklist'.lower())
+#         content_type_map = ContentTypeMap.objects.get(content_type__model='EnrollmentChecklist'.lower())
 #         membership_form = MembershipFormFactory(content_type_map=content_type_map)
-#         schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='enrolment', grouping_key='ELIGIBILITY')
+#         schedule_group = ScheduleGroupFactory(membership_form=membership_form, group_name='enrollment', grouping_key='ELIGIBILITY')
 #         visit_tracking_content_type_map = ContentTypeMap.objects.get(content_type__model='subjectvisit')
-#         visit_definition = VisitDefinitionFactory(code='1000', title='Enrolment', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
+#         visit_definition = VisitDefinitionFactory(code='1000', title='Enrollment', grouping='subject', visit_tracking_content_type_map=visit_tracking_content_type_map)
 #         visit_definition.schedule_group.add(schedule_group)
 # 
 #         survey = SurveyFactory()
@@ -283,7 +281,7 @@ class FormsTests(TestCase):
 #         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
 #         self.assertEqual(subject_consent.registered_subject.pk, registered_subject.pk)
 # 
-#         enrolment = EnrolmentChecklistFactory(registered_subject=registered_subject)
+#         enrollment = EnrollmentChecklistFactory(registered_subject=registered_subject)
 # 
 #         self.assertEqual(Appointment.objects.all().count(), 1)
 #         appointment = Appointment.objects.get(registered_subject=registered_subject)

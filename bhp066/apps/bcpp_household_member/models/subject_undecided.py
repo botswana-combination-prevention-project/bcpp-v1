@@ -7,11 +7,9 @@ class SubjectUndecided (BaseMemberStatusModel):
 
     history = AuditTrail()
 
-    def member_status_string(self):
-        return 'UNDECIDED'
-
     def save(self, *args, **kwargs):
         self.survey = self.household_member.survey
+        self.registered_subject = self.household_member.registered_subject
         super(SubjectUndecided, self).save(*args, **kwargs)
 
     class Meta:

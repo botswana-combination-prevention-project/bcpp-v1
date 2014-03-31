@@ -21,24 +21,24 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
 
     fields = (
         'survey',
-        'member_count',
         'note')
     list_display = (
         'plot',
         'survey',
         'house',
+        'enrolled',
         'dashboard',
         'members',
         'logs',
         'progress',
-        'member_count',
         'modified',
         'user_modified',
         'hostname_modified')
     list_filter = (
         'survey',
         'progress',
-        'member_count',
+        'enrolled',
+        'enrolled_datetime',
         'modified',
         'user_modified',
         'hostname_modified',

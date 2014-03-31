@@ -13,12 +13,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     fields = (
         'report_datetime',
-        'allowed_to_enumerate',
         'comment')
-
-    radio_fields = {
-        "allowed_to_enumerate": admin.VERTICAL,
-        }
 
     list_display = ('household_identifier', 'structure', 'plot', 'community', 'created')
 

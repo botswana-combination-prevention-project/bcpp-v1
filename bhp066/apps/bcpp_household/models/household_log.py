@@ -1,18 +1,19 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.core.crypto_fields.fields import EncryptedTextField
-from ..choices import YES_NO
-from apps.bcpp_survey.validators import date_in_survey
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
+
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
 class HouseholdLog(BaseDispatchSyncUuidModel):
-    #Household
+
     household_structure = models.OneToOneField(HouseholdStructure)
 
     history = AuditTrail()
@@ -42,8 +43,8 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
 
     household_log = models.ForeignKey(HouseholdLog)
 
-    report_datetime = models.DateTimeField("Report date",
-        validators=[datetime_not_before_study_start, datetime_not_future, date_in_survey],
+    report_datetime = models.DateField("Report date",
+        validators=[date_not_before_study_start, date_not_future],
         )
 
     household_status = models.CharField(
@@ -51,16 +52,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         max_length=50,
         choices=HOUSEHOLD_STATUS,
         null=True,
-        )
-
-    supervisor_vdc_confirm = models.CharField(
-        verbose_name='VDC confirmation, Members rarely there or temporarily/ seasonally there.',
-        max_length=25,
-        null=True,
-        choices=YES_NO,
-        editable=True,
-        blank=True,
-        help_text='Fill only when there is no informant available, after having consulted supervisor and VDC.',
+        blank=False,
         )
 
     next_appt_datetime = models.DateTimeField(
@@ -90,6 +82,9 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         return (self.report_datetime, ) + self.household_log.natural_key()
+
+    def save(self, *args, **kwargs):
+        super(HouseholdLogEntry, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
         return True

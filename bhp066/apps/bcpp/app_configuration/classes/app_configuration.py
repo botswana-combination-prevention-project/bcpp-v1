@@ -1,13 +1,17 @@
 from datetime import datetime
 
-from edc.apps.app_configuration.classes import BaseAppConfiguration, AliquotTypeTuple, ProfileItemTuple, ProfileTuple
-
-from apps.bcpp_survey.models import Survey
+from edc.apps.app_configuration.classes import BaseAppConfiguration
+from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
 
+from lis.labeling.classes import LabelPrinterTuple
+from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
+from lis.specimen.lab_panel.classes import PanelTuple
 
-study_start_datetime = datetime(2013, 12, 29, 10, 30, 00)
-study_end_datetime = datetime(2014, 10, 29, 16, 30, 00)
+from apps.bcpp_survey.models import Survey
+
+study_start_datetime = datetime(2013, 10, 18, 10, 30, 00)
+study_end_datetime = datetime(2014, 10, 17, 16, 30, 00)
 
 
 class BcppAppConfiguration(BaseAppConfiguration):
@@ -16,10 +20,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).__init__()
         self.update_or_create_survey()
 
-    appointment_configuration = {
-                'allowed_iso_weekdays': '1234567',
-                'use_same_weekday': True,
-                'default_appt_type': 'default'}
+    global_configuration = {
+        'dashboard':
+            {'show_not_required': True,
+            'allow_additional_requisitions': False},
+        'appointment':
+            {'allowed_iso_weekdays': '1234567',
+             'use_same_weekday': True,
+             'default_appt_type': 'default',
+             'appointments_per_day_max': 20,
+             'appointments_days_forward': 15},
+        }
 
     study_variables_setup = {
                 'protocol_number': 'BHP066',
@@ -47,43 +58,69 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'end_datetime': study_end_datetime,
                 'add_for_app': 'bcpp_subject'}
 
-    rbd_consent_catalogue_setup = {
-                'name': 'subject_rbd-year-1',
-                'content_type_map': 'rbdconsent',
-                'consent_type': 'study',
-                'version': 1,
-                'start_datetime': study_start_datetime,
-                'end_datetime': study_end_datetime,
-                'add_for_app': 'bcpp_rbd'}
-
     survey_setup = {
-                'survey_name': 'BCPP Year 1',
-                'survey_slug': 'bcpp-year-1',
-                'datetime_start': study_start_datetime,
-                'datetime_end': datetime(2014, 10, 29, 16, 30, 00)}
+                'bcpp-year-1':
+                    {'survey_name': 'BCPP Year 1',
+                     'survey_slug': 'bcpp-year-1',
+                     'datetime_start': study_start_datetime,
+                     'datetime_end': datetime(2014, 10, 29, 16, 30, 00)},
+                'bcpp-year-2':
+                    {'survey_name': 'BCPP Year 2',
+                     'survey_slug': 'bcpp-year-2',
+                     'datetime_start': datetime(2014, 10, 30, 07, 00, 00),
+                     'datetime_end': datetime(2015, 10, 29, 16, 30, 00)},
+                'bcpp-year-3':
+                    {'survey_name': 'BCPP Year 3',
+                     'survey_slug': 'bcpp-year-3',
+                     'datetime_start': datetime(2015, 10, 30, 07, 00, 00),
+                     'datetime_end': datetime(2016, 10, 29, 16, 30, 00)}
+                }
 
     study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
                         'site_code': site_mappers.get_current_mapper().map_code}
 
-    lab_clinic_api_setup = {'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
-                                             AliquotTypeTuple('Plasma', 'PL', '32'),
-                                             AliquotTypeTuple('Buffy Coat', 'BC', '16')],
-                            'processing_profile': [ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
-                            'processing_profile_item': [ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
-                                                   ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
-                                                   ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
-                                                   ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
-                                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
-                                                   ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}
+    lab_clinic_api_setup = {
+        'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
+                  PanelTuple('Viral Load', 'TEST', 'WB'),
+                  PanelTuple('Microtube', 'STORAGE', 'WB'),
+                  PanelTuple('ELISA', 'TEST', 'WB'),
+                  PanelTuple('Venous (HIV)', 'TEST', 'WB'),
+                  ],
+        'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
+                         AliquotTypeTuple('Plasma', 'PL', '32'),
+                         AliquotTypeTuple('Buffy Coat', 'BC', '16')]}
 
-    consent_catalogue_list = [consent_catalogue_setup, rbd_consent_catalogue_setup]
+    lab_setup = {'bcpp': {
+                     'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
+                               PanelTuple('Viral Load', 'TEST', 'WB'),
+                               PanelTuple('Microtube', 'STORAGE', 'WB'),
+                               PanelTuple('ELISA', 'TEST', 'WB'),
+                               PanelTuple('Venous (HIV)', 'TEST', 'WB'),
+                               ],
+                     'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
+                                      AliquotTypeTuple('Plasma', 'PL', '32'),
+                                      AliquotTypeTuple('Buffy Coat', 'BC', '16')],
+                     'profile': [ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
+                     'profile_item': [ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
+                                      ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
+                                      ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
+                                      ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
+                                      ProfileItemTuple('ELISA', 'PL', 1.0, 1),
+                                      ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}}
+
+    labeling = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', '127.0.0.1', True), ],
+#                 'zpl_template': ZplTemplateTuple('aliquot_label', ''),
+                }
+
+    consent_catalogue_list = [consent_catalogue_setup]
 
     def update_or_create_survey(self):
-        if Survey.objects.all().count() == 0:
-            Survey.objects.create(**self.survey_setup)
-        else:
-            try:
-                # mat fail on tests if surveys created there
-                Survey.objects.all().update(**self.survey_setup)
-            except:
-                pass
+        for survey_values in self.survey_setup.itervalues():
+            if not Survey.objects.filter(survey_name=survey_values.get('survey_name')):
+                Survey.objects.create(**survey_values)
+            else:
+                survey = Survey.objects.get(survey_name=survey_values.get('survey_name'))
+                survey.survey_slug = survey_values.get('survey_slug')
+                survey.datetime_start = survey_values.get('datetime_start')
+                survey.datetime_end = survey_values.get('datetime_end')
+                survey.save()
