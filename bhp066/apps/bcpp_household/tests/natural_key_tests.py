@@ -13,9 +13,9 @@ from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from apps.bcpp_survey.models import Survey
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal, HouseholdRefusalHistory
 from apps.bcpp_household.tests.factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
-                                                 PlotLogFactory, HouseholdLogFactory)
+                                                 PlotLogFactory, HouseholdLogFactory, HouseholdAssessmentFactory)
 
 
 class NaturalKeyTests(TestCase):
@@ -66,11 +66,16 @@ class NaturalKeyTests(TestCase):
         self.assertEquals(HouseholdStructure.objects.all().count(), 1)
         self.assertEquals(Survey.objects.all().count(), 1)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-        household_refusal = HouseholdRefusalFactory(household=household)
-        print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
-#         household_identifier_history =
         print 'No. of HOUSEHOLDS_STRUCTURE = ' + str(HouseholdStructure.objects.all().count())
-        print 'No. of HOUSEHOLDS_LOG = ' + str(HouseholdLog.objects.all().count())
+        household_refusal = HouseholdRefusalFactory(household_structure=household_structure)
+        print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
+        print 'HOUSEHOLD_REFUSAL='+str(HouseholdRefusal.objects.all()[0]) 
+#         household_identifier_history =
+        HouseholdRefusal.objects.get(household_structure=household_structure).delete()
+        print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
+        self.assertEqual(HouseholdRefusalHistory.objects.all().count(), 1)
+        household_ref_history = HouseholdRefusalHistory.objects.get(household_structure=household_structure)
+        household_assesment = HouseholdAssessmentFactory(household_structure=household_structure)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
         household_log_entry1 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=date.today())
         household_log_entry2 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=date.today() + timedelta(days=1))
@@ -84,7 +89,9 @@ class NaturalKeyTests(TestCase):
         instances.append(household)
         # instances.append(enrollment_checklist)
         instances.append(household_structure)
-        instances.append(household_refusal)
+        #instances.append(household_refusal)
+        instances.append(household_assesment)
+        instances.append(household_ref_history)
 #         instances.append(household_identifier_history)
         instances.append(household_log)
         instances.append(plot_log_entry1)

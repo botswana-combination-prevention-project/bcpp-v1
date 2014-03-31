@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import get_model
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
@@ -148,7 +149,17 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.registered_subject = self.household_member.registered_subject
+        self.verified_household_head(self.household_member)
         super(HouseholdInfo, self).save(*args, **kwargs)
+
+    def verified_household_head(self, household_member, exception_cls=None):
+        error_msg = None
+        exception_cls = exception_cls or ValidationError
+        if not household_member:
+            raise exception_cls('No Household Member selected.')
+        if not household_member.eligible_hoh:
+            raise exception_cls('Household Member is not eligible Head Of Household. Fill head of household eligibility first.')
+        return error_msg
 
     class Meta:
         app_label = 'bcpp_household_member'
