@@ -39,7 +39,7 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     objects = ReplacementHistoryManager()
-    
+
     def natural_key(self):
         return (self.replacing_item, self.replaced_item)
 
