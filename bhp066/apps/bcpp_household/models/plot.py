@@ -235,6 +235,14 @@ class Plot(BaseDispatchSyncUuidModel):
 
     bhs = models.NullBooleanField(editable=False)
 
+    replaced_by = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot that this plot is replaced by',
+        editable=False,
+        )
+
     objects = PlotManager()
 
     history = AuditTrail()
