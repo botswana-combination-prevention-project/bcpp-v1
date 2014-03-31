@@ -61,15 +61,14 @@ def household_refusal_on_delete(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdRefusal):
             # update the history model
-            options = {'household_member': instance.household_member,
-                       'survey': instance.survey,
-                       'refusal_date': instance.refusal_date,
+            options = {'household_structure': instance.household_structure,
+                       'report_datetime': instance.report_datetime,
                        'reason': instance.reason,
                        'reason_other': instance.reason_other}
             HouseholdRefusalHistory.objects.create(**options)
-            household_member = instance.household_member
-            household_member.refused_enumeration = False
-            household_member.save()
+            household_structure = instance.household_structure
+            household_structure.refused_enumeration = False
+            household_structure.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='household_enumeration_on_past_save')
