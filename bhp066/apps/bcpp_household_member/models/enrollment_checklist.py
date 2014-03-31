@@ -10,7 +10,7 @@ from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..constants import BHS_SCREEN, BHS_ELIGIBLE
+from ..constants import BHS_SCREEN, BHS_ELIGIBLE, BHS_LOSS
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
 
@@ -191,6 +191,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         if self.household_member.is_minor and self.guardian.lower() != 'yes':
             reason.append('Minor without guardian available.')
         if reason:
+            self.household_member.member_status = BHS_LOSS
             if EnrollmentLoss.objects.filter(household_member=self.household_member):
                 enrollment_loss = EnrollmentLoss.objects.get(household_member=self.household_member)
                 enrollment_loss.report_datetime = datetime.today()
