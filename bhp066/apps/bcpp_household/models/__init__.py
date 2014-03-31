@@ -1,4 +1,3 @@
-
 from .community import Community
 from .gps_device import GpsDevice
 from .household import Household
@@ -12,3 +11,5 @@ from .plot_identifier_history import PlotIdentifierHistory
 from .plot_log import PlotLog, PlotLogEntry
 from .replacement_history import ReplacementHistory
 from .signals import *
+from .representative_eligibility import RepresentativeEligibility
+from .base_representative_eligibility import BaseRepresentativeEligibility
