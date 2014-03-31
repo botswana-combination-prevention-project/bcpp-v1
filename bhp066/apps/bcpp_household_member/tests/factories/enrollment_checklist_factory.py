@@ -10,7 +10,7 @@ class EnrollmentChecklistFactory(BaseUuidModelFactory):
 
     household_member = factory.SubFactory(HouseholdMemberFactory)
     dob = date(1997, 10, 10)
-    guardian = 'Yes'
+    guardian = 'N/A'
     gender = 'M'
     citizen = 'Yes'
     legal_marriage = 'N/A'
