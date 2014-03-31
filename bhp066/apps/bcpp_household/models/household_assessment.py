@@ -7,25 +7,13 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
-#from ..choices import INELIGIBLE_REASON
-#from ..choices import RESIDENT_LAST_SEEN
-from ..constants import RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS
+from ..choices import INELIGIBLE_REASON
+from ..choices import RESIDENT_LAST_SEEN
+from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
-
-INELIGIBLE_REASON = (
-    ('non_citizen', 'Non-Citizen(s)'),
-    ('age_ineligible', 'Not of eligible age'),
-    ('other', 'Other'),
-    )
-
-RESIDENT_LAST_SEEN = (
-        (RESIDENT_LAST_SEEN_4WKS, 'Spends at least 4 weeks in a household over the course of the past year '),
-        (RESIDENT_LAST_SEEN_LESS_4WKS, 'spends at least 1 night be probably less than 4 weeks/year in the household'),
-        ('never_spent_1_day_over_a_year', 'did not even spend 1 night in the household over the past year'),
-        ('dont_know', 'Don\'t know'),
-)
+from django.core.exceptions import ValidationError
 
 
 class HouseholdAssessment(BaseDispatchSyncUuidModel):
@@ -80,11 +68,13 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        if self.household_structure.enumerated:
+            raise ValidationError('HouseholdStructure has been enumerated')
+        if self.household_structure.failed_enumeration_attempts < 3:
+            raise ValidationError('Three attempts are required before Household Assessment')
         if not self.id:
             self.household_structure.failed_enumeration = True
-        self.household_structure.no_informant = False
-        if self.last_seen_home in [RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS]:
-            self.household_structure.no_informant = True
+        self.household_structure.no_informant = self.last_seen_home in [SEASONALLY_OCCUPIED, RARELY_OCCUPIED]
         self.household_structure.save()
         super(HouseholdAssessment, self).save(*args, **kwargs)
 
@@ -102,7 +92,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
             status = 'seasonally_occupied'
         elif self.last_seen_home == '1_night_less_than_4_weeks_year':
             status = 'rarely_occupied'
-        elif self.last_seen_home == 'never_spent_1_day_over_a_year':
+        elif self.last_seen_home == NEVER_OCCUPIED:
             status = 'never_occupied'
         return status
 
