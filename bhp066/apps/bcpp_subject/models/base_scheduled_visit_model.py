@@ -2,16 +2,15 @@ from datetime import datetime
 
 from django.db import models
 
+from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.subject.consent.models import BaseConsentedUuidModel
-from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp_household.models import Plot
 
 from ..managers import ScheduledModelManager
 
-from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
@@ -50,13 +49,17 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
     def get_visit(self):
         return self.subject_visit
 
+    @classmethod
+    def visit_model(self):
+        return SubjectVisit
+
     def is_dispatched_item_within_container(self, using=None):
         return (('bcpp_household', 'plot'), 'subject_visit__household_member__household_structure__household__plot')
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
-    def deserialize_get_missing_fk(self, attrname):  #FIX ME, return subject visit
+    def deserialize_get_missing_fk(self, attrname):
         retval = None
         if attrname == 'subject_visit':
             return self.subject_visit

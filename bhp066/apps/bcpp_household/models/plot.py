@@ -14,6 +14,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
+
 from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -118,7 +119,7 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         decimal_places=4,
         )
-    # TODO: need to be encrypted!!!!!
+
     gps_lon = EncryptedDecimalField(
         verbose_name='longitude',
         max_digits=10,
@@ -126,7 +127,6 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
-    # TODO: need to be encrypted!!!!!
     gps_lat = EncryptedDecimalField(
         verbose_name='latitude',
         max_digits=10,
@@ -134,7 +134,6 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
-    # TODO: need to be encrypted!!!!!
     gps_target_lon = EncryptedDecimalField(
         verbose_name='target waypoint longitude',
         max_digits=10,
@@ -142,7 +141,6 @@ class Plot(BaseDispatchSyncUuidModel):
         decimal_places=6,
         )
 
-    # TODO: need to be encrypted!!!!!
     gps_target_lat = EncryptedDecimalField(
         verbose_name='target waypoint latitude',
         max_digits=10,
@@ -170,7 +168,20 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replacement = models.BooleanField(default=False, editable=False)
+    replaces = models.CharField(
+        max_length=25,
+        blank=True,
+        editable=False,
+        help_text=("plot or household identifier that this plot replaced."),
+        )
+
+    replaced_by = models.CharField(
+        max_length=25,
+        null=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot that this plot replaces',
+        editable=False,
+        )
 
     device_id = models.CharField(
         max_length=2,
@@ -241,7 +252,7 @@ class Plot(BaseDispatchSyncUuidModel):
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
         if self.household_count > 9:
             raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
-        # if self.community does not get valid mapper, will raise an error that should be caught in forms.py
+        # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
@@ -349,7 +360,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return 'Not Dispatched'
 
     def is_server(self):
-        if Device().get_device_id() == '99':
+        if Device().device_id == '99':
             return True
         return False
 
@@ -413,7 +424,7 @@ class Plot(BaseDispatchSyncUuidModel):
     @property
     def log_entry_form_urls(self):
         """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
-        from .plot_log import PlotLog, PlotLogEntry
+        from .plot_log import PlotLogEntry
         entry_urls = {}
         plot_log = self.plot_log
         for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):

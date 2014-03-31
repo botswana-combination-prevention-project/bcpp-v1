@@ -1,10 +1,10 @@
-from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic
-from edc.subject.appointment.models import Appointment
+from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
 from edc.subject.registration.models import RegisteredSubject
+
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, HicEnrollment)
+                    HivResult, HivResultDocumentation, Pima)
 
 
 class RegisteredSubjectRuleGroup(RuleGroup):
@@ -102,12 +102,55 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresultdocumentation'])
 
+    #Verbal hiv posetive with documentation, then Microtube is not reuired.
+    microtube_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],)
+
+    #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
+    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    venus_on_required1 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'],)
+
+    venus_on_required2 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'ne', 'POS'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'],)
+
+    #Verbal posetive, then RBD and VL are required.
+    rbd_vl_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load',])
+
+    verbal_hiv_result_for_hic = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('verbal_hiv_result', 'equals', 'POS'), ('has_record', 'equals', 'Yes', 'and')),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hicenrollment', 'hivresult'])
+
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', ])
+        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -116,12 +159,11 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    # TODO: this looks WRONG!!
     other_response = ScheduledDataRule(
         logic=Logic(
-            predicate=(('verbal_hiv_result', 'ne', 'POS'), ('verbal_hiv_result', 'ne', 'NEG', 'or')),
+            predicate=(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or')),
             consequence='not_required',
-            alternative='new'),
+            alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     class Meta:
@@ -147,12 +189,11 @@ class HivTestReviewRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    # TODO: this looks WRONG!!
     other_responses = ScheduledDataRule(
         logic=Logic(
-            predicate=(('recorded_hiv_result', 'ne', 'POS'), ('recorded_hiv_result', 'ne', 'NEG', 'or')),
+            predicate=(('recorded_hiv_result', 'equals', 'IND'), ('recorded_hiv_result', 'equals', 'UNK', 'or'), ('recorded_hiv_result', 'equals', 'not_answering', 'or')),
             consequence='not_required',
-            alternative='new'),
+            alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
     # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
@@ -179,6 +220,40 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult', 'hicenrollment'])
 
+    microtube_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'ne', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],)
+
+    #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
+    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    venus_on_required1 = RequisitionRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'equals', 'POS'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'],)
+
+    venus_on_required2 = RequisitionRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'ne', 'POS'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'],)
+
+    rbd_vl_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load',])
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -195,6 +270,40 @@ class HivDocumentationGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult', 'hicenrollment'])
 
+    microtube_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=('result_recorded', 'ne', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],)
+
+    #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
+    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    venus_on_required1 = RequisitionRule(
+        logic=Logic(
+            predicate=('result_recorded', 'equals', 'POS'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'],)
+
+    venus_on_required2 = RequisitionRule(
+        logic=Logic(
+            predicate=('result_recorded', 'ne', 'POS'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'],)
+
+    rbd_vl_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=('result_recorded', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load',])
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -210,13 +319,21 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivmedicalcare'])
-#   confirms therapy then requires pima form ???????? Or does it mean, on therapy, no pima????
-    arv_evidence = ScheduledDataRule(
+
+    #What if they are HIV + but not on ARV, then PIMA is not required???,seems odd.
+    on_arv = ScheduledDataRule(
         logic=Logic(
-            predicate=('arv_evidence', 'equals', 'Yes'),
+            predicate=(('on_arv', 'equals', 'Yes'), ('arv_evidence', 'equals', 'Yes', 'and')),
             consequence='not_required',
             alternative='new'),
         target_model=['pima'])
+
+#     arv_evidence = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('arv_evidence', 'equals', 'Yes'),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['pima'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -233,13 +350,14 @@ class TodaysHivRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
-
+ 
     hic_enrollement = ScheduledDataRule(
         logic=Logic(
-            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined','or'), ('hiv_result', 'equals', 'Not performed','or')),
+            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['hicenrollment'])
+    pass
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -344,21 +462,21 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('heart_attack_record', 'equals', 'Yes'), ('heart_attack_record', 'equals', 'No', 'or')),
+            predicate=('heart_attack_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['heartattack'])
 
     cancer_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('cancer_record', 'equals', 'Yes'), ('cancer_record', 'equals', 'Yes', 'or')),
+            predicate=('cancer_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
 
     tb_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
+            predicate=('tb_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['tubercolosis'])
@@ -375,3 +493,64 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = MedicalDiagnoses
 site_rule_groups.register(MedicalDiagnosesRuleGroup)
+
+
+class RequisitionRuleGroup(RuleGroup):
+
+#     """Ensures no requisitions if HIV result is not POS or IND."""
+#     hiv_result3 = RequisitionRule(
+#         logic=Logic(
+#             predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'IND', 'or')),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Research Blood Draw', 'Viral Load', 'Microtube', 'Venous (HIV)', 'ELISA'], )
+
+    """Ensures an RBD, VL blood draw requisition if HIV result is POS."""
+    hiv_result1 = RequisitionRule(
+        logic=Logic(
+            predicate=('hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw', 'Viral Load'], )
+
+    """Ensures an ELISA blood draw requisition if HIV result is IND."""
+    hiv_result2 = RequisitionRule(
+        logic=Logic(
+            predicate=(('hiv_result', 'equals', 'IND'), ),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'], )
+
+    """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
+    hiv_result3 = RequisitionRule(
+        logic=Logic(
+            predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or'),),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Venous (HIV)'], )
+
+#     hiv_result4 = RequisitionRule(
+#         logic=Logic(
+#             predicate=(('blood_draw_type', 'equals', 'venous')),
+#             consequence='new',
+#             alternative='none'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Venous (HIV)'], )
+#     """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
+#     hiv_result1 = RequisitionRule(
+#         logic=Logic(
+#             predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or')),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Venous (HIV)'], )
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivResult
+site_rule_groups.register(RequisitionRuleGroup)

@@ -4,12 +4,14 @@ from django.contrib import admin
 
 from edc.export.actions import export_as_csv_action
 
-from ..models import SubjectReferral
+from ..models import SubjectReferral, SubjectReferralReview
 from ..forms import SubjectReferralForm
 from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
+# for subject_visit in SubjectVisit.objects.all():
+#     SubjectReferral.objects.create(subject_visit=subject_visit, report_datetime=subject_visit.get_report_datetime(), subject_referred='Yes', referral_clinic='Otse', referral_appt_date=datetime(2014,4,7))
 
 class SubjectReferralAdmin(SubjectVisitModelAdmin):
 
@@ -23,6 +25,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'dashboard',
+        'subject_referred',
         'referral_code',
         'referral_appt_date',
         'exported',
@@ -35,6 +38,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
     fields = (
         'subject_visit',
         'report_datetime',
+        'subject_referred',
         'referral_code',
         'referral_appt_date',
         'referral_clinic',
@@ -44,6 +48,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "referral_code": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
+        "subject_referred": admin.VERTICAL,
         }
 
     def get_actions(self, request):
@@ -63,6 +68,23 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                 ),
                 'export_as_csv_action',
                 "Export Referrals to CSV")
+        actions['export_as_pipe_action'] = (  # This is a django SortedDict (function, name, short_description)
+            export_as_csv_action(
+                delimiter='|',
+                encrypt=False,
+                exclude=['id', 'exported', 'exported_datetime', self.visit_model_foreign_key, 'revision', 'hostname_created', 'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', 'comment'],
+                extra_fields=OrderedDict(
+                    {'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
+                     'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
+                     'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
+                     'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
+                     'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
+                     'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
+                     'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
+                     })
+                ),
+                'export_as_pipe_action',
+                "Export Referrals to Pipe delimited file")
         return actions
 
 admin.site.register(SubjectReferral, SubjectReferralAdmin)

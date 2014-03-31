@@ -1,7 +1,5 @@
 from django.db import models
 
-from apps.bcpp_survey.models import Survey
-
 
 class HouseholdRefusalManager(models.Manager):
 
