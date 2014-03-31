@@ -123,7 +123,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='Yes',
+            ever_taken_arv='Yes',
             on_arv='No',
             arv_evidence='No',  # this is the rule field
             )
@@ -158,7 +158,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='Yes',  # this is the rule field
             )
@@ -193,7 +193,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='No',  # this is the rule field
             )
@@ -228,7 +228,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='No',
             arv_evidence='Yes',  # this is the rule field
             )
@@ -424,7 +424,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='No',  # this is the rule field
             )
@@ -478,7 +478,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='Yes',  # this is the rule field
             )
@@ -534,7 +534,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='No',
             arv_evidence='Yes',  # this is the rule field
             )
@@ -579,7 +579,7 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='No',
             arv_evidence='Yes',  # this is the rule field
             )
