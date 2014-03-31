@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, date
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.db.models import signals
 from django.core import serializers
@@ -15,8 +16,9 @@ from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import HouseholdStructureFactory
 from apps.bcpp_household.models import post_save_on_household, create_household_on_post_save, household_structure_on_post_save
 from .factories import (HouseholdMemberFactory, EnrollmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory, SubjectAbsenteeEntryFactory,
-                        SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, EnrollmentLossFactory)
-from apps.bcpp_household_member.models import EnrollmentLoss, SubjectRefusalHistory
+                        SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, EnrollmentLossFactory,
+                        HeadHouseholdEligibilityFactory, SubjectHtcFactory)
+from apps.bcpp_household_member.models import EnrollmentLoss, SubjectRefusalHistory, SubjectRefusal
 
 class NaturalKeyTests(TestCase):
 
@@ -74,12 +76,18 @@ class NaturalKeyTests(TestCase):
         from .factories import SubjectRefusalFactory
         household_member.member_status = 'REFUSED'
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
+        SubjectRefusal.objects.get(household_member=household_member).delete()
         subject_refusal_history = SubjectRefusalHistory.objects.get(household_member=household_member)
         print 'Enrollment Loss count='+str(EnrollmentLoss.objects.all().count())
         household_member.member_status = 'BHS_SCREEN'
         enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='No')
         print 'Enrollment Loss count='+str(EnrollmentLoss.objects.all().count())
         #loss = EnrollmentLoss.objects.get(household_member=household_member)
+        household_member.member_status = 'HTC_ELIGIBLE'
+        subject_htc = SubjectHtcFactory(household_member=household_member)
+        self.assertRaises(ValidationError, lambda: HouseholdInfoFactory(household_structure=household_structure, household_member=household_member))
+        household_member.age_in_years = 19
+        household_head_eligibility = HeadHouseholdEligibilityFactory(household_member=household_member)
         household_info = HouseholdInfoFactory(household_structure=household_structure, household_member=household_member)
         subject_absentee = SubjectAbsenteeFactory(household_member=household_member, registered_subject=registered_subject)
         subject_undecided = SubjectUndecidedFactory(household_member=household_member, registered_subject=registered_subject)
@@ -97,9 +105,11 @@ class NaturalKeyTests(TestCase):
         instances.append(enrollment_checklist)
         instances.append(household_structure)
         instances.append(household_info)
-        instances.append(subject_refusal)
+        #instances.append(subject_refusal)
+        instances.append(subject_htc)
         instances.append(subject_refusal_history)
         #instances.append(loss)
+        instances.append(household_head_eligibility)
         instances.append(subject_moved)
         instances.append(subject_absentee_entry)
         instances.append(subject_undecided_entry)
