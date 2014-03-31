@@ -8,6 +8,8 @@ from edc.choices.common import YES_NO
 from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.subject.locator.models import BaseLocator
+from edc.export.managers import ExportHistoryManager
+from edc.export.models import ExportTrackingFieldsMixin
 
 from apps.bcpp_household.models  import Plot
 
@@ -17,7 +19,7 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 from .hic_enrollment import HicEnrollment
 
 
-class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
+class SubjectLocator(SubjectOffStudyMixin, BaseLocator, ExportTrackingFieldsMixin):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
@@ -79,6 +81,8 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
         blank=True,
         null=True,
         )
+
+    export_history = ExportHistoryManager()
 
     history = AuditTrail()
 
