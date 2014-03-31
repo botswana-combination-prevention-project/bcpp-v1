@@ -1,41 +1,57 @@
 from django.utils.translation import ugettext as _
 
-HOUSEHOLD_MEMBER_FULL_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RESEARCH', 'BHS'),
-#     ('HTC', 'HTC'),
-#     ('RBD', 'RBD only'),
-    ('ABSENT', 'Absentee'),
-    ('REFUSED', 'Refusal'),
-    ('UNDECIDED', 'Undecided'),
-    #('NOT_ELIGIBLE', 'Not Eligible'),
-]
+from .constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS
 
-HOUSEHOLD_MEMBER_RBD_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RBD', 'RBD'),
-]
+options = list(set([ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS]))
 
-HOUSEHOLD_MEMBER_NOT_ELIGIBLE = [
-    ('NOT_ELIGIBLE', 'Not Eligible'),
-]
+HOUSEHOLD_MEMBER_PARTICIPATION = [(item, item) for item in options]
 
-HOUSEHOLD_MEMBER_HTC_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('HTC', 'HTC'),
-]
+FEMALE_RELATIONS = [
+    ('wife', 'Wife'),
+    ('daughter', 'Daughter'),
+    ('mother', 'Mother'),
+    ('sister', 'Sister'),
+    ('grandmother', 'Grandmother'),
+    ('granddaughter', 'Granddaughter'),
+    ('great-Grandmother', 'Great-Grandmother'),
+    ('great-Granddaughter', 'Great-Granddaughter'),
+    ('aunt', 'Aunt'),
+    ('niece', 'Niece'),
+    ('mother-in-law', 'Mother-in-law'),
+    ('daughter-in-law', 'Daughter-in-law'),
+    ('sister-in-law', 'Sister-in-law'),
+    ('housemaid', 'Housemaid'),
+    ]
 
-HOUSEHOLD_MEMBER_PARTIAL_PARTICIPATION = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('RBD', 'RBD only'),
-    ('HTC', 'HTC'),
-    ('HTC/RBD', 'HTC plus RBD'),
-]
+ANY_RELATIONS = [
+    ('partner', 'Partner'),
+    ('housemate', 'Housemate'),
+    ('cousin', 'Cousin'),
+    ('family_friend', 'Family friend'),
+    ('friend', 'Friend'),
+    ('helper', 'Helper'),
+    ('employee', 'Employee'),
+    ]
+MALE_RELATIONS = [
+    ('husband', 'Husband'),
+    ('son', 'Son'),
+    ('father', 'Father'),
+    ('brother', 'Brother'),
+    ('grandfather', 'Grandfather'),
+    ('grandson', 'Grandson'),
+    ('great-Grandfather', 'Great-Grandfather'),
+    ('great-Grandson', 'Great-Grandson'),
+    ('uncle', 'Uncle'),
+    ('nephew', 'Nephew'),
+    ('father-in-law', 'Father-in-law'),
+    ('son-in-law', 'Son-in-law'),
+    ('brother-in-law', 'Brother in-law'),
+    ]
 
-HOUSEHOLD_MEMBER_MINOR = [
-    ('NOT_REPORTED', '<not reported>'),
-    ('NOT_ELIGIBLE', 'Not Eligible'),
-]
+
+relations = FEMALE_RELATIONS + MALE_RELATIONS + ANY_RELATIONS
+relations.sort()
+RELATIONS = [('Head', 'HEAD of HOUSEHOLD')] + relations + [('UNKNOWN', 'UNKNOWN')]
 
 ABSENTEE_STATUS = (
     ('ABSENT', _('Absent')),
