@@ -49,3 +49,4 @@ from .community_engagement_factory import CommunityEngagementFactory
 from .hiv_health_care_costs_factory import HivHealthCareCostsFactory
 from .cancer_factory import CancerFactory
 from .hiv_test_review_factory import HivTestReviewFactory
+from .tb_symptoms_factory import TbSymptomsFactory

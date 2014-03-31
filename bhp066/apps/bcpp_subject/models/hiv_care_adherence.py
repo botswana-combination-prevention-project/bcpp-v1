@@ -56,13 +56,13 @@ class HivCareAdherence (BaseScheduledVisitModel):
         help_text="",
         )
 
-    arv_naive = models.CharField(
+    ever_taken_arv = models.CharField(
         verbose_name=_("Have you ever taken any antiretroviral therapy (ARVs) for your HIV infection?"
                         " [For women: Do not include treatment that you took during pregnancy to protect "
                         "your baby from HIV]"),
         max_length=25,
         choices=YES_NO_DWTA,
-        help_text="",
+        help_text="",  # Q7
         )
 
     why_no_arv = models.CharField(
@@ -88,7 +88,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
         choices=YES_NO_DWTA,
-        help_text="If yes, need to answer next two questions.",
+        help_text="If yes, need to answer next two questions.",   # Q11
         )
 
     clinic_receiving_from = models.CharField(
@@ -110,7 +110,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     arv_stop_date = models.DateField(
         verbose_name=_("When did you stop taking ARV\'s?"),
-        validators=[date_not_future],
+        validators=[date_not_future],  # Q15
         null=True,
         blank=True,
         help_text="",
@@ -149,7 +149,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     arv_evidence = models.CharField(
         verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
-        choices=YES_NO,
+        choices=YES_NO,  # Q17
         null=True,
         blank=True,
         max_length=3,
@@ -159,27 +159,25 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
+    @property
     def defaulter(self):
         """Returns true if subject is an ARV defaulter."""
-        if self.arv_evidence == 'Yes' and self.on_arv == 'No':
+        if (self.arv_evidence == 'Yes' and self.on_arv == 'No') or (self.ever_taken_arv == 'Yes' and self.on_arv == 'No'):
             return True
         return None
 
+    @property
     def on_art(self):
         if self.on_arv == 'Yes':
             return True
         elif self.on_arv == 'No':
             if self.arv_evidence == 'Yes':
                 return True  # defaulter
+            elif self.ever_taken_arv == 'Yes':
+                return True  # defaulter
             return False
         else:
             return None
-
-    def get_clinic_receiving_from(self):
-        return self.clinic_receiving_from
-
-    def get_next_appointment_date(self):
-        return self.next_appointment_date
 
     class Meta:
         app_label = 'bcpp_subject'
