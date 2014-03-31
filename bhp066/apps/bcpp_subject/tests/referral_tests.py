@@ -80,7 +80,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertNotIn('SMC', subject_referral.referral_code)
 
-    def tests_referred_neg_female_pregnant(self):
+    def tests_referred_neg_female_pregnant1(self):
         """if NEG and female, and not pregnant, do not refer"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
@@ -91,6 +91,19 @@ class ReferralTests(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
         self.assertEqual('', subject_referral.referral_code)
+
+    def tests_referred_neg_female_pregnant2(self):
+        """if NEG and female, and not pregnant, do not refer"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='NEG', has_record='No', other_record='No')
+        HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='Declined')
+        ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime)
+        self.assertEqual('TST-HIV,UNK?-PR', subject_referral.referral_code)
 
     def tests_referred_pos_female_pregnant(self):
         """if POS and female, pregnant, on-arv, refer ANC-POS"""
