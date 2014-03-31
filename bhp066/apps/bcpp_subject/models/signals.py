@@ -1,8 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from edc.subject.appointment.constants import COMPLETE
-
 from .subject_consent import SubjectConsent
 
 from ..classes import SubjectReferralHelper
