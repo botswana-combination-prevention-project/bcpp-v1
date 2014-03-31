@@ -8,4 +8,5 @@ from .plot_manager import PlotManager
 from .plot_log_manager import PlotLogManager, PlotLogEntryManager
 from .household_assessment_manager import HouseholdAssessmentManager
 from .household_refusal_manager import HouseholdRefusalManager
+from .replacement_history_manager import ReplacementHistoryManager
 from .household_refusal_history_manager import HouseholdRefusalHistoryManager
