@@ -74,6 +74,24 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         choices=YES_NO,
         db_index=True)
 
+    relation = models.CharField(
+        verbose_name="Relation to head of household",
+        max_length=35,
+        choices=RELATIONS,
+        null=True,
+        help_text="Relation to head of household")
+
+    study_resident = models.CharField(
+        verbose_name=("In the past 12 months, have you typically spent 3 or "
+                      "more nights per month in this community? "),
+        max_length=17,
+        choices=YES_NO_DWTA,
+        help_text=("If participant has moved into the "
+                  "community in the past 12 months, then "
+                  "since moving in has the participant typically "
+                  "spent 3 or more nights per month in this community."),
+        )
+
     member_status = models.CharField(
         max_length=25,
         choices=HOUSEHOLD_MEMBER_PARTICIPATION,
@@ -109,24 +127,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     absent = models.BooleanField(default=False, editable=False, help_text="Updated by the subject absentee log")
 
     target = models.IntegerField(default=0)
-
-    relation = models.CharField(
-        verbose_name="Relation to head of household",
-        max_length=35,
-        choices=RELATIONS,
-        null=True,
-        help_text="Relation to head of household")
-
-    study_resident = models.CharField(
-        verbose_name=("In the past 12 months, have you typically spent 3 or "
-                      "more nights per month in this community? "),
-        max_length=17,
-        choices=YES_NO_DWTA,
-        help_text=("If participant has moved into the "
-                  "community in the past 12 months, then "
-                  "since moving in has the participant typically "
-                  "spent 3 or more nights per month in this community."),
-        )
 
     objects = HouseholdMemberManager()
 
