@@ -147,16 +147,15 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django_extensions',
+    'django_extensions',   # DONT TOUCH!!
     'django_databrowse',
     'dajaxice',
     'storages',
     'dajax',
-#     'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
-
-    'edc.audit',
+    'edc.apps.app_configuration',
 
     'edc.base.admin',
     'edc.base.form',
@@ -203,6 +202,7 @@ INSTALLED_APPS = (
     'edc.map',
 
     'edc.testing',
+    'edc.utils',
 
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',
@@ -228,6 +228,7 @@ INSTALLED_APPS = (
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
+    'edc.lab.lab_profile',
 
     'lis.labeling',
     'lis.core.lab_common',
@@ -256,11 +257,11 @@ INSTALLED_APPS = (
     'lis.exim.lab_import_dmis',
 
     'apps.bcpp',
+    'apps.bcpp.app_configuration',
     'apps.bcpp_list',
     'apps.bcpp_dashboard',
     'apps.bcpp_stats',
     'apps.bcpp_household',
-    'apps.bcpp_rbd',
     'apps.bcpp_subject',
     'apps.bcpp_household_member',
     'apps.bcpp_lab',
@@ -268,8 +269,14 @@ INSTALLED_APPS = (
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
+#     'apps.bcpp_clinic_lab',
+#     'apps.bcpp_clinic',
+#     'apps.clinic',
+#     'apps.bcpp_clinic_dashboard',
     'tastypie',
+    'edc.audit',
 )
+
 
 # django
 SESSION_COOKIE_AGE = 10000
