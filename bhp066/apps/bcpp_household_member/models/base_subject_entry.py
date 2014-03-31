@@ -57,6 +57,7 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
         else:
             pass
             #self.update_replacement_data()
+
         super(BaseSubjectEntry, self).save(*args, **kwargs)
 
     @property
