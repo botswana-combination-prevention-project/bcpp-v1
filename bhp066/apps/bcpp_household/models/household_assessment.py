@@ -7,12 +7,25 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
-from ..choices import INELIGIBLE_REASON
-from ..choices import RESIDENT_LAST_SEEN
+#from ..choices import INELIGIBLE_REASON
+#from ..choices import RESIDENT_LAST_SEEN
 from ..constants import RESIDENT_LAST_SEEN_4WKS, RESIDENT_LAST_SEEN_LESS_4WKS
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
+
+INELIGIBLE_REASON = (
+    ('non_citizen', 'Non-Citizen(s)'),
+    ('age_ineligible', 'Not of eligible age'),
+    ('other', 'Other'),
+    )
+
+RESIDENT_LAST_SEEN = (
+        (RESIDENT_LAST_SEEN_4WKS, 'Spends at least 4 weeks in a household over the course of the past year '),
+        (RESIDENT_LAST_SEEN_LESS_4WKS, 'spends at least 1 night be probably less than 4 weeks/year in the household'),
+        ('never_spent_1_day_over_a_year', 'did not even spend 1 night in the household over the past year'),
+        ('dont_know', 'Don\'t know'),
+)
 
 
 class HouseholdAssessment(BaseDispatchSyncUuidModel):

@@ -121,7 +121,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_dev',
+            'NAME': 'bhp066_r142',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -264,8 +264,6 @@ INSTALLED_APPS = (
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
 
-    'edc.audit',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
@@ -311,6 +309,7 @@ INSTALLED_APPS = (
     'edc.map',
 
     'edc.testing',
+    'edc.utils',
 
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',
@@ -382,6 +381,7 @@ INSTALLED_APPS = (
 #     'apps.clinic',
 #     'apps.bcpp_clinic_dashboard',
     'tastypie',
+    'edc.audit',
 )
 
 # django
