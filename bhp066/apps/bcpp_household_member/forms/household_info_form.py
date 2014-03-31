@@ -7,7 +7,7 @@ class HouseholdInfoForm (BaseModelForm):
 
     def clean(self):
 
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(HouseholdInfoForm, self).clean()
         #validating if other, specify
         if cleaned_data.get('flooring_type') == 'OTHER' and not cleaned_data.get('flooring_type_other'):
             raise forms.ValidationError('If participant has a different flooring type from what is on the list, provide the flooring type')

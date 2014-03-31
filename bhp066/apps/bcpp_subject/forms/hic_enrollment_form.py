@@ -1,27 +1,30 @@
 from django import forms
-from ..models import HicEnrollment, ResidencyMobility, HivResult
+
+from ..models import HicEnrollment
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
 class HicEnrollmentForm (BaseSubjectModelForm):
 
     def clean(self):
-
-        cleaned_data = super(HicEnrollmentForm, self).clean()
-        # validating a need to specify the participant's preference
-        mobility = ResidencyMobility.objects.filter(subject_visit=cleaned_data.get('subject_visit'))
-        if mobility.exists():
-            if mobility[0].intend_residency == 'Yes':
-                raise forms.ValidationError('In Recidency Mobility form this individual states they want to move out of this community. Please cancel and revise that answer before coming back to this HicEnrollment form.')
-            if mobility[0].permanent_resident != 'Yes':
-                raise forms.ValidationError('In Recidency Mobility form this individual has to spend atleast 14 days/month. Please cancel and revise that answer before coming back to this HicEnrollment form.')
+        instance = None
+        if self.instance.id:
+            instance = self.instance
         else:
-            raise forms.ValidationError('You need to have filled the Recidency Mobility form before this one.')
-        hiv_result = HivResult.objects.filter(subject_visit=cleaned_data.get('subject_visit'))
-        if not hiv_result.exists():
-            raise forms.ValidationError('You need to have filled the Today\'s HivResult form before this one.')
-
-        return cleaned_data
+            instance = HicEnrollment(**self.cleaned_data)
+        if not self.cleaned_data.get('hic_permission', None):
+            raise forms.ValidationError('Provide an answer for whether participant gave permission for HIC.')
+        if self.cleaned_data.get('hic_permission', None).lower() == 'yes':
+            #Only enforce this criteria is subject enrols in HIC
+            instance.is_permanent_resident(exception_cls=forms.ValidationError)
+            instance.is_intended_residency(exception_cls=forms.ValidationError)
+            instance.get_hiv_status_today(exception_cls=forms.ValidationError)
+            instance.get_dob_consent_datetime(exception_cls=forms.ValidationError)
+            instance.is_household_residency(exception_cls=forms.ValidationError)
+            instance.is_citizen_or_spouse(exception_cls=forms.ValidationError)
+            instance.is_locator_information(exception_cls=forms.ValidationError)
+        return super(HicEnrollmentForm, self).clean()
 
     class Meta:
         model = HicEnrollment

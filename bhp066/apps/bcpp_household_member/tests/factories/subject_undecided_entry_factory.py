@@ -1,7 +1,11 @@
 import factory
-from datetime import date, datetime, timedelta
+
+from datetime import datetime, timedelta
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import SubjectUndecidedEntry
+
 from ..factories import SubjectUndecidedFactory
 
 

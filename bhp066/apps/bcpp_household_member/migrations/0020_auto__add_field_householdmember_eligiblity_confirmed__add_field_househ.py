@@ -18,17 +18,17 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=78L, null=True),
                       keep_default=False)
 
-        # Deleting field 'EnrolmentChecklist.eligible'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'eligible')
+        # Deleting field 'EnrollmentChecklist.eligible'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'eligible')
 
-        # Deleting field 'EnrolmentChecklist.omang'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'omang')
+        # Deleting field 'EnrollmentChecklist.omang'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'omang')
 
-        # Deleting field 'EnrolmentChecklist.reason_not_eligible'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'reason_not_eligible')
+        # Deleting field 'EnrollmentChecklist.reason_not_eligible'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'reason_not_eligible')
 
-        # Adding field 'EnrolmentChecklist.has_identity'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'has_identity',
+        # Adding field 'EnrollmentChecklist.has_identity'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'has_identity',
                       self.gf('django.db.models.fields.CharField')(default='Yes', max_length=10),
                       keep_default=False)
 
@@ -42,17 +42,17 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(max_length=78L, null=True),
                       keep_default=False)
 
-        # Deleting field 'EnrolmentChecklistAudit.eligible'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist_audit', 'eligible')
+        # Deleting field 'EnrollmentChecklistAudit.eligible'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist_audit', 'eligible')
 
-        # Deleting field 'EnrolmentChecklistAudit.omang'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist_audit', 'omang')
+        # Deleting field 'EnrollmentChecklistAudit.omang'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist_audit', 'omang')
 
-        # Deleting field 'EnrolmentChecklistAudit.reason_not_eligible'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist_audit', 'reason_not_eligible')
+        # Deleting field 'EnrollmentChecklistAudit.reason_not_eligible'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist_audit', 'reason_not_eligible')
 
-        # Adding field 'EnrolmentChecklistAudit.has_identity'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist_audit', 'has_identity',
+        # Adding field 'EnrollmentChecklistAudit.has_identity'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist_audit', 'has_identity',
                       self.gf('django.db.models.fields.CharField')(default='Yes', max_length=10),
                       keep_default=False)
 
@@ -64,21 +64,21 @@ class Migration(SchemaMigration):
         # Deleting field 'HouseholdMember.reason_not_eligible'
         db.delete_column(u'bcpp_household_member_householdmember', 'reason_not_eligible')
 
-        # Adding field 'EnrolmentChecklist.eligible'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'eligible',
+        # Adding field 'EnrollmentChecklist.eligible'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'eligible',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
 
-        # User chose to not deal with backwards NULL issues for 'EnrolmentChecklist.omang'
-        raise RuntimeError("Cannot reverse this migration. 'EnrolmentChecklist.omang' and its values cannot be restored.")
-        # Adding field 'EnrolmentChecklist.reason_not_eligible'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist', 'reason_not_eligible',
+        # User chose to not deal with backwards NULL issues for 'EnrollmentChecklist.omang'
+        raise RuntimeError("Cannot reverse this migration. 'EnrollmentChecklist.omang' and its values cannot be restored.")
+        # Adding field 'EnrollmentChecklist.reason_not_eligible'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist', 'reason_not_eligible',
                       self.gf('django.db.models.fields.CharField')(max_length=78L, null=True),
                       keep_default=False)
 
-        # Deleting field 'EnrolmentChecklist.has_identity'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist', 'has_identity')
+        # Deleting field 'EnrollmentChecklist.has_identity'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist', 'has_identity')
 
         # Deleting field 'HouseholdMemberAudit.eligiblity_confirmed'
         db.delete_column(u'bcpp_household_member_householdmember_audit', 'eligiblity_confirmed')
@@ -86,21 +86,21 @@ class Migration(SchemaMigration):
         # Deleting field 'HouseholdMemberAudit.reason_not_eligible'
         db.delete_column(u'bcpp_household_member_householdmember_audit', 'reason_not_eligible')
 
-        # Adding field 'EnrolmentChecklistAudit.eligible'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist_audit', 'eligible',
+        # Adding field 'EnrollmentChecklistAudit.eligible'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist_audit', 'eligible',
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
 
-        # User chose to not deal with backwards NULL issues for 'EnrolmentChecklistAudit.omang'
-        raise RuntimeError("Cannot reverse this migration. 'EnrolmentChecklistAudit.omang' and its values cannot be restored.")
-        # Adding field 'EnrolmentChecklistAudit.reason_not_eligible'
-        db.add_column(u'bcpp_household_member_enrolmentchecklist_audit', 'reason_not_eligible',
+        # User chose to not deal with backwards NULL issues for 'EnrollmentChecklistAudit.omang'
+        raise RuntimeError("Cannot reverse this migration. 'EnrollmentChecklistAudit.omang' and its values cannot be restored.")
+        # Adding field 'EnrollmentChecklistAudit.reason_not_eligible'
+        db.add_column(u'bcpp_household_member_enrollmentchecklist_audit', 'reason_not_eligible',
                       self.gf('django.db.models.fields.CharField')(max_length=78L, null=True),
                       keep_default=False)
 
-        # Deleting field 'EnrolmentChecklistAudit.has_identity'
-        db.delete_column(u'bcpp_household_member_enrolmentchecklist_audit', 'has_identity')
+        # Deleting field 'EnrollmentChecklistAudit.has_identity'
+        db.delete_column(u'bcpp_household_member_enrollmentchecklist_audit', 'has_identity')
 
 
     models = {
@@ -212,8 +212,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklist': {
-            'Meta': {'object_name': 'EnrolmentChecklist'},
+        'bcpp_household_member.enrollmentchecklist': {
+            'Meta': {'object_name': 'EnrollmentChecklist'},
             'citizen': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'community_resident': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -234,8 +234,8 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
-        'bcpp_household_member.enrolmentchecklistaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'EnrolmentChecklistAudit', 'db_table': "u'bcpp_household_member_enrolmentchecklist_audit'"},
+        'bcpp_household_member.enrollmentchecklistaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'EnrollmentChecklistAudit', 'db_table': "u'bcpp_household_member_enrollmentchecklist_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
@@ -247,14 +247,14 @@ class Migration(SchemaMigration):
             'has_identity': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrolmentchecklist'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrollmentchecklist'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'is_dob_estimated': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'legal_marriage': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'marriage_certificate': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'marriage_certificate_no': ('django.db.models.fields.CharField', [], {'max_length': '9', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrolmentchecklist'", 'to': "orm['registration.RegisteredSubject']"}),
+            'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_enrollmentchecklist'", 'to': "orm['registration.RegisteredSubject']"}),
             'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})

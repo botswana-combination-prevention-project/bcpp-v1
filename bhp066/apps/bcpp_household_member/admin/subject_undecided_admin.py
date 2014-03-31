@@ -8,10 +8,21 @@ from ..forms import SubjectUndecidedForm, SubjectUndecidedEntryForm
 
 class SubjectUndecidedEntryAdmin(BaseModelAdmin):
 
+    fields = (
+              'subject_undecided',
+              'report_datetime',
+              'next_appt_datetime',
+              'next_appt_datetime_source',
+              'subject_undecided_reason',
+              'reason_other',
+              'contact_details')
+
     list_display = (
-        'id',
         'subject_undecided',
-        'report_datetime',)
+        'report_datetime',
+        'next_appt_datetime',
+        'contact_details')
+
     radio_fields = {
         "subject_undecided_reason": admin.VERTICAL,
         "next_appt_datetime_source": admin.VERTICAL}

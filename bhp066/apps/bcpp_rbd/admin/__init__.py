@@ -1,6 +1,0 @@
-from .rbd_consent_admin import RBDConsentAdmin
-from .rbd_locator_admin import RBDLocatorAdmin
-from .rbd_visit_admin import RBDVisitAdmin
-from .rbd_visit_model_admin import RBDVisitModelAdmin
-from .rbd_eligibility_admin import RBDEligibilityAdmin
-from .rbd_demographics_admin import RBDDemographicsAdmin
