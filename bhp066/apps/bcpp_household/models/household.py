@@ -153,13 +153,13 @@ class Household(BaseDispatchSyncUuidModel):
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
 
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
+    #enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
 
-    reason_not_enumerated = models.CharField(
-        verbose_name='Household Status',
-        max_length=50,
-        null=True,
-        )
+#     reason_not_enumerated = models.CharField(
+#         verbose_name='Household Status',
+#         max_length=50,
+#         null=True,
+#         )
 
     objects = HouseholdManager()
 

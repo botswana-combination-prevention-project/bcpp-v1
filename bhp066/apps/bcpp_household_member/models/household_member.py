@@ -2,6 +2,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
@@ -14,7 +15,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
 from apps.bcpp_household.models import Plot
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
@@ -139,10 +140,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.gender)
 
     def save(self, *args, **kwargs):
+        try:
+            RepresentativeEligibility.objects.get(household_structure=self.household_structure)
+        except RepresentativeEligibility.DoesNotExist:
+            raise ValidationError('The eligibility checklist for an eligible representative has not completed. Perhaps catch this in the form.')
         if not self.id:
-            if not self.household_structure.household.enumerated:
-                self.household_structure.household.enumerated = True
-                self.household_structure.household.save()
+            if not self.household_structure.enumerated:
+                self.household_structure.enumerated = True
+                self.household_structure.save()
         else:
             household_member_helper = HouseholdMemberHelper(self)
             if household_member_helper.consented:
