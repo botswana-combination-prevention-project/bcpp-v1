@@ -56,7 +56,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         help_text="",
         )
 
-    arv_naive = models.CharField(
+    ever_taken_arv = models.CharField(
         verbose_name=_("Have you ever taken any antiretroviral therapy (ARVs) for your HIV infection?"
                         " [For women: Do not include treatment that you took during pregnancy to protect "
                         "your baby from HIV]"),
@@ -162,7 +162,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     @property
     def defaulter(self):
         """Returns true if subject is an ARV defaulter."""
-        if (self.arv_evidence == 'Yes' and self.on_arv == 'No') or (self.arv_naive == 'Yes' and self.on_arv == 'No'):
+        if (self.arv_evidence == 'Yes' and self.on_arv == 'No') or (self.ever_taken_arv == 'Yes' and self.on_arv == 'No'):
             return True
         return None
 
@@ -172,6 +172,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
             return True
         elif self.on_arv == 'No':
             if self.arv_evidence == 'Yes':
+                return True  # defaulter
+            elif self.ever_taken_arv == 'Yes':
                 return True  # defaulter
             return False
         else:

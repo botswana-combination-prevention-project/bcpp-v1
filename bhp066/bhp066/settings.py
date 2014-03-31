@@ -264,8 +264,6 @@ INSTALLED_APPS = (
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
 
-    'edc.audit',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
@@ -383,6 +381,7 @@ INSTALLED_APPS = (
 #     'apps.clinic',
 #     'apps.bcpp_clinic_dashboard',
     'tastypie',
+    'edc.audit',
 )
 
 # django

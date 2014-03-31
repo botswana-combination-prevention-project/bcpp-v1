@@ -10,6 +10,20 @@ from ..models import (SubjectConsent, HivResult, Pima, HivTestReview, ResidencyM
 
 class SubjectReferralHelper(object):
 
+    # class attribute is accessed by the signal to ensure any modifications are caught in the post_save signal
+    models = {'subject_consent': SubjectConsent,
+              'hiv_result': HivResult,
+              'pima': Pima,
+              'hiv_test_review': HivTestReview,
+              'residency_mobility': ResidencyMobility,
+              'circumcision': Circumcision,
+              'hiv_care_adherence': HivCareAdherence,
+              'reproductive_health': ReproductiveHealth,
+              'hiv_testing_history': HivTestingHistory,
+              'hiv_result_documentation': HivResultDocumentation,
+              'subject_requisition': SubjectRequisition,
+              'enrollment_checklist': EnrollmentChecklist}
+
     def __init__(self, instance):
         self._pregnant = None
         self._hiv_result = None
@@ -122,9 +136,16 @@ class SubjectReferralHelper(object):
 
     @property
     def hiv_result(self):
-        """Returns the hiv status considering today\'s result, the last documented result and a verbal result with or without indirect documentation."""
+        """Returns the hiv status considering today\'s result, the last documented result and a verbal result with or without indirect documentation.
+
+        Last or verbal results are used only if the value is POS otherwise None."""
         if not self._hiv_result:
-            self._hiv_result = self.todays_hiv_result or self.last_hiv_result or self.documented_verbal_hiv_result or (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_documentation or self.indirect_hiv_documentation)) else None)
+            self._hiv_result = (
+                self.todays_hiv_result or
+                (self.last_hiv_result if self.last_hiv_result == 'POS' else None) or
+                self.documented_verbal_hiv_result or
+                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_documentation or self.indirect_hiv_documentation)) else None)
+                )
         return self._hiv_result
 
     @property
@@ -141,8 +162,8 @@ class SubjectReferralHelper(object):
     def hiv_result_instance(self):
         if not self._hiv_result_instance:
             try:
-                self._hiv_result_instance = HivResult.objects.get(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND'])
-            except HivResult.DoesNotExist:
+                self._hiv_result_instance = self.models.get('hiv_result').objects.get(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND'])
+            except self.models.get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
         return self._hiv_result_instance
 
@@ -170,8 +191,8 @@ class SubjectReferralHelper(object):
     def hiv_test_review_instance(self):
         if not self._hiv_test_review_instance:
             try:
-                self._hiv_test_review_instance = HivTestReview.objects.get(subject_visit=self.subject_visit, recorded_hiv_result__in=['POS', 'NEG', 'IND'])
-            except HivTestReview.DoesNotExist:
+                self._hiv_test_review_instance = self.models.get('hiv_test_review').objects.get(subject_visit=self.subject_visit, recorded_hiv_result__in=['POS', 'NEG', 'IND'])
+            except self.models.get('hiv_test_review').DoesNotExist:
                 self._hiv_test_review_instance = None
         return self._hiv_test_review_instance
 
@@ -211,8 +232,8 @@ class SubjectReferralHelper(object):
     def hiv_result_documentation_instance(self):
         if not self._hiv_result_documentation_instance:
             try:
-                self._hiv_result_documentation_instance = HivResultDocumentation.objects.get(subject_visit=self.subject_visit, result_recorded__in=['POS', 'NEG', 'IND'])
-            except HivResultDocumentation.DoesNotExist:
+                self._hiv_result_documentation_instance = self.models.get('hiv_result_documentation').objects.get(subject_visit=self.subject_visit, result_recorded__in=['POS', 'NEG', 'IND'])
+            except self.models.get('hiv_result_documentation').DoesNotExist:
                 self._hiv_result_documentation_instance = None
         return self._hiv_result_documentation_instance
 
@@ -240,8 +261,8 @@ class SubjectReferralHelper(object):
     def hiv_testing_history_instance(self):
         if not self._hiv_testing_history_instance:
             try:
-                self._hiv_testing_history_instance = HivTestingHistory.objects.get(subject_visit=self.subject_visit)
-            except HivTestingHistory.DoesNotExist:
+                self._hiv_testing_history_instance = self.models.get('hiv_testing_history').objects.get(subject_visit=self.subject_visit)
+            except self.models.get('hiv_testing_history').DoesNotExist:
                 self._hiv_testing_history_instance = None
         return self._hiv_testing_history_instance
 
@@ -269,7 +290,10 @@ class SubjectReferralHelper(object):
         elif (self.recorded_hiv_result == 'POS'):
             return False
         else:
-            return True
+            if self.todays_hiv_result == 'POS':  # you only have today's result and possibly an undocumented verbal_hiv_result
+                return True
+            else:
+                return None  # may have no result or just an undocumented verbal_hiv_result, which is not enough information.
 
     @property
     def direct_hiv_documentation(self):
@@ -294,13 +318,13 @@ class SubjectReferralHelper(object):
     def citizen(self):
         citizen = False
         try:
-            enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.household_member)
-            subject_consent = SubjectConsent.objects.get(household_member=self.household_member)
+            enrollment_checklist = self.models.get('enrollment_checklist').objects.get(household_member=self.household_member)
+            subject_consent = self.models.get('subject_consent').objects.get(household_member=self.household_member)
             if enrollment_checklist.citizen == 'Yes' and subject_consent.identity:
                 citizen = True
-        except EnrollmentChecklist.DoesNotExist:
+        except self.models.get('enrollment_checklist').DoesNotExist:
             citizen = None
-        except SubjectConsent.DoesNotExist:
+        except self.models.get('subject_consent').DoesNotExist:
             citizen = None
         return citizen
 
@@ -308,13 +332,13 @@ class SubjectReferralHelper(object):
     def citizen_spouse(self):
         citizen_spouse = False
         try:
-            enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.household_member)
-            subject_consent = SubjectConsent.objects.get(household_member=self.household_member)
+            enrollment_checklist = self.models.get('enrollment_checklist').objects.get(household_member=self.household_member)
+            subject_consent = self.models.get('subject_consent').objects.get(household_member=self.household_member)
             if enrollment_checklist.legal_marriage == 'Yes' and subject_consent.identity:
                 citizen_spouse = True
-        except EnrollmentChecklist.DoesNotExist:
+        except self.models.get('enrollment_checklist').DoesNotExist:
             citizen_spouse = None
-        except SubjectConsent.DoesNotExist:
+        except self.models.get('subject_consent').DoesNotExist:
             citizen_spouse = None
         return citizen_spouse
 
@@ -326,8 +350,8 @@ class SubjectReferralHelper(object):
     def pima_instance(self):
         if not self._pima_instance:
             try:
-                self._pima_instance = Pima.objects.get(subject_visit=self.subject_visit, cd4_value__isnull=False)
-            except Pima.DoesNotExist:
+                self._pima_instance = self.models.get('pima').objects.get(subject_visit=self.subject_visit, cd4_value__isnull=False)
+            except self.models.get('pima').DoesNotExist:
                 self._pima_instance = None
         return self._pima_instance
 
@@ -353,8 +377,8 @@ class SubjectReferralHelper(object):
     def vl_requisition_instance(self):
         if not self._vl_requisition_instance:
             try:
-                self._vl_requisition_instance = SubjectRequisition.objects.get(subject_visit=self.subject_visit, panel__name='Viral Load', is_drawn='Yes')
-            except SubjectRequisition.DoesNotExist:
+                self._vl_requisition_instance = self.models.get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Viral Load', is_drawn='Yes')
+            except self.models.get('subject_requisition').DoesNotExist:
                 pass
         return self._vl_requisition_instance
 
@@ -375,9 +399,9 @@ class SubjectReferralHelper(object):
     def permanent_resident(self):
         """Returns True if permanent resident as stated on ResidencyMobility."""
         try:
-            residency_mobility = ResidencyMobility.objects.get(subject_visit=self.subject_visit)
+            residency_mobility = self.models.get('residency_mobility').objects.get(subject_visit=self.subject_visit)
             permanent_resident = self.convert_to_nullboolean(residency_mobility.permanent_resident)
-        except ResidencyMobility.DoesNotExist:
+        except self.models.get('residency_mobility').DoesNotExist:
             permanent_resident = None
         return permanent_resident
 
@@ -387,9 +411,9 @@ class SubjectReferralHelper(object):
         circumcised = None
         if self.gender == 'M':
             try:
-                circumcision = Circumcision.objects.get(subject_visit=self.subject_visit)
+                circumcision = self.models.get('circumcision').objects.get(subject_visit=self.subject_visit)
                 circumcised = self.convert_to_nullboolean(circumcision.circumcised)
-            except Circumcision.DoesNotExist:
+            except self.models.get('circumcision').DoesNotExist:
                 pass
         return circumcised
 
@@ -399,9 +423,9 @@ class SubjectReferralHelper(object):
         if self.gender == 'F':
             if not self._pregnant:
                 try:
-                    reproductive_health = ReproductiveHealth.objects.get(subject_visit=self.subject_visit)
+                    reproductive_health = self.models.get('reproductive_health').objects.get(subject_visit=self.subject_visit)
                     self._pregnant = self.convert_to_nullboolean(reproductive_health.currently_pregnant)
-                except ReproductiveHealth.DoesNotExist:
+                except self.models.get('reproductive_health').DoesNotExist:
                     self._pregnant = None
         return self._pregnant
 
@@ -409,8 +433,8 @@ class SubjectReferralHelper(object):
     def hiv_care_adherence_instance(self):
         if not self._hiv_care_adherence_instance:
             try:
-                self._hiv_care_adherence_instance = HivCareAdherence.objects.get(subject_visit=self.subject_visit)
-            except HivCareAdherence.DoesNotExist:
+                self._hiv_care_adherence_instance = self.models.get('hiv_care_adherence').objects.get(subject_visit=self.subject_visit)
+            except self.models.get('hiv_care_adherence').DoesNotExist:
                 self._hiv_care_adherence_instance = None
         return self._hiv_care_adherence_instance
 
