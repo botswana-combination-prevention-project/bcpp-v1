@@ -1,5 +1,4 @@
 from datetime import datetime, date, timedelta
-from pprint import pprint
 
 from edc.map.classes import Mapper, site_mappers
 
@@ -204,7 +203,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         self.assertIn('POS#-LO', subject_referral.referral_code)
 
     def tests_referred3(self):
-        """if known NEG, high PIMA CD4 and art unknown, female"""
+        """if known NEG but not tested today, high PIMA CD4 and art unknown, female"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -213,7 +212,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertEqual('', subject_referral.referral_code)
+        self.assertEqual('TST-HIV', subject_referral.referral_code)
 
     def tests_referred4(self):
         """if new POS, high PIMA CD4 and art unknown, """
@@ -463,10 +462,11 @@ class ReferralTests(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=today)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
-            report_datetime=report_datetime)
+            report_datetime=report_datetime,
+            referral_clinic='Otse')
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
-            'art_documentation': True,
+            'arv_documentation': True,
             'arv_clinic': None,
             'cd4_result': 350,
             'cd4_result_datetime': today,
@@ -484,7 +484,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
-            'referral_clinic': 'otse',
+            'referral_clinic': 'Otse',
             'referral_code': 'MASA',
             'tb_symptoms': 'cough, cough_blood, night_sweat',
             'urgent_referral': False,
@@ -511,10 +511,11 @@ class ReferralTests(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=today)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
-            report_datetime=report_datetime)
+            report_datetime=report_datetime,
+            referral_clinic='Otse')
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
-            'art_documentation': True,
+            'arv_documentation': True,
             'arv_clinic': None,
             'cd4_result': None,
             'cd4_result_datetime': None,
@@ -532,11 +533,109 @@ class ReferralTests(BaseScheduledModelTestCase):
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
-            'referral_clinic': 'otse',
+            'referral_clinic': 'Otse',
             'referral_code': 'MASA',
             'tb_symptoms': 'cough, cough_blood, night_sweat',
             'urgent_referral': False,
             'verbal_hiv_result': 'POS',
             'vl_sample_drawn': True,
             'vl_sample_drawn_datetime': today}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr3(self):
+        yesterday = datetime.today() - timedelta(days=1)
+        report_datetime = datetime.today()
+        today = datetime.today()
+        today_date = date.today()
+        last_year_date = today_date - timedelta(days=365)
+        panel = Panel.objects.get(name='Microtube')
+        self.subject_visit_female.report_datetime = yesterday
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        # verbal POS with indirect docs
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
+        # on ART and there are docs 
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
+
+        panel = Panel.objects.get(name='Viral Load')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime,
+            referral_clinic='Otse')
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'arv_documentation': True,
+            'arv_clinic': None,
+            'cd4_result': None,
+            'cd4_result_datetime': None,
+            'circumcised': None,
+            'citizen': True,
+            'citizen_spouse': False,
+            'direct_hiv_documentation': False,
+            'gender': u'F',
+            'hiv_result': None,
+            'hiv_result_datetime': None,
+            'indirect_hiv_documentation': None,
+            'last_hiv_result': None,
+            'new_pos': None,
+            'next_arv_clinic_appointment_date': None,
+            'on_art': True,
+            'permanent_resident': None,
+            'pregnant': None,
+            'referral_clinic': 'Otse',
+            'referral_code': 'TST-HIV',
+            'tb_symptoms': '',
+            'urgent_referral': False,
+            'verbal_hiv_result': 'POS',
+            'vl_sample_drawn': True,
+            'vl_sample_drawn_datetime': yesterday}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr4(self):
+        yesterday = datetime.today() - timedelta(days=1)
+        report_datetime = datetime.today()
+        today = datetime.today()
+        today_date = date.today()
+        last_year_date = today_date - timedelta(days=365)
+        panel = Panel.objects.get(name='Microtube')
+        self.subject_visit_female.report_datetime = yesterday
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        # verbal POS with indirect docs
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
+        # on ART and there are docs 
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
+        HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS', hiv_result_datetime=yesterday)
+        panel = Panel.objects.get(name='Viral Load')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_female,
+            report_datetime=report_datetime,
+            referral_clinic='Otse')
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'arv_documentation': True,
+            'arv_clinic': None,
+            'cd4_result': None,
+            'cd4_result_datetime': None,
+            'circumcised': None,
+            'citizen': True,
+            'citizen_spouse': False,
+            'direct_hiv_documentation': True,
+            'gender': u'F',
+            'hiv_result': 'POS',
+            'hiv_result_datetime': yesterday,
+            'indirect_hiv_documentation': None,
+            'last_hiv_result': None,  # undocumented verbal_hiv_result cannot be the last result
+            'new_pos': False,  # undocumented verbal_hiv_result can suggest not a new POS
+            'next_arv_clinic_appointment_date': None,
+            'on_art': True,
+            'permanent_resident': None,
+            'pregnant': None,
+            'referral_clinic': 'Otse',
+            'referral_code': 'MASA-DF',
+            'tb_symptoms': '',
+            'urgent_referral': True,  # because this is a defaulter
+            'verbal_hiv_result': 'POS',
+            'vl_sample_drawn': True,
+            'vl_sample_drawn_datetime': yesterday}
         self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
