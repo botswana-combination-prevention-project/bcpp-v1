@@ -4,6 +4,8 @@ from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from ..managers import ReplacementHistoryManager
+
 
 class ReplacementHistory(BaseDispatchSyncUuidModel):
 
@@ -36,6 +38,12 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+    objects = ReplacementHistoryManager()
+    
+    def natural_key(self):
+        return (self.replacing_item, self.replaced_item)
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-replacing_item', ]
+        unique_together = ('replacing_item', 'replaced_item')

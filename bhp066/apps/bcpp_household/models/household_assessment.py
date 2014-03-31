@@ -73,7 +73,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
         )
 
     def __unicode__(self):
-        return unicode(self.household)
+        return unicode(self.household_structure)
 
     objects = HouseholdAssessmentManager()
 
@@ -89,7 +89,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
         super(HouseholdAssessment, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return self.household.natural_key()
+        return self.household_structure.natural_key()
     natural_key.dependencies = ['bcpp_household.household_structure']
 
     def dispatch_container_lookup(self, using=None):
