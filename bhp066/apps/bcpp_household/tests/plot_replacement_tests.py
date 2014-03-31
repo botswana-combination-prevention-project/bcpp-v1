@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.test import TestCase
 
@@ -9,7 +9,7 @@ from edc.map.classes import site_mappers, Mapper
 
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.models import SubjectAbsentee, SubjectRefusal
+from apps.bcpp_household_member.models import SubjectAbsentee
 from apps.bcpp_household_member.constants import REFUSED, ABSENT
 from apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
 from apps.bcpp_survey.models import Survey
@@ -17,13 +17,11 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_household.models import Household, HouseholdStructure
+from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
 
-from .factories import PlotFactory
-from .factories import HouseholdRefusalFactory
-from .factories import HouseholdLogFactory
-from .factories import HouseholdLogEntryFactory
-from .factories import HouseholdAssessmentFactory
+from ..constants import NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED
+
+from .factories import PlotFactory, HouseholdRefusalFactory, RepresentativeEligibilityFactory, HouseholdLogEntryFactory, HouseholdAssessmentFactory
 
 
 class TestPlotMapper(Mapper):
@@ -73,7 +71,7 @@ class PlotReplacementTests(TestCase):
         SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
         SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee)
 
-    def test_replacement_plot1(self, **kwargs):
+    def test_replacement_plot1(self):
         plot = PlotFactory(
             community='test_community11',
             household_count=1,
@@ -91,8 +89,9 @@ class PlotReplacementTests(TestCase):
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [plot])
 
-    def test_replacement_plot2(self, **kwargs):
-        plot = PlotFactory(
+    def test_replacement_plot2(self):
+        """Assert helper returns an empty list if plot is not replaceable."""
+        PlotFactory(
             community='test_community11',
             household_count=0,
             status='non_residential',
@@ -108,8 +107,9 @@ class PlotReplacementTests(TestCase):
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [])
 
-    def test_replacement_plot3(self, **kwargs):
-        plot = PlotFactory(
+    def test_replacement_plot3(self):
+        """Assert helper returns an empty list if plot is not replaceable."""
+        PlotFactory(
             community='test_community11',
             household_count=1,
             status='residential_habitable',
@@ -128,7 +128,6 @@ class PlotReplacementTests(TestCase):
 
     def test_refusal_household1(self):
         """Asserts that a household of refused members is replaceble."""
-
         plot = PlotFactory(
             community='test_community11',
             household_count=1,
@@ -144,6 +143,7 @@ class PlotReplacementTests(TestCase):
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMember(
             household_structure=household_structure,
             first_name='COOL',
@@ -154,8 +154,8 @@ class PlotReplacementTests(TestCase):
             present_today='Yes',
             study_resident='Yes')
         household_member.save()
-        subject_refusal = SubjectRefusal(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
-        subject_refusal.save()
+        self.assertEqual(household_member.member_status, REFUSED)
+        SubjectRefusalFactory(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
@@ -178,13 +178,13 @@ class PlotReplacementTests(TestCase):
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_refused_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='M',
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        #household_member.delete()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
@@ -206,19 +206,20 @@ class PlotReplacementTests(TestCase):
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_refused_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='M',
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='M',
             age_in_years=34,
             present_today='Yes',
             study_resident='Yes')
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=30,
@@ -226,10 +227,9 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
- 
+
     def test_refusal_household3(self):
-        """Asserts that a household of 3 refused members is replaceble."""
- 
+        """Asserts that a household of 3 refused members and two ineligible members is replaceble."""
         plot = PlotFactory(
             community='test_community11',
             household_count=1,
@@ -245,42 +245,42 @@ class PlotReplacementTests(TestCase):
             selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_refused_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='M',
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='M',
             age_in_years=34,
             present_today='Yes',
             study_resident='Yes')
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=30,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure,
             gender='F',
             age_in_years=70,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure,
             gender='F',
             age_in_years=12,
             present_today='Yes',
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
- 
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
+
     def test_refusal_household4(self):
-        """Asserts that a 2 households  1 with of 3 refused members is replaceble."""
- 
+        """Asserts that if 2 households in a plot, 1 household with 3 refused members, the household is replaceble."""
         plot = PlotFactory(
             community='test_community11',
             household_count=2,
@@ -299,41 +299,45 @@ class PlotReplacementTests(TestCase):
         household2 = households[1]
         household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
         household_structure2 = HouseholdStructure.objects.get(household=household2, survey=self.survey1)
-        household_member = self.household_member_refused_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure1)
+        RepresentativeEligibilityFactory(household_structure=household_structure2)
+        self.household_member_refused_factory(
             household_structure=household_structure1,
             gender='M',
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure1,
             gender='M',
             age_in_years=34,
             present_today='Yes',
             study_resident='Yes')
-        household_member = self.household_member_refused_factory(
+        self.household_member_refused_factory(
             household_structure=household_structure1,
             gender='F',
             age_in_years=30,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        #hh2
+        HouseholdMemberFactory(
             household_structure=household_structure2,
             gender='F',
             age_in_years=70,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure2,
             gender='F',
             age_in_years=12,
             present_today='Yes',
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
+        self.assertEquals(replacement_helper.replaceable_plots(), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household1])
 
     def test_refusal_household5(self):
-        """Asserts that a household with 3 not refused members is not replaceble."""
+        """Asserts that a household with 3 eligible members is not replaceble."""
 
         plot = PlotFactory(
             community='test_community11',
@@ -350,32 +354,33 @@ class PlotReplacementTests(TestCase):
             selected=1)
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
-        household2 = households[1]
+        households[1]
         household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
-        household_member = HouseholdMemberFactory(
+        RepresentativeEligibilityFactory(household_structure=household_structure1)
+        HouseholdMemberFactory(
             household_structure=household_structure1,
             gender='M',
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure1,
             gender='M',
             age_in_years=34,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure1,
             gender='F',
             age_in_years=30,
             present_today='Yes',
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
+        self.assertEquals(replacement_helper.replaceable_plots(), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_refusal_household6(self):
-        """Asserts that a household that a HOH has refused is not replaceble."""
-
+        """Asserts that a household with a HOH who has refused is replaceble."""
         plot = PlotFactory(
             community='test_community11',
             household_count=2,
@@ -391,18 +396,17 @@ class PlotReplacementTests(TestCase):
             selected=1)
         households = Household.objects.filter(plot=plot)
         household1 = households[0]
-        household2 = households[1]
+        households[1]
         household_structure = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
-        household_refusal = HouseholdRefusalFactory(household_structure=household_structure, report_datetime=datetime.now(), reason='not_interested')
+        HouseholdRefusalFactory(household_structure=household_structure, report_datetime=datetime.now(), reason='not_interested')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household1])
 
     def test_refusal_household7(self):
-        """Asserts that a household on a plot with 2 households and has HOH has refused is not replaceble."""
-
+        """Asserts a plot with 2 households, A and B, where in household A the HOH has refused, A is replaceble."""
         plot = PlotFactory(
             community='test_community11',
-            household_count=1,
+            household_count=2,
             status='residential_habitable',
             eligible_members=3,
             description="A blue house with yellow screen wall",
@@ -413,29 +417,29 @@ class PlotReplacementTests(TestCase):
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
             selected=1)
-        households = Household.objects.filter(plot=plot)
-        household1 = households
-        household2 = households
+        household1, household2 = Household.objects.filter(plot=plot)
         household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
         household_structure2 = HouseholdStructure.objects.get(household=household2, survey=self.survey1)
-        household_member = HouseholdMemberFactory(
+        RepresentativeEligibilityFactory(household_structure=household_structure1)
+        RepresentativeEligibilityFactory(household_structure=household_structure2)
+        HouseholdMemberFactory(
             household_structure=household_structure2,
             gender='F',
             age_in_years=70,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure2,
             gender='F',
             age_in_years=24,
             present_today='Yes',
             study_resident='Yes')
-        household_refusal = HouseholdRefusalFactory(household_structure=household_structure1, report_datetime=datetime.now(), reason='not_interested')
+        HouseholdRefusalFactory(household_structure=household_structure1, report_datetime=datetime.now(), reason='not_interested')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household1])
 
     def test_absentees_ineligibles1(self):
-        """Asserts a household 1 member that is absent that is replaceble"""
+        """Asserts a household with 1 absent member and no other eligible members is replaceble"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -451,7 +455,8 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_absent_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=51,
@@ -459,10 +464,9 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
- 
+
     def test_absentees_ineligibles2(self):
         """Asserts a household multiple members that are absent that its replaceble."""
- 
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -478,19 +482,20 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_absent_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=51,
             present_today='No',
             study_resident='Yes')
-        household_member = self.household_member_absent_factory(
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=34,
             present_today='No',
             study_resident='Yes')
-        household_member = self.household_member_absent_factory(
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=23,
@@ -498,10 +503,9 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
- 
+
     def test_absentees_ineligibles3(self):
         """Asserts a household 3 members absent and 2 not absent that is not replaceble."""
- 
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -517,31 +521,32 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_member = self.household_member_absent_factory(
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=51,
             present_today='No',
             study_resident='Yes')
-        household_member = self.household_member_absent_factory(
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=34,
             present_today='No',
             study_resident='Yes')
-        household_member = self.household_member_absent_factory(
+        self.household_member_absent_factory(
             household_structure=household_structure,
             gender='F',
             age_in_years=23,
             present_today='No',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure,
             gender='F',
             age_in_years=70,
             present_today='Yes',
             study_resident='Yes')
-        household_member = HouseholdMemberFactory(
+        HouseholdMemberFactory(
             household_structure=household_structure,
             gender='F',
             age_in_years=24,
@@ -551,9 +556,9 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_check_absentees_ineligibles4(self):
-        """Asserts a household with no 'no informant' that is replaceble"""
+        """Asserts a household initially is not replaceable"""
 
-        plot = PlotFactory(
+        PlotFactory(
                 community='test_community11',
                 household_count=1,
                 status='residential_habitable',
@@ -566,14 +571,11 @@ class PlotReplacementTests(TestCase):
                 gps_degrees_e=25,
                 gps_minutes_e=44.8981199,
                 selected=1)
-        household = Household.objects.get(plot=plot)
-        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_absentees_ineligibles5(self):
-        """Asserts a household with no 'no informant' with a household assessment form status being seasonally occupied that is replaceble"""
-
+        """Asserts a household without an informant after 3 enumeration attempt is replaceble if last_seen_home indicates 4_weeks_a_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -589,19 +591,17 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
-        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='4_weeks_a_year')  # Status value becomes seasonally occupied
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=1))
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=SEASONALLY_OCCUPIED)  # Status value becomes seasonally occupied
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
     def test_absentees_ineligibles6(self):
-        """Asserts a household with no 'no informant' with a household assessment form status being rarely occupied that is replaceble"""
-
+        """Asserts a household without an informant after 3 enumeration attempt is replaceble if last_seen_home indicates 1_night_less_than_4_weeks_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -617,19 +617,17 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
-        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='1_night_less_than_4_weeks_year')  # Status value becomes rarely occupied
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=1))
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_OCCUPIED)  # Status value becomes rarely occupied
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
     def test_absentees_ineligibles7(self):
-        """Asserts a household with no 'no informant' with a household assessment form status being never occupied that is replaceble"""
-
+        """Asserts a household without an informant after 3 enumeration attempt is NOT replaceble if last_seen_home indicates never_spent_1_day_over_a_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -645,19 +643,17 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
-        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='never_spent_1_day_over_a_year')  # Status value becomes never occupied
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=1))
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEVER_OCCUPIED)  # Status value becomes never occupied
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_absentees_ineligibles8(self):
-        """Asserts a household with no 'no informant' with a household assessment form status being 'None' that is replaceble"""
-
+        """Asserts a household without an informant after 3 enumeration attempt is not replaceble if last_seen_home is unknown"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -673,19 +669,17 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='no_household_informant')
-        household_assessment = HouseholdAssessmentFactory(household_structure=household_structure, last_seen_home='dont_know')  # Status value becomes None
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=1))
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home='dont_know')  # Status value becomes None
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_absentees_ineligibles9(self):
-        """Asserts a household with no 'no informant' with 2 attempts of enumeration that is replaceble"""
-
+        """Asserts a household without an informant after 2 enumeration attempts is not replaceble"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -701,16 +695,14 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_absentees_ineligibles10(self):
-        """Asserts a household with no 'no informant' with 1 attempts of enumeration that is replaceble"""
-
+        """Asserts a household without an informant after 1 enumeration attempt is not replaceble"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -726,8 +718,8 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry = HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant',)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant',)
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
@@ -749,8 +741,8 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_present',)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_present',)
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
@@ -772,12 +764,10 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='eligible_representative_present')
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_present', report_datetime=datetime.today() - timedelta(days=1))
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
@@ -799,12 +789,10 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='eligible_representative_absent',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='eligible_representative_absent')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log3, household_status='eligible_representative_absent')
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent', report_datetime=datetime.today() - timedelta(days=1))
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
@@ -826,8 +814,8 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_absent')
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent')
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
@@ -849,10 +837,9 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='eligible_representative_absent',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='eligible_representative_absent')
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent', report_datetime=datetime.today() - timedelta(days=2))
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
@@ -874,12 +861,11 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log1 = HouseholdLogFactory(household_structure=household_structure)
-        household_log2 = HouseholdLogFactory(household_structure=household_structure)
-        household_log3 = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry1 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='no_household_informant',)
-        household_log_entry2 = HouseholdLogEntryFactory(household_structure=household_log2, household_status='no_household_informant')
-        household_log_entry3 = HouseholdLogEntryFactory(household_structure=household_log1, household_status='eligible_representative_absent',)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='no_household_informant', report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent', report_datetime=datetime.today() - timedelta(days=1))
+
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
@@ -901,7 +887,7 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        household_log = HouseholdLogFactory(household_structure=household_structure)
-        household_log_entry = HouseholdLogEntryFactory(household_structure=household_log, household_status='eligible_representative_absent',)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status='eligible_representative_absent',)
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
