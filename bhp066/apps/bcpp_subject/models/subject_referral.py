@@ -116,7 +116,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text='from HivTestingHistory.other_record. A document that suggests the subject is HIV POS.'
         )
 
-    last_hiv_test_date = models.DateTimeField(
+    last_hiv_result_date = models.DateTimeField(
          null=True,
          )
 
