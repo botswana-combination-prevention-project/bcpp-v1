@@ -140,10 +140,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.gender)
 
     def save(self, *args, **kwargs):
-        try:
-            RepresentativeEligibility.objects.get(household_structure=self.household_structure)
-        except RepresentativeEligibility.DoesNotExist:
-            raise ValidationError('The eligibility checklist for an eligible representative has not completed. Perhaps catch this in the form.')
+        self.check_eligible_representative_filled(self.household_structure)
         if not self.id:
             if not self.household_structure.enumerated:
                 self.household_structure.enumerated = True
@@ -175,6 +172,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             household_structure__household__plot__plot_identifier=self.household_structure.household.plot.plot_identifier,
             eligible_member=True).count()
         self.household_structure.household.plot.save()
+
+    def check_eligible_representative_filled(self, household_structure, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
+        try:
+            RepresentativeEligibility.objects.get(household_structure=household_structure)
+        except RepresentativeEligibility.DoesNotExist:
+            raise exception_cls('The eligibility checklist for an eligible representative has not completed.')
 
     def match_enrollment_checklist_values(self, household_member, exception_cls=None):
         if household_member.enrollment_checklist:
