@@ -104,8 +104,7 @@ class PlotReplacementTests(TestCase):
             gps_minutes_s=0.5666599,
             gps_degrees_e=25,
             gps_minutes_e=44.366660,
-            selected=2,
-            replaces=None)
+            selected=2,)
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [])
 
@@ -157,8 +156,6 @@ class PlotReplacementTests(TestCase):
         household_member.save()
         subject_refusal = SubjectRefusal(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
         subject_refusal.save()
-        print "enumerated = ", household_structure.enumerated
-        print "refused =", household_structure.refused
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
@@ -187,7 +184,7 @@ class PlotReplacementTests(TestCase):
             age_in_years=50,
             present_today='Yes',
             study_resident='Yes')
-        household_member.delete()
+        #household_member.delete()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
