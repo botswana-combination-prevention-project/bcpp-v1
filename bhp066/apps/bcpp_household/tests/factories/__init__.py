@@ -9,3 +9,4 @@ from .plot_log_entry_factory import PlotLogEntryFactory
 from .household_refusal_factory import HouseholdRefusalFactory
 from .plot_identifier_factory import PlotIdentifierHistoryFactory
 from .household_assessment_factory import HouseholdAssessmentFactory
+from .reprentative_eligibility_factory import RepresentativeEligibilityFactory

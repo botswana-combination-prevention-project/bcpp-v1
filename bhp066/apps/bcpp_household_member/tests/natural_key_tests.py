@@ -4,14 +4,17 @@ from django.test import TestCase
 from django.db.models import signals
 from django.core import serializers
 from django.db.models import get_app, get_models
+
 from edc.core.crypto_fields.classes import FieldCryptor
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.device.sync.classes import SerializeToTransaction
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_content_type_map.models import ContentTypeMap
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import HouseholdStructureFactory
 from apps.bcpp_household.models import post_save_on_household, create_household_on_post_save, household_structure_on_post_save
@@ -20,10 +23,17 @@ from .factories import (HouseholdMemberFactory, EnrollmentChecklistFactory, Hous
                         HeadHouseholdEligibilityFactory, SubjectHtcFactory)
 from apps.bcpp_household_member.models import EnrollmentLoss, SubjectRefusalHistory, SubjectRefusal
 
+
 class NaturalKeyTests(TestCase):
 
-#     def setup(self):
-#         User.objects.c
+    def setUp(self):
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
 
     def test_p1(self):
         """Confirms all models have a natural_key method (except Audit models)"""
@@ -42,25 +52,7 @@ class NaturalKeyTests(TestCase):
                 self.assertTrue('get_by_natural_key' in dir(model.objects), 'get_by_natural_key key not found in {0}'.format(model._meta.object_name))
 
     def test_p3(self):
-        site_lab_tracker.autodiscover()
-        StudySpecificFactory()
-        StudySiteFactory()
-        content_type_map_helper = ContentTypeMapHelper()
-        content_type_map_helper.populate()
-        content_type_map_helper.sync()
-        print 'setup the consent catalogue for this BCPP'
-        content_type_map = ContentTypeMap.objects.get(content_type__model__iexact='SubjectConsent')
-        print ContentTypeMap.objects.all().count()
-        consent_catalogue = ConsentCatalogueFactory(name='bcpp year 0', content_type_map=content_type_map)
-        consent_catalogue.add_for_app = 'bcpp_subject'
-        consent_catalogue.save()
-        Survey.objects.create(survey_name='YEAR 0',
-                          datetime_start=datetime.today() - timedelta(days=30),
-                          datetime_end=datetime.today() + timedelta(days=180)
-                          )
         survey = Survey.objects.all()[0]
-#         print 'Clear previous Registered Subjects: Count='+str(RegisteredSubject.objects.all().count())
-#         RegisteredSubject.objects.all().delete()
         from apps.bcpp_household.models import HouseholdStructure
         signals.post_save.disconnect(post_save_on_household, weak=False, dispatch_uid="post_save_on_household")
         signals.post_save.disconnect(household_structure_on_post_save, weak=False, dispatch_uid="household_structure_on_post_save")
@@ -97,8 +89,6 @@ class NaturalKeyTests(TestCase):
         subject_absentee_entry1 = SubjectAbsenteeEntryFactory(subject_absentee=subject_absentee, report_datetime=date.today()+timedelta(days=int(2)))
         subject_undecided_entry1 = SubjectUndecidedEntryFactory(subject_undecided=subject_undecided, report_datetime=date.today()+timedelta(days=int(2)))
 
-        # contact_log = ContactLogFactory()
-        # contact_log_item = ContactLogFactoryItem()
         instances = []
         instances.append(household_member)
         instances.append(registered_subject)
@@ -115,12 +105,6 @@ class NaturalKeyTests(TestCase):
         instances.append(subject_undecided_entry)
         instances.append(subject_absentee_entry1)
         instances.append(subject_undecided_entry1)
-
-#         appointment, created = Appointment.objects.get_or_create(registered_subject=registered_subject,
-#                                                                  appt_datetime = datetime.today(),
-#                                                                  visit_definition__code='1000')
-#         content_type = ContentType.objects.get(app_label='bcpp_subject',model='subjectvisit')
-#         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
 
         print 'INSTANCE: ' + str(instances)
         for obj in instances:
