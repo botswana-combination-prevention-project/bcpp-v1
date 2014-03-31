@@ -50,7 +50,8 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
         if self.household_structure.enrolled:
             raise ValidationError('Household is enrolled.')
         self.household_structure.refused_enumeration = True
-        super(HouseholdRefusal, self).save(*args, **kwargs)
+        self.household_structure.save()
+        super(BaseHouseholdRefusal, self).save(*args, **kwargs)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
