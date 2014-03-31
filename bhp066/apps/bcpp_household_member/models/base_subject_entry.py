@@ -52,10 +52,12 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
         )
 
     def save(self, *args, **kwargs):
-#         if self.in_replaced_household:
-#             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
-#         else:
-#             self.update_replacement_data()
+        if self.in_replaced_household:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+        else:
+            pass
+            #self.update_replacement_data()
+
         super(BaseSubjectEntry, self).save(*args, **kwargs)
 
     @property
