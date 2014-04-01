@@ -19,7 +19,7 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 from .hic_enrollment import HicEnrollment
 
 
-class SubjectLocator(SubjectOffStudyMixin, BaseLocator, ExportTrackingFieldsMixin):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
@@ -86,9 +86,9 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator, ExportTrackingFieldsMixi
 
     history = AuditTrail()
 
-    objects = ScheduledModelManager()
-
     entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
+
+    objects = ScheduledModelManager()
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
