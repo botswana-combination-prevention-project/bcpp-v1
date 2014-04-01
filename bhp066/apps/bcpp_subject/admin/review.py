@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
-from ..models import (SubjectReferralReview, SubjectOffStudyReview, SubjectVisitReview, HicEnrollmentReview, SubjectConsentHistoryReview, SubjectConsentReview, SubjectLocatorReview, SubjectDeathReview, QualityOfLifeReview, ResourceUtilizationReview, OutpatientCareReview, HospitalAdmissionReview, HivHealthCareCostsReview, LabourMarketWagesReview, GrantReview, CeaEnrollmentChecklistReview, ResidencyMobilityReview, DemographicsReview, CommunityEngagementReview, EducationReview, HivTestingHistoryReview, HivTestReviewReview, HivTestedReview, HivUntestedReview, FutureHivTestingReview, SexualBehaviourReview, MonthsRecentPartnerReview, MonthsSecondPartnerReview, MonthsThirdPartnerReview, HivCareAdherenceReview, HivMedicalCareReview, CircumcisionReview, CircumcisedReview, UncircumcisedReview, ReproductiveHealthReview, MedicalDiagnosesReview, HeartAttackReview, CancerReview, TubercolosisReview, StiReview, SubstanceUseReview, StigmaReview, StigmaOpinionReview, PositiveParticipantReview, AccessToCareReview, HivResultReview, PregnancyReview, NonPregnancyReview, HivResultDocumentationReview, PimaReview, Cd4HistoryReview, ClinicQuestionnaireReview, TbSymptomsReview, ParticipationReview, RbdDemographicsReview)
+from ..models import (SubjectReferralReview, SubjectOffStudyReview, SubjectVisitReview, HicEnrollmentReview, SubjectConsentHistoryReview, SubjectConsentReview, SubjectLocatorReview, SubjectDeathReview, QualityOfLifeReview, ResourceUtilizationReview, OutpatientCareReview, HospitalAdmissionReview, HivHealthCareCostsReview, LabourMarketWagesReview, GrantReview, CeaEnrollmentChecklistReview, ResidencyMobilityReview, DemographicsReview, CommunityEngagementReview, EducationReview, HivTestingHistoryReview, HivTestReviewReview, HivTestedReview, HivUntestedReview, SexualBehaviourReview, MonthsRecentPartnerReview, MonthsSecondPartnerReview, MonthsThirdPartnerReview, HivCareAdherenceReview, HivMedicalCareReview, CircumcisionReview, CircumcisedReview, UncircumcisedReview, ReproductiveHealthReview, MedicalDiagnosesReview, HeartAttackReview, CancerReview, TubercolosisReview, StiReview, SubstanceUseReview, StigmaReview, StigmaOpinionReview, PositiveParticipantReview, AccessToCareReview, HivResultReview, PregnancyReview, NonPregnancyReview, HivResultDocumentationReview, PimaReview, Cd4HistoryReview, ClinicQuestionnaireReview, TbSymptomsReview, ParticipationReview, RbdDemographicsReview)
 
 
 class SubjectReferralReviewAdmin(SubjectVisitModelAdmin):
@@ -201,12 +201,12 @@ class HivUntestedReviewAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivUntestedReview, HivUntestedReviewAdmin)
 
 
-class FutureHivTestingReviewAdmin(SubjectVisitModelAdmin):
-    def __init__(self, *args, **kwargs):
-        super(FutureHivTestingReviewAdmin, self).__init__(*args, **kwargs)
-        self.readonly_fields = [field.name for field in FutureHivTestingReview._meta.fields]
-
-admin.site.register(FutureHivTestingReview, FutureHivTestingReviewAdmin)
+# class FutureHivTestingReviewAdmin(SubjectVisitModelAdmin):
+#     def __init__(self, *args, **kwargs):
+#         super(FutureHivTestingReviewAdmin, self).__init__(*args, **kwargs)
+#         self.readonly_fields = [field.name for field in FutureHivTestingReview._meta.fields]
+# 
+# admin.site.register(FutureHivTestingReview, FutureHivTestingReviewAdmin)
 
 
 class SexualBehaviourReviewAdmin(SubjectVisitModelAdmin):
