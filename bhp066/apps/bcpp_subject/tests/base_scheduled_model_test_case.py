@@ -26,6 +26,7 @@ from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, E
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 
 class BaseScheduledModelTestCase(TestCase):
@@ -46,6 +47,7 @@ class BaseScheduledModelTestCase(TestCase):
         plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
