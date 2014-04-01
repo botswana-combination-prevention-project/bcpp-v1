@@ -24,7 +24,7 @@ def subject_refusal_on_post_delete(sender, instance, **kwargs):
             household_member.save()
 
 
-@receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
+@receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
 def enrollment_checklist_on_post_delete(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, EnrollmentChecklist):
