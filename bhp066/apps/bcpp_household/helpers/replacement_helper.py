@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from edc.device.dispatch.models import DispatchContainerRegister
 
 from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
-from ..models import HouseholdStructure, Plot
+from ..models import HouseholdStructure, Plot, ReplacementHistory
 
 
 class ReplacementHelper(object):
@@ -18,9 +20,6 @@ class ReplacementHelper(object):
         if DispatchContainerRegister.objects.filter(container_identifier=self.plot.plot_identifier):
             producer = producer.producer
         return producer
-
-    def get_replaceable_items_for_view(self):
-        pass
 
     @property
     def household_structure(self):
@@ -63,8 +62,6 @@ class ReplacementHelper(object):
                 replaceable = True
             elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
                 replaceable = True
-#         if self.plot.status == RESIDENTIAL_HABITABLE and (self.household_structure.failed_enumeration and not self.household_structure.eligible_members):
-#             replaceable = True
         return replaceable
 
     @property
@@ -100,13 +97,58 @@ class ReplacementHelper(object):
         except Plot.DoesNotExist:
             return None
 
-    def replacement_reason(self, replacement_item):
+    def replace_household(self, replaceble_households):
+        """"Replaces a household with a plot.
+
+        This takes a list of replaceble households and plots that are to replace those households.
+        The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
+        plots = Plot.objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
+        replacing_plots = []
+        for household, plot in zip(replaceble_households, plots):
+            household.replaced_by = plot.plot_identifier
+            plot.replaces = household.household_identifier
+            household.save()
+            plot.save()
+            ReplacementHistory.objects.create(
+                    replacing_item=plot.plot_identifier,
+                    replaced_item=household.household_identifier,
+                    replacement_datetime=datetime.now(),
+                    replacement_reason=self.household_replacement_reason())
+            replacing_plots.append(plot)
+        return replacing_plots
+
+    def replace_plot(self, replaceble_plots):
+        """Replaces a plot with a plot.
+
+        This takes a list of replaceble plots and replaces each with a plot.
+        The replacement history model is also update to keep track of what replace what."""
+        plots = Plot.objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
+        replacing_plots = []
+        #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
+        for plot_a, plot_b in zip(replaceble_plots, plots):
+            plot_a.repalced_by = plot_b.plot_identifier
+            plot_b.replaces = plot_a.plot_identifier
+            plot_a.save()
+            plot_b.save()
+            ReplacementHistory.objects.create(
+                    replacing_item=plot_b.plot_identifier,
+                    replaced_item=plot_a.plot_identifier,
+                    replacement_datetime=datetime.now(),
+                    replacement_reason='Invalid plot replacement')
+            replacing_plots.append(plot_b)
+        return replacing_plots
+
+    def household_replacement_reason(self):
         """check the reason why a plot or household is being replaced."""
         reason = None
-        if self.is_absent(replacement_item):
+        if self.household_structure.all_eligible_members_absent:
             reason = 'all members are absent'
         elif self.household_structure.refused_enumeration:
             reason = 'HOH refusal'
-        elif self.no_eligible_rep(replacement_item):
-            reason = 'no eligible members'
+        elif self.household_structure.all_eligible_members_refused:
+            reason = 'all eligible members refused'
+        elif self.household_structure.eligible_representative_absent:
+            reason = 'no eligible Representative'
+        elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
+            reason = 'No informant'
         return reason
