@@ -1,4 +1,4 @@
-from . import (SubjectOffStudy, SubjectVisit, HicEnrollment, SubjectConsentHistory, SubjectConsent, SubjectLocator, SubjectDeath, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, CeaEnrollmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTested, HivUntested, FutureHivTesting, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis, Sti, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HivResult, Pregnancy, NonPregnancy, HivResultDocumentation, Pima, Cd4History, ClinicQuestionnaire, TbSymptoms, SubjectReferral, Participation, RbdDemographics)
+from . import (SubjectOffStudy, SubjectVisit, HicEnrollment, SubjectConsentHistory, SubjectConsent, SubjectLocator, SubjectDeath, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts, LabourMarketWages, Grant, CeaEnrollmentChecklist, ResidencyMobility, Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview, HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised, Uncircumcised, ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis, Sti, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HivResult, Pregnancy, NonPregnancy, HivResultDocumentation, Pima, Cd4History, ClinicQuestionnaire, TbSymptoms, SubjectReferral, Participation, RbdDemographics)
 
 
 class SubjectOffStudyReview(SubjectOffStudy):
@@ -231,14 +231,14 @@ class HivUntestedReview(HivUntested):
         proxy = True
 
 
-class FutureHivTestingReview(FutureHivTesting):
-
-    def save(self, *args, **kwargs):
-        pass
-
-    class Meta:
-        app_label = 'bcpp_subject_review'
-        proxy = True
+# class FutureHivTestingReview(FutureHivTesting):
+# 
+#     def save(self, *args, **kwargs):
+#         pass
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject_review'
+#         proxy = True
 
 
 class SexualBehaviourReview(SexualBehaviour):
