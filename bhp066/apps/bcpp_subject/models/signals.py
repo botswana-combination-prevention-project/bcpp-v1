@@ -16,7 +16,7 @@ def subject_consent_on_post_save(sender, instance, **kwargs):
             instance.post_save_update_registered_subject()  # HM values must either be changed or match that provided on the consent
             instance.household_member.enroll_household()
 
-
+@receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
 def update_subject_referral_on_post_save(sender, instance, **kwargs):
     """Updates the subject referral if a model that is part of the referral data is changed."""
     if not kwargs.get('raw', False):
