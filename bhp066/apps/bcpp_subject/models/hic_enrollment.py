@@ -29,7 +29,7 @@ class HicEnrollment (BaseScheduledVisitModel):
     intend_residency = models.NullBooleanField(
         default=None,
         # editable=False,
-        help_text='From Residency and Mobility. Eligible if Yes.'
+        help_text='From Residency and Mobility. Eligible if No.'
         )
 
     hiv_status_today = models.CharField(
@@ -109,7 +109,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         from ..models import ResidencyMobility
         residency_mobility = ResidencyMobility.objects.filter(subject_visit=self.subject_visit)
         if residency_mobility.exists():
-            if residency_mobility[0].permanent_resident.lower() == 'yes':
+            if residency_mobility[0].intend_residency.lower() == 'no':
                 return True
             else:
                 raise exception_cls('Please review \'intend_residency\' in ResidencyMobility form before proceeding with this one.')

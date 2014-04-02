@@ -8,7 +8,8 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment, HouseholdRefusal)
+from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, 
+                                        HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
 from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_survey.models import Survey
@@ -62,6 +63,8 @@ class HouseholdDashboard(Dashboard):
             household_refusal=self.household_refusal,
             head_household_eligibility_meta=HouseholdHeadEligibility._meta,
             head_household_eligibility=self.head_household_eligibility,
+            representative_eligibility_meta=RepresentativeEligibility._meta,
+            representative_eligibility=self.representative_eligibility,
             plot=self.household.plot,
             household_assessment=self.household_assessment,
             household=self.household,
@@ -81,7 +84,7 @@ class HouseholdDashboard(Dashboard):
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
-            )
+            )   
 
     @property
     def has_household_log_entry(self):
@@ -136,6 +139,12 @@ class HouseholdDashboard(Dashboard):
     def head_household_eligibility(self):
         if HouseholdHeadEligibility.objects.filter(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes'):
             return HouseholdHeadEligibility.objects.get(household_structure=self.household_structure, aged_over_18='Yes', verbal_script='Yes')
+        return None
+
+    @property
+    def representative_eligibility(self):
+        if RepresentativeEligibility.objects.filter(household_structure=self.household_structure):
+            return RepresentativeEligibility.objects.get(household_structure=self.household_structure)
         return None
 
     @property

@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
@@ -13,8 +14,6 @@ from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
-from django.core.exceptions import ValidationError
-
 
 class HouseholdAssessment(BaseDispatchSyncUuidModel):
 

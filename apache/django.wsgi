@@ -9,15 +9,15 @@ if platform.system() == 'Darwin':
 else:
         home_dir = 'home'
 
-path = '/{0}/django_dev/source/bhp066/live/bhp066_project'.format(home_dir)
+path = '/{0}/django_dev/source/bhp066/test_server_training/bhp066/'.format(home_dir)
 if path not in sys.path:
     sys.path.append(path)
 
-path = '/{0}/django_dev/source/bhp066/live/bhp066_project/bhp066'.format(home_dir)
+path = '/{0}/django_dev/source/bhp066/test_server_training/bhp066/bhp066'.format(home_dir)
 if path not in sys.path:
     sys.path.append(path)
 
-path = '/{0}/django_dev/source/bhp066/live/bhp066_project/bhp066/keys'.format(home_dir)
+path = '/{0}/django_dev/source/bhp066/test_server_training/bhp066/keys'.format(home_dir)
 if path not in sys.path:
     sys.path.append(path)
 
