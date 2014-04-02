@@ -172,7 +172,6 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=25,
         null=True,
         blank=True,
-        null=True,
         editable=False,
         help_text=("plot or household identifier that this plot replaces."),
         )
