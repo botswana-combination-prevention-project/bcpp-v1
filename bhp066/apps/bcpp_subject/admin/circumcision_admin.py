@@ -20,12 +20,12 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
     radio_fields = {
          'circumcised': admin.VERTICAL, }
     instructions = [("Note to Interviewer: This section is to be completed "
-                             "by male participants. SKIP for female participants. "),
-                             _("Read to Participant: Some men are circumcised. "
-                             "Male circumcision is [enter site specific word] when "
-                             "the foreskin of the man's penis has been cut off. "
-                             "I would like to ask you a few questions regarding "
-                             "male circumcision.")]
+                     "by male participants. SKIP for female participants. "),
+                     _("Read to Participant: Some men are circumcised. "
+                     "Male circumcision is [enter site specific word] when "
+                     "the foreskin of the man's penis has been cut off. "
+                     "I would like to ask you a few questions regarding "
+                     "male circumcision.")]
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
