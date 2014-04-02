@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+from django.db.models import Max
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
@@ -115,6 +116,14 @@ class HouseholdDashboard(Dashboard):
             self._household_refusal = HouseholdRefusal.objects.get(household_structure=self.household_structure)
             return self._household_refusal
         return self._household_refusal
+
+    @property
+    def lastest_household_log_entry_household_status(self):
+        lastest_household_log_entry = None
+        report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self.household_structure).aggregate(Max('report_datetime')).get('report_datetime__max')
+        if HouseholdLogEntry.objects.get(household_log__household_structure=self.household_structure, report_datetime=report_datetime):
+            lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=self.household_structure, report_datetime=report_datetime)
+        return lastest_household_log_entry.household_status
 
     @property
     def any_eligible_hoh(self):

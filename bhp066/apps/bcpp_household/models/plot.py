@@ -373,6 +373,9 @@ class Plot(BaseDispatchSyncUuidModel):
             return True
         return False
 
+    def is_plot(self):
+        return True
+
     def is_dispatch_container_model(self):
         return True
 

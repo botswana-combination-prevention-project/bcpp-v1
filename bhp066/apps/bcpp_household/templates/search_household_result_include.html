@@ -38,7 +38,7 @@
                 <input type="submit" value="Locked-{{ household.plot.action }}">
             </form>
           {% else %}
-          {% if not household.replacement %}
+          {% if not household.replaced_by %}
 	          {% if household.plot.action == 'confirmed'%}         
 	               <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=household.pk %}">
 	               {% csrf_token %}
