@@ -39,8 +39,6 @@
  {% if household_assessment %}
   <a href="{% url household_assessment_meta|admin_urlname:'change' household_assessment.pk %}?household={{ household.pk }}&household_assessment={{household_assessment.pk}}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Assessing of Household residency status form</a>
  {% endif %}
- has household log {{ has_household_log_entry }}
- 
 {% if lastest_household_log_entry_household_status == 'refused' %}
 	{% if household_refusal %}
 		<p><A href="{% url household_refusal_meta|admin_urlname:'change' household_refusal.pk %}?household_refusal={{household_refusal.pk}}&household={{household.pk}}&next=section_url&section_name=household">refusal form</A></p>
