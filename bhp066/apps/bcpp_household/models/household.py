@@ -5,6 +5,8 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
 
@@ -186,6 +188,12 @@ class Household(BaseDispatchSyncUuidModel):
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
+
+    def save(self, *args, **kwargs):
+        if self.id:
+            if self.replaced_by:
+                raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+        super(Household, self).save(*args, **kwargs)
 
     def get_subject_identifier(self):
         return self.household_identifier

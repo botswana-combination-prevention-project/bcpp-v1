@@ -14,7 +14,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-
+from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -257,6 +257,9 @@ class Plot(BaseDispatchSyncUuidModel):
         return (self.plot_identifier,)
 
     def save(self, *args, **kwargs):
+        # If the plot is replaced can not save this plot
+        if self.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
