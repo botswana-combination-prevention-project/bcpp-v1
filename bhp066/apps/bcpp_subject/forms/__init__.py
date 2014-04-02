@@ -17,7 +17,6 @@ from .months_partner_form import *
 from .hiv_test_review_form import HivTestReviewForm
 from .circumcision_form import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from .access_to_care_form import AccessToCareForm
-from .future_hiv_testing_form import FutureHivTestingForm
 from .reproductive_health_form import ReproductiveHealthForm
 from .pima_form import PimaForm
 from .cd4_history_form import Cd4HistoryForm

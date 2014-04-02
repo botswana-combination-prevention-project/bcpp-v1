@@ -5,12 +5,9 @@ from edc.choices.common import YES_NO
 from edc.base.model.validators import eligible_if_yes
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import HouseholdStructure
-
 
 class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel):
     """Determines if the household member is eligible representative of the household."""
-    household_structure = models.ForeignKey(HouseholdStructure)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
