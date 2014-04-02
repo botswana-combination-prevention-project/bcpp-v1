@@ -231,16 +231,6 @@ class HivUntestedReview(HivUntested):
         proxy = True
 
 
-# class FutureHivTestingReview(FutureHivTesting):
-# 
-#     def save(self, *args, **kwargs):
-#         pass
-# 
-#     class Meta:
-#         app_label = 'bcpp_subject_review'
-#         proxy = True
-
-
 class SexualBehaviourReview(SexualBehaviour):
 
     def save(self, *args, **kwargs):

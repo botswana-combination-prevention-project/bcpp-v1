@@ -201,14 +201,6 @@ class HivUntestedReviewAdmin(SubjectVisitModelAdmin):
 admin.site.register(HivUntestedReview, HivUntestedReviewAdmin)
 
 
-# class FutureHivTestingReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(FutureHivTestingReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in FutureHivTestingReview._meta.fields]
-# 
-# admin.site.register(FutureHivTestingReview, FutureHivTestingReviewAdmin)
-
-
 class SexualBehaviourReviewAdmin(SubjectVisitModelAdmin):
     def __init__(self, *args, **kwargs):
         super(SexualBehaviourReviewAdmin, self).__init__(*args, **kwargs)
