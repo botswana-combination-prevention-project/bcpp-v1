@@ -40,7 +40,6 @@ from .uncircumcised_factory import UncircumcisedFactory
 from .quality_of_life_factory import QualityOfLifeFactory
 from .hiv_untested_factory import HivUntestedFactory
 from .education_factory import EducationFactory
-from .future_hiv_testing_factory import FutureHivTestingFactory
 from .tubercolosis_factory import TubercolosisFactory
 from .outpatient_care_factory import OutpatientCareFactory
 from .pregnancy_factory import PregnancyFactory
