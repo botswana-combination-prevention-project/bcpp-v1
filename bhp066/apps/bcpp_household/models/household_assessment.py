@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_DONT_KNOW
@@ -8,12 +7,15 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.managers import HouseholdAssessmentManager
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..choices import INELIGIBLE_REASON
 from ..choices import RESIDENT_LAST_SEEN
 from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
+
 
 class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
@@ -67,6 +69,8 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_structure.enumerated:
             raise ValidationError('HouseholdStructure has been enumerated')
         if self.household_structure.failed_enumeration_attempts < 3:

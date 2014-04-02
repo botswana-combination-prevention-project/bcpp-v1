@@ -14,6 +14,8 @@ from ..constants import BHS_SCREEN, BHS_ELIGIBLE, BHS_LOSS
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from .enrollment_loss import EnrollmentLoss
 from .household_member import HouseholdMember
 
@@ -138,6 +140,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if not self.pk:
             if self.household_member.member_status != BHS_SCREEN:
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
