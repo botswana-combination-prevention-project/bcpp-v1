@@ -20,7 +20,7 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
 
-from ..constants import NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED
+from ..constants import UNKNOWN, NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEARLY_ALWAYS_PRESENT
 
 from .factories import PlotFactory, HouseholdRefusalFactory, RepresentativeEligibilityFactory, HouseholdLogEntryFactory, HouseholdAssessmentFactory
 
@@ -675,7 +675,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home='dont_know')  # Status value becomes None
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=UNKNOWN)  # Status value becomes None
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
