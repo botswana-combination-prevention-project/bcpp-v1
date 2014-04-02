@@ -23,7 +23,6 @@ from .hiv_testing_history import HivTestingHistory
 from .hiv_test_review import HivTestReview
 from .hiv_tested import HivTested
 from .hiv_untested import HivUntested
-# from .future_hiv_testing import FutureHivTesting
 from .sexual_behaviour import SexualBehaviour
 from .months_recent_partner import MonthsRecentPartner
 from .months_second_partner import MonthsSecondPartner
