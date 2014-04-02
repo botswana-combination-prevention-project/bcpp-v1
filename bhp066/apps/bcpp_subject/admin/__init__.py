@@ -7,7 +7,6 @@ from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, Circumcis
 from .community_engagement_admin import CommunityEngagementAdmin
 from .demographics_admin import DemographicsAdmin
 from .education_admin import EducationAdmin
-# from .future_hiv_testing_admin import FutureHivTestingAdmin
 from .grant_admin import GrantAdmin
 from .hiv_care_adherence_admin import HivCareAdherenceAdmin
 from .hiv_result_admin import HivResultAdmin
