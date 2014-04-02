@@ -1,8 +1,11 @@
 from datetime import datetime
 
 from django.db.models.loading import get_model
+from django.db.models import Min
 
 from edc.device.dispatch.models import DispatchContainerRegister
+
+from apps.bcpp_survey.models import Survey
 
 from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
 
@@ -25,6 +28,12 @@ class ReplacementHelper(object):
     @property
     def household_structure(self):
         return self._household_structure
+
+    @property
+    def survey(self):
+        first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+        survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
+        return survey
 
     @household_structure.setter
     def household_structure(self, household_structure):
@@ -79,7 +88,8 @@ class ReplacementHelper(object):
         for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
             if self.replaceable_household:
-                replaceable_households.append(household_structure.household)
+                if not household_structure.household.replaced_by:
+                    replaceable_households.append(household_structure.household)
         return replaceable_households
 
     def replaceable_plots(self):
@@ -110,11 +120,12 @@ class ReplacementHelper(object):
             plot.replaces = household.household_identifier
             household.save()
             plot.save()
+            household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
                     replacing_item=plot.plot_identifier,
                     replaced_item=household.household_identifier,
                     replacement_datetime=datetime.now(),
-                    replacement_reason=self.household_replacement_reason())
+                    replacement_reason=self.household_replacement_reason(household_structure))
             replacing_plots.append(plot)
         return replacing_plots
 
@@ -139,17 +150,17 @@ class ReplacementHelper(object):
             replacing_plots.append(plot_b)
         return replacing_plots
 
-    def household_replacement_reason(self):
+    def household_replacement_reason(self, household_structure):
         """check the reason why a plot or household is being replaced."""
         reason = None
-        if self.household_structure.all_eligible_members_absent:
+        if household_structure.all_eligible_members_absent:
             reason = 'all members are absent'
-        elif self.household_structure.refused_enumeration:
+        elif household_structure.refused_enumeration:
             reason = 'HOH refusal'
-        elif self.household_structure.all_eligible_members_refused:
+        elif household_structure.all_eligible_members_refused:
             reason = 'all eligible members refused'
-        elif self.household_structure.eligible_representative_absent:
+        elif household_structure.eligible_representative_absent:
             reason = 'no eligible Representative'
-        elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
+        elif household_structure.failed_enumeration and self.household_structure.no_informant:
             reason = 'No informant'
         return reason

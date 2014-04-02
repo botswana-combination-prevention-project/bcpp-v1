@@ -30,7 +30,7 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
 
     replacement_reason = models.CharField(
         verbose_name='Reason for replacement',
-        max_length=25,
+        max_length=100,
         help_text=_("Reasons could be absentees, refusals, e.t.c"),
         null=True,
         editable=False,
