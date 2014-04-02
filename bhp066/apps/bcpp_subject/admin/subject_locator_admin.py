@@ -58,6 +58,7 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
             export_as_csv_action(
                 delimiter='|',
                 encrypt=False,
+                strip=True,
                 exclude=['exported', 'registered_subject', self.visit_model_foreign_key, 'revision', 'hostname_created', 'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', ],
                 extra_fields=OrderedDict(
                     {'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
