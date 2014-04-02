@@ -1,11 +1,11 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.core.validators import RegexValidator
-from edc.device.sync.models import BaseSyncUuidModel
+from edc.base.model.models import BaseUuidModel
 from ..managers import SurveyManager
 
 
-class Survey (BaseSyncUuidModel):
+class Survey (BaseUuidModel):
 
     survey_name = models.CharField(
         verbose_name="Survey name",
