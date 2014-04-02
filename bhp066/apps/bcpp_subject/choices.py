@@ -18,10 +18,7 @@ REFERRAL_CODES = (
     ('POS!-LO', 'POS today, not on ART, low CD4)'),
     ('POS#-HI', 'Known POS, not on ART, high CD4)'),
     ('POS#-LO', 'Known POS, not on ART, low CD4)'),
-    ('NOT-REF', 'Not referred'),
-    ('ERROR', 'Error'),
 )
-
 
 VISIT_INFO_SOURCE = [
     ('subject', '1. Subject'),
