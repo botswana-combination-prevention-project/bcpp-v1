@@ -1,9 +1,10 @@
 from datetime import datetime
 
+from django.db.models.loading import get_model
+
 from edc.device.dispatch.models import DispatchContainerRegister
 
 from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
-from ..models import HouseholdStructure, Plot, ReplacementHistory
 
 
 class ReplacementHelper(object):
@@ -75,7 +76,7 @@ class ReplacementHelper(object):
     def replaceable_households(self, survey):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
         replaceable_households = []
-        for household_structure in HouseholdStructure.objects.filter(survey=survey):
+        for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
             if self.replaceable_household:
                 replaceable_households.append(household_structure.household)
@@ -84,7 +85,7 @@ class ReplacementHelper(object):
     def replaceable_plots(self):
         """Returns a list of plots that meet the criteria to be replaced by a plot."""
         replaceable_plots = []
-        for plot in Plot.objects.filter(selected=FIVE_PERCENT):
+        for plot in get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT):
             self.plot = plot
             if self.replaceable_plot:
                 replaceable_plots.append(self.plot)
@@ -93,8 +94,8 @@ class ReplacementHelper(object):
     def replaced_by(self, household_structure):
         """Returns the plot instance that was used to replace the household_structure or None."""
         try:
-            return Plot.objects.get(replaces=household_structure.household.household_identifier)
-        except Plot.DoesNotExist:
+            return get_model('bcpp_household', 'Plot').objects.get(replaces=household_structure.household.household_identifier)
+        except get_model('bcpp_household', 'Plot').DoesNotExist:
             return None
 
     def replace_household(self, replaceble_households):
@@ -102,14 +103,14 @@ class ReplacementHelper(object):
 
         This takes a list of replaceble households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
-        plots = Plot.objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
+        plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         for household, plot in zip(replaceble_households, plots):
             household.replaced_by = plot.plot_identifier
             plot.replaces = household.household_identifier
             household.save()
             plot.save()
-            ReplacementHistory.objects.create(
+            get_model('bcpp_household', 'ReplacementHistory').objects.create(
                     replacing_item=plot.plot_identifier,
                     replaced_item=household.household_identifier,
                     replacement_datetime=datetime.now(),
@@ -122,7 +123,7 @@ class ReplacementHelper(object):
 
         This takes a list of replaceble plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
-        plots = Plot.objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
+        plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
@@ -130,7 +131,7 @@ class ReplacementHelper(object):
             plot_b.replaces = plot_a.plot_identifier
             plot_a.save()
             plot_b.save()
-            ReplacementHistory.objects.create(
+            get_model('bcpp_household', 'ReplacementHistory').objects.create(
                     replacing_item=plot_b.plot_identifier,
                     replaced_item=plot_a.plot_identifier,
                     replacement_datetime=datetime.now(),
