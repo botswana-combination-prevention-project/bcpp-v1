@@ -73,6 +73,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
             export_as_csv_action(
                 delimiter='|',
                 encrypt=False,
+                strip=True,
                 exclude=[
                         'exported',
                         'revision',
