@@ -5,6 +5,7 @@ from django.db.models import get_model
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp_household.models import BaseRepresentativeEligibility
+from apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdHeadEligibilityManager
 
@@ -13,6 +14,7 @@ from .household_member import HouseholdMember
 
 class HouseholdHeadEligibility(BaseRepresentativeEligibility):
     """Determines if the household member is eligible to be treated as head of household or representative."""
+    household_structure = models.ForeignKey(HouseholdStructure)
 
     household_member = models.OneToOneField(HouseholdMember,
         help_text=('Important: The household member must verbally consent before completing this questionnaire.'))

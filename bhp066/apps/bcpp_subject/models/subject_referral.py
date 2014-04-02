@@ -14,6 +14,7 @@ from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
+from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
@@ -26,9 +27,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     subject_referred = models.CharField(
         max_length=10,
         choices=(('Yes', 'Yes, subject has been handed a referral letter'),
-                 ('No', 'No, subject is not being referred'),
-                 ('refused', 'Subject refused referral')),
-        )
+                 ('No', 'No, subject has not been handed a referral letter'),
+                 ('refused', 'Subject refused referral the referral letter')),
+                )
 
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
@@ -115,7 +116,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text='from HivTestingHistory.other_record. A document that suggests the subject is HIV POS.'
         )
 
-    last_hiv_test_date = models.DateTimeField(
+    last_hiv_result_date = models.DateTimeField(
          null=True,
          )
 
@@ -247,6 +248,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     history = AuditTrail()
 
+    objects = ScheduledModelManager()
+
     def __unicode__(self):
         return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)
 
@@ -258,11 +261,6 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         for field, value in SubjectReferralHelper(self).subject_referral.iteritems():
             setattr(self, field, value)
         super(SubjectReferral, self).save(*args, **kwargs)
-
-    def update_export_mixin_fields(self):
-        self.exported = True
-        self.exported_datetime = datetime.now()
-        self.save()
 
     def get_referral_identifier(self):
         return self.id

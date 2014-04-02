@@ -90,6 +90,8 @@ class SubjectReferralHelper(object):
             self._referral_code_list.append('TST-HIV')
             if self.gender == 'M' and not self.circumcised:
                 self._referral_code_list.append('SMC-UNK')  # refer if status unknown or indeterminate
+            elif self.pregnant:
+                self._referral_code_list.append('UNK?-PR')
         else:
             if self.hiv_result == 'IND':
                 self._referral_code_list.append('HIV-IND')
@@ -143,7 +145,7 @@ class SubjectReferralHelper(object):
             self._hiv_result = (
                 self.todays_hiv_result or
                 (self.last_hiv_result if self.last_hiv_result == 'POS' else None) or
-                self.documented_verbal_hiv_result or
+                (self.documented_verbal_hiv_result if self.documented_verbal_hiv_result == 'POS' else None) or
                 (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_documentation or self.indirect_hiv_documentation)) else None)
                 )
         return self._hiv_result
@@ -444,7 +446,7 @@ class SubjectReferralHelper(object):
             try:
                 self._on_art = self.hiv_care_adherence_instance.on_art
             except AttributeError:
-                self._on_art = None
+                self._on_art = False
         return self._on_art
 
     @property
@@ -452,7 +454,7 @@ class SubjectReferralHelper(object):
         try:
             arv_documentation = self.hiv_care_adherence_instance.arv_evidence == 'Yes'
         except AttributeError:
-            arv_documentation = None
+            arv_documentation = False
         return arv_documentation
 
     @property
@@ -496,7 +498,7 @@ class SubjectReferralHelper(object):
     @property
     def urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals list and sets to true on a match."""
-        return True if [code for code in self.referral_code_list if code in ['MASA-DF', 'POS!-LO', 'POS#-LO']] else False
+        return True if [code for code in self.referral_code_list if code in ['MASA-DF', 'POS!-LO', 'POS#-LO', 'POS#-AN']] else False
 
     def convert_to_nullboolean(self, yes_no_dwta):
         if str(yes_no_dwta) in ['True', 'False', 'None']:

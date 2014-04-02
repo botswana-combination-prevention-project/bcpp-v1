@@ -170,6 +170,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     replaces = models.CharField(
         max_length=25,
+        null=True,
         blank=True,
         null=True,
         editable=False,
@@ -180,6 +181,7 @@ class Plot(BaseDispatchSyncUuidModel):
         verbose_name='Identifier',
         max_length=25,
         null=True,
+        blank=True,
         editable=False,
         help_text=u'The identifier of the plot that this plot was replaced by',
         )
@@ -239,6 +241,7 @@ class Plot(BaseDispatchSyncUuidModel):
     replaced_by = models.CharField(
         max_length=25,
         null=True,
+        blank=True,
         verbose_name='Identifier',
         help_text=u'The identifier of the plot that this plot is replaced by',
         editable=False,
