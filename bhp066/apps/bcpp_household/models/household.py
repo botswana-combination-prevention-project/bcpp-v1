@@ -119,7 +119,7 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         editable=False,
         )
-    
+
     replaced_by = models.CharField(
         max_length=25,
         null=True,
@@ -154,14 +154,6 @@ class Household(BaseDispatchSyncUuidModel):
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
-
-    #enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
-
-#     reason_not_enumerated = models.CharField(
-#         verbose_name='Household Status',
-#         max_length=50,
-#         null=True,
-#         )
 
     objects = HouseholdManager()
 
@@ -203,6 +195,9 @@ class Household(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
+
+    def is_plot(self):
+        return False
 
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))
