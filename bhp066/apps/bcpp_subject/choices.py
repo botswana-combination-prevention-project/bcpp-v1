@@ -8,18 +8,17 @@ REFERRAL_CODES = (
     ('MASA', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
     ('SMC-NEG', 'SMC'),
+    ('SMC-UNK', 'SMC (hiv result not known)'),
     ('NEG!-PR', 'NEG today, Pregnant'),
     ('POS!-PR', 'POS today, Pregnant'),
+    ('UNK?-PR', 'HIV UNKNOWN, Pregnant'),
     ('POS#-AN', 'Known POS, Pregnant, on ART (ANC)'),
     ('POS#-PR', 'Known POS, Pregnant, not on ART'),
     ('POS!-HI', 'POS today, not on ART, high CD4)'),
     ('POS!-LO', 'POS today, not on ART, low CD4)'),
     ('POS#-HI', 'Known POS, not on ART, high CD4)'),
     ('POS#-LO', 'Known POS, not on ART, low CD4)'),
-    ('NOT-REF', 'Not referred'),
-    ('ERROR', 'Error'),
 )
-
 
 VISIT_INFO_SOURCE = [
     ('subject', '1. Subject'),
