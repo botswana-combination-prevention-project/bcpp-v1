@@ -1,26 +1,28 @@
-from datetime import datetime
 import itertools
 
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Min
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from apps.bcpp_survey.models import Survey
+
 from ..helpers import ReplacementHelper
-from ..models import Household, Plot
+from ..models import Plot
 
 
 def return_data(request):
     content_type = None
-    replaceble_households = []
     replaceble_plots = []
     replacement_items = []
-    plot = None
-    household = None
     template = 'return_data.html'
     message = None
+    replacement_helper = ReplacementHelper()
     replacement_plots = Plot.objects.filter(selected=2, replaces=None)
+    first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+    survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
     if not replacement_plots:
         message = 'No plots available to replace with.'
         return render_to_response(
@@ -30,34 +32,26 @@ def return_data(request):
                     context_instance=RequestContext(request)
                 )
     else:
-        if request.GET.get('replaceble_household_str'):
-            replaceble_households_identifiers = request.GET.get('replaceble_household_str')
-            replaceble_households_identifiers = replaceble_households_identifiers.split(',')
-            replaceble_households_identifiers.pop(0)
-            for identifer in replaceble_households_identifiers:
-                household = Household.objects.get(household_identifier=identifer)
-                replaceble_households.append(household)
-            replacement_helper = ReplacementHelper()
-            replacement_plots = replacement_helper.replace_household(replaceble_households)
-        if request.GET.get('replaceble_plot_str'):
-            replaceble_plot_identifiers = request.GET.get('replaceble_plot_str')
-            replaceble_plot_identifiers = replaceble_plot_identifiers.split(',')
-            replaceble_plot_identifiers.pop(0)
-            content_type = None
-            replaceble_plots = []
-            for identifer in replaceble_plot_identifiers:
-                plot = Plot.objects.get(plot_identifier=identifer)
-                replaceble_plots.append(plot)
-            replacement_helper = ReplacementHelper()
-            replacement_plots = replacement_helper.replace_plot(replaceble_plots)
+        replacement_plots = []
+        replacement_households = replacement_helper.replaceable_households(survey)
+        replacement_plots = replacement_helper.replaceable_plots()
+        if replaceble_plots and replacement_households:
+            replacement_items = replacement_helper.replace_plot(replaceble_plots) + replacement_helper.replace_household(replacement_households)
+        elif replaceble_plots and not replacement_households:
+            replacement_items = replacement_helper.replace_plot(replaceble_plots)
+        elif not replaceble_plots and replacement_households:
+            replacement_items = replacement_helper.replace_household(replacement_households)
 #             if not plot.is_dispatched:
 #                 replaceble_items.append(replacing_plot.plot_identifier)
 #                 replacement_count += 1
-        replacement_items = replacement_plots + replaceble_households
-        pks = replacement_items.values_list('pk')
-        selected = list(itertools.chain(*pks))
-        content_type = ContentType.objects.get_for_model(Plot)
-        return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
+        plot_identifiers = []
+        for plot in replacement_items:
+            plot_identifiers.append(plot.plot_identifier)
+        if plot_identifiers:
+            pks = Plot.objects.filter(Q(**{'plot_identifier__in': plot_identifiers})).values_list('pk')
+            selected = list(itertools.chain(*pks))
+            content_type = ContentType.objects.get_for_model(Plot)
+            return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
 #     else:
 #         pass
 #             if request.GET.get('item_identifier'):

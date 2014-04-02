@@ -79,12 +79,13 @@ class HouseholdDashboard(Dashboard):
             rendered_surveys=self.render_surveys(),
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry,
+            lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
             household_info=self.household_info,
             eligible_hoh=self.any_eligible_hoh,
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
-            )   
+            )
 
     @property
     def has_household_log_entry(self):
@@ -122,11 +123,12 @@ class HouseholdDashboard(Dashboard):
 
     @property
     def lastest_household_log_entry_household_status(self):
-        lastest_household_log_entry = None
-        report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self.household_structure).aggregate(Max('report_datetime')).get('report_datetime__max')
-        if HouseholdLogEntry.objects.get(household_log__household_structure=self.household_structure, report_datetime=report_datetime):
+        try:
+            report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self.household_structure).aggregate(Max('report_datetime')).get('report_datetime__max')
             lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=self.household_structure, report_datetime=report_datetime)
-        return lastest_household_log_entry.household_status
+            return lastest_household_log_entry.household_status
+        except HouseholdLogEntry.DoesNotExist:
+            return None
 
     @property
     def any_eligible_hoh(self):

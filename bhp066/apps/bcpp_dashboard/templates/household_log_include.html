@@ -33,17 +33,17 @@
  {% endif %}
  {{ household_log.household_status }}
  <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;{% if not household_assessment.vdc_househould_status %}<A href="{% url household_log_entry_meta|admin_urlname:'add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>{% endif %}
- {% if household.enumeration_attempts >= 3 and not household_assessment %}
-  <p><A href="{% url household_assessment_meta|admin_urlname:'add' %}?household_assessment={{household_assessment.pk}}&household={{household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add Assessing of Household residency status form</A></p>
+ {% if household_structure.failed_enumeration_attempts >= 3 and not household_assessment %}
+  <p><A href="{% url household_assessment_meta|admin_urlname:'add' %}?household_structure={{household_structure.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add Assessing of Household residency status form</A></p>
  {% endif %}
  {% if household_assessment %}
   <a href="{% url household_assessment_meta|admin_urlname:'change' household_assessment.pk %}?household={{ household.pk }}&household_assessment={{household_assessment.pk}}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Assessing of Household residency status form</a>
  {% endif %}
 {% if lastest_household_log_entry_household_status == 'refused' %}
 	{% if household_refusal %}
-		<p><A href="{% url household_refusal_meta|admin_urlname:'change' household_refusal.pk %}?household_refusal={{household_refusal.pk}}&household={{household.pk}}&next=section_url&section_name=household">refusal form</A></p>
+		<p><A href="{% url household_refusal_meta|admin_urlname:'change' household_refusal.pk %}?household_refusal={{household_refusal.pk}}&household_structure={{household_structure.pk}}&next=section_url&section_name=household">refusal form</A></p>
 	{% else %}
-		<p><A href="{% url household_refusal_meta|admin_urlname:'add' %}?household={{household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;refusal form</A></p>
+		<p><A href="{% url household_refusal_meta|admin_urlname:'add' %}?household_structure={{household_structure.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;refusal form</A></p>
 	{% endif %}
 {% endif %}
 {% endif %}
