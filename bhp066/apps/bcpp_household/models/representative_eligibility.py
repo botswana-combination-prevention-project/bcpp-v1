@@ -1,14 +1,17 @@
+from django.db import models
 from django.db.models import get_model
-
 from edc.audit.audit_trail import AuditTrail
 
 from ..managers import RepresentativeEligibilityManager
 
 from .base_representative_eligibility import BaseRepresentativeEligibility
+from .household_structure import HouseholdStructure
 
 
 class RepresentativeEligibility(BaseRepresentativeEligibility):
     """Determines if the household member is eligible representative of the household."""
+
+    household_structure = models.OneToOneField(HouseholdStructure)
 
     objects = RepresentativeEligibilityManager()
 
