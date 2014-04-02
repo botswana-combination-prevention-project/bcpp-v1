@@ -1,39 +1,38 @@
-<VirtualHost *:8128>
+<VirtualHost *:8126>
 
-		#Redirect / http://192.168.1.65/dom_offline.html?
+        #Redirect / http://192.168.1.65/dom_offline.html?
 
         ServerAdmin webmaster@localhost
 
-        ErrorLog /var/log/apache2/django-bcpp-error.log
+        ErrorLog /var/log/apache2/django-bcpp-training-error.log
 
         LogLevel warn
 
-        CustomLog /var/log/apache2/django-bcpp-access.log combined
+        CustomLog /var/log/apache2/django-bcpp-training-access.log combined
 
-        Alias /media/ /home/django_dev/source/bhp066/live/bhp066_project/bhp066/media/
-        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/bhp066/media/" >
+        Alias /media/ /home/django_dev/source/bhp066/test_server_training/bhp066/media/
+        <Directory "/home/django_dev/source/bhp066/test_server_training/bhp066/media/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        Alias /sitestatic/ /home/django_dev/source/bhp066/live/bhp066_project/bhp066/sitestatic/
-        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/bhp066/sitestatic/" >
+        Alias /sitestatic/ /home/django_dev/source/bhp066/test_server_training/bhp066/sitestatic/
+        <Directory "/home/django_dev/source/bhp066/test_server_training/bhp066/sitestatic/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        Alias /static/ /home/django_dev/source/bhp066/live/bhp066_project/bhp066/static/
-        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/bhp066/static/" >
+        Alias /static/ /home/django_dev/source/bhp066/test_server_training/bhp066/static/
+        <Directory "/home/django_dev/source/bhp066/test_server_training/bhp066/static/" >
           Order deny,allow
           Allow from all
         </Directory>
 
-        WSGIScriptAlias / /home/django_dev/source/bhp066/live/bhp066_project/apache/django.wsgi
+        WSGIScriptAlias / /home/django_dev/source/bhp066/test_server_training/apache/django.wsgi
 
-        <Directory "/home/django_dev/source/bhp066/live/bhp066_project/apache/" >
+        <Directory "/home/django_dev/source/bhp066/test_server_training/apache/" >
           Order deny,allow
           Allow from all
         </Directory>
 
 </VirtualHost>
-
