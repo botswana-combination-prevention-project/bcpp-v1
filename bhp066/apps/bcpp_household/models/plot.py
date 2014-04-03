@@ -258,9 +258,10 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         # If the plot is replaced can not save this plot
-        plot = models.get_model('bcpp_household', 'Plot').objects.get(plot_identifier=self.natural_key())
-        if plot.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+        if self.id:
+            plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
+            if plot.replaced_by:
+                raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
