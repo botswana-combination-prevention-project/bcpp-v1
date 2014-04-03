@@ -1,5 +1,5 @@
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED,
+                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED,
                         NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT)
 
 HOUSEHOLD_STATUS = (
@@ -113,6 +113,7 @@ INELIGIBLE_REASON = (
     )
 
 RESIDENT_LAST_SEEN = (
+        (NEARLY_ALWAYS_OCCUPIED, ''),
         (SEASONALLY_OCCUPIED, 'Spends at least 4 weeks in a household over the course of the past year '),
         (RARELY_OCCUPIED, 'spends at least 1 night be probably less than 4 weeks/year in the household'),
         (NEVER_OCCUPIED, 'did not even spend 1 night in the household over the past year'),
