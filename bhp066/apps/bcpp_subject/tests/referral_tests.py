@@ -57,7 +57,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         self.assertIn('SMC-NEG', subject_referral.referral_code)
 
     def tests_referred_smc2(self):
-        """if NEG and male and NOT circumcised, do not refer for SMC"""
+        """if NEG and male and circumcised, do not refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -66,10 +66,10 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertNotIn('SMC-NEG', subject_referral.referral_code)
+        self.assertNotIn('SMC', subject_referral.referral_code)
 
     def tests_referred_smc3(self):
-        """if new POS and male and NOT circumcised, do not refer for SMC"""
+        """if new POS and male and circumcised, do not refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -79,6 +79,78 @@ class ReferralTests(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertNotIn('SMC', subject_referral.referral_code)
+
+    def tests_referred_smc3a(self):
+        """if new POS and male and  NOT circumcised, do not refer for SMC"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertNotIn('SMC', subject_referral.referral_code)
+
+    def tests_referred_smc4(self):
+        """if UNKNOWN HIV status and male and NOT circumcised, refer for SMC"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('SMC-UNK', subject_referral.referral_code)
+
+    def tests_referred_smc5(self):
+        """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        #CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('SMC?UNK', subject_referral.referral_code)
+
+    def tests_referred_smc5a(self):
+        """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Unsure')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('SMC?UNK', subject_referral.referral_code)
+
+    def tests_referred_smc5b(self):
+        """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Unsure')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('SMC?UNK', subject_referral.referral_code)
+
+    def tests_referred_smc6(self):
+        """if NEG and male and unknown circumcision status, refer for SMC"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        #CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('SMC?NEG', subject_referral.referral_code)
 
     def tests_referred_neg_female_pregnant1(self):
         """if NEG and female, and not pregnant, do not refer"""
@@ -103,7 +175,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertEqual('TST-HIV,UNK?-PR', subject_referral.referral_code)
+        self.assertEqual('UNK?-PR', subject_referral.referral_code)
 
     def tests_referred_pos_female_pregnant(self):
         """if POS and female, pregnant, on-arv, refer ANC-POS"""
@@ -485,7 +557,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': today,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': False,
+            'citizen_spouse': None,
             'direct_hiv_documentation': True,
             'gender': u'F',
             'hiv_result': u'POS',
@@ -534,7 +606,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': None,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': False,
+            'citizen_spouse': None,
             'direct_hiv_documentation': False,
             'gender': u'F',
             'hiv_result': u'POS',
@@ -583,7 +655,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': None,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': False,
+            'citizen_spouse': None,
             'direct_hiv_documentation': False,
             'gender': u'F',
             'hiv_result': None,
@@ -632,7 +704,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': None,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': False,
+            'citizen_spouse': None,
             'direct_hiv_documentation': True,
             'gender': u'F',
             'hiv_result': 'POS',
