@@ -1,5 +1,5 @@
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED,
+                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN,
                         NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT)
 
 HOUSEHOLD_STATUS = (
@@ -117,7 +117,7 @@ RESIDENT_LAST_SEEN = (
     (SEASONALLY_OCCUPIED, 'at least 1 person stays in the household for at least 4 weeks but less than half the nights over the past year'),  # replace
     (RARELY_OCCUPIED, 'at least 1 person stays in the household for 1 or more nights but less than 4 weeks over the past year'),  # NOT replaced
     (NEVER_OCCUPIED, 'nobody spent at least 1 night in the household over the past year'),  # NOT replaced
-    ('dont_know', 'Don\'t know'),  # replaced
+    (UNKNOWN, 'Don\'t know'),  # replaced
 )
 
 NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))
