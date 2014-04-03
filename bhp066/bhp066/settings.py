@@ -120,7 +120,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_re',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -135,6 +135,17 @@ else:
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
+            'PORT': '',
+        },
+        'bcpp020-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '192.168.1.21',
             'PORT': '',
         },
     }
@@ -405,7 +416,6 @@ APP_NAME = 'bcpp'
 PROJECT_NUMBER = 'BHP066'
 PROJECT_IDENTIFIER_PREFIX = '066'
 PROJECT_IDENTIFIER_MODULUS = 7
-PROJECT_TITLE = 'Botswana Combination Prevention Project'
 PROTOCOL_REVISION = 'V1.0 24 September 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
 
@@ -460,8 +470,11 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 
 SITE_CODE = '14'
 #  edc.device.device
-DEVICE_ID = '99'
-
+DEVICE_ID = '98'
+if DEVICE_ID == '98':
+    PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
+else:
+    PROJECT_TITLE = 'Botswana Combination Prevention Project'
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 

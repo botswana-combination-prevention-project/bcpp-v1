@@ -12,5 +12,8 @@ class ProfileItem(BaseProfileItem):
 
     aliquot_type = models.ForeignKey(AliquotType)
 
+    def __unicode__(self):
+        return unicode(self.aliquot_type)
+
     class Meta:
         app_label = 'bcpp_lab'
