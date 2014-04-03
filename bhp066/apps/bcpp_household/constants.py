@@ -5,8 +5,10 @@ NO_HOUSEHOLD_INFORMANT = 'no_household_informant'
 REFUSED_ENUMERATION = 'refused'
 RESIDENTIAL_HABITABLE = 'residential_habitable'
 RESIDENTIAL_NOT_HABITABLE = 'residential_not_habitable'
-SEASONALLY_OCCUPIED = '4_weeks_a_year'
-RARELY_OCCUPIED = '1_night_less_than_4_weeks_year'
-NEVER_OCCUPIED = 'never_spent_1_day_over_a_year'
 FIVE_PERCENT = 2  # plot.selected=2
 TWENTY_PERCENT = 1
+NEARLY_ALWAYS_OCCUPIED = 'nearly_always_present'  # replace
+SEASONALLY_OCCUPIED = 'seasonally_occupied'  # replace
+RARELY_OCCUPIED = 'rarely_occupied'  # NOT replaced
+NEVER_OCCUPIED = 'never_occupied'  # NOT replaced
+UNKNOWN = 'unknown'  # replaced
