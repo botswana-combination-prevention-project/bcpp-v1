@@ -625,7 +625,7 @@ class PlotReplacementTests(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_OCCUPIED)  # Status value becomes rarely occupied
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
 
     def test_absentees_ineligibles7(self):
         """Asserts a household without an informant after 3 enumeration attempt is NOT replaceble if last_seen_home indicates never_spent_1_day_over_a_year"""
@@ -677,7 +677,7 @@ class PlotReplacementTests(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=UNKNOWN)  # Status value becomes None
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
     def test_absentees_ineligibles9(self):
         """Asserts a household without an informant after 2 enumeration attempts is not replaceble"""
@@ -892,6 +892,32 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT,)
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1), [])
+
+    def test_absentees_ineligibles18(self):
+        """Asserts a household without an informant after 3 enumeration attempt is replaceble if last_seen_home indicates 1_night_less_than_4_weeks_year"""
+        plot = PlotFactory(
+                community='test_community11',
+                household_count=1,
+                status='residential_habitable',
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEARLY_ALWAYS_OCCUPIED)  # Status value becomes nearly always occupied occupied
+        replacement_helper = ReplacementHelper()
+        self.assertEquals(replacement_helper.replaceable_households(self.survey1), [household])
 
     def test_household_replacement1(self):
         """assert if a household is replaced by a plot."""
