@@ -11,7 +11,11 @@ from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from ..choices import INELIGIBLE_REASON
 from ..choices import RESIDENT_LAST_SEEN
+<<<<<<< HEAD
 from ..constants import SEASONALLY_OCCUPIED, UNKNOWN, NEARLY_ALWAYS_OCCUPIED
+=======
+from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED
+>>>>>>> develop
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -87,6 +91,10 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
+
+    @property
+    def vdc_househould_status(self):
+        return self.last_seen_home
 
     class Meta:
         app_label = 'bcpp_household'
