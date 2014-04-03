@@ -10,10 +10,11 @@ from apps.bcpp_household.managers import HouseholdAssessmentManager
 
 from ..choices import INELIGIBLE_REASON
 from ..choices import RESIDENT_LAST_SEEN
-from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED
+from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
+
 
 class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
@@ -86,14 +87,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     @property
     def vdc_househould_status(self):
-        status = None
-        if self.last_seen_home == '4_weeks_a_year':
-            status = 'seasonally_occupied'
-        elif self.last_seen_home == '1_night_less_than_4_weeks_year':
-            status = 'rarely_occupied'
-        elif self.last_seen_home == NEVER_OCCUPIED:
-            status = 'never_occupied'
-        return status
+        return self.last_seen_home
 
     class Meta:
         app_label = 'bcpp_household'
