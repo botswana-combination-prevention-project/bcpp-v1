@@ -17,6 +17,12 @@ class ReplacementHelper(object):
         self._plot = None
         self.household = None
 
+    def __repr__(self):
+        return 'ReplacementHelper()'
+
+    def __str__(self):
+        return '()'
+
     @property
     def producer(self):
         """Returns the producer where the plot is dispatched to."""
