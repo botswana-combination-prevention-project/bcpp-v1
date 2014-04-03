@@ -10,6 +10,8 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, 
                                         HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
+from apps.bcpp_household.helpers import ReplacementHelper
+
 from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_survey.models import Survey
@@ -80,6 +82,7 @@ class HouseholdDashboard(Dashboard):
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry,
             lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
+            replaceble=self.replaceble,
             household_info=self.household_info,
             eligible_hoh=self.any_eligible_hoh,
             mapper_name=self.mapper_name,
@@ -129,6 +132,12 @@ class HouseholdDashboard(Dashboard):
             return lastest_household_log_entry.household_status
         except HouseholdLogEntry.DoesNotExist:
             return None
+
+    @property
+    def replaceble(self):
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = self.household_structure
+        return replacement_helper.replaceable
 
     @property
     def any_eligible_hoh(self):
