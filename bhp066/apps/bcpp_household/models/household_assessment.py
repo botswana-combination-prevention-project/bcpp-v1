@@ -11,7 +11,7 @@ from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from ..choices import INELIGIBLE_REASON
 from ..choices import RESIDENT_LAST_SEEN
-from ..constants import SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED
+from ..constants import SEASONALLY_OCCUPIED, UNKNOWN, NEARLY_ALWAYS_OCCUPIED
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -77,7 +77,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
             raise ValidationError('Three attempts are required before Household Assessment')
         if not self.id:
             self.household_structure.failed_enumeration = True
-        self.household_structure.no_informant = self.last_seen_home in [SEASONALLY_OCCUPIED]
+        self.household_structure.no_informant = self.last_seen_home in [SEASONALLY_OCCUPIED, UNKNOWN, NEARLY_ALWAYS_OCCUPIED]
         self.household_structure.save()
         super(HouseholdAssessment, self).save(*args, **kwargs)
 
@@ -87,17 +87,6 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
-
-    @property
-    def vdc_househould_status(self):
-        status = None
-        if self.last_seen_home == '4_weeks_a_year':
-            status = 'seasonally_occupied'
-        elif self.last_seen_home == '1_night_less_than_4_weeks_year':
-            status = 'rarely_occupied'
-        elif self.last_seen_home == NEVER_OCCUPIED:
-            status = 'never_occupied'
-        return status
 
     class Meta:
         app_label = 'bcpp_household'
