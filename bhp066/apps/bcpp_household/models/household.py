@@ -190,9 +190,12 @@ class Household(BaseDispatchSyncUuidModel):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
 
     def save(self, *args, **kwargs):
-        if self.id:
-            if self.replaced_by:
+        try:
+            household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.natural_key())
+            if household.replaced_by:
                 raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+        except models.get_model('bcpp_household', 'Household').DeosNotExist:
+            pass
         super(Household, self).save(*args, **kwargs)
 
     def get_subject_identifier(self):
