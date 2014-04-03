@@ -4,14 +4,12 @@ from django.contrib import admin
 
 from edc.export.actions import export_as_csv_action
 
-from ..models import SubjectReferral, SubjectReferralReview
+from ..actions import export_referrals_for_cdc_action
+from ..models import SubjectReferral
 from ..forms import SubjectReferralForm
 from ..filters import SubjectCommunityListFilter, SubjectReferralIsReferredListFilter
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
-
-# for subject_visit in SubjectVisit.objects.all():
-#     SubjectReferral.objects.create(subject_visit=subject_visit, report_datetime=subject_visit.get_report_datetime(), subject_referred='Yes', referral_clinic='Otse', referral_appt_date=datetime(2014,4,7))
 
 
 class SubjectReferralAdmin(SubjectVisitModelAdmin):
@@ -69,47 +67,46 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                 ),
                 'export_as_csv_action',
                 "Export Referrals to CSV")
-        actions['export_as_pipe_action'] = (  # This is a django SortedDict (function, name, short_description)
-            export_as_csv_action(
+        actions['export_referrals_for_cdc_action'] = (  # This is a django SortedDict (function, name, short_description)
+            export_referrals_for_cdc_action(
                 delimiter='|',
                 encrypt=False,
                 strip=True,
-                exclude=[
-                        'exported',
-                        'revision',
-                        'comment',
-                        'in_clinic_flag',
-                        'intend_residency',
-                        'permanent_resident',
-                        'direct_hiv_documentation',
-                        'indirect_hiv_documentation',
-                        'last_hiv_test_date',
-                        'last_hiv_result',
-                        'verbal_hiv_result',
-                        'referral_clinic_other',
-                        'exported',
-                        'revision',
-                        'hostname_created',
-                        'hostname_modified',
-                        'user_created',
-                        'user_modified',
-                        'created',
-                        'modified',
-                        'subject_visit'
+                exclude=['comment',
+                         'created',
+                         'direct_hiv_documentation',
+                         'exported',
+                         'exported',
+                         'hostname_created',
+                         'hostname_modified',
+                         'in_clinic_flag',
+                         'indirect_hiv_documentation',
+                         'intend_residency',
+                         'last_hiv_result',
+                         'last_hiv_test_date',
+                         'modified',
+                         'permanent_resident',
+                         'referral_clinic_other',
+                         'revision',
+                         'revision',
+                         'subject_visit'
+                         'user_created',
+                         'user_modified',
+                         'verbal_hiv_result',
                         ],
                 extra_fields=OrderedDict(
-                    {'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
-                     'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
-                     'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
-                     'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
+                    {'plot_identifier': self.visit_model_foreign_key + '__household_member__household_structure__household__plot__plot_identifier',
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
+                     'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
                      'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
-                      'plot_identifier': self.visit_model_foreign_key + '__household_member__household_structure__household__plot__plot_identifier',
+                     'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
+                     'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
+                     'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
                      })
                 ),
-                'export_as_pipe_action',
-                "Export Referrals to Pipe (|) delimited file")
+                'export_referrals_for_cdc_action',
+                "Export Referrals in CDC format (Manual)")
         return actions
 
 admin.site.register(SubjectReferral, SubjectReferralAdmin)
