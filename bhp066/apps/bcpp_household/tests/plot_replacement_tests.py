@@ -20,7 +20,7 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
 
-from ..constants import UNKNOWN, NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEARLY_ALWAYS_PRESENT
+from ..constants import UNKNOWN, NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEARLY_ALWAYS_OCCUPIED
 
 from .factories import PlotFactory, HouseholdRefusalFactory, RepresentativeEligibilityFactory, HouseholdLogEntryFactory, HouseholdAssessmentFactory
 

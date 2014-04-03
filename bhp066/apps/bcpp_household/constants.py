@@ -7,8 +7,7 @@ RESIDENTIAL_HABITABLE = 'residential_habitable'
 RESIDENTIAL_NOT_HABITABLE = 'residential_not_habitable'
 FIVE_PERCENT = 2  # plot.selected=2
 TWENTY_PERCENT = 1
-
-NEARLY_ALWAYS_PRESENT = 'nearly_always_present'  # replace
+NEARLY_ALWAYS_OCCUPIED = 'nearly_always_present'  # replace
 SEASONALLY_OCCUPIED = 'seasonally_occupied'  # replace
 RARELY_OCCUPIED = 'rarely_occupied'  # NOT replaced
 NEVER_OCCUPIED = 'never_occupied'  # NOT replaced
