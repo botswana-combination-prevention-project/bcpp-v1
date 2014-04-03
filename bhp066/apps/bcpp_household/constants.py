@@ -11,4 +11,5 @@ NEARLY_ALWAYS_OCCUPIED = 'nearly_always_present'  # replace
 SEASONALLY_OCCUPIED = 'seasonally_occupied'  # replace
 RARELY_OCCUPIED = 'rarely_occupied'  # NOT replaced
 NEVER_OCCUPIED = 'never_occupied'  # NOT replaced
-UNKNOWN = 'unknown'  # replaced
+UNKNOWN_OCCUPIED = 'unknown'  # replaced
+
