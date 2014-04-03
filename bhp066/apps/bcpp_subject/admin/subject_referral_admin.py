@@ -73,6 +73,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
             export_as_csv_action(
                 delimiter='|',
                 encrypt=False,
+                strip=True,
                 exclude=[
                         'exported',
                         'revision',
@@ -104,6 +105,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
                      'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
+                      'plot_identifier': self.visit_model_foreign_key + '__household_member__household_structure__household__plot__plot_identifier',
                      })
                 ),
                 'export_as_pipe_action',
