@@ -77,7 +77,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
             raise ValidationError('Three attempts are required before Household Assessment')
         if not self.id:
             self.household_structure.failed_enumeration = True
-        self.household_structure.no_informant = self.last_seen_home in [SEASONALLY_OCCUPIED, RARELY_OCCUPIED]
+        self.household_structure.no_informant = self.last_seen_home in [SEASONALLY_OCCUPIED]
         self.household_structure.save()
         super(HouseholdAssessment, self).save(*args, **kwargs)
 
