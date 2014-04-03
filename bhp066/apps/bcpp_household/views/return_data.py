@@ -41,9 +41,11 @@ def return_data(request):
             replacement_items = replacement_helper.replace_plot(replaceble_plots)
         elif not replaceble_plots and replacement_households:
             replacement_items = replacement_helper.replace_household(replacement_households)
-#             if not plot.is_dispatched:
-#                 replaceble_items.append(replacing_plot.plot_identifier)
-#                 replacement_count += 1
+        # A plot that has been used to replace a plot or household and not dispatched is added to the list of plots to be dispatched
+        for plot in Plot.objects.filter(selected=2):
+            if plot.producer_dispatched_to == 'Not Dispatched' and plot.replaces:
+                if not plot in replacement_items:
+                    replacement_items.append(plot)
         plot_identifiers = []
         for plot in replacement_items:
             plot_identifiers.append(plot.plot_identifier)
