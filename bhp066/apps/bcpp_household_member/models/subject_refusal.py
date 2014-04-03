@@ -52,7 +52,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         return self.report_datetime
 
     def save(self, *args, **kwargs):
-        if self.household_structure.household.replaced_by:
+        if self.household_member.household_structure.household.replaced_by:
             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_member.member_status != REFUSED:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
