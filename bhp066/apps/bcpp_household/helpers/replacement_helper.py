@@ -161,6 +161,6 @@ class ReplacementHelper(object):
             reason = 'all eligible members refused'
         elif household_structure.eligible_representative_absent:
             reason = 'no eligible Representative'
-        elif household_structure.failed_enumeration and self.household_structure.no_informant:
+        elif household_structure.failed_enumeration and household_structure.no_informant:
             reason = 'No informant'
         return reason
