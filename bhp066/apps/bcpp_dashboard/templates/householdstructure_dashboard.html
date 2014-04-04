@@ -51,7 +51,7 @@
 
         <div id="household_structure_status_marquee">
             <B>Household Status:</B> {% if household_structure.enrolled %} <b><span style="color:green">Enrolled</span></b> {% else %} (not enrolled) {% endif %}
-            <B>Replaceble: <a href="">{{ replaceble }}</a></B>
+            <B>Replaceble: <a href="{% url 'return_data_url' %}/?household_identifier={{ household.household_identifier }}">{{ replaceble }}</a></B>
         </div>
 
     {% endblock %}
