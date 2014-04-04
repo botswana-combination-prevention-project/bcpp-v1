@@ -226,7 +226,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertIn('MASA', subject_referral.referral_code)
+        self.assertIn('MASA-CC', subject_referral.referral_code)
 
     def tests_referred_pos_female_pregnant3(self):
         """if POS and female, and pregnant, refer ANC-POS"""
@@ -399,7 +399,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('TST-HIV', subject_referral.referral_code)
+        self.assertIn('SMC?UNK', subject_referral.referral_code)
 
     def tests_referred_verbal1a(self):
         """"""
@@ -465,7 +465,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA', subject_referral.referral_code)
+        self.assertIn('MASA-CC', subject_referral.referral_code)
 
     def tests_referred_verbal6(self):
         """"""
@@ -478,7 +478,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA', subject_referral.referral_code)
+        self.assertIn('MASA-CC', subject_referral.referral_code)
 
     def tests_referred_masa2(self):
         """if new pos, high PIMA CD4 and on art, """
@@ -491,7 +491,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA', subject_referral.referral_code)
+        self.assertIn('MASA-CC', subject_referral.referral_code)
 
     def tests_referred_masa3(self):
         """if pos, low CD4 and on art, """
@@ -504,7 +504,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('MASA', subject_referral.referral_code)
+        self.assertIn('MASA-CC', subject_referral.referral_code)
 
     def tests_referred_masa4(self):
         """Tests pos today but have evidence on ART"""
@@ -557,7 +557,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': today,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': None,
+            'citizen_spouse': False,
             'direct_hiv_documentation': True,
             'gender': u'F',
             'hiv_result': u'POS',
@@ -570,7 +570,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'permanent_resident': None,
             'pregnant': None,
             'referral_clinic': 'Otse',
-            'referral_code': 'MASA',
+            'referral_code': 'MASA-CC',
             'tb_symptoms': 'cough, cough_blood, night_sweat',
             'urgent_referral': False,
             'verbal_hiv_result': None,
@@ -606,7 +606,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': None,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': None,
+            'citizen_spouse': False,
             'direct_hiv_documentation': False,
             'gender': u'F',
             'hiv_result': u'POS',
@@ -619,7 +619,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'permanent_resident': None,
             'pregnant': None,
             'referral_clinic': 'Otse',
-            'referral_code': 'MASA',
+            'referral_code': 'MASA-CC',
             'tb_symptoms': 'cough, cough_blood, night_sweat',
             'urgent_referral': False,
             'verbal_hiv_result': 'POS',
@@ -655,7 +655,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': None,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': None,
+            'citizen_spouse': False,
             'direct_hiv_documentation': False,
             'gender': u'F',
             'hiv_result': None,
@@ -704,7 +704,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'cd4_result_datetime': None,
             'circumcised': None,
             'citizen': True,
-            'citizen_spouse': None,
+            'citizen_spouse': False,
             'direct_hiv_documentation': True,
             'gender': u'F',
             'hiv_result': 'POS',

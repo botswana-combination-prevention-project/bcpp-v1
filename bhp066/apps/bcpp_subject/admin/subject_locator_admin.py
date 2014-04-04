@@ -2,11 +2,12 @@ from collections import OrderedDict
 
 from django.contrib import admin
 
-from edc.export.actions import export_as_csv_action
+# from edc.export.actions import export_as_csv_action
 
 from ..filters import SubjectLocatorIsReferredListFilter, SubjectCommunityListFilter
 from ..forms import SubjectLocatorForm
 from ..models import SubjectLocator
+from ..actions import export_locator_for_cdc_action
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
@@ -54,8 +55,8 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
 
     def get_actions(self, request):
         actions = super(SubjectLocatorAdmin, self).get_actions(request)
-        actions['export_as_pipe_action'] = (  # This is a django SortedDict (function, name, short_description)
-            export_as_csv_action(
+        actions['export_locator_for_cdc_action'] = (  # This is a django SortedDict (function, name, short_description)
+            export_locator_for_cdc_action(
                 delimiter='|',
                 encrypt=False,
                 strip=True,
@@ -71,8 +72,8 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
                      'plot_identifier': self.visit_model_foreign_key + '__household_member__household_structure__household__plot__plot_identifier',
                      })
                 ),
-                'export_as_pipe_action',
-                "Export Locator to Pipe delimited file")
+                'export_locator_for_cdc_action',
+                "Export Locator in CDC format (Manual)")
         return actions
 
 admin.site.register(SubjectLocator, SubjectLocatorAdmin)
