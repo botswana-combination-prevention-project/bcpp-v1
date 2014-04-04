@@ -7,6 +7,8 @@ from ..models import (SubjectConsent, HivResult, Pima, HivTestReview, ResidencyM
                       Circumcision, HivCareAdherence, ReproductiveHealth, HivTestingHistory,
                       HivResultDocumentation)
 
+from ..choices import REFERRAL_CODES
+
 
 class SubjectReferralHelper(object):
 
@@ -41,7 +43,6 @@ class SubjectReferralHelper(object):
         self._indirect_hiv_documentation = None
         self._last_hiv_result = None
         self._last_hiv_result_date = None
-        self._circumcision_instance = None
         self._enrollment_checklist_instance = None
         self._on_art = None
         self._pima_instance = None
@@ -50,7 +51,6 @@ class SubjectReferralHelper(object):
         self._recorded_hiv_result_date = None
         self._referral_clinic = None
         self._referral_code_list = []
-        self._residency_mobility_instance = None
         self._subject_consent_instance = None
         self._subject_referral = {}
         self._todays_cd4_result = None
@@ -107,8 +107,10 @@ class SubjectReferralHelper(object):
             elif self.hiv_result == 'NEG':
                 if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
                     self._referral_code_list.append('NEG!-PR')
-                elif self.gender == 'M' and not self.circumcised:  # only refer M if not circumcised
+                elif self.gender == 'M' and self.circumcised == False:  # only refer M if not circumcised
                     self._referral_code_list.append('SMC-NEG')
+                elif self.gender == 'M' and self.circumcised == None:  # only refer M if not circumcised
+                    self._referral_code_list.append('SMC?NEG')
             elif self.hiv_result == 'POS':
                 if self.gender == 'F' and self.pregnant and self.on_art:
                     self._referral_code_list.append('POS!-AN') if self.new_pos else self._referral_code_list.append('POS#-AN')
@@ -122,11 +124,11 @@ class SubjectReferralHelper(object):
                     elif self.cd4_result <= 350:
                         self._referral_code_list.append('POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
                 elif self.on_art:
-                    self._referral_code_list.append('MASA')
+                    self._referral_code_list.append('MASA-CC')
                     if self.defaulter:
-                        self._referral_code_list = ['MASA-DF' for item in self._referral_code_list if item == 'MASA']
+                        self._referral_code_list = ['MASA-DF' for item in self._referral_code_list if item == 'MASA-CC']
                     if self.pregnant:
-                        self._referral_code_list = ['POS#-AN' for item in self._referral_code_list if item == 'MASA']
+                        self._referral_code_list = ['POS#-AN' for item in self._referral_code_list if item == 'MASA-CC']
             else:
                 self._referral_code_list.append('TST-HIV')
 
@@ -136,12 +138,19 @@ class SubjectReferralHelper(object):
         if self._referral_code_list:
             self._referral_code_list = list(set((self._referral_code_list)))
             self._referral_code_list.sort()
+            for code in self._referral_code_list:
+                if code not in self.valid_referral_codes:
+                    raise ValueError('{0} is not a valid referral code.'.format(code))
         return self._referral_code_list
 
     @property
     def referral_code(self):
         """Returns a string of referral codes as a join of the list of referral codes delimited by ","."""
         return ','.join(self.referral_code_list)
+
+    @property
+    def valid_referral_codes(self):
+        return [code for code, _ in REFERRAL_CODES if not code == 'pending']
 
     @property
     def hiv_result(self):
@@ -231,8 +240,9 @@ class SubjectReferralHelper(object):
         """Returns None if female otherwise True if circumcised or False if not."""
         if self.gender == 'M':
             try:
-                self._circumcised = self.convert_to_nullboolean(self.circumcision_instance.circumcised)
-            except AttributeError:
+                circumcision_instance = self.models.get('circumcision').objects.get(subject_visit=self.subject_visit)
+                self._circumcised = self.convert_to_nullboolean(circumcision_instance.circumcised)
+            except self.models.get('circumcision').DoesNotExist:
                 self._circumcised = None
         return self._circumcised
 
@@ -240,7 +250,7 @@ class SubjectReferralHelper(object):
     def citizen(self):
         citizen = None
         try:
-            citizen = self.enrollment_checklist_instance.citizen == 'Yes' and self.subject_consent_instance.identity
+            citizen = self.enrollment_checklist_instance.citizen == 'Yes' and self.subject_consent_instance.identity is not None
         except AttributeError:
             citizen = None
         return citizen
@@ -249,7 +259,7 @@ class SubjectReferralHelper(object):
     def citizen_spouse(self):
         citizen_spouse = None
         try:
-            citizen_spouse = self.enrollment_checklist_instance.legal_marriage == 'Yes' and self.subject_consent_instance.identity
+            citizen_spouse = self.enrollment_checklist_instance.legal_marriage == 'Yes' and self.subject_consent_instance.identity is not None
         except AttributeError:
             citizen_spouse = None
         return citizen_spouse
@@ -321,7 +331,7 @@ class SubjectReferralHelper(object):
     def part_time_resident(self):
         """Returns True if part_time_resident as stated on enrollment_checklist."""
         try:
-            part_time_resident = self.convert_to_nullboolean(self.enrollment_checklist_instance.permanent_resident)
+            part_time_resident = self.convert_to_nullboolean(self.enrollment_checklist_instance.part_time_resident)
         except AttributeError:
             part_time_resident = None
         return part_time_resident
@@ -330,8 +340,9 @@ class SubjectReferralHelper(object):
     def permanent_resident(self):
         """Returns True if permanent resident as stated on ResidencyMobility."""
         try:
-            permanent_resident = self.convert_to_nullboolean(self.residency_mobility_instance.permanent_resident)
-        except AttributeError:
+            residency_mobility_instance = self.models.get('residency_mobility').objects.get(subject_visit=self.subject_visit)
+            permanent_resident = self.convert_to_nullboolean(residency_mobility_instance.permanent_resident)
+        except self.models.get('residency_mobility').DoesNotExist:
             permanent_resident = None
         return permanent_resident
 
@@ -419,7 +430,7 @@ class SubjectReferralHelper(object):
     @property
     def urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals list and sets to true on a match."""
-        return True if [code for code in self.referral_code_list if code in ['MASA-DF', 'POS!-LO', 'POS#-LO', 'POS#-AN']] else False
+        return True if [code for code in self.referral_code_list if code in ['MASA-DF', 'POS!-LO', 'POS#-LO', 'POS#-AN', 'POS!-PR']] else False
 
     @property
     def verbal_hiv_result(self):
@@ -445,21 +456,12 @@ class SubjectReferralHelper(object):
         return self._vl_sample_drawn_datetime
 
     @property
-    def circumcision_instance(self):
-        if not self._circumcision_instance:
-            try:
-                self._circumcision_instance = self.models.get('circumcision').objects.get(subject_visit=self.subject_visit)
-            except self.models.get('circumcision').DoesNotExist:
-                self._circumcision_instance = None
-        return self._circumcision_instance
-
-    @property
     def enrollment_checklist_instance(self):
         if not self._enrollment_checklist_instance:
-            try:
-                self._enrollment_checklist_instance = self.models.get('enrollment_checklist').objects.get(household_member=self.subject_visit.household_member)
-            except self.models.get('enrollment_checklist').DoesNotExist:
-                pass
+            #try:
+            self._enrollment_checklist_instance = self.models.get('enrollment_checklist').objects.get(household_member=self.subject_visit.household_member)
+            #except self.models.get('enrollment_checklist').DoesNotExist:
+            #    self._enrollment_checklist_instance = None
         return self._enrollment_checklist_instance
 
     @property
@@ -515,15 +517,6 @@ class SubjectReferralHelper(object):
             except self.models.get('pima').DoesNotExist:
                 self._pima_instance = None
         return self._pima_instance
-
-    @property
-    def residency_mobility_instance(self):
-        if not self._residency_mobility_instance:
-            try:
-                self._residency_mobility_instance = self.models.get('residency_mobility').objects.get(subject_visit=self.subject_visit)
-            except self.models.get('residency_mobility').DoesNotExist:
-                self._residency_mobility_instance = None
-        return self._residency_mobility_instance
 
     @property
     def subject_consent_instance(self):

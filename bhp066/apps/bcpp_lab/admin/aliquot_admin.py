@@ -12,7 +12,7 @@ class AliquotAdmin(BaseModelAdmin):
 
     actions = [print_aliquot_label]
 
-    list_display = ("aliquot_identifier", 'subject_identifier', 'to_process', 'to_receive', 'drawn', "aliquot_type", 'aliquot_condition', 'created', 'user_created', 'hostname_created')
+    list_display = ("aliquot_identifier", 'subject_identifier', 'to_process', 'to_receive', 'drawn', "aliquot_type", 'aliquot_condition', 'is_packed', 'created', 'user_created', 'hostname_created')
 
     search_fields = ('aliquot_identifier', 'receive__receive_identifier', 'receive__registered_subject__subject_identifier')
 

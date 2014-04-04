@@ -1,13 +1,13 @@
 from edc.lab.lab_packing.forms import BasePackingListForm, BasePackingListItemForm
 
-from ..models import SubjectRequisition, PackingList, PackingListItem
+from ..models import SubjectRequisition, PackingList, PackingListItem, Aliquot
 
 
 class PackingListForm (BasePackingListForm):
 
     def clean(self):
 
-        self.requisition = [SubjectRequisition, ]
+        self.requisition = [SubjectRequisition, Aliquot]
 
         return  super(PackingListForm, self).clean()
 
@@ -19,7 +19,7 @@ class PackingListItemForm (BasePackingListItemForm):
 
     def clean(self):
 
-        self.requisition = [SubjectRequisition, ]
+        self.requisition = [SubjectRequisition, Aliquot]
 
         return  super(BasePackingListItemForm, self).clean()
 
