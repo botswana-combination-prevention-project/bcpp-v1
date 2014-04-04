@@ -32,6 +32,10 @@ class Aliquot(BaseAliquot):
             raise ValidationError('Primary aliquot may not be None')
         super(Aliquot, self).save(*args, **kwargs)
 
+    def get_visit_model(self):
+        from apps.bcpp_subject.models import SubjectVisit
+        return SubjectVisit
+
     def to_process(self):
         url = reverse('admin:bcpp_lab_processing_add')
         return '<a href="{0}?aliquot={1}">process</a>'.format(url, self.pk)
