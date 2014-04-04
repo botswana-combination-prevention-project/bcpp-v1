@@ -173,7 +173,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         return True
 
     def enrollment_loss(self):
-        """Creates or updates (or deletes) the enrollment loss based on the reason for noot passing the enrollment checklist."""
+        """Creates or updates (or deletes) the enrollment loss based on the reason for not passing the enrollment checklist."""
         reason = []
         age_in_years = relativedelta(date.today(), self.dob).years
         if not (age_in_years >= 16 and age_in_years <= 64):
