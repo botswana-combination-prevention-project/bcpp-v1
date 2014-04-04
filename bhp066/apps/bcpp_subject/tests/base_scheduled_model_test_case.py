@@ -62,14 +62,16 @@ class BaseScheduledModelTestCase(TestCase):
             gender=self.household_member_male.gender,
             dob=date.today() - relativedelta(years=self.household_member_male.age_in_years),
             guardian='No',
-            part_time_resident='Yes')
+            part_time_resident='Yes',
+            citizen='Yes')
         enrollment_female = EnrollmentChecklistFactory(
             household_member=self.household_member_female,
             initials=self.household_member_female.initials,
             gender=self.household_member_female.gender,
             dob=date.today() - relativedelta(years=self.household_member_female.age_in_years),
             guardian='No',
-            part_time_resident='Yes')
+            part_time_resident='Yes',
+            citizen='Yes')
 
         subject_consent_female = SubjectConsentFactory(
             household_member=self.household_member_female,
@@ -77,6 +79,7 @@ class BaseScheduledModelTestCase(TestCase):
             dob=enrollment_female.dob,
             first_name='SUE',
             last_name='W',
+            citizen='Yes',
             initials=enrollment_female.initials,
             study_site=StudySite.objects.get(site_code='14'))
         subject_consent_male = SubjectConsentFactory(
@@ -85,6 +88,7 @@ class BaseScheduledModelTestCase(TestCase):
             dob=enrollment_male.dob,
             first_name='ERIK',
             last_name='W',
+            citizen='Yes',
             initials=enrollment_male.initials,
             study_site=StudySite.objects.get(site_code='14'))
 
