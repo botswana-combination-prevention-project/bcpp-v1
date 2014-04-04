@@ -17,6 +17,7 @@ def return_data(request):
     content_type = None
     replaceble_plots = []
     replacement_items = []
+    replacing_plot = None
     template = 'return_data.html'
     message = None
     replacement_helper = ReplacementHelper()
@@ -31,7 +32,7 @@ def return_data(request):
                     },
                     context_instance=RequestContext(request)
                 )
-    else:
+    elif request.GET.get('return_all'):
         replacement_plots = []
         replacement_households = replacement_helper.replaceable_households(survey)
         replacement_plots = replacement_helper.replaceable_plots()
@@ -54,16 +55,29 @@ def return_data(request):
             selected = list(itertools.chain(*pks))
             content_type = ContentType.objects.get_for_model(Plot)
             return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
-#     else:
-#         pass
-    if request.GET.get('household_identifier'):
+
+    elif request.GET.get('household_identifier'):
         household_identifier = request.GET.get('household_identifier')
         if replacement_plots and len(replacement_plots) > 1:
             replacing_plot = replacement_plots[0]
-            if not replacing_plot.replacement:
-                if Household.objects.filter(household_identifier=household_identifier):
-                    replacement_items.append(replacing_plot.plot_identifier)
-            if replacing_plot.producer_dispatched_to == 'Not Dispatched' and plot.replaces:
+            if Household.objects.filter(household_identifier=household_identifier):
+                household = Household.objects.get(household_identifier=household_identifier)
+                replacement_items = replacement_helper.replace_household([household])
+            if replacing_plot.producer_dispatched_to == 'Not Dispatched' and replacing_plot.replaces:
+                if not plot in replacement_items:
+                    replacement_items.append(plot)
+        pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_items})).values_list('pk')
+        selected = list(itertools.chain(*pks))
+        content_type = ContentType.objects.get_for_model(Plot)
+        return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
+    elif request.GET.get('plot_identifier'):
+        plot_identifier = request.GET.get('plot_identifier')
+        if replacement_plots and len(replacement_plots) > 1:
+            replacing_plot = replacement_plots[0]
+            if Plot.objects.filter(plot_identifier=plot_identifier):
+                plot = Plot.objects.get(plot_identifier=plot_identifier)
+                replacement_items = replacement_helper.replace_household([plot])
+            if replacing_plot.producer_dispatched_to == 'Not Dispatched' and replacing_plot.replaces:
                 if not plot in replacement_items:
                     replacement_items.append(plot)
         pks = Plot.objects.filter(Q(**{'plot_identifier__in': replacement_items})).values_list('pk')
