@@ -5,7 +5,7 @@ REFERRAL_CODES = (
     ('TST-CD4', 'POS any, need CD4 testing'),
     ('TST-HIV', 'HIV test'),
     ('HIV-IND', 'HIV re-test (IND)'),
-    ('MASA', 'Known POS, MASA continued care'),
+    ('MASA-CC', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
     ('SMC-NEG', 'SMC (uncircumcised, hiv neg)'),
     ('SMC?NEG', 'SMC (Unknown circumcision status, hiv neg'),
