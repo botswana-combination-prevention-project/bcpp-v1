@@ -11,23 +11,27 @@
 {% endblock %}
 
 {% block content%}
-	{% if replacement_data %}
+	{% if replaceble_producer %}
 		<table>
-			<thead>
-				<th>Household to return</th>
-				<th>Return</th>
-			</thead>
-			{% for item in replacement_data %}
-			<tr>
+		<thead>
+			<th>Plot/Household to replace</th>
+			<th>Producer</th>
+			<th>Replace</th>
+		</thead>
+		<tr>
+		{% for item, producer in replaceble_producer %}
 			<td>{{ item }}</td>
-			{% if item.is_plot %}
-			<td><a href="{% url 'return_data_url' %}/?item_identifier={{ item.plot_identifier }}">return plot</a></td>
-			{% else %}
-			<td><a href="{% url 'return_data_url' %}/?item_identifier={{ item.household_identifier }}">return household</a></td>
+			<td>{{ producer }}</td>
+			<td>
+				{% if item.is_plot %}
+				<a href="{% url 'return_data_url' %}/?plot_identifier={{ item.plot_identifier }}">return plot</a><
+				{% else %}
+				<a href="{% url 'return_data_url' %}/?household_identifier={{ item.household_identifier }}">return household</a>
 			{% endif %}
-			</tr>
-			{% endfor %}
-		<tr><td colspan="2"><a href="{% url 'return_data_url' %}"><b>Return All</b></a> </td></tr>
+			</td>
+		{% endfor %}
+		</tr>
+		<tr><td colspan="2"><a href="{% url 'return_data_url' %}/?return_all='all'"><b>Return All</b></a> </td></tr>
 		<tr><td colspan="2">Total replacements: {{ replacement_count }}</td></tr>
 		</table>
 	{% else %}
