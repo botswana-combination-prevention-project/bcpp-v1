@@ -34,7 +34,4 @@
 		<tr><td colspan="2"><a href="{% url 'return_data_url' %}/?return_all='all'"><b>Return All</b></a> </td></tr>
 		<tr><td colspan="2">Total replacements: {{ replacement_count }}</td></tr>
 		</table>
-	{% else %}
-		<b>No households qualify for replacement.</b>
-	{%endif%}
 {% endblock %}
