@@ -129,6 +129,24 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'],)
 
+    #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
+    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    elisa_on_required1 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'IND'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'],)
+
+    elisa_on_required2 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'ne', 'IND'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'],)
+    
     #Verbal posetive, then RBD and VL are required.
     rbd_vl_known_pos = RequisitionRule(
         logic=Logic(
@@ -245,6 +263,24 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'],)
+    
+    #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
+    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    elisa_on_required1 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'IND'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'],)
+
+    elisa_on_required2 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'ne', 'IND'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'],)
 
     rbd_vl_known_pos = RequisitionRule(
         logic=Logic(
@@ -296,6 +332,24 @@ class HivDocumentationGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'],)
 
+    #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
+    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    elisa_on_required1 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'IND'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'],)
+
+    elisa_on_required2 = RequisitionRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'ne', 'IND'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['ELISA'],)
+    
     rbd_vl_known_pos = RequisitionRule(
         logic=Logic(
             predicate=('result_recorded', 'equals', 'POS'),
@@ -532,6 +586,24 @@ class RequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
+
+    #Next two rules ensures that after filling in Today's HIV Result, Microtube always remains as required
+    #It should be as its a pre-requisite to Today's HIV Result.
+    hiv_result4 = RequisitionRule(
+        logic=Logic(
+            predicate=('hiv_result', 'ne', 'NEG'),
+            consequence='new',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'], )
+
+    hiv_result5 = RequisitionRule(
+        logic=Logic(
+            predicate=('hiv_result', 'equals', 'NEG'),
+            consequence='new',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'], )
 
 #     hiv_result4 = RequisitionRule(
 #         logic=Logic(
