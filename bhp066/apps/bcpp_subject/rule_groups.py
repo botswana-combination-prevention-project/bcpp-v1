@@ -268,7 +268,7 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
     #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
     elisa_on_required1 = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'IND'),
+            predicate=('recorded_hiv_result', 'equals', 'IND'),
             consequence='not_required',
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
@@ -276,7 +276,7 @@ class ReviewNotPositiveRuleGroup(RuleGroup):
 
     elisa_on_required2 = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'ne', 'IND'),
+            predicate=('recorded_hiv_result', 'ne', 'IND'),
             consequence='not_required',
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
@@ -336,7 +336,7 @@ class HivDocumentationGroup(RuleGroup):
     #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
     elisa_on_required1 = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'IND'),
+            predicate=('result_recorded', 'equals', 'IND'),
             consequence='not_required',
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
@@ -344,7 +344,7 @@ class HivDocumentationGroup(RuleGroup):
 
     elisa_on_required2 = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'ne', 'IND'),
+            predicate=('result_recorded', 'ne', 'IND'),
             consequence='not_required',
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
