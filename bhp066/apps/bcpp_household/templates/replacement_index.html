@@ -11,21 +11,20 @@
 {% endblock %}
 
 {% block content%}
-	{% if replaceble_producer %}
-		<table>
-		<thead>
-			<th>Plot/Household to replace</th>
-			<th>Replace</th>
-		</thead>
-		<tr>
-		{% for item in replaceble_producer %}
-			<td>{{ item }}</td>
+	<H4>Select producer to replace households/plots from.</H4>
+	{% if producer_names %}
+		<form action="{% url 'return_data_url' %}" method="post">
+	   	{% csrf_token %}
+	    <div id="selection_box">
+    	Producer:&nbsp;<select id="producer" name="producer"> 
+		{% for producer in producer_names %}
+		  <option value="{{ producer }}">{{ producer }}</option>
 		{% endfor %}
-		</tr>
-		<tr><td colspan="2"><a href="{% url 'return_data_url' %}/?return_all='all'"><b>Replace household/plots</b></a> </td></tr>
-		<tr><td colspan="2">Total replacements: {{ replacement_count }}</td></tr>
-		</table>
+		</select>
+		<input type="submit" value="submit">			
+		</form>
 	{% else %}
 		{{ message }}
-	{%endif%}
-{% endblock %}
+	{% endif %}
+
+{% endblock content %}
