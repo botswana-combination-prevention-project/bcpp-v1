@@ -31,6 +31,10 @@ class ReplacementHelper(object):
             producer = producer.producer
         return producer
 
+    def synchronized(self, producer):
+        """Check if a producer has been synchronized."""
+        pass
+
     @property
     def household_structure(self):
         return self._household_structure
@@ -88,23 +92,25 @@ class ReplacementHelper(object):
             replaceable = True
         return replaceable
 
-    def replaceable_households(self, survey):
+    def replaceable_households(self, survey, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
         replaceable_households = []
         for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
-            if self.replaceable_household:
-                if not household_structure.household.replaced_by:
-                    replaceable_households.append(household_structure.household)
+            if producer_name == household_structure.household.plot.producer_dispatched_to:
+                if self.replaceable_household:
+                    if not household_structure.household.replaced_by:
+                        replaceable_households.append(household_structure.household)
         return replaceable_households
 
-    def replaceable_plots(self):
+    def replaceable_plots(self, producer_name):
         """Returns a list of plots that meet the criteria to be replaced by a plot."""
         replaceable_plots = []
         for plot in get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT):
             self.plot = plot
-            if self.replaceable_plot:
-                replaceable_plots.append(self.plot)
+            if producer_name == plot.producer_dispatched_to:
+                if self.replaceable_plot:
+                    replaceable_plots.append(self.plot)
         return replaceable_plots
 
     def replaced_by(self, household_structure):
@@ -122,17 +128,18 @@ class ReplacementHelper(object):
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         for household, plot in zip(replaceble_households, plots):
-            household.replaced_by = plot.plot_identifier
-            plot.replaces = household.household_identifier
-            household.save()
-            plot.save()
-            household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
-            get_model('bcpp_household', 'ReplacementHistory').objects.create(
-                    replacing_item=plot.plot_identifier,
-                    replaced_item=household.household_identifier,
-                    replacement_datetime=datetime.now(),
-                    replacement_reason=self.household_replacement_reason(household_structure))
-            replacing_plots.append(plot)
+            if self.synchronized(self.producer()):
+                household.replaced_by = plot.plot_identifier
+                plot.replaces = household.household_identifier
+                household.save()
+                plot.save()
+                household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
+                get_model('bcpp_household', 'ReplacementHistory').objects.create(
+                        replacing_item=plot.plot_identifier,
+                        replaced_item=household.household_identifier,
+                        replacement_datetime=datetime.now(),
+                        replacement_reason=self.household_replacement_reason(household_structure))
+                replacing_plots.append(plot)
         return replacing_plots
 
     def replace_plot(self, replaceble_plots):
@@ -144,16 +151,17 @@ class ReplacementHelper(object):
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
-            plot_a.repalced_by = plot_b.plot_identifier
-            plot_b.replaces = plot_a.plot_identifier
-            plot_a.save()
-            plot_b.save()
-            get_model('bcpp_household', 'ReplacementHistory').objects.create(
-                    replacing_item=plot_b.plot_identifier,
-                    replaced_item=plot_a.plot_identifier,
-                    replacement_datetime=datetime.now(),
-                    replacement_reason='Invalid plot replacement')
-            replacing_plots.append(plot_b)
+            if self.synchronized(self.producer()):
+                plot_a.repalced_by = plot_b.plot_identifier
+                plot_b.replaces = plot_a.plot_identifier
+                plot_a.save()
+                plot_b.save()
+                get_model('bcpp_household', 'ReplacementHistory').objects.create(
+                        replacing_item=plot_b.plot_identifier,
+                        replaced_item=plot_a.plot_identifier,
+                        replacement_datetime=datetime.now(),
+                        replacement_reason='Invalid plot replacement')
+                replacing_plots.append(plot_b)
         return replacing_plots
 
     def household_replacement_reason(self, household_structure):

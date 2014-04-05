@@ -6,8 +6,6 @@ from apps.bcpp_survey.models import Survey
 
 from ..helpers import ReplacementHelper
 
-from ..models import Household
-
 
 def replace_data(request):
     """Get all plots to be replaced.
