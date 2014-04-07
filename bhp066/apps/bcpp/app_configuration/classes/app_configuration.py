@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 
 from edc.apps.app_configuration.classes import BaseAppConfiguration
@@ -113,6 +114,43 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 }
 
     consent_catalogue_list = [consent_catalogue_setup]
+
+    export_plan_setup = {'bcpp_subject.subjectreferral': {
+        'app_label': 'bcpp_subject',
+        'object_name': 'subjectreferral',
+        'fields': [],
+        'extra_fields': OrderedDict(
+            {'plot_identifier': 'subject_visit__household_member__household_structure__household__plot__plot_identifier',
+             'dob': 'subject_visit__appointment__registered_subject__dob',
+             'first_name': 'subject_visit__appointment__registered_subject__first_name',
+             'identity': 'subject_visit__appointment__registered_subject__identity',
+             'identity_type': 'subject_visit__appointment__registered_subject__identity_type',
+             'initials': 'subject_visit__appointment__registered_subject__initials',
+             'last_name': 'subject_visit__appointment__registered_subject__last_name',
+             'subject_identifier': 'subject_visit__appointment__registered_subject__subject_identifier',
+             }),
+        'exclude': [
+            'comment',
+            'created',
+            'exported',
+            'hostname_created',
+            'hostname_modified',
+            'in_clinic_flag',
+            'modified',
+            'referral_clinic_other',
+            'revision',
+            'subject_visit',
+            'user_created',
+            'user_modified',
+             ],
+        'header': True,
+        'track_history': True,
+        'show_all_fields': True,
+        'delimiter': '|',
+        'encrypt': False,
+        'strip': True,
+        'target_path': '~/export_to_cdc'
+        }}
 
     def update_or_create_survey(self):
         for survey_values in self.survey_setup.itervalues():
