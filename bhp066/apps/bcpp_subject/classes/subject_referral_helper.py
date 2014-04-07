@@ -102,8 +102,11 @@ class SubjectReferralHelper(object):
         else:
             if self.hiv_result == 'IND':
                 self._referral_code_list.append('HIV-IND')
-                if self.gender == 'M' and not self.circumcised:
-                    self._referral_code_list.append('SMC-IND')  # refer if status unknown or indeterminate
+                if self.gender == 'M':
+                    if not self.circumcised:
+                        self._referral_code_list.append('SMC-IND')
+                    elif self.circumcised == None:
+                        self._referral_code_list.append('SMC?IND')
             elif self.hiv_result == 'NEG':
                 if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
                     self._referral_code_list.append('NEG!-PR')
@@ -285,13 +288,10 @@ class SubjectReferralHelper(object):
     def indirect_hiv_documentation(self):
         """Returns True if there is a verbal result and hiv_testing_history.other_record is Yes, otherwise None (not False).
 
-        hiv_testing_history.other_record is indirect evidence of a previous "POS result" only.
+        hiv_testing_history.other_record or hiv_care_adherence.arv_evidence is indirect evidence of a previous "POS result" only."""
 
-        ...note: a verbal result
-                   1. without direct documentation (has_record) should trigger an HIV test.
-                   2. with direct documentation (has_record) will be recorded as the last_hiv_result."""
         try:
-            self._indirect_hiv_documentation = True if (self.hiv_testing_history_instance.verbal_hiv_result == 'POS' and self.hiv_testing_history_instance.other_record == 'Yes') else None
+            self._indirect_hiv_documentation = True if (self.hiv_testing_history_instance.verbal_hiv_result == 'POS' and (self.hiv_testing_history_instance.other_record == 'Yes' or self.arv_documentation)) else None
         except AttributeError:
             self._indirect_hiv_documentation = None
         return self._indirect_hiv_documentation
