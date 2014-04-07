@@ -26,6 +26,7 @@ class HivResultDocumentation (BaseScheduledVisitModel):
         choices=RECORDEDHIVRESULT_CHOICE,  # this is always POSITIVE!!
         default='POS',
         help_text="",
+        editable=False,
         )
 
     result_doc_type = models.CharField(
