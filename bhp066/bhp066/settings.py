@@ -41,8 +41,8 @@ else:
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    #KEY_PATH = '/Volumes/keys'
+    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -120,7 +120,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_r142',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -465,7 +465,7 @@ if DEVICE_ID == '98':
 else:
     PROJECT_TITLE = 'Botswana Combination Prevention Project'
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066']
+MIDDLE_MAN_LIST = ['resourcemac-bhp066', 'bcpp003-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
