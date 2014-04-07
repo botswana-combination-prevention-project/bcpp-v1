@@ -587,24 +587,6 @@ class RequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
 
-    #Next two rules ensures that after filling in Today's HIV Result, Microtube always remains as required
-    #It should be as its a pre-requisite to Today's HIV Result.
-    hiv_result4 = RequisitionRule(
-        logic=Logic(
-            predicate=('hiv_result', 'ne', 'NEG'),
-            consequence='new',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'], )
-
-    hiv_result5 = RequisitionRule(
-        logic=Logic(
-            predicate=('hiv_result', 'equals', 'NEG'),
-            consequence='new',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'], )
-
 #     hiv_result4 = RequisitionRule(
 #         logic=Logic(
 #             predicate=(('blood_draw_type', 'equals', 'venous')),
