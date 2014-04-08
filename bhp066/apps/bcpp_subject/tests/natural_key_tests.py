@@ -22,7 +22,7 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory
+from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory,
@@ -69,7 +69,7 @@ class NaturalKeyTests(TestCase):
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
         self.assertEquals(Survey.objects.all().count(), 3)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-
+        representative_eligibility = RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(household_structure=household_structure)
         enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='Yes', dob=date(1989,01,01))
         study_site = StudySite.objects.all()[0]
@@ -90,9 +90,9 @@ class NaturalKeyTests(TestCase):
         visit_definition = VisitDefinition.objects.get(title = 'T0') #VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
         print 'No. of Appointments = '+str(Appointment.objects.all().count())
         appointment = Appointment.objects.get(visit_definition=visit_definition)
-        print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
+        #print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_visit = SubjectVisitFactory(appointment=appointment, household_member=household_member)
-        print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
+        #print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
         # SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
