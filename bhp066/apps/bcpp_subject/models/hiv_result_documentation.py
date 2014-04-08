@@ -25,7 +25,8 @@ class HivResultDocumentation (BaseScheduledVisitModel):
         max_length=30,
         choices=RECORDEDHIVRESULT_CHOICE,  # this is always POSITIVE!!
         default='POS',
-        help_text="",
+        help_text="value should always be POS as the rule group only shows this form if verbal_hiv_result is POS and have indirect documentation.",
+        editable=False,
         )
 
     result_doc_type = models.CharField(
