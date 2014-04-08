@@ -120,7 +120,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_re',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -137,17 +137,17 @@ else:
             'HOST': '',
             'PORT': '',
         },
-#         'bcpp01-bhp066': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'OPTIONS': {
-#                 'init_command': 'SET storage_engine=INNODB',
-#             },
-#             'NAME': 'bhp066',
-#             'USER': 'root',
-#             'PASSWORD': 'cc3721b',
-#             'HOST': 'localhost',
-#             'PORT': '',
-#         },
+        'bcpp01-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': 'localhost',
+            'PORT': '',
+        },
 #         'bcpp020-bhp066': {
 #             'ENGINE': 'django.db.backends.mysql',
 #             'OPTIONS': {
