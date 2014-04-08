@@ -13,6 +13,7 @@ from .factories import (
     HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
     PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory, TbSymptomsFactory,
     HivResultDocumentationFactory)
+from dateutil.relativedelta import relativedelta
 
 
 class TestPlotMapper(Mapper):
@@ -638,7 +639,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         # verbal POS with indirect docs
         HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
-        # on ART and there are docs 
+        # on ART and there are docs
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
 
         panel = Panel.objects.get(name='Viral Load')
@@ -658,19 +659,19 @@ class ReferralTests(BaseScheduledModelTestCase):
             'citizen_spouse': False,
             'direct_hiv_documentation': False,
             'gender': u'F',
-            'hiv_result': None,
+            'hiv_result': 'POS',
             'hiv_result_datetime': None,
-            'indirect_hiv_documentation': None,
+            'indirect_hiv_documentation': True,
             'last_hiv_result': None,
-            'new_pos': None,
+            'new_pos': False,
             'next_arv_clinic_appointment_date': None,
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
             'referral_clinic': 'Otse',
-            'referral_code': 'TST-HIV',
+            'referral_code': 'MASA-DF',
             'tb_symptoms': '',
-            'urgent_referral': False,
+            'urgent_referral': True,
             'verbal_hiv_result': 'POS',
             'vl_sample_drawn': True,
             'vl_sample_drawn_datetime': yesterday}
@@ -709,7 +710,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'gender': u'F',
             'hiv_result': 'POS',
             'hiv_result_datetime': yesterday,
-            'indirect_hiv_documentation': None,
+            'indirect_hiv_documentation': True,
             'last_hiv_result': None,  # undocumented verbal_hiv_result cannot be the last result
             'new_pos': False,  # undocumented verbal_hiv_result can suggest not a new POS
             'next_arv_clinic_appointment_date': None,
@@ -723,4 +724,121 @@ class ReferralTests(BaseScheduledModelTestCase):
             'verbal_hiv_result': 'POS',
             'vl_sample_drawn': True,
             'vl_sample_drawn_datetime': yesterday}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr5(self):
+        """if IND refer for HIV testing"""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'direct_hiv_documentation': False,
+            'indirect_hiv_documentation': None,
+            'last_hiv_result': None,  # undocumented verbal_hiv_result cannot be the last result
+            'last_hiv_result_date': None,  # undocumented verbal_hiv_result cannot be the last result
+            'new_pos': None,  # undocumented verbal_hiv_result can suggest not a new POS
+            'verbal_hiv_result': 'POS',
+            'hiv_result': None}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr6(self):
+        """if IND refer for HIV testing"""
+        report_datetime = datetime.today()
+        last_date = report_datetime.date() - relativedelta(years=3)
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='NEG')
+        #HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'direct_hiv_documentation': False,  # of positive result
+            'indirect_hiv_documentation': None,
+            'last_hiv_result': 'NEG',
+            'last_hiv_result_date': last_date,
+            'new_pos': None,
+            'verbal_hiv_result': 'POS',
+            'hiv_result': None}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr7(self):
+        """ """
+        report_datetime = datetime.today()
+        last_date = report_datetime.date() - relativedelta(years=3)
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='NEG')
+        HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'direct_hiv_documentation': False,
+            'indirect_hiv_documentation': True,
+            'last_hiv_result': 'NEG',
+            'last_hiv_result_date': last_date,
+            'new_pos': False,
+            'verbal_hiv_result': 'POS',
+            'hiv_result': 'POS'}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr8(self):
+        """ """
+        report_datetime = datetime.today()
+        last_date = report_datetime.date() - relativedelta(years=3)
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='POS')
+        HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'direct_hiv_documentation': True,
+            'indirect_hiv_documentation': True,
+            'last_hiv_result': 'POS',
+            'last_hiv_result_date': last_date,
+            'new_pos': False,
+            'verbal_hiv_result': 'POS',
+            'hiv_result': 'POS'}
+        self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def tests_subject_referral_field_attr9(self):
+        """ """
+        report_datetime = datetime.today()
+        #last_date = report_datetime.date() - relativedelta(years=3)
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
+        #HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='POS')
+        #HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        expected = {
+            'direct_hiv_documentation': True,
+            'indirect_hiv_documentation': True,
+            'last_hiv_result': None,
+            'last_hiv_result_date': None,
+            'new_pos': False,
+            'verbal_hiv_result': 'POS',
+            'hiv_result': 'POS'}
         self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
