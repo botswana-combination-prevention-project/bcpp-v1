@@ -11,18 +11,15 @@
 {% endblock %}
 
 {% block content%}
-	{% if replaceble_producer %}
+	{% if replacebles %}
 		<table>
 		<thead>
 			<th>Plot/Household to replace</th>
-			<th>Replace</th>
 		</thead>
-		<tr>
-		{% for item in replaceble_producer %}
-			<td>{{ item }}</td>
+		{% for item in replacebles %}
+			<tr><td>{{ item }}</td></tr>
 		{% endfor %}
-		</tr>
-		<tr><td colspan="2"><a href="{% url 'return_data_url' %}/?return_all='all'"><b>Replace household/plots</b></a> </td></tr>
+		<tr><td colspan="2"><a href="{% url 'replace_household_plot_url' %}/?producer_name={{ producer_name }}"><b>Replace household/plots</b></a> </td></tr>
 		<tr><td colspan="2">Total replacements: {{ replacement_count }}</td></tr>
 		</table>
 	{% else %}

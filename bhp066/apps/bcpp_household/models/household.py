@@ -199,6 +199,9 @@ class Household(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household_identifier
 
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
