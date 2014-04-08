@@ -4,12 +4,10 @@ from django.db.models.loading import get_model
 from django.db.models import Min
 
 from edc.device.dispatch.models import DispatchContainerRegister
-from edc.core.bhp_using.classes import BaseUsing
 
 from apps.bcpp_survey.models import Survey
 
 from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
-from ..exceptions import ReplacementError
 
 
 class ReplacementHelper(object):
