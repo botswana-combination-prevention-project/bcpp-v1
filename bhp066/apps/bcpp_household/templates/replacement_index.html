@@ -13,18 +13,18 @@
 {% block content%}
 	<H4>Select producer to replace households/plots from.</H4>
 	{% if producer_names %}
-		<form action="{% url 'return_data_url' %}" method="post">
+		<form action="{% url 'check_replacements_url' %}" method="post">
 	   	{% csrf_token %}
 	    <div id="selection_box">
-    	Producer:&nbsp;<select id="producer" name="producer"> 
-		{% for producer in producer_names %}
-		  <option value="{{ producer }}">{{ producer }}</option>
+    	Producer Name:&nbsp;<select id="producer_name" name="producer_name"> 
+		{% for producer_name in producer_names %}
+		  <option value="{{ producer_name }}">{{ producer_name }}</option>
 		{% endfor %}
 		</select>
 		<input type="submit" value="submit">			
 		</form>
 	{% else %}
-		{{ message }}
+		<B>{{ message }}</B>
 	{% endif %}
 
 {% endblock content %}
