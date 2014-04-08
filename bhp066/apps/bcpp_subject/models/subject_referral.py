@@ -238,7 +238,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         default=None,
         null=True,
         editable=False,
-        help_text='True if one of MASA-DF, POS!-LO, POS#-LO, POS#-AN, POS!-PR, otherwise None (derived)',
+        help_text='True if one of MASA-DF, POS!-LO, POS#-LO, POS#-PR, POS!-PR, otherwise None (derived)',
         )
 
     referral_code = models.CharField(

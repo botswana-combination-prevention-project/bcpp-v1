@@ -1,1 +1,2 @@
+from .subject_status_helper import SubjectStatusHelper
 from .subject_referral_helper import SubjectReferralHelper
