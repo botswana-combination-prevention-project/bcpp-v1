@@ -14,7 +14,7 @@ def replacement_index(request, **kwargs):
     for producer in producers:
         producer_names.append(producer.name)
     if not producer_names:
-        message = 'Add producers to your producer table'
+        message = 'There are no producers in your producer table. Add producers to your producer table'
     return render_to_response(
             template, {
                 'message': message,
