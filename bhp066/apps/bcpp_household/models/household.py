@@ -189,13 +189,6 @@ class Household(BaseDispatchSyncUuidModel):
                 if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
                     HouseholdStructure.objects.create(household=instance, survey=survey)
 
-    def save(self, *args, **kwargs):
-        if self.id:
-            household = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
-            if household.replaced_by:
-                raise AlreadyReplaced('Household {0} has been replaced by. plot {1}'.format(self.household_identifier, self.replaced_by))
-        super(Household, self).save(*args, **kwargs)
-
     def get_subject_identifier(self):
         return self.household_identifier
 
