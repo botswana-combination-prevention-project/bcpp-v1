@@ -92,7 +92,7 @@ class PlotReplacementTests(TestCase):
         replacement_helper = ReplacementHelper()
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
 
     def test_replacement_plot2(self):
@@ -112,7 +112,7 @@ class PlotReplacementTests(TestCase):
             selected=2,)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
 
@@ -134,7 +134,7 @@ class PlotReplacementTests(TestCase):
             replaces='H12345')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
 
@@ -168,7 +168,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         household_member.save()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         self.assertEqual(household_member.member_status, REFUSED)
         SubjectRefusalFactory(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
         replacement_helper = ReplacementHelper()
@@ -202,7 +202,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -245,7 +245,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -299,7 +299,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -358,7 +358,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household1])
@@ -404,7 +404,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
@@ -431,7 +431,7 @@ class PlotReplacementTests(TestCase):
         HouseholdRefusalFactory(household_structure=household_structure, report_datetime=datetime.now(), reason='not_interested')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household1])
 
@@ -470,7 +470,7 @@ class PlotReplacementTests(TestCase):
         HouseholdRefusalFactory(household_structure=household_structure1, report_datetime=datetime.now(), reason='not_interested')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household1])
 
@@ -500,7 +500,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -542,7 +542,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -596,7 +596,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -618,7 +618,7 @@ class PlotReplacementTests(TestCase):
                 selected=1)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -647,7 +647,7 @@ class PlotReplacementTests(TestCase):
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=SEASONALLY_OCCUPIED)  # Status value becomes seasonally occupied
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -676,7 +676,7 @@ class PlotReplacementTests(TestCase):
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_OCCUPIED)  # Status value becomes rarely occupied
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -705,7 +705,7 @@ class PlotReplacementTests(TestCase):
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEVER_OCCUPIED)  # Status value becomes never occupied
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -734,7 +734,7 @@ class PlotReplacementTests(TestCase):
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=UNKNOWN_OCCUPIED)  # Status value becomes None
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -760,7 +760,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -785,7 +785,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT,)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -811,7 +811,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT,)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -839,7 +839,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT, report_datetime=datetime.today() - timedelta(days=1))
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -867,7 +867,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=1))
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -893,7 +893,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -920,7 +920,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=2))
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -948,7 +948,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=1))
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -974,7 +974,7 @@ class PlotReplacementTests(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT,)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
@@ -1003,7 +1003,7 @@ class PlotReplacementTests(TestCase):
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEARLY_ALWAYS_OCCUPIED)  # Status value becomes nearly always occupied occupied
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
@@ -1048,7 +1048,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         replaceble_household = replacement_helper.replaceable_households(self.survey1, producer.name)
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
@@ -1117,7 +1117,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         replaceble_household = replacement_helper.replaceable_households(self.survey1, producer.name)
         self.assertEquals((replacement_helper.replaceable_households(self.survey1, producer.name)).sort(), ([household1, household2, household3]).sort())
@@ -1166,7 +1166,7 @@ class PlotReplacementTests(TestCase):
             study_resident='Yes')
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         replaceble_household = replacement_helper.replaceable_households(self.survey1, producer)
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer), [household1])
@@ -1188,7 +1188,7 @@ class PlotReplacementTests(TestCase):
                 selected=2)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         replaceble_plots = replacement_helper.replaceable_plots(producer.name)
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
@@ -1210,7 +1210,7 @@ class PlotReplacementTests(TestCase):
                 selected=2)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot1)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         replaceble_plots = replacement_helper.replaceable_plots(producer.name)
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
@@ -1230,7 +1230,7 @@ class PlotReplacementTests(TestCase):
         PlotFactory(community='test_community11', selected=2)
         producer = ProducerFactory()
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch_prep()
+        bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         replaceble_plots = replacement_helper.replaceable_plots(producer.name)
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
