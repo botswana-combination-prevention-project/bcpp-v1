@@ -1,26 +1,40 @@
 from edc.export.classes import ExportAsCsv
+from edc.subject.appointment.constants import DONE
+
 from apps.bcpp_subject.choices import REFERRAL_CODES
 
 from .models import SubjectReferral
 
 
-def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manual)",
-                         fields=None, exclude=None, extra_fields=None, header=True, track_history=True, show_all_fields=True, delimiter=None, encrypt=True, strip=False):
+def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manual)", fields=None, exclude=None,
+                                    extra_fields=None, header=True, track_history=True, show_all_fields=True,
+                                    delimiter=None, encrypt=True, strip=False):
+    """Filters then exports a queryset from admin.
 
+    The post admin filtering takes out:
+      * out any referrals with an invalid or blank code.
+      * any referrals NOT covered by an appointment that is DONE (appt_status=DONE).
+      * any referrals that were previously exported (exported=True).
+
+    """
     def export(modeladmin, request, queryset):
         referral_code_list = [key for key, value in REFERRAL_CODES if not key == 'pending']
-        queryset = queryset.filter(referral_code__in=referral_code_list, in_clinic_flag=False)
+        queryset = queryset.filter(referral_code__in=referral_code_list,
+                                   in_clinic_flag=False,
+                                   #subject_visit__appointment__appt_status=DONE,
+                                   #exported=False,
+                                   )
         export_as_csv = ExportAsCsv(queryset,
-                               modeladmin=modeladmin,
-                               fields=fields,
-                               exclude=exclude,
-                               extra_fields=extra_fields,
-                               header=header,
-                               track_history=track_history,
-                               show_all_fields=show_all_fields,
-                               delimiter=delimiter,
-                               encrypt=encrypt,
-                               strip=strip)
+            modeladmin=modeladmin,
+            fields=fields,
+            exclude=exclude,
+            extra_fields=extra_fields,
+            header=header,
+            track_history=track_history,
+            show_all_fields=show_all_fields,
+            delimiter=delimiter,
+            encrypt=encrypt,
+            strip=strip)
         return export_as_csv.write_to_file()
 
     export.short_description = description
