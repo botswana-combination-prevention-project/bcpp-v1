@@ -63,6 +63,7 @@ class NaturalKeyTests(TestCase):
         print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
         self.assertEqual(HouseholdRefusalHistory.objects.all().count(), 1)
         household_ref_history = HouseholdRefusalHistory.objects.get(household_structure=household_structure)
+        household_structure.failed_enumeration_attempts = 3
         household_assesment = HouseholdAssessmentFactory(household_structure=household_structure)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
         household_log_entry1 = HouseholdLogEntryFactory(household_log=household_log, report_datetime=date.today())
