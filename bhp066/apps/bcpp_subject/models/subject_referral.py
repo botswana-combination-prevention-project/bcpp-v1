@@ -8,6 +8,7 @@ from edc.base.model.validators import datetime_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
+from edc.subject.appointment.constants import DONE
 
 from apps.bcpp.choices import COMMUNITIES
 
@@ -78,19 +79,24 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         max_length=50,
         null=True,
         editable=False,
-        help_text='HIV status (POS, NEG, IND) as determined by the field RA either by testing or using a combination of verbal response and documentation. None if no result available. See also new_pos. (derived)'
+        help_text=('HIV status (POS, NEG, IND) as determined by the field RA either by testing or using a combination '
+                   'of verbal response and documentation. None if no result available. See also new_pos. (derived)'),
         )
 
     hiv_result_datetime = models.DateTimeField(
-         null=True,
-        help_text='HIV result datetime either from today\'s test or documentation provided by the subject or None. See also new_pos. (derived)'
+        max_length=50,
+        null=True,
+        editable=False,
+        help_text=('HIV result datetime either from today\'s test or documentation provided by the subject or None. See '
+                   'also new_pos. (derived)'),
          )
 
     todays_hiv_result = models.CharField(
         max_length=50,
         null=True,
         editable=False,
-        help_text='HIV result of test performed by the field RA (POS, NEG, IND) or None if not performed. The datetime of the result is hiv_result_datetime.'
+        help_text=('from HIV result of test performed by the field RA (POS, NEG, IND) or None if not performed. The datetime '
+                   'of the result is hiv_result_datetime.'),
         )
 
     new_pos = models.NullBooleanField(
@@ -104,75 +110,73 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         max_length=50,
         null=True,
         editable=False,
-        help_text="A documented previous HIV result provided by the subject"
+        help_text="Documented result from a participant's past record of HIV testing or valid documentation of positive status (derived)"
         )
 
     verbal_hiv_result = models.CharField(
         max_length=50,
         null=True,
         editable=False,
-        help_text='from HivTestingHistory.verbal_result. HIV status as verbally provided by subject or None. See also if a positive result is supported by direct and indirect documentation.'
+        help_text=('from HivTestingHistory.verbal_result. HIV status as verbally provided by subject or None. See also '
+                   ' if a positive result is supported by direct and indirect documentation.')
         )
 
     direct_hiv_documentation = models.NullBooleanField(
-        max_length=50,
         null=True,
         editable=False,
-        help_text='from HivTestingHistory.has_record. True if a document was seen that confirms the subject\'s verbally provided POS result, False if not, None if unknown. See also last_hiv_result.'
+        help_text=('from HivTestingHistory.has_record. True if a document was seen that confirms the subject\'s '
+                   'verbally provided result, False if not, None if unknown. See also last_hiv_result.'),
         )
 
     indirect_hiv_documentation = models.NullBooleanField(
-        max_length=50,
         null=True,
         editable=False,
-        help_text='from HivTestingHistory.other_record. True if a document was seen that suggests the subject is HIV POS, False if not, None if unknown.'
+        help_text=('from HivTestingHistory.other_record and from HivCareAdherence.arv_evidence. True if a document was seen that suggests the subject is '
+                   'HIV positive, False if not, None if unknown.'),
         )
 
     last_hiv_result_date = models.DateTimeField(
-         null=True,
-         )
-
-#     last_cd4_result = models.CharField(
-#         max_length=50,
-#         null=True,
-#         editable=False,
-#         )
-#
-#     last_cd4_test_date = models.DateTimeField(
-#          null=True,
-#          )
+        null=True,
+        editable=False,
+        help_text=('Recorded date of previous HIV test or of the document that provides supporting evidence of HIV infection (derived)'),
+        )
 
     on_art = models.NullBooleanField(
         default=None,
         null=True,
         editable=False,
-        help_text="from hiv_care_adherence. True if subject claims to be on ARV, False if not, None if unknown. See also art_documentation. (derived)"
+        help_text=('from HivCareAdherence.on_art() method. True if subject claims to be on ARV, False if not, None if unknown. See '
+                    'also art_documentation. (derived)'),
         )
 
     arv_documentation = models.NullBooleanField(
         null=True,
         editable=False,
-        help_text='from HivCarAdherence.arv_evidence. True if Field RA has seen documents that shows subject is on ARV\'s, False if not, None if unknown. Overrides a False on_art value if True')
+        help_text=('from HivCareAdherence.arv_evidence. True if Field RA has seen documents that shows subject is on '
+                   'ARV\'s, False if not, None if unknown. If True, overrides HivCareAdherence.on_arv=False'),
+        )
 
     arv_clinic = models.CharField(
+        max_length=50,
         default=None,
         null=True,
-        max_length=50,
-        help_text="from hiv_care_adherence. The ARV clinic where subject currently receives care"
+        editable=False,
+        help_text="from HivCareAdherence.clinic_receiving_from. The ARV clinic where subject currently receives care"
         )
 
     next_arv_clinic_appointment_date = models.DateField(
          default=None,
          null=True,
-         help_text="from hiv_care_adherence. Next appointment date at the subject's ARV clinic."
+         editable=False,
+         help_text="from HivCareAdherence.next_appointment_date. Next appointment date at the subject's ARV clinic."
          )
 
     cd4_result = models.DecimalField(
         null=True,
-        editable=False,
         max_digits=6,
         decimal_places=2,
-        help_text='from Pima. Today\'s CD4 result',
+        editable=False,
+        help_text='from Pima. Result of today\'s CD4 test performed in the household',
         )
 
     cd4_result_datetime = models.DateTimeField(
@@ -210,28 +214,31 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     part_time_resident = models.NullBooleanField(
         default=None,
-        editable=False,
         null=True,
-        help_text='from eligibility checklist "part_time_resident. True if part_time resident, False if not, None if unknown"'
+        editable=False,
+        help_text=('from eligibility checklist.part_time_resident. True if part_time resident, False if not, None if unknown')
         )
 
     permanent_resident = models.NullBooleanField(
         default=None,
-        editable=False,
         null=True,
-        help_text='from residence and mobility "permanent_resident. True if permanent resident, False if not, None if unknown"'
+        editable=False,
+        help_text=('from residence and mobility.permanent_resident. True if permanent resident, False if not, None if unknown')
         )
 
     tb_symptoms = models.CharField(
         max_length=100,
         null=True,
         editable=False,
-        help_text='list of symptoms from tb_symptoms. Any combination of Fever, cough, cough_blood, fever, night_sweat, lymph_nodes, weight_loss OR None'
+        help_text=('list of symptoms from tb_symptoms. Any combination of Fever, cough, cough_blood, fever, night_sweat, '
+                   'lymph_nodes, weight_loss OR None'),
         )
 
     urgent_referral = models.NullBooleanField(
         default=None,
         null=True,
+        editable=False,
+        help_text='True if one of MASA-DF, POS!-LO, POS#-LO, POS#-AN, POS!-PR, otherwise None (derived)',
         )
 
     referral_code = models.CharField(
@@ -239,13 +246,14 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         max_length=50,
         choices=REFERRAL_CODES,
         default='pending',
-        help_text="list of referral codes updated internally, comma separated."
+        help_text="list of referral codes confirmed by the edc, comma delimited if more than one (derived)."
         )
 
     in_clinic_flag = models.BooleanField(
         default=False,
         editable=False,
-        help_text='flag indicating participant was seen in clinic (from implementer data.) Updated by export_transaction.'
+        help_text=('system field. flag indicating participant was seen in clinic (from implementer data.) '
+                   'Updated by export_transaction.'),
         )
 
     comment = models.CharField(
@@ -266,13 +274,14 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)
 
     def save(self, *args, **kwargs):
-        #if not self.referral_clinic:
-        #    self.referral_clinic = site_mappers.get_current_mapper().map_area
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
-        #self.referral_code = SubjectReferralHelper(self).referral_code
         for field, value in SubjectReferralHelper(self).subject_referral.iteritems():
             setattr(self, field, value)
         super(SubjectReferral, self).save(*args, **kwargs)
+
+    @property
+    def ready_to_export_transaction(self):
+        return self.subject_visit.appointment.appt_status == DONE
 
     def get_referral_identifier(self):
         return self.id
