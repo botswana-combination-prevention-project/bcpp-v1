@@ -8,7 +8,6 @@ def replacement_index(request, **kwargs):
     """Clears all sections for a given region."""
 
     template = 'replacement_index.html'
-    mapper_name = kwargs.get('mapper_name', '')
     producers = Producer.objects.all()
     producer_names = []
     message = ''

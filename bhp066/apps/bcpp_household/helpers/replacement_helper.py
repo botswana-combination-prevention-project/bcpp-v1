@@ -4,10 +4,12 @@ from django.db.models.loading import get_model
 from django.db.models import Min
 
 from edc.device.dispatch.models import DispatchContainerRegister
+from edc.core.bhp_using.classes import BaseUsing
 
 from apps.bcpp_survey.models import Survey
 
 from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
+from ..exceptions import ReplacementError
 
 
 class ReplacementHelper(object):
@@ -97,7 +99,7 @@ class ReplacementHelper(object):
         replaceable_households = []
         for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
-            if producer_name == household_structure.household.plot.producer_dispatched_to:
+            if producer_name.split('-')[0] == household_structure.household.plot.producer_dispatched_to:
                 if self.replaceable_household:
                     if not household_structure.household.replaced_by:
                         replaceable_households.append(household_structure.household)
@@ -108,7 +110,7 @@ class ReplacementHelper(object):
         replaceable_plots = []
         for plot in get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT):
             self.plot = plot
-            if producer_name == plot.producer_dispatched_to:
+            if producer_name.split('-')[0] == plot.producer_dispatched_to:
                 if self.replaceable_plot:
                     replaceable_plots.append(self.plot)
         return replaceable_plots
@@ -120,7 +122,7 @@ class ReplacementHelper(object):
         except get_model('bcpp_household', 'Plot').DoesNotExist:
             return None
 
-    def replace_household(self, replaceble_households):
+    def replace_household(self, replaceble_households, destination):
         """"Replaces a household with a plot.
 
         This takes a list of replaceble households and plots that are to replace those households.
@@ -128,21 +130,24 @@ class ReplacementHelper(object):
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         for household, plot in zip(replaceble_households, plots):
-            if self.synchronized(self.producer()):
-                household.replaced_by = plot.plot_identifier
-                plot.replaces = household.household_identifier
-                household.save()
-                plot.save()
-                household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
-                get_model('bcpp_household', 'ReplacementHistory').objects.create(
-                        replacing_item=plot.plot_identifier,
-                        replaced_item=household.household_identifier,
-                        replacement_datetime=datetime.now(),
-                        replacement_reason=self.household_replacement_reason(household_structure))
-                replacing_plots.append(plot)
+#             if self.synchronized(destination):
+            household.replaced_by = plot.plot_identifier
+            plot.replaces = household.household_identifier
+            household.save()
+            plot.save()
+            household.save(using=destination)
+            plot.save(using=destination)
+            household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
+            # Creates a history of replacement
+            get_model('bcpp_household', 'ReplacementHistory').objects.create(
+                    replacing_item=plot.plot_identifier,
+                    replaced_item=household.household_identifier,
+                    replacement_datetime=datetime.now(),
+                    replacement_reason=self.household_replacement_reason(household_structure))
+            replacing_plots.append(plot)
         return replacing_plots
 
-    def replace_plot(self, replaceble_plots):
+    def replace_plot(self, replaceble_plots, destination):
         """Replaces a plot with a plot.
 
         This takes a list of replaceble plots and replaces each with a plot.
@@ -151,17 +156,20 @@ class ReplacementHelper(object):
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
-            if self.synchronized(self.producer()):
-                plot_a.repalced_by = plot_b.plot_identifier
-                plot_b.replaces = plot_a.plot_identifier
-                plot_a.save()
-                plot_b.save()
-                get_model('bcpp_household', 'ReplacementHistory').objects.create(
-                        replacing_item=plot_b.plot_identifier,
-                        replaced_item=plot_a.plot_identifier,
-                        replacement_datetime=datetime.now(),
-                        replacement_reason='Invalid plot replacement')
-                replacing_plots.append(plot_b)
+#             if self.synchronized(destination):
+            plot_a.repalced_by = plot_b.plot_identifier
+            plot_b.replaces = plot_a.plot_identifier
+            plot_a.save()
+            plot_b.save()
+            plot_a.save(using=destination)
+            plot_b.save(using=destination)
+            # Creates a history of replacement
+            get_model('bcpp_household', 'ReplacementHistory').objects.create(
+                    replacing_item=plot_b.plot_identifier,
+                    replaced_item=plot_a.plot_identifier,
+                    replacement_datetime=datetime.now(),
+                    replacement_reason='Invalid plot replacement')
+            replacing_plots.append(plot_b)
         return replacing_plots
 
     def household_replacement_reason(self, household_structure):
