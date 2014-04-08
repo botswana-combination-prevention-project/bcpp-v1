@@ -54,9 +54,7 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_result(self):
-        """Returns the hiv status considering today\'s result, the last documented result and a verbal result with or without indirect documentation.
-
-        Last or verbal results are used only if the value is POS otherwise None."""
+        """Returns the hiv status considering today\'s result, the last documented result and a verbal result."""
         if not self._hiv_result:
             self._hiv_result = (
                 self.todays_hiv_result or
@@ -81,9 +79,7 @@ class SubjectStatusHelper(object):
 
     @property
     def new_pos(self):
-        """Returns True if combination of documents and test history show POS.
-
-        ...note: if the result is verbal without any documentation the subject will be tested today and if POS considered a new POS (POS!)."""
+        """Returns True if combination of documents and test history show POS."""
         if (self.todays_hiv_result == 'POS' and self.recorded_hiv_result == 'POS'):
             return False
         elif (self.todays_hiv_result == 'POS' and self.verbal_hiv_result == 'POS' and not self.indirect_hiv_documentation):
@@ -145,7 +141,6 @@ class SubjectStatusHelper(object):
 
     @property
     def direct_hiv_documentation(self):
-#         return True if (self.todays_hiv_result == 'POS' or self.recorded_hiv_result == 'POS') else False
         return True if (self.recorded_hiv_result in ['POS', 'NEG']) else False
 
     @property
