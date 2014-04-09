@@ -1,9 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.base.model.fields import OtherCharField
 from edc.audit.audit_trail import AuditTrail
+
 from ..managers import GrantManager
 from ..choices import GRANT_TYPE
+
 from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .labour_market_wages import LabourMarketWages
 

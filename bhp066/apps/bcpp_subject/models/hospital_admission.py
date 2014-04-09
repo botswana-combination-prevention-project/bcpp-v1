@@ -1,8 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
+
 from apps.bcpp.choices import YES_NO_REFUSED
+
 from ..choices import CARE_REASON, TRAVEL_HOURS
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
