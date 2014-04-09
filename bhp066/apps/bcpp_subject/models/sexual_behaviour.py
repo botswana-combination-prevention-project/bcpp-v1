@@ -1,10 +1,11 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_SEX
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
