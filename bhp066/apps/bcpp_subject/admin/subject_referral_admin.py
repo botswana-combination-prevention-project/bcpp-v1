@@ -38,7 +38,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'subject_referred',
-        'referral_code',
         'referral_appt_date',
         'referral_clinic',
         'comment'

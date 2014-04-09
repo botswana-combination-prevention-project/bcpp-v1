@@ -88,27 +88,19 @@
 
 {% block referral %}    
     <tr name="bottom right" >
-    {%if not subject_referral %}<td>Referral form has not been keyed</td>{% endif %}
-    {% if subject_referral.referral_code == 'NOT_REFERRED' %}
-        <td>Participant not referred</td>
-    {% else %}            
         <td>
-            <H3>Referral</H3>
-            {% if subject_referral %}
-                {% if subject_referral.referral_code %}
-                    
-                    <ul>
-                    <li><B>{{ subject_referral.referral_code }}</B> {% if subject_referral.urgent_referral %}<B>URGENT</B>{% endif %}
-                    <li>Participant is '{{subject_referral.get_referral_code_display }}'
-                    <li>Referral Clinic: {{subject_referral.referral_clinic }}
-                    <li>Appointment: {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }} 
-                    </ul>
-                {% endif %}                                                
+            <H4>Referral</H4>
+            {% if subject_referral.referral_code %}
+                <ul>
+                <li><B>{{ subject_referral.referral_code }}</B> {% if subject_referral.urgent_referral %}<B>URGENT</B>{% endif %}
+                <li>Participant is '{{subject_referral.get_referral_code_display }}'
+                <li>Referral Clinic: {{subject_referral.referral_clinic }}
+                <li>Appointment: {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }} 
+                </ul>
             {% else %}
-               <font color="red">Referral not complete</font>
+               <span style="color:red">Referral not complete</span>
             {% endif %}                                                
         </td>
     </tr>
-    {% endif %}
-    {% if subject_referral.in_clinic %}<B><span style="color:teal">Participant presented at clinic</span><B>{% endif %}            
+    {% if subject_referral.in_clinic_flag %}<B><span style="color:teal">Participant presented at clinic</span><B>{% endif %}            
 {% endblock referral %}
