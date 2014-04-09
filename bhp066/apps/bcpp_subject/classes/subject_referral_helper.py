@@ -18,6 +18,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_clinic = None
         self._referral_code_list = []
         self._subject_referral = {}
+        self.instance = instance
         self.models.update({
             'circumcision': Circumcision,
             'enrollment_checklist': EnrollmentChecklist,
