@@ -10,6 +10,7 @@ from edc.subject.registration.models import RegisteredSubject
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp_list.models import ElectricalAppliances, TransportMode
 from apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
@@ -148,6 +149,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         self.registered_subject = self.household_member.registered_subject
         self.verified_household_head(self.household_member)
         super(HouseholdInfo, self).save(*args, **kwargs)

@@ -7,6 +7,8 @@ from apps.bcpp_household_member.constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
 from apps.bcpp_household_member.exceptions import MemberStatusError
 from apps.bcpp.choices import HIV_RESULT
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from .base_member_status_model import BaseMemberStatusModel
 
 
@@ -61,6 +63,8 @@ class SubjectHtc(BaseMemberStatusModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_member.member_status not in [HTC, HTC_ELIGIBLE, REFUSED_HTC]:
             raise MemberStatusError('Expected member status to be on of {0}. Got {1}'.format([HTC, HTC_ELIGIBLE, REFUSED_HTC], self.household_member.member_status))
         self.survey = self.household_member.survey

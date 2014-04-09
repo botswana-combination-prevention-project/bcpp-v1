@@ -14,7 +14,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-
+from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -173,16 +173,16 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         editable=False,
-        help_text=("plot or household identifier that this plot replaced."),
+        help_text=("plot or household identifier that this plot replaces."),
         )
 
     replaced_by = models.CharField(
+        verbose_name='Identifier',
         max_length=25,
         null=True,
         blank=True,
-        verbose_name='Identifier',
-        help_text=u'The identifier of the plot that this plot replaces',
         editable=False,
+        help_text=u'The identifier of the plot that this plot was replaced by',
         )
 
     device_id = models.CharField(
@@ -257,6 +257,11 @@ class Plot(BaseDispatchSyncUuidModel):
         return (self.plot_identifier,)
 
     def save(self, *args, **kwargs):
+        # If the plot is replaced can not save this plot
+        if self.id:
+            plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
+            if plot.replaced_by:
+                raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
@@ -374,6 +379,9 @@ class Plot(BaseDispatchSyncUuidModel):
         if Device().device_id == '99':
             return True
         return False
+
+    def is_plot(self):
+        return True
 
     def is_dispatch_container_model(self):
         return True
