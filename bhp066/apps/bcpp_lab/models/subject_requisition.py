@@ -36,6 +36,9 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
         self.community = self.get_visit().household_member.household_structure.household.plot.community
         super(SubjectRequisition, self).save(*args, **kwargs)
 
+    def __unicode__(self):
+        return '{0} {1}'.format(unicode(self.panel), self.requisition_identifier)
+
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
 
