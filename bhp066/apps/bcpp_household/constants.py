@@ -12,3 +12,4 @@ SEASONALLY_OCCUPIED = 'seasonally_occupied'  # replace
 RARELY_OCCUPIED = 'rarely_occupied'  # NOT replaced
 NEVER_OCCUPIED = 'never_occupied'  # NOT replaced
 UNKNOWN_OCCUPIED = 'unknown'  # replaced
+
