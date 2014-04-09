@@ -6,6 +6,7 @@ from edc.base.model.validators import date_not_future
 from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 
 from ..choices import HIV_DOC_TYPE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

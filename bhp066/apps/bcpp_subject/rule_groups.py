@@ -1,10 +1,12 @@
-from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
 from edc.subject.registration.models import RegisteredSubject
+from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
+
 from .classes import SubjectStatusHelper
+
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, Pima)
+                    HivResult, HivResultDocumentation)
 
 
 class RegisteredSubjectRuleGroup(RuleGroup):
