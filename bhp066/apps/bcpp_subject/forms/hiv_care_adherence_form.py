@@ -20,7 +20,7 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         # if on_arv, need to answer clinic taking from and next scheduled appointment.
         if cleaned_data.get('on_arv', None) == 'Yes':
             if not cleaned_data.get('clinic_receiving_from', None) or not cleaned_data.get('next_appointment_date', None):
-                raise forms.ValidationError('If patient is on ARV, provide the clinic facility and next scheduled appoitnment.')
+                raise forms.ValidationError('If patient is on ARV, provide the clinic facility and next scheduled appointment.')
         # if you are not taking any arv's do not indicate that you have missed taking medication
         if cleaned_data.get('on_arv', None) == 'No' and cleaned_data.get('adherence_4_day'):
             raise forms.ValidationError('You do not have to indicate missed medication because you are not taking any ARV\'s')
