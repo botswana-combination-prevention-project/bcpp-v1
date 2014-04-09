@@ -93,8 +93,20 @@
         <td>Participant not referred</td>
     {% else %}            
         <td>
-            <H3>Refer Participant</H3>Refer participant to the {{subject_referral.referral_clinic }} clinic for '{{subject_referral.get_referral_code_display }}'</B>
-            for {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }}{% if subject_referral.urgent_referral %} or by the next "clinic" day{% endif %}.                                                
+            <H3>Referral</H3>
+            {% if subject_referral %}
+                {% if subject_referral.referral_code %}
+                    
+                    <ul>
+                    <li><B>{{ subject_referral.referral_code }}</B> {% if subject_referral.urgent_referral %}<B>URGENT</B>{% endif %}
+                    <li>Participant is '{{subject_referral.get_referral_code_display }}'
+                    <li>Referral Clinic: {{subject_referral.referral_clinic }}
+                    <li>Appointment: {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }} 
+                    </ul>
+                {% endif %}                                                
+            {% else %}
+               <font color="red">Referral not complete</font>
+            {% endif %}                                                
         </td>
     </tr>
     {% endif %}
