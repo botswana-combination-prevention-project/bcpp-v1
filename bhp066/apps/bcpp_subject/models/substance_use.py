@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_CHOICE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

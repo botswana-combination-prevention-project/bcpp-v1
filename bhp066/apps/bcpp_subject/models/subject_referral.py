@@ -15,7 +15,6 @@ from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
-from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
@@ -267,8 +266,6 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     export_history = ExportHistoryManager()
 
     history = AuditTrail()
-
-    objects = ScheduledModelManager()
 
     def __unicode__(self):
         return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)

@@ -1,5 +1,4 @@
 from edc.export.classes import ExportAsCsv
-from edc.subject.appointment.constants import DONE
 
 from apps.bcpp_subject.choices import REFERRAL_CODES
 
@@ -51,16 +50,16 @@ def export_locator_for_cdc_action(description="Export Locator for CDC (Manual)",
         referred_subject_identifiers = [dct.get('subject_visit__subject_identifier') for dct in SubjectReferral.objects.values('subject_visit__subject_identifier').filter(referral_code__in=referral_code_list, in_clinic_flag=False)]
         queryset = queryset.filter(subject_visit__subject_identifier__in=referred_subject_identifiers)
         export_as_csv = ExportAsCsv(queryset,
-                               modeladmin=modeladmin,
-                               fields=fields,
-                               exclude=exclude,
-                               extra_fields=extra_fields,
-                               header=header,
-                               track_history=track_history,
-                               show_all_fields=show_all_fields,
-                               delimiter=delimiter,
-                               encrypt=encrypt,
-                               strip=strip)
+            modeladmin=modeladmin,
+            fields=fields,
+            exclude=exclude,
+            extra_fields=extra_fields,
+            header=header,
+            track_history=track_history,
+            show_all_fields=show_all_fields,
+            delimiter=delimiter,
+            encrypt=encrypt,
+            strip=strip)
         return export_as_csv.write_to_file()
 
     export.short_description = description
