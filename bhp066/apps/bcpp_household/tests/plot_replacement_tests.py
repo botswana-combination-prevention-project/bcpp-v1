@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
 
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import teardown_test_environment
+from django.db.models import get_model
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -52,6 +55,13 @@ class PlotReplacementTests(TestCase):
         BcppSubjectVisitSchedule().build()
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        self.dispatch_test_db = 'dispatch_destination'
+#         connection.creation.destroy_test_db(self.dispatch_test_db, verbosity=1)
+#         teardown_test_environment()
+
+    def tearDown(self):
+        self.dispatch_test_db = 'dispatch_destination'
+        connection.creation.destroy_test_db(self.dispatch_test_db, verbosity=1)
 
     def household_member_refused_factory(self, **kwargs):
         household_member = HouseholdMemberFactory(**kwargs)
@@ -167,10 +177,9 @@ class PlotReplacementTests(TestCase):
             present_today='Yes',
             study_resident='Yes')
         household_member.save()
+        SubjectRefusalFactory(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
-        self.assertEqual(household_member.member_status, REFUSED)
-        SubjectRefusalFactory(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
         replacement_helper = ReplacementHelper()
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
@@ -766,6 +775,7 @@ class PlotReplacementTests(TestCase):
 
     def test_absentees_ineligibles10(self):
         """Asserts a household without an informant after 1 enumeration attempt is not replaceble"""
+        print get_model('bcpp_household', 'Plot').objects.using(self.dispatch_test_db).all().count()
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
