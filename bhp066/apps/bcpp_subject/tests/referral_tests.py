@@ -1,4 +1,5 @@
 from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 
 from edc.map.classes import Mapper, site_mappers
 
@@ -13,7 +14,6 @@ from .factories import (
     HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
     PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory, TbSymptomsFactory,
     HivResultDocumentationFactory)
-from dateutil.relativedelta import relativedelta
 
 
 class TestPlotMapper(Mapper):
@@ -402,7 +402,47 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertIn('SMC?UNK', subject_referral.referral_code)
 
-    def tests_referred_verbal1a(self):
+    def tests_hiv_result1(self):
+        """"""
+        report_datetime = datetime.today()
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIsNone(subject_referral.hiv_result)
+
+    def tests_hiv_result2(self):
+        """"""
+        report_datetime = datetime.today()
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('POS', subject_referral.hiv_result)
+
+    def tests_hiv_result3(self):
+        """"""
+        report_datetime = datetime.today()
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('POS', subject_referral.hiv_result)
+
+    def tests_hiv_result4(self):
+        """"""
+        report_datetime = datetime.today()
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('POS', subject_referral.hiv_result)
+
+    def tests_referred_verbal1b(self):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
