@@ -5,6 +5,8 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
 
@@ -119,7 +121,7 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         editable=False,
         )
-    
+
     replaced_by = models.CharField(
         max_length=25,
         null=True,
@@ -154,14 +156,6 @@ class Household(BaseDispatchSyncUuidModel):
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
-
-    #enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household_structure has been enumerated')
-
-#     reason_not_enumerated = models.CharField(
-#         verbose_name='Household Status',
-#         max_length=50,
-#         null=True,
-#         )
 
     objects = HouseholdManager()
 
@@ -198,11 +192,17 @@ class Household(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household_identifier
 
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
+
+    def is_plot(self):
+        return False
 
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))

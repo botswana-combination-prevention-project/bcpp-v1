@@ -17,6 +17,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
 from apps.bcpp_household.models import Plot
+from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
@@ -141,6 +142,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.check_eligible_representative_filled(self.household_structure)
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if not self.id:
             if not self.household_structure.enumerated:
                 self.household_structure.enumerated = True
