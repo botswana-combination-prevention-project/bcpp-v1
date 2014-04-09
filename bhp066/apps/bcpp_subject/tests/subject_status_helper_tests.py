@@ -77,3 +77,11 @@ class SubjectStatusHelperTests(BaseScheduledModelTestCase):
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, 'POS')
+
+    def tests_hiv_result5(self):
+        """"""
+        result_date = datetime(2014,2,9)
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='NEG', hiv_test_date=result_date)
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        self.assertIsNone(subject_status_helper.hiv_result)
