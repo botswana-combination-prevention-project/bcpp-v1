@@ -7,6 +7,8 @@ from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 from edc.base.model.fields import UUIDField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure
@@ -47,6 +49,8 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
         )
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_structure.enrolled:
             raise ValidationError('Household is enrolled.')
         self.household_structure.refused_enumeration = True

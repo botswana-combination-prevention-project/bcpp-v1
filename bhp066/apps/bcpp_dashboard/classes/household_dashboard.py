@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+from django.db.models import Max
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
@@ -9,6 +10,8 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, 
                                         HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
+from apps.bcpp_household.helpers import ReplacementHelper
+
 from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_survey.models import Survey
@@ -78,12 +81,14 @@ class HouseholdDashboard(Dashboard):
             rendered_surveys=self.render_surveys(),
             allow_edit_members=self.allow_edit_members(),
             has_household_log_entry=self.has_household_log_entry,
+            lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
+            replaceble=self.replaceble,
             household_info=self.household_info,
             eligible_hoh=self.any_eligible_hoh,
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
-            )   
+            )
 
     @property
     def has_household_log_entry(self):
@@ -118,6 +123,21 @@ class HouseholdDashboard(Dashboard):
             self._household_refusal = HouseholdRefusal.objects.get(household_structure=self.household_structure)
             return self._household_refusal
         return self._household_refusal
+
+    @property
+    def lastest_household_log_entry_household_status(self):
+        try:
+            report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self.household_structure).aggregate(Max('report_datetime')).get('report_datetime__max')
+            lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=self.household_structure, report_datetime=report_datetime)
+            return lastest_household_log_entry.household_status
+        except HouseholdLogEntry.DoesNotExist:
+            return None
+
+    @property
+    def replaceble(self):
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = self.household_structure
+        return replacement_helper.replaceable
 
     @property
     def any_eligible_hoh(self):
