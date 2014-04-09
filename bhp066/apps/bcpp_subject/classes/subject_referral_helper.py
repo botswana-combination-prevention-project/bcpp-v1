@@ -10,7 +10,7 @@ from .subject_status_helper import SubjectStatusHelper
 class SubjectReferralHelper(SubjectStatusHelper):
 
     def __init__(self, instance):
-        super(SubjectReferralHelper, self).__init__(instance)
+        super(SubjectReferralHelper, self).__init__(instance.subject_visit)
         self._circumcised = None
         self._enrollment_checklist_instance = None
         self._subject_consent_instance = None

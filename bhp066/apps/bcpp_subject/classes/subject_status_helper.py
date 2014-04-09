@@ -18,7 +18,7 @@ class SubjectStatusHelper(object):
               'subject_requisition': SubjectRequisition,
               }
 
-    def __init__(self, instance):
+    def __init__(self, visit_instance):
         self._defaulter = None
         self._documented_verbal_hiv_result = None
         self._documented_verbal_hiv_result_date = None
@@ -43,8 +43,7 @@ class SubjectStatusHelper(object):
         self._verbal_hiv_result = None
         self._vl_requisition_instance = None
         self._vl_sample_drawn_datetime = None
-        self.instance = instance
-        self.subject_visit = self.instance.subject_visit
+        self.subject_visit = visit_instance
 
     def __repr__(self):
         return 'SubjectStatusHelper({0.instance!r})'.format(self)

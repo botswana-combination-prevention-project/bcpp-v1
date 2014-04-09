@@ -216,7 +216,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         default=None,
         null=True,
         editable=False,
-        help_text=('from eligibility checklist.part_time_resident. True if part_time resident, False if not, None if unknown')
+        help_text=('from eligibility checklist.part_time_resident. True if at least a part_time resident, False if not, None if unknown')
         )
 
     permanent_resident = models.NullBooleanField(
