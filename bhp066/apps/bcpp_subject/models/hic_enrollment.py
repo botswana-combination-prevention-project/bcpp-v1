@@ -22,20 +22,21 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     permanent_resident = models.NullBooleanField(
         default=None,
-        # editable=False,
+        null=True,
+        blank=True,
         help_text='From Residency and Mobility. Eligible if Yes.'
         )
 
     intend_residency = models.NullBooleanField(
         default=None,
-        # editable=False,
+        null=True,
+        blank=True,
         help_text='From Residency and Mobility. Eligible if No.'
         )
 
     hiv_status_today = models.CharField(
         max_length=50,
         help_text="From Today's HIV Result. Eligible if Negative.",
-        # editable=False,
         )
 
     dob = models.DateField(
@@ -52,7 +53,8 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     household_residency = models.NullBooleanField(
         default=None,
-        # editable=False,
+        null=True,
+        blank=True,
         help_text='Is Participant a Household Member. Eligible if Yes.'
         )
 
@@ -64,7 +66,8 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     locator_information = models.NullBooleanField(
         default=None,
-        # editable=False,
+        null=True,
+        blank=True,
         help_text=("From Subject Locator. Is the locator form filled and all necessary contact information collected?"),
         )
 
@@ -83,13 +86,13 @@ class HicEnrollment (BaseScheduledVisitModel):
             #Only enforce the criteria if subjectt agrees to enroll in HIC
             self.permanent_resident = self.is_permanent_resident()
             self.intend_residency = self.is_intended_residency()
-            self.hiv_status_today = self.get_hiv_status_today()
-            dob, consent_datetime = self.get_dob_consent_datetime()
-            self.dob = dob
-            self.consent_datetime = consent_datetime
             self.household_residency = self.is_household_residency()
-            self.citizen_or_spouse = self.is_citizen_or_spouse()
             self.locator_information = self.is_locator_information()
+            self.citizen_or_spouse = self.is_citizen_or_spouse()
+            self.hiv_status_today = self.get_hiv_status_today()
+        dob, consent_datetime = self.get_dob_consent_datetime()
+        self.consent_datetime = consent_datetime
+        self.dob = dob
         super(HicEnrollment, self).save(*args, **kwargs)
 
     def is_permanent_resident(self, exception_cls=None):
