@@ -7,8 +7,8 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
-from ..managers import HouseholdStructureManager
 from ..helpers import ReplacementHelper
+from ..managers import HouseholdStructureManager
 
 from .household import Household
 from .plot import Plot

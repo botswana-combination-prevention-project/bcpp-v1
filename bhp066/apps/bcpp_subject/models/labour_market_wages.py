@@ -1,9 +1,13 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
+
 from apps.bcpp.choices import YES_NO_REFUSED
+
 from ..choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

@@ -5,6 +5,7 @@ from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future
 from edc.choices import YES_NO_NA
+
 from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
 from apps.bcpp_lab.models import SubjectRequisition
 
