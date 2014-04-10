@@ -152,7 +152,28 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'encrypt': False,
         'strip': True,
         'target_path': '~/export_to_cdc',
-        'recipient': 'CDC clinic',
+        'notification_plan_name': 'referral_file_to_cdc',
+        }}
+
+    notification_plan_setup = {'referral_file_to_cdc': {
+        'name': 'referral_file_to_cdc',
+        'friendly_name': 'BCPP Participant Referral File to Clinic',
+        'subject_format': '{exit_status}: BCPP Referral File Transfer {timestamp}',
+        'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
+                        'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
+                        'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n'
+                        'To unsubscribe, please contact BHP Data Management.\n\n'
+                        'File transfer status for {export_datetime} is as follows:\n\n'
+                        '* Transfer Title: {notification_plan_name}\n'
+                        '* Status: {exit_status}\n'
+                        '* Status Message: {exit_status_message}\n'
+                        '* Transaction count: {tx_count}\n'
+                        '* File name: {file_name}\n\n'
+                        'Thank You,\n\n'
+                        'BHP Data Management Team\n'
+                        ),
+        'recipient_list': ['ew2789@gmail.com', 'tsetsiba@bhp.org.bw'],
+        'cc_list': ['ew2789@gmail.com'],
         }}
 
     def update_or_create_survey(self):
