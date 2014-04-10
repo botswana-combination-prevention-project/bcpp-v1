@@ -55,8 +55,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
             export_as_csv_action(
                 exclude=['exported', 'exported_datetime', self.visit_model_foreign_key, 'revision', 'hostname_created', 'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', 'comment'],
                 extra_fields=OrderedDict(
-                    {'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
-                     'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
+                    {'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
                      'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
@@ -97,7 +96,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
                      'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
-                     'subject_identifier': self.visit_model_foreign_key + '__appointment__registered_subject__subject_identifier',
                      })
                 ),
                 'export_referrals_for_cdc_action',

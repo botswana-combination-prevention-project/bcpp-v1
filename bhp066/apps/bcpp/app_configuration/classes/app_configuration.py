@@ -151,7 +151,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'delimiter': '|',
         'encrypt': False,
         'strip': True,
-        'target_path': '~/export_to_cdc'
+        'target_path': '~/export_to_cdc',
+        'recipient': 'CDC clinic',
         }}
 
     def update_or_create_survey(self):

@@ -32,6 +32,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
             })
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member
+        self.subject_identifier = self.instance.subject_visit.appointment.registered_subject.subject_identifier
 
     @property
     def missing_data(self):
@@ -55,6 +56,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
             for attr in self.instance.__dict__:
                 if attr in dir(self) and not attr.startswith('_'):
                     self._subject_referral.update({attr: getattr(self, attr)})
+            self._subject_referral.update({'subject_identifier': getattr(self, 'subject_identifier')})
         return self._subject_referral
 
     @property
