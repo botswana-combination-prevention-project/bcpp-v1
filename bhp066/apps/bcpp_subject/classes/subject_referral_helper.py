@@ -1,10 +1,14 @@
-from ..choices import REFERRAL_CODES
+from django.core.exceptions import FieldError
+from edc.constants import NOT_REQUIRED, KEYED
+from edc.entry_meta_data.models import ScheduledEntryMetaData
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
 
+from ..choices import REFERRAL_CODES
 from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth)
 
 from .subject_status_helper import SubjectStatusHelper
+from collections import namedtuple
 
 
 class SubjectReferralHelper(SubjectStatusHelper):
@@ -30,6 +34,20 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self.household_member = self.instance.subject_visit.household_member
 
     @property
+    def missing_data(self):
+        """Returns the model name of the first model used in the referral algorithm that's meta data is NOT set to KEYED or NOT_REQUIRED."""
+        for model_cls in self.models.values():
+            try:
+                scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(appointment=self.instance.subject_visit.appointment,
+                                                  entry__app_label=model_cls._meta.app_label,
+                                                  entry__model_name=model_cls._meta.object_name)
+                if scheduled_entry_meta_data.entry_status  not in [KEYED, NOT_REQUIRED]:
+                    return model_cls
+            except ScheduledEntryMetaData.DoesNotExist:
+                pass
+        return None
+
+    @property
     def subject_referral(self):
         """Returns a dictionary of the attributes {name: value, ...} from this class that match, by name, field attributes in the SubjectReferral model."""
         if not self._subject_referral:
@@ -38,6 +56,13 @@ class SubjectReferralHelper(SubjectStatusHelper):
                 if attr in dir(self) and not attr.startswith('_'):
                     self._subject_referral.update({attr: getattr(self, attr)})
         return self._subject_referral
+
+    @property
+    def subject_referral_tuple(self):
+        """Returns a dictionary of the attributes {name: value, ...} from this class that match, by name, field attributes in the SubjectReferral model."""
+        Tpl = namedtuple('SubjectReferralTuple', 'subject_visit ' + '  '.join(self.subject_referral.keys()))
+        self._subject_referral_tuple = Tpl(self.subject_visit, *self.subject_referral.values())
+        return self._subject_referral_tuple
 
     @property
     def referral_code_list(self):
