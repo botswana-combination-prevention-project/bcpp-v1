@@ -10,7 +10,7 @@ class SubjectUndecided (BaseMemberStatusModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        if self.household_structure.household.replaced_by:
+        if self.household_member.household_structure.household.replaced_by:
             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
