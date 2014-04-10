@@ -482,7 +482,7 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 SITE_CODE = '14'
 #  edc.device.device
 DEVICE_ID = '99'
-if DEVICE_ID == '98':
+if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
 else:
     PROJECT_TITLE = 'Botswana Combination Prevention Project'
