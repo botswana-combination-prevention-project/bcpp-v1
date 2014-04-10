@@ -15,6 +15,7 @@ from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
+from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
@@ -262,6 +263,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment')
         )
+
+    objects = ScheduledModelManager()
 
     export_history = ExportHistoryManager()
 
