@@ -51,10 +51,10 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
            'information in this comment')
         )
 
-    def save(self, *args, **kwargs):
-        if self.subject_absentee.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
-        super(BaseSubjectEntry, self).save(*args, **kwargs)
+#     def save(self, *args, **kwargs):
+#         if self.household_member.household_structure.household.replaced_by:
+#             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+#         super(BaseSubjectEntry, self).save(*args, **kwargs)
 
     @property
     def in_replaced_household(self):
