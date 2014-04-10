@@ -507,35 +507,35 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
-class TodaysHivRuleGroup(RuleGroup):
-#   confirms pima required only when HIV result from today is positive
-    cd4_required = ScheduledDataRule(
-        logic=Logic(
-            predicate=None,
-            consequence='new',
-            alternative='not_required'),
-        helper_class=SubjectStatusHelper,
-        helper_class_attr='cd4_required',
-        target_model=['pima'])
-#     hiv_result = ScheduledDataRule(
+# class TodaysHivRuleGroup(RuleGroup):
+# #   confirms pima required only when HIV result from today is positive
+#     cd4_required = ScheduledDataRule(
 #         logic=Logic(
-#             predicate=('hiv_result', 'equals', 'POS'),
+#             predicate=None,
 #             consequence='new',
 #             alternative='not_required'),
+#         helper_class=SubjectStatusHelper,
+#         helper_class_attr='cd4_required',
 #         target_model=['pima'])
-
-    hic_enrollement = ScheduledDataRule(
-        logic=Logic(
-            predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hicenrollment'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivResult
-site_rule_groups.register(TodaysHivRuleGroup)
+# #     hiv_result = ScheduledDataRule(
+# #         logic=Logic(
+# #             predicate=('hiv_result', 'equals', 'POS'),
+# #             consequence='new',
+# #             alternative='not_required'),
+# #         target_model=['pima'])
+# 
+#     hic_enrollement = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['hicenrollment'])
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         source_fk = (SubjectVisit, 'subject_visit')
+#         source_model = HivResult
+# site_rule_groups.register(TodaysHivRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
@@ -705,21 +705,21 @@ class RequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
 
-#     hiv_result4 = RequisitionRule(
-#         logic=Logic(
-#             predicate=(('blood_draw_type', 'equals', 'venous')),
-#             consequence='new',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Venous (HIV)'], )
-#     """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
-#     hiv_result1 = RequisitionRule(
-#         logic=Logic(
-#             predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or')),
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Venous (HIV)'], )
+    cd4_required = ScheduledDataRule(
+            logic=Logic(
+                predicate=None,
+                consequence='new',
+                alternative='not_required'),
+            helper_class=SubjectStatusHelper,
+            helper_class_attr='cd4_required',
+            target_model=['pima'])
+
+    hic_enrollement = ScheduledDataRule(
+            logic=Logic(
+                predicate=(('hiv_result', 'equals', 'POS'), ('hiv_result', 'equals', 'Declined', 'or'), ('hiv_result', 'equals', 'Not performed', 'or')),
+                consequence='not_required',
+                alternative='new'),
+            target_model=['hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
