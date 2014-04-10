@@ -1,12 +1,12 @@
 from django.db import models
 
-from .base_scheduled_visit_model import BaseScheduledVisitModel
-
-from apps.bcpp_list.models import StiIllnesses
-
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future
+
+from apps.bcpp_list.models import StiIllnesses
+
+from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class Sti (BaseScheduledVisitModel):
