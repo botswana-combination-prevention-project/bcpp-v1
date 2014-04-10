@@ -41,8 +41,8 @@ else:
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    #KEY_PATH = '/Volumes/keys'
+    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -280,7 +280,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
