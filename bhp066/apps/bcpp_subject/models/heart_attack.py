@@ -1,4 +1,5 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future

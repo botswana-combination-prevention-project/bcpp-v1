@@ -4,12 +4,10 @@ from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future
-from edc.entry_meta_data.managers import EntryMetaDataManager
 
 from apps.bcpp.choices import (YES_NO_DWTA, YES_NO, WHYNOARV_CHOICE, ADHERENCE4DAY_CHOICE,
                                ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
 
-from .subject_visit import SubjectVisit
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
@@ -156,8 +154,6 @@ class HivCareAdherence (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
-
-    entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
     @property
     def defaulter(self):

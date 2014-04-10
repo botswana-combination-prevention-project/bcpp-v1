@@ -59,7 +59,7 @@ class SubjectStatusHelper(object):
                 self.todays_hiv_result or
                 (self.last_hiv_result if self.last_hiv_result == 'POS' else None) or
                 (self.documented_verbal_hiv_result if self.documented_verbal_hiv_result == 'POS' else None) or
-                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_documentation or self.indirect_hiv_documentation)) else None)
+                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and ((self.direct_hiv_documentation and self.recorded_hiv_result == 'POS') or self.indirect_hiv_documentation)) else None)
                 )
         return self._hiv_result
 
@@ -92,6 +92,20 @@ class SubjectStatusHelper(object):
                 return True
             else:
                 return None  # may have no result or just an undocumented verbal_hiv_result, which is not enough information.
+
+    @property
+    def should_be_tested(self):
+        #Returns true if there is enough evidence that the subject is HIV+ with supporting documentation.
+        #result = self.hiv_result
+        return self.hiv_result != 'POS'
+
+    @property
+    def cd4_required(self):
+        #Anybody that does not should not be tested i.e HIV+ with enough evidence, then CD4/PIMA should be reuired.
+        #Except when they are already on ART with evidence
+        if self.on_art and self.arv_documentation:
+            return False
+        return not self.should_be_tested
 
     @property
     def arv_documentation(self):
