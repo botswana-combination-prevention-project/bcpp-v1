@@ -1,9 +1,11 @@
+from django.db.models import signals
 from datetime import datetime, timedelta, date
 
 from django.core import serializers
 from django.db.models import get_app, get_models
 from django.test import TestCase
 
+from edc.entry_meta_data.models import entry_meta_data_on_post_save
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
@@ -18,6 +20,7 @@ from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.subject.entry.models import Entry
 from edc.subject.appointment.models import Appointment
 
+from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -97,10 +100,17 @@ class NaturalKeyTests(TestCase):
         # SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         # SubjectLocator : Independent Natural Key
+        signals.post_save.disconnect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
+        requisition1 = SubjectRequisitionFactory(subject_visit=subject_visit)
+#         print requisition1.aliquot_type.numeric_code
+        requisition2 = SubjectRequisitionFactory(subject_visit=subject_visit)
+        signals.post_save.connect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
         subject_locator = SubjectLocatorFactory(subject_visit=subject_visit, registered_subject=registered_subject)
         instances.append(subject_referral)
         instances.append(subject_death)
         instances.append(subject_locator)
+        instances.append(requisition1)
+        instances.append(requisition2)
 
         print 'INSTANCE: ' + str(instances)
         for obj in instances:
