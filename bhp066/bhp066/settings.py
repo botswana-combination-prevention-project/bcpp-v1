@@ -352,6 +352,8 @@ INSTALLED_APPS = (
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
 
+    'edc.notification',
+
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
@@ -417,7 +419,7 @@ EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
-EMAIL_AFTER_CONSUME = False
+#EMAIL_AFTER_CONSUME = False
 
 # django auth
 AUTH_PROFILE_MODULE = "bhp_userprofile.userprofile"
