@@ -1,7 +1,10 @@
 from django.db import models
+
 from edc.subject.consent.models import BaseConsentHistory
+
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
+
 from ..managers import ConsentHistoryManager
 
 

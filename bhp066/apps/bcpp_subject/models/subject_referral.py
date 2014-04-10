@@ -264,11 +264,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                    'information in this comment')
         )
 
+    objects = ScheduledModelManager()
+
     export_history = ExportHistoryManager()
 
     history = AuditTrail()
-
-    objects = ScheduledModelManager()
 
     def __unicode__(self):
         return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)
