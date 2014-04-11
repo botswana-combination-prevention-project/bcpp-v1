@@ -42,12 +42,8 @@ else:
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
     #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    KEY_PATH = '/Volumes/keys'
-
-# DB_FILES = {
-#     'table': 'FILES',
-#     'base_url': 'http://localhost/dbfiles/'
-# }
+    #KEY_PATH = '/Volumes/keys'
+    pass
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -137,7 +133,7 @@ else:
             'HOST': '',
             'PORT': '',
         },
-        'bcpp01-bhp066': {
+        'bcpp026-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -145,7 +141,7 @@ else:
             'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': 'localhost',
+            'HOST': '192.168.1.79',
             'PORT': '',
         },
 #         'bcpp020-bhp066': {
@@ -177,17 +173,6 @@ TIME_ZONE = 'Africa/Gaborone'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 #langauage setting
-ugettext = lambda s: s
-LANGUAGES = (
-    ('tn', 'Setswana'),
-    ('en', 'English'),
-)
-
-LOCALE_PATHS = ('locale', )
-
-LANGUAGE_CODE = 'en'
-
-SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -196,6 +181,20 @@ USE_I18N = True
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
+
+ugettext = lambda s: s
+LANGUAGES = (
+    ('tn', 'Setswana'),
+    ('en', 'English'),
+)
+
+LOCALE_PATHS = (
+            PROJECT_DIR.child('locale'),
+        )#'locale', )
+
+LANGUAGE_CODE = 'tn'
+
+SITE_ID = 1
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -280,7 +279,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -484,12 +483,12 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 SITE_CODE = '14'
 #  edc.device.device
 DEVICE_ID = '99'
-if DEVICE_ID == '98':
+if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
 else:
     PROJECT_TITLE = 'Botswana Combination Prevention Project'
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066', 'bcpp003-bhp066']
+MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True

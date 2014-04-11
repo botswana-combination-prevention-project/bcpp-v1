@@ -140,8 +140,9 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        if self.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        if household.replaced_by:
+            raise AlreadyReplaced('Household {0} has its container replaced.'.format(household.household_identifier))
         if not self.pk:
             if self.household_member.member_status != BHS_SCREEN:
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
