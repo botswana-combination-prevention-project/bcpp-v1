@@ -20,13 +20,12 @@ def subject_consent_on_post_save(sender, instance, **kwargs):
 def update_subject_referral_on_post_save(sender, instance, **kwargs):
     """Updates the subject referral if a model that is part of the referral data is changed."""
     if not kwargs.get('raw', False):
-        referal_models = ()
-        for _, val in SubjectReferralHelper.models.iteritems():
-            referal_models = referal_models + (val,)
-        if isinstance(instance, referal_models):
-            if 'subject_visit' in dir(instance):
-                try:
-                    subject_referral = SubjectReferral.objects.get(subject_visit=instance.subject_visit)
-                    subject_referral.save()
-                except SubjectReferral.DoesNotExist:
-                    pass
+        try:
+            subject_visit = instance.visit
+            subject_referral = SubjectReferral.objects.get(subject_visit=subject_visit)
+            if instance.__class__ in SubjectReferralHelper(instance).models.values():
+                subject_referral.save()
+        except AttributeError:
+            pass
+        except SubjectReferral.DoesNotExist:
+            pass
