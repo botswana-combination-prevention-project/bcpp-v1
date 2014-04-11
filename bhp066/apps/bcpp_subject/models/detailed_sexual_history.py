@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from edc.base.model.fields import OtherCharField
 from edc.choices.common import GENDER, POS_NEG_UNKNOWN
