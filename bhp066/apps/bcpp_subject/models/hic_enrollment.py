@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
@@ -14,29 +14,29 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class HicEnrollment (BaseScheduledVisitModel):
 
     hic_permission = models.CharField(
-        verbose_name="Is it okay for the project to visit you every year for the next three years for further questions and testing?",
+        verbose_name=_("Is it okay for the project to visit you every year for the next three years for further questions and testing?"),
         max_length=25,
         choices=YES_NO,
-        help_text='If \'No\', subject is not eligible.'
+        help_text=_('If \'No\', subject is not eligible.')
         )
 
     permanent_resident = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text='From Residency and Mobility. Eligible if Yes.'
+        help_text=_('From Residency and Mobility. Eligible if Yes.')
         )
 
     intend_residency = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text='From Residency and Mobility. Eligible if No.'
+        help_text=_('From Residency and Mobility. Eligible if No.')
         )
 
     hiv_status_today = models.CharField(
         max_length=50,
-        help_text="From Today's HIV Result. Eligible if Negative.",
+        help_text=_("From Today's HIV Result. Eligible if Negative."),
         )
 
     dob = models.DateField(
@@ -55,20 +55,20 @@ class HicEnrollment (BaseScheduledVisitModel):
         default=None,
         null=True,
         blank=True,
-        help_text='Is Participant a Household Member. Eligible if Yes.'
+        help_text=_('Is Participant a Household Member. Eligible if Yes.')
         )
 
     citizen_or_spouse = models.NullBooleanField(
         default=None,
         # editable=False,
-        help_text=("From Subject Consent. Is participant a citizen, or married to citizen with a valid marriage certificate?"),
+        help_text=_("From Subject Consent. Is participant a citizen, or married to citizen with a valid marriage certificate?"),
         )
 
     locator_information = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text=("From Subject Locator. Is the locator form filled and all necessary contact information collected?"),
+        help_text=_("From Subject Locator. Is the locator form filled and all necessary contact information collected?"),
         )
 
     consent_datetime = models.DateTimeField("Consent date and time",
@@ -76,7 +76,7 @@ class HicEnrollment (BaseScheduledVisitModel):
             datetime_not_before_study_start,
             datetime_not_future, ],
         # editable=False,
-        help_text=("From Subject Consent.")
+        help_text=_("From Subject Consent.")
         )
 
     history = AuditTrail()
