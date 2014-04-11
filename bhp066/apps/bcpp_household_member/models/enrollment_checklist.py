@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
+from django.utils.translation import ugettext_lazy as _
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
@@ -45,10 +46,10 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         )
 
     guardian = models.CharField(
-        verbose_name=("If minor, is there a guardian available? "),
+        verbose_name=_("If minor, is there a guardian available? "),
         max_length=10,
         choices=YES_NO_NA,
-        help_text=("If a minor age 16 and 17, ensure a guardian is available otherwise"
+        help_text=_("If a minor age 16 and 17, ensure a guardian is available otherwise"
                    " participant will not be enrolled."),
         )
 
@@ -61,10 +62,10 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         )
 
     has_identity = models.CharField(
-        verbose_name="[Interviewer] Has the subject presented a valid OMANG or other identity document?",
+        verbose_name=_("[Interviewer] Has the subject presented a valid OMANG or other identity document?"),
         max_length=10,
         choices=YES_NO,
-        help_text="Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO' participant will not be enrolled."
+        help_text=_("Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO' participant will not be enrolled.")
         )
 
     citizen = models.CharField(
@@ -75,13 +76,13 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         )
 
     legal_marriage = models.CharField(
-        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
+        verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
         max_length=3,
         choices=YES_NO_NA,
         null=True,
         blank=False,
         default='N/A',
-        help_text="If 'NO' participant will not be enrolled.",
+        help_text=_("If 'NO' participant will not be enrolled."),
         )
 
     marriage_certificate = models.CharField(
@@ -96,11 +97,11 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
 
     # same as study_resident in household member
     part_time_resident = models.CharField(
-        verbose_name=("In the past 12 months, have you typically spent 3 or"
+        verbose_name=_("In the past 12 months, have you typically spent 3 or"
                       " more nights per month in this community? "),
         max_length=10,
         choices=YES_NO,
-        help_text=("If participant has moved into the "
+        help_text=_("If participant has moved into the "
                   "community in the past 12 months, then "
                   "since moving in has the participant typically "
                   "spent more than 3 nights per month in this community. "
@@ -108,18 +109,18 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         )
 
     household_residency = models.CharField(
-        verbose_name='In the past 12 months, have you typically spent more nights on average in this household than in any other household in the same community?',
+        verbose_name=_('In the past 12 months, have you typically spent more nights on average in this household than in any other household in the same community?'),
         max_length=3,
         choices=YES_NO,
-        help_text="If 'NO' participant will not be enrolled.",
+        help_text=_("If 'NO' participant will not be enrolled."),
         )
 
     literacy = models.CharField(
-        verbose_name=("Is the participant LITERATE?, or if ILLITERATE, is there a"
+        verbose_name=_("Is the participant LITERATE?, or if ILLITERATE, is there a"
                       "  LITERATE witness available "),
         max_length=10,
         choices=YES_NO,
-        help_text=("If participate is illiterate, confirm there is a literate"
+        help_text=_("If participate is illiterate, confirm there is a literate"
                    "witness available otherwise participant will not be enrolled."),
         )
 
