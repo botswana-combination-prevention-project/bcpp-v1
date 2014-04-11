@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
@@ -14,7 +15,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
 from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory
+from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.tests.factories import SurveyFactory
@@ -62,31 +63,44 @@ class RuleGroupTests(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
 
-        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, gender='F')
-        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, gender='M')
-        self.household_member_female.eligible_member = True
-        self.household_member_male.eligible_member = True
-        self.household_member_female.eligible_subject = True
-        self.household_member_male.eligible_subject = True
+        male_dob = date.today() - relativedelta(years=25)
+        male_age_in_years = 25
+        male_first_name = 'ERIK'
+        male_initials = "EW"
+        female_dob = date.today() - relativedelta(years=35)
+        female_age_in_years = 35
+        female_first_name = 'ERIKA'
+        female_initials = "EW"
+
+        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, gender='F', age_in_years=female_age_in_years, first_name=female_first_name, initials=female_initials)
+        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, gender='M', age_in_years=male_age_in_years, first_name=male_first_name, initials=male_initials)
+        self.household_member_female.member_status = 'BHS_SCREEN'
+        self.household_member_male.member_status = 'BHS_SCREEN'
         self.household_member_female.save()
         self.household_member_male.save()
-
         EnrollmentChecklistFactory(
             household_member=self.household_member_female,
-            guardian='No',
+            gender='F',
             citizen='Yes',
-            **self.household_member_female.enrollment_options)
+            dob=female_dob,
+            guardian='No',
+            initials=self.household_member_female.initials,
+            part_time_resident='Yes')
         EnrollmentChecklistFactory(
             household_member=self.household_member_male,
-            guardian='No',
+            gender='M',
             citizen='Yes',
-            **self.household_member_male.enrollment_options)
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F')
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M')
+            dob=male_dob,
+            guardian='No',
+            initials=self.household_member_male.initials,
+            part_time_resident='Yes')
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
 
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
@@ -557,21 +571,21 @@ class RuleGroupTests(TestCase):
 
         hiv_result_options = {}
         hiv_result_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivresult',
-            appointment=self.subject_visit_male.appointment)
+            {'entry__app_label': 'bcpp_subject',
+            'entry__model_name': 'hivresult',
+            'appointment': self.subject_visit_male.appointment})
 
         pima_options = {}
         pima_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='pima',
-            appointment=self.subject_visit_male.appointment)
+            {'entry__app_label': 'bcpp_subject',
+            'entry__model_name': 'pima',
+            'appointment': self.subject_visit_male.appointment})
 
         hiv_care_adherence_options = {}
         hiv_care_adherence_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivcareadherence',
-            appointment=self.subject_visit_male.appointment)
+            {'entry__app_label': 'bcpp_subject',
+            'entry__model_name': 'hivcareadherence',
+            'appointment': self.subject_visit_male.appointment})
 
         # add HivCareAdherence, out of order ...
         hiv_care_adherence = HivCareAdherence.objects.create(
