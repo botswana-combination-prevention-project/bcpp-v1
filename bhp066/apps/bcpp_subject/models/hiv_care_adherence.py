@@ -155,26 +155,6 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     history = AuditTrail()
 
-    @property
-    def defaulter(self):
-        """Returns true if subject is an ARV defaulter."""
-        if (self.arv_evidence == 'Yes' and self.on_arv == 'No') or (self.ever_taken_arv == 'Yes' and self.on_arv == 'No'):
-            return True
-        return None
-
-    @property
-    def on_art(self):
-        if self.on_arv == 'Yes':
-            return True
-        elif self.on_arv == 'No':
-            if self.arv_evidence == 'Yes':
-                return True  # defaulter
-            elif self.ever_taken_arv == 'Yes':
-                return True  # defaulter
-            return False
-        else:
-            return None
-
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "HIV care & Adherence"
