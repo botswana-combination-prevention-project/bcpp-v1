@@ -7,6 +7,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
+from ..exceptions import AlreadyReplaced
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -84,6 +85,9 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def save(self, *args, **kwargs):
+        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_log.household_structure.household.household_identifier)
+        if household.replaced_by:
+            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
