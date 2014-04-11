@@ -7,17 +7,20 @@ from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
 from edc.choices.common import YES_NO
 from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
+from edc.export.managers import ExportHistoryManager
+from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
 
 from apps.bcpp_household.models  import Plot
 
 from ..managers import ScheduledModelManager
 from ..models import SubjectVisit
+
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .hic_enrollment import HicEnrollment
 
 
-class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
@@ -80,11 +83,13 @@ class SubjectLocator(SubjectOffStudyMixin, BaseLocator):
         null=True,
         )
 
+    export_history = ExportHistoryManager()
+
+    entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
+
     history = AuditTrail()
 
     objects = ScheduledModelManager()
-
-    entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')

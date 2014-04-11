@@ -1,8 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
+
 from apps.bcpp.choices import WHEREHIVTEST_CHOICE, WHYHIVTEST_CHOICE
+
 from .hiv_testing_supplemental import HivTestingSupplemental
 
 

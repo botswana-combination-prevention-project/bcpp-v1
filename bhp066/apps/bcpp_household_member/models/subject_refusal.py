@@ -8,6 +8,8 @@ from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
 from apps.bcpp_household_member.constants import REFUSED
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from .base_member_status_model import BaseMemberStatusModel
 
 
@@ -50,6 +52,8 @@ class SubjectRefusal (BaseMemberStatusModel):
         return self.report_datetime
 
     def save(self, *args, **kwargs):
+        if self.household_member.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_member.member_status != REFUSED:
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
         if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
@@ -62,6 +66,6 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     class Meta:
         app_label = "bcpp_household_member"
-        verbose_name = "Refusal Log"
-        verbose_name_plural = "Refusal Log"
+        verbose_name = "Subject Refusal"
+        verbose_name_plural = "Subject Refusal"
         ordering = ['household_member']

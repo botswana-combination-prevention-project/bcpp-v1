@@ -1,11 +1,12 @@
 from django.db import models
 
-from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE, COMMUNITIES
+from apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
 

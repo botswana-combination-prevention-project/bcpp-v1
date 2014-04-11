@@ -76,10 +76,10 @@ class Migration(SchemaMigration):
         db.create_unique(m2m_table_name, ['householdassessment_id', 'residentmostlikely_id'])
 
 
-        # Changing field 'HouseholdEnumerationRefusal.comment'
+        # Changing field 'HouseholdRefusal.comment'
         db.alter_column(u'bcpp_household_householdenumerationrefusal', 'comment', self.gf('django.db.models.fields.CharField')(max_length=250, null=True))
 
-        # Changing field 'HouseholdEnumerationRefusalAudit.comment'
+        # Changing field 'HouseholdRefusalAudit.comment'
         db.alter_column(u'bcpp_household_householdenumerationrefusal_audit', 'comment', self.gf('django.db.models.fields.CharField')(max_length=250, null=True))
 
     def backwards(self, orm):
@@ -151,10 +151,10 @@ class Migration(SchemaMigration):
         db.delete_table(db.shorten_name(u'bcpp_household_householdassessment_most_likely'))
 
 
-        # Changing field 'HouseholdEnumerationRefusal.comment'
+        # Changing field 'HouseholdRefusal.comment'
         db.alter_column(u'bcpp_household_householdenumerationrefusal', 'comment', self.gf('django.db.models.fields.CharField')(default=0, max_length=250))
 
-        # Changing field 'HouseholdEnumerationRefusalAudit.comment'
+        # Changing field 'HouseholdRefusalAudit.comment'
         db.alter_column(u'bcpp_household_householdenumerationrefusal_audit', 'comment', self.gf('django.db.models.fields.CharField')(default=0, max_length=250))
 
     models = {
@@ -312,7 +312,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdenumerationrefusal': {
-            'Meta': {'ordering': "['household']", 'object_name': 'HouseholdEnumerationRefusal'},
+            'Meta': {'ordering': "['household']", 'object_name': 'HouseholdRefusal'},
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'ckgathi'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -328,7 +328,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdenumerationrefusalaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdEnumerationRefusalAudit', 'db_table': "u'bcpp_household_householdenumerationrefusal_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdRefusalAudit', 'db_table': "u'bcpp_household_householdenumerationrefusal_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),

@@ -92,6 +92,8 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
         plot_identifier = self.get_container_register_instance().container_identifier
         logger.info("Dispatching data for plot {0}".format(plot_identifier))
         Plot = get_model('bcpp_household', 'plot')
+        PlotLog = get_model('bcpp_household', 'plotlog')
+        PlotLogEntry = get_model('bcpp_household', 'plotlogentry')
         Household = get_model('bcpp_household', 'household')
         HouseholdLog = get_model('bcpp_household', 'householdlog')
         HouseholdLogEntry = get_model('bcpp_household', 'householdlogentry')
@@ -103,6 +105,12 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
 #         self.dispatch_registered_subjects()
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
+            if PlotLog.objects.filter(plot=plot).exists():
+                plot_log = PlotLog.objects.using(self.get_using_source()).get(plot=plot)
+                plot_log_entries = PlotLogEntry.objects.using(self.get_using_source()).filter(plot_log=plot_log)
+                self.dispatch_user_items_as_json(plot_log, plot, ['plot_id'])
+                if plot_log_entries:
+                    self.dispatch_user_items_as_json(plot_log_entries, plot, ['plot_log_id, plot_id'])
             #self.dispatch_user_container_as_json(plot)
             for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])

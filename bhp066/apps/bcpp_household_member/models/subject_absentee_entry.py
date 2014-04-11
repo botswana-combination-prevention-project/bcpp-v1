@@ -2,6 +2,8 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..choices import ABSENTEE_REASON
 from ..managers import SubjectAbsenteeEntryManager
 
@@ -24,12 +26,18 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
     objects = SubjectAbsenteeEntryManager()
 
     def save(self, *args, **kwargs):
+        if self.subject_absentee.household_member.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if not self.id:
             household_member = self.subject_absentee.household_member
             household_member.visit_attempts += 1
+            household_member.absent = False
+            if household_member.visit_attempts >= 3:
+                household_member.absent = True
             household_member.save()
         super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
 
+    @property
     def inline_parent(self):
         return self.subject_absentee
 
@@ -39,7 +47,6 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
 
     class Meta:
         app_label = 'bcpp_household_member'
-#         db_table = 'bcpp_subject_subjectabsenteeentry'
         verbose_name = "Subject Absentee Entry"
         verbose_name_plural = "Subject Absentee Entries"
         unique_together = ('subject_absentee', 'report_datetime')
