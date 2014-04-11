@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_before_study_start, date_not_future
@@ -23,12 +24,12 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
     reason_other = OtherCharField()
 
     next_appt_datetime = models.DateTimeField(
-        verbose_name="Follow-up appointment",
-        help_text="The date and time to meet with the subject"
+        verbose_name=_("Follow-up appointment"),
+        help_text=_("The date and time to meet with the subject")
         )
 
     next_appt_datetime_source = models.CharField(
-        verbose_name="Appointment date suggested by?",
+        verbose_name=_("Appointment date suggested by?"),
         max_length=25,
         choices=NEXT_APPOINTMENT_SOURCE,
         help_text=''
@@ -38,7 +39,7 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         #editable=False,
-        help_text=('Information that can be used to contact someone, '
+        help_text=_('Information that can be used to contact someone, '
                    'preferrably the subject, to confirm the appointment'),
         )
 
