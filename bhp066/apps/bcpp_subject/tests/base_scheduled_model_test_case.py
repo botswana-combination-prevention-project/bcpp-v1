@@ -73,6 +73,8 @@ class BaseScheduledModelTestCase(TestCase):
             part_time_resident='Yes',
             citizen='Yes')
 
+        self.site_code = StudySite.objects.get(site_code='14')
+
         subject_consent_female = SubjectConsentFactory(
             household_member=self.household_member_female,
             gender='F',
@@ -81,7 +83,7 @@ class BaseScheduledModelTestCase(TestCase):
             last_name='W',
             citizen='Yes',
             initials=enrollment_female.initials,
-            study_site=StudySite.objects.get(site_code='14'))
+            study_site=self.site_code)
         subject_consent_male = SubjectConsentFactory(
             household_member=self.household_member_male,
             gender='M',
@@ -90,7 +92,7 @@ class BaseScheduledModelTestCase(TestCase):
             last_name='W',
             citizen='Yes',
             initials=enrollment_male.initials,
-            study_site=StudySite.objects.get(site_code='14'))
+            study_site=self.site_code)
 
         #FIXME: need this to be fixed, not getting gender right!
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
@@ -99,4 +101,3 @@ class BaseScheduledModelTestCase(TestCase):
         self.subject_visit_female = SubjectVisitFactory(appointment=appointment_female, household_member=self.household_member_female)
         appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male)
         self.subject_visit_male = SubjectVisitFactory(appointment=appointment_male, household_member=self.household_member_male)
-
