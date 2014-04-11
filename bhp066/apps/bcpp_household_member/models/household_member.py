@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+from django.utils.translation import ugettext_lazy as _
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
@@ -39,7 +40,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         null=True,  # will always be set in post_save()m
         default=None,
         editable=False,
-        help_text=('Identifier to track member between surveys, '
+        help_text=_('Identifier to track member between surveys, '
                    'is the id of the member\'s first appearance in the table.'))
 
     first_name = EncryptedFirstnameField(
@@ -62,7 +63,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         db_index=True)
 
     age_in_years = models.IntegerField(
-        verbose_name='Age in years',
+        verbose_name=_('Age in years'),
         help_text="If age is unknown, enter 0. If member is less than one year old, enter 1",
         validators=[MinValueValidator(0), MaxValueValidator(120)],
         db_index=True,
@@ -70,20 +71,20 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         blank=False)
 
     present_today = models.CharField(
-        verbose_name='Is the member present today?',
+        verbose_name=_('Is the member present today?'),
         max_length=3,
         choices=YES_NO,
         db_index=True)
 
     relation = models.CharField(
-        verbose_name="Relation to head of household",
+        verbose_name=_("Relation to head of household"),
         max_length=35,
         choices=RELATIONS,
         null=True,
         help_text="Relation to head of household")
 
     study_resident = models.CharField(
-        verbose_name=("In the past 12 months, have you typically spent 3 or "
+        verbose_name=_("In the past 12 months, have you typically spent 3 or "
                       "more nights per month in this community? "),
         max_length=17,
         choices=YES_NO_DWTA,
