@@ -41,8 +41,8 @@ else:
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    KEY_PATH = '/Volumes/keys'
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    #KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -137,7 +137,7 @@ else:
             'HOST': '',
             'PORT': '',
         },
-        'bcpp014-bhp066': {
+        'bcpp026-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -177,17 +177,6 @@ TIME_ZONE = 'Africa/Gaborone'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 #langauage setting
-ugettext = lambda s: s
-LANGUAGES = (
-    ('tn', 'Setswana'),
-    ('en', 'English'),
-)
-
-LOCALE_PATHS = ('locale', )
-
-LANGUAGE_CODE = 'en'
-
-SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -196,6 +185,20 @@ USE_I18N = True
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
+
+ugettext = lambda s: s
+LANGUAGES = (
+    ('tn', 'Setswana'),
+    ('en', 'English'),
+)
+
+LOCALE_PATHS = (
+            PROJECT_DIR.child('locale'),
+        )#'locale', )
+
+LANGUAGE_CODE = 'tn'
+
+SITE_ID = 1
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -487,7 +490,7 @@ if str(DEVICE_ID) == '98':
 else:
     PROJECT_TITLE = 'Botswana Combination Prevention Project'
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066', 'bcpp003-bhp066']
+MIDDLE_MAN_LIST = ['resourcemac-bhp066', 'bcpp016-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True

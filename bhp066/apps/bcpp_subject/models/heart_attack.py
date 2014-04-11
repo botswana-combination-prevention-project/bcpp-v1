@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
@@ -14,13 +15,13 @@ class HeartAttack (BaseScheduledVisitModel):
     """CS002 - Medical Diagonoses - Sub"""
 
     date_heart_attack = models.DateField(
-        verbose_name="Date of the heart disease or stroke diagnosis:",
+        verbose_name=_("Date of the heart disease or stroke diagnosis:"),
         validators=[date_not_future],
         help_text="",
         )
 
     dx_heart_attack = models.ManyToManyField(HeartDisease,
-        verbose_name="[Interviewer:] What is the heart disease or stroke diagnosis as recorded?",
+        verbose_name=_("[Interviewer:] What is the heart disease or stroke diagnosis as recorded?"),
         help_text=("(tick all that apply)"),
         )
     dx_heart_attack_other = OtherCharField()
