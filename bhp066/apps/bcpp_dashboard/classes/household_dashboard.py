@@ -249,7 +249,7 @@ class HouseholdDashboard(Dashboard):
 
     def allow_edit_members(self):
         allow_edit_members = False
-        if not RepresentativeEligibility.objects.filter(household_structure=self.household_structure()).exists():
+        if not RepresentativeEligibility.objects.filter(household_structure=self.household_structure).exists():
             allow_edit_members = False
         elif hasattr(settings, 'ALLOW_CHANGES_OTHER_SURVEYS') and settings.ALLOW_CHANGES_OTHER_SURVEYS:
             allow_edit_members = True
