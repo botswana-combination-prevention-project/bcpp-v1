@@ -9,6 +9,7 @@ from apps.bcpp_survey.models import Survey
 
 from ..helpers import ReplacementHelper
 from ..managers import HouseholdStructureManager
+from ..exceptions import AlreadyReplaced
 
 from .household import Household
 from .plot import Plot
@@ -59,6 +60,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return unicode(self.household)
 
     def save(self, *args, **kwargs):
+        if self.household.replaced_by:
+            raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
         if self.enrolled and not self.household.enrolled:
             self.household.enrolled = True
             self.household.save()

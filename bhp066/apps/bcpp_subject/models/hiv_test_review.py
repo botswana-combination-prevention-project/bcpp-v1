@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
@@ -24,7 +24,7 @@ class HivTestReview (BaseScheduledVisitModel):
         verbose_name=_("What was the recorded HIV test result?"),
         max_length=30,
         choices=RECORDEDHIVRESULT_CHOICE,
-        help_text=("If the participant and written record differ, the result"
+        help_text=_("If the participant and written record differ, the result"
                    " from the written record should be recorded."),
         )
 
