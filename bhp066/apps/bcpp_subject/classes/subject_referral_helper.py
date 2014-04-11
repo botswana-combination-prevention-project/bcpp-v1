@@ -1,4 +1,3 @@
-from django.core.exceptions import FieldError
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
 
