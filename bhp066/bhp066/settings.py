@@ -40,10 +40,8 @@ else:
     #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
-    #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
     #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    #KEY_PATH = '/Volumes/keys'
-    pass
+    KEY_PATH = '/Volumes/keys'
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -67,14 +65,6 @@ if 'test' in sys.argv:
                 'HOST': '',
                 'PORT': '',
             },
-#             'survey': {
-#                 'ENGINE': 'django.db.backends.sqlite3',
-#                 'NAME': 'survey',
-#                 'USER': 'root',
-#                 'PASSWORD': 'cc3721b',
-#                 'HOST': '',
-#                 'PORT': '',
-#             },
             'dispatch_destination': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': 'producer',
@@ -116,7 +106,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_r150',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -133,28 +123,6 @@ else:
             'HOST': '',
             'PORT': '',
         },
-        'bcpp026-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.79',
-            'PORT': '',
-        },
-#         'bcpp020-bhp066': {
-#             'ENGINE': 'django.db.backends.mysql',
-#             'OPTIONS': {
-#                 'init_command': 'SET storage_engine=INNODB',
-#             },
-#             'NAME': 'bhp066',
-#             'USER': 'root',
-#             'PASSWORD': 'cc3721b',
-#             'HOST': '192.168.1.114',
-#             'PORT': '',
-#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -398,10 +366,6 @@ INSTALLED_APPS = (
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
-#     'apps.bcpp_clinic_lab',
-#     'apps.bcpp_clinic',
-#     'apps.clinic',
-#     'apps.bcpp_clinic_dashboard',
     'tastypie',
     'edc.audit',
 )
@@ -446,7 +410,7 @@ DAJAXICE_MEDIA_PREFIX = "dajaxice"
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
 SUBJECT_TYPES = ['subject']
-MAX_SUBJECTS = {'subject': 3000}
+MAX_SUBJECTS = {'subject': 9999}
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
@@ -457,6 +421,7 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
+SITE_CODE = '14'
 CURRENT_COMMUNITY = 'otse'
 CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
@@ -480,18 +445,15 @@ else:
 # edc.subject.consent
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
-SITE_CODE = '14'
 #  edc.device.device
 DEVICE_ID = '99'
 if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
 else:
     PROJECT_TITLE = 'Botswana Combination Prevention Project'
+
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
-#Stripped down EDC for purposes of CLO's work.
-#DENIED_SECTIONS_FOR_GROUP = {'clo': ('household', 'subject', 'member', 'audit_trail', 'appointments', 'reports')}
-#LOGGED_IN_USER_GROUP = 'clo'
