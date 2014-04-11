@@ -210,8 +210,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             'Thank You,\n\n'
                             'BHP Data Management Team\n'
                             ),
-            'recipient_list': ['ew2789@gmail.com', 'tsetsiba@bhp.org.bw', 'kpowis@partners.org', 'mpretori@hsph.harvard.edu'],
-            'cc_list': ['ew2789@gmail.com'],
+            'recipient_list': ['ew2789@gmail.com', 'bcpp_referral_monitoring@bhp.org.bw'],
+            'cc_list': [],
             },
         'locator_file_to_cdc': {
             'name': 'locator_file_to_cdc',
@@ -230,8 +230,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             'Thank You,\n\n'
                             'BHP Data Management Team\n'
                             ),
-            'recipient_list': ['ew2789@gmail.com', 'tsetsiba@bhp.org.bw', 'kpowis@partners.org', 'mpretori@hsph.harvard.edu'],
-            'cc_list': ['ew2789@gmail.com'],
+            'recipient_list': ['ew2789@gmail.com', 'bcpp_referral_monitoring@bhp.org.bw'],
+            'cc_list': [],
             }
         }
 

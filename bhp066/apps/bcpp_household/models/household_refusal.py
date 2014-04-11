@@ -18,8 +18,8 @@ from .plot import Plot
 HOUSEHOLD_REFUSAL = (
     ('not_interested', 'Not Interested'),
     ('does_not_have_time', 'Does not have time'),
-    ('dont_want_to_answer', 'Don\'t want to answer'),
-    ('other', 'Other'),
+    ('DWTA', 'Don\'t want to answer'),
+    ('OTHER', 'Other'),
 )
 
 
