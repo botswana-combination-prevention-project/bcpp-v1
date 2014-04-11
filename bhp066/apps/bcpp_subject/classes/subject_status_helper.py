@@ -59,13 +59,13 @@ class SubjectStatusHelper(object):
                 self.todays_hiv_result or
                 (self.last_hiv_result if self.last_hiv_result == 'POS' else None) or
                 (self.documented_verbal_hiv_result if self.documented_verbal_hiv_result == 'POS' else None) or
-                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and ((self.direct_hiv_documentation and self.recorded_hiv_result == 'POS') or self.indirect_hiv_documentation)) else None)
+                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)) else None)
                 )
         return self._hiv_result
 
     @property
     def hiv_result_datetime(self):
-        """Returns the oldest hiv result datetime based on last then today."""
+        """Returns the oldest hiv result datetime if POS, based on last then today, moost recent if NEG."""
         if not self._hiv_result_datetime:
             last_hiv_result_datetime = None
             if self.last_hiv_result_date:
@@ -83,7 +83,7 @@ class SubjectStatusHelper(object):
             return False
         elif (self.todays_hiv_result == 'POS' and self.verbal_hiv_result == 'POS' and not self.indirect_hiv_documentation):
             return False
-        elif (self.verbal_hiv_result == 'POS' and (self.direct_hiv_documentation or self.indirect_hiv_documentation)):
+        elif (self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
             return False
         elif (self.recorded_hiv_result == 'POS'):
             return False
@@ -92,20 +92,6 @@ class SubjectStatusHelper(object):
                 return True
             else:
                 return None  # may have no result or just an undocumented verbal_hiv_result, which is not enough information.
-
-    @property
-    def should_be_tested(self):
-        #Returns true if there is enough evidence that the subject is HIV+ with supporting documentation.
-        #result = self.hiv_result
-        return self.hiv_result != 'POS'
-
-    @property
-    def cd4_required(self):
-        #Anybody that does not should not be tested i.e HIV+ with enough evidence, then CD4/PIMA should be reuired.
-        #Except when they are already on ART with evidence
-        if self.on_art and self.arv_documentation:
-            return False
-        return not self.should_be_tested
 
     @property
     def arv_documentation(self):
@@ -145,16 +131,28 @@ class SubjectStatusHelper(object):
 
     @property
     def defaulter(self):
+        """Returns true if subject is an ARV defaulter."""
         if not self._defaulter:
             try:
-                self._defaulter = self.hiv_care_adherence_instance.defaulter
+                if self.hiv_care_adherence_instance.on_arv == 'No' and self.hiv_care_adherence_instance.arv_evidence == 'Yes':
+                    self._defaulter = True
+                elif self.hiv_care_adherence_instance.on_arv == 'No' and self.hiv_care_adherence_instance.ever_taken_arv == 'Yes':
+                    self._defaulter = True
+                else:
+                    self._defaulter = False
             except AttributeError:
                 self._defaulter = None
         return self._defaulter
 
     @property
     def direct_hiv_documentation(self):
+        """Returns True if documentation of an HIV test was seen."""
         return True if (self.recorded_hiv_result in ['POS', 'NEG']) else False
+
+    @property
+    def direct_hiv_pos_documentation(self):
+        """Returns True if documentation of a POS HIV test was seen."""
+        return True if (self.recorded_hiv_result == 'POS') else False
 
     @property
     def indirect_hiv_documentation(self):
@@ -186,9 +184,18 @@ class SubjectStatusHelper(object):
         self._on_art = None
         if not self._on_art:
             try:
-                self._on_art = self.hiv_care_adherence_instance.on_art  # yes, on_art, not on_arv
+                if self.hiv_care_adherence_instance.on_arv == 'Yes':
+                    self._on_art = True
+                elif self.defaulter:
+                    self._on_art = True
+#                 elif self.hiv_care_adherence_instance.on_arv == 'No' and self.hiv_care_adherence_instance.arv_evidence == 'Yes':
+#                     self._on_art = True  # defaulter
+#                 elif self.hiv_care_adherence_instance.on_arv == 'No' and self.hiv_care_adherence_instance.ever_taken_arv == 'Yes':
+#                         self._on_art = True  # defaulter
+                else:
+                    self._on_art = False
             except AttributeError:
-                self._on_art = False
+                self._on_art = None
         return self._on_art
 
     @property
