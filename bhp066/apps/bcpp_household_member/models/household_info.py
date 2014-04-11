@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import get_model
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
@@ -24,12 +24,12 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     household_structure = models.OneToOneField(HouseholdStructure)
 
     household_member = models.OneToOneField(HouseholdMember,
-        help_text=('Important: The household member must verbally consent before completing this questionnaire.'))
+        help_text=_('Important: The household member must verbally consent before completing this questionnaire.'))
 
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False)
 
     report_datetime = models.DateTimeField(
-        verbose_name="Report Date/Time",
+        verbose_name=_("Report Date/Time"),
         validators=[datetime_not_before_study_start, datetime_not_future],
         )
 
