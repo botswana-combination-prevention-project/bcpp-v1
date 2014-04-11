@@ -1,16 +1,15 @@
-from django.db.models.signals import pre_save, post_save, pre_delete
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
-
-from ..classes import HouseholdMemberHelper
 
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 from .household_member import HouseholdMember
 from .subject_refusal import SubjectRefusal
 from .subject_refusal_history import SubjectRefusalHistory
+from .enrollment_checklist import EnrollmentChecklist
 
 
-@receiver(pre_delete, weak=False, dispatch_uid="subject_refusal_on_pre_delete")
-def subject_refusal_on_pre_delete(sender, instance, **kwargs):
+@receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
+def subject_refusal_on_post_delete(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, SubjectRefusal):
             # update the history model
@@ -20,6 +19,20 @@ def subject_refusal_on_pre_delete(sender, instance, **kwargs):
                        'reason': instance.reason,
                        'reason_other': instance.reason_other}
             SubjectRefusalHistory.objects.create(**options)
+            household_member = instance.household_member
+            household_member.refused = False
+            household_member.save()
+
+
+@receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
+def enrollment_checklist_on_post_delete(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, EnrollmentChecklist):
+            #re-save the member to recalc the member_status
+            household_member = instance.household_member
+            household_member.enrollment_checklist_completed = False
+            household_member.eligible_subject = False
+            household_member.save()
 
 
 @receiver(pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
@@ -33,19 +46,7 @@ def household_member_on_pre_save(sender, instance, **kwargs):
 def household_member_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdMember):
-            instance.update_registered_subject_on_post_save(**kwargs)  # update HM must not override consent values, if consent exists
-            instance.update_household_member_count_on_post_save(sender, using)
-            if created:
-                # calculate member status
-                household_member_helper = HouseholdMemberHelper()
-                household_member_helper.household_member = instance
-                instance.member_status = household_member_helper.calculate_new_member_status()
-                instance.save()
-                # has members so confirm household enumerated is True
-                if not instance.household_structure.household.enumerated:
-                    instance.household_structure.household.enumerated = True
-                    instance.household_structure.household.save()
-
+            instance.update_registered_subject_on_post_save(**kwargs)
 
 
 @receiver(post_save, weak=False, dispatch_uid='base_household_member_consent_on_post_save')

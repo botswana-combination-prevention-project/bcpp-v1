@@ -6,42 +6,6 @@ from ..models import HouseholdMember
 from ..forms import HouseholdMemberForm
 
 
-class VisitAtempts(admin.SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
-    title = 'Current visit attempts'
-
-    # Parameter for the filter that will be used in the URL query.
-    parameter_name = 'visit_attempts'
-
-    def lookups(self, request, model_admin):
-        """
-        Returns a list of tuples. The first element in each
-        tuple is the coded value for the option that will
-        appear in the URL query. The second element is the
-        human-readable name for the option that will appear
-        in the right sidebar.
-        """
-        values = ['0', '1', '2', '3']
-        visit_attempts_tuples = []
-        visit_attempts_tuples.append((values[0], values[0]))
-        visit_attempts_tuples.append((values[1], values[1]))
-        visit_attempts_tuples.append((values[2], values[2]))
-        visit_attempts_tuples.append((values[3], values[3]))
-        return visit_attempts_tuples
-
-    def queryset(self, request, queryset):
-        """
-        Returns the filtered queryset based on the value
-        provided in the query string and retrievable via
-        `self.value()`.
-        """
-        if self.value():
-            return queryset.filter(member_status='ABSENT', visit_attempts=self.value())
-        else:
-            return queryset
-
-
 class HouseholdMemberInline(BaseTabularInline):
     model = HouseholdMember
     extra = 3
@@ -76,11 +40,16 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'to_locator',
                     'hiv_history',
                     'relation',
+                    'visit_attempts',
+                    'member_status',
                     'eligible_member',
                     'eligible_subject',
+                    'enrollment_checklist_completed',
+                    'enrollment_loss_completed',
+                    'reported',
+                    'refused',
                     'is_consented',
-                    'member_status',
-                    'visit_attempts',
+                    'eligible_htc',
                     'created',
                     'hostname_created')
 
@@ -94,8 +63,9 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'relation', 'id']
 
     list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status',
-                   'eligible_member', 'eligible_subject', 'target', 'hiv_history', 'household_structure__household__community',
-                    'modified', 'hostname_created', 'user_created', VisitAtempts)
+                   'eligible_member', 'eligible_subject', 'enrollment_checklist_completed', 'enrollment_loss_completed', 'reported',
+                   'refused', 'is_consented', 'eligible_htc', 'target', 'hiv_history', 'household_structure__household__community',
+                   'modified', 'hostname_created', 'user_created', 'visit_attempts')
 
     list_per_page = 25
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)

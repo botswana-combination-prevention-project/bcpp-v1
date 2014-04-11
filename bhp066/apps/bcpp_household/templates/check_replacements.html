@@ -1,0 +1,28 @@
+{% extends "section.html" %}
+{% load i18n %}
+{% load admin_urls %}
+{% load url from future %}
+{% block extrahead %}
+{{ block.super }} 
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/map.css" />
+{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url "section_index_url"  %}">Home</a> &rsaquo; <a href="{% url "section_url" 'administration' %}">Administration</a> > Data replacement</div>
+{% endblock %}
+
+{% block content%}
+	{% if replacebles %}
+		<table>
+		<thead>
+			<th>Plot/Household to replace</th>
+		</thead>
+		{% for item in replacebles %}
+			<tr><td>{{ item }}</td></tr>
+		{% endfor %}
+		<tr><td colspan="2"><a href="{% url 'replace_household_plot_url' %}/?producer_name={{ producer_name }}"><b>Replace household/plots</b></a> </td></tr>
+		<tr><td colspan="2">Total replacements: {{ replacement_count }}</td></tr>
+		</table>
+	{% else %}
+		{{ message }}
+	{%endif%}
+{% endblock %}

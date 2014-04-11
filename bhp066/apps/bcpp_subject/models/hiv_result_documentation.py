@@ -6,13 +6,15 @@ from edc.base.model.validators import date_not_future
 from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 
 from ..choices import HIV_DOC_TYPE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivResultDocumentation (BaseScheduledVisitModel):
 
-    """CS002 - for usage only and if only patient has other result for HIV"""
+    """"""
 
+    # base on question from hiv test history
     result_date = models.DateField(
         verbose_name=("What is the recorded date of this previous HIV test (or of the document that provides supporting evidence of HIV infection)?"),
         validators=[date_not_future],
@@ -22,8 +24,10 @@ class HivResultDocumentation (BaseScheduledVisitModel):
     result_recorded = models.CharField(
         verbose_name=("What is the recorded HIV status indicated by this additional document?"),
         max_length=30,
-        choices=RECORDEDHIVRESULT_CHOICE,
-        help_text="",
+        choices=RECORDEDHIVRESULT_CHOICE,  # this is always POSITIVE!!
+        default='POS',
+        help_text="value should always be POS as the rule group only shows this form if verbal_hiv_result is POS and have indirect documentation.",
+        editable=False,
         )
 
     result_doc_type = models.CharField(

@@ -1,14 +1,16 @@
 from django.db import models
 from django.db.models import get_model
 from django.utils.translation import ugettext as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp_list.models import ElectricalAppliances, TransportMode
 from apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
@@ -147,8 +149,20 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         self.registered_subject = self.household_member.registered_subject
+        self.verified_household_head(self.household_member)
         super(HouseholdInfo, self).save(*args, **kwargs)
+
+    def verified_household_head(self, household_member, exception_cls=None):
+        error_msg = None
+        exception_cls = exception_cls or ValidationError
+        if not household_member:
+            raise exception_cls('No Household Member selected.')
+        if not household_member.eligible_hoh:
+            raise exception_cls('Household Member is not eligible Head Of Household. Fill head of household eligibility first.')
+        return error_msg
 
     class Meta:
         app_label = 'bcpp_household_member'

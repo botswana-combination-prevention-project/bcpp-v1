@@ -12,7 +12,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
 
     form = EnrollmentChecklistForm
 
-    instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject. After entering the required items, click SAVE. THE DATA WILL BE EVALUATED BUT NOT SAVED.']
+    instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject. After entering the required items, click SAVE.']
 
     fields = (
         'household_member',
@@ -24,6 +24,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "legal_marriage",
         "marriage_certificate",
         "part_time_resident",
+        "household_residency",
         "literacy",
         "guardian",
         )
@@ -37,6 +38,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "legal_marriage": admin.VERTICAL,
         "marriage_certificate": admin.VERTICAL,
         "part_time_resident": admin.VERTICAL,
+        "household_residency": admin.VERTICAL,
         "literacy": admin.VERTICAL,
         "guardian": admin.VERTICAL,
         }

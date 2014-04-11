@@ -5,6 +5,8 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
 
@@ -13,7 +15,7 @@ from .plot import Plot
 
 class Household(BaseDispatchSyncUuidModel):
 
-    plot = models.ForeignKey(Plot, null=True)  # TODO: field should not be nullable.
+    plot = models.ForeignKey(Plot, null=True)
 
     household_identifier = models.CharField(
         verbose_name='Household Identifier',
@@ -120,13 +122,14 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    #Indicates that a household has been replaced if its part of twenty percent.
-    #For five percent indicates that a household has been used for replacement.
-    replacement =  models.CharField(
+    replaced_by = models.CharField(
         max_length=25,
-        blank=True,
+        null=True,
+        verbose_name='Identifier',
+
+        help_text=u'The identifier of the plot that this household is replaced by',
+
         editable=False,
-        db_index=True,
         )
 
     comment = EncryptedTextField(
@@ -149,24 +152,10 @@ class Household(BaseDispatchSyncUuidModel):
         default='unconfirmed',
         editable=False)
 
-    # see subject_consent save method
+    # updated by subject_consent save method
     enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
 
     complete = models.BooleanField(default=False, editable=False, help_text='all BHS activity complete')
-
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to true if household has been enumerated')
-
-    enumeration_attempts = models.IntegerField(
-        default=0,
-        editable=False,
-        help_text='Number of attempts to enumerate a plot to determine it\'s status.'
-        )
-
-    household_status = models.CharField(
-        verbose_name='Household Status',
-        max_length=50,
-        null=True,
-        )
 
     objects = HouseholdManager()
 
@@ -181,7 +170,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         return (self.household_identifier,)
-    natural_key.dependencies = ['bcpp_household.plot', ]
+    natural_key.dependencies = ['bcpp_household.household', ]
 
     def post_save_update_identifier(self, instance, created):
         """Updates the identifier field if this is a new instance."""
@@ -203,11 +192,17 @@ class Household(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household_identifier
 
+    def bypass_for_edit_dispatched_as_item(self):
+        return True
+
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
+
+    def is_plot(self):
+        return False
 
     def structure(self):
         #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))

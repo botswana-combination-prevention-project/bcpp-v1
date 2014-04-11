@@ -1,12 +1,13 @@
+from django.db.models import get_model, Max
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import get_model
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
+from ..helpers import ReplacementHelper
 from ..managers import HouseholdStructureManager
 
 from .household import Household
@@ -30,13 +31,25 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     note = models.CharField("Note", max_length=250, blank=True)
 
-    member_count = models.IntegerField(default=0, editable=False)
+    enrolled = models.NullBooleanField(default=None, editable=False, help_text='enrolled by the subject consent of a household_member')
 
-    enrolled = models.NullBooleanField(default=None, editable=False)
+    enrolled_household_member = models.CharField(max_length=36, null=True, editable=False, help_text='pk of consenting household_member that triggered the enroll')
 
-    enrolled_datetime = models.DateTimeField(null=True, editable=False)
+    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime household_structure enrolled')
 
-    enrolled_member_count = models.IntegerField(default=0, editable=False)
+    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to True when first household_member is enumerated')
+
+    enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
+
+    refused_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household enumeration refusal save method only')
+
+    failed_enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of failed attempts to enumerate a household_structure.')
+
+    failed_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
+
+    no_informant = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
+
+    eligible_members = models.BooleanField(default=False, editable=False, help_text='Updated by household member save method and post_delete')
 
     objects = HouseholdStructureManager()
 
@@ -61,26 +74,61 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
+    @property
+    def all_eligible_members_absent(self):
+        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
+        if self.enumerated:
+            absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True).count()
+            if absent_member_count:
+                eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
+                return eligible_member_count == absent_member_count 
+        return False
+
+    @property
+    def all_eligible_members_refused(self):
+        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
+        if self.enumerated:
+            refused_members_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, refused=True).count()
+            if refused_members_count:
+                eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
+                return eligible_member_count == refused_members_count
+        return False
+
+    @property
+    def eligible_representative_absent(self):
+        eligible_representative_absent = False
+        HouseholdLogEntry = get_model('bcpp_household', 'HouseholdLogEntry')
+        if not self.enumerated and self.failed_enumeration_attempts >= 3:
+            try:
+                report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self).aggregate(Max('report_datetime')).get('report_datetime__max')
+                HouseholdLogEntry.objects.get(household_log__household_structure=self, report_datetime=report_datetime, household_status='eligible_representative_absent')
+                eligible_representative_absent = True
+            except HouseholdLogEntry.DoesNotExist:
+                pass
+        return eligible_representative_absent
+
+    @property
+    def member_count(self):
+        """Returns the number of household members in this household for all surveys."""
+        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        return HouseholdMember.objects.filter(household_structure__pk=self.pk).count()
+
+    @property
+    def enrolled_member_count(self):
+        """Returns the number of consented (or enrolled) household members in this household for all surveys."""
+        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
+
+    @property
+    def replaceble(self):
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = self
+        return replacement_helper.replaceable
+
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         if not HouseholdLog.objects.filter(household_structure__pk=self.pk):
             HouseholdLog.objects.create(household_structure=self)
-
-    def fetch_and_count_members_on_post_save(self, **kwargs):
-        """Fetches members from the previous survey, if new, and checks the number of members."""
-        created = kwargs.get('created', False)
-        using = kwargs.get('using', None)
-        # create new members, if new
-        if created:
-            self.__class__.objects.fetch_household_members(self)
-        # recount members, may be greater but not less than the actual number of members
-        household_member = get_model(app_label="bcpp_household_member", model_name="householdmember")
-        current_member_count = household_member.objects.filter(household_structure__pk=self.pk).count()
-        self.member_count = self.member_count or 0
-        if self.member_count < current_member_count:
-            self.member_count = current_member_count
-            # count has changed or was incorrect, so update
-            self.save(using=using)
 
     def plot(self):
         url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))

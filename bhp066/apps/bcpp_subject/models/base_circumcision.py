@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
+
 from apps.bcpp_list.models import CircumcisionBenefits
 from apps.bcpp.choices import YES_NO_UNSURE
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

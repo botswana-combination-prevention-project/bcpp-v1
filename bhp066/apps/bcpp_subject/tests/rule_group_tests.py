@@ -1,7 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
+from edc.constants import NEW, NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -13,7 +15,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
 from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory
+from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.tests.factories import SurveyFactory
@@ -61,31 +63,44 @@ class RuleGroupTests(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
 
-        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, gender='F')
-        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, gender='M')
-        self.household_member_female.eligible_member = True
-        self.household_member_male.eligible_member = True
-        self.household_member_female.eligible_subject = True
-        self.household_member_male.eligible_subject = True
+        male_dob = date.today() - relativedelta(years=25)
+        male_age_in_years = 25
+        male_first_name = 'ERIK'
+        male_initials = "EW"
+        female_dob = date.today() - relativedelta(years=35)
+        female_age_in_years = 35
+        female_first_name = 'ERIKA'
+        female_initials = "EW"
+
+        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, gender='F', age_in_years=female_age_in_years, first_name=female_first_name, initials=female_initials)
+        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, gender='M', age_in_years=male_age_in_years, first_name=male_first_name, initials=male_initials)
+        self.household_member_female.member_status = 'BHS_SCREEN'
+        self.household_member_male.member_status = 'BHS_SCREEN'
         self.household_member_female.save()
         self.household_member_male.save()
-
         EnrollmentChecklistFactory(
             household_member=self.household_member_female,
-            guardian='No',
+            gender='F',
             citizen='Yes',
-            **self.household_member_female.enrollment_options)
+            dob=female_dob,
+            guardian='No',
+            initials=self.household_member_female.initials,
+            part_time_resident='Yes')
         EnrollmentChecklistFactory(
             household_member=self.household_member_male,
-            guardian='No',
+            gender='M',
             citizen='Yes',
-            **self.household_member_male.enrollment_options)
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F')
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M')
+            dob=male_dob,
+            guardian='No',
+            initials=self.household_member_male.initials,
+            part_time_resident='Yes')
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
 
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
@@ -112,9 +127,9 @@ class RuleGroupTests(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male.appointment)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_car_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -122,12 +137,12 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='Yes',
+            ever_taken_arv='Yes',
             on_arv='No',
             arv_evidence='No',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
     def test_hiv_car_adherence_and_pima2(self):
         """If POS and on arv and have doc evidence, Pima not required.
@@ -147,9 +162,9 @@ class RuleGroupTests(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male.appointment)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_car_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -157,12 +172,12 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='Yes',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_hiv_car_adherence_and_pima3(self):
         """If POS and on arv but do not have doc evidence, Pima required.
@@ -182,9 +197,9 @@ class RuleGroupTests(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male.appointment)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_car_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -192,12 +207,12 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='No',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
     def test_hiv_care_adherence_and_pima4(self):
         """If POS and not on arv but have doc evidence, Pima required.
@@ -217,9 +232,9 @@ class RuleGroupTests(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male.appointment)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_car_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -227,12 +242,12 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='No',
             arv_evidence='Yes',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_not_known_pos_runs_hiv_and_cd4(self):
         """If not a known POS, requires HIV and CD4 (until today's result is known)."""
@@ -261,21 +276,21 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='NEG',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         hiv_test_review.recorded_hiv_result = 'IND'
         hiv_test_review.save()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         hiv_test_review.recorded_hiv_result = 'UNK'
         hiv_test_review.save()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
     def test_known_pos_completes_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
@@ -298,8 +313,8 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='POS',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
     def test_known_neg_does_not_complete_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
@@ -322,8 +337,8 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='NEG',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_care_adherence_options).count(), 1)
 
     def test_known_neg_requires_hiv_test_today(self):
         """If previous result is NEG, need to test today (HivResult).
@@ -349,8 +364,8 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='NEG',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
 
     def test_known_pos_does_not_require_hiv_test_today(self):
         """If previous result is POS, do not need to test today (HivResult).
@@ -376,8 +391,8 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='POS',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
     def test_known_pos_on_art_no_doc_requires_cd4_only(self):
         """If previous result is POS on art but no evidence, need to run CD4 (Pima).
@@ -415,7 +430,7 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='POS',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
         # add HivCareAdherence,
         HivCareAdherence.objects.create(
@@ -423,15 +438,15 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='No',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
     def test_known_pos_on_art_with_doc_requires_cd4_only(self):
         """If previous result is POS on art with doc evidence, do not run HIV or CD4.
@@ -469,7 +484,7 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='POS',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
         # add HivCareAdherence,
         HivCareAdherence.objects.create(
@@ -477,15 +492,15 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='Yes',
             arv_evidence='Yes',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_known_pos_no_art_but_has_doc_requires_cd4_only(self):
         """If previous result is POS on art but no evidence, need to run CD4 (Pima).
@@ -525,7 +540,7 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='POS',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
         # add HivCareAdherence,
         HivCareAdherence.objects.create(
@@ -533,15 +548,15 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='No',
             arv_evidence='Yes',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_enter_out_of_order(self):
         """Add models out of order.
@@ -556,21 +571,21 @@ class RuleGroupTests(TestCase):
 
         hiv_result_options = {}
         hiv_result_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivresult',
-            appointment=self.subject_visit_male.appointment)
+            {'entry__app_label': 'bcpp_subject',
+            'entry__model_name': 'hivresult',
+            'appointment': self.subject_visit_male.appointment})
 
         pima_options = {}
         pima_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='pima',
-            appointment=self.subject_visit_male.appointment)
+            {'entry__app_label': 'bcpp_subject',
+            'entry__model_name': 'pima',
+            'appointment': self.subject_visit_male.appointment})
 
         hiv_care_adherence_options = {}
         hiv_care_adherence_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivcareadherence',
-            appointment=self.subject_visit_male.appointment)
+            {'entry__app_label': 'bcpp_subject',
+            'entry__model_name': 'hivcareadherence',
+            'appointment': self.subject_visit_male.appointment})
 
         # add HivCareAdherence, out of order ...
         hiv_care_adherence = HivCareAdherence.objects.create(
@@ -578,15 +593,15 @@ class RuleGroupTests(TestCase):
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
-            arv_naive='No',
+            ever_taken_arv='No',
             on_arv='No',
             arv_evidence='Yes',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
         # add HivTestReview,
         hiv_test_review = HivTestReview.objects.create(
@@ -595,35 +610,35 @@ class RuleGroupTests(TestCase):
             recorded_hiv_result='POS',
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
         hiv_test_review.recorded_hiv_result = 'NEG'  # and arv_evidence = 'Yes'
         hiv_test_review.save()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
         hiv_care_adherence.arv_evidence = 'No'  # and recorded_hiv_result = 'NEG'
         hiv_care_adherence.save()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         hiv_test_review.recorded_hiv_result = 'IND'  # and arv_evidence = 'No'
         hiv_test_review.save()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
         hiv_care_adherence.arv_evidence = 'No'  # and recorded_hiv_result = 'IND'
         hiv_test_review.save()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_test_review_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='KEYED', **hiv_care_adherence_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **hiv_result_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NEW', **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
