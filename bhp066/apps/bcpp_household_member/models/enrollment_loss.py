@@ -5,6 +5,7 @@ from edc.base.model.validators import dob_not_future
 
 from apps.bcpp_household_member.constants import BHS_LOSS, BHS_SCREEN
 from apps.bcpp_household_member.exceptions import MemberStatusError
+from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .household_member import HouseholdMember
 from ..managers import EnrollmentLossManager
@@ -27,6 +28,9 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
     objects = EnrollmentLossManager()
 
     def save(self, *args, **kwargs):
+        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        if household.replaced_by:
+            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
 #         if not self.id:
 #             if self.household_member.member_status != BHS_SCREEN:
 #                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))

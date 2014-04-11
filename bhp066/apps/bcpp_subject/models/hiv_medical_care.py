@@ -1,6 +1,6 @@
 from django.db import models
 from edc.base.model.validators import date_not_future
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
@@ -19,7 +19,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        help_text=("Note: If participant does not want to answer, leave blank.  "
+        help_text=_("Note: If participant does not want to answer, leave blank.  "
                    "If participant is unable to estimate date, leave blank."),
         )
 
@@ -31,7 +31,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         blank=True,
-        help_text=("Note: If participant does not want to answer,leave blank. "
+        help_text=_("Note: If participant does not want to answer,leave blank. "
                    "If participant is unable to estimate date, leave blank."),
         )
 
@@ -39,7 +39,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
         verbose_name=_("What was your lowest CD4 (masole) count that was ever measured?"),
         max_length=25,
         choices=LOWESTCD4_CHOICE,
-        help_text=("Assist the participant by helping review their outpatient cards if "
+        help_text=_("Assist the participant by helping review their outpatient cards if "
                    "they are available."),
         )
 
