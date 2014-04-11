@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
@@ -35,7 +35,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name=("If we are unable to contact the person indicated above, is there another"
+        verbose_name=_("If we are unable to contact the person indicated above, is there another"
                       " individual (including next of kin) with whom the study team can get"
                       " in contact with?"),
         help_text="",
