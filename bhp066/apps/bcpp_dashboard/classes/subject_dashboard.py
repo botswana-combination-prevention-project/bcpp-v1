@@ -17,7 +17,6 @@ class SubjectDashboard(BaseSubjectDashboard):
         self.dashboard_type_list = ['subject']
         self.form_category = None
         kwargs.update({'dashboard_models': {'subject_consent': SubjectConsent}})
-        #kwargs.update({'membership_form_category': self.survey.survey_slug})
         self.visit_model = SubjectVisit
         super(SubjectDashboard, self).__init__(*args, **kwargs)
 
@@ -36,16 +35,19 @@ class SubjectDashboard(BaseSubjectDashboard):
     @property
     def consent(self):
         """Returns to the subject consent, if it has been completed."""
-        self._consent = None
-        if SubjectConsent.objects.filter(subject_identifier=self.subject_identifier):
-            self._consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
-        return self._consent
+        try:
+            subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
+        except SubjectConsent.DoesNotExist:
+            subject_consent = None
+        return subject_consent
 
     @property
     def subject_referral(self):
-        if SubjectReferral.objects.filter(subject_visit=self.visit_model_instance):
-            return SubjectReferral.objects.get(subject_visit=self.visit_model_instance)
-        return 'unknown referral'
+        try:
+            subject_referral = SubjectReferral.objects.get(subject_visit__household_member=self.household_member)
+        except SubjectReferral.DoesNotExist:
+            subject_referral = None
+        return subject_referral
 
     @property
     def requisition_model(self):

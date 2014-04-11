@@ -15,6 +15,7 @@ from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
+from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
@@ -255,6 +256,12 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                    'Updated by export_transaction.'),
         )
 
+    subject_identifier = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        )
+
     comment = models.CharField(
         verbose_name="Comment",
         max_length=250,
@@ -262,6 +269,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment')
         )
+
+    objects = ScheduledModelManager()
 
     export_history = ExportHistoryManager()
 
@@ -272,13 +281,16 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     def save(self, *args, **kwargs):
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
-        for field, value in SubjectReferralHelper(self).subject_referral.iteritems():
+        subject_referral_helper = SubjectReferralHelper(self)
+        if subject_referral_helper.missing_data:
+            raise ValueError('Some data is missing for the referral. Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
+        for field, value in subject_referral_helper.subject_referral.iteritems():
             setattr(self, field, value)
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
     def ready_to_export_transaction(self):
-        return self.subject_visit.appointment.appt_status == DONE
+        return True
 
     def get_referral_identifier(self):
         return self.id
