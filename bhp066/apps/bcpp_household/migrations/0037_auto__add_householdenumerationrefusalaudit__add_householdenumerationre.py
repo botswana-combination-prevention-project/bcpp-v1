@@ -8,7 +8,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'HouseholdEnumerationRefusalAudit'
+        # Adding model 'HouseholdRefusalAudit'
         db.create_table(u'bcpp_household_householdenumerationrefusal_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -27,9 +27,9 @@ class Migration(SchemaMigration):
             ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('household', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_householdenumerationrefusal', to=orm['bcpp_household.Household'])),
         ))
-        db.send_create_signal('bcpp_household', ['HouseholdEnumerationRefusalAudit'])
+        db.send_create_signal('bcpp_household', ['HouseholdRefusalAudit'])
 
-        # Adding model 'HouseholdEnumerationRefusal'
+        # Adding model 'HouseholdRefusal'
         db.create_table(u'bcpp_household_householdenumerationrefusal', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
@@ -45,7 +45,7 @@ class Migration(SchemaMigration):
             ('reason_other', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('comment', self.gf('django.db.models.fields.CharField')(max_length=250)),
         ))
-        db.send_create_signal('bcpp_household', ['HouseholdEnumerationRefusal'])
+        db.send_create_signal('bcpp_household', ['HouseholdRefusal'])
 
         # Deleting field 'Plot.replacement'
         db.delete_column(u'bcpp_household_plot', 'replacement')
@@ -81,10 +81,10 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting model 'HouseholdEnumerationRefusalAudit'
+        # Deleting model 'HouseholdRefusalAudit'
         db.delete_table(u'bcpp_household_householdenumerationrefusal_audit')
 
-        # Deleting model 'HouseholdEnumerationRefusal'
+        # Deleting model 'HouseholdRefusal'
         db.delete_table(u'bcpp_household_householdenumerationrefusal')
 
         # Adding field 'Plot.replacement'
@@ -227,7 +227,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdenumerationrefusal': {
-            'Meta': {'ordering': "['household']", 'object_name': 'HouseholdEnumerationRefusal'},
+            'Meta': {'ordering': "['household']", 'object_name': 'HouseholdRefusal'},
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'ckgathi'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
@@ -243,7 +243,7 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.householdenumerationrefusalaudit': {
-            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdEnumerationRefusalAudit', 'db_table': "u'bcpp_household_householdenumerationrefusal_audit'"},
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'HouseholdRefusalAudit', 'db_table': "u'bcpp_household_householdenumerationrefusal_audit'"},
             '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),

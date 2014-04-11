@@ -25,10 +25,11 @@ class BaseScheduledInlineModel(BaseConsentedUuidModel):
         )
 
     def save(self, *args, **kwargs):
-        self.subject_visit = self.inline_parent().subject_visit
-        self.report_datetime = self.inline_parent().report_datetime
+        self.subject_visit = self.inline_parent.subject_visit
+        self.report_datetime = self.inline_parent.report_datetime
         super(BaseScheduledInlineModel, self).save(*args, **kwargs)
 
+    @property
     def inline_parent(self):
         raise ImproperlyConfigured('Override on the inline model to return the parent model')
 

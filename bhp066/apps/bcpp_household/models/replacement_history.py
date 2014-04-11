@@ -2,14 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO
-from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..classes import HouseholdIdentifier
-from ..managers import HouseholdManager
-from ..choices import NOT_ENUMERATED_REASONS
-from .plot import Plot
+from ..managers import ReplacementHistoryManager
 
 
 class ReplacementHistory(BaseDispatchSyncUuidModel):
@@ -35,12 +30,20 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
 
     replacement_reason = models.CharField(
         verbose_name='Reason for replacement',
-        max_length=25,
+        max_length=100,
         help_text=_("Reasons could be absentees, refusals, e.t.c"),
         null=True,
         editable=False,
         )
 
+    history = AuditTrail()
+
+    objects = ReplacementHistoryManager()
+
+    def natural_key(self):
+        return (self.replacing_item, self.replaced_item)
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-replacing_item', ]
+        unique_together = ('replacing_item', 'replaced_item')

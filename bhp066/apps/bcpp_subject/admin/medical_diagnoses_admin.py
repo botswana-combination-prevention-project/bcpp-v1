@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 
 from ..models import MedicalDiagnoses
 from ..forms import MedicalDiagnosesForm
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

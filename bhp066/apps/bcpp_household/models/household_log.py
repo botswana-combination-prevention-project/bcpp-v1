@@ -1,19 +1,19 @@
 from django.db import models
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
-from ..choices import YES_NO
-from apps.bcpp_survey.validators import date_in_survey
-from apps.bcpp_household_member.models import HouseholdMember
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
+
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
 class HouseholdLog(BaseDispatchSyncUuidModel):
-    #Household
+
     household_structure = models.OneToOneField(HouseholdStructure)
 
     history = AuditTrail()
@@ -52,6 +52,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         max_length=50,
         choices=HOUSEHOLD_STATUS,
         null=True,
+        blank=False,
         )
 
     next_appt_datetime = models.DateTimeField(
@@ -83,11 +84,6 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def save(self, *args, **kwargs):
-        household = self.household_log.household_structure.household
-        if self.household_status:
-            household.household_status = self.household_status
-        household.save()
-
         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):

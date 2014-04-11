@@ -5,6 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp.choices import YES_NO_DWTA
 from apps.bcpp_list.models import Diagnoses
+
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 

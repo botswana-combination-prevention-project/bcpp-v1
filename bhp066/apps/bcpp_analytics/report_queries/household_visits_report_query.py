@@ -1,4 +1,4 @@
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
+#from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_ACTION as member_actions
 from apps.bcpp_household.models.household import Household
 from apps.bcpp_household.models.household_log import HouseholdLogEntry
 from .data_row import DataRow
@@ -32,8 +32,9 @@ class HouseholdVisitsReportQuery(TwoColumnReportQuery):
                                         plot__status__istartswith='occupied', community=self.community)
 
     def _households_with_all_enrolled(self):
-        statuses = [item[0] for item in member_actions if item[0] not in ['NOT_REPORTED', 'RESEARCH', 'NOT_ELIGIBLE', 'RBD']]
-        return self._root_households_qs().exclude(householdstructure__householdmember__member_status_full__in=statuses)
+        #statuses = [item[0] for item in member_actions if item[0] not in ['NOT_REPORTED', 'RESEARCH', 'NOT_ELIGIBLE', 'RBD']]
+        #return self._root_households_qs().exclude(householdstructure__householdmember__member_status_full__in=statuses)
+        return self._root_households_qs().exclude(householdstructure__householdmember__is_consented=False)
 
     def _households_with_all_screened(self):
         untested = ['Not performed', 'Declined']
@@ -41,4 +42,4 @@ class HouseholdVisitsReportQuery(TwoColumnReportQuery):
         return hh_enrolled_qs.exclude(householdstructure__householdmember__subjectvisit__hivresult__hiv_result__in=untested)
 
     def confirmed_refusing_qs(self):
-        return HouseholdLogEntry.objects.filter(household_log__household_structure__householdmember__member_status_full='REFUSED')
+        return HouseholdLogEntry.objects.filter(household_log__household_structure__householdmember__refused=True)

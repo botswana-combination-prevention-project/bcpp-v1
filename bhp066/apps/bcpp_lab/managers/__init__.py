@@ -1,1 +1,1 @@
-from .requisition_manager import RequisitionManager
+from .subject_requisition_manager import SubjectRequisitionManager

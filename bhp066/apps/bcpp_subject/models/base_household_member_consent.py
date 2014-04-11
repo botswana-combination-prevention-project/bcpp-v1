@@ -1,6 +1,5 @@
 import re
 from django.db import models
-from django.core.exceptions import ValidationError
 
 from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
