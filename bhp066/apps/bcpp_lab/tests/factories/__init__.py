@@ -1,1 +1,3 @@
+from .aliquot_type_factory import AliquotTypeFactory
+from .panel_factory import PanelFactory
 from .subject_requisition_factory import SubjectRequisitionFactory
