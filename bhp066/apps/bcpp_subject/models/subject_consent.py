@@ -97,28 +97,35 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             expected_member_status = BHS
         if self.household_member.member_status != expected_member_status:
             raise MemberStatusError('Expected member status to be {0}. Got {1}.'.format(expected_member_status, self.household_member.member_status))
-
+        if self.minor:
+            self.is_minor = 'Yes'
+        else:
+            self.is_minor = 'No'
         self.matches_enrollment_checklist(self, self.household_member)
-        self.matches_hic_enrollment()
-        self.enroll_household()
-
+        self.matches_hic_enrollment(self, self.household_member)
         self.community = self.household_member.household_structure.household.plot.community
         self.household_member.is_consented = True
-        self.household_member.member_status = BHS
+        old_enrolled = self.household_member.household_structure.enrolled
         self.household_member.save()
+        if self.household_member.household_structure.enrolled and not old_enrolled:
+            # recalculate household_member.member_status
+            household_members = HouseholdMember.objects.filter(household_structure=self.household_member.household_structure).exclude(pk=self.household_member.pk)
+            for household_member in household_members:
+                household_member.save()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
 
-    def matches_hic_enrollment(self, exception_cls=None):
+    def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit__household_member=self.household_member).exists():
-            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=self.household_member)
-            if self.dob != hic_enrollment.dob or self.consent_datetime != hic_enrollment.consent_datetime:
-                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' and \'consent_dateitme\' cannot changed.')
-        if not (self.citizen or (self.legal_marriage and  self.marriage_certificate)):
-            raise exception_cls('The subject has to be a citizen, or legally married to a citizen to consent.')
+
+        if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
+            #consent_datetime does not exist in cleaned_data as it not editable.
+            #if subject_consent.dob != hic_enrollment.dob or subject_consent.consent_datetime != hic_enrollment.consent_datetime:
+            if subject_consent.dob != hic_enrollment.dob:
+                raise exception_cls('An HicEnrollment form already exists for this Subject. So \'dob\' cannot be changed.')
 
     def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
         """Matches values in this consent against the enrollment checklist.
@@ -132,35 +139,21 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
             raise exception_cls('Initials do not match those on the enrollment checklist')
-        if enrollment_checklist.guardian.lower() == 'yes' and not (subject_consent.is_minor.lower() == 'yes' and subject_consent.guardian_name):
+        if enrollment_checklist.guardian.lower() == 'yes' and not (subject_consent.minor and subject_consent.guardian_name):
             raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian available, but the consent does not indicate this.')
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
-            raise exception_cls('Enrollment Checklist indicates that this subject is a citizen, but the consent does not indicate this.')
+            raise exception_cls('Answer to whether this subject a citizen, does not match that in enrollment checklist.')
+        if (enrollment_checklist.literacy.lower() == 'yes' and not 
+            (subject_consent.is_literate.lower() == 'yes' or (subject_consent.is_literate.lower() == 'no') and subject_consent.witness_name)):
+            raise exception_cls('Answer to whether this subject is literate/not literate but with a literate witness, does not match that in enrollment checklist.')
         if ((enrollment_checklist.legal_marriage.lower() == 'yes' and enrollment_checklist.marriage_certificate.lower() == 'yes') and
                 not (subject_consent.legal_marriage.lower() == 'yes' and subject_consent.marriage_certificate.lower() == 'yes')):
             raise exception_cls('Enrollment Checklist indicates that this subject is married to a citizen with a valid marriage certificate, but the consent does not indicate this.')
         if not household_member.eligible_subject:
             raise exception_cls('Subject is not eligible or has not been confirmed eligible for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
-
-    def enroll_household(self):
-        """Updates the household structure as enrolled if the member consents.
-
-        ..note:: household structure will update the household as enrolled."""
-        # household_structure is enrolled if a member consents
-        household_structure = self.household_member.household_structure
-        if not household_structure.enrolled:
-            household_structure.enrolled = True
-            household_structure.enrolled_datetime = datetime.today()
-            household_structure.save()
-        if self.pk:
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure).exclude(pk=self.pk)
-        else:
-            household_members = HouseholdMember.objects.filter(household_structure=household_structure)
-        for household_member in household_members:
-            household_member.save()  # recalc member status
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code

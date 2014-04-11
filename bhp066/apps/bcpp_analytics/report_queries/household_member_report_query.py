@@ -50,7 +50,7 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
         return data
 
     def refused_qs(self):
-        return self.community_members_qs.filter(member_status_full='REFUSED')
+        return self.community_members_qs.filter(refused=True)
 
     def absentee_stratified(self):
         absentee_strat = OrderedDict()
@@ -78,14 +78,15 @@ class HouseholdMemberReportQuery(TwoColumnReportQuery):
         return self._residents_demographics('REFUSED', 'UNDECIDED', 'RESEARCH')
 
     def absentee_qs(self):
-        return self.community_members_qs.filter(member_status_full='ABSENT')
+        return self.community_members_qs.filter(absent=True)
 
     def enrolled_stats(self):
         return self._residents_demographics('RESEARCH')
 
     def _residents_demographics(self, *args):
         demographics = OrderedDict()
-        demo_query = self.community_members_qs.filter(member_status_full__in=args)
+        #demo_query = self.community_members_qs.filter(member_status_full__in=args)
+        demo_query = self.community_members_qs.filter(reported=True)
         demographics['Count'] = demo_query.count()
         demographics['Males'] = demo_query.filter(gender='M').count()
         demographics['Females'] = demo_query.filter(gender='F').count()

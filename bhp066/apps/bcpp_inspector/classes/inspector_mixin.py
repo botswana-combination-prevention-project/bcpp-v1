@@ -18,7 +18,7 @@ class InspectorMixin(object):
                 specimen_identifier = fields.get('specimen_identifier')
             SubjectRequisitionInspector.objects.create(
                     subject_identifier=fields.get('subject_identifier'),
-                    requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')).split('T')[0], '%Y-%m-%d'),  # FIXME: why strptime this??
+                    requisition_datetime=datetime.strptime(str(fields.get('requisition_datetime')), '%Y-%m-%dT%H:%M:%S'),
                     requisition_identifier=requisition_identifier,
                     specimen_identifier=specimen_identifier,
                     device_id=device.device_id,

@@ -9,7 +9,7 @@ from ..models import CommunityEngagement
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class CommunityEngagementAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class CommunityEngagementAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
 
     form = CommunityEngagementForm
     supplemental_fields = SupplementalFields(

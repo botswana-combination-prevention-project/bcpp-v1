@@ -10,10 +10,8 @@ class HivResultDocumentationAdmin (SubjectVisitModelAdmin):
     fields = (
         'subject_visit',
         'result_date',
-        'result_recorded',
         'result_doc_type',)
     radio_fields = {
-        "result_recorded": admin.VERTICAL,
         'result_doc_type': admin.VERTICAL, }
     instructions = [("This section collects information on whether or not the"
                      " participant has either:"

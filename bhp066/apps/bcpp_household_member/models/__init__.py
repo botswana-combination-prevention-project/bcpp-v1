@@ -4,6 +4,7 @@ from .contact_log import ContactLog
 from .enrollment_checklist import EnrollmentChecklist
 from .household_info import HouseholdInfo
 from .head_household_eligibility import HouseholdHeadEligibility
+from .subject_htc import SubjectHtc
 from .enrollment_loss import EnrollmentLoss
 from .subject_absentee import SubjectAbsentee
 from .subject_absentee_entry import SubjectAbsenteeEntry

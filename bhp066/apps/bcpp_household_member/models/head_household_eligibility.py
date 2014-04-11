@@ -3,46 +3,22 @@ from django.db import models
 from django.db.models import get_model
 
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.choices.common import YES_NO
-from edc.base.model.validators import eligible_if_yes
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_household.models import BaseRepresentativeEligibility
 from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from ..managers import HouseholdHeadEligibilityManager
 
 from .household_member import HouseholdMember
 
 
-class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
-    """Determines if the household member is eligible to be treated as head of household."""
+class HouseholdHeadEligibility(BaseRepresentativeEligibility):
+    """Determines if the household member is eligible to be treated as head of household or representative."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
     household_member = models.OneToOneField(HouseholdMember,
         help_text=('Important: The household member must verbally consent before completing this questionnaire.'))
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report Date/Time",
-        validators=[datetime_not_before_study_start, datetime_not_future],
-        )
-
-    aged_over_18 = models.CharField(
-        verbose_name=("Did you verify that the respondent is aged 18 or older? "),
-        max_length=10,
-        choices=YES_NO,
-        validators=[eligible_if_yes],
-        help_text=("If No, respondent is under 18 participant and cannot be head of household."),
-        )
-
-    verbal_script = models.CharField(
-        verbose_name=("Did you administer the verbal script and ensure the respondent is willing "
-                      "to provide household information? "),
-        max_length=10,
-        choices=YES_NO,
-        validators=[eligible_if_yes],
-        help_text=("If No, the participant cannot be head of household."),
-        )
 
     objects = HouseholdHeadEligibilityManager()
 
@@ -61,8 +37,10 @@ class HouseholdHeadEligibility(BaseDispatchSyncUuidModel):
         return (get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         self.matches_household_member_values(self.household_member)
-        self.household_member.eligible_hoh = False
+        self.household_member.eligible_hoh = True
         self.household_member.save()
         super(HouseholdHeadEligibility, self).save(*args, **kwargs)
 

@@ -14,6 +14,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import COMMUNITIES
 
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
@@ -167,11 +168,21 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
-    replacement = models.CharField(
+    replaces = models.CharField(
         max_length=25,
+        null=True,
         blank=True,
         editable=False,
-        null=True
+        help_text=("plot or household identifier that this plot replaces."),
+        )
+
+    replaced_by = models.CharField(
+        verbose_name='Identifier',
+        max_length=25,
+        null=True,
+        blank=True,
+        editable=False,
+        help_text=u'The identifier of the plot that this plot was replaced by',
         )
 
     device_id = models.CharField(
@@ -226,6 +237,15 @@ class Plot(BaseDispatchSyncUuidModel):
 
     bhs = models.NullBooleanField(editable=False)
 
+    replaced_by = models.CharField(
+        max_length=25,
+        null=True,
+        blank=True,
+        verbose_name='Identifier',
+        help_text=u'The identifier of the plot that this plot is replaced by',
+        editable=False,
+        )
+
     objects = PlotManager()
 
     history = AuditTrail()
@@ -237,13 +257,18 @@ class Plot(BaseDispatchSyncUuidModel):
         return (self.plot_identifier,)
 
     def save(self, *args, **kwargs):
+        # If the plot is replaced can not save this plot
+        if self.id:
+            plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
+            if plot.replaced_by:
+                raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
         if self.household_count > 9:
             raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
-        # if self.community does not get valid mapper, will raise an error that should be caught in forms.py
+        # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
@@ -355,6 +380,9 @@ class Plot(BaseDispatchSyncUuidModel):
             return True
         return False
 
+    def is_plot(self):
+        return True
+
     def is_dispatch_container_model(self):
         return True
 
@@ -415,7 +443,7 @@ class Plot(BaseDispatchSyncUuidModel):
     @property
     def log_entry_form_urls(self):
         """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
-        from .plot_log import PlotLog, PlotLogEntry
+        from .plot_log import PlotLogEntry
         entry_urls = {}
         plot_log = self.plot_log
         for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):

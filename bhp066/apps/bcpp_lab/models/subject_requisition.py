@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
 
@@ -9,7 +10,7 @@ from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_inspector.classes import InspectorMixin
 from apps.bcpp_subject.models import SubjectVisit
 
-from ..managers import RequisitionManager
+from ..managers import SubjectRequisitionManager
 
 from .aliquot_type import AliquotType
 from .packing_list import PackingList
@@ -28,13 +29,18 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
-    entry_meta_data_manager = RequisitionManager(SubjectVisit)
+    objects = SubjectRequisitionManager()
+
+    entry_meta_data_manager = RequisitionMetaDataManager(SubjectVisit)
 
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
         self.community = self.get_visit().household_member.household_structure.household.plot.community
         super(SubjectRequisition, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return '{0} {1}'.format(unicode(self.panel), self.requisition_identifier)
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code

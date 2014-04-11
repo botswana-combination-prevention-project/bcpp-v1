@@ -1,22 +1,26 @@
 from __future__ import print_function
-from datetime import datetime
+
 from django.contrib import admin
-from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.test import TestCase
+
 from edc.core.bhp_common.utils import convert_from_camel
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.appointment.tests.factories import ConfigurationFactory
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import site_mappers
-from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_subject.models import SubjectConsent
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_household.models import HouseholdStructure, Household
 from apps.bcpp_household.tests.factories import HouseholdFactory, PlotFactory
-from apps.bcpp_household.models import HouseholdStructure
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from apps.bcpp_survey.models import Survey
+from apps.bcpp_survey.tests.factories import SurveyFactory
+
 from .factories import HouseholdMemberFactory
 
 
@@ -24,25 +28,23 @@ class FormsTests(TestCase):
 
     app_label = 'bcpp_household_member'
 
-    def test_all_forms(self):
+    def setUp(self):
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
+
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
+        household = Household.objects.get(plot=plot)
+        self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         admin.autodiscover()
         site_lab_tracker.autodiscover()
-        study_specific = StudySpecificFactory()
-        StudySiteFactory()
-        ConfigurationFactory()
 
-        content_type_map_helper = ContentTypeMapHelper()
-        content_type_map_helper.populate()
-        content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(model__iexact=SubjectConsent._meta.object_name)
-        ConsentCatalogueFactory(
-            name=self.app_label,
-            content_type_map=content_type_map,
-            consent_type='study',
-            version=1,
-            start_datetime=study_specific.study_start_datetime,
-            end_datetime=datetime(datetime.today().year + 5, 1, 1),
-            add_for_app=self.app_label)
+    def test_all_forms(self):
 
         adminuser = User.objects.create_user('django', 'django@test.com', 'pass')
         adminuser.save()

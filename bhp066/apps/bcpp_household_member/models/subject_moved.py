@@ -4,6 +4,8 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
 
+from apps.bcpp_household.exceptions import AlreadyReplaced
+
 from ..choices import MOVED_REASON, PLACE_SUBJECT_MOVED
 
 from .base_member_status_model import BaseMemberStatusModel
@@ -47,6 +49,8 @@ class SubjectMoved(BaseMemberStatusModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
+        if self.household_member.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         kwargs['reason'] = 'moved'
         kwargs['info_source'] = 'subject'
         self.survey = self.household_member.survey
