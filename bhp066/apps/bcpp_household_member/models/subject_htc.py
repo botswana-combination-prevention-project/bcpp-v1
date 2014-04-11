@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_NA
@@ -20,12 +21,12 @@ HIV_RESULT = tuple(HIV_RESULT)
 class SubjectHtc(BaseMemberStatusModel):
 
     offered = models.CharField(
-        verbose_name="Was the subject offered HTC",
+        verbose_name=_("Was the subject offered HTC"),
         max_length=10,
         choices=YES_NO)
 
     accepted = models.CharField(
-        verbose_name="Did the subject accept HTC",
+        verbose_name=_("Did the subject accept HTC"),
         max_length=25,
         choices=YES_NO_NA,
         null=True,
@@ -33,26 +34,26 @@ class SubjectHtc(BaseMemberStatusModel):
         )
 
     refusal_reason = models.CharField(
-        verbose_name="If the subject did not accept HTC, please explain",
+        verbose_name=_("If the subject did not accept HTC, please explain"),
         max_length=50,
         null=True,
         blank=True,
         help_text='Required if subject did not accepted HTC')
 
     hiv_result = models.CharField(
-        verbose_name="What was the result of todays\'s HIV test",
+        verbose_name=_("What was the result of todays\'s HIV test"),
         max_length=10,
         choices=HIV_RESULT,
         help_text='Required if subject accepted HTC')
 
     referred = models.CharField(
-        verbose_name="Was the subject referred",
+        verbose_name=_("Was the subject referred"),
         max_length=10,
         choices=YES_NO_NA,
         help_text='Required if subject accepted HTC')
 
     referral_clinic = models.CharField(
-        verbose_name="If referred, which clinic",
+        verbose_name=_("If referred, which clinic"),
         max_length=25,
         blank=True,
         null=True,
