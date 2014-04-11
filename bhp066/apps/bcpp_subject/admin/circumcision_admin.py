@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-#from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
-#from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
+from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..models import Circumcision, Circumcised, Uncircumcised
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
@@ -32,13 +32,13 @@ admin.site.register(Circumcision, CircumcisionAdmin)
 class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
-#     supplemental_fields = SupplementalFields(
-#         ("circumcised",
-#         "health_benefits_smc",
-#         'where_circ',
-#         'where_circ_other',
-#         'why_circ',
-#         'why_circ_other'), p=0.18, group='MC', grouping_field='subject_visit')
+    supplemental_fields = SupplementalFields(
+        ("circumcised",
+        "health_benefits_smc",
+        'where_circ',
+        'where_circ_other',
+        'why_circ',
+        'why_circ_other'), p=0.18, group='MC', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         "circumcised",
