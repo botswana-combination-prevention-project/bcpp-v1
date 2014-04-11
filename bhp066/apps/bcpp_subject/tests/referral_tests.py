@@ -38,7 +38,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if IND refer for HIV testing"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='IND')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
@@ -49,7 +49,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and male and NOT circumcised, refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
         subject_referral = SubjectReferralFactory(
@@ -61,7 +61,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and male and circumcised, do not refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
         subject_referral = SubjectReferralFactory(
@@ -73,7 +73,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new POS and male and circumcised, do not refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
         subject_referral = SubjectReferralFactory(
@@ -85,7 +85,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new POS and male and  NOT circumcised, do not refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
         subject_referral = SubjectReferralFactory(
@@ -97,7 +97,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if UNKNOWN HIV status and male and NOT circumcised, refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
         subject_referral = SubjectReferralFactory(
@@ -109,7 +109,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         #CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
         subject_referral = SubjectReferralFactory(
@@ -121,7 +121,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Unsure')
         subject_referral = SubjectReferralFactory(
@@ -133,7 +133,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Unsure')
         subject_referral = SubjectReferralFactory(
@@ -145,7 +145,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and male and unknown circumcision status, refer for SMC"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         #CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
         subject_referral = SubjectReferralFactory(
@@ -157,7 +157,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and female, and not pregnant, do not refer"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='NEG')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='No')
         subject_referral = SubjectReferralFactory(
@@ -169,7 +169,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and female, and not pregnant, do not refer"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='NEG', has_record='No', other_record='No')
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='Declined')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
@@ -182,7 +182,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if POS and female, pregnant, on-arv, refer ANC-POS"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='Yes')
@@ -195,7 +195,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if newly POS and female, and pregnant, refer"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
@@ -208,7 +208,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if known POS, on ART,  Cd4 lo, refer as MASA monitoring low"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
@@ -221,7 +221,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if known POS, on ART,  Cd4 hi, refer as MASA monitoring hi"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='Yes')
         subject_referral = SubjectReferralFactory(
@@ -233,7 +233,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if POS and female, and pregnant, refer ANC-POS"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
@@ -245,7 +245,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if NEG and female, refer ANC-NEG"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='NEG')
         ReproductiveHealthFactory(subject_visit=self.subject_visit_female, currently_pregnant='Yes')
         subject_referral = SubjectReferralFactory(
@@ -257,7 +257,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if POS but no other data, refer for CD4"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
@@ -268,7 +268,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if known POS, high PIMA CD4 and art unknown, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS', hiv_test_date=date.today())
         PimaFactory(subject_visit=self.subject_visit_female, cd4_value=351, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -280,7 +280,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if known POS, low PIMA CD4 and art unknown, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
         PimaFactory(subject_visit=self.subject_visit_female, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -292,7 +292,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if known NEG but not tested today, high PIMA CD4 and art unknown, female"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='NEG')
         PimaFactory(subject_visit=self.subject_visit_female, cd4_value=351, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -304,7 +304,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new POS, high PIMA CD4 and art unknown, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=351, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -316,7 +316,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new POS, low PIMA CD4 and art unknown, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -328,7 +328,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if existing POS, low PIMA CD4 and art unknown, urgent referral"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='POS')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -341,7 +341,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if existing POS, low PIMA CD4 and art no, urgent referral"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='POS')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No')
@@ -355,7 +355,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new POS, low PIMA CD4 and art unknown, urgent referral"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
@@ -368,7 +368,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new pos, high PIMA CD4 and not on art, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=351, report_datetime=datetime.today())
@@ -381,7 +381,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new pos, low PIMA CD4 and not on art, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
@@ -394,7 +394,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         subject_referral = SubjectReferralFactory(
@@ -420,7 +420,20 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
+        self.assertEqual(None, subject_referral.hiv_result)
+        self.assertEqual(None, subject_referral.hiv_result_datetime)
+
+    def tests_hiv_result2a(self):
+        """"""
+        report_datetime = datetime.today()
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
+        hiv_test_review = HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='POS')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
         self.assertEqual('POS', subject_referral.hiv_result)
+        self.assertEqual(hiv_test_review.hiv_test_date, subject_referral.hiv_result_datetime.date())
 
     def tests_hiv_result3(self):
         """"""
@@ -431,22 +444,38 @@ class ReferralTests(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertEqual('POS', subject_referral.hiv_result)
+        self.assertIsNone(subject_referral.hiv_result_datetime)
 
-    def tests_hiv_result4(self):
-        """"""
+    def tests_hiv_result3a(self):
+        """Evidence of being on ARV as reported on Care and Adherence does NOT confirm a verbal positive as evidence of HIV infection"""
         report_datetime = datetime.today()
-        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
+        hiv_care_adherence = HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertEqual('POS', subject_referral.hiv_result)
+        self.assertEqual(hiv_care_adherence.first_arv, subject_referral.hiv_result_datetime.date())
+
+    def tests_hiv_result4(self):
+        """Other record confirms a verbal positive as evidence of HIV infection."""
+        report_datetime = datetime.today()
+        today_date = date.today()
+        last_year_date = today_date - timedelta(days=365)
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
+        hiv_result_documentation = HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_recorded='POS', result_date=last_year_date, result_doc_type='ART Prescription')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertEqual('POS', subject_referral.hiv_result)
+        self.assertEqual(hiv_result_documentation.result_date, subject_referral.hiv_result_datetime.date())
 
     def tests_referred_verbal1b(self):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
         subject_referral = SubjectReferralFactory(
@@ -458,7 +487,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
@@ -471,7 +500,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
@@ -485,7 +514,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
@@ -499,7 +528,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
@@ -512,7 +541,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
@@ -525,7 +554,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if new pos, high PIMA CD4 and on art, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=351, report_datetime=datetime.today())
@@ -538,7 +567,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if pos, low CD4 and on art, """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=350, report_datetime=datetime.today())
@@ -551,7 +580,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """Tests pos today but have evidence on ART"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=350, report_datetime=datetime.today())
@@ -564,7 +593,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if pos and defaulter """
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='No', arv_evidence='Yes')
         subject_referral = SubjectReferralFactory(
@@ -578,14 +607,14 @@ class ReferralTests(BaseScheduledModelTestCase):
         today_date = datetime.today()
         last_year_date = today_date - timedelta(days=365)
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=datetime.today())
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=datetime.today())
         TbSymptomsFactory(subject_visit=self.subject_visit_female)
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS', hiv_result_datetime=today)
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result='POS', hiv_test_date=last_year_date)
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='Yes', arv_evidence='Yes')
         PimaFactory(subject_visit=self.subject_visit_female, cd4_value=350, report_datetime=report_datetime, cd4_datetime=today)
         panel = Panel.objects.get(name='Viral Load')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=today)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=today)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
@@ -625,7 +654,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=datetime.today())
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=datetime.today())
         TbSymptomsFactory(subject_visit=self.subject_visit_female)
         # verbal POS with indirect docs
         HivTestingHistoryFactory(subject_visit=self.subject_visit_female, verbal_hiv_result='POS', has_record='No', other_record='Yes')
@@ -634,7 +663,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         # on ART and there are docs 
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv='Yes', arv_evidence='Yes')
         panel = Panel.objects.get(name='Viral Load')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=today)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=today)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
@@ -676,14 +705,14 @@ class ReferralTests(BaseScheduledModelTestCase):
         last_year_date = today_date - timedelta(days=365)
         panel = Panel.objects.get(name='Microtube')
         self.subject_visit_female.report_datetime = yesterday
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         # verbal POS with indirect docs
         HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
         # on ART and there are docs
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
 
         panel = Panel.objects.get(name='Viral Load')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
@@ -725,14 +754,14 @@ class ReferralTests(BaseScheduledModelTestCase):
         last_year_date = today_date - timedelta(days=365)
         panel = Panel.objects.get(name='Microtube')
         self.subject_visit_female.report_datetime = yesterday
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         # verbal POS with indirect docs
         HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
         # on ART and there are docs 
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
         HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS', hiv_result_datetime=yesterday)
         panel = Panel.objects.get(name='Viral Load')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
@@ -746,7 +775,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             'circumcised': None,
             'citizen': True,
             'citizen_spouse': False,
-            'direct_hiv_documentation': True,
+            'direct_hiv_documentation': False,
             'gender': u'F',
             'hiv_result': 'POS',
             'hiv_result_datetime': yesterday,
@@ -770,7 +799,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         """if IND refer for HIV testing"""
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='Declined')
         subject_referral = SubjectReferralFactory(
@@ -779,7 +808,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
             'direct_hiv_documentation': False,
-            'indirect_hiv_documentation': None,
+            'indirect_hiv_documentation': False,
             'last_hiv_result': None,  # undocumented verbal_hiv_result cannot be the last result
             'last_hiv_result_date': None,  # undocumented verbal_hiv_result cannot be the last result
             'new_pos': None,  # undocumented verbal_hiv_result can suggest not a new POS
@@ -792,7 +821,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='NEG')
         #HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
@@ -803,7 +832,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
             'direct_hiv_documentation': False,  # of positive result
-            'indirect_hiv_documentation': None,
+            'indirect_hiv_documentation': False,
             'last_hiv_result': 'NEG',
             'last_hiv_result_date': last_date,
             'new_pos': None,
@@ -816,7 +845,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
         HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='NEG')
         HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
@@ -840,7 +869,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
         HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='POS')
         HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
@@ -864,7 +893,7 @@ class ReferralTests(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         #last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
         #HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='POS')
         #HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
@@ -874,7 +903,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
-            'direct_hiv_documentation': True,
+            'direct_hiv_documentation': False,
             'indirect_hiv_documentation': True,
             'last_hiv_result': None,
             'last_hiv_result_date': None,
