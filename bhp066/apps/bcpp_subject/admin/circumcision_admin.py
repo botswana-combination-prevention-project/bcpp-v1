@@ -20,16 +20,16 @@ class CircumcisionAdmin(SubjectVisitModelAdmin):
     radio_fields = {
          'circumcised': admin.VERTICAL, }
     instructions = [("Note to Interviewer: This section is to be completed "
-                             "by male participants. SKIP for female participants. "),
-                             _("Read to Participant: Some men are circumcised. "
-                             "Male circumcision is [enter site specific word] when "
-                             "the foreskin of the man's penis has been cut off. "
-                             "I would like to ask you a few questions regarding "
-                             "male circumcision.")]
+                     "by male participants. SKIP for female participants. "),
+                     _("Read to Participant: Some men are circumcised. "
+                     "Male circumcision is [enter site specific word] when "
+                     "the foreskin of the man's penis has been cut off. "
+                     "I would like to ask you a few questions regarding "
+                     "male circumcision.")]
 admin.site.register(Circumcision, CircumcisionAdmin)
 
 
-class CircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
     supplemental_fields = SupplementalFields(
@@ -57,17 +57,17 @@ class CircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
 admin.site.register(Circumcised, CircumcisedAdmin)
 
 
-class UncircumcisedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class UncircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = UncircumcisedForm
-    supplemental_fields = SupplementalFields(
-        ("circumcised",
-        "health_benefits_smc",
-        'reason_circ',
-        'reason_circ_other',
-        'future_reasons_smc',
-        'service_facilities',
-        'aware_free'), p=0.18, group='MC', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ("circumcised",
+#         "health_benefits_smc",
+#         'reason_circ',
+#         'reason_circ_other',
+#         'future_reasons_smc',
+#         'service_facilities',
+#         'aware_free'), p=0.18, group='MC', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         "circumcised",

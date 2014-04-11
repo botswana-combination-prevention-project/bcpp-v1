@@ -1,5 +1,7 @@
 from django import forms
+
 from ..models import HicEnrollment
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -11,6 +13,8 @@ class HicEnrollmentForm (BaseSubjectModelForm):
             instance = self.instance
         else:
             instance = HicEnrollment(**self.cleaned_data)
+        if not self.cleaned_data.get('hic_permission', None):
+            raise forms.ValidationError('Provide an answer for whether participant gave permission for HIC.')
         if self.cleaned_data.get('hic_permission', None).lower() == 'yes':
             #Only enforce this criteria is subject enrols in HIC
             instance.is_permanent_resident(exception_cls=forms.ValidationError)

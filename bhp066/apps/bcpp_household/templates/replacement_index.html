@@ -1,0 +1,30 @@
+{% extends "section.html" %}
+{% load i18n %}
+{% load admin_urls %}
+{% load url from future %}
+{% block extrahead %}
+{{ block.super }} 
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/map.css" />
+{% endblock %}
+{% block breadcrumbs %}
+<div class="breadcrumbs"><a href="{% url "section_index_url"  %}">Home</a> &rsaquo; <a href="{% url "section_url" 'administration' %}">Administration</a> > Data replacement</div>
+{% endblock %}
+
+{% block content%}
+	<H4>Select producer to replace households/plots from.</H4>
+	{% if producer_names %}
+		<form action="{% url 'check_replacements_url' %}" method="post">
+	   	{% csrf_token %}
+	    <div id="selection_box">
+    	Producer Name:&nbsp;<select id="producer_name" name="producer_name"> 
+		{% for producer_name in producer_names %}
+		  <option value="{{ producer_name }}">{{ producer_name }}</option>
+		{% endfor %}
+		</select>
+		<input type="submit" value="submit">			
+		</form>
+	{% else %}
+		<B>{{ message }}</B>
+	{% endif %}
+
+{% endblock content %}

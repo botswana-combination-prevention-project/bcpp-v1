@@ -23,9 +23,8 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 admin.autodiscover()
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
-#BcppClinicConfiguration()
-BcppAppConfiguration()
 site_mappers.autodiscover()
+BcppAppConfiguration()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
 site_rule_groups.autodiscover()
@@ -75,8 +74,9 @@ urlpatterns += patterns('',
 # )
 
 urlpatterns += patterns('',
-    url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
-        include('edc.audit.urls'), name="section_url_name"),
+#     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
+#         include('edc.audit.urls'), name="section_url_name"),
+    url(r'^audit_trail/', include('edc.audit.urls'), name="audit_trail_url_name"),
 )
 
 urlpatterns += patterns('',

@@ -10,7 +10,7 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 #HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up
-class HivTestedAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class HivTestedAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
 
     form = HivTestedForm
     supplemental_fields = SupplementalFields(

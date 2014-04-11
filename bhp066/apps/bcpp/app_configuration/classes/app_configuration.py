@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime
 
 from edc.apps.app_configuration.classes import BaseAppConfiguration
@@ -20,10 +21,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).__init__()
         self.update_or_create_survey()
 
-    appointment_configuration = {
-                'allowed_iso_weekdays': '1234567',
-                'use_same_weekday': True,
-                'default_appt_type': 'default'}
+    global_configuration = {
+        'dashboard':
+            {'show_not_required': True,
+            'allow_additional_requisitions': False},
+        'appointment':
+            {'allowed_iso_weekdays': '1234567',
+             'use_same_weekday': True,
+             'default_appt_type': 'default',
+             'appointments_per_day_max': 20,
+             'appointments_days_forward': 15},
+        }
 
     study_variables_setup = {
                 'protocol_number': 'BHP066',
@@ -93,8 +101,10 @@ class BcppAppConfiguration(BaseAppConfiguration):
                      'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
                                       AliquotTypeTuple('Plasma', 'PL', '32'),
                                       AliquotTypeTuple('Buffy Coat', 'BC', '16')],
-                     'profile': [ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
-                     'profile_item': [ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
+                     'profile': [ProfileTuple('Microtube', 'WB'), ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
+                     'profile_item': [ProfileItemTuple('Microtube', 'PL', 0.3, 1),
+                                      ProfileItemTuple('Microtube', 'BC', 0.2, 1),
+                                      ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
                                       ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
                                       ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
                                       ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
@@ -106,6 +116,124 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 }
 
     consent_catalogue_list = [consent_catalogue_setup]
+
+    export_plan_setup = {
+        'bcpp_subject.subjectreferral': {
+            'app_label': 'bcpp_subject',
+            'object_name': 'subjectreferral',
+            'fields': [],
+            'extra_fields': OrderedDict(
+                {'plot_identifier': 'subject_visit__household_member__household_structure__household__plot__plot_identifier',
+                 'dob': 'subject_visit__appointment__registered_subject__dob',
+                 'first_name': 'subject_visit__appointment__registered_subject__first_name',
+                 'identity': 'subject_visit__appointment__registered_subject__identity',
+                 'identity_type': 'subject_visit__appointment__registered_subject__identity_type',
+                 'initials': 'subject_visit__appointment__registered_subject__initials',
+                 'last_name': 'subject_visit__appointment__registered_subject__last_name',
+                 'subject_identifier': 'subject_visit__appointment__registered_subject__subject_identifier',
+                 }),
+            'exclude': [
+                'comment',
+                'created',
+                'exported',
+                'hostname_created',
+                'hostname_modified',
+                'in_clinic_flag',
+                'modified',
+                'referral_clinic_other',
+                'revision',
+                'subject_visit',
+                'user_created',
+                'user_modified',
+                 ],
+            'header': True,
+            'track_history': True,
+            'show_all_fields': True,
+            'delimiter': '|',
+            'encrypt': False,
+            'strip': True,
+            'target_path': '~/export_to_cdc',
+            'notification_plan_name': 'referral_file_to_cdc',
+        },
+        'bcpp_subject.subjectlocator': {
+            'app_label': 'bcpp_subject',
+            'object_name': 'subjectlocator',
+            'fields': [],
+            'extra_fields': OrderedDict(
+                {'plot_identifier': 'subject_visit__household_member__household_structure__household__plot__plot_identifier',
+                 'dob': 'subject_visit__appointment__registered_subject__dob',
+                 'first_name': 'subject_visit__appointment__registered_subject__first_name',
+                 'identity': 'subject_visit__appointment__registered_subject__identity',
+                 'identity_type': 'subject_visit__appointment__registered_subject__identity_type',
+                 'initials': 'subject_visit__appointment__registered_subject__initials',
+                 'last_name': 'subject_visit__appointment__registered_subject__last_name',
+                 'subject_identifier': 'subject_visit__appointment__registered_subject__subject_identifier',
+                 }),
+            'exclude': [
+                'exported',
+                'created',
+                'hostname_created',
+                'hostname_modified',
+                'modified',
+                'revision',
+                'subject_visit',
+                'user_created',
+                'user_modified',
+                'registered_subject',
+                 ],
+            'header': True,
+            'track_history': True,
+            'show_all_fields': True,
+            'delimiter': '|',
+            'encrypt': False,
+            'strip': True,
+            'target_path': '~/export_to_cdc',
+            'notification_plan_name': 'locator_file_to_cdc',
+            }
+        }
+
+    notification_plan_setup = {
+        'referral_file_to_cdc': {
+            'name': 'referral_file_to_cdc',
+            'friendly_name': 'BCPP Participant Referral File Transfer to Clinic',
+            'subject_format': '{exit_status}: BCPP Referral File Transfer {timestamp}',
+            'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
+                            'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
+                            'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
+                            'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
+                            'File transfer status for {export_datetime} is as follows:\n\n'
+                            '* Transfer Title: {notification_plan_name}\n'
+                            '* Status: {exit_status}\n'
+                            '* Status Message: {exit_status_message}\n'
+                            '* Transaction count: {tx_count}\n'
+                            '* File name: {file_name}\n\n'
+                            'Thank You,\n\n'
+                            'BHP Data Management Team\n'
+                            ),
+            'recipient_list': ['ew2789@gmail.com', 'tsetsiba@bhp.org.bw', 'kpowis@partners.org', 'mpretori@hsph.harvard.edu'],
+            'cc_list': ['ew2789@gmail.com'],
+            },
+        'locator_file_to_cdc': {
+            'name': 'locator_file_to_cdc',
+            'friendly_name': 'BCPP Participant Locator File Transfer to Clinic',
+            'subject_format': '{exit_status}: BCPP Locator File Transfer {timestamp}',
+            'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
+                            'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
+                            'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
+                            'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
+                            'File transfer status for {export_datetime} is as follows:\n\n'
+                            '* Transfer Title: {notification_plan_name}\n'
+                            '* Status: {exit_status}\n'
+                            '* Status Message: {exit_status_message}\n'
+                            '* Transaction count: {tx_count}\n'
+                            '* File name: {file_name}\n\n'
+                            'Thank You,\n\n'
+                            'BHP Data Management Team\n'
+                            ),
+            'recipient_list': ['ew2789@gmail.com', 'tsetsiba@bhp.org.bw', 'kpowis@partners.org', 'mpretori@hsph.harvard.edu'],
+            'cc_list': ['ew2789@gmail.com'],
+            }
+        }
 
     def update_or_create_survey(self):
         for survey_values in self.survey_setup.itervalues():

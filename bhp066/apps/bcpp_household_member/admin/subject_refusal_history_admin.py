@@ -18,7 +18,7 @@ class SubjectRefusalHistoryAdmin(BaseRegisteredSubjectModelAdmin):
         "reason": admin.VERTICAL,
         }
 
-    list_display = ('reason', )
+    list_display = ('household_member', 'report_datetime', )
 
     search_fields = [
         'household_member__first_name',

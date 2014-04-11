@@ -1,6 +1,7 @@
 import os
 import platform
 import sys
+import socket
 
 from unipath import Path
 
@@ -27,12 +28,21 @@ CONFIG_DIR = PROJECT_DIR.child('bhp066')
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
-KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-#KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-# KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
-#KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
-#KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-#KEY_PATH = '/Volumes/keys'
+if socket.gethostname() == 'mac.local':
+    KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+elif socket.gethostname() == 'ckgathi':
+    KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+else:
+    #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
+    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    #KEY_PATH = '/Volumes/keys'
+    #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+    #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
+    #KEY_PATH = '/Users/ckgathi/source/confirm_plots/bhp066/keys'
+    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    KEY_PATH = '/Volumes/keys'
 
 # DB_FILES = {
 #     'table': 'FILES',
@@ -110,7 +120,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_dvp',
+            'NAME': 'bhp066_r150',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -127,6 +137,28 @@ else:
             'HOST': '',
             'PORT': '',
         },
+        'bcpp01-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': 'localhost',
+            'PORT': '',
+        },
+#         'bcpp020-bhp066': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'init_command': 'SET storage_engine=INNODB',
+#             },
+#             'NAME': 'bhp066',
+#             'USER': 'root',
+#             'PASSWORD': 'cc3721b',
+#             'HOST': '192.168.1.114',
+#             'PORT': '',
+#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -253,8 +285,6 @@ INSTALLED_APPS = (
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
 
-    'edc.audit',
-
     'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
@@ -300,6 +330,7 @@ INSTALLED_APPS = (
     'edc.map',
 
     'edc.testing',
+    'edc.utils',
 
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',
@@ -320,6 +351,8 @@ INSTALLED_APPS = (
     'edc.subject.subject',
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
+
+    'edc.notification',
 
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
@@ -371,6 +404,7 @@ INSTALLED_APPS = (
 #     'apps.clinic',
 #     'apps.bcpp_clinic_dashboard',
     'tastypie',
+    'edc.audit',
 )
 
 # django
@@ -385,7 +419,7 @@ EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
-EMAIL_AFTER_CONSUME = False
+#EMAIL_AFTER_CONSUME = False
 
 # django auth
 AUTH_PROFILE_MODULE = "bhp_userprofile.userprofile"
@@ -395,7 +429,6 @@ APP_NAME = 'bcpp'
 PROJECT_NUMBER = 'BHP066'
 PROJECT_IDENTIFIER_PREFIX = '066'
 PROJECT_IDENTIFIER_MODULUS = 7
-PROJECT_TITLE = 'Botswana Combination Prevention Project'
 PROTOCOL_REVISION = 'V1.0 24 September 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
 
@@ -410,10 +443,6 @@ SOUTH_LOGGING_ON = True
 
 # dajax
 DAJAXICE_MEDIA_PREFIX = "dajaxice"
-
-# edc.subject.appointment
-APPOINTMENTS_PER_DAY_MAX = 20
-APPOINTMENTS_DAYS_FORWARD = 15
 
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
@@ -430,7 +459,7 @@ FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
 CURRENT_COMMUNITY = 'otse'
-CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
+CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
@@ -455,9 +484,12 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 SITE_CODE = '14'
 #  edc.device.device
 DEVICE_ID = '99'
-
+if DEVICE_ID == '98':
+    PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
+else:
+    PROJECT_TITLE = 'Botswana Combination Prevention Project'
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066']
+MIDDLE_MAN_LIST = ['resourcemac-bhp066', 'bcpp003-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True

@@ -13,10 +13,12 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
         "household_member",
         "report_datetime",
         "aged_over_18",
+        'household_residency',
         "verbal_script",
         )
     radio_fields = {
         "aged_over_18": admin.VERTICAL,
+        "household_residency": admin.VERTICAL,
         "verbal_script": admin.VERTICAL,
         }
 

@@ -13,6 +13,7 @@ class PimaAdmin(SubjectVisitModelAdmin):
         'pima_today_other',
         'pima_id',
         'cd4_value',
+        'cd4_datetime',
         )
     radio_fields = {
         'pima_today': admin.VERTICAL}
