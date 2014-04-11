@@ -66,6 +66,6 @@ class ContactLogItem(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         return (self.contact_datetime, ) + self.contact_log.natural_key()
-    
+
     class Meta:
         app_label = 'bcpp_household_member'
