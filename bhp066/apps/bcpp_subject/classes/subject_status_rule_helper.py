@@ -7,10 +7,7 @@ class SubjectStatusRuleHelper(SubjectStatusHelper):
     def hiv_result_required(self):
         if self.todays_hiv_result:
             return True
-        if not self.hiv_result:
-            return True
-        if self.hiv_result:
-            return self.hiv_result in ['POS', 'NEG']
+        return False if (self.new_pos == False) else True
 
     @property
     def pima_required(self):
