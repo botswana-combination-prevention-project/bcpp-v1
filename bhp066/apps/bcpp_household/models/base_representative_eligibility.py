@@ -5,6 +5,8 @@ from edc.choices.common import YES_NO
 from edc.base.model.validators import eligible_if_yes
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from ..exceptions import AlreadyReplaced
+
 
 class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel):
     """Determines if the household member is eligible representative of the household."""
@@ -37,6 +39,12 @@ class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel):
         validators=[eligible_if_yes],
         help_text="If 'NO' respondent cannot serve as Household Head/Representative.",
         )
+
+    def save(self, *args, **kwargs):
+        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_structure.household.household_identifier)
+        if household.replaced_by:
+            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
+        super(BaseRepresentativeEligibility, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True
