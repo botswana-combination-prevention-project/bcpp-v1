@@ -290,7 +290,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     @property
     def ready_to_export_transaction(self):
-        return True
+        """Evaluates to True if the instance has a referral code to avoid exporting someone who is not being referred."""
+        return self.referral_code
 
     def get_referral_identifier(self):
         return self.id
