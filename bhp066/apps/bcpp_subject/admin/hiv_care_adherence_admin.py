@@ -49,11 +49,15 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
                              " been given for your HIV infection.")]
     list_display = (
         'subject_visit',
-        'on_art')
+        'on_arv',
+        'arv_evidence',
+        'ever_taken_arv',
+        )
 
     list_filter = (
         'on_arv',
-        'arv_evidence')
-
+        'arv_evidence',
+        'ever_taken_arv',
+        )
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
