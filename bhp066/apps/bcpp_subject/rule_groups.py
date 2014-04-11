@@ -1,7 +1,7 @@
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
 
-from .classes import SubjectStatusRuleHelper
+from .classes import SubjectStatusHelper
 
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
@@ -11,27 +11,39 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 def func_pima_required(visit_instance):
     """Returns True if the pima is required"""
-    return SubjectStatusRuleHelper(visit_instance).pima_required
+    return SubjectStatusHelper(visit_instance).on_art == False
 
 
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required"""
-    return SubjectStatusRuleHelper(visit_instance).hiv_result_required
+    subject_status_helper = SubjectStatusHelper(visit_instance)
+    if subject_status_helper.todays_hiv_result:
+        return True
+    return False if (subject_status_helper.new_pos == False) else True
 
 
 def func_not_hiv_positive_today(visit_instance):
     """Returns True if the participant, so far, has not been determined to be positive."""
-    return SubjectStatusRuleHelper(visit_instance).hiv_result != 'POS'
+    return SubjectStatusHelper(visit_instance).hiv_result != 'POS'
 
 
 def func_hiv_indeterminate_today(visit_instance):
     """Returns True if the participant tests indeterminate today."""
-    return SubjectStatusRuleHelper(visit_instance).hiv_result == 'IND'
+    return SubjectStatusHelper(visit_instance).hiv_result == 'IND'
 
 
 def func_hiv_positive_today(visit_instance):
     """Returns True if the participant has been determinied to be either known or newly diagnosed HIV positive."""
-    return SubjectStatusRuleHelper(visit_instance).hiv_result == 'POS'
+    return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
+
+
+def func_not_required(visit_instance):
+    return True
+
+
+def func_no_verbal_hiv_result(visit_instance):
+    """(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or'))"""
+    return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
 class RegisteredSubjectRuleGroup(RuleGroup):
@@ -129,47 +141,30 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_requisition_panels=['Microtube'],)
 
     #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
-    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    #Next rule makes sure its always NOT_REQUIRED when this form is being fileed.
     venus_on_required1 = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'POS'),
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Venous (HIV)'],)
-
-    venus_on_required2 = RequisitionRule(
-        logic=Logic(
-            predicate=('verbal_hiv_result', 'ne', 'POS'),
+            predicate=func_not_required,
             consequence='not_required',
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'],)
 
     #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
-    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
+    #Next rule makes sure its always NOT_REQUIRED when this form is being fileed.
     elisa_on_required1 = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'IND'),
+            predicate=func_not_required,
             consequence='not_required',
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['ELISA'],)
 
-    elisa_on_required2 = RequisitionRule(
+    rbd_vl = RequisitionRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'ne', 'IND'),
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['ELISA'],)
-
-    #Verbal posetive, then RBD and VL are required.
-    rbd_vl_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='not_required',
-            alternative='new'),
+            predicate=func_hiv_positive_today,
+            consequence='new',
+            alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw', 'Viral Load'])
 
@@ -203,7 +198,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     other_response = ScheduledDataRule(
         logic=Logic(
-            predicate=(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or')),
+            predicate=func_no_verbal_hiv_result,
             consequence='not_required',
             alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
@@ -310,8 +305,6 @@ class ReviewPositiveRuleGroup(RuleGroup):
             predicate=func_todays_hiv_result_required,
             consequence='not_required',
             alternative='new'),
-#         helper_class=SubjectStatusRuleHelper,
-#         helper_class_attr='hiv_result_required',
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw', 'Viral Load',])
 
@@ -328,8 +321,6 @@ class HivDocumentationGroup(RuleGroup):
             predicate=func_pima_required,
             consequence='new',
             alternative='not_required'),
-#         helper_class=SubjectStatusRuleHelper,
-#         helper_class_attr='pima_required',
         target_model=['pima'])
 
 #    requires Todays HIV results form when the other HIV result documentation form  recorded result is POS
