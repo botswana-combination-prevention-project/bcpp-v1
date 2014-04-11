@@ -177,7 +177,8 @@ class PlotReplacementTests(TestCase):
             present_today='Yes',
             study_resident='Yes')
         household_member.save()
-        SubjectRefusalFactory(household_member=household_member, reason='I don\'t have time', refusal_date=datetime.now())
+        hm = HouseholdMember.objects.get(first_name='COOL')
+        SubjectRefusalFactory(household_member=hm, reason='I don\'t have time', refusal_date=datetime.now())
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
