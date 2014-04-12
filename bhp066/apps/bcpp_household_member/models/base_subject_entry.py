@@ -52,12 +52,6 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
            'information in this comment')
         )
 
-    def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.subject_absentee.household_member.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} has its container replaced.'.format(household.household_identifier))
-        super(BaseSubjectEntry, self).save(*args, **kwargs)
-
     @property
     def in_replaced_household(self):
         """Returns True if the household for this entry is "replaced"""""
