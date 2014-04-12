@@ -37,9 +37,6 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
         return (get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.matches_household_member_values(self.household_member)
         self.household_member.eligible_hoh = True
         self.household_member.save()
@@ -55,3 +52,4 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
 
     class Meta:
         app_label = 'bcpp_household_member'
+        unique_together = ('household_structure', 'aged_over_18', 'verbal_script')
