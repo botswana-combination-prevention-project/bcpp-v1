@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 
 from edc.constants import NEW, NOT_REQUIRED, KEYED
-from edc.entry_meta_data.models import ScheduledEntryMetaData
+from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
@@ -108,6 +108,10 @@ class RuleGroupTests(TestCase):
         self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
         self.appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male)
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
+    def new_metadata_is_not_keyed(self):
+        self.assertEquals(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
+        self.assertEquals(RequisitionMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
 
     def test_hiv_car_adherence_and_pima1(self):
         """If POS and not on arv and no doc evidence, Pima required.
