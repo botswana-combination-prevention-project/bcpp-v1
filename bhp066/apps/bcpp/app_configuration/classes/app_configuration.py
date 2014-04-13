@@ -1,6 +1,8 @@
 from collections import OrderedDict
 from datetime import datetime
 
+from django.conf import settings
+
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
@@ -209,12 +211,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'referral_file_to_cdc': {
             'name': 'referral_file_to_cdc',
             'friendly_name': 'BCPP Participant Referral File Transfer to Clinic',
-            'subject_format': '{exit_status}: BCPP Referral File Transfer {timestamp}',
+            'subject_format': '{exit_status}: ' + 'BCPP Site {0}'.format(settings.SITE_CODE) + ' Referral File Transfer {timestamp}',
             'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
                             'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
                             'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
-                            'File transfer status for {export_datetime} is as follows:\n\n'
+                            'File transfer status for {export_datetime} is as follows:\n\n') +
+                            ('* Site: {0}\n'.format(settings.SITE_CODE)) + (
                             '* Transfer Title: {notification_plan_name}\n'
                             '* Status: {exit_status}\n'
                             '* Status Message: {exit_status_message}\n'
@@ -229,12 +232,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'locator_file_to_cdc': {
             'name': 'locator_file_to_cdc',
             'friendly_name': 'BCPP Participant Locator File Transfer to Clinic',
-            'subject_format': '{exit_status}: BCPP Locator File Transfer {timestamp}',
+            'subject_format': '{exit_status}: ' + 'BCPP Site {0}'.format(settings.SITE_CODE) + ' Locator File Transfer {timestamp}',
             'body_format': ('Dear BCPP File Transfer Monitoring Group Member,\n\nYou are receiving this email as a member '
                             'of the BCPP file transfer monitoring group. If you have any questions or comments regarding the contents '
                             'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
-                            'File transfer status for {export_datetime} is as follows:\n\n'
+                            'File transfer status for {export_datetime} is as follows:\n\n') +
+                            ('* Site: {0}\n'.format(settings.SITE_CODE)) + (
                             '* Transfer Title: {notification_plan_name}\n'
                             '* Status: {exit_status}\n'
                             '* Status Message: {exit_status_message}\n'
