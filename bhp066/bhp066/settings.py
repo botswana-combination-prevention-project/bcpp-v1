@@ -106,7 +106,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_r150',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -160,7 +160,7 @@ LOCALE_PATHS = (
             PROJECT_DIR.child('locale'),
         )#'locale', )
 
-LANGUAGE_CODE = 'tn'
+LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 

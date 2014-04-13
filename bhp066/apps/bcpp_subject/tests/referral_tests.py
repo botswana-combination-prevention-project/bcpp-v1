@@ -14,6 +14,9 @@ from .factories import (
     HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
     PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory, TbSymptomsFactory,
     HivResultDocumentationFactory)
+from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryMetaData
+from edc.constants import NOT_REQUIRED, REQUIRED
+from edc.entry_meta_data.models.requisition_meta_data import RequisitionMetaData
 
 
 class TestPlotMapper(Mapper):
@@ -470,6 +473,24 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertEqual('POS', subject_referral.hiv_result)
         self.assertEqual(hiv_result_documentation.result_date, subject_referral.hiv_result_datetime.date())
+
+    def tests_hiv_result4a(self):
+        """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
+        from ..classes import SubjectStatusHelper
+
+        report_datetime = datetime.today()
+        today_date = date.today()
+        last_year_date = today_date - timedelta(days=365)
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
+        hiv_result_documentation = HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_recorded='POS', result_date=last_year_date, result_doc_type='ART Prescription')
+        subject_referral = SubjectStatusHelper(self.subject_visit_male)
+        self.assertEqual('POS', subject_referral.hiv_result)
+        self.assertFalse(subject_referral.new_pos)
+        self.assertTrue(subject_referral.on_art == False)
+        #self.assertEqual(hiv_result_documentation.result_date, subject_referral.hiv_result_datetime.date())
+        self.assertTrue(ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment, entry__model_name='hivresult', entry_status=REQUIRED).count() == 1)
+        self.assertTrue(ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment, entry__model_name='pima', entry_status=REQUIRED).count() == 1)
 
     def tests_referred_verbal1b(self):
         """"""
