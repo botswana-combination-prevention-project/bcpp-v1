@@ -5,7 +5,6 @@ from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
 
-from ..forms import GpsSearchForm
 from ..search import PlotSearchByWord, PlotSearchByGps
 
 site_mappers.autodiscover()
@@ -25,6 +24,7 @@ class SectionPlotView(BaseSectionView):
             'current_survey': Survey.objects.current_survey(),
             'current_community': self.get_current_community(),
             'mapper_name': current_community,
+            'use_gps_to_target_verification': settings.VERIFY_GPS
             })
         return context
 
