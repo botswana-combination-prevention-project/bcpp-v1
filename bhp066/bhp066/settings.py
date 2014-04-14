@@ -106,7 +106,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_r150',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -428,7 +428,7 @@ CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = False
+VERIFY_GPS = True
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'
