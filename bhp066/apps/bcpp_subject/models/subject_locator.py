@@ -18,8 +18,6 @@ from ..models import SubjectVisit
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .hic_enrollment import HicEnrollment
-from apps.bcpp_subject.models.referral import SubjectReferral
-from __builtin__ import False
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):

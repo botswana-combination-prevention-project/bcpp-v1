@@ -1,5 +1,8 @@
+#import calendar
+
 from datetime import date, timedelta, datetime
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -16,6 +19,7 @@ from apps.bcpp.choices import COMMUNITIES
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
+from ..utils import next_clinic_date
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
@@ -37,7 +41,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_appt_date = models.DateTimeField(  # check that this date is not greater than next_arv_clinic_appointment_date
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        default=datetime.today(),
+        default=next_clinic_date(),
         help_text="... or next refill / clinic date if on ART."
         )
 
