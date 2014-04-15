@@ -19,7 +19,7 @@ from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
-
+from .subject_locator import SubjectLocator
 
 site_mappers.autodiscover()
 
@@ -291,6 +291,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     @property
     def ready_to_export_transaction(self):
         """Evaluates to True if the instance has a referral code to avoid exporting someone who is not being referred."""
+        try:
+            subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
+            if self.referral_code:
+                # TODO: check if an export 'I' tx already exists
+                subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', using=None)  # re-sqve to trigger manager to export transaction
+        except SubjectLocator.DoesNotExist:
+            pass
         return self.referral_code
 
     def get_referral_identifier(self):

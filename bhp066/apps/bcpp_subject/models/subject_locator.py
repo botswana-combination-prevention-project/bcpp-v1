@@ -18,6 +18,8 @@ from ..models import SubjectVisit
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .hic_enrollment import HicEnrollment
+from apps.bcpp_subject.models.referral import SubjectReferral
+from __builtin__ import False
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
@@ -121,6 +123,15 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     def get_report_datetime(self):
         return self.created
+
+    @property
+    def ready_to_export_transaction(self):
+        """Evaluates to True if the subject has a referral instance with a referral code to avoid exporting someone who is not being referred."""
+        try:
+            return SubjectReferral.objects.get(subject_visit=self.subject_visit).referral_code
+        except SubjectReferral.DoesNotExist:
+            return False
+        return None
 
     def __unicode__(self):
         return unicode(self.subject_visit)
