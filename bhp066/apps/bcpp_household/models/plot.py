@@ -282,13 +282,12 @@ class Plot(BaseDispatchSyncUuidModel):
             for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment']]:
                 setattr(self, field.name, None)
         else:
-            if settings.VERIFY_GPS:
-                if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
-                    self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-                    self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
-                    mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-                    mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
-                    self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
+            if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
+                self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+                self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
+                mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+                mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
+                self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
             self.action = self.get_action()
             if self.id:
                 self.household_count = self.create_or_delete_households(self)
