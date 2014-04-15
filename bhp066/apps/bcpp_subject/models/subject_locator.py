@@ -14,10 +14,10 @@ from edc.subject.locator.models import BaseLocator
 from apps.bcpp_household.models  import Plot
 
 from ..managers import ScheduledModelManager
-from ..models import SubjectVisit
+from ..models import SubjectVisit, SubjectReferral
 
-from .subject_off_study_mixin import SubjectOffStudyMixin
 from .hic_enrollment import HicEnrollment
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
