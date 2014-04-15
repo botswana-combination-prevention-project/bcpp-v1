@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
-from edc.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL
+from edc.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL, ADDITIONAL
 
 from ..models import SubjectVisit, SubjectConsent
 
@@ -86,7 +86,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(360L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(370L, u'bcpp_subject', u'pima', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(380L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(390L, u'bcpp_subject', u'hicenrollment', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(390L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             )}
         }
     )
