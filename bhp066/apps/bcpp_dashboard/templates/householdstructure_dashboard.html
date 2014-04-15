@@ -51,7 +51,7 @@
 
         <div id="household_structure_status_marquee">
             <B>Household Status:</B> {% if household_structure.enrolled %} <b><span style="color:green">Enrolled</span></b> {% else %} (not enrolled) {% endif %}
-            <B>{% if replaceble %} Replaceble{% endif %}</B>
+            <B>{% if replaceble and not household.replaced_by %} Replaceble{% endif %} {% if household.replaced_by %}Replaced {% endif %}</B>
         </div>
 
     {% endblock %}
