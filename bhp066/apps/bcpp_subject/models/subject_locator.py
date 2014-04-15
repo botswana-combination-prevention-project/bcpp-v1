@@ -14,10 +14,10 @@ from edc.subject.locator.models import BaseLocator
 from apps.bcpp_household.models  import Plot
 
 from ..managers import ScheduledModelManager
-from ..models import SubjectVisit, SubjectReferral
 
-from .hic_enrollment import HicEnrollment
+
 from .subject_off_study_mixin import SubjectOffStudyMixin
+from .subject_visit import SubjectVisit
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
@@ -103,6 +103,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
         super(SubjectLocator, self).save(*args, **kwargs)
 
     def hic_enrollment_checks(self, exception_cls=None):
+        from .hic_enrollment import HicEnrollment
         exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
             if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
@@ -125,6 +126,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     @property
     def ready_to_export_transaction(self):
         """Evaluates to True if the subject has a referral instance with a referral code to avoid exporting someone who is not being referred."""
+        from .subject_referral import SubjectReferral
         try:
             return SubjectReferral.objects.get(subject_visit=self.subject_visit).referral_code
         except SubjectReferral.DoesNotExist:
