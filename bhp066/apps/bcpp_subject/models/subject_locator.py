@@ -15,7 +15,6 @@ from apps.bcpp_household.models  import Plot
 
 from ..managers import ScheduledModelManager
 
-
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
