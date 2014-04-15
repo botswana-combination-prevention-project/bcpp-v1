@@ -28,6 +28,8 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
 
         if cleaned_data.get('verbal_hiv_result') != 'POS' and cleaned_data.get('other_record') != 'N/A':
             raise forms.ValidationError('If participant is NOT POS, then any other documentation of HIV + should be Not Applicable.')
+        if cleaned_data.get('verbal_hiv_result') == 'POS' and cleaned_data.get('other_record') == 'N/A':
+            raise forms.ValidationError('If participant is POS, then any other documentation of HIV + should be either \'Yes\' or \'No\'.')
         return cleaned_data
 
     def validate_prior_hiv_testing(self, field, cleaned_data):
