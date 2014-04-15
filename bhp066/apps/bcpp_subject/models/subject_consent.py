@@ -106,13 +106,30 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         self.community = self.household_member.household_structure.household.plot.community
         self.household_member.is_consented = True
         old_enrolled = self.household_member.household_structure.enrolled
-        self.household_member.save()
+        if not self.save_member_if_not_verifying_consent(self.household_member, consent_verification=kwargs.get('consent_verification', None)):
+            #If you where verifying consent then remove 'consent_verification' frim kwargs, otherwise save will faill with
+            #'Unexpecred keyword argument'.
+            kwargs.pop('consent_verification', None)
         if self.household_member.household_structure.enrolled and not old_enrolled:
             # recalculate household_member.member_status
             household_members = HouseholdMember.objects.filter(household_structure=self.household_member.household_structure).exclude(pk=self.household_member.pk)
             for household_member in household_members:
-                household_member.save()
+                if not self.save_member_if_not_verifying_consent(household_member, consent_verification=kwargs.get('consent_verification', None)):
+                    #If you where verifying consent then remove 'consent_verification' frim kwargs, otherwise save will faill with
+                    #'Unexpecred keyword argument'.
+                    kwargs.pop('consent_verification', None)
         super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    def save_member_if_not_verifying_consent(self, household_member, consent_verification=None):
+        #If we are verifying a consent on site-server, then you get an already dispatched error.
+        #We put a bypass in consent mode which is 'bypass_for_edit_dispatched_as_item()'
+        #We cannot put the same bypass in Household member because its manipulated from many different places and this will be risky
+        #Instead we dont save a household_member when verifying a consent. This is ubsolutely fine, only one value in consent is modified
+        #and nothing else depends on this value.
+        if not consent_verification:
+            household_member.save()
+            return True
+        return False
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
