@@ -106,7 +106,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_r150',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -160,7 +160,7 @@ LOCALE_PATHS = (
             PROJECT_DIR.child('locale'),
         )#'locale', )
 
-LANGUAGE_CODE = 'tn'
+LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 
@@ -377,7 +377,7 @@ SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # django email settings
-EMAIL_HOST = '192.168.1.48'
+EMAIL_HOST = 'mail.bhp.org.bw'
 EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
@@ -428,7 +428,7 @@ CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = False
+VERIFY_GPS = True
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'
