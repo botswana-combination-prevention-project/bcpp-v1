@@ -4,7 +4,7 @@ from edc.entry_meta_data.models import ScheduledEntryMetaData
 from apps.bcpp_household_member.models import EnrollmentChecklist
 
 from ..choices import REFERRAL_CODES
-from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth)
+from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
 
 from .subject_status_helper import SubjectStatusHelper
 from collections import namedtuple
@@ -23,6 +23,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._subject_referral = {}
         self.instance = instance
         self.models.update({
+            'subject_locator': SubjectLocator,  # not required for anything here, but needed for export with the referral
             'circumcision': Circumcision,
             'enrollment_checklist': EnrollmentChecklist,
             'reproductive_health': ReproductiveHealth,
