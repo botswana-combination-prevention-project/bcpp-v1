@@ -9,9 +9,14 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     HivResult, HivResultDocumentation)
 
 
-def func_pima_required(visit_instance):
-    """Returns True if the pima is required"""
-    return SubjectStatusHelper(visit_instance).on_art == False
+def func_art_naive(visit_instance):
+    """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
+    subject_status_helper = SubjectStatusHelper(visit_instance)
+    return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
+
+
+def func_known_pos(visit_instance):
+    return SubjectStatusHelper(visit_instance).new_pos == False
 
 
 def func_todays_hiv_result_required(visit_instance):
@@ -22,9 +27,9 @@ def func_todays_hiv_result_required(visit_instance):
     return False if (subject_status_helper.new_pos == False) else True
 
 
-def func_not_hiv_positive_today(visit_instance):
-    """Returns True if the participant, so far, has not been determined to be positive."""
-    return SubjectStatusHelper(visit_instance).hiv_result != 'POS'
+def func_hiv_negative_today(visit_instance):
+    """Returns True if the participant tests negative today."""
+    return SubjectStatusHelper(visit_instance).hiv_result == 'NEG'
 
 
 def func_hiv_indeterminate_today(visit_instance):
@@ -96,9 +101,9 @@ site_rule_groups.register(ResourceUtilizationRuleGroup)
 
 class HivTestingHistoryRuleGroup(RuleGroup):
 
-    pima_required = ScheduledDataRule(
+    pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_pima_required,
+            predicate=func_art_naive,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -131,56 +136,12 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresultdocumentation'])
 
-    #Verbal hiv posetive with documentation, then Microtube is not reuired.
-    microtube_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],)
-
-    #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
-    #Next rule makes sure its always NOT_REQUIRED when this form is being fileed.
-    venus_on_required1 = RequisitionRule(
-        logic=Logic(
-            predicate=func_not_required,
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Venous (HIV)'],)
-
-    #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
-    #Next rule makes sure its always NOT_REQUIRED when this form is being fileed.
-    elisa_on_required1 = RequisitionRule(
-        logic=Logic(
-            predicate=func_not_required,
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['ELISA'],)
-
-    rbd_vl = RequisitionRule(
-        logic=Logic(
-            predicate=func_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw', 'Viral Load'])
-
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
-
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -203,6 +164,14 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
+    microtube = RequisitionRule(
+        logic=Logic(
+            predicate=func_todays_hiv_result_required,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],)
+
     def method_result(self):
         return True
 
@@ -214,9 +183,9 @@ site_rule_groups.register(HivTestingHistoryRuleGroup)
 
 
 class ReviewPositiveRuleGroup(RuleGroup):
-    pima_required = ScheduledDataRule(
+    pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_pima_required,
+            predicate=func_art_naive,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -241,7 +210,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
-    # This is to make the hivresult form TODAYS HIV RESULT only available if the HIV result from the hivtestreview is POS
+
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
@@ -249,64 +218,13 @@ class ReviewPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
-
-    microtube_known_pos = RequisitionRule(
+    microtube = RequisitionRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
             consequence='new',
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'],)
-
-    #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
-    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
-    venus_on_required1 = RequisitionRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'equals', 'POS'),
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Venous (HIV)'],)
-
-    venus_on_required2 = RequisitionRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'ne', 'POS'),
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Venous (HIV)'],)
-
-    #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
-    #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
-    elisa_on_required1 = RequisitionRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'equals', 'IND'),
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['ELISA'],)
-
-    elisa_on_required2 = RequisitionRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'ne', 'IND'),
-            consequence='not_required',
-            alternative='none'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['ELISA'],)
-
-    rbd_vl_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw', 'Viral Load',])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -316,9 +234,10 @@ site_rule_groups.register(ReviewPositiveRuleGroup)
 
 
 class HivDocumentationGroup(RuleGroup):
-    pima_required = ScheduledDataRule(
+
+    pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_pima_required,
+            predicate=func_art_naive,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -331,14 +250,7 @@ class HivDocumentationGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
-
-    microtube_known_pos = RequisitionRule(
+    microtube = RequisitionRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
             consequence='new',
@@ -382,14 +294,6 @@ class HivDocumentationGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['ELISA'],)
 
-    rbd_vl_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw', 'Viral Load'])
-
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -406,9 +310,9 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivmedicalcare'])
 
-    pima_required = ScheduledDataRule(
+    pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_pima_required,
+            predicate=func_art_naive,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -420,13 +324,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
-
     microtube_known_pos = RequisitionRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
@@ -434,14 +331,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'],)
-
-    rbd_vl_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw', 'Viral Load'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -572,10 +461,10 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 site_rule_groups.register(MedicalDiagnosesRuleGroup)
 
 
-class RequisitionRuleGroup(RuleGroup):
+class BaseRequisitionRuleGroup(RuleGroup):
 
     """Ensures an RBD, VL blood draw requisition if HIV result is POS."""
-    hiv_result1 = RequisitionRule(
+    rbd_vl_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_hiv_positive_today,
             consequence='new',
@@ -583,8 +472,21 @@ class RequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw', 'Viral Load'], )
 
+    pima_for_art_naive = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_art_naive,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
+
+    class Meta:
+        abstract = True
+
+
+class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
+
     """Ensures an ELISA blood draw requisition if HIV result is IND."""
-    hiv_result2 = RequisitionRule(
+    elisa_for_ind = RequisitionRule(
         logic=Logic(
             predicate=func_hiv_indeterminate_today,
             consequence='new',
@@ -593,7 +495,7 @@ class RequisitionRuleGroup(RuleGroup):
         target_requisition_panels=['ELISA'], )
 
     """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
-    hiv_result3 = RequisitionRule(
+    venous_for_vol = RequisitionRule(
         logic=Logic(
             predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or'),),
             consequence='new',
@@ -601,15 +503,42 @@ class RequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
 
-    pima_required = ScheduledDataRule(
+    hic = ScheduledDataRule(
         logic=Logic(
-            predicate=func_pima_required,
+            predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
-        target_model=['pima'])
+        target_model=['hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResult
-site_rule_groups.register(RequisitionRuleGroup)
+site_rule_groups.register(RequisitionRuleGroup1)
+
+
+class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivTestingHistory
+site_rule_groups.register(RequisitionRuleGroup2)
+
+
+class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivTestReview
+site_rule_groups.register(RequisitionRuleGroup3)
+
+
+class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
+ 
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivResultDocumentation
+site_rule_groups.register(RequisitionRuleGroup4)
