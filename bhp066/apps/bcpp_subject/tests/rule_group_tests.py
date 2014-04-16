@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
-from edc.constants import NEW, NOT_REQUIRED, KEYED
+from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -13,13 +13,13 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
+from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.tests.factories import SurveyFactory
-
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -62,6 +62,8 @@ class RuleGroupTests(TestCase):
 
         survey = Survey.objects.all().order_by('datetime_start')[0]
 
+        study_site = StudySite.objects.get(site_code='14')
+
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
@@ -99,8 +101,8 @@ class RuleGroupTests(TestCase):
             guardian='No',
             initials=self.household_member_male.initials,
             part_time_resident='Yes')
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female, study_site=study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male, study_site=study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
 
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
@@ -120,6 +122,10 @@ class RuleGroupTests(TestCase):
             * HivCareAdherence
             * HivResult
         """
+        self.subject_visit_male.delete()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male).count(), 0)
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
             entry__app_label='bcpp_subject',
@@ -145,8 +151,8 @@ class RuleGroupTests(TestCase):
             on_arv='No',
             arv_evidence='No',  # this is the rule field
             )
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        # said they have taken ARV so not required
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_hiv_car_adherence_and_pima2(self):
         """If POS and on arv and have doc evidence, Pima not required.
@@ -155,6 +161,9 @@ class RuleGroupTests(TestCase):
             * HivCareAdherence
             * HivResult
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
             entry__app_label='bcpp_subject',
@@ -181,6 +190,7 @@ class RuleGroupTests(TestCase):
             arv_evidence='Yes',  # this is the rule field
             )
 
+        # on art so no need for CD4
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_hiv_car_adherence_and_pima3(self):
@@ -190,6 +200,9 @@ class RuleGroupTests(TestCase):
             * HivCareAdherence
             * HivResult
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
             entry__app_label='bcpp_subject',
@@ -216,7 +229,7 @@ class RuleGroupTests(TestCase):
             arv_evidence='No',  # this is the rule field
             )
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_hiv_care_adherence_and_pima4(self):
         """If POS and not on arv but have doc evidence, Pima required.
@@ -225,6 +238,9 @@ class RuleGroupTests(TestCase):
             * HivCareAdherence
             * HivResult
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)        
+
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
             entry__app_label='bcpp_subject',
@@ -255,6 +271,9 @@ class RuleGroupTests(TestCase):
 
     def test_not_known_pos_runs_hiv_and_cd4(self):
         """If not a known POS, requires HIV and CD4 (until today's result is known)."""
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -298,6 +317,9 @@ class RuleGroupTests(TestCase):
 
     def test_known_pos_completes_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -322,6 +344,9 @@ class RuleGroupTests(TestCase):
 
     def test_known_neg_does_not_complete_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -349,6 +374,9 @@ class RuleGroupTests(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -376,6 +404,9 @@ class RuleGroupTests(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -403,6 +434,9 @@ class RuleGroupTests(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -457,6 +491,9 @@ class RuleGroupTests(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -513,6 +550,9 @@ class RuleGroupTests(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -567,6 +607,9 @@ class RuleGroupTests(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',

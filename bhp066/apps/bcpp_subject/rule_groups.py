@@ -11,7 +11,8 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
-    return not SubjectStatusHelper(visit_instance).on_art
+    subject_status_helper = SubjectStatusHelper(visit_instance)
+    return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
 
 
 def func_known_pos(visit_instance):
@@ -26,9 +27,9 @@ def func_todays_hiv_result_required(visit_instance):
     return False if (subject_status_helper.new_pos == False) else True
 
 
-def func_not_hiv_positive_today(visit_instance):
-    """Returns True if the participant, so far, has not been determined to be positive."""
-    return SubjectStatusHelper(visit_instance).hiv_result != 'POS'
+def func_hiv_negative_today(visit_instance):
+    """Returns True if the participant tests negative today."""
+    return SubjectStatusHelper(visit_instance).hiv_result == 'NEG'
 
 
 def func_hiv_indeterminate_today(visit_instance):
@@ -142,13 +143,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
-
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
@@ -224,13 +218,6 @@ class ReviewPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
-
     microtube = RequisitionRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
@@ -262,13 +249,6 @@ class HivDocumentationGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
-
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
 
     microtube = RequisitionRule(
         logic=Logic(
@@ -343,13 +323,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
-
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_not_hiv_positive_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
 
     microtube_known_pos = RequisitionRule(
         logic=Logic(
@@ -509,6 +482,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
     class Meta:
         abstract = True
 
+
 class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
     """Ensures an ELISA blood draw requisition if HIV result is IND."""
@@ -528,6 +502,13 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
+
+    hic = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_negative_today,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'

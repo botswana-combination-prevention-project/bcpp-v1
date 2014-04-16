@@ -41,6 +41,7 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
         self.registered_subject = self.household_member.registered_subject
         self.household_member.bhs_loss = True
         self.household_member.save()
+        super(EnrollmentLoss, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return str(self.household_member)
