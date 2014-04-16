@@ -111,7 +111,8 @@
                     {% endif %}
             	
             {% elif household_member.enrollment_checklist_completed and household_member.member_status == 'NOT_ELIGIBLE' %}
-            	Member has not passed the enrollment checklist, an enrollment loss form has been created.
+            	<B>Member has not passed the <A title="link to the Enrollment Checklist" href="{% url enrollment_checklist_meta|admin_urlname:'change' household_member.enrollment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">
+             		 enrollment checklist</A>, an enrollment loss form has been created.</B>
 
             {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
             	Under age 16, cannot participate at any level.
