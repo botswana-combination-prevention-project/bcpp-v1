@@ -377,7 +377,7 @@ SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # django email settings
-EMAIL_HOST = '192.168.1.48'
+EMAIL_HOST = 'mail.bhp.org.bw'
 EMAIL_PORT = '25'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
@@ -428,7 +428,7 @@ CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = False
+VERIFY_GPS = True
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'

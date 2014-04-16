@@ -25,6 +25,7 @@ class SectionPlotView(BaseSectionView):
             'current_survey': Survey.objects.current_survey(),
             'current_community': self.get_current_community(),
             'mapper_name': current_community,
+            'use_gps_to_target_verification': settings.VERIFY_GPS
             })
         return context
 
