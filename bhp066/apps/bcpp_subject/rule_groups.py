@@ -11,7 +11,8 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
-    return not SubjectStatusHelper(visit_instance).on_art
+    subject_status_helper = SubjectStatusHelper(visit_instance)
+    return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
 
 
 def func_known_pos(visit_instance):
@@ -26,9 +27,9 @@ def func_todays_hiv_result_required(visit_instance):
     return False if (subject_status_helper.new_pos == False) else True
 
 
-def func_not_hiv_positive_today(visit_instance):
-    """Returns True if the participant, so far, has not been determined to be positive."""
-    return SubjectStatusHelper(visit_instance).hiv_result != 'POS'
+def func_hiv_negative_today(visit_instance):
+    """Returns True if the participant tests negative today."""
+    return SubjectStatusHelper(visit_instance).hiv_result == 'NEG'
 
 
 def func_hiv_indeterminate_today(visit_instance):
@@ -144,7 +145,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     hic = ScheduledDataRule(
         logic=Logic(
-            predicate=func_not_hiv_positive_today,
+            predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
@@ -226,7 +227,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
 
     hic = ScheduledDataRule(
         logic=Logic(
-            predicate=func_not_hiv_positive_today,
+            predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
@@ -265,7 +266,7 @@ class HivDocumentationGroup(RuleGroup):
 
     hic = ScheduledDataRule(
         logic=Logic(
-            predicate=func_not_hiv_positive_today,
+            predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
@@ -346,7 +347,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     hic = ScheduledDataRule(
         logic=Logic(
-            predicate=func_not_hiv_positive_today,
+            predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
