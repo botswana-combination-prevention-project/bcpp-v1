@@ -428,7 +428,7 @@ CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = True
+VERIFY_GPS = False
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'

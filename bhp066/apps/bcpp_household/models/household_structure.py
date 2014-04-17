@@ -113,7 +113,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     @property
     def replaceble(self):
         replacement_helper = ReplacementHelper()
-        replacement_helper.household_structure = self.household_structure
+        replacement_helper.household_structure = self
         return replacement_helper.replaceable
 
     @property
