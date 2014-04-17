@@ -1,5 +1,8 @@
+#import calendar
+
 from datetime import date, timedelta, datetime
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -16,10 +19,11 @@ from apps.bcpp.choices import COMMUNITIES
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
+from ..utils import next_clinic_date
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
-
+from .subject_locator import SubjectLocator
 
 site_mappers.autodiscover()
 
@@ -37,7 +41,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_appt_date = models.DateTimeField(  # check that this date is not greater than next_arv_clinic_appointment_date
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        default=datetime.today(),
+        default=next_clinic_date(),
         help_text="... or next refill / clinic date if on ART."
         )
 
@@ -291,6 +295,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     @property
     def ready_to_export_transaction(self):
         """Evaluates to True if the instance has a referral code to avoid exporting someone who is not being referred."""
+        try:
+            subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
+            if self.referral_code:
+                # TODO: check if an export 'I' tx already exists
+                subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', using=None)  # re-sqve to trigger manager to export transaction
+        except SubjectLocator.DoesNotExist:
+            pass
         return self.referral_code
 
     def get_referral_identifier(self):
