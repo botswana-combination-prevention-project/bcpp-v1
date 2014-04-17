@@ -319,7 +319,7 @@ class Plot(BaseDispatchSyncUuidModel):
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
-        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, member_count=0).order_by('-created'):
+        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
             if Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
                 try:
                     if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).exists():
