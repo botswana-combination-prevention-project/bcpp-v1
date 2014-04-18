@@ -5,7 +5,6 @@ from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
 
-from ..forms import GpsSearchForm
 from ..search import PlotSearchByWord, PlotSearchByGps
 
 site_mappers.autodiscover()
