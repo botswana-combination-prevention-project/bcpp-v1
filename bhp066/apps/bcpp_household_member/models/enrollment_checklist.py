@@ -11,7 +11,7 @@ from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..constants import BHS_SCREEN, BHS_ELIGIBLE, BHS_LOSS, NOT_ELIGIBLE
+from ..constants import BHS_SCREEN, BHS_ELIGIBLE, BHS_LOSS, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
 
@@ -148,7 +148,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             if self.household_member.member_status != BHS_SCREEN:
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         else:
-            if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN]:
+            if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN+' or '+NOT_ELIGIBLE+' or '+BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
         if self.matches_household_member_values(self, self.household_member):
