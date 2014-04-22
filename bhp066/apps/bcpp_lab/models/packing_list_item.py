@@ -3,6 +3,7 @@ from edc.subject.registration.models import RegisteredSubject
 from edc.lab.lab_packing.models import BasePackingListItem
 from packing_list import PackingList
 from subject_requisition import SubjectRequisition
+from aliquot import Aliquot
 
 
 class PackingListItem(BasePackingListItem):
@@ -12,8 +13,9 @@ class PackingListItem(BasePackingListItem):
     def drawn_datetime(self):
         retval = "n/a"
         if self.item_reference:
+            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             requisition = SubjectRequisition.objects.get(
-                                specimen_identifier=self.item_reference
+                                requisition_identifier=aliquot.receive.requisition_identifier
                                 )
             retval = requisition.drawn_datetime
         return retval
@@ -21,8 +23,9 @@ class PackingListItem(BasePackingListItem):
     def clinician(self):
         retval = "n/a"
         if self.item_reference:
+            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             requisition = SubjectRequisition.objects.get(
-                                specimen_identifier=self.item_reference
+                                requisition_identifier=aliquot.receive.requisition_identifier
                                 )
             retval = requisition.user_created
         return retval
@@ -30,8 +33,9 @@ class PackingListItem(BasePackingListItem):
     def gender(self):
         retval = "n/a"
         if self.item_reference:
+            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             requisition = SubjectRequisition.objects.get(
-                                specimen_identifier=self.item_reference
+                                requisition_identifier=aliquot.receive.requisition_identifier
                                 )
             subject_identifier = requisition.subject()
             if subject_identifier:
