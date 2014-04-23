@@ -20,7 +20,7 @@ class PlotLogEntryForm(BaseModelForm):
             raise forms.ValidationError('Members cannot be present and have the be rarely present.')
         if cleaned_data.get('rarely_present') == 'Yes' and cleaned_data.get('supervisor_vdc_confirm') == 'No':
             raise forms.ValidationError('There needs to be confirmation from supervisor and VDC for rarely or seasonal members.')
-        if status == 'INACCESSIBLE' and plot.action != 'unconfirmed':
+        if status == 'INACCESSIBLE' and plot.action == 'confirmed':
             raise forms.ValidationError('This plot has been confirmed. You cannot set it as INACCESSIBLE.')
         return cleaned_data
     class Meta:
