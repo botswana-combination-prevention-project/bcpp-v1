@@ -280,6 +280,7 @@ class Plot(BaseDispatchSyncUuidModel):
             # reset any editable fields that the user changed
             for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment']]:
                 setattr(self, field.name, None)
+            self.action = self.get_action()
         else:
             if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
                 self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
