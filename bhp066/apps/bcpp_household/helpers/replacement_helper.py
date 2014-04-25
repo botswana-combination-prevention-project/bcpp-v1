@@ -128,7 +128,7 @@ class ReplacementHelper(object):
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         available_plots = []
         for plot in plots:
-            if plot.is_dispatched:
+            if not plot.is_dispatched:
                 available_plots.append(plot)      
         replacing_plots = []
         for household, plot in zip(replaceble_households, available_plots):
@@ -157,7 +157,7 @@ class ReplacementHelper(object):
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         available_plots = []
         for plot in plots:
-            if plot.is_dispatched:
+            if not plot.is_dispatched:
                 available_plots.append(plot)
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
