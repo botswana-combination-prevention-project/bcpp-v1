@@ -126,8 +126,12 @@ class ReplacementHelper(object):
         This takes a list of replaceble households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
+        available_plots = []
+        for plot in plots:
+            if plot.is_dispatched:
+                available_plots.append(plot)      
         replacing_plots = []
-        for household, plot in zip(replaceble_households, plots):
+        for household, plot in zip(replaceble_households, available_plots):
 #             if self.synchronized(destination):
             household.replaced_by = plot.plot_identifier
             plot.replaces = household.household_identifier
@@ -151,9 +155,13 @@ class ReplacementHelper(object):
         This takes a list of replaceble plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
+        available_plots = []
+        for plot in plots:
+            if plot.is_dispatched:
+                available_plots.append(plot)
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
-        for plot_a, plot_b in zip(replaceble_plots, plots):
+        for plot_a, plot_b in zip(replaceble_plots, available_plots):
 #             if self.synchronized(destination):
             plot_a.repalced_by = plot_b.plot_identifier
             plot_b.replaces = plot_a.plot_identifier
