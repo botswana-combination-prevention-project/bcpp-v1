@@ -113,7 +113,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                       ProfileItemTuple('ELISA', 'PL', 1.0, 1),
                                       ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}}
 
-    labeling_setup = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', '127.0.0.1', True), ],
+    labeling_setup = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', '127.0.0.1', True), LabelPrinterTuple('ZPL_ZPL_Label_Printer', '127.0.0.1', False)],
                 'zpl_template': [
                     ZplTemplateTuple(
                         'aliquot_label', (
