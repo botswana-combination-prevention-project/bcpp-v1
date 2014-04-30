@@ -1,1 +1,4 @@
 from .subject_requisition_manager import SubjectRequisitionManager
+from .panel_manager import PanelManager
+from .profile_manager import ProfileManager
+from .profile_item_manager import ProfileItemManager
