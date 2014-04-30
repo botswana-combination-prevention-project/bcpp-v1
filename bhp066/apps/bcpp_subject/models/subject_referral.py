@@ -298,8 +298,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
             if self.referral_code:
-                # TODO: check if an export 'I' tx already exists
-                subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', using=None)  # re-sqve to trigger manager to export transaction
+                if not SubjectLocator.export_history.export_transaction_model.objects.filter(object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
+                    subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', None)
+            else:
+                if SubjectLocator.export_history.export_transaction_model.objects.filter(object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
+                    subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'D', None)
         except SubjectLocator.DoesNotExist:
             pass
         return self.referral_code
