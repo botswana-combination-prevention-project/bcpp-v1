@@ -7,6 +7,8 @@ from lis.specimen.lab_panel.models import BasePanel
 
 from .aliquot_type import AliquotType
 
+from ..managers import PanelManager
+
 
 class Panel(BasePanel):
 
@@ -17,11 +19,14 @@ class Panel(BasePanel):
 
     panel_type = models.CharField(max_length=15, choices=PANEL_TYPE, default='TEST')
 
-    objects = models.Manager()
+    objects = PanelManager()
 
     def save(self, *args, **kwargs):
         # check these panels also update
         super(Panel, self).save(*args, **kwargs)
+
+    def natural_key(self):
+        return (self.name,)
 
     def __unicode__(self):
         return self.name
