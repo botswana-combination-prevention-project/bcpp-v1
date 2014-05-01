@@ -1,14 +1,22 @@
 from django.db import models
+
 from edc.subject.registration.models import RegisteredSubject
 from edc.lab.lab_packing.models import BasePackingListItem
-from packing_list import PackingList
-from subject_requisition import SubjectRequisition
-from aliquot import Aliquot
+
+from .aliquot import Aliquot
+from .packing_list import PackingList
+from .panel import Panel
+from .subject_requisition import SubjectRequisition
 
 
 class PackingListItem(BasePackingListItem):
 
     packing_list = models.ForeignKey(PackingList, null=True)
+
+    panel = models.ForeignKey(Panel,
+        null=True,
+        blank=True,
+        )
 
     def drawn_datetime(self):
         retval = "n/a"
