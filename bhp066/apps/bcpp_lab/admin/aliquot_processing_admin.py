@@ -2,10 +2,10 @@ from django.contrib import admin
 
 from edc.lab.lab_profile.admin import BaseProcessingAdmin
 
-from ..models import Processing
+from ..models import AliquotProcessing
 
 
-class ProcessingAdmin(BaseProcessingAdmin):
+class AliquotProcessingAdmin(BaseProcessingAdmin):
 
     list_display = ('aliquot', 'profile', 'created', 'modified', 'user_created', 'user_modified')
 
@@ -13,4 +13,4 @@ class ProcessingAdmin(BaseProcessingAdmin):
 
     list_filter = ('profile', 'created', 'modified', 'user_created', 'user_modified')
 
-admin.site.register(Processing, ProcessingAdmin)
+admin.site.register(AliquotProcessing, AliquotProcessingAdmin)

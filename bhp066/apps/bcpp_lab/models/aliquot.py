@@ -36,10 +36,15 @@ class Aliquot(BaseAliquot):
         from apps.bcpp_subject.models import SubjectVisit
         return SubjectVisit
 
-    def to_process(self):
-        url = reverse('admin:bcpp_lab_processing_add')
+    def processing(self):
+        url = reverse('admin:bcpp_lab_aliquotprocessing_add')
         return '<a href="{0}?aliquot={1}">process</a>'.format(url, self.pk)
-    to_process.allow_tags = True
+    processing.allow_tags = True
+
+    def related(self):
+        url = reverse('admin:bcpp_lab_aliquot_changelist')
+        return '<a href="{0}?q={1}">related</a>'.format(url, self.receive.receive_identifier)
+    related.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_lab'

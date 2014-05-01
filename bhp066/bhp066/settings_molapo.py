@@ -5,11 +5,18 @@ import socket
 
 from unipath import Path
 
-# from logger import LOGGING
+# begin site specific settings
+ROLE = 0  # 0=SERVER, 1=MIDDLEMAN, 2=FIELD CLIENT
+DEVICE_ID = '70' if not ROLE == 1 else '98'
+ROLE_NAME = ['SERVER', 'MIDDLEMAN', 'CLIENT'][ROLE]
+CURRENT_COMMUNITY, SITE_CODE = ('molapowabojang', '13')
+MIDDLE_MAN_LIST = ['resourcemac-bhp066', 'bcpp036-bhp066']
+# end site specific settings
 
-DEBUG = True
+PROTOCOL_NUMBER = 'bhp066'
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
+ADMINS = (('erik', 'ew@2789@gmail.com'), ('one', 'opharatlhatlhe@bhp.org.bw'), ('coulson', 'ckgathi@bhp.org.bw'))
 
 # Path
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
@@ -24,7 +31,7 @@ FIXTURE_DIRS = (
     PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
     )
 STATICFILES_DIRS = ()
-CONFIG_DIR = PROJECT_DIR.child('bhp066')
+CONFIG_DIR = PROJECT_DIR.child(PROTOCOL_NUMBER)
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
@@ -106,7 +113,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_157',
+            'NAME': PROTOCOL_NUMBER,
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -127,7 +134,7 @@ else:
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -228,10 +235,10 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.request",
                                "django.contrib.messages.context_processors.messages")
 
-ROOT_URLCONF = 'bhp066.urls'
+ROOT_URLCONF = '{0}.urls'.format(PROTOCOL_NUMBER.lower())
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'bhp066.wsgi.application'
+WSGI_APPLICATION = '{0}.wsgi.application'.format(PROTOCOL_NUMBER.lower())
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -247,7 +254,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -377,8 +384,8 @@ SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # django email settings
-EMAIL_HOST = 'mail.bhp.org.bw'
-EMAIL_PORT = '25'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '2001'
 EMAIL_HOST_USER = 'edcdev'
 EMAIL_HOST_PASSWORD = 'cc3721b'
 EMAIL_USE_TLS = True
@@ -389,11 +396,12 @@ AUTH_PROFILE_MODULE = "bhp_userprofile.userprofile"
 
 # general
 APP_NAME = 'bcpp'
-PROJECT_NUMBER = 'BHP066'
-PROJECT_IDENTIFIER_PREFIX = '066'
+PROJECT_NUMBER = PROTOCOL_NUMBER.upper()
+PROJECT_IDENTIFIER_PREFIX = PROTOCOL_NUMBER.split('BHP')[1]
 PROJECT_IDENTIFIER_MODULUS = 7
 PROTOCOL_REVISION = 'V1.0 24 September 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
+PROJECT_TITLE = '{0} {1}: {2} ({3})'.format(APP_NAME.upper(), ROLE_NAME, CURRENT_COMMUNITY.upper(), SITE_CODE)
 
 # admin overrides
 LOGIN_URL = '/{app_name}/login/'.format(app_name=APP_NAME)
@@ -421,8 +429,6 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '14'
-CURRENT_COMMUNITY = 'otse'
 CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
@@ -432,7 +438,7 @@ VERIFY_GPS = True
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'
-LAB_LOCK_NAME = 'BHP066'
+LAB_LOCK_NAME = PROTOCOL_NUMBER.upper()
 LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'
 GRADING_LIST = 'DAIDS_2004'
@@ -444,16 +450,6 @@ else:
                                    'DATABASE=BHPLAB')
 # edc.subject.consent
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
-
-#  edc.device.device
-DEVICE_ID = '99'
-if str(DEVICE_ID) == '98':
-    PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
-else:
-    PROJECT_TITLE = 'Botswana Combination Prevention Project'
-
-# edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True

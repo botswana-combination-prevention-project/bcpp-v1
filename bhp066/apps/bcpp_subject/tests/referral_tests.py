@@ -17,6 +17,7 @@ from .factories import (
 from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryMetaData
 from edc.constants import NOT_REQUIRED, REQUIRED
 from edc.entry_meta_data.models.requisition_meta_data import RequisitionMetaData
+from edc.export.models.export_transaction import ExportTransaction
 
 
 class TestPlotMapper(Mapper):
@@ -932,3 +933,16 @@ class ReferralTests(BaseScheduledModelTestCase):
             'verbal_hiv_result': 'POS',
             'hiv_result': 'POS'}
         self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
+
+    def test_export_history1(self):
+        """Asserts a referral is queued for export."""
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('SMC-NEG', subject_referral.referral_code)
+        self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk))
