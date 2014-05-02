@@ -4,6 +4,7 @@ from django.db.models.loading import get_model
 from django.db.models import Min
 
 from edc.device.dispatch.models import DispatchContainerRegister
+from edc.device.dispatch.classes import BaseController
 
 from apps.bcpp_survey.models import Survey
 
@@ -129,12 +130,30 @@ class ReplacementHelper(object):
         replacing_plots = []
         for household, plot in zip(replaceble_households, plots):
 #             if self.synchronized(destination):
-            household.replaced_by = plot.plot_identifier
-            plot.replaces = household.household_identifier
-            household.save()
-            plot.save()
-            household.save(using=destination)
-            plot.save(using=destination)
+            if household.replaced_by:
+                try:
+                    plot = get_model('bcpp_household', 'Plot').objects.get(replaces=household.household_identifier)
+                except get_model('bcpp_household', 'Plot').DoesNotExist as e:
+                    pass
+                household.replaced_by = plot.plot_identifier
+                plot.replaces = household.household_identifier
+                household.save(using=destination)
+                plot.save(using=destination)
+                crypts = BaseController('default', destination).update_model_crpts([household, plot])
+                for crypt in crypts:
+                    crypt.save(using=destination)
+                household.save()
+                plot.save()
+            else:
+                household.replaced_by = plot.plot_identifier
+                plot.replaces = household.household_identifier
+                household.save(using=destination)
+                plot.save(using=destination)
+                crypts = BaseController('default', destination).update_model_crpts([household, plot])
+                for crypt in crypts:
+                    crypt.save(using=destination)
+                household.save()
+                plot.save()
             household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
             # Creates a history of replacement
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
@@ -155,12 +174,21 @@ class ReplacementHelper(object):
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
 #             if self.synchronized(destination):
+            if plot_a.replaced_by:
+                try:
+                    plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
+                except get_model('bcpp_household', 'Plot').DoesNotExist as e:
+                    pass
             plot_a.repalced_by = plot_b.plot_identifier
             plot_b.replaces = plot_a.plot_identifier
-            plot_a.save()
-            plot_b.save()
             plot_a.save(using=destination)
             plot_b.save(using=destination)
+            #Pull and save crypts to remote
+            crypts = BaseController('default', destination).update_model_crpts([plot_a, plot_b])
+            for crypt in crypts:
+                crypt.save(using=destination)
+            plot_a.save()
+            plot_b.save()
             # Creates a history of replacement
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
                     replacing_item=plot_b.plot_identifier,
