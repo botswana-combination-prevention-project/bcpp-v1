@@ -123,6 +123,17 @@ else:
             'HOST': '',
             'PORT': '',
         },
+        'bcpp024-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_netbook',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '',
+            'PORT': '',
+        },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
