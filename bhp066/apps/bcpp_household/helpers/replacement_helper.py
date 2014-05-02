@@ -4,7 +4,6 @@ from django.db.models.loading import get_model
 from django.db.models import Min
 
 from edc.device.dispatch.models import DispatchContainerRegister
-from edc.device.dispatch.classes import BaseController
 
 from apps.bcpp_survey.models import Survey
 
@@ -126,6 +125,7 @@ class ReplacementHelper(object):
 
         This takes a list of replaceble households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
+        from edc.device.dispatch.classes import BaseController
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         for household, plot in zip(replaceble_households, plots):
@@ -137,23 +137,23 @@ class ReplacementHelper(object):
                     pass
                 household.replaced_by = plot.plot_identifier
                 plot.replaces = household.household_identifier
+                household.save()
+                plot.save()
                 household.save(using=destination)
                 plot.save(using=destination)
                 crypts = BaseController('default', destination).update_model_crpts([household, plot])
                 for crypt in crypts:
                     crypt.save(using=destination)
-                household.save()
-                plot.save()
             else:
                 household.replaced_by = plot.plot_identifier
                 plot.replaces = household.household_identifier
+                household.save()
+                plot.save()
                 household.save(using=destination)
                 plot.save(using=destination)
                 crypts = BaseController('default', destination).update_model_crpts([household, plot])
                 for crypt in crypts:
                     crypt.save(using=destination)
-                household.save()
-                plot.save()
             household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
             # Creates a history of replacement
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
@@ -169,11 +169,14 @@ class ReplacementHelper(object):
 
         This takes a list of replaceble plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
+        from edc.device.dispatch.classes import BaseController
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
 #             if self.synchronized(destination):
+            plot_a.save()
+            plot_b.save()
             if plot_a.replaced_by:
                 try:
                     plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
@@ -187,8 +190,6 @@ class ReplacementHelper(object):
             crypts = BaseController('default', destination).update_model_crpts([plot_a, plot_b])
             for crypt in crypts:
                 crypt.save(using=destination)
-            plot_a.save()
-            plot_b.save()
             # Creates a history of replacement
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
                     replacing_item=plot_b.plot_identifier,
