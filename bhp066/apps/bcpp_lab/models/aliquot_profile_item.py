@@ -5,12 +5,12 @@ from edc.lab.lab_profile.models import BaseProfileItem
 from ..managers import ProfileItemManager
 
 from .aliquot_type import AliquotType
-from .profile import Profile
+from .aliquot_profile import AliquotProfile
 
 
-class ProfileItem(BaseProfileItem):
+class AliquotProfileItem(BaseProfileItem):
 
-    profile = models.ForeignKey(Profile)
+    profile = models.ForeignKey(AliquotProfile)
 
     aliquot_type = models.ForeignKey(AliquotType)
 
@@ -25,3 +25,4 @@ class ProfileItem(BaseProfileItem):
     class Meta:
         app_label = 'bcpp_lab'
         unique_together = ('profile', 'aliquot_type')
+        db_table = 'bcpp_lab_profileitem'
