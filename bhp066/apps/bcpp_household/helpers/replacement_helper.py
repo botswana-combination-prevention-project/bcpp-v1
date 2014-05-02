@@ -175,8 +175,6 @@ class ReplacementHelper(object):
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
 #             if self.synchronized(destination):
-            plot_a.save()
-            plot_b.save()
             if plot_a.replaced_by:
                 try:
                     plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
@@ -184,6 +182,8 @@ class ReplacementHelper(object):
                     pass
             plot_a.repalced_by = plot_b.plot_identifier
             plot_b.replaces = plot_a.plot_identifier
+            plot_a.save()
+            plot_b.save()
             plot_a.save(using=destination)
             plot_b.save(using=destination)
             #Pull and save crypts to remote
