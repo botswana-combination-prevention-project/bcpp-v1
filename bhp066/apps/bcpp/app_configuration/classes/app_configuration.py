@@ -26,7 +26,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
     global_configuration = {
         'dashboard':
             {'show_not_required': True,
-            'allow_additional_requisitions': False},
+            'allow_additional_requisitions': False,
+            'show_drop_down_requisitions': False},
         'appointment':
             {'allowed_iso_weekdays': '1234567',
              'use_same_weekday': True,
