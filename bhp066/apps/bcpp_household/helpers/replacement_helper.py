@@ -95,8 +95,10 @@ class ReplacementHelper(object):
     def replaceable_households(self, survey, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
         replaceable_households = []
+        print producer_name
         for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
+            print household_structure.household.plot.producer_dispatched_to
             if producer_name.split('-')[0] == household_structure.household.plot.producer_dispatched_to:
                 if self.replaceable_household:
                     if not household_structure.household.replaced_by:
