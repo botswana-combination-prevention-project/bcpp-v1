@@ -18,6 +18,7 @@ def check_replacements(request):
     producer_name = None
     if request.POST.get('producer_name'):
         producer_name = request.POST.get('producer_name')
+        print producer_name
         first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
         survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
         replacement_households = ReplacementHelper().replaceable_households(survey, producer_name)

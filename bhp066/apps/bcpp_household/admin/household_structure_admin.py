@@ -39,6 +39,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'survey',
         'progress',
         'enrolled',
+        ReplacebleHouseholdStructureFilter,
         'enrolled_datetime',
         'modified',
         'user_modified',
