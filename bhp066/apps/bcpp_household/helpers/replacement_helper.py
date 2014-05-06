@@ -125,16 +125,32 @@ class ReplacementHelper(object):
 
         This takes a list of replaceble households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
+        from edc.device.dispatch.classes import BaseController
+        from edc.device.sync.classes import Consumer
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         for household, plot in zip(replaceble_households, plots):
-#             if self.synchronized(destination):
-            household.replaced_by = plot.plot_identifier
-            plot.replaces = household.household_identifier
-            household.save()
-            plot.save()
-            household.save(using=destination)
-            plot.save(using=destination)
+            if household.replaced_by:
+                try:
+                    plot = get_model('bcpp_household', 'Plot').objects.get(replaces=household.household_identifier)
+                except get_model('bcpp_household', 'Plot').DoesNotExist as e:
+                    pass
+                household.replaced_by = plot.plot_identifier
+                plot.replaces = household.household_identifier
+                household.save()
+                plot.save()
+                remote_household = get_model('bcpp_household', 'Household').objects.using(destination).get(household_identifier=household.household_identifier)
+                remote_household.save(using=destination)
+            else:
+                household.replaced_by = plot.plot_identifier
+                plot.replaces = household.household_identifier
+                household.save()
+                plot.save()
+                remote_household = get_model('bcpp_household', 'Household').objects.using(destination).get(household_identifier=household.household_identifier)
+                remote_household.save(using=destination)
+            # Fetch and consume transactions created when saving to remote
+            consumer = Consumer()
+            consumer.fetch_outgoing(using_source=destination, using_destination='default')
             household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
             # Creates a history of replacement
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
@@ -150,17 +166,27 @@ class ReplacementHelper(object):
 
         This takes a list of replaceble plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
+        from edc.device.dispatch.classes import BaseController
+        from edc.device.sync.classes import Consumer
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
         for plot_a, plot_b in zip(replaceble_plots, plots):
 #             if self.synchronized(destination):
+            if plot_a.replaced_by:
+                try:
+                    plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
+                except get_model('bcpp_household', 'Plot').DoesNotExist as e:
+                    pass
             plot_a.repalced_by = plot_b.plot_identifier
             plot_b.replaces = plot_a.plot_identifier
             plot_a.save()
             plot_b.save()
-            plot_a.save(using=destination)
-            plot_b.save(using=destination)
+            remote_plot_a = get_model('bcpp_household', 'Plot').objects.using(destination).filter(plot_identifier=plot_a.plot_identifier)
+            remote_plot_a.save(using=destination)
+            # Fetch and consume transactions created when saving to remote
+            consumer = Consumer()
+            consumer.fetch_outgoing(using_source=destination, using_destination='default')
             # Creates a history of replacement
             get_model('bcpp_household', 'ReplacementHistory').objects.create(
                     replacing_item=plot_b.plot_identifier,
