@@ -2,6 +2,7 @@ from django.contrib import admin
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.forms import HouseholdStructureForm
 from apps.bcpp_household.actions import export_as_kml_hs
+from apps.bcpp_household.filters import ReplacebleHouseholdStructureFilter
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -43,8 +44,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'user_modified',
         'hostname_modified',
         'failed_enumeration_attempts',
-        'no_informant',
-        'refused_enumeration',
+        ReplacebleHouseholdStructureFilter,
         )
     search_fields = (
         'household__household_identifier',
