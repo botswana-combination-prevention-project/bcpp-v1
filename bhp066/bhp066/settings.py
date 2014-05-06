@@ -106,7 +106,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_157',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -118,6 +118,17 @@ else:
                 'init_command': 'SET storage_engine=INNODB',
             },
             'NAME': 'lab',
+            'USER': 'root',
+            'PASSWORD': 'cc3721b',
+            'HOST': '',
+            'PORT': '',
+        },
+        'bcpp024-bhp066': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET storage_engine=INNODB',
+            },
+            'NAME': 'bhp066_netbook',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
