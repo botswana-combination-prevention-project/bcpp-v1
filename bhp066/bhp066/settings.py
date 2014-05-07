@@ -40,8 +40,8 @@ else:
     #KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
-    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    KEY_PATH = '/Volumes/keys'
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    #KEY_PATH = '/Volumes/keys'
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -106,7 +106,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_157',
+            'NAME': 'bhp066_r1512',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
@@ -247,7 +247,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -428,7 +428,7 @@ CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = True
+VERIFY_GPS = False
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'
