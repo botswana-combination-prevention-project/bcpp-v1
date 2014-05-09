@@ -238,7 +238,7 @@ def operational_report_view(request, **kwargs):
     replacement_values['2. Total replaced plots'] = replaced_plots
     replacement_values['3. Total number of replaceble households'] = replaceble_households
     replacement_values['4. Total household accessment pending'] = accessment_forms_to_fill
-    replacement_values['5. Total Household refusals'] = household_refusal_forms_to_fill
+    replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
     values['3. Total members'] = members.count()
     age_eligible = members.filter(eligible_member=True).count()
     values['4. Total age eligible members'] = age_eligible
