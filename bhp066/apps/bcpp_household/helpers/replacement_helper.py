@@ -88,7 +88,7 @@ class ReplacementHelper(object):
     def replaceable_plot(self):
         """Returns True if a plot meets the criteria to be replaced by a plot."""
         replaceable = False
-        if self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+        if not self.replaced_by and self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
             replaceable = True
         return replaceable
 
