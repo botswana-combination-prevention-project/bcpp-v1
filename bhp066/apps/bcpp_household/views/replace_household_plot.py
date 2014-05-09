@@ -15,7 +15,6 @@ from ..models import Plot
 
 def replace_household_plot(request):
     content_type = None
-    replaceble_plots = []
     replacement_items = []
     producer_name = None
     template = 'replace_household_plot.html'
