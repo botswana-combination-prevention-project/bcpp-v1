@@ -15,7 +15,6 @@ from ..models import Plot
 
 def replace_household_plot(request):
     content_type = None
-    replaceble_plots = []
     replacement_items = []
     producer_name = None
     template = 'replace_household_plot.html'
@@ -34,12 +33,11 @@ def replace_household_plot(request):
                 )
     elif request.GET.get('producer_name'):
         producer_name = request.GET.get('producer_name')
-        replaceme37
-        nt_plots = []
+        replacement_plots = []
         replacement_households = replacement_helper.replaceable_households(survey, producer_name)
         replacement_plots = replacement_helper.replaceable_plots(producer_name)
         if replacement_plots and replacement_households:
-            replacement_items = replacement_helper.replace_plot(replaceble_plots, producer_name) + replacement_helper.replace_household(replacement_households, producer_name)
+            replacement_items = replacement_helper.replace_plot(replacement_plots, producer_name) + replacement_helper.replace_household(replacement_households, producer_name)
         elif replacement_plots and not replacement_households:
             replacement_items = replacement_helper.replace_plot(replacement_plots, producer_name)
         elif not replacement_plots and replacement_households:
