@@ -34,14 +34,15 @@ def replace_household_plot(request):
                 )
     elif request.GET.get('producer_name'):
         producer_name = request.GET.get('producer_name')
-        replacement_plots = []
+        replaceme37
+        nt_plots = []
         replacement_households = replacement_helper.replaceable_households(survey, producer_name)
         replacement_plots = replacement_helper.replaceable_plots(producer_name)
-        if replaceble_plots and replacement_households:
+        if replacement_plots and replacement_households:
             replacement_items = replacement_helper.replace_plot(replaceble_plots, producer_name) + replacement_helper.replace_household(replacement_households, producer_name)
-        elif replaceble_plots and not replacement_households:
-            replacement_items = replacement_helper.replace_plot(replaceble_plots, producer_name)
-        elif not replaceble_plots and replacement_households:
+        elif replacement_plots and not replacement_households:
+            replacement_items = replacement_helper.replace_plot(replacement_plots, producer_name)
+        elif not replacement_plots and replacement_households:
             replacement_items = replacement_helper.replace_household(replacement_households, producer_name)
         # A plot that has been used to replace a plot or household and not dispatched is added to the list of plots to be dispatched
         for plot in Plot.objects.filter(selected=2):
