@@ -88,7 +88,7 @@ class ReplacementHelper(object):
     def replaceable_plot(self):
         """Returns True if a plot meets the criteria to be replaced by a plot."""
         replaceable = False
-        if self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+        if not self.plot.replaced_by and self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
             replaceable = True
         return replaceable
 
@@ -171,8 +171,8 @@ class ReplacementHelper(object):
         from edc.device.dispatch.classes import BaseController
         from edc.device.sync.classes import Consumer
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
-        replacing_plots = []
         #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
+        replacing_plots = []
         for plot_a, plot_b in zip(replaceble_plots, plots):
 #             if self.synchronized(destination):
             if plot_a.replaced_by:
@@ -184,7 +184,7 @@ class ReplacementHelper(object):
             plot_b.replaces = plot_a.plot_identifier
             plot_a.save()
             plot_b.save()
-            remote_plot_a = get_model('bcpp_household', 'Plot').objects.using(destination).filter(plot_identifier=plot_a.plot_identifier)
+            remote_plot_a = get_model('bcpp_household', 'Plot').objects.using(destination).get(plot_identifier=plot_a.plot_identifier)
             remote_plot_a.save(using=destination)
             # Fetch and consume transactions created when saving to remote
             consumer = Consumer()
