@@ -7,7 +7,7 @@ from edc.device.dispatch.models import DispatchContainerRegister
 
 from apps.bcpp_survey.models import Survey
 
-from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
+from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT, RARELY_OCCUPIED
 
 
 class ReplacementHelper(object):
@@ -74,23 +74,33 @@ class ReplacementHelper(object):
     @property
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot."""
-        replaceable = False
+        replaceble = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
             if self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused:
-                replaceable = True
+                replaceble = True
             elif self.household_structure.eligible_representative_absent or self.household_structure.all_eligible_members_absent:
-                replaceable = True
+                replaceble = True
             elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
-                replaceable = True
-        return replaceable
+                replaceble = True
+            elif self.household_structure.vdc_form_status == RARELY_OCCUPIED:
+                replaceble = False
+            elif self.household_structure.enumerated and not self.household_structure.eligible_members:
+                replaceble = False
+            elif self.household_structure.enrolled:
+                replaceble = False
+        return replaceble
 
     @property
     def replaceable_plot(self):
         """Returns True if a plot meets the criteria to be replaced by a plot."""
-        replaceable = False
+        replaceble = None
         if not self.plot.replaced_by and self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-            replaceable = True
-        return replaceable
+            replaceble = True
+        elif not self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+            replaceble = False
+        else:
+            replaceble = None
+        return replaceble
 
     def replaceable_households(self, survey, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
@@ -98,7 +108,6 @@ class ReplacementHelper(object):
         print producer_name
         for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
-            print household_structure.household.plot.producer_dispatched_to
             if producer_name.split('-')[0] == household_structure.household.plot.producer_dispatched_to:
                 if self.replaceable_household:
                     if not household_structure.household.replaced_by:
