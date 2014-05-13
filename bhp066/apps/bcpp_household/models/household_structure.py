@@ -78,6 +78,13 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return self.household.plot.plot_identifier
 
     @property
+    def vdc_form_status(self):
+        status = None
+        if self.no_informant:
+            status = get_model('bcpp_household', 'HouseholdAssessment').objects.get(household_structure=self).vdc_househould_status
+        return status
+
+    @property
     def all_eligible_members_absent(self):
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         if self.enumerated:

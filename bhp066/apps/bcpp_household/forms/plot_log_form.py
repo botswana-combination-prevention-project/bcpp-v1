@@ -13,6 +13,12 @@ class PlotLogEntryForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = super(PlotLogEntryForm, self).clean()
+        try:
+            plot_log_entry = PlotLogEntry.objects.get(plot_log=self.instance)
+        except:
+            plot_log_entry = None
+        if plot_log_entry:
+            plot_log_entry.allow_enrollement(plot_log_entry, PlotLogEntry(**cleaned_data), exception_cls=forms.ValidationError)
         # confirm that an inaccessible log entry is not entered against a confirmed plot.
         plot = cleaned_data.get('plot_log').plot
         status = cleaned_data.get('log_status')
