@@ -5,6 +5,7 @@ from .household import Household
 from .household_refusal import HouseholdRefusal
 from .household_refusal import HouseholdRefusalHistory
 from .household_log import HouseholdLogEntry
+from .household_assessment import HouseholdAssessment
 from .household_structure import HouseholdStructure
 from .plot import Plot
 from .plot_log import PlotLogEntry
@@ -31,6 +32,9 @@ def household_structure_on_post_save(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, HouseholdStructure):
             instance.create_household_log_on_post_save(**kwargs)
+            if instance.enumerated and instance.no_informant:
+                household_assessment = HouseholdAssessment.objects.filter(household_structure=instance)
+                household_assessment.delete()
 
 
 @receiver(post_save, weak=False, dispatch_uid="create_household_on_post_save")
@@ -66,6 +70,14 @@ def household_refusal_on_delete(sender, instance, **kwargs):
             household_structure = instance.household_structure
             household_structure.refused_enumeration = False
             household_structure.save()
+
+
+@receiver(post_delete, weak=False, dispatch_uid="household_assessment_on_delete")
+def household_assessment_on_delete(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, HouseholdAssessment):
+            instance.household_structure.no_informant = False
+            instance.household_structure.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='household_enumeration_on_past_save')
