@@ -7,7 +7,7 @@ from unipath import Path
 
 # from logger import LOGGING
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
