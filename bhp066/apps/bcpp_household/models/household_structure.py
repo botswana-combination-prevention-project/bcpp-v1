@@ -6,6 +6,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from ..helpers import ReplacementHelper
 from ..managers import HouseholdStructureManager
@@ -76,6 +77,14 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
+
+    def refresh_member_status(self):
+        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
+        members = HouseholdMember.objects.filter(household_structure__pk=self.pk)
+        for member in members:
+            household_member_helper = HouseholdMemberHelper(member)
+            member.member_status = household_member_helper.calculate_member_status_without_hint()
+            member.save()
 
     @property
     def all_eligible_members_absent(self):

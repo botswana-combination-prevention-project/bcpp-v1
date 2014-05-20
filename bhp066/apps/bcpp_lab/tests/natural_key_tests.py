@@ -12,7 +12,7 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_lab.models import (Panel,AliquotType,Profile,ProfileItem,AliquotCondition)
+from apps.bcpp_lab.models import (Panel,AliquotType,AliquotProfile,AliquotProfileItem,AliquotCondition)
 #from .factories import ()
 
 
@@ -49,10 +49,10 @@ class NaturalKeyTests(TestCase):
         instances.append(Panel.objects.all()[1])
         instances.append(AliquotType.objects.all()[0])
         instances.append(AliquotType.objects.all()[1])
-        instances.append(Profile.objects.all()[0])
-        instances.append(Profile.objects.all()[1])
-        instances.append(ProfileItem.objects.all()[1])
-        instances.append(ProfileItem.objects.all()[1])
+        instances.append(AliquotProfile.objects.all()[0])
+        instances.append(AliquotProfile.objects.all()[1])
+        instances.append(AliquotProfile.objects.all()[1])
+        instances.append(AliquotProfile.objects.all()[1])
         #aliquot_condition = AliquotCondition
         print 'INSTANCE: ' + str(instances)
         for obj in instances:
