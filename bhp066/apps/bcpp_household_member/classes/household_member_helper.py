@@ -17,7 +17,6 @@ class HouseholdMemberHelper(object):
         self.household_member = household_member
         from ..models import HouseholdMember
         if self.household_member.id:
-            #member_helper = self.__class__(HouseholdMember.objects.get(id=self.household_member.id))
             member = HouseholdMember.objects.get(id=self.household_member.id)
             if member.member_status == ABSENT:
                 self.member_status_absent = True
@@ -274,8 +273,6 @@ class HouseholdMemberHelper(object):
             EnrollmentChecklist.objects.get(household_member=self.household_member).delete()
             self.household_member.enrollment_checklist_completed = False
             self.household_member.eligible_subject = False
-            #self.household_member = HouseholdMember.objects.get(id=hm_id)
-            #print 'XX'
 
     @property
     def enrollment_loss_completed(self):
@@ -307,8 +304,6 @@ class HouseholdMemberHelper(object):
             member_status = None
             if member_status_hint:
                 if member_status_hint == BHS_SCREEN:
-                    #member_status = BHS_SCREEN
-                    #pass
                     self.member_status_bhs_screen = True
                 elif member_status_hint == ABSENT:
                     self.member_status_absent = True
@@ -339,15 +334,6 @@ class HouseholdMemberHelper(object):
         else:
             if self.eligible_subject:# and self.member_status_bhs_screen == BHS_SCREEN:
                 member_status = BHS_ELIGIBLE
-            #elif self.enrollment_loss_completed:# and self.member_status_bhs_screen == BHS_SCREEN:
-            #    member_status = BHS_LOSS
-            #if self.member_status_bhs_screen == BHS_SCREEN:
-            #    member_status = BHS_SCREEN
-            #elif self.eligible_subject and self.refused and self.eligible_htc:
-            #    member_status = HTC_ELIGIBLE
-#             elif self.eligible_member and not self.eligible_subject and not self.enrollment_checklist_completed and self.refused:
-#                 member_status = HTC_ELIGIBLE
-            #elif self.eligible_member and not self.eligible_subject and not self.enrollment_checklist_completed and not self.member_status_refused == REFUSED:
             elif (self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.member_status_enrollment_loss
                 and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
                 and not self.member_status_undecided):
