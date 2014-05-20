@@ -10,6 +10,7 @@ from apps.bcpp_household_member.constants import REFUSED
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
+from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -63,8 +64,10 @@ class SubjectRefusal (BaseMemberStatusModel):
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         self.household_member.refused = True
-        #self.save_instance_to_correct_db(self.household_member, kwargs.get('using', None))
-        self.household_member.save(kwargs)
+        household_member_helper = HouseholdMemberHelper(self.household_member)
+        self.household_member.member_status = household_member_helper.calculate_member_status_without_hint()
+        #important during dispatch, need to save instance to the correct db.
+        self.household_member.save(using=kwargs.get('using',None))
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:

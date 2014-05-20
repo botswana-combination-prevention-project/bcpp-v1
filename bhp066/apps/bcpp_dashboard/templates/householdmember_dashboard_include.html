@@ -59,7 +59,7 @@
     <td>{{ household_member.visit_attempts }}</td>
     {% comment%} particpation {% endcomment %}
     <td id="participation">
-        {% if not household_member.is_consented and not household_member.member_status == 'NOT_ELIGIBLE' %}     
+        {% if not household_member.is_consented and not household_member.member_status == 'NOT_ELIGIBLE' and not household_member.member_status == 'HTC' %}     
     		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 	         {% csrf_token %}
 			    <select name="status" id="status" onchange="this.form.submit()">
@@ -152,8 +152,13 @@
                     	<ol>
              		  		<li>Proceed to complete HTC intake form.
              		  	</ol>
-                    {% else %} 
-                        <A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
+                    {% else %}
+                    	<ol> 
+                        	<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
+                    		{% if household_member.enrollment_checklist%}
+                    			<li><A title="Edit Enrollment Checklist" href="{% url enrollment_checklist_meta|admin_urlname:'change' household_member.enrollment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Edit Enrollment Checklist</A>
+                    		{%endif%}
+                    	</ol>
                     {% endif %}
                {%endif%}
             {% else %}
