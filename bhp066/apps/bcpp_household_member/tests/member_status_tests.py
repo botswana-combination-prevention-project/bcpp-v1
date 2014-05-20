@@ -18,6 +18,7 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 from ..exceptions import MemberStatusError
 from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED
@@ -58,6 +59,7 @@ class MemberStatusTests(TestCase):
         plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
 
     def test_household_member1(self):
         """Assert not reported based on age and residency"""
@@ -249,9 +251,11 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         household_member.member_status = BHS_SCREEN
-        household_member.created = datetime.today() - timedelta(days=1)
+        household_member.created = datetime.now() - timedelta(seconds=5)
         household_member.save()
         household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, BHS_SCREEN)
+        #self.assertEquals(household_member.member_status, ABSENT)
         self.assertTrue(isinstance(EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -291,8 +295,12 @@ class MemberStatusTests(TestCase):
         household_member.save()
         household_member = HouseholdMember.objects.get(pk=pk)
         SubjectRefusalFactory(household_member=household_member)
-        self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
+        self.assertEqual(household_member.member_status, REFUSED)
         self.assertTrue(household_member.refused)
+#         household_member.member_status = REFUSED
+#         household_member.save()
+#         household_member = HouseholdMember.objects.get(pk=pk)
+#         self.assertEqual(household_member.member_status, REFUSED)
 
     def test_change_household_member6(self):
         """Asserts that an eligible member that fails Eligibility is NOT ELIGIBLE if the household is not enrolled."""
@@ -347,6 +355,11 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
+        #######
+        household_member.member_status = BHS_SCREEN
+        household_member.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, BHS_SCREEN)
 
     def test_change_household_member8(self):
         """Asserts that an eligible member in a household that is enrolled AFTER the member was added and who fails eligibility is HTC ELIGIBLE."""
@@ -426,7 +439,9 @@ class MemberStatusTests(TestCase):
         household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
+        print HouseholdMember.objects.all()
         self.enroll_household()
+        print HouseholdMember.objects.all()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         EnrollmentChecklistFactory(
@@ -446,15 +461,14 @@ class MemberStatusTests(TestCase):
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
         household_member.member_status = REFUSED
         household_member.save()
-        SubjectRefusalFactory(household_member=household_member)
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertTrue(household_member.eligible_subject)
-        self.assertTrue(household_member.enrollment_checklist_completed)
+        SubjectRefusalFactory(household_member=household_member)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertFalse(household_member.enrollment_checklist_completed)
         self.assertTrue(household_member.refused)
         self.assertTrue(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
-        household_member.save()
 
     def test_change_household_member11(self):
         household_member = HouseholdMemberFactory(
@@ -491,7 +505,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertEquals(household_member.member_status, REFUSED)
-        self.assertTrue(household_member.eligible_subject)
-        self.assertTrue(household_member.enrollment_checklist_completed)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertFalse(household_member.enrollment_checklist_completed)
         self.assertTrue(household_member.refused)
-        self.assertTrue(household_member.eligible_htc)
+        self.assertFalse(household_member.eligible_htc)
