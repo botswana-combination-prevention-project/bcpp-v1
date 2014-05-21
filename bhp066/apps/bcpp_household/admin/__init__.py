@@ -7,4 +7,5 @@ from .plot_admin import PlotAdmin
 from .plot_log_admin import PlotLogEntryAdmin, PlotLogAdmin
 from .household_refusal_admin import HouseholdRefusalAdmin
 from .household_assessment_admin import HouseholdAssessmentAdmin
+from .replacement_history_admin import ReplacementHistoryAdmin
 from .representative_eligibility_admin import RepresentativeEligibilityAdmin
