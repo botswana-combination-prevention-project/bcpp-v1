@@ -19,7 +19,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not args or len(args) < 1:
             raise CommandError('Missing \'using\' parameters.')
-
         community_name = args[0]
         cdc_plots = []
         first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
