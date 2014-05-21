@@ -7,7 +7,7 @@ from unipath import Path
 
 # from logger import LOGGING
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
@@ -128,7 +128,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066_netbook',
+            'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '192.168.1.56',
