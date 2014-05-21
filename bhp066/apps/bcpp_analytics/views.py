@@ -231,7 +231,7 @@ def operational_report_view(request, **kwargs):
         if household_structure.failed_enumeration_attempts == 3:
             if not get_model('bcpp_household', 'HouseholdAssessment').objects.filter(household_structure=household_structure) and household_status == NO_HOUSEHOLD_INFORMANT:
                 accessment_forms_to_fill += 1
-        elif household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
+        elif not get_model('bcpp_household', 'HouseholdRefusal').objects.filter(household_structure=household_structure) and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
             household_refusal_forms_to_fill += 1
 
     replacement_values['1. Total replaced households'] = replaced_households
