@@ -123,7 +123,7 @@ else:
             'HOST': '',
             'PORT': '',
         },
-        'bcpp024-bhp066': {
+        'bcpp044-bhp066': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
@@ -131,7 +131,7 @@ else:
             'NAME': 'bhp066_netbook',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': '',
+            'HOST': '192.168.1.56',
             'PORT': '',
         },
     }
