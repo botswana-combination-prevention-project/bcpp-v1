@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     APP_NAME = 0
     MODEL_NAME = 1
-    args = '<community>'
+    args = '<community name e.g otse>'
     help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent.'
 
     def handle(self, *args, **options):
