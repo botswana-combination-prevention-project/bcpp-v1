@@ -154,9 +154,13 @@
              		  	</ol>
                     {% else %}
                     	<ol> 
-                        	<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     		{% if household_member.enrollment_checklist%}
+                    			<B>Failed BHS Enrollment Checklist</B>
+                    			<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     			<li><A title="Edit Enrollment Checklist" href="{% url enrollment_checklist_meta|admin_urlname:'change' household_member.enrollment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Edit Enrollment Checklist</A>
+                    		{% else %}
+                    			<B>Refused BHS</B>
+                    			<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     		{%endif%}
                     	</ol>
                     {% endif %}
