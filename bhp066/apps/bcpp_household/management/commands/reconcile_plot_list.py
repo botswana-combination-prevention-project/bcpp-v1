@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     APP_NAME = 0
     MODEL_NAME = 1
-    args = '<community name e.g otse>, <file path e.g /home/django/>'
+    args = '<community_name e.g otse>, <file_path e.g /home/django/>'
     help = 'Prints a report that shows reconciliation statistics of plot lists belonging to 75%, 20%, 5%.'
 
     def handle(self, *args, **options):
