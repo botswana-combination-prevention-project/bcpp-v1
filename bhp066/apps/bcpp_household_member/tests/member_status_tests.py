@@ -10,7 +10,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, EnrollmentChecklist
+from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, EnrollmentChecklist, EnrollmentLoss
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.models import SubjectConsent
@@ -209,6 +209,7 @@ class MemberStatusTests(TestCase):
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, ABSENT)
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
+        household_member.modified = household_member.created + timedelta(seconds=30)
         household_member.member_status = BHS_SCREEN
         household_member.save()
         self.assertEqual(household_member.member_status, BHS_SCREEN)
@@ -251,7 +252,7 @@ class MemberStatusTests(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         household_member.member_status = BHS_SCREEN
-        household_member.created = datetime.now() - timedelta(seconds=5)
+        household_member.modified = household_member.created + timedelta(seconds=30)
         household_member.save()
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertEquals(household_member.member_status, BHS_SCREEN)
@@ -325,6 +326,72 @@ class MemberStatusTests(TestCase):
         self.assertFalse(household_member.eligible_subject)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+
+    def test_change_household_member6a(self):
+        """Start as Eligible and edit eligibility checklist to switch to Not Eligible"""
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=20),
+            guardian='No',
+            initials=household_member.initials,
+            part_time_resident='Yes',
+            has_identity='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertTrue(household_member.eligible_subject)
+        self.assertFalse(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
+        self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 0)
+        ec = EnrollmentChecklist.objects.get(household_member=household_member)
+        ec.has_identity = 'No'
+        ec.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertFalse(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 1)
+
+    def test_change_household_member6b(self):
+        """Start as Not Eligible and edit eligibility checklist to switch to Bhs Eligible"""
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=20),
+            guardian='No',
+            initials=household_member.initials,
+            part_time_resident='Yes',
+            has_identity='No')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertFalse(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 1)
+        ec = EnrollmentChecklist.objects.get(household_member=household_member)
+        ec.has_identity = 'Yes'
+        ec.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertTrue(household_member.eligible_subject)
+        self.assertFalse(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
+        self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 0)
 
     def test_change_household_member7(self):
         """Assert enrolling a household_structure updates the member status of other members in the household."""
