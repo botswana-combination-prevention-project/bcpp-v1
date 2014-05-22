@@ -26,6 +26,7 @@ class Command(BaseCommand):
         enrolled = []
         household_reason = []
         erolled_plot = 0
+        not_enrolled = 0
         confirmed = 0
         unconfirmed = 0
         plots = Plot.objects.filter(selected__isnull=False)
@@ -34,12 +35,14 @@ class Command(BaseCommand):
             if plot.status in ['inaccessible', None]:
                 cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
                 unconfirmed += 1
+                not_enrolled += 1
             elif plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
                 cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
                 if plot.action == 'unconfirmed':
                     unconfirmed += 1
                 elif plot.action == 'confirmed':
                     confirmed += 1
+                not_enrolled += 1
             if plot.household_count > 0 and plot.action == 'confirmed' and plot.status == RESIDENTIAL_HABITABLE:
                 confirmed += 1
                 households = Household.objects.filter(plot=plot)
@@ -68,8 +71,9 @@ class Command(BaseCommand):
                     cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'Yes', ''])
                 elif not enrolled[0]:
                     cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', '; '.join(household_reason)])
+                    not_enrolled += 1
                 else:
-                    raise TypeError("oops")
+                    raise TypeError()
         filename_25_pct = str(community_name) + '_25_pct.csv'
         filename_75_pct = str(community_name) + '_75_pct.csv'
         cdc_file = open(filename_25_pct, 'wb')
@@ -83,3 +87,11 @@ class Command(BaseCommand):
         cdc_file_75_pct = open(filename_75_pct, 'wb')
         writer_75_pct = csv.writer(cdc_file_75_pct, delimiter='|')
         writer_75_pct.writerows(cdc_plots_75_pct)
+        # Report of the statistics
+        print "Total plots in the Database: ", plots.count() + plots_75_pct.count()
+        print "Total number of plots in the 75 percent: ", plots_75_pct.count()
+        print "Total number of plots in the 25 percent: ", plots.count()
+        print "Total number of confirmed plots in the 25 percent:", confirmed
+        print "Total number of unconfirmed plots in the 25 percent:", unconfirmed
+        print "total number of enrolled plots in the 25 percent: ", erolled_plot
+        print "Total number of plots not enrolled in the 25 percent: ", not_enrolled
