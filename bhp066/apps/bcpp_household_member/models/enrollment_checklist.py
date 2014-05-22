@@ -151,12 +151,14 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN+' or '+NOT_ELIGIBLE+' or '+BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
+        self.household_member.eligible_subject = self.is_eligible
         if self.matches_household_member_values(self, self.household_member):
             if not self.enrollment_loss():
                 self.is_eligible = True
         self.household_member.eligible_subject = self.is_eligible
         self.household_member.enrollment_checklist_completed = True
-        self.household_member.save()
+        #important during dispatch, need to save instance to the correct db.
+        self.household_member.save(using=kwargs.get('using',None))
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
@@ -197,7 +199,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         if self.household_member.is_minor and self.guardian.lower() != 'yes':
             reason.append('Minor without guardian available.')
         if reason:
-            self.household_member.member_status = BHS_LOSS
+            self.household_member.member_status = NOT_ELIGIBLE
             try:
                 enrollment_loss = EnrollmentLoss.objects.get(household_member=self.household_member)
                 enrollment_loss.report_datetime = datetime.today()

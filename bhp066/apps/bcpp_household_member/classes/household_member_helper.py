@@ -15,9 +15,8 @@ class HouseholdMemberHelper(object):
         self._member_status_bhs_screen = None
         self._member_status_enrollment_loss = False
         self.household_member = household_member
-        from ..models import HouseholdMember
         if self.household_member.id:
-            member = HouseholdMember.objects.get(id=self.household_member.id)
+            member = self.household_member#HouseholdMember.objects.get(id=self.household_member.id)
             if member.member_status == ABSENT:
                 self.member_status_absent = True
             elif member.member_status == UNDECIDED:
@@ -28,7 +27,7 @@ class HouseholdMemberHelper(object):
                 self.member_status_bhs_screen = True
             elif member.member_status == HTC_ELIGIBLE:
                 self.member_status_htc = True
-            elif member.member_status == BHS_LOSS:
+            elif member.member_status == NOT_ELIGIBLE:
                 self.member_status_enrollment_loss = True
         self._reported = None
 
@@ -174,14 +173,17 @@ class HouseholdMemberHelper(object):
 
     @member_status_enrollment_loss.setter
     def member_status_enrollment_loss(self, is_member_status_enrollment_loss):
+        from ..models import EnrollmentLoss
         self._member_status_enrollment_loss = None
         if is_member_status_enrollment_loss:
-            if self.household_member.bhs_loss:
-                self._member_status_enrollment_loss = BHS_LOSS
+            if self.household_member.enrollment_loss_completed:
+                self._member_status_enrollment_loss = NOT_ELIGIBLE
             self.member_status_absent = False
             self.member_status_undecided = False
             self.member_status_refused = False
             self.member_status_bhs_screen = False
+        else:
+            self.enrollment_loss_completed = False
         return self._member_status_enrollment_loss
 
     @property
@@ -269,7 +271,7 @@ class HouseholdMemberHelper(object):
         enrollment_checklist_completed needs to be set back to false and the
         enrolment checklist deleted for that member."""
         from ..models import EnrollmentChecklist, HouseholdMember
-        if not is_completed and EnrollmentChecklist.objects.filter(household_member=self.household_member):
+        if not is_completed and EnrollmentChecklist.objects.filter(household_member=self.household_member).exists():
             EnrollmentChecklist.objects.get(household_member=self.household_member).delete()
             self.household_member.enrollment_checklist_completed = False
             self.household_member.eligible_subject = False
@@ -280,6 +282,13 @@ class HouseholdMemberHelper(object):
 
         This is set by the enrollment loss save method."""
         return self.household_member.enrollment_loss_completed
+
+    @enrollment_loss_completed.setter
+    def enrollment_loss_completed(self, is_completed):
+        from ..models import EnrollmentLoss
+        if not is_completed and EnrollmentLoss.objects.filter(household_member=self.household_member).exists():
+            EnrollmentLoss.objects.get(household_member=self.household_member).delete()
+            self.household_member.enrollment_loss_completed = False
 
     @property
     def refused(self):
@@ -311,7 +320,7 @@ class HouseholdMemberHelper(object):
                     self.member_status_undecided = True
                 elif member_status_hint == REFUSED:
                     self.member_status_refused = True
-                elif member_status_hint == BHS_LOSS:
+                elif member_status_hint == NOT_ELIGIBLE:
                     self.member_status_enrollment_loss = True
                 elif member_status_hint == NOT_REPORTED:
                     member_status = self.household_member.__class__.objects.get(pk=self.household_member.pk).member_status
@@ -351,7 +360,7 @@ class HouseholdMemberHelper(object):
             elif not self.eligible_member and not self.eligible_htc:
                 member_status = NOT_ELIGIBLE
             elif self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.refused and self.member_status_enrollment_loss:
-                member_status = BHS_LOSS
+                member_status = NOT_ELIGIBLE
             elif self.household_member.htc:
                 member_status = HTC
             elif self.member_status_absent:
