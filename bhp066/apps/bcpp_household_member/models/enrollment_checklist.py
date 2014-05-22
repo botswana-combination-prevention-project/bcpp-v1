@@ -188,6 +188,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             reason.append('Must be aged between >=16 and <=64 years.')
         if self.has_identity.lower() == 'no':
             reason.append('No valid identity.')
+        if self.household_residency.lower() != 'Yes':
+            reason.append('Failed household residency requirement')
         if self.part_time_resident.lower() != 'yes':
             reason.append('Does not spend 3 or more nights per month in the community.')
         if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
