@@ -16,7 +16,7 @@ class HouseholdMemberHelper(object):
         self._member_status_enrollment_loss = False
         self.household_member = household_member
         if self.household_member.id:
-            member = self.household_member#HouseholdMember.objects.get(id=self.household_member.id)
+            member = self.household_member
             if member.member_status == ABSENT:
                 self.member_status_absent = True
             elif member.member_status == UNDECIDED:
@@ -331,7 +331,6 @@ class HouseholdMemberHelper(object):
                         member_status = HTC
                 else:
                     pass
-                #member_status = self.member_status
         if not member_status:
             member_status = self.calculate_member_status_without_hint()
         return member_status
@@ -341,7 +340,7 @@ class HouseholdMemberHelper(object):
         if self.consenting or self.consented:
             member_status = BHS
         else:
-            if self.eligible_subject:# and self.member_status_bhs_screen == BHS_SCREEN:
+            if self.eligible_subject:
                 member_status = BHS_ELIGIBLE
             elif (self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.member_status_enrollment_loss
                 and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
@@ -404,7 +403,6 @@ class HouseholdMemberHelper(object):
                         if self.subject_htc:
                             options = [HTC]
                         else:
-                            #options = [HTC_ELIGIBLE, HTC]
                             options = [HTC_ELIGIBLE, BHS_SCREEN]
             elif self.eligible_member:
                 options = [ABSENT, BHS_SCREEN, BHS_ELIGIBLE, BHS, UNDECIDED, REFUSED, BHS_LOSS, HTC, HTC_ELIGIBLE]
@@ -425,7 +423,6 @@ class HouseholdMemberHelper(object):
                     if self.refused:
                         options.remove(ABSENT)
                         options.remove(UNDECIDED)
-                        #options.remove(BHS_SCREEN)
                     if self.enrollment_loss_completed:
                         options.remove(BHS_LOSS)
                     if self.enrollment_checklist_completed:
