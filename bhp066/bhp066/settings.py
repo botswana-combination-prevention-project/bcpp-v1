@@ -131,7 +131,7 @@ else:
             'NAME': 'bhp066',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
-            'HOST': '192.168.1.56',
+            'HOST': '192.168.1.189',
             'PORT': '',
         },
     }
