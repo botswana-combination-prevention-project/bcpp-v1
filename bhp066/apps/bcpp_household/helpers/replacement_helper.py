@@ -108,7 +108,6 @@ class ReplacementHelper(object):
     def replaceable_households(self, survey, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
         replaceable_households = []
-        print producer_name
         for household_structure in get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey):
             self.household_structure = household_structure
             if producer_name.split('-')[0] == household_structure.household.plot.producer_dispatched_to:
@@ -157,8 +156,7 @@ class ReplacementHelper(object):
                     plot.replaces = household.household_identifier
                     household.save()
                     plot.save()
-                    remote_household = get_model('bcpp_household', 'Household').objects.using(destination).get(household_identifier=household.household_identifier)
-                    remote_household.save(using=destination)
+                    household.save(using=destination)
                 else:
                     household.replaced_by = plot.plot_identifier
                     plot.replaces = household.household_identifier
@@ -198,7 +196,7 @@ class ReplacementHelper(object):
                         plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
                     except get_model('bcpp_household', 'Plot').DoesNotExist as e:
                         pass
-                plot_a.repalced_by = plot_b.plot_identifier
+                plot_a.replaced_by = plot_b.plot_identifier
                 plot_b.replaces = plot_a.plot_identifier
                 plot_a.save()
                 plot_b.save()

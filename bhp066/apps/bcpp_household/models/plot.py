@@ -264,7 +264,7 @@ class Plot(BaseDispatchSyncUuidModel):
         if not self.allow_enrollement:
             raise ValidationError('Not allowed to modify this Plot.')
         # If the plot is replaced can not save this plot
-        if self.id:
+        if self.id and not kwargs.get('using'):
             plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
             if plot.replaced_by:
                 raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
@@ -284,7 +284,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         if self.status == 'inaccessible':
             # reset any editable fields that the user changed
-            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'selected']]:
+            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'replaced_by', 'selected']]:
                 setattr(self, field.name, None)
             self.action = self.get_action()
         else:
