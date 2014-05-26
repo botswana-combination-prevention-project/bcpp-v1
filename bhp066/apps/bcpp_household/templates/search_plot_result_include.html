@@ -34,7 +34,7 @@
           {% if not plot.pk %}
             <span style="background-color:red;color:white;">Error: No Plot!!</span>
           {% else %}
-          	{% if plot.replced_by %}
+          	{% if plot.replaced_by %}
           		{{ plot }} replaced
           	{% else %}
             	<A href="{% url plot|get_meta|admin_urlname:'change' plot.pk %}?next=section_url&section_name=plot">{{ plot }}</A>
