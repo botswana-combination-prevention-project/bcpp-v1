@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 if Plot.objects.filter(plot_identifier=plot[0]):
                     print "Plot {0} already created".format(plot[0])
                 else:
-                    plot_in_75 = Plot(plot_identifier=plot[0], gps_target_lat=plot[1], gps_target_lon=plot[2], community=community_name)
+                    plot_in_75 = Plot(plot_identifier=plot[0], gps_target_lat=plot[1], gps_target_lon=plot[2], community=community_name, htc=True)
                     plot_in_75.save()
                 num_75_pct += 1
                 print "plots created {0} out of {1} in the 75%".format(num_75_pct, len(lines_75))
