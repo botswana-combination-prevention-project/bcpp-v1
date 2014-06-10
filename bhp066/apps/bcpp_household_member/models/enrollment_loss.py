@@ -3,7 +3,7 @@ from django.db import models
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.base.model.validators import dob_not_future
 
-from apps.bcpp_household_member.constants import BHS_LOSS, BHS_SCREEN
+from apps.bcpp_household_member.constants import BHS_LOSS, BHS_SCREEN, NOT_ELIGIBLE
 from apps.bcpp_household_member.exceptions import MemberStatusError
 from apps.bcpp_household.exceptions import AlreadyReplaced
 
@@ -35,12 +35,13 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
 #             if self.household_member.member_status != BHS_SCREEN:
 #                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
 #         else:
-        if self.household_member.member_status != BHS_LOSS:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_LOSS, self.household_member.member_status))
+        if self.household_member.member_status != NOT_ELIGIBLE:
+            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(NOT_ELIGIBLE, self.household_member.member_status))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
-        self.household_member.bhs_loss = True
-        self.household_member.save()
+        self.household_member.enrollment_loss_completed = True
+        #important during dispatch, need to save instance to the correct db.
+        self.household_member.save(using=kwargs.get('using',None))
         super(EnrollmentLoss, self).save(*args, **kwargs)
 
     def __unicode__(self):
