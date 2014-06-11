@@ -45,7 +45,6 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'user_modified',
         'hostname_modified',
         'failed_enumeration_attempts',
-        ReplacebleHouseholdStructureFilter,
         )
     search_fields = (
         'household__household_identifier',
