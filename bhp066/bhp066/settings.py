@@ -432,14 +432,14 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '16'
-CURRENT_COMMUNITY = 'lentsweletau'
-CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
+SITE_CODE = '14'
+CURRENT_COMMUNITY = 'otse'
+CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = False
+VERIFY_GPS = True
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'
