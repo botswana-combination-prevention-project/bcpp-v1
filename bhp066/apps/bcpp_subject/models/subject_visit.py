@@ -4,6 +4,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.subject.visit_tracking.models import BaseVisitTracking
 
 from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_list.models import Religion
 
 from ..choices import VISIT_UNSCHEDULED_REASON
 
@@ -11,6 +12,8 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
 class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
+    
+    #religion= models.ForeignKey(Religion)
 
     household_member = models.ForeignKey(HouseholdMember)
 
