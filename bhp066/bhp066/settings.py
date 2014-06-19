@@ -432,8 +432,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '15'
-CURRENT_COMMUNITY = 'letlhakeng'
+SITE_CODE = '14'
+CURRENT_COMMUNITY = 'otse'
 CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'

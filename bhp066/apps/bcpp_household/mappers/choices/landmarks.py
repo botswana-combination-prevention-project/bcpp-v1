@@ -57,15 +57,6 @@ RANAKA_LANDMARKS = (
     ('UCCSA / Lontone', -24.91311497, 25.46800802)
 )
 
-GABORONE_LANDMARKS = (
-    ('Princess Marina Hospital', -24.656105, 25.925392),
-    ('Princess Marina Hospital Round about', -24.658172, 25.923139),
-    ('Gaborone Senior Secondary school Grounds', -24.659186, 25.922302),
-    ('University Of Botswana round about', -24.658114, 25.929126),
-    ('Notswane Grounds', -24.657139, 25.930091),
-    ('Botswana Harvard', -24.657061, 25.923439),
-)
-
 BOKAA_LANDMARKS = (
     ('Ben King Dealer bokaa', -24.427804, 26.015773),
     ('Bokaa Brigade', -24.432434, 26.029002),
