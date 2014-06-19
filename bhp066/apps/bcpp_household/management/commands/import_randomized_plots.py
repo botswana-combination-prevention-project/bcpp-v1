@@ -10,7 +10,7 @@ class Command(BaseCommand):
     APP_NAME = 0
     MODEL_NAME = 1
     args = '<community name e.g otse>, file path e.g /Users/ckgathi/source/bhp066_project/bhp066/'
-    help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent.'
+    help = 'Creates plots from csv files containing plot lists of the 5 percent, 20 percent and 75 percent.'
 
     def handle(self, *args, **options):
         if not args or len(args) < 2:
