@@ -12,8 +12,6 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
 class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
-    
-    #religion= models.ForeignKey(Religion)
 
     household_member = models.ForeignKey(HouseholdMember)
 
