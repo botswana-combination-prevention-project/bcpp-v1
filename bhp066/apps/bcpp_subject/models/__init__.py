@@ -54,7 +54,7 @@ from .cd4_history import Cd4History
 from .subject_consent_history import SubjectConsentHistory
 from .clinic_questionnaire import ClinicQuestionnaire
 from .base_household_member_consent import BaseHouseholdMemberConsent
-from .subject_referral import SubjectReferral, SubjectReferralReview
+from .subject_referral import SubjectReferral
 from .participation import Participation
 from .tb_symptoms import TbSymptoms
 from .signals import *
