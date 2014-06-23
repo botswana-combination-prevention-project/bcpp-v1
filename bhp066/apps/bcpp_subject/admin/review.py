@@ -9,11 +9,18 @@ class SubjectReferralReviewAdmin(SubjectVisitModelAdmin):
     def __init__(self, *args, **kwargs):
         super(SubjectReferralReviewAdmin, self).__init__(*args, **kwargs)
         self.readonly_fields = [field.name for field in SubjectReferralReview._meta.fields]
-    date_hierarchy = 'report_datetime'
-    list_display = ('subject_visit', 'referral_code', 'referral_clinic', 'referral_appt_date')
-    list_filter = ('referral_clinic', 'arv_clinic', 'referral_code')
-    search_fields = ('subject_visit__appointment__registered_subject__subject_identifier', 'referral_code')
+    #date_hierarchy = 'report_datetime'
+    #list_display = ('subject_visit', 'referral_code', 'referral_clinic', 'referral_appt_date')
+    #list_filter = ('referral_clinic', 'arv_clinic', 'referral_code')
+    #search_fields = ('subject_visit__appointment__registered_subject__subject_identifier', 'referral_code')
 admin.site.register(SubjectReferralReview, SubjectReferralReviewAdmin)
+
+# class DemographicsReviewAdmin(SubjectVisitModelAdmin):
+#     def __init__(self, *args, **kwargs):
+#         super(DemographicsReviewAdmin, self).__init__(*args, **kwargs)
+#         self.readonly_fields = [field.name for field in DemographicsReview._meta.fields]
+# 
+# admin.site.register(DemographicsReview, DemographicsReviewAdmin)
 
 
 # class SubjectOffStudyReviewAdmin(SubjectVisitModelAdmin):
