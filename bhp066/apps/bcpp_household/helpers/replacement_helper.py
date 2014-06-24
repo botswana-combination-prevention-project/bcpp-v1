@@ -7,7 +7,7 @@ from edc.device.dispatch.models import DispatchContainerRegister
 
 from apps.bcpp_survey.models import Survey
 
-from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT
+from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT, RARELY_OCCUPIED
 
 
 class ReplacementHelper(object):
@@ -33,7 +33,10 @@ class ReplacementHelper(object):
 
     def synchronized(self, producer):
         """Check if a producer has been synchronized."""
-        pass
+        pending_transaction = False
+        if get_model('sync', 'OutgoingTransaction').objects.using(producer).filter(is_ignored=False, is_consumed_server=False):
+            pending_transaction = True
+        return pending_transaction
 
     @property
     def household_structure(self):
@@ -74,23 +77,33 @@ class ReplacementHelper(object):
     @property
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot."""
-        replaceable = False
+        replaceble = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
-            if self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused:
-                replaceable = True
-            elif self.household_structure.eligible_representative_absent or self.household_structure.all_eligible_members_absent:
-                replaceable = True
-            elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
-                replaceable = True
-        return replaceable
+            if self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused and not self.household_structure.household.replaced_by:
+                replaceble = True
+            elif self.household_structure.eligible_representative_absent or self.household_structure.all_eligible_members_absent and not self.household_structure.household.replaced_by:
+                replaceble = True
+            elif self.household_structure.failed_enumeration and self.household_structure.no_informant and not self.household_structure.household.replaced_by:
+                replaceble = True
+            elif self.household_structure.vdc_form_status == RARELY_OCCUPIED:
+                replaceble = False
+            elif self.household_structure.enumerated and not self.household_structure.eligible_members:
+                replaceble = False
+            elif self.household_structure.enrolled:
+                replaceble = False
+        return replaceble
 
     @property
     def replaceable_plot(self):
         """Returns True if a plot meets the criteria to be replaced by a plot."""
-        replaceable = False
-        if self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-            replaceable = True
-        return replaceable
+        replaceble = None
+        if not self.plot.replaced_by and self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+            replaceble = True
+        elif not self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+            replaceble = False
+        else:
+            replaceble = None
+        return replaceble
 
     def replaceable_households(self, survey, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
@@ -126,43 +139,41 @@ class ReplacementHelper(object):
         This takes a list of replaceble households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
         from edc.device.dispatch.classes import BaseController
+        from edc.device.sync.classes import Consumer
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
-        for household, plot in zip(replaceble_households, plots):
-#             if self.synchronized(destination):
-            if household.replaced_by:
-                try:
-                    plot = get_model('bcpp_household', 'Plot').objects.get(replaces=household.household_identifier)
-                except get_model('bcpp_household', 'Plot').DoesNotExist as e:
-                    pass
-                household.replaced_by = plot.plot_identifier
-                plot.replaces = household.household_identifier
-                household.save()
-                plot.save()
-                household.save(using=destination)
-                plot.save(using=destination)
-                crypts = BaseController('default', destination).update_model_crpts([household, plot])
-                for crypt in crypts:
-                    crypt.save(using=destination)
-            else:
-                household.replaced_by = plot.plot_identifier
-                plot.replaces = household.household_identifier
-                household.save()
-                plot.save()
-                household.save(using=destination)
-                plot.save(using=destination)
-                crypts = BaseController('default', destination).update_model_crpts([household, plot])
-                for crypt in crypts:
-                    crypt.save(using=destination)
-            household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
-            # Creates a history of replacement
-            get_model('bcpp_household', 'ReplacementHistory').objects.create(
-                    replacing_item=plot.plot_identifier,
-                    replaced_item=household.household_identifier,
-                    replacement_datetime=datetime.now(),
-                    replacement_reason=self.household_replacement_reason(household_structure))
-            replacing_plots.append(plot)
-        return replacing_plots
+        if self.synchronized(destination):
+            message = "Pending outgoing transaction on: " + str(destination)
+            return message
+        else:
+            for household, plot in zip(replaceble_households, plots):
+                if household.replaced_by:
+                    try:
+                        plot = get_model('bcpp_household', 'Plot').objects.get(replaces=household.household_identifier)
+                    except get_model('bcpp_household', 'Plot').DoesNotExist as e:
+                        pass
+                    household.replaced_by = plot.plot_identifier
+                    plot.replaces = household.household_identifier
+                    household.save()
+                    plot.save()
+                    household.save(using=destination)
+                else:
+                    household.replaced_by = plot.plot_identifier
+                    plot.replaces = household.household_identifier
+                    household.save()
+                    plot.save()
+                    household.save(using=destination)
+                # Fetch and delete transactions created when saving to remote
+                get_model('sync', 'OutgoingTransaction').objects.using(destination).filter(is_ignored=False, is_consumed_server=False).delete()
+                household_structure = get_model('bcpp_household', 'HouseholdStructure').objects.get(household=household, survey=self.survey)
+                # Creates a history of replacement
+                get_model('bcpp_household', 'ReplacementHistory').objects.create(
+                        replacing_item=plot.plot_identifier,
+                        replaced_item=household.household_identifier,
+                        replacement_datetime=datetime.now(),
+                        replacement_reason=self.household_replacement_reason(household_structure))
+                replacing_plots.append(plot)
+            return replacing_plots
 
     def replace_plot(self, replaceble_plots, destination):
         """Replaces a plot with a plot.
@@ -170,34 +181,36 @@ class ReplacementHelper(object):
         This takes a list of replaceble plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
         from edc.device.dispatch.classes import BaseController
+        from edc.device.sync.classes import Consumer
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
-        replacing_plots = []
-        #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
-        for plot_a, plot_b in zip(replaceble_plots, plots):
-#             if self.synchronized(destination):
-            if plot_a.replaced_by:
-                try:
-                    plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
-                except get_model('bcpp_household', 'Plot').DoesNotExist as e:
-                    pass
-            plot_a.repalced_by = plot_b.plot_identifier
-            plot_b.replaces = plot_a.plot_identifier
-            plot_a.save()
-            plot_b.save()
-            plot_a.save(using=destination)
-            plot_b.save(using=destination)
-            #Pull and save crypts to remote
-            crypts = BaseController('default', destination).update_model_crpts([plot_a, plot_b])
-            for crypt in crypts:
-                crypt.save(using=destination)
-            # Creates a history of replacement
-            get_model('bcpp_household', 'ReplacementHistory').objects.create(
-                    replacing_item=plot_b.plot_identifier,
-                    replaced_item=plot_a.plot_identifier,
-                    replacement_datetime=datetime.now(),
-                    replacement_reason='Invalid plot replacement')
-            replacing_plots.append(plot_b)
-        return replacing_plots
+        if self.synchronized(destination):
+            message = "Pending outgoing transaction on: " + destination
+            return message
+        else:
+            #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
+            replacing_plots = []
+            for plot_a, plot_b in zip(replaceble_plots, plots):
+    #             if self.synchronized(destination):
+                if plot_a.replaced_by:
+                    try:
+                        plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)
+                    except get_model('bcpp_household', 'Plot').DoesNotExist as e:
+                        pass
+                plot_a.replaced_by = plot_b.plot_identifier
+                plot_b.replaces = plot_a.plot_identifier
+                plot_a.save()
+                plot_b.save()
+                plot_a.save(using=destination)
+                # Fetch and delete transactions created when saving to remote
+                get_model('sync', 'OutgoingTransaction').objects.using(destination).filter(is_ignored=False, is_consumed_server=False).delete()
+                # Creates a history of replacement
+                get_model('bcpp_household', 'ReplacementHistory').objects.create(
+                        replacing_item=plot_b.plot_identifier,
+                        replaced_item=plot_a.plot_identifier,
+                        replacement_datetime=datetime.now(),
+                        replacement_reason='Invalid plot replacement')
+                replacing_plots.append(plot_b)
+            return replacing_plots
 
     def household_replacement_reason(self, household_structure):
         """check the reason why a plot or household is being replaced."""
