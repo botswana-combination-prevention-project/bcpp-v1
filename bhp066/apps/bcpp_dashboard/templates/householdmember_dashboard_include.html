@@ -31,7 +31,17 @@
     <td>{{ household_member.get_study_resident_display }}</td>
     <td>{{ household_member.visit_attempts }}</td>
     <td>{{ household_member.member_status }}</td>
-    <td>&nbsp;</td>
+    <td> {%if household_member.bypass_household_log %}
+         	{% comment %} show link to dashboard/consent{% endcomment %} 
+            {% if household_member.household_structure.household.household_identifier|is_dispatched %}
+            	dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{% endif %}
+            {% else %}
+             	Participant Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.get_hiv_history%}/consented/{{household_member.get_hiv_history}}{%endif%}</a>
+            {% endif %}
+         {%else%}
+    	 &nbsp; 
+    	 {%endif%}
+    	 </td>
     </tr>
   {% endfor %}
 {% else %}
@@ -102,8 +112,8 @@
             	    </ol>
             	{% endif %}
 
-            {% elif household_member.member_status == 'BHS' %}		
-             		{% comment %} show link to dashboard/consent {% endcomment %}
+            {% elif household_member.member_status == 'BHS' %}
+             		{% comment %} show link to dashboard/consent{% endcomment %} 
              		{% if household_member.household_structure.household.household_identifier|is_dispatched %}
                         dashboard{% if household_member.get_hiv_history%}/{{household_member.get_hiv_history}}{% endif %}
                     {% else %}

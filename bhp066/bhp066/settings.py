@@ -469,3 +469,6 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
+
+# bypass household log to get to the subject dashboard.
+BYPASS_HOUSEHOLD_LOG = True
