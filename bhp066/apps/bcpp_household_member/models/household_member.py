@@ -171,6 +171,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             household_structure.enrolled_household_member = self.pk
             household_structure.enrolled_datetime = datetime.today()
             household_structure.save()
+            household_structure.refresh_member_status()
 
     def update_plot_eligible_members(self):
         self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
@@ -325,15 +326,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def subject_absentee_instance(self):
         """Returns the subject absentee instance for this member and creates a subject_absentee_instance if it does not exist."""
-        household_member_helper = HouseholdMemberHelper()
+        household_member_helper = HouseholdMemberHelper(self)
         household_member_helper.household_member = self
         return household_member_helper.subject_status_factory('SubjectAbsentee', ABSENT)
 
     @property
     def subject_undecided_instance(self):
         """Returns the subject undecided instance for this member and creates a subject_undecided_instance if it does not exist."""
-        from ..models import SubjectUndecided
-        household_member_helper = HouseholdMemberHelper()
+        household_member_helper = HouseholdMemberHelper(self)
         household_member_helper.household_member = self
         return household_member_helper.subject_status_factory('SubjectUndecided', UNDECIDED)
 
