@@ -1,3 +1,4 @@
+from datetime import datetime
 from edc.export.classes import ExportAsCsv
 
 from apps.bcpp_subject.choices import REFERRAL_CODES
@@ -58,6 +59,7 @@ def export_locator_for_cdc_action(description="Export Locator for CDC (Manual)",
             track_history=track_history,
             show_all_fields=show_all_fields,
             delimiter=delimiter,
+            export_datetime = datetime.now(),
             encrypt=encrypt,
             strip=strip)
         return export_as_csv.write_to_file()
