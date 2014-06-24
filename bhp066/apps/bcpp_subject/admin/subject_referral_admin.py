@@ -53,6 +53,9 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         actions = super(SubjectReferralAdmin, self).get_actions(request)
         actions['export_as_csv_action'] = (  # This is a django SortedDict (function, name, short_description)
             export_as_csv_action(
+                delimiter='|',
+                encrypt=False,
+                strip=True,
                 exclude=['exported', 'exported_datetime', self.visit_model_foreign_key, 'revision', 'hostname_created', 'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', 'comment'],
                 extra_fields=OrderedDict(
                     {'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
