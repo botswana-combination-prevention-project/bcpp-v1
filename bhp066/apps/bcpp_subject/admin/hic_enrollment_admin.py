@@ -2,6 +2,7 @@ from django.contrib import admin
 from ..models import  HicEnrollment
 from ..forms import HicEnrollmentForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
+from ..filters import HicEnrollmentFilter
 
 
 class HicEnrollmentAdmin(SubjectVisitModelAdmin):
@@ -37,7 +38,7 @@ class HicEnrollmentAdmin(SubjectVisitModelAdmin):
         'citizen_or_spouse',
         'consent_datetime',
         )
-    list_filter = ('consent_datetime',)
+    list_filter = ('consent_datetime', HicEnrollmentFilter,)
     readonly_fields = (
         "dob",
         "permanent_resident",
