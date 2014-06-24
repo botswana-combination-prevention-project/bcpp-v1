@@ -193,7 +193,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     @property
     def minor(self):
-        return self.age >= 16 and self.age <= 17
+        age_at_consent = relativedelta(self.consent_datetime.date(), self.dob).years
+        return age_at_consent >= 16 and age_at_consent <= 17
 
     @property
     def age(self):

@@ -1,6 +1,5 @@
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Count
 
 
 class ReplacebleHouseholdStructureFilter(SimpleListFilter):
@@ -15,6 +14,6 @@ class ReplacebleHouseholdStructureFilter(SimpleListFilter):
         if self.value():
             query_id_list = []
             for household_structure in queryset.all():
-                if household_structure.replaceble:
+                if household_structure.replaceble and not household_structure.household.replaced_by:
                     query_id_list.append(household_structure.id)
             return queryset.filter(id__in=query_id_list)
