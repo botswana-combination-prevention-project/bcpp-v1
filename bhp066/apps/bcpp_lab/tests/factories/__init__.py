@@ -1,6 +1,6 @@
+from .receive_factory import ReceiveFactory
 from .aliquot_type_factory import AliquotTypeFactory
 from .aliquot_factory import AliquotFactory
-from .receive_factory import ReceiveFactory
 from .profile_factory import ProfileFactory
 from .packing_list_factory import PackingListFactory
 from .packing_list_item_factory import PackingListItem
