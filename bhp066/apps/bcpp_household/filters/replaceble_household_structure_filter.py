@@ -6,9 +6,8 @@ from django.db.models import Count
 class ReplacebleHouseholdStructureFilter(SimpleListFilter):
 
     title = _('replaceble')
-
     parameter_name = 'replaceble'
-    
+
     def lookups(self, request, model_admin):
         return ((True, 'Yes'), (False, 'No'), )
 
