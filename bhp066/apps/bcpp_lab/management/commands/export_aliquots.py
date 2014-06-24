@@ -1,8 +1,7 @@
 import csv
-
+from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 
-from ...models import Aliquot
 
 
 class Command(BaseCommand):
@@ -12,8 +11,9 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list
 
     def handle(self, *args, **options):
-
-        with open('/tmp/aliquot.csv', 'w') as f:
+        from ...models import Aliquot
+        date_suffix = datetime.today().strftime('%Y%m%d')
+        with open('/tmp/aliquot{0}.csv'.format(date_suffix), 'w') as f:
             writer = csv.writer(f, delimiter=',')
             writer.writerow(['requisition_identifier', 'drawn_datetime', 'aliquot_identifier', 'aliquot_type', 'aliquot_datetime', 'subject_identifier', 'initials', 'dob', 'requisition_model_name', 'receive_identifier'])
             for a in Aliquot.objects.all():
