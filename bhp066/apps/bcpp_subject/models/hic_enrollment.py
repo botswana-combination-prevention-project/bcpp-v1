@@ -166,8 +166,22 @@ class HicEnrollment (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectLocator
         subject_locator = SubjectLocator.objects.filter(subject_visit=self.subject_visit)
+        # At least some information to contact the person should be available
         if subject_locator.exists():
-            if subject_locator[0].subject_cell or subject_locator[0].subject_cell_alt or subject_locator[0].subject_phone:
+            if [subject_locator[0].subject_cell or
+                    subject_locator[0].subject_cell_alt or
+                    subject_locator[0].subject_phone or
+                    subject_locator[0].mail_address or
+                    subject_locator[0].physical_address or
+                    subject_locator[0].subject_cell or
+                    subject_locator[0].subject_cell_alt or
+                    subject_locator[0].subject_phone or
+                    subject_locator[0].subject_phone_alt or
+                    subject_locator[0].subject_work_place or
+                    subject_locator[0].subject_work_phone or
+                    subject_locator[0].contact_physical_address or
+                    subject_locator[0].contact_cell or
+                    subject_locator[0].contact_phone]:
                 return True
             else:
                 raise exception_cls('Please review \'subject_cell\', \'subject_cell_alt\' and \'subject_phone\' in SubjectLocator form before proceeding with this one.')

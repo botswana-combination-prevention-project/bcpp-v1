@@ -1,4 +1,7 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Min
+from django.db.models.loading import get_model
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
@@ -6,6 +9,7 @@ from edc.core.crypto_fields.fields import EncryptedTextField
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.validators import date_in_survey
 
 from .plot import Plot
@@ -80,6 +84,20 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot_log__plot__plot_identifier')
+
+    def allow_enrollement(self, plot_log_entry, exception_cls=None):
+        """Stops enrollments."""
+        exception_cls = exception_cls or ValidationError
+        allow_edit = []
+        first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+        survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
+        households = None
+        if self.plot_log.plot.household_count >= 1:
+            households = get_model('bcpp_household', 'Household').objects.filter(plot=self.plot_log.plot)
+            for household in households:
+                allow_edit.append(get_model('bcpp_household', 'HouseholdStructure').objects.get(survey=survey, household=household).enrolled)
+        if not (len(set(allow_edit)) == 1):
+            raise exception_cls("adding logs or modifying logs is not allowed anymore where there is no at least one enrolled individual")
 
     def __unicode__(self):
         return unicode(self.plot_log) + '(' + unicode(self.report_datetime) + ')'

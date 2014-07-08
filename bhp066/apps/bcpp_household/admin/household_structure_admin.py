@@ -39,12 +39,12 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'survey',
         'progress',
         'enrolled',
+        ReplacebleHouseholdStructureFilter,
         'enrolled_datetime',
         'modified',
         'user_modified',
         'hostname_modified',
         'failed_enumeration_attempts',
-        ReplacebleHouseholdStructureFilter,
         )
     search_fields = (
         'household__household_identifier',
