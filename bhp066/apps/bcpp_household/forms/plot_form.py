@@ -10,6 +10,12 @@ class PlotForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
+        try:
+            plot = Plot.objects.get(plot=self.instance)
+        except:
+            plot = None
+        if plot:
+            plot.allow_enrollement(plot, Plot(**cleaned_data), exception_cls=forms.ValidationError)
         if self.instance:
             if not self.instance.community:
                 raise forms.ValidationError('Community may not be blank. Must be one of {1}.'.format(self.instance.community, ', '.join(site_mappers.get_as_list())))
