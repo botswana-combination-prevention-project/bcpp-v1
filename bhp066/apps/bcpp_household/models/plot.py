@@ -1,8 +1,11 @@
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError
+from django.db.models import Min
+from django.db.models.loading import get_model
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
@@ -14,8 +17,9 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_household.exceptions import AlreadyReplaced
+from apps.bcpp_survey.models import Survey
 
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
@@ -237,6 +241,8 @@ class Plot(BaseDispatchSyncUuidModel):
 
     bhs = models.NullBooleanField(editable=False)
 
+    htc = models.NullBooleanField(editable=False)
+
     replaced_by = models.CharField(
         max_length=25,
         null=True,
@@ -257,8 +263,10 @@ class Plot(BaseDispatchSyncUuidModel):
         return (self.plot_identifier,)
 
     def save(self, *args, **kwargs):
+        if not self.allow_enrollement:
+            raise ValidationError('Not allowed to modify this Plot.')
         # If the plot is replaced can not save this plot
-        if self.id:
+        if self.id and not kwargs.get('using'):
             plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
             if plot.replaced_by:
                 raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
@@ -278,7 +286,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         if self.status == 'inaccessible':
             # reset any editable fields that the user changed
-            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'selected']]:
+            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'replaced_by', 'selected']]:
                 setattr(self, field.name, None)
             self.action = self.get_action()
         else:
@@ -313,13 +321,27 @@ class Plot(BaseDispatchSyncUuidModel):
             'gps_minutes_s': instance.gps_minutes_s,
             })
 
+    def allow_enrollement(self, plot, exception_cls=None):
+        """Stops enrollments."""
+        allow_edit = False
+        first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+        survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
+        household_structures = None
+        if get_model('bcpp_household', 'Plot').objects.get(plot_identifier=self.plot_identifier).household_count >= 1:
+            household_structures = get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey)
+            for household_structure in household_structures:
+                if household_structure.enrolled:
+                    allow_edit = True
+        if not (len(set(allow_edit)) == 1):
+            raise exception_cls("modifying plots is not allowed anymore where there is no at least one enrolled individual")
+
     def delete_unused_households(self, instance):
         """Deletes households and HouseholdStructure if member_count==0 and no log entry."""
         Household = models.get_model('bcpp_household', 'Household')
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
-        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, member_count=0).order_by('-created'):
+        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
             if Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
                 try:
                     if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).exists():

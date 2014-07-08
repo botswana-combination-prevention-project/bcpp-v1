@@ -87,6 +87,13 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             member.save()
 
     @property
+    def vdc_form_status(self):
+        status = None
+        if self.no_informant:
+            status = get_model('bcpp_household', 'HouseholdAssessment').objects.get(household_structure=self).vdc_househould_status
+        return status
+
+    @property
     def all_eligible_members_absent(self):
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         if self.enumerated:
@@ -120,6 +127,12 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return eligible_representative_absent
 
     @property
+    def replaceble(self):
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = self
+        return replacement_helper.replaceable
+
+    @property
     def member_count(self):
         """Returns the number of household members in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
@@ -130,12 +143,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         """Returns the number of consented (or enrolled) household members in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
-
-    @property
-    def replaceble(self):
-        replacement_helper = ReplacementHelper()
-        replacement_helper.household_structure = self
-        return replacement_helper.replaceable
 
     def create_household_log_on_post_save(self, **kwargs):
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
