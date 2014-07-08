@@ -42,15 +42,23 @@ def replace_household_plot(request):
             replacement_items = replacement_helper.replace_plot(replacement_plots, producer_name)
         elif not replacement_plots and replacement_households:
             replacement_items = replacement_helper.replace_household(replacement_households, producer_name)
-        # A plot that has been used to replace a plot or household and not dispatched is added to the list of plots to be dispatched
-        for plot in Plot.objects.filter(selected=2):
-            if plot.producer_dispatched_to == 'Not Dispatched' and plot.replaces:
-                if not plot in replacement_items:
-                    replacement_items.append(plot)
-        plot_identifiers = []
-        for plot in replacement_items:
-            plot_identifiers.append(plot.plot_identifier)
-        pks = Plot.objects.filter(Q(**{'plot_identifier__in': plot_identifiers})).values_list('pk')
-        selected = list(itertools.chain(*pks))
-        content_type = ContentType.objects.get_for_model(Plot)
-        return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
+        if type(replacement_items) is str:
+            return render_to_response(
+                template, {
+                    'message': replacement_items,
+                    },
+                    context_instance=RequestContext(request)
+                )
+        elif type(replacement_items) is list:
+            # A plot that has been used to replace a plot or household and not dispatched is added to the list of plots to be dispatched
+            for plot in Plot.objects.filter(selected=2):
+                if plot.producer_dispatched_to == 'Not Dispatched' and plot.replaces:
+                    if not plot in replacement_items:
+                        replacement_items.append(plot)
+            plot_identifiers = []
+            for plot in replacement_items:
+                plot_identifiers.append(plot.plot_identifier)
+            pks = Plot.objects.filter(Q(**{'plot_identifier__in': plot_identifiers})).values_list('pk')
+            selected = list(itertools.chain(*pks))
+            content_type = ContentType.objects.get_for_model(Plot)
+            return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))

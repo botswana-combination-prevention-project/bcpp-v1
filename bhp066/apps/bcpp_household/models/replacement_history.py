@@ -13,14 +13,14 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
         verbose_name='Item identifier used to replace another item',
         max_length=25,
         null=True,
-        editable=False,
+        #editable=False,
         )
 
     replaced_item = models.CharField(
         verbose_name='Item identifier of an item being replaced',
         max_length=25,
         null=True,
-        editable=False,
+        #editable=False,
         )
 
     replacement_datetime = models.DateTimeField(
@@ -33,7 +33,7 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
         max_length=100,
         help_text=_("Reasons could be absentees, refusals, e.t.c"),
         null=True,
-        editable=False,
+        #editable=False,
         )
 
     history = AuditTrail()
