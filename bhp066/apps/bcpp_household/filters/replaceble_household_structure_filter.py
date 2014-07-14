@@ -5,7 +5,6 @@ from django.utils.translation import ugettext_lazy as _
 class ReplacebleHouseholdStructureFilter(SimpleListFilter):
 
     title = _('replaceble')
-
     parameter_name = 'replaceble'
 
     def lookups(self, request, model_admin):
