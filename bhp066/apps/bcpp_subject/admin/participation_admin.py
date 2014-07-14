@@ -12,6 +12,7 @@ class ParticipationAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         "full",
+        "description",
         )
     radio_fields = {
         'full': admin.VERTICAL}
