@@ -26,6 +26,8 @@ from ..constants import  ABSENT, UNDECIDED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
+from django.conf import settings
+
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
 
@@ -209,6 +211,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         except:
             subject_htc = None
         return subject_htc
+    
+    @property
+    def bypass_household_log(self):
+        return settings.BYPASS_HOUSEHOLD_LOG
 
     @property
     def enrollment_options(self):
