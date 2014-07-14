@@ -197,6 +197,7 @@ class ReplacementHelper(object):
                     except get_model('bcpp_household', 'Plot').DoesNotExist as e:
                         pass
                 plot_a.replaced_by = plot_b.plot_identifier
+                plot_a.htc = True  # If a plot is replaced it goes to CDC
                 plot_b.replaces = plot_a.plot_identifier
                 plot_a.save()
                 plot_b.save()

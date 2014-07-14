@@ -56,8 +56,6 @@ class Demographics (BaseScheduledVisitModel):
         )
     
     history = AuditTrail()
-    
-    
 
     class Meta:
         app_label = 'bcpp_subject'
