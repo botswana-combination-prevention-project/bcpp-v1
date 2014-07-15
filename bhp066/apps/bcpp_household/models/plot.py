@@ -501,12 +501,11 @@ class Plot(BaseDispatchSyncUuidModel):
     @property
     def plot_log(self):
         from .plot_log import PlotLog
+        instance = None
         try:
             instance = PlotLog.objects.get(plot=self)
         except PlotLog.DoesNotExist:
-            instance = PlotLog.objects.create(
-                plot=self
-                )
+            return instance
         return instance
 
     class Meta:
