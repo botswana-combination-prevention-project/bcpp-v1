@@ -28,7 +28,7 @@ class Participation (BaseScheduledVisitModel, BaseParticipationModel):
     history = AuditTrail()
 
     def allow_missing_forms(self):
-        if self.full.lower() == 'yes':
+        if self.full.lower() == 'no':
             return True
         return False
 
