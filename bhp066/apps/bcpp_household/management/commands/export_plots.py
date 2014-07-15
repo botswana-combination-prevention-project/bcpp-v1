@@ -68,12 +68,20 @@ class Command(BaseCommand):
                 enrolled = list(set(enrolled))
                 if True in enrolled:
                     erolled_plot += 1
+                    if not plot.htc:
+                        plot.htc = True
+                        plot.save()
                     cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'Yes', ''])
                 elif not enrolled[0]:
                     cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', '; '.join(household_reason)])
                     not_enrolled += 1
                 else:
                     raise TypeError()
+        for plot_values in cdc_plots:
+            if not plot_values[0] == 'plot_identifier' and plot_values[6] == 'No':
+                plot_instance = Plot.objects.get(plot_identifier=plot_values[0])
+                plot_instance.htc = True
+                plot_instance.save()
         filename_25_pct = str(community_name) + '_25_pct.csv'
         filename_75_pct = str(community_name) + '_75_pct.csv'
         cdc_file = open(filename_25_pct, 'wb')
