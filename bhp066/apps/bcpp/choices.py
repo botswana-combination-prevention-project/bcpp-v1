@@ -244,6 +244,11 @@ HIV_RESULT = (
         ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'),
     )
 
+ELISA_HIV_RESULT = (
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
+    )
+
 WHYNOHIVTESTING_CHOICE = (
         ('I already knew I am HIV positive', _('I already knew I am HIV positive')),
         ('I recently tested', _('I recently tested (I know my status)')),
