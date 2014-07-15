@@ -8,7 +8,11 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.add_column(u'bcpp_subject_participation', 'description',
+#         db.add_column(u'bcpp_subject_participation', 'description',
+#                       self.gf('django.db.models.fields.CharField')(default=None, max_length=250, null=True),
+#                       keep_default=False)
+
+        db.add_column(u'bcpp_subject_participation_audit', 'description',
                       self.gf('django.db.models.fields.CharField')(default=None, max_length=250, null=True),
                       keep_default=False)
 
