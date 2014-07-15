@@ -362,6 +362,13 @@ class SexualBehaviourRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['monthsthirdpartner'])
 
+    ever_sex = ScheduledDataRule(
+        logic=Logic(
+            predicate=('ever_sex', 'equals', 'No'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['reproductivehealth','pregnancy'])
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
