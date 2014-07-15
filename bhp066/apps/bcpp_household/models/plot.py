@@ -241,7 +241,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     bhs = models.NullBooleanField(editable=False)
 
-    htc = models.NullBooleanField(editable=False)
+    htc = models.NullBooleanField(default=False, editable=False)
 
     replaced_by = models.CharField(
         max_length=25,
