@@ -362,6 +362,13 @@ class SexualBehaviourRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['monthsthirdpartner'])
 
+    ever_sex = ScheduledDataRule(
+        logic=Logic(
+            predicate=('ever_sex', 'equals', 'No'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['reproductivehealth','pregnancy'])
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -491,8 +498,8 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             predicate=func_hiv_indeterminate_today,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['ELISA'], )
+        target_model=[('bcpp_lab', 'subjectrequisition'),'elisahivresult'],
+        target_requisition_panels=['ELISA',], )
 
     """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
     venous_for_vol = RequisitionRule(
