@@ -498,8 +498,8 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             predicate=func_hiv_indeterminate_today,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['ELISA'], )
+        target_model=[('bcpp_lab', 'subjectrequisition'),'elisahivresult'],
+        target_requisition_panels=['ELISA',], )
 
     """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
     venous_for_vol = RequisitionRule(
