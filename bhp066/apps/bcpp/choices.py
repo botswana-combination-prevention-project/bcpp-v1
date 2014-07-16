@@ -223,6 +223,13 @@ EDUCATION_CHOICE = (
             ('not_answering', _('Don\'t want to answer')),
         )
 
+INABILITY_TO_PARTICIPATE_REASON = (
+           ('Mental Incapacity', _('Mental Incapacity')),
+           ('Deaf/Mute', _('Deaf/Mute')),
+           ('Too sick to talk', _('Too sick to talk')),
+           ('None', _('None')),
+        )
+
 EMPLOYMENT_CHOICE = (
         ('Not working', _('Not working')),
         ('Full-time Govt', _('Yes in the Government Sector (full time)')),
