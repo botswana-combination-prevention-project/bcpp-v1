@@ -201,59 +201,47 @@ def operational_report_view(request, **kwargs):
     how_many_tested = 0
 ############################################################################################################################################
     if community == '':
-        print 'all communities' 
         for item in COMMUNITIES:
             plt = Plot.objects.all()
             reached = reached + ( plt.filter(action='confirmed', community__icontains=community,
                                  modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
-            print reached
             values['1. Plots reached'] = reached
             not_reached = not_reached + (plt.filter(action='unconfirmed', community__icontains=community,
                                      modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
-            print not_reached
             values['2. Plots not reached'] = not_reached
             members = (HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
                                                      created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username))
             members_val = members_val + (members.count())
-            print members_val
             values['3. Total members'] = members_val
             
             age_eligible = age_eligible + (members.filter(eligible_member=True).count())
-            print age_eligible
             values['4. Total age eligible members'] = age_eligible
             
             not_age_eligible = not_age_eligible + (members.filter(eligible_member=False).count())
-            print not_age_eligible
             values['5. Total members not age eligible'] = not_age_eligible
             
             age_eligible_research = members.filter(eligible_member=True, member_status=BHS)
             research = research + (age_eligible_research.count())
-            print research
             values['6. Age eligible members that consented for BHS'] = research
             
             age_eligible_htc = members.filter(eligible_member=True, member_status__in=HTC)
             htc = htc + (age_eligible_htc.count())
-            print htc
             values['7. Age eligible members that agreed to HTC (not through BHS)'] = htc
             
             age_eligible_absent = members.filter(eligible_member=True, member_status=ABSENT)
             absent = absent + (age_eligible_absent.count())
-            print absent
             values['8. Age eligible members that where ABSENT'] = absent
             
             age_eligible_undecided = members.filter(eligible_member=True, member_status=UNDECIDED)
             undecided = undecided + (age_eligible_undecided.count())
-            print undecided
             values['9. Age eligible members that where UNDECIDED'] = undecided
             
             age_eligible_refused = members.filter(eligible_member=True, member_status=REFUSED)
             refused = refused + (age_eligible_refused.count())
-            print refused
             values['91. Age eligible members that REFUSED'] = refused
             
             how_many_tested =how_many_tested + (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
                                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count())
-            print how_many_tested
             values['92. Age eligible members that TESTED'] = how_many_tested
             values = collections.OrderedDict(sorted(values.items()))
             
@@ -297,12 +285,10 @@ def operational_report_view(request, **kwargs):
                 ra_usernames.insert(0, '---------')
 ###############################################################################
     elif ra_username == '':
-        print 'all RA\'s' 
         for user in User.objects.filter(groups__name='field_research_assistant'):
             plt = Plot.objects.all()
             reached = reached + ( plt.filter(action='confirmed', community__icontains=community,
                                  modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
-            print reached
             values['1. Plots reached'] = reached
             not_reached = not_reached + (plt.filter(action='unconfirmed', community__icontains=community,
                                      modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
