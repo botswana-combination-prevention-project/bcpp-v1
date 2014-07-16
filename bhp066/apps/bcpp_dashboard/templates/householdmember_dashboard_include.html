@@ -172,7 +172,13 @@
                     			<B>Refused BHS</B>
                     			<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     		{% else %}
-                    			<B>Older than 64</B>
+                    			{% if household_member.age_in_years > 64 %}
+                    				<B>Older than 64.</B>
+                    			{% elif household_member.inability_to_participate != 'None' %}
+                    				<B>{{household_member.inability_to_participate}}.</B>
+                    			{% else %}
+                    				<B>Not a study resident.</B>
+                    			{% endif %}
                     			<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     		{%endif%}
                     	</ol>

@@ -249,7 +249,8 @@ class HouseholdMemberHelper(object):
 
     @property
     def eligible_member(self):
-        return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes')
+        return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes' 
+                and self.household_member.inability_to_participate == 'None')
 
     @property
     def eligible_subject(self):
