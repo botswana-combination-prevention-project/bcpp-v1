@@ -42,7 +42,7 @@ else:
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
     #KEY_PATH = '/Volumes/keys'
-    #KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
+    KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -259,7 +259,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+#     'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
