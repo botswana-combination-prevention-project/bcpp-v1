@@ -45,6 +45,7 @@ from .stigma_opinion import StigmaOpinion
 from .positive_participant import PositiveParticipant
 from .access_to_care import AccessToCare
 from .hiv_result import HivResult
+from .elisa_hiv_result import ElisaHivResult
 from .hic_enrollment import HicEnrollment
 from .pregnancy import Pregnancy
 from .non_pregnancy import NonPregnancy
