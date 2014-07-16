@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class HivResultFilter(SimpleListFilter):
 
-    title = _('today\'s hiv result')
+    title = _('hiv result')
 
     parameter_name = 'hiv_result'
 
