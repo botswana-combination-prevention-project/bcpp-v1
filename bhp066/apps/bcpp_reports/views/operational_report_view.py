@@ -21,8 +21,8 @@ def operational_report_view(request, **kwargs):
     community = request.GET.get('community', '')
     if community.find('----') != -1:
         community = ''
-    date_from = utilities.date_format_utility(request.GET.get('date_from', ''), '1960/01/01')
-    date_to = utilities.date_format_utility(request.GET.get('date_to', ''), '2099/12/31')
+    date_from = utilities.date_format_utility(request.GET.get('date_from', ''), '1960-01-01')
+    date_to = utilities.date_format_utility(request.GET.get('date_to', ''), '2099-12-31')
 
     plt = Plot.objects.all()
     reached = plt.filter(action='confirmed', community__icontains=community,
