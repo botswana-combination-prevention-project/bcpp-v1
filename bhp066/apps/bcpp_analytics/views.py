@@ -188,6 +188,8 @@ def operational_report_view(request, **kwargs):
     date_from = utilities.date_format_utility(request.GET.get('date_from', ''), '1960-01-01')
     date_to = utilities.date_format_utility(request.GET.get('date_to', ''), '2099-12-31')
     
+    date_to += datetime.timedelta(days=1)
+        
     reached = 0
     not_reached = 0
     members_val = 0
