@@ -412,7 +412,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     ever_sex = ScheduledDataRule(
         logic=Logic(
-            predicate=('ever_sex', 'equals', 'No'),
+            predicate=(('ever_sex', 'equals', 'No'), ('ever_sex', 'equals', 'DWTA', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth','pregnancy'])
