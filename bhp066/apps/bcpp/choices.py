@@ -96,6 +96,11 @@ CATTLEPOSTLANDS_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
+PARTIAL_PARTICIPATION_TYPE = (
+        ('Not Applicable', _('Not Applicable')),
+        ('RBD Only', _('RBD Only')),
+        ('Changed mind midway', _('Changed mind midway')),
+   )
 
 COMMUNITIES = (
         ('Bokaa', _('Bokaa')),
