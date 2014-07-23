@@ -1,0 +1,2 @@
+RBD = 'RBD'
+FULL = 'FULL'
