@@ -1,18 +1,15 @@
 import collections
 import datetime
-
 from django.db.models import Max, Min
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET
 from django.db.models.loading import get_model
-
 from apps.bcpp.choices import COMMUNITIES
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
-
 from apps.bcpp_household.constants import NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models import Plot
@@ -188,7 +185,7 @@ def operational_report_view(request, **kwargs):
     date_from = utilities.date_format_utility(request.GET.get('date_from', ''), '1960-01-01')
     date_to = utilities.date_format_utility(request.GET.get('date_to', ''), '2099-12-31')
     
-    #date_to += datetime.timedelta(days=1)
+    date_to += datetime.timedelta(days=1)
         
     reached = 0
     not_reached = 0
