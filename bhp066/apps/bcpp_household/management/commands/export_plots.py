@@ -14,7 +14,7 @@ class Command(BaseCommand):
     APP_NAME = 0
     MODEL_NAME = 1
     args = '<community name e.g otse>'
-    help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent.'
+    help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent. List that goes to CDC.'
 
     def handle(self, *args, **options):
         if not args or len(args) < 1:
