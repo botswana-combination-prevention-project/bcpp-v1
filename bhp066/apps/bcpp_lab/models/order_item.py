@@ -8,6 +8,7 @@ from edc.device.sync.models import BaseSyncUuidModel
 from .aliquot import Aliquot
 from .order import Order
 from .panel import Panel
+from ..managers import OrderItemManager
 
 
 class OrderItem(BaseSyncUuidModel):
@@ -38,11 +39,14 @@ class OrderItem(BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = OrderItemManager()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
         super(OrderItem, self).save(*args, **kwargs)
+
+    def natural_key(self):
+        return (self.order_identifier, )
 
     class Meta:
         app_label = 'bcpp_lab'
