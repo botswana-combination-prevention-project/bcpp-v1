@@ -6,3 +6,4 @@ from .packing_list_factory import PackingListFactory
 from .packing_list_item_factory import PackingListItem
 from .panel_factory import PanelFactory
 from .subject_requisition_factory import SubjectRequisitionFactory
+from .processing_factory import ProcessingFactory
