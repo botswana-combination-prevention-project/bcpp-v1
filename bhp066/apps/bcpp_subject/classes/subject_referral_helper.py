@@ -1,10 +1,15 @@
+from datetime import datetime
+from django.core.exceptions import ValidationError
+
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
+from edc.subject.appointment.models import Holiday
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
 
 from ..choices import REFERRAL_CODES
 from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
+from ..utils import next_clinic_date
 
 from .subject_status_helper import SubjectStatusHelper
 from collections import namedtuple
@@ -243,3 +248,15 @@ class SubjectReferralHelper(SubjectStatusHelper):
             except self.models.get('subject_consent').DoesNotExist:
                 self._subject_consent_instance = None
         return self._subject_consent_instance
+
+    def validate_referral_appt_date(self, exception_cls=None):
+        exception_cls = exception_cls or ValidationError
+        result = True
+        if self.instance.referral_appt_date != next_clinic_date():
+            result = False
+            if self.instance.referral_appt_date.strftime("%A") in ['Saturday', 'Sunday']:
+                raise exception_cls("You cannot schedule an appointment for a weekend day. Got \'{0}\''.".format(self.instance.referral_appt_date.strftime("%A")))
+            elif Holiday.objects.filter(holiday_date=self.instance.referral_appt_date.date()):
+                holiday = Holiday.objects.get(holiday_date=self.instance.referral_appt_date.date())
+                raise exception_cls("You cannot schedule an appointment on a holiday. Got \'{0}\''.".format(holiday.holiday_name))
+        return result
