@@ -231,7 +231,7 @@ EDUCATION_CHOICE = (
 INABILITY_TO_PARTICIPATE_REASON = (
            ('Mental Incapacity', _('Mental Incapacity')),
            ('Deaf/Mute', _('Deaf/Mute')),
-           ('Too sick to talk', _('Too sick to talk')),
+           ('Too sick', _('Too sick')),
            ('None', _('None')),
         )
 
@@ -379,6 +379,13 @@ ALCOHOL_SEX = (
     )
 
 LASTSEX_CHOICE = (
+        ('Days', _('Days')),
+        ('Months', _('Months')),
+        ('Years', _('Years')),
+        ('not_answering', _('Don\'t want to answer')),
+)
+
+TIME_UNIT_CHOICE = (
         ('Days', _('Days')),
         ('Months', _('Months')),
         ('Years', _('Years')),
