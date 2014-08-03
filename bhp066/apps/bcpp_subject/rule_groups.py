@@ -16,6 +16,12 @@ def func_hiv_tested(visit_instance):
     return testing_history.has_tested.lower() == 'yes' and participation.participation_type != 'RBD Only'
 
 
+def func_hiv_untested(visit_instance):
+    testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
+    participation = Participation.objects.get(subject_visit=visit_instance)
+    return testing_history.has_tested.lower() == 'no' and participation.participation_type != 'RBD Only'
+
+
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
     subject_status_helper = SubjectStatusHelper(visit_instance)
@@ -172,7 +178,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     hiv_untested = ScheduledDataRule(
         logic=Logic(
             #predicate=('has_tested', 'equals', 'No'),
-            predicate=func_hiv_tested,
+            predicate=func_hiv_untested,
             consequence='new',
             alternative='not_required'),
         target_model=['hivuntested'])
@@ -507,7 +513,7 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
             predicate=('tb_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
-        target_model=['tubercolosis'])
+        target_model=['tubercolosis', 'tbsymptoms'])
 
     class Meta:
         app_label = 'bcpp_subject'

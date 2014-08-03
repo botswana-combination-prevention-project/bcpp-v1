@@ -29,7 +29,7 @@ class Panel(BasePanel):
         return (self.name, )
 
     def __unicode__(self):
-        return (self.name, )
+        return self.name
 
     class Meta:
         app_label = 'bcpp_lab'
