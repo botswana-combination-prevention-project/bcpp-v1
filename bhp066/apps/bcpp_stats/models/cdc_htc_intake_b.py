@@ -5,37 +5,38 @@ from edc.core.crypto_fields.fields import EncryptedCharField
 from .base_cdc import BaseCdc
 
 
-class CdcHtcIntake(BaseCdc):
-
-    _age_in_years = models.IntegerField(null=True)
+class CdcHtcIntakeB(BaseCdc):
+    """Aug 5 format"""
     ART_documentation_ind = models.IntegerField(null=True)
     DOB = models.DateField(null=True)
+    Prior_HIV_Test_Date = models.IntegerField(null=True) # new
     age_calc = models.IntegerField(null=True)
     cd4_res = models.IntegerField(null=True)
     cd4_test_performed_ind = models.IntegerField(null=True)
-    citizen_ind2 = models.IntegerField(null=True)
+    citizen_ind = models.IntegerField(null=True)
     community_name = models.IntegerField(null=True)
     gender = models.IntegerField(null=True)
     have_omang_ind = models.IntegerField(null=True)
     hh_id = models.CharField(max_length=25, null=True)
     hiv_result_in_past_3m_ind = models.IntegerField(null=True)
     hiv_test_result = models.IntegerField(null=True)
-    home_visit_permission2 = models.IntegerField(null=True)
-    intv_dt = models.DateField()
+    home_visit_permission = models.IntegerField(null=True)
+    intv_dt = models.DateField(null=True)
     mc_family_phone_contact_permissi = models.IntegerField(null=True)
     mc_like_to_be_referred = models.IntegerField(null=True)
     mc_like_to_be_referred2 = models.IntegerField(null=True)
     mc_no_interest_reason = models.IntegerField(null=True)
     mc_phone_contact_permission = models.IntegerField(null=True)
-    omang_nbr = EncryptedCharField(max_length=150, null=True)
+    mc_tent_appointment_date = models.DateField(null=True)
+    omang_nbr = EncryptedCharField(max_length=25, null=True)
     part_time_resident = models.IntegerField(null=True)
     permanent_resident_ind = models.IntegerField(null=True)
     permanent_resident_ind2 = models.IntegerField(null=True)
     permission = models.IntegerField(null=True)
-    pregnant_ind2 = models.IntegerField(null=True)
+    pregnant_ind = models.IntegerField(null=True)
     prior_hiv_result = models.IntegerField(null=True)
     prior_hiv_test_record_available = models.IntegerField(null=True)
-    referral_clinic2 = models.IntegerField(null=True)
+    referral_clinic = models.IntegerField(null=True)
     referred_for = models.IntegerField(null=True)
     resident_community = models.IntegerField(null=True)
     spouse_of_citizen_ind = models.IntegerField(null=True)
