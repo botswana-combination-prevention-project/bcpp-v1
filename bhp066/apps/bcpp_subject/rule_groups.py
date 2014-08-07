@@ -239,6 +239,15 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
+    #added because when participant is -VE, positive participant form was still available
+    #and then now after saving hivtestreview, adherence & medicalcare form are available
+    verbal_result_response = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'NEG'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
+
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=func_no_verbal_hiv_result,
@@ -292,6 +301,14 @@ class ReviewPositiveRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
+
+    #added to make adherence, medicalcare and positiveparticipant forms unavailable for -ve participants
+    recorded_result_response = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'equals', 'NEG'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -449,7 +466,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
             predicate=(('ever_sex', 'equals', 'No'), ('ever_sex', 'equals', 'DWTA', 'or')),
             consequence='not_required',
             alternative='new'),
-        target_model=['reproductivehealth','pregnancy'])
+        target_model=['reproductivehealth', 'pregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
