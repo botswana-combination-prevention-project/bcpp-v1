@@ -32,6 +32,8 @@ if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+elif 'bcpp0' in socket.gethostname():
+    KEY_PATH = '/Volumes/keys'
 else:
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
@@ -107,7 +109,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_release',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
