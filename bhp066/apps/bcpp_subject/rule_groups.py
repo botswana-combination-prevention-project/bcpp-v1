@@ -6,7 +6,8 @@ from .classes import SubjectStatusHelper
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, Participation)
+                    HivResult, HivResultDocumentation, Participation,
+                    ElisaHivResult)
 from .constants import RBD
 
 
@@ -549,6 +550,13 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['pima'])
 
+    hic = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_negative_today,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hicenrollment'])
+
     class Meta:
         abstract = True
 
@@ -572,13 +580,6 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
-
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hiv_negative_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -612,3 +613,12 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResultDocumentation
 site_rule_groups.register(RequisitionRuleGroup4)
+
+
+class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
+ 
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = ElisaHivResult
+site_rule_groups.register(RequisitionRuleGroup5)
