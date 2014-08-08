@@ -60,4 +60,5 @@ from .participation import Participation
 from .tb_symptoms import TbSymptoms
 from .signals import *
 from .rbd_demographics import RbdDemographics
+from .viral_load_result import ViralLoadResult
 from .review import *
