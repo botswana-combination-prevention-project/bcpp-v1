@@ -99,6 +99,8 @@ CATTLEPOSTLANDS_CHOICE = (
 PARTIAL_PARTICIPATION_TYPE = (
         ('Not Applicable', _('Not Applicable')),
         ('RBD Only', _('RBD Only')),
+        ('HTC Only', _('HTC Only')),
+        ('Questionnaires', _('Questionnaires only')),
         ('Changed mind midway', _('Changed mind midway')),
    )
 

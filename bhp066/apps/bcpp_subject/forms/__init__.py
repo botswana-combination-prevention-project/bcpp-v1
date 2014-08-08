@@ -34,3 +34,4 @@ from .clinic_questionnaire_form import ClinicQuestionnaireForm
 from .participation_form import ParticipationForm
 from .tb_symptoms_form import TbSymptomsForm
 from .rbd_demographics_form import RbdDemographicsForm
+from .viral_load_result_form import ViralLoadResultForm
