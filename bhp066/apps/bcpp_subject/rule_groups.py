@@ -6,20 +6,22 @@ from .classes import SubjectStatusHelper
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, Participation)
-from .constants import RBD
+                    HivResult, HivResultDocumentation, Participation,
+                    ElisaHivResult)
+
+from .constants import RBD, Questionnaires
 
 
 def func_hiv_tested(visit_instance):
     testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
     participation = Participation.objects.get(subject_visit=visit_instance)
-    return testing_history.has_tested.lower() == 'yes' and participation.participation_type != 'RBD Only'
+    return testing_history.has_tested == 'Yes' and participation.participation_type != 'RBD Only'
 
 
 def func_hiv_untested(visit_instance):
     testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
     participation = Participation.objects.get(subject_visit=visit_instance)
-    return testing_history.has_tested.lower() == 'no' and participation.participation_type != 'RBD Only'
+    return testing_history.has_tested == 'No' and participation.participation_type != 'RBD Only'
 
 
 def func_art_naive(visit_instance):
@@ -38,6 +40,8 @@ def func_todays_hiv_result_required(visit_instance):
     subject_status_helper = SubjectStatusHelper(visit_instance)
     participation = Participation.objects.get(subject_visit=visit_instance)
     if participation.participation_type_string == RBD:
+        return False
+    if participation.participation_type_string == Questionnaires:
         return False
     if subject_status_helper.todays_hiv_result:
         return True
@@ -60,7 +64,7 @@ def func_hiv_positive_today(visit_instance):
 
 
 def func_hiv_positive_today_not_rbd(visit_instance):
-    """Returns True if the participant has been determinied to be either known or newly diagnosed HIV positive 
+    """Returns True if the participant has been determinied to be either known or newly diagnosed HIV positive
     and their participation is not RBD only."""
     participation = Participation.objects.get(subject_visit=visit_instance)
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS' and participation.participation_type_string != RBD
@@ -101,16 +105,19 @@ site_rule_groups.register(RegisteredSubjectRuleGroup)
 
 class ParticipationRuleGroup(RuleGroup):
 
-    """Ensures all un-necesssary models are made not_required when participant only wishes to give RBD."""
-    participation_type = ScheduledDataRule(
+    """Makes un-required forms unavailable based on participation"""
+    rbd_participation_type = ScheduledDataRule(
         logic=Logic(
             predicate=('participation_type', 'equals', 'RBD Only'),
             consequence='not_required',
             alternative='none'),
-        target_model=['subjectlocator', 'residencymobility', 'communityengagement', 'demographics', 'education', 'sexualbehaviour', 'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
-                      'hivcareadherence', 'hivmedicalcare', 'circumcision', 'circumcised', 'uncircumcised', 'reproductivehealth', 'pregnancy', 'nonpregnancy', 'medicaldiagnoses', 'heartattack',
-                      'cancer', 'sti', 'tubercolosis', 'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion', 'positiveparticipant', 'accesstocare', 'hivresult', 'elisahivresult','pima',
-                      'subjectreferral', 'hicenrollment', 'hivtested', 'hivuntested'])
+        target_model=['communityengagement', 'demographics', 'education', 'hivmedicalcare',
+                      'sexualbehaviour', 'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
+                      'circumcision', 'circumcised', 'uncircumcised', 'reproductivehealth',
+                      'pregnancy', 'nonpregnancy', 'medicaldiagnoses', 'heartattack', 'cancer',
+                      'sti', 'tubercolosis', 'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion',
+                      'positiveparticipant', 'accesstocare', 'hivresult', 'elisahivresult',
+                      'hicenrollment', 'hivuntested'])
 
     rbd_requsition = RequisitionRule(
         logic=Logic(
@@ -119,6 +126,35 @@ class ParticipationRuleGroup(RuleGroup):
             alternative='none'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'], )
+
+    htc_participation_type = ScheduledDataRule(
+        logic=Logic(
+            predicate=('participation_type', 'equals', 'HTC Only'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=['communityengagement', 'demographics', 'education', 'sexualbehaviour',
+                      'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
+                      'circumcision', 'circumcised', 'uncircumcised',
+                      'reproductivehealth', 'pregnancy', 'nonpregnancy',
+                      'medicaldiagnoses', 'heartattack', 'cancer', 'sti', 'tubercolosis',
+                      'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion', 'hivmedicalcare'])
+
+    #3forms removed because they assume requisitions have been processed and for questionnaire only
+    #participation there are no labs
+    questionnaires_participation_type = ScheduledDataRule(
+        logic=Logic(
+            predicate=('participation_type', 'equals', 'Questionnaires'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=['hivresult', 'elisahivresult', 'pima'])
+
+    questionnaires_requsition = RequisitionRule(
+        logic=Logic(
+            predicate=('participation_type', 'equals', 'Questionnaires'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube', 'Venous (HIV)', 'ELISA', 'Viral Load', 'Research Blood Draw'], )
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -211,6 +247,15 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
+    #added because when participant is -VE, positive participant form was still available
+    #and then now after saving hivtestreview, adherence & medicalcare form are available
+    verbal_result_response = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'NEG'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
+
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=func_no_verbal_hiv_result,
@@ -226,7 +271,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'],)
 
-    zrbd_participation = ScheduledDataRule(
+    rbd_participation = ScheduledDataRule(
         logic=Logic(
             predicate=('participation_type_string', 'equals', 'RBD'),
             consequence='not_required',
@@ -264,6 +309,14 @@ class ReviewPositiveRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
+
+    #added to make adherence, medicalcare and positiveparticipant forms unavailable for -ve participants
+    recorded_result_response = ScheduledDataRule(
+        logic=Logic(
+            predicate=('recorded_hiv_result', 'equals', 'NEG'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -421,7 +474,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
             predicate=(('ever_sex', 'equals', 'No'), ('ever_sex', 'equals', 'DWTA', 'or')),
             consequence='not_required',
             alternative='new'),
-        target_model=['reproductivehealth','pregnancy'])
+        target_model=['reproductivehealth', 'pregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -549,6 +602,13 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['pima'])
 
+    hic = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_negative_today,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hicenrollment'])
+
     class Meta:
         abstract = True
 
@@ -561,8 +621,8 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             predicate=func_hiv_indeterminate_today,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition'),'elisahivresult'],
-        target_requisition_panels=['ELISA',], )
+        target_model=[('bcpp_lab', 'subjectrequisition'), 'elisahivresult'],
+        target_requisition_panels=['ELISA', ], )
 
     """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
     venous_for_vol = RequisitionRule(
@@ -572,13 +632,6 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
-
-    hic = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hiv_negative_today,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -606,9 +659,18 @@ site_rule_groups.register(RequisitionRuleGroup3)
 
 
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
- 
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivResultDocumentation
 site_rule_groups.register(RequisitionRuleGroup4)
+
+
+class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
+ 
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = ElisaHivResult
+site_rule_groups.register(RequisitionRuleGroup5)
