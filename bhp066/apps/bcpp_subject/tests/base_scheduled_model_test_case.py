@@ -61,7 +61,7 @@ class BaseScheduledModelTestCase(TestCase):
             initials=self.household_member_male.initials,
             gender=self.household_member_male.gender,
             dob=date.today() - relativedelta(years=self.household_member_male.age_in_years),
-            guardian='No',
+            guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
         enrollment_female = EnrollmentChecklistFactory(
@@ -69,7 +69,7 @@ class BaseScheduledModelTestCase(TestCase):
             initials=self.household_member_female.initials,
             gender=self.household_member_female.gender,
             dob=date.today() - relativedelta(years=self.household_member_female.age_in_years),
-            guardian='No',
+            guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
 
