@@ -139,7 +139,8 @@ class ParticipationRuleGroup(RuleGroup):
                       'medicaldiagnoses', 'heartattack', 'cancer', 'sti', 'tubercolosis',
                       'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion', 'hivmedicalcare'])
 
-    #3forms removed because they assume requisitions have been processed and for questionnaires there are no labs
+    #3forms removed because they assume requisitions have been processed and for questionnaire only
+    #participation there are no labs
     questionnaires_participation_type = ScheduledDataRule(
         logic=Logic(
             predicate=('participation_type', 'equals', 'Questionnaires'),
