@@ -5,19 +5,12 @@ from edc.core.crypto_fields.fields import EncryptedIdentityField
 from .base_cdc import BaseCdc
 
 
-class CdcSmc(BaseCdc):
+class CdcSmcOtse(BaseCdc):
 
-    Alt_Contact_Made = models.CharField(max_length=25, null=True)
-    Contact1_Made = models.CharField(max_length=25, null=True)
-    Contact2_Made = models.CharField(max_length=25, null=True)
-    Contact3_Made = models.CharField(max_length=25, null=True)
     FirstSaveTime = models.DateTimeField(null=True)
     GlobalRecordId = models.CharField(max_length=50, null=True)
     LastSaveTime = models.DateTimeField(null=True)
-    SMC_Followup_UID = models.IntegerField(null=True)
-    Source_System_Name = models.CharField(max_length=25, null=True)
     UniqueKey = models.IntegerField(null=True)
-    identity_type = models.CharField(max_length=25, null=True)
     identity_value = EncryptedIdentityField(null=True)
     mcVstIDtypeOM = EncryptedIdentityField(null=True)
     mcVstIDtypePBC = EncryptedIdentityField(null=True)

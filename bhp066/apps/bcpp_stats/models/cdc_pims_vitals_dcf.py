@@ -21,7 +21,7 @@ class CdcPimsVitalsDcf(BaseCdc):
     SRH_PMTCT = models.IntegerField(null=True)
     artrx_regimenother = models.IntegerField(null=True)
     artrx_startdt = models.DateField(null=True)
-    med_regimenother = models.IntegerField(null=True)
+    med_regimenother = models.CharField(max_length=25, null=True)
     srh_pmtctdt = models.DateField(null=True)
 
     class Meta:

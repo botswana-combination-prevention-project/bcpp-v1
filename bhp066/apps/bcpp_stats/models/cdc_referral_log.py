@@ -20,7 +20,7 @@ class CdcReferralLog(BaseCdc):
     ScreenEnroll = models.IntegerField(null=True)
     VisitRsn = models.IntegerField(null=True)
     staff_id = models.IntegerField(null=True)
-    studyid = models.IntegerField(null=True)
+    studyid = models.CharField(max_length=25, null=True)
     visit_date = models.DateField(null=True)
 
     class Meta:
