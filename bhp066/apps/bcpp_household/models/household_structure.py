@@ -83,7 +83,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         members = HouseholdMember.objects.filter(household_structure__pk=self.pk)
         for member in members:
             household_member_helper = HouseholdMemberHelper(member)
-            member.member_status = household_member_helper.calculate_member_status_without_hint()
+            member.member_status = household_member_helper.calculate_member_status_with_hint(member.member_status)
             member.save()
 
     @property
