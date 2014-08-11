@@ -20,11 +20,12 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        pass
         # Deleting field 'Circumcised.age_unit_circ'
-        db.delete_column(u'bcpp_subject_circumcised', 'age_unit_circ')
+        #db.delete_column(u'bcpp_subject_circumcised', 'age_unit_circ')
 
         # Deleting field 'CircumcisedAudit.age_unit_circ'
-        db.delete_column(u'bcpp_subject_circumcised_audit', 'age_unit_circ')
+        #db.delete_column(u'bcpp_subject_circumcised_audit', 'age_unit_circ')
 
 
     models = {
