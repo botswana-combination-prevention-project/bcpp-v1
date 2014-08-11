@@ -85,7 +85,7 @@ class Command(BaseCommand):
         filename_25_pct = str(community_name) + '_25_pct.csv'
         filename_75_pct = str(community_name) + '_75_pct.csv'
         cdc_file = open(filename_25_pct, 'wb')
-        writer = csv.writer(cdc_file, delimiter='|')
+        writer = csv.writer(cdc_file, delimiter=',')
         writer.writerows(cdc_plots)
         plots_75_pct = Plot.objects.filter(selected__isnull=True)
         cdc_plots_75_pct = []
@@ -93,7 +93,7 @@ class Command(BaseCommand):
         for plot in plots_75_pct:
             cdc_plots_75_pct.append([plot.plot_identifier, plot.action, plot.status, plot.gps_target_lat, plot.gps_target_lon])
         cdc_file_75_pct = open(filename_75_pct, 'wb')
-        writer_75_pct = csv.writer(cdc_file_75_pct, delimiter='|')
+        writer_75_pct = csv.writer(cdc_file_75_pct, delimiter=',')
         writer_75_pct.writerows(cdc_plots_75_pct)
         # Report of the statistics
         print "Total plots in the Database: ", plots.count() + plots_75_pct.count()

@@ -15,13 +15,13 @@ from .constants import RBD, Questionnaires
 def func_hiv_tested(visit_instance):
     testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
     participation = Participation.objects.get(subject_visit=visit_instance)
-    return testing_history.has_tested.lower() == 'yes' and participation.participation_type != 'RBD Only'
+    return testing_history.has_tested == 'Yes' and participation.participation_type != 'RBD Only'
 
 
 def func_hiv_untested(visit_instance):
     testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
     participation = Participation.objects.get(subject_visit=visit_instance)
-    return testing_history.has_tested.lower() == 'no' and participation.participation_type != 'RBD Only'
+    return testing_history.has_tested == 'No' and participation.participation_type != 'RBD Only'
 
 
 def func_art_naive(visit_instance):
@@ -111,12 +111,11 @@ class ParticipationRuleGroup(RuleGroup):
             predicate=('participation_type', 'equals', 'RBD Only'),
             consequence='not_required',
             alternative='none'),
-        target_model=['communityengagement', 'demographics', 'education', 'sexualbehaviour',
-                      'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
-                      'circumcision', 'circumcised',
-                      'uncircumcised', 'reproductivehealth', 'pregnancy', 'nonpregnancy',
-                      'medicaldiagnoses', 'heartattack', 'cancer', 'sti', 'tubercolosis',
-                      'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion',
+        target_model=['communityengagement', 'demographics', 'education', 'hivmedicalcare',
+                      'sexualbehaviour', 'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
+                      'circumcision', 'circumcised', 'uncircumcised', 'reproductivehealth',
+                      'pregnancy', 'nonpregnancy', 'medicaldiagnoses', 'heartattack', 'cancer',
+                      'sti', 'tubercolosis', 'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion',
                       'positiveparticipant', 'accesstocare', 'hivresult', 'elisahivresult',
                       'hicenrollment', 'hivuntested'])
 
@@ -135,12 +134,19 @@ class ParticipationRuleGroup(RuleGroup):
             alternative='none'),
         target_model=['communityengagement', 'demographics', 'education', 'sexualbehaviour',
                       'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
-                      'circumcision', 'circumcised',
-                      'uncircumcised', 'reproductivehealth', 'pregnancy', 'nonpregnancy',
+                      'circumcision', 'circumcised', 'uncircumcised',
+                      'reproductivehealth', 'pregnancy', 'nonpregnancy',
                       'medicaldiagnoses', 'heartattack', 'cancer', 'sti', 'tubercolosis',
-                      'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion',
-                      'positiveparticipant', 'accesstocare', 'hivresult', 'elisahivresult',
-                      'hicenrollment', 'hivuntested'])
+                      'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion', 'hivmedicalcare'])
+
+    #3forms removed because they assume requisitions have been processed and for questionnaire only
+    #participation there are no labs
+    questionnaires_participation_type = ScheduledDataRule(
+        logic=Logic(
+            predicate=('participation_type', 'equals', 'Questionnaires'),
+            consequence='not_required',
+            alternative='none'),
+        target_model=['hivresult', 'elisahivresult', 'pima'])
 
     questionnaires_requsition = RequisitionRule(
         logic=Logic(
