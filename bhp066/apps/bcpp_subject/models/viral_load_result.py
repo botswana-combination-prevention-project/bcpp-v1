@@ -1,6 +1,4 @@
-from datetime import datetime, date
 from django.db import models
-from lis.specimen.lab_result.models import BaseResult
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
@@ -18,7 +16,7 @@ from ..models import SubjectVisit
 class ViralLoadResult(BaseDispatchSyncUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject)
-    subject_visit = subject_visit = models.ForeignKey(SubjectVisit)
+    subject_visit = models.ForeignKey(SubjectVisit)
     sample_id = models.CharField(
         verbose_name='Aliquot Identifier',
         max_length=25,
@@ -78,7 +76,7 @@ class ViralLoadResult(BaseDispatchSyncUuidModel):
         help_text="Validation reference",
         )
 
-    objects = models.Manager()#ViralLoadResultManager()
+    objects = ViralLoadResultManager()
 
     history = AuditTrail()
 
