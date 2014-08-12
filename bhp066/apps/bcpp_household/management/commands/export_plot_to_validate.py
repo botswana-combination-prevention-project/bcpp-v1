@@ -29,11 +29,11 @@ class Command(BaseCommand):
         count = 0
         for plot in plots:
             if plot.selected == '1':
-                plot_20_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                plot_20_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
             elif plot.selected == '2':
-                backup_plots.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                backup_plots.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
             else:
-                plot_75_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                plot_75_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
             count += 1
             print "{0} out of {1} added to a list.".format(count, plot_num)
         community_name = community_name.title()
@@ -42,15 +42,15 @@ class Command(BaseCommand):
         filename_5_pct = str(community_name) + '_backup.csv'
         # Create a 20 percent plot list csv file
         file_20 = open(filename_20_pct, 'wb')
-        writer = csv.writer(file_20)
+        writer = csv.writer(file_20, delimiter='|')
         writer.writerows(plot_20_pct)
         # Create a 75 percent plot list csv file
         file_75 = open(filename_75_pct, 'wb')
-        writer_75_pct = csv.writer(file_75)
+        writer_75_pct = csv.writer(file_75, delimiter='|')
         writer_75_pct.writerows(plot_75_pct)
         # Create a 5 percent plot list csv file
         file_5 = open(filename_5_pct, 'wb')
-        writer_5_pct = csv.writer(file_5)
+        writer_5_pct = csv.writer(file_5, delimiter='|')
         writer_5_pct.writerows(backup_plots)
         print " Sampling Log"
         print "3 CSV files created. Location:"
