@@ -21,19 +21,20 @@ class Command(BaseCommand):
         if not args or len(args) < 1:
             raise CommandError('Missing \'using\' parameters.')
         community_name = args[0]
-        backup_plots = [['plot_identifier', 'gps_target_lat', 'gps_target_lon', 'selected']]  # Plots in the 5 percent
-        plot_20_pct = [['plot_identifier', 'gps_target_lat', 'gps_target_lon', 'selected']]  # Plots in the 20 percent
-        plot_75_pct = [['plot_identifier', 'gps_target_lat', 'gps_target_lon', 'selected']]  # Plot in the 75 percent
-        plots = Plot.objects.filter(community=community_name)
+        value_attributes = ['plot_identifier', 'gps_target_lat', 'gps_target_lon', 'selected']
+        backup_plots = [value_attributes]  # Plots in the 5 percent
+        plot_20_pct = [value_attributes]  # Plots in the 20 percent
+        plot_75_pct = [value_attributes]  # Plot in the 75 percent
+        plots = Plot.objects.filter(community=community_name).values_list(*value_attributes)
         plot_num = plots.count()
         count = 0
         for plot in plots:
-            if plot.selected == '1':
-                plot_20_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
-            elif plot.selected == '2':
-                backup_plots.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
+            if plot[3] == '1':
+                plot_20_pct.append(plot)
+            elif plot[3] == '2':
+                backup_plots.append(plot)
             else:
-                plot_75_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
+                plot_75_pct.append(plot)
             count += 1
             print "{0} out of {1} added to a list.".format(count, plot_num)
         community_name = community_name.title()
