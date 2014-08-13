@@ -33,7 +33,7 @@ class HivTestReview (BaseScheduledVisitModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.validate_participation_type(self)
+#         self.validate_participation_type(self)
         super(HivTestReview, self).save(*args, **kwargs)
 
 #     def validate_participation_type(self, hiv_test_review, exception_cls=None):
