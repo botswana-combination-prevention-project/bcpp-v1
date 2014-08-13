@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO
 from edc.subject.appointment.models import BaseParticipationModel
@@ -27,10 +26,6 @@ class Participation (BaseScheduledVisitModel, BaseParticipationModel):
         )
 
     history = AuditTrail()
-
-#     @property
-#     def participation_type(self):
-#         return self.participation_type
 
     def allow_missing_forms(self):
         if self.full.lower() == 'no':
