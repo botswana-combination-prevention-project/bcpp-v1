@@ -11,6 +11,7 @@ from apps.bcpp_household.models import Plot, Household, HouseholdStructure, Hous
 
 
 class Command(BaseCommand):
+    """Creates a csv files of 4 files containing plot list of 75, 25, 20 and 5 percent. """
 
     APP_NAME = 0
     MODEL_NAME = 1
@@ -37,6 +38,7 @@ class Command(BaseCommand):
                 plot_75_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
             count += 1
             print "{0} out of {1} added to a list.".format(count, plot_num)
+        backup_plots.pop(0)  # Remove the heading on the 5 percent plot list before merging it to the 20 percent list
         plot_25_pct = plot_20_pct + backup_plots
         community_name = community_name.title()
         filename_20_pct = str(community_name) + '_20pct.csv'
@@ -61,9 +63,10 @@ class Command(BaseCommand):
         writer_5_pct.writerows(plot_25_pct)
 
         print " Sampling Log"
-        print "3 CSV files created. Location:"
+        print "4 CSV files created. Location:"
         print "Total records in {0}: {1}".format(community_name, plot_num)
         print "BHS sample: {0}".format(len(plot_20_pct) - 1)
+        print "BHS sample: {0}".format(len(plot_25_pct) - 1)
         print "Backup: {0}".format(len(backup_plots) - 1)
         print "75 percent total: {0}".format(len(plot_75_pct) - 1)
         print "location of the files:"
