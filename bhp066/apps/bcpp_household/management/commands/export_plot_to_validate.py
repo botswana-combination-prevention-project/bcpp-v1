@@ -65,9 +65,9 @@ class Command(BaseCommand):
         print " Sampling Log"
         print "4 CSV files created. Location:"
         print "Total records in {0}: {1}".format(community_name, plot_num)
-        print "BHS sample: {0}".format(len(plot_20_pct) - 1)
-        print "BHS sample: {0}".format(len(plot_25_pct) - 1)
-        print "Backup: {0}".format(len(backup_plots) - 1)
+        print "BHS sample 20 percent: {0}".format(len(plot_20_pct) - 1)
+        print "BHS sample 25 percent: {0}".format(len(plot_25_pct) - 1)
+        print "Backup, 5 percent: {0}".format(len(backup_plots) - 1)
         print "75 percent total: {0}".format(len(plot_75_pct) - 1)
         print "location of the files:"
         os.system('pwd')
