@@ -26,20 +26,22 @@ class Command(BaseCommand):
         backup_plots = [value_attributes]  # Plots in the 5 percent
         plot_20_pct = [value_attributes]  # Plots in the 20 percent
         plot_75_pct = [value_attributes]  # Plot in the 75 percent
+        plot_25_pct = [value_attributes]  # Plot in the 25 percent
         plots = Plot.objects.filter(community=community_name)
         plot_num = plots.count()
         count = 0
         for plot in plots:
             if plot.selected == '1':
                 plot_20_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                plot_25_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
             elif plot.selected == '2':
                 backup_plots.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                plot_25_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
             else:
                 plot_75_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
             count += 1
             print "{0} out of {1} added to a list.".format(count, plot_num)
-        backup_plots.pop(0)  # Remove the heading on the 5 percent plot list before merging it to the 20 percent list
-        plot_25_pct = plot_20_pct + backup_plots
+        # File names
         community_name = community_name.title()
         filename_20_pct = str(community_name) + '_20pct.csv'
         filename_75_pct = str(community_name) + '_75pct.csv'
