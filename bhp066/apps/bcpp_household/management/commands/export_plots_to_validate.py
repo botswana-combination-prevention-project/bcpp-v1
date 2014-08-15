@@ -32,13 +32,13 @@ class Command(BaseCommand):
         count = 0
         for plot in plots:
             if plot.selected == '1':
-                plot_20_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
-                plot_25_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                plot_20_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
+                plot_25_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
             elif plot.selected == '2':
-                backup_plots.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
-                plot_25_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                backup_plots.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
+                plot_25_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
             else:
-                plot_75_pct.append([plot.plot_identifier, plot.gps_target_lon, plot.gps_target_lon, plot.selected])
+                plot_75_pct.append([plot.plot_identifier, plot.gps_target_lat, plot.gps_target_lon, plot.selected])
             count += 1
             print "{0} out of {1} added to a list.".format(count, plot_num)
         # File names
