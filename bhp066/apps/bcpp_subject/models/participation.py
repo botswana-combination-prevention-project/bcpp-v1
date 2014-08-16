@@ -4,12 +4,12 @@ from django.utils.translation import ugettext_lazy as _
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO
-from edc.subject.appointment.models import BaseParticipationModel
+#from edc.subject.appointment.models import BaseParticipationModel
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
-class Participation (BaseScheduledVisitModel, BaseParticipationModel):
+class Participation (BaseScheduledVisitModel):
 
     full = models.CharField(
         verbose_name=_('Has the participant agreed to fully participate in BHS'),
