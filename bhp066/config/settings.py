@@ -20,7 +20,8 @@ PROJECT_DIR = Path(__file__).ancestor(2)
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
 TEMPLATE_DIRS = (
-    PROJECT_DIR.child('templates'),
+    #PROJECT_DIR.child('templates'),
+    os.path.expanduser('~/source/edc_project/edc/templates/'),
 )
 FIXTURE_DIRS = (
     PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
