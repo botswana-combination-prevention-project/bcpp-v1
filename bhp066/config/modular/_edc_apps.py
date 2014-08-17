@@ -1,7 +1,7 @@
 EDC_APPS = (
     'edc.apps.admin_supplemental_fields',
     'edc.audit',
-    'edc.base.admin',
+    'edc.base.modeladmin',
     'edc.base.form',
     'edc.base.model',
     'edc.core.identifier',

@@ -17,12 +17,12 @@ class BaseScheduledInlineModel(BaseConsentedUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
-    report_datetime = models.DateTimeField("Today's date",
+    report_datetime = models.DateTimeField(
+        verbose_name="Today's date",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        default=datetime.today(),
-        )
+        default=datetime.today())
 
     def save(self, *args, **kwargs):
         self.subject_visit = self.inline_parent.subject_visit

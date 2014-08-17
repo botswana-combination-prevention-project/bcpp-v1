@@ -28,8 +28,8 @@ def subject_refusal_on_post_delete(sender, instance, **kwargs):
 def enrollment_checklist_on_post_delete(sender, instance, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, EnrollmentChecklist):
-            #re-save the member to recalc the member_status
-            #If this gets deleted, then the process must be started again from BHS_SCREEN
+            # re-save the member to recalc the member_status
+            # If this gets deleted, then the process must be started again from BHS_SCREEN
             household_member = instance.household_member
             if EnrollmentLoss.objects.filter(household_member=household_member).exists():
                 EnrollmentLoss.objects.get(household_member=household_member).delete()
