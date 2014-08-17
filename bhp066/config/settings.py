@@ -26,12 +26,12 @@ FIXTURE_DIRS = (
     PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
 )
 STATICFILES_DIRS = ()
-CONFIG_DIR = PROJECT_DIR.child('bhp066')
+CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
 if socket.gethostname() == 'mac.local':
-    KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+    KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
 else:
@@ -109,7 +109,7 @@ else:
             'OPTIONS': {
                 'init_command': 'SET storage_engine=INNODB',
             },
-            'NAME': 'bhp066',
+            'NAME': 'bhp066_dev',
             'USER': 'root',
             'PASSWORD': 'cc3721b',
             'HOST': '',
