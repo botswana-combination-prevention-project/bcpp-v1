@@ -5,8 +5,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
-
 from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
 
@@ -23,31 +21,26 @@ class Household(BaseDispatchSyncUuidModel):
         unique=True,
         help_text=_("Household identifier"),
         null=True,
-        editable=False,
-        )
+        editable=False)
 
     household_sequence = models.IntegerField(
         editable=False,
         null=True,
-        help_text='is 1 for first household in plot, 2 for second, 3, etc. Embedded in household identifier.'
-        )
+        help_text='is 1 for first household in plot, 2 for second, 3, etc. Embedded in household identifier.')
 
     hh_int = models.IntegerField(
         null=True,
         editable=False,
-        help_text='not used'
-        )
+        help_text='not used')
 
     hh_seed = models.IntegerField(
         null=True,
         editable=False,
-        help_text='not used'
-        )
+        help_text='not used')
 
     report_datetime = models.DateTimeField(
         verbose_name='Report Date/Time',
-        null=True,
-        )
+        null=True)
 
     gps_degrees_s = EncryptedDecimalField(
         verbose_name='GPS Degrees-South',
@@ -55,8 +48,7 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         decimal_places=0,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_minutes_s = EncryptedDecimalField(
         verbose_name='GPS Minutes-South',
@@ -64,8 +56,7 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         decimal_places=4,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_degrees_e = EncryptedDecimalField(
         verbose_name='GPS Degrees-East',
@@ -73,8 +64,7 @@ class Household(BaseDispatchSyncUuidModel):
         max_digits=10,
         decimal_places=0,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_minutes_e = EncryptedDecimalField(
         verbose_name='GPS Minutes-East',
@@ -82,36 +72,31 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         decimal_places=4,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_lon = models.FloatField(
         verbose_name='longitude',
         null=True,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_lat = models.FloatField(
         verbose_name='latitude',
         null=True,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_target_lon = models.FloatField(
         verbose_name='target waypoint longitude',
         null=True,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     gps_target_lat = models.FloatField(
         verbose_name='target waypoint latitude',
         null=True,
         editable=False,
-        help_text='comes from plot',
-        )
+        help_text='comes from plot')
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
@@ -119,32 +104,26 @@ class Household(BaseDispatchSyncUuidModel):
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
         null=True,
-        editable=False,
-        )
+        editable=False)
 
     replaced_by = models.CharField(
         max_length=25,
         null=True,
         verbose_name='Identifier',
-
         help_text=u'The identifier of the plot that this household is replaced by',
-
-        editable=False,
-        )
+        editable=False)
 
     comment = EncryptedTextField(
         max_length=250,
         help_text=_("You may provide a comment here or leave BLANK."),
         blank=True,
-        null=True,
-        )
+        null=True)
 
     uploaded_map = models.CharField(
         verbose_name="filename of uploaded map",
         max_length=25,
         null=True,
-        blank=True,
-        )
+        blank=True)
 
     action = models.CharField(
         max_length=25,
@@ -203,7 +182,6 @@ class Household(BaseDispatchSyncUuidModel):
         return False
 
     def structure(self):
-        #url = reverse('admin:{0}__{1}__changelist'.format('bcpp_household', 'householdstructure'))
         return """<a href="{url}" />structure</a>"""  # .format(url=url)
     structure.allow_tags = True
 

@@ -1,21 +1,24 @@
 from django.contrib import admin
-from edc.base.admin.admin import BaseModelAdmin, BaseTabularInline
+
+from edc.base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+
 from apps.bcpp_household_member.models import HouseholdMember
-from ..models import SubjectUndecided, SubjectUndecidedEntry
+
 from ..forms import SubjectUndecidedForm, SubjectUndecidedEntryForm
+from ..models import SubjectUndecided, SubjectUndecidedEntry
 
 
 class SubjectUndecidedEntryAdmin(BaseModelAdmin):
 
     fields = (
-              'subject_undecided',
-              'report_datetime',
-              'next_appt_datetime',
-              'next_appt_datetime_source',
-              'subject_undecided_reason',
-              'reason_other',
-              'contact_details')
+        'subject_undecided',
+        'report_datetime',
+        'next_appt_datetime',
+        'next_appt_datetime_source',
+        'subject_undecided_reason',
+        'reason_other',
+        'contact_details')
 
     list_display = (
         'subject_undecided',
@@ -52,25 +55,25 @@ class SubjectUndecidedAdmin(BaseRegisteredSubjectModelAdmin):
     subject_identifier_attribute = 'registration_identifier'
 
     fields = (
-              'registered_subject',
-              'household_member',
-              'report_datetime')
+        'registered_subject',
+        'household_member',
+        'report_datetime')
 
     list_display = (
-            'household_member',
-            'report_datetime')
+        'household_member',
+        'report_datetime')
 
     search_fields = [
-            'household_member__first_name',
-            'household_member__household_structure__household__household_identifier', ]
+        'household_member__first_name',
+        'household_member__household_structure__household__household_identifier', ]
 
     list_filter = ('survey',)
 
     readonly_fields = (
-            'registered_subject',
-            'household_member',
-            'survey',
-            'report_datetime',)
+        'registered_subject',
+        'household_member',
+        'survey',
+        'report_datetime',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

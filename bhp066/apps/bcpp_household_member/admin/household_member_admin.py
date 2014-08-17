@@ -1,9 +1,12 @@
 from django.contrib import admin
-from edc.base.admin.admin import BaseTabularInline, BaseModelAdmin
+
+from edc.base.modeladmin.admin import BaseTabularInline, BaseModelAdmin
 from edc.export.actions import export_as_csv_action
+
 from apps.bcpp_household.models import HouseholdStructure
-from ..models import HouseholdMember
+
 from ..forms import HouseholdMemberForm
+from ..models import HouseholdMember
 
 
 class HouseholdMemberInline(BaseTabularInline):
