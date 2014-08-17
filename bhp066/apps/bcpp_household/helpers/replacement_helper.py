@@ -33,7 +33,7 @@ class ReplacementHelper(object):
         return producer
 
     def synchronized(self, producer):
-        """Check if a producer has been synchronized."""
+        """Checks if a producer has been synchronized."""
         pending_transaction = False
         if get_model('sync', 'OutgoingTransaction').objects.using(producer).filter(is_ignored=False, is_consumed_server=False):
             pending_transaction = True
@@ -41,12 +41,12 @@ class ReplacementHelper(object):
 
     @property
     def household_structure(self):
-        """return a household structure of a household."""
+        """Returns a household structure of a household."""
         return self._household_structure
 
     @property
     def survey(self):
-        """return the first survey."""
+        """Returns the first survey."""
         first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
         survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
         return survey
@@ -60,7 +60,7 @@ class ReplacementHelper(object):
 
     @property
     def plot(self):
-        """return a plot instance."""
+        """Returns a plot instance."""
         return self._plot
 
     @plot.setter
@@ -138,7 +138,7 @@ class ReplacementHelper(object):
             return None
 
     def replace_household(self, replaceble_households, destination):
-        """"Replaces a household with a plot.
+        """Replaces a household with a plot.
 
         This takes a list of replaceble households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
@@ -183,10 +183,10 @@ class ReplacementHelper(object):
             message = "Pending outgoing transaction on: " + destination
             return message
         else:
-            #plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
+            # plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
             replacing_plots = []
             for plot_a, plot_b in zip(replaceble_plots, plots):
-    #             if self.synchronized(destination):
+                # if self.synchronized(destination):
                 if plot_a.replaced_by:
                     try:
                         plot_b = get_model('bcpp_household', 'Plot').objects.get(replaces=plot_a.plot_identifier)

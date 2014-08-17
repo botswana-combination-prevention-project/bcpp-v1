@@ -1,5 +1,7 @@
 from django.db import models
+
 from edc.base.model.models import BaseListModel
+
 from ..managers import GpsDeviceManager
 
 

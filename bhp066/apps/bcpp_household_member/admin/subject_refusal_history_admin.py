@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+
 from apps.bcpp_household_member.models import HouseholdMember
 
 from ..models import SubjectRefusalHistory
@@ -14,9 +16,7 @@ class SubjectRefusalHistoryAdmin(BaseRegisteredSubjectModelAdmin):
         'reason',
         'reason_other')
 
-    radio_fields = {
-        "reason": admin.VERTICAL,
-        }
+    radio_fields = {"reason": admin.VERTICAL}
 
     list_display = ('household_member', 'report_datetime', )
 

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
 
 
 class HouseholdMemberHelper(object):
@@ -41,8 +41,8 @@ class HouseholdMemberHelper(object):
     def reported(self):
         """Returns True if there is some report on this member (e.g. absent, undecided, refused, consented)"""
         if (self.member_status_absent or self.member_status_refused or self.member_status_undecided or
-            self.member_status_htc or self.member_status_enrollment_loss or self.member_status_consented
-            or self.enrollment_checklist_completed):
+                self.member_status_htc or self.member_status_enrollment_loss or self.member_status_consented
+                or self.enrollment_checklist_completed):
             return True
         return False
 
@@ -435,7 +435,7 @@ class HouseholdMemberHelper(object):
                     options = [BHS_SCREEN, HTC_ELIGIBLE]
             else:
                 raise TypeError('ERROR: household_member.refused={0},self.household_member.eligible_htc={1},self.household_member.eligible_member={2} '
-                'should never occur together'.format(self.refused, self.eligible_htc, self.eligible_member))
+                                'should never occur together'.format(self.refused, self.eligible_htc, self.eligible_member))
         # append the current member_status
         options.append(self.household_member.member_status)
         # sort and remove duplicates

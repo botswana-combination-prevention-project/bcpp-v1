@@ -1,14 +1,9 @@
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Min
-from django.db.models.loading import get_model
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-
-from apps.bcpp_survey.models import Survey
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
@@ -49,24 +44,22 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
 
     household_log = models.ForeignKey(HouseholdLog)
 
-    report_datetime = models.DateField("Report date",
-        validators=[date_not_before_study_start, date_not_future],
-        )
+    report_datetime = models.DateField(
+        verbose_name="Report date",
+        validators=[date_not_before_study_start, date_not_future])
 
     household_status = models.CharField(
         verbose_name='Household Status',
         max_length=50,
         choices=HOUSEHOLD_STATUS,
         null=True,
-        blank=False,
-        )
+        blank=False)
 
     next_appt_datetime = models.DateTimeField(
         verbose_name="Re-Visit On",
         help_text="The date and time to revisit household",
         null=True,
-        blank=True
-        )
+        blank=True)
 
     next_appt_datetime_source = models.CharField(
         verbose_name="Source",
@@ -74,13 +67,11 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         choices=NEXT_APPOINTMENT_SOURCE,
         help_text='source of information for the appointment date',
         null=True,
-        blank=True
-        )
+        blank=True)
 
     comment = EncryptedTextField(
         null=True,
-        blank=True,
-        )
+        blank=True)
 
     history = AuditTrail()
 
@@ -90,8 +81,6 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def save(self, *args, **kwargs):
-#         if not self.allow_enrollement:
-#             raise ValidationError('Not allowed to modify or add logs.')
         household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_log.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))

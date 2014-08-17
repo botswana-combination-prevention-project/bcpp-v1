@@ -1,5 +1,5 @@
 from edc.export.actions import export_as_csv_action
-from edc.base.admin.admin import BaseModelAdmin
+from edc.base.modeladmin.admin import BaseModelAdmin
 
 
 class BaseHouseholdModelAdmin(BaseModelAdmin):

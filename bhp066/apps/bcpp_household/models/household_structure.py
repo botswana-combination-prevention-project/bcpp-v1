@@ -100,7 +100,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True).count()
             if absent_member_count:
                 eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
-                return eligible_member_count == absent_member_count 
+                return eligible_member_count == absent_member_count
         return False
 
     @property
@@ -176,4 +176,3 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household'
-        #unique_together = (('household', 'survey'), )

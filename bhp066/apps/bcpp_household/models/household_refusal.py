@@ -2,9 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
+from django_extensions.db.fields import UUIDField
+
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
-from edc.base.model.fields import UUIDField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
@@ -38,15 +39,13 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
         verbose_name=_('If Other, specify'),
         max_length=100,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     comment = EncryptedTextField(
         max_length=250,
         help_text=_("You may provide a comment here or leave BLANK."),
         blank=True,
-        null=True,
-        )
+        null=True)
 
     def save(self, *args, **kwargs):
         if self.household_structure.household.replaced_by:

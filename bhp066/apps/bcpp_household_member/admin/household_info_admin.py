@@ -1,8 +1,11 @@
 from django.contrib import admin
-from edc.base.admin.admin import BaseModelAdmin
+
+from edc.base.modeladmin.admin import BaseModelAdmin
+
 from apps.bcpp_household.models import HouseholdStructure
-from ..models import HouseholdInfo, HouseholdMember
+
 from ..forms import HouseholdInfoForm
+from ..models import HouseholdInfo, HouseholdMember
 
 
 class HouseholdInfoAdmin(BaseModelAdmin):
