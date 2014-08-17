@@ -1,13 +1,14 @@
 from datetime import datetime
+
 from django.db import models
 
-from edc.subject.registration.models import RegisteredSubject
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
 from apps.bcpp_household.models import Plot
+from apps.bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
+from apps.bcpp_survey.models import Survey
 
 from .household_member import HouseholdMember
 
@@ -18,12 +19,12 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
     registered_subject = models.ForeignKey(
         RegisteredSubject,
-        null=True
-        )
+        null=True)
 
     household_member = models.OneToOneField(HouseholdMember)
 
-    report_datetime = models.DateTimeField("Report date",
+    report_datetime = models.DateTimeField(
+        verbose_name="Report date",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
@@ -37,7 +38,6 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
         return self.household_member
 
     def natural_key(self):
-        #return (self.report_datetime, ) + self.household_member.natural_key()
         return self.household_member.natural_key()  # OneToOne field with household_member, so it should be enough alone
     natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 

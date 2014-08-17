@@ -1,8 +1,9 @@
 from datetime import datetime
 
 from django.db import models
+from django_extensions.db.fields import UUIDField
 
-from edc.base.model.fields import OtherCharField, UUIDField
+from edc.base.model.fields import OtherCharField
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
@@ -21,7 +22,8 @@ class SubjectRefusalHistory(BaseDispatchSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember)
 
-    report_datetime = models.DateTimeField("Report date",
+    report_datetime = models.DateTimeField(
+        verbose_name="Report date",
         default=datetime.today())
 
     survey = models.ForeignKey(Survey, editable=False)
@@ -37,7 +39,7 @@ class SubjectRefusalHistory(BaseDispatchSyncUuidModel):
         max_length=50,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="",
-        )
+    )
     reason_other = OtherCharField()
 
     objects = SubjectRefusalHistoryManager()

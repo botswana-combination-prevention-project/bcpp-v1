@@ -157,7 +157,7 @@ INSTALLED_APPS = (
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
 
-    'edc.base.admin',
+    'edc.base.modeladmin',
     'edc.base.form',
     'edc.base.model',
 

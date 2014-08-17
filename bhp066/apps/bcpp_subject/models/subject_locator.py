@@ -11,7 +11,7 @@ from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
 
-from apps.bcpp_household.models  import Plot
+from apps.bcpp_household.models import Plot
 
 from ..managers import ScheduledModelManager
 

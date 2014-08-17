@@ -6,12 +6,13 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
+from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..constants import BHS_SCREEN, BHS_ELIGIBLE, BHS_LOSS, NOT_ELIGIBLE, HTC_ELIGIBLE
+from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
 
@@ -25,7 +26,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
 
     household_member = models.OneToOneField(HouseholdMember)
 
-    initials = models.CharField('Initials',
+    initials = models.CharField(
+        verbose_name='Initials',
         max_length=3,
         validators=[
             MinLengthValidator(2),
@@ -38,42 +40,36 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         validators=[
             dob_not_future,
             MinConsentAge,
-            MaxConsentAge,
-            ],
+            MaxConsentAge],
         null=True,
         blank=False,
-        help_text="Format is YYYY-MM-DD. (Data will not be saved)",
-        )
+        help_text="Format is YYYY-MM-DD. (Data will not be saved)")
 
     guardian = models.CharField(
         verbose_name=_("If minor, is there a guardian available? "),
         max_length=10,
         choices=YES_NO_NA,
         help_text=_("If a minor age 16 and 17, ensure a guardian is available otherwise"
-                   " participant will not be enrolled."),
-        )
+                    " participant will not be enrolled."))
 
     gender = models.CharField(
         verbose_name="Gender",
         choices=GENDER,
         max_length=1,
         null=True,
-        blank=False,
-        )
+        blank=False)
 
     has_identity = models.CharField(
         verbose_name=_("[Interviewer] Has the subject presented a valid OMANG or other identity document?"),
         max_length=10,
         choices=YES_NO,
-        help_text=_("Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO' participant will not be enrolled.")
-        )
+        help_text=_("Allow Omang, Passport number, driver's license number or Omang receipt number. If 'NO' participant will not be enrolled."))
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
-        help_text="",
-        )
+        help_text="")
 
     legal_marriage = models.CharField(
         verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
@@ -82,8 +78,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         default='N/A',
-        help_text=_("If 'NO' participant will not be enrolled."),
-        )
+        help_text=_("If 'NO' participant will not be enrolled."))
 
     marriage_certificate = models.CharField(
         verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
@@ -92,41 +87,39 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         default='N/A',
-        help_text="If 'NO' participant will not be enrolled.",
-        )
+        help_text="If 'NO' participant will not be enrolled.")
 
     # same as study_resident in household member
     part_time_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or"
-                      " more nights per month in this community? "),
+                       " more nights per month in this community? "),
         max_length=10,
         choices=YES_NO,
         help_text=_("If participant has moved into the "
-                  "community in the past 12 months, then "
-                  "since moving in has the participant typically "
-                  "spent more than 3 nights per month in this community. "
-                  "If 'NO (or don't want to answer)'. Participant will not be enrolled."),
-        )
+                    "community in the past 12 months, then "
+                    "since moving in has the participant typically "
+                    "spent more than 3 nights per month in this community. "
+                    "If 'NO (or don't want to answer)'. Participant will not be enrolled."))
 
     household_residency = models.CharField(
         verbose_name=_('In the past 12 months, have you typically spent more nights on average in this household than in any other household in the same community?'),
         max_length=3,
         choices=YES_NO,
-        help_text=_("If 'NO' participant will not be enrolled."),
-        )
+        help_text=_("If 'NO' participant will not be enrolled."))
 
     literacy = models.CharField(
         verbose_name=_("Is the participant LITERATE?, or if ILLITERATE, is there a"
-                      "  LITERATE witness available "),
+                       "  LITERATE witness available "),
         max_length=10,
         choices=YES_NO,
         help_text=_("If participate is illiterate, confirm there is a literate"
-                   "witness available otherwise participant will not be enrolled."),
-        )
+                    "witness available otherwise participant will not be enrolled."))
 
     is_eligible = models.BooleanField(default=False)
 
     objects = EnrollmentChecklistManager()
+
+    history = AuditTrail()
 
     def __unicode__(self):
         return str(self.household_member)
@@ -149,7 +142,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         else:
             if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
-                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN+' or '+NOT_ELIGIBLE+' or '+BHS_SCREEN, self.household_member.member_status))
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
         self.household_member.eligible_subject = self.is_eligible
         if self.matches_household_member_values(self, self.household_member):

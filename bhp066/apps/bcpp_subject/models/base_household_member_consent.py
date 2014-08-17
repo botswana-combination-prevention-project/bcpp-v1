@@ -12,14 +12,16 @@ from apps.bcpp_survey.models import Survey
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
-    household_member = models.ForeignKey(HouseholdMember,
+    household_member = models.ForeignKey(
+        HouseholdMember,
         help_text='')
 
     is_signed = models.BooleanField(default=False)
 
     survey = models.ForeignKey(Survey, editable=False)  # this updates from household_member in save()
 
-    registered_subject = models.ForeignKey(RegisteredSubject,  # this also updates from household_member in save()
+    registered_subject = models.ForeignKey(
+        RegisteredSubject,  # this also updates from household_member in save()
         editable=False,
         null=True,
         help_text='one registered subject will be related to one household member for each survey')
