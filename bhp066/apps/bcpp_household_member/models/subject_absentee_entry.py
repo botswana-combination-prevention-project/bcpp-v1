@@ -19,8 +19,7 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
     reason = models.CharField(
         verbose_name="Reason?",
         max_length=100,
-        choices=ABSENTEE_REASON,
-        )
+        choices=ABSENTEE_REASON)
 
     history = AuditTrail()
 

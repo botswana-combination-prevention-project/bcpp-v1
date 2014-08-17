@@ -21,7 +21,6 @@ class SubjectUndecided (BaseMemberStatusModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-#         db_table = 'bcpp_subject_subjectundecided'
         verbose_name = "Subject Undecided"
         verbose_name_plural = "Subject Undecided"
         unique_together = ('registered_subject', 'survey',)
