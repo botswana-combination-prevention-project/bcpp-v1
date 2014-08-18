@@ -6,14 +6,36 @@ from django.test import TestCase
 from ..management.commands import export_plots_to_validate
 from ..models import Plot
 
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.subject.lab_tracker.classes import site_lab_tracker
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from apps.bcpp_survey.models import Survey
+
 
 class ExportPlotToValidateTest(TestCase):
 
+    def setUp(self):
+            try:
+                site_lab_profiles.register(BcppSubjectProfile())
+            except AlreadyRegisteredLabProfile:
+                pass
+            BcppAppConfiguration()
+            site_lab_tracker.autodiscover()
+            BcppSubjectVisitSchedule().build()
+
+            self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+            #call_command('loaddata', 'Users/ckgathi/source/bhp066_project/bhp066/initial_data.json')
+
     def test_export_plot_to_validate(self):
         """Tests the if the exported plots are the right number and the correct ones."""
-        community_name = 'letlhakeng'
+
+        community_name = 'lentsweletau'
         # Plot statistics in the databse
-        db_all_plots = Plot.objects.all(using='com_destination')  # Total number of plots in the database
+        db_all_plots = Plot.objects.all()  # Total number of plots in the database
         db_plots = []
         db_plots_75pct = []
         db_plots_25pct = []
@@ -29,8 +51,6 @@ class ExportPlotToValidateTest(TestCase):
         csv_plots_25pct = []
         csv_plots_20pct = []
         csv_plots_5pct = []
-        
-        
 
         for plot in db_all_plots:
             if plot.selected == '1':
