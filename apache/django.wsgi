@@ -1,32 +1,25 @@
 import os
 import sys
-import platform
-#import djcelery
-#djcelery.setup_loader()
+#import site
+#import platform
 
-if platform.system() == 'Darwin':
-        home_dir = 'Users'
-else:
-        home_dir = 'home'
+VIRTUALENV_PATH = '/home/django/.virtualenvs/django-1.6.5/'
+SOURCE_ROOT_PATH = '/home/django//source/bhp066/develop/'
+LOCAL_PROJECT_RELPATH = 'bhp066_project/bhp066/'
 
-path = '/{0}/django_dev/source/bhp066/test_server_training/bhp066/'.format(home_dir)
-if path not in sys.path:
-    sys.path.append(path)
+# Add the site-packages of the chosen virtualenv to work with
 
-path = '/{0}/django_dev/source/bhp066/test_server_training/bhp066/bhp066'.format(home_dir)
-if path not in sys.path:
-    sys.path.append(path)
-
-path = '/{0}/django_dev/source/bhp066/test_server_training/bhp066/keys'.format(home_dir)
-if path not in sys.path:
-    sys.path.append(path)
-
-#sys.path.insert(0, "/{0}/django_dev/.virtualenvs/bhp066_env/lib/python2.7/site-packages/".format(home_dir))
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'bhp066.bhp066.settings'
-
-if platform.system() == 'Darwin':
-        os.environ['PYTHON_EGG_CACHE'] = '/usr/local/pylons/python-eggs'
+# update path
+sys.path.insert(0, os.path.join(VIRTUALENV_PATH, 'local/lib/python2.7/site-packages'))
+sys.path.insert(0, os.path.join(SOURCE_ROOT_PATH, 'edc_project'))
+sys.path.insert(0, os.path.join(SOURCE_ROOT_PATH, 'lis_project'))
+sys.path.insert(0, os.path.join(SOURCE_ROOT_PATH, LOCAL_PROJECT_RELPATH))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+#if platform.system() == 'Darwin':
+#        os.environ['PYTHON_EGG_CACHE'] = '/usr/local/pylons/python-eggs'
+# Activate the virtual env
+activate_env=os.path.join(VIRTUALENV_PATH, 'bin/activate_this.py')
+execfile(activate_env, dict(__file__=activate_env))
 
 import django.core.handlers.wsgi
 application = django.core.handlers.wsgi.WSGIHandler()
