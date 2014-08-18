@@ -853,7 +853,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
-            'direct_hiv_documentation': False,  # of positive result
+            'direct_hiv_documentation': True,
             'indirect_hiv_documentation': False,
             'last_hiv_result': 'NEG',
             'last_hiv_result_date': last_date,
@@ -877,7 +877,7 @@ class ReferralTests(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
-            'direct_hiv_documentation': False,
+            'direct_hiv_documentation': True,
             'indirect_hiv_documentation': True,
             'last_hiv_result': 'NEG',
             'last_hiv_result_date': last_date,
@@ -945,4 +945,4 @@ class ReferralTests(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertIn('SMC-NEG', subject_referral.referral_code)
-        self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk))
+        self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk),1)
