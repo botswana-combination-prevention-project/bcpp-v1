@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -81,7 +82,12 @@ class SubjectHtc(BaseMemberStatusModel):
 
     def prepare_tracking_identifier(self):
         device = Device()
-        return 'HTC{0}{1}{2}'.format(StudySite.objects.all()[0], device.device_id, datetime.today().strftime('%Y%m%d%H%M%S'))
+        site_code = None
+        if 'SITE_CODE' in dir(settings):
+            site_code = settings.SITE_CODE
+        if not site_code:
+            site_code = StudySite.objects.all()[0].site_code
+        return 'HTC{0}{1}{2}'.format(site_code, device.device_id, datetime.today().strftime('%Y%m%d%H%M'))
 
     class Meta:
         app_label = 'bcpp_household_member'
