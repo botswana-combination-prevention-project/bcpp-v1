@@ -19,7 +19,6 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
         'offered',
         'accepted',
         'refusal_reason',
-        'hiv_result',
         'referred',
         'referral_clinic',
         'comment')
@@ -27,7 +26,6 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
     radio_fields = {
         "offered": admin.VERTICAL,
         "accepted": admin.VERTICAL,
-        "hiv_result": admin.VERTICAL,
         "referred": admin.VERTICAL,
         }
 

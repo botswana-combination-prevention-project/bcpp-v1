@@ -29,7 +29,9 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "guardian",
         )
 
-    list_display = ('household_member', 'is_eligible', )
+    list_display = ('household_member', 'gender', 'is_eligible', )
+
+    list_filter = ('household_member', 'gender', 'is_eligible',)
 
     radio_fields = {
         'has_identity': admin.VERTICAL,

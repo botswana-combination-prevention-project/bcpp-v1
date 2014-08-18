@@ -124,11 +124,16 @@
             	<B>Member has not passed the <A title="link to the Enrollment Checklist" href="{% url enrollment_checklist_meta|admin_urlname:'change' household_member.enrollment_checklist.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">
              		 enrollment checklist</A>, an enrollment loss form has been created.</B>
 
-            {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years < 16 %}
-            	Under age 16, cannot participate at any level.
-
-            {% elif household_member.member_status == 'NOT_ELIGIBLE' and household_member.age_in_years > 64 %}
-            	Older than age 64.
+            {% elif household_member.member_status == 'NOT_ELIGIBLE'%}
+            	{% if household_member.age_in_years < 16 %}
+            		<B>Under age 16</B>, cannot participate at any level.
+            	{% elif household_member.inability_to_participate != 'None' %}
+    				<B>{{household_member.inability_to_participate}}</B>,  cannot participate at any level.
+				{% elif household_member.age_in_years > 64 %}
+					<B>Older than age 64</B>.
+				{% elif household_member.study_resident != 'Yes' %}
+    				<B>Not a study resident.</B>
+				{% endif %}
 
             {% elif not household_member.is_consented and household_member.member_status != 'NOT_ELIGIBLE' %}
                {% if household_member.member_status == 'ABSENT'%}
@@ -172,7 +177,11 @@
                     			<B>Refused BHS</B>
                     			<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     		{% else %}
-                    			<B>Older than 64</B>
+                    			{% if household_member.age_in_years > 64 %}
+                    				<B>Older than 64.</B>
+                    			{% else %}
+                    				<B>Not a study resident.</B>
+                    			{% endif %}
                     			<li><A title="HTC" href="{% url subject_htc_meta|admin_urlname:'add' %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">Offer HTC</A>
                     		{%endif%}
                     	</ol>

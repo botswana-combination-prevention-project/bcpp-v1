@@ -514,7 +514,7 @@ def replacement_report_view(request, **kwargs):
         replacement_values['1. Total replaced households'] = replaced_households
         replacement_values['2. Total replaced plots'] = replaced_plots
         replacement_values['3. Total number of replaceble households'] = replaceble_households
-        replacement_values['4. Total household accessment pending'] = accessment_forms_to_fill
+        replacement_values['4. Total household assessment pending'] = accessment_forms_to_fill
         replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
 
         replacement_values = collections.OrderedDict(sorted(replacement_values.items()))

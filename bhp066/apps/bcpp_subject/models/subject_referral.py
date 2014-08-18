@@ -281,6 +281,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     def save(self, *args, **kwargs):
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
+        subject_referral_helper.validate_referral_appt_date()
         if subject_referral_helper.missing_data:
             raise ValueError('Some data is missing for the referral. Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral.iteritems():
