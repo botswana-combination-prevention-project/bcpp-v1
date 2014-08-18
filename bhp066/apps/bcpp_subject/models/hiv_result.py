@@ -20,14 +20,14 @@ class HivResult (BaseScheduledVisitModel):
         max_length=50,
         choices=HIV_RESULT,
         help_text="If participant declined HIV testing, please select a reason below.",
-        )
+    )
 
     hiv_result_datetime = models.DateTimeField(
         verbose_name=_("Today\'s HIV test result date and time"),
         null=True,
         blank=True,
         validators=[datetime_not_future],
-        )
+    )
 
     blood_draw_type = models.CharField(
         verbose_name=_("What type of blood was used for the test"),
@@ -35,7 +35,7 @@ class HivResult (BaseScheduledVisitModel):
         choices=(('capillary', 'Capillary'), ('venous', 'Venous'), ('N/A', 'Not applicable')),
         default='N/A',
         help_text="",
-        )
+    )
 
     insufficient_vol = models.CharField(
         verbose_name=_('If capillary, is the volume less than 350uL?'),
@@ -43,7 +43,7 @@ class HivResult (BaseScheduledVisitModel):
         choices=YES_NO_NA,
         default='N/A',
         help_text=_('Note: if capillary blood and less than 350uL, an additional venous blood draw is required')
-        )
+    )
 
     why_not_tested = models.CharField(
         verbose_name=_("What was the main reason why you did not want HIV testing"
@@ -53,7 +53,7 @@ class HivResult (BaseScheduledVisitModel):
         blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
         help_text=_("Note: Only asked of individuals declining HIV testing during this visit."),
-        )
+    )
 
     history = AuditTrail()
 

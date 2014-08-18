@@ -49,12 +49,11 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
         max_length=25,
         choices=PLOT_LOG_STATUS,
         blank=True,
-        null=True,
-        )
+        null=True)
 
-    report_datetime = models.DateTimeField("Report date",
-        validators=[datetime_not_before_study_start, datetime_not_future, date_in_survey],
-        )
+    report_datetime = models.DateTimeField(
+        verbose_name="Report date",
+        validators=[datetime_not_before_study_start, datetime_not_future, date_in_survey])
 
     comment = EncryptedTextField(
         verbose_name="Comments",
@@ -62,8 +61,7 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
-           'information in this comment')
-        )
+                   'information in this comment'))
 
     history = AuditTrail()
 

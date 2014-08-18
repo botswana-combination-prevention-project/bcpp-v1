@@ -16,15 +16,13 @@ class Cancer (BaseScheduledVisitModel):
     date_cancer = models.DateField(
         verbose_name=_("Date of the diagnosis of cancer:"),
         validators=[date_not_future],
-        help_text="",
-        )
+        help_text="")
 
     dx_cancer = models.CharField(
         verbose_name=_("[Interviewer:] What is the cancer diagnosis as recorded?"),
         max_length=45,
         choices=DXCANCER_CHOICE,
-        help_text="",
-        )
+        help_text="")
 
     history = AuditTrail()
 

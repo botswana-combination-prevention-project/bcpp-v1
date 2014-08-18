@@ -42,36 +42,32 @@ class Plot(BaseDispatchSyncUuidModel):
         unique=True,
         help_text=_("Plot identifier"),
         editable=False,
-        db_index=True,
-        )
+        db_index=True)
 
     eligible_members = models.IntegerField(
         verbose_name="Approximate number of age eligible members",
         blank=True,
         null=True,
-        help_text=("Provide an approximation of the number of people who live in this residence who are age eligible."),)
+        help_text=("Provide an approximation of the number of people who live in this residence who are age eligible."))
 
     description = EncryptedTextField(
         verbose_name="Description of plot/residence",
         max_length=250,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     comment = EncryptedTextField(
         verbose_name="Comment",
         max_length=250,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     cso_number = EncryptedCharField(
         verbose_name="CSO Number",
         blank=True,
         null=True,
         db_index=True,
-        help_text=("provide the CSO number or leave BLANK."),
-        )
+        help_text=("provide the CSO number or leave BLANK."))
 
     household_count = models.IntegerField(
         verbose_name="Number of Households on this plot.",
@@ -85,100 +81,87 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=25,
         choices=TIME_OF_WEEK,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     time_of_day = models.CharField(
         verbose_name='Time of day when most of the eligible members will be available',
         max_length=25,
         choices=TIME_OF_DAY,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     gps_degrees_s = EncryptedDecimalField(
         verbose_name='GPS Degrees-South',
         max_digits=10,
         null=True,
-        decimal_places=0,
-        )
+        decimal_places=0)
 
     gps_minutes_s = EncryptedDecimalField(
         verbose_name='GPS Minutes-South',
         max_digits=10,
         null=True,
-        decimal_places=4,
-        )
+        decimal_places=4)
 
     gps_degrees_e = EncryptedDecimalField(
         verbose_name='GPS Degrees-East',
         null=True,
         max_digits=10,
-        decimal_places=0,
-        )
+        decimal_places=0)
 
     gps_minutes_e = EncryptedDecimalField(
         verbose_name='GPS Minutes-East',
         max_digits=10,
         null=True,
-        decimal_places=4,
-        )
+        decimal_places=4)
 
     gps_lon = EncryptedDecimalField(
         verbose_name='longitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     gps_lat = EncryptedDecimalField(
         verbose_name='latitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     gps_target_lon = EncryptedDecimalField(
         verbose_name='target waypoint longitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     gps_target_lat = EncryptedDecimalField(
         verbose_name='target waypoint latitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     status = models.CharField(
         verbose_name='Plot status',
         max_length=35,
         null=True,
-        choices=PLOT_STATUS,
-        )
+        choices=PLOT_STATUS)
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
     distance_from_target = models.FloatField(null=True, editable=True, help_text='distance in meters')
 
-    #20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
+    # 20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
     selected = models.CharField(
         max_length=25,
         null=True,
         verbose_name='selected',
         choices=SELECTED,
-        editable=False,
-        )
+        editable=False)
 
     replaces = models.CharField(
         max_length=25,
         null=True,
         blank=True,
         editable=False,
-        help_text=("plot or household identifier that this plot replaces."),
-        )
+        help_text=("plot or household identifier that this plot replaces."))
 
     replaced_by = models.CharField(
         verbose_name='Identifier',
@@ -186,14 +169,12 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         editable=False,
-        help_text=u'The identifier of the plot that this plot was replaced by',
-        )
+        help_text=u'The identifier of the plot that this plot was replaced by')
 
     device_id = models.CharField(
         max_length=2,
         null=True,
-        editable=False,
-        )
+        editable=False)
 
     action = models.CharField(
         max_length=25,
@@ -204,8 +185,7 @@ class Plot(BaseDispatchSyncUuidModel):
     access_attempts = models.IntegerField(
         default=0,
         editable=False,
-        help_text='Number of attempts to access a plot to determine it\'s status.'
-        )
+        help_text='Number of attempts to access a plot to determine it\'s status.')
 
     # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
     uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16", max_length=25, null=True, blank=True, editable=False)
@@ -219,16 +199,14 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text='If the community is incorrect, please contact the DMC immediately.',
         choices=COMMUNITIES,
         validators=[is_valid_community, ],
-        editable=False,
-        )
+        editable=False)
 
     section = models.CharField(
         max_length=25,
         null=True,
         verbose_name='Section',
         choices=SECTIONS,
-        editable=False,
-        )
+        editable=False)
 
     sub_section = models.CharField(
         max_length=25,
@@ -236,8 +214,7 @@ class Plot(BaseDispatchSyncUuidModel):
         verbose_name='Sub-section',
         choices=SUB_SECTIONS,
         help_text=u'',
-        editable=False,
-        )
+        editable=False)
 
     bhs = models.NullBooleanField(editable=False)
 
@@ -249,8 +226,7 @@ class Plot(BaseDispatchSyncUuidModel):
         blank=True,
         verbose_name='Identifier',
         help_text=u'The identifier of the plot that this plot is replaced by',
-        editable=False,
-        )
+        editable=False)
 
     objects = PlotManager()
 
@@ -286,7 +262,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         if self.status == 'inaccessible':
             # reset any editable fields that the user changed
-            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'replaced_by', 'selected']]:
+            for field in [fld for fld in self.__class__._meta.fields if not fld.editable and fld.null and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'replaced_by', 'selected']]:
                 setattr(self, field.name, None)
             self.action = self.get_action()
         else:
@@ -299,7 +275,7 @@ class Plot(BaseDispatchSyncUuidModel):
             self.action = self.get_action()
             if self.id:
                 self.household_count = self.create_or_delete_households(self)
-            if ((self.household_count == 0 and self.status in  ['residential_habitable'])):
+            if ((self.household_count == 0 and self.status in ['residential_habitable'])):
                 raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
 
@@ -310,7 +286,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def create_household(self, instance):
         Household = models.get_model('bcpp_household', 'Household')
         Household.objects.create(**{
-           'plot': instance,
+            'plot': instance,
             'gps_target_lat': instance.gps_target_lat,
             'gps_target_lon': instance.gps_target_lon,
             'gps_lat': instance.gps_lat,
@@ -318,8 +294,7 @@ class Plot(BaseDispatchSyncUuidModel):
             'gps_degrees_e': instance.gps_degrees_e,
             'gps_degrees_s': instance.gps_degrees_s,
             'gps_minutes_e': instance.gps_minutes_e,
-            'gps_minutes_s': instance.gps_minutes_s,
-            })
+            'gps_minutes_s': instance.gps_minutes_s})
 
     def allow_enrollement(self, plot, exception_cls=None):
         """Stops enrollments."""
@@ -370,7 +345,7 @@ class Plot(BaseDispatchSyncUuidModel):
             if instance.status not in [item[0] for item in PLOT_STATUS]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
         existing_household_count = Household.objects.filter(plot__pk=instance.pk).count()
-        if instance.status in  ['residential_habitable'] and not (existing_household_count == instance.household_count):
+        if instance.status in ['residential_habitable'] and not (existing_household_count == instance.household_count):
             if Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
                 while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
                     instance.create_household(instance)
