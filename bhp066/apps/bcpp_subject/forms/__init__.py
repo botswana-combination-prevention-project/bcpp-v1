@@ -11,6 +11,7 @@ from .demographics_form import DemographicsForm
 from .sexual_behaviour_form import SexualBehaviourForm
 from .hiv_care_adherence_form import HivCareAdherenceForm
 from .hiv_result_form import HivResultForm
+from .elisa_hiv_result_form import ElisaHivResultForm
 from .hiv_tested_form import HivTestedForm
 from .hiv_untested_form import HivUntestedForm
 from .months_partner_form import *
@@ -33,3 +34,4 @@ from .clinic_questionnaire_form import ClinicQuestionnaireForm
 from .participation_form import ParticipationForm
 from .tb_symptoms_form import TbSymptomsForm
 from .rbd_demographics_form import RbdDemographicsForm
+from .viral_load_result_form import ViralLoadResultForm

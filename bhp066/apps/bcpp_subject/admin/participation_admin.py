@@ -12,7 +12,11 @@ class ParticipationAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         "full",
+        "participation_type",
         )
+    list_display = ('subject_visit', 'full', 'participation_type')
+    list_filter = ('subject_visit', 'full', 'participation_type')
     radio_fields = {
-        'full': admin.VERTICAL}
+        'full': admin.VERTICAL,
+        'participation_type': admin.VERTICAL}
 admin.site.register(Participation, ParticipationAdmin)

@@ -45,6 +45,7 @@ from .stigma_opinion import StigmaOpinion
 from .positive_participant import PositiveParticipant
 from .access_to_care import AccessToCare
 from .hiv_result import HivResult
+from .elisa_hiv_result import ElisaHivResult
 from .hic_enrollment import HicEnrollment
 from .pregnancy import Pregnancy
 from .non_pregnancy import NonPregnancy
@@ -54,9 +55,10 @@ from .cd4_history import Cd4History
 from .subject_consent_history import SubjectConsentHistory
 from .clinic_questionnaire import ClinicQuestionnaire
 from .base_household_member_consent import BaseHouseholdMemberConsent
-from .subject_referral import SubjectReferral, SubjectReferralReview
+from .subject_referral import SubjectReferral
 from .participation import Participation
 from .tb_symptoms import TbSymptoms
 from .signals import *
 from .rbd_demographics import RbdDemographics
+from .viral_load_result import ViralLoadResult
 from .review import *
