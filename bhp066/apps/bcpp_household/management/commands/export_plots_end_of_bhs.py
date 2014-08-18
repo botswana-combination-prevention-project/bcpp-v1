@@ -29,7 +29,7 @@ class Command(BaseCommand):
         not_enrolled = 0
         confirmed = 0
         unconfirmed = 0
-        plots = Plot.objects.filter(selected__isnull=False)
+        plots = Plot.objects.filter(community=community_name, selected__isnull=False)
         cdc_plots.append(['plot_identifier', 'action', 'status', 'household_count', 'gps_target_lat', 'gps_target_lon', 'enrolled', 'comment'])
         for plot in plots:
             if plot.status in ['inaccessible', None]:
@@ -68,9 +68,9 @@ class Command(BaseCommand):
                 enrolled = list(set(enrolled))
                 if True in enrolled:
                     erolled_plot += 1
-                    if not plot.htc:
-                        plot.htc = True
-                        plot.save()
+#                     if not plot.htc:
+#                         plot.htc = True
+#                         plot.save()
                     cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'Yes', ''])
                 elif not enrolled[0]:
                     cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', '; '.join(household_reason)])
@@ -80,23 +80,23 @@ class Command(BaseCommand):
         for plot_values in cdc_plots:
             if not plot_values[0] == 'plot_identifier' and plot_values[6] == 'No':
                 plot_instance = Plot.objects.get(plot_identifier=plot_values[0])
-                plot_instance.htc = True
-                plot_instance.save()
+#                 plot_instance.htc = True
+#                 plot_instance.save()
         filename_25_pct = str(community_name) + '_25_pct.csv'
         filename_75_pct = str(community_name) + '_75_pct.csv'
         cdc_file = open(filename_25_pct, 'wb')
-        writer = csv.writer(cdc_file, delimiter='|')
+        writer = csv.writer(cdc_file, delimiter=',')
         writer.writerows(cdc_plots)
-        plots_75_pct = Plot.objects.filter(selected__isnull=True)
+        plots_75_pct = Plot.objects.filter(community=community_name, selected__isnull=True)
         cdc_plots_75_pct = []
         cdc_plots_75_pct.append(['Plot identifier', 'Plot confirmation status', 'Plot status', 'Original latitude coordinate', 'Original longitude coordinate'])
         for plot in plots_75_pct:
             cdc_plots_75_pct.append([plot.plot_identifier, plot.action, plot.status, plot.gps_target_lat, plot.gps_target_lon])
         cdc_file_75_pct = open(filename_75_pct, 'wb')
-        writer_75_pct = csv.writer(cdc_file_75_pct, delimiter='|')
+        writer_75_pct = csv.writer(cdc_file_75_pct, delimiter=',')
         writer_75_pct.writerows(cdc_plots_75_pct)
         # Report of the statistics
-        print "Total plots in the Database: ", plots.count() + plots_75_pct.count()
+        print "Total plots in the Database: ", Plot.objects.filter(community=community_name).count()
         print "Total number of plots in the 75 percent: ", plots_75_pct.count()
         print "Total number of plots in the 25 percent: ", plots.count()
         print "Total number of confirmed plots in the 25 percent:", confirmed
