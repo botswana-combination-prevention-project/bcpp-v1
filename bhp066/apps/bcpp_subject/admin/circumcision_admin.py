@@ -44,6 +44,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         "circumcised",
         "health_benefits_smc",
         'when_circ',
+        'age_unit_circ',
         'where_circ',
         'where_circ_other',
         'why_circ',
@@ -51,6 +52,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         "circumcised": admin.VERTICAL,
         "where_circ": admin.VERTICAL,
+        "age_unit_circ": admin.VERTICAL,
         "why_circ": admin.VERTICAL, }
     filter_horizontal = ("health_benefits_smc",)
 

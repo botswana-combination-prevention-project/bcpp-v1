@@ -16,7 +16,10 @@ class CircumcisedForm (BaseSubjectModelForm):
         cleaned_data = super(CircumcisedForm, self).clean()
         if cleaned_data.get('circumcised') == 'Yes' and not cleaned_data.get('health_benefits_smc'):
             raise forms.ValidationError('if \'YES\', what are the benefits of male circumcision?.')
-
+        if cleaned_data.get('when_circ') and not cleaned_data.get('age_unit_circ'):
+            raise forms.ValidationError('If you answered age of circumcision then you must provide time units.')
+        if not cleaned_data.get('when_circ') and cleaned_data.get('age_unit_circ'):
+            raise forms.ValidationError('If you did not answer age of circumcision then you must not provide time units.')
         return cleaned_data
 
     class Meta:

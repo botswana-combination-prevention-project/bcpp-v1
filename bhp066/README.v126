@@ -22,9 +22,9 @@ bhp066: settings and urls
 
 
 permissions
-1. clear the Permission model
+1. clear the Group Permission ManyToMany
 
-python manage.py clear_permissions
+python manage.py clear_group_permissions
 
 2. edit out south in settings.py
 3. run syncdb
