@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, date
 
 from django.conf import settings
 
@@ -52,6 +52,21 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'machine_type': 'SERVER',
         'hostname_prefix': 's030',
         'device_id': '99'}
+
+    holidays_setup = {'New Year': date(2014, 1, 01),
+                      'New Year Holiday': date(2014, 1, 02),
+                      'Good Fiday': date(2014, 4, 18),
+                      'Easter Monday': date(2014, 4, 21),
+                      'Labour Day': date(2014, 5, 01),
+                      'Ascension Day': date(2014, 5, 29),
+                      'Sir Seretse Khama Day': date(2014, 7, 01),
+                      'President\'s Day': date(2014, 7, 17),
+                      'President\'s Day Holiday': date(2014, 7, 21),
+                      'Independence Day': date(2014, 9, 30),
+                      'Botswana Day Holiday': date(2014, 10, 01),
+                      'Christmas Day': date(2014, 12, 25),
+                      'Boxing Day': date(2014, 12, 26),
+                      }
 
     consent_catalogue_setup = {
         'name': 'bcpp-year-1',
