@@ -3,9 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-
-from apps.bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE
-
+from apps.bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 from .base_circumcision import BaseCircumcision
 
 
@@ -17,6 +15,15 @@ class Circumcised (BaseCircumcision):
         null=True,
         blank=True,
         help_text=_("Note:Leave blank if participant does not want to respond."))
+
+    age_unit_circ = models.CharField(
+        verbose_name=_("The unit of age of circumcision is?"),
+        max_length=25,
+        choices=TIME_UNIT_CHOICE,
+        null=True,
+        blank=True,
+        help_text="",
+        )
 
     where_circ = models.CharField(
         verbose_name=_("Where were you circumcised?"),

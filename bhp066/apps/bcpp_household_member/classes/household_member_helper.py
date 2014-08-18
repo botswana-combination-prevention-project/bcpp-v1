@@ -225,9 +225,11 @@ class HouseholdMemberHelper(object):
             if self.household_enrolled:
                 if self.household_member.age_in_years > 64:
                     self._eligible_htc = True
-                elif not self.eligible_member and self.household_member.age_in_years >= 16:
+                elif (not self.eligible_member and self.household_member.inability_to_participate == 'None') and self.household_member.age_in_years >= 16:
                     self._eligible_htc = True
                 elif self.eligible_member:
+#                     if self.household_member.age_in_years >= 16:
+#                         self._eligible_htc = True
                     if not self.enrollment_checklist_completed and self.refused:
                         self._eligible_htc = True
                     elif self.enrollment_checklist_completed and not self.eligible_subject:
@@ -236,8 +238,8 @@ class HouseholdMemberHelper(object):
                         self._eligible_htc = True
                     else:
                         pass
-                elif not self.eligible_subject and self.enrollment_checklist_completed:
-                    self._eligible_htc = True
+#                 elif not self.eligible_subject and self.enrollment_checklist_completed:
+#                     self._eligible_htc = True
                 else:
                     pass
         return self._eligible_htc
@@ -249,7 +251,8 @@ class HouseholdMemberHelper(object):
 
     @property
     def eligible_member(self):
-        return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes')
+        return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes' 
+                and self.household_member.inability_to_participate == 'None')
 
     @property
     def eligible_subject(self):
