@@ -7,18 +7,16 @@ from ..models import (HivResult, Pima, HivTestReview, HivCareAdherence, HivTesti
 
 
 class SubjectStatusHelper(object):
-
+    """A helper class to consistently and conveniently return the HIV status of a subject."""
     # class attribute is accessed by the signal to ensure any modifications are caught in the post_save signal
-    models = {
-              'hiv_care_adherence': HivCareAdherence,
+    models = {'hiv_care_adherence': HivCareAdherence,
               'hiv_result': HivResult,
               'elisa_hiv_result': ElisaHivResult,
               'hiv_result_documentation': HivResultDocumentation,
               'hiv_test_review': HivTestReview,
               'hiv_testing_history': HivTestingHistory,
               'pima': Pima,
-              'subject_requisition': SubjectRequisition,
-              }
+              'subject_requisition': SubjectRequisition}
 
     def __init__(self, visit_instance):
         self._defaulter = None
@@ -64,8 +62,7 @@ class SubjectStatusHelper(object):
                 (self.elisa_hiv_result or self.todays_hiv_result) or
                 (self.last_hiv_result if self.last_hiv_result == 'POS' else None) or
                 (self.documented_verbal_hiv_result if self.documented_verbal_hiv_result == 'POS' else None) or
-                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)) else None)
-                )
+                (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)) else None))
         return self._hiv_result
 
     @property
@@ -90,9 +87,9 @@ class SubjectStatusHelper(object):
             return False
         elif ((self.todays_hiv_result == 'POS' or self.elisa_hiv_result_datetime == 'POS') and self.verbal_hiv_result == 'POS' and not self.indirect_hiv_documentation):
             return False
-        elif (self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
+        elif self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation):
             return False
-        elif (self.recorded_hiv_result == 'POS'):
+        elif self.recorded_hiv_result == 'POS':
             return False
         else:
             if (self.todays_hiv_result == 'POS' or self.elisa_hiv_result_datetime == 'POS'):  # you only have today's result and possibly an undocumented verbal_hiv_result
@@ -102,6 +99,7 @@ class SubjectStatusHelper(object):
 
     @property
     def arv_documentation(self):
+        """Returns True is there is arv documentation otherwise False or None."""
         try:
             arv_documentation = self.convert_to_nullboolean(self.hiv_care_adherence_instance.arv_evidence)
         except AttributeError:
@@ -110,6 +108,7 @@ class SubjectStatusHelper(object):
 
     @property
     def cd4_result_datetime(self):
+        """Returns the datetim of the CD4 result run in the household."""
         return self.todays_cd4_result_datetime
 
     @property
@@ -134,6 +133,7 @@ class SubjectStatusHelper(object):
 
     @property
     def cd4_result(self):
+        """Returns the value of the CD4 run in the household."""
         return self.todays_cd4_result
 
     @property
@@ -176,6 +176,7 @@ class SubjectStatusHelper(object):
 
     @property
     def last_hiv_result(self):
+        """Returns True the last HIV result which is either the recorded result or a verbal result supported by direct or indirect documentation."""
         if not self._last_hiv_result:
             self._last_hiv_result = self.recorded_hiv_result or self.documented_verbal_hiv_result
         return self._last_hiv_result
@@ -227,6 +228,7 @@ class SubjectStatusHelper(object):
 
     @property
     def todays_cd4_result(self):
+        """Returns the CD4 result."""
         if not self._todays_cd4_result:
             try:
                 self._todays_cd4_result = int(self.pima_instance.cd4_value)
@@ -236,6 +238,7 @@ class SubjectStatusHelper(object):
 
     @property
     def todays_cd4_result_datetime(self):
+        """Returns the CD4 result datetime."""
         if not self._todays_cd4_result_datetime:
             try:
                 self._todays_cd4_result_datetime = self.pima_instance.cd4_datetime
@@ -295,10 +298,12 @@ class SubjectStatusHelper(object):
 
     @property
     def vl_sample_drawn(self):
+        """Returns True if the VL was drawn."""
         return True if self.vl_requisition_instance else False
 
     @property
     def vl_sample_drawn_datetime(self):
+        """Returns the viral load draw datetime from the SubjectRequisition for VL or None."""
         if not self._vl_sample_drawn_datetime:
             try:
                 self._vl_sample_drawn_datetime = self.vl_requisition_instance.drawn_datetime
@@ -308,6 +313,7 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_care_adherence_instance(self):
+        """Returns a model instance of HivCareAdherence or None."""
         if not self._hiv_care_adherence_instance:
             try:
                 self._hiv_care_adherence_instance = self.models.get('hiv_care_adherence').objects.get(subject_visit=self.subject_visit)
@@ -317,6 +323,7 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_result_instance(self):
+        """Returns a model instance of HivResult or None."""
         if not self._hiv_result_instance:
             try:
                 self._hiv_result_instance = self.models.get('hiv_result').objects.get(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND'])
@@ -335,6 +342,7 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_testing_history_instance(self):
+        """Returns a model instance of HivTestingHistory or None."""
         if not self._hiv_testing_history_instance:
             try:
                 self._hiv_testing_history_instance = self.models.get('hiv_testing_history').objects.get(subject_visit=self.subject_visit)
@@ -344,6 +352,7 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_result_documentation_instance(self):
+        """Returns a model instance of HivResultDocumentation or None."""
         if not self._hiv_result_documentation_instance:
             try:
                 self._hiv_result_documentation_instance = self.models.get('hiv_result_documentation').objects.get(subject_visit=self.subject_visit, result_recorded__in=['POS', 'NEG', 'IND'])
@@ -353,6 +362,7 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_test_review_instance(self):
+        """Returns a model instance of HivTestReview or None."""
         if not self._hiv_test_review_instance:
             try:
                 self._hiv_test_review_instance = self.models.get('hiv_test_review').objects.get(subject_visit=self.subject_visit, recorded_hiv_result__in=['POS', 'NEG', 'IND'])
@@ -362,6 +372,7 @@ class SubjectStatusHelper(object):
 
     @property
     def pima_instance(self):
+        """Returns a model instance of Pima or None."""
         if not self._pima_instance:
             try:
                 self._pima_instance = self.models.get('pima').objects.get(subject_visit=self.subject_visit, cd4_value__isnull=False)
@@ -371,6 +382,7 @@ class SubjectStatusHelper(object):
 
     @property
     def vl_requisition_instance(self):
+        """Returns a model instance of the SubjectRequisition for panel VL or None."""
         if not self._vl_requisition_instance:
             try:
                 self._vl_requisition_instance = self.models.get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Viral Load', is_drawn='Yes')
@@ -379,6 +391,7 @@ class SubjectStatusHelper(object):
         return self._vl_requisition_instance
 
     def convert_to_nullboolean(self, yes_no_dwta):
+        """Converts 'yes' to True, 'no' to False or returns None."""
         if str(yes_no_dwta) in ['True', 'False', 'None']:
             return yes_no_dwta
         if yes_no_dwta.lower() == 'no':

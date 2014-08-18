@@ -22,12 +22,12 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     subject_visit = models.OneToOneField(SubjectVisit)
 
-    report_datetime = models.DateTimeField("Today's date",
+    report_datetime = models.DateTimeField(
+        verbose_name="Today's date",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        default=datetime.today(),
-        )
+        default=datetime.today())
 
     objects = ScheduledModelManager()
 

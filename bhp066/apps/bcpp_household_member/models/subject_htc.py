@@ -40,8 +40,7 @@ class SubjectHtc(BaseMemberStatusModel):
         max_length=25,
         choices=YES_NO_NA,
         null=True,
-        blank=False,
-        )
+        blank=False)
 
     refusal_reason = models.CharField(
         verbose_name=_("If the subject did not accept HTC, please explain"),
