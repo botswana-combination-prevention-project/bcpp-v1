@@ -1,26 +1,24 @@
 import os
 import sys
-import site
+#import site
 #import platform
 
-
-
-SOURCE_ROOT = '~/source'
-VIRTUALENV_PATH = os.path.expanduser('~/.virtualenvs/django-1.6.5/')
+VIRTUALENV_PATH = '/home/django/.virtualenvs/django-1.6.5/'
+SOURCE_ROOT_PATH = '/home/django//source/bhp066/develop/'
+LOCAL_PROJECT_RELPATH = 'bhp066_project/bhp066/'
 
 # Add the site-packages of the chosen virtualenv to work with
-site.addsitedir(os.path.join(VIRTUALENV_PATH, 'local/lib/python2.7/site-packages'))
 
-SOURCE_DIR = sys.path.expanduser(SOURCE_ROOT)
-sys.path.insert(1, os.path.join(SOURCE_DIR, 'edc_project'))
-sys.path.insert(1, os.path.join(SOURCE_DIR, 'lis_project'))
+# update path
+sys.path.insert(0, os.path.join(VIRTUALENV_PATH, 'local/lib/python2.7/site-packages'))
+sys.path.insert(0, os.path.join(SOURCE_ROOT_PATH, 'edc_project'))
+sys.path.insert(0, os.path.join(SOURCE_ROOT_PATH, 'lis_project'))
+sys.path.insert(0, os.path.join(SOURCE_ROOT_PATH, LOCAL_PROJECT_RELPATH))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
-
 #if platform.system() == 'Darwin':
 #        os.environ['PYTHON_EGG_CACHE'] = '/usr/local/pylons/python-eggs'
-
-# Activate your virtual env
-activate_env=os.path.join(os.path.join(VIRTUALENV_PATH, 'bin/activate_this.py"))
+# Activate the virtual env
+activate_env=os.path.join(VIRTUALENV_PATH, 'bin/activate_this.py')
 execfile(activate_env, dict(__file__=activate_env))
 
 import django.core.handlers.wsgi
