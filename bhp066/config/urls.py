@@ -43,75 +43,71 @@ for model in get_models():
     except:
         pass
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/logout/$', RedirectView.as_view(url='/{app_name}/logout/'.format(app_name=APP_NAME))),
     (r'^admin/', include(admin.site.urls)),
     (r'^i18n/', include('django.conf.urls.i18n')),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     (r'^bcpp/section/analytics/', include('apps.bcpp_analytics.urls', namespace="analytics")),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     (r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^databrowse/(.*)', login_required(django_databrowse.site.root)),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     (r'^bhp_sync/', include('edc.device.sync.urls')),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     (r'^reports/', include('edc.core.bhp_birt_reports.urls')),
 )
 
-# urlpatterns += patterns('',
-#     (r'^{app_name}/reports/'.format(app_name=APP_NAME), include('apps.{app_name}_reports.urls'.format(app_name=APP_NAME))),
-# )
-
-urlpatterns += patterns('',
-#     url(r'^{app_name}/(?P<section_name>audit_trail)/'.format(app_name=APP_NAME),
-#         include('edc.audit.urls'), name="section_url_name"),
+urlpatterns += patterns(
+    '',
     url(r'^audit_trail/', include('edc.audit.urls'), name="audit_trail_url_name"),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/section/reports/model_data_inspector/'.format(app_name=APP_NAME),
         include('edc.core.model_data_inspector.urls'), name="model_data_inspector_url_name"),
 )
 
-# urlpatterns += patterns('',
-#     url(r'^{app_name}/(?P<section_name>statistics)/'.format(app_name=APP_NAME),
-#         include('{app_name}_stats.urls'.format(app_name=APP_NAME)), name="section_url_name"),
-# )
-
-# urlpatterns += patterns('',
-#     url(r'^{app_name}/(?P<section_name>specimens)/'.format(app_name=APP_NAME),
-#         include('edc.lab.lab_clinic_api.urls'), name="section_url_name"),
-# )
-
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
     url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_clinic_dashboard.urls'.format(app_name=APP_NAME))),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/sync/'.format(app_name=APP_NAME), include('edc.device.sync.urls')),
     url(r'^{app_name}/dispatch/'.format(app_name=APP_NAME), include('edc.device.dispatch.urls')),
     url(r'^{app_name}/map/'.format(app_name=APP_NAME), include('edc.map.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^dispatch/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_dispatch.urls')),
     url(r'^bcpp_household/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_household.urls')),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/login/'.format(app_name=APP_NAME),
         'django.contrib.auth.views.login',
         name='{app_name}_login'.format(app_name=APP_NAME)),
@@ -125,14 +121,16 @@ urlpatterns += patterns('',
         'django.contrib.auth.views.password_change_done',
         name='password_change_done'.format(app_name=APP_NAME)),
 )
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/section/'.format(app_name=APP_NAME), include('edc.dashboard.section.urls'), name='section'),
 )
 
-urlpatterns += patterns('',
+urlpatterns += patterns(
+    '',
     url(r'^{app_name}/$'.format(app_name=APP_NAME), RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
-    )
+)
 
 # if settings.DEBUG:
 #     import debug_toolbar

@@ -1,8 +1,11 @@
 from django.contrib import admin
+
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+
 from apps.bcpp_household_member.models import HouseholdMember
-from ..models import SubjectMoved
+
 from ..forms import SubjectMovedForm
+from ..models import SubjectMoved
 
 
 class SubjectMovedAdmin(BaseRegisteredSubjectModelAdmin):
