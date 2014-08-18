@@ -15,6 +15,7 @@ def subject_dashboard(request, **kwargs):
         show=kwargs.get('show'),
         dashboard_type_list=['subject'],
         dashboard_models={'subject_consent': SubjectConsent},
+        app_label='bcpp_subject',
         )
     dashboard.set_context()
     return render_to_response(

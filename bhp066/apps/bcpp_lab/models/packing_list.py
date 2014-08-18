@@ -1,7 +1,14 @@
 from edc.lab.lab_packing.models import BasePackingList
 
+from ..managers import PackingListManager
+
 
 class PackingList(BasePackingList):
+
+    objects = PackingListManager()
+
+    def natural_key(self):
+        return (self.list_datetime, )
 
     class Meta:
         app_label = "bcpp_lab"

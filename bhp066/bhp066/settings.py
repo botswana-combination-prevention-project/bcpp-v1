@@ -32,6 +32,8 @@ if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+elif 'bcpp0' in socket.gethostname():
+    KEY_PATH = '/Volumes/keys'
 else:
     #KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
@@ -42,6 +44,7 @@ else:
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
     #KEY_PATH = '/Volumes/keys'
+    #KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 testing_db_name = 'sqlite'
@@ -123,17 +126,17 @@ else:
             'HOST': '',
             'PORT': '',
         },
-        'bcpp024-bhp066': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066_netbook',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '',
-            'PORT': '',
-        },
+#         'bcpp044-bhp066': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'OPTIONS': {
+#                 'init_command': 'SET storage_engine=INNODB',
+#             },
+#             'NAME': 'bhp066',
+#             'USER': 'root',
+#             'PASSWORD': 'cc3721b',
+#             'HOST': '192.168.1.189',
+#             'PORT': '',
+#         },
     }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -258,7 +261,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -432,8 +435,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '14'
-CURRENT_COMMUNITY = 'otse'
+SITE_CODE = '16'
+CURRENT_COMMUNITY = 'lentsweletau'
 CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
@@ -468,3 +471,7 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
+
+# bypass household log to get to the subject dashboard.
+BYPASS_HOUSEHOLD_LOG = True
+

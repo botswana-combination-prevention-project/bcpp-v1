@@ -96,6 +96,13 @@ CATTLEPOSTLANDS_CHOICE = (
         ('not_answering', _('Don\'t want to answer')),
     )
 
+PARTIAL_PARTICIPATION_TYPE = (
+        ('Not Applicable', _('Not Applicable')),
+#         ('RBD Only', _('RBD Only')),
+#         ('HTC Only', _('HTC Only')),
+#         ('Questionnaires', _('Questionnaires only')),
+        ('Changed mind midway', _('Participant changed mind')),
+   )
 
 COMMUNITIES = (
         ('Bokaa', _('Bokaa')),
@@ -223,6 +230,13 @@ EDUCATION_CHOICE = (
             ('not_answering', _('Don\'t want to answer')),
         )
 
+INABILITY_TO_PARTICIPATE_REASON = (
+           ('Mental Incapacity', _('Mental Incapacity')),
+           ('Deaf/Mute', _('Deaf/Mute')),
+           ('Too sick', _('Too sick')),
+           ('None', _('None')),
+        )
+
 EMPLOYMENT_CHOICE = (
         ('Not working', _('Not working')),
         ('Full-time Govt', _('Yes in the Government Sector (full time)')),
@@ -242,6 +256,11 @@ HIV_RESULT = (
         ('IND', 'Indeterminate'),
         ('Declined', 'Participant declined testing'),
         ('Not performed', 'Test could not be performed (e.g. supply outage, technical problem)'),
+    )
+
+ELISA_HIV_RESULT = (
+        ('POS', 'HIV Positive (Reactive)'),
+        ('NEG', 'HIV Negative (Non-reactive)'),
     )
 
 WHYNOHIVTESTING_CHOICE = (
@@ -362,6 +381,13 @@ ALCOHOL_SEX = (
     )
 
 LASTSEX_CHOICE = (
+        ('Days', _('Days')),
+        ('Months', _('Months')),
+        ('Years', _('Years')),
+        ('not_answering', _('Don\'t want to answer')),
+)
+
+TIME_UNIT_CHOICE = (
         ('Days', _('Days')),
         ('Months', _('Months')),
         ('Years', _('Years')),
