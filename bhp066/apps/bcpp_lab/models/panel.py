@@ -26,7 +26,7 @@ class Panel(BasePanel):
         super(Panel, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return (self.name,)
+        return (self.name, )
 
     def __unicode__(self):
         return self.name

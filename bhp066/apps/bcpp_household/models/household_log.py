@@ -1,9 +1,14 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Min
+from django.db.models.loading import get_model
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
+from apps.bcpp_survey.models import Survey
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
@@ -85,6 +90,8 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (self.report_datetime, ) + self.household_log.natural_key()
 
     def save(self, *args, **kwargs):
+#         if not self.allow_enrollement:
+#             raise ValidationError('Not allowed to modify or add logs.')
         household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_log.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
@@ -92,6 +99,14 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self):
         return True
+
+    @property
+    def allow_enrollement(self):
+        """Stops enrollments."""
+        allow_edit = False
+        if self.household_log.household_structure.enrolled:
+            allow_edit = True
+        return allow_edit
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')

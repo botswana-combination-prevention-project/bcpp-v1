@@ -28,23 +28,25 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'survey',
         'house',
         'enrolled',
+        'refused_enumeration',
         'dashboard',
         'members',
         'logs',
         'progress',
         'modified',
         'user_modified',
-        'hostname_modified')
+        'failed_enumeration_attempts')
     list_filter = (
         'survey',
         'progress',
         'enrolled',
+        'refused_enumeration',
+        ReplacebleHouseholdStructureFilter,
         'enrolled_datetime',
         'modified',
         'user_modified',
         'hostname_modified',
         'failed_enumeration_attempts',
-        ReplacebleHouseholdStructureFilter,
         )
     search_fields = (
         'household__household_identifier',
