@@ -16,6 +16,7 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
     fields = (
         'household_member',
         'report_datetime',
+        'tracking_identifier',
         'offered',
         'accepted',
         'refusal_reason',
@@ -29,13 +30,18 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
         "referred": admin.VERTICAL,
         }
 
-    list_display = ('household_member', 'report_datetime', 'offered', 'accepted', 'referred')
+    list_display = ('household_member', 'tracking_identifier', 'report_datetime', 'offered', 'accepted', 'referred')
 
     search_fields = [
+        'tracking_identifier',
         'household_member__first_name',
         'household_member__household_structure__household__household_identifier']
 
     list_filter = ('report_datetime', 'offered', 'accepted', 'referred')
+
+    def get_readonly_fields(self, request, obj=None):
+        super(SubjectHtcAdmin, self).get_readonly_fields(request, obj)
+        return ('tracking_identifier',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
