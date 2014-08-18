@@ -8,6 +8,8 @@ from .packing_list import PackingList
 from .panel import Panel
 from .subject_requisition import SubjectRequisition
 
+from ..managers import PackingListItemManager
+
 
 class PackingListItem(BasePackingListItem):
 
@@ -17,6 +19,8 @@ class PackingListItem(BasePackingListItem):
         null=True,
         blank=True,
         )
+
+    objects = PackingListItemManager()
 
     def drawn_datetime(self):
         retval = "n/a"
@@ -52,6 +56,9 @@ class PackingListItem(BasePackingListItem):
                                     )
                 retval = registered_subject.gender
         return retval
+
+    def natural_key(self):
+        return (self.item_reference, )
 
     class Meta:
         app_label = "bcpp_lab"
