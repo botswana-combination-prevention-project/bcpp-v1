@@ -23,7 +23,7 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import  ABSENT, UNDECIDED
+from ..constants import ABSENT, UNDECIDED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
@@ -32,7 +32,8 @@ from django.conf import settings
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
 
-    household_structure = models.ForeignKey(HouseholdStructure,
+    household_structure = models.ForeignKey(
+        HouseholdStructure,
         null=True,
         blank=False)
 
@@ -44,14 +45,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         default=None,
         editable=False,
         help_text=_('Identifier to track member between surveys, '
-                   'is the id of the member\'s first appearance in the table.'))
+                    'is the id of the member\'s first appearance in the table.'))
 
     first_name = EncryptedFirstnameField(
         verbose_name='First name',
         validators=[RegexValidator("^[A-Z]{1,250}$", "Ensure first name is only CAPS and does not contain any spaces or numbers")],
         db_index=True)
 
-    initials = models.CharField('Initials',
+    initials = models.CharField(
+        verbose_name='Initials',
         max_length=3,
         validators=[
             MinLengthValidator(2),
@@ -95,14 +97,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     study_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or "
-                      "more nights per month in this community? "),
+                       "more nights per month in this community? "),
         max_length=17,
         choices=YES_NO_DWTA,
         help_text=("If participant has moved into the "
-                  "community in the past 12 months, then "
-                  "since moving in has the participant typically "
-                  "spent 3 or more nights per month in this community."),
-        )
+                   "community in the past 12 months, then "
+                   "since moving in has the participant typically "
+                   "spent 3 or more nights per month in this community."))
 
     member_status = models.CharField(
         max_length=25,

@@ -19,8 +19,7 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
     subject_undecided_reason = models.CharField(
         verbose_name="Reason",
         max_length=100,
-        choices=UNDECIDED_REASON,
-     )
+        choices=UNDECIDED_REASON)
 
     history = AuditTrail()
 
@@ -47,7 +46,6 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
 
     class Meta:
         app_label = 'bcpp_household_member'
-#         db_table = 'bcpp_subject_subjectundecidedentry'
         verbose_name = "Subject Undecided Entry"
         verbose_name_plural = "Subject Undecided Entries"
         unique_together = ('subject_undecided', 'report_datetime')

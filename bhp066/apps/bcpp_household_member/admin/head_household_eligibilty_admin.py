@@ -1,6 +1,9 @@
 from django.contrib import admin
-from edc.base.admin.admin import BaseModelAdmin
+
+from edc.base.modeladmin.admin import BaseModelAdmin
+
 from apps.bcpp_household.models import HouseholdStructure
+
 from ..models import HouseholdHeadEligibility, HouseholdMember
 from ..forms import HouseholdHeadEligibilityForm
 
@@ -14,13 +17,12 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
         "report_datetime",
         "aged_over_18",
         'household_residency',
-        "verbal_script",
-        )
+        "verbal_script")
+
     radio_fields = {
         "aged_over_18": admin.VERTICAL,
         "household_residency": admin.VERTICAL,
-        "verbal_script": admin.VERTICAL,
-        }
+        "verbal_script": admin.VERTICAL}
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

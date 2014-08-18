@@ -1,8 +1,5 @@
-#import calendar
+from datetime import date, timedelta
 
-from datetime import date, timedelta, datetime
-
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -11,7 +8,6 @@ from edc.base.model.validators import datetime_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
-from edc.subject.appointment.constants import DONE
 
 from apps.bcpp.choices import COMMUNITIES
 
@@ -35,8 +31,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         choices=(('Yes', 'Yes, subject has been handed a referral letter'),
                  ('No', 'No, subject has not been handed a referral letter'),
                  ('refused', 'Subject refused referral the referral letter')),
-        help_text=''
-                )
+        help_text='')
 
     referral_appt_date = models.DateTimeField(  # check that this date is not greater than next_arv_clinic_appointment_date
         verbose_name="Referral Appointment Date",
@@ -333,15 +328,3 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         app_label = 'bcpp_subject'
         verbose_name = 'Subject Referral'
         verbose_name_plural = "Subject Referral"
-
-
-# class SubjectReferralReview(SubjectReferral):
-#   
-#     def save(self, *args, **kwargs):
-#         pass
-#   
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         verbose_name = 'Subject Referral Review'
-#         verbose_name_plural = "Subject Referral Review" 
-#         proxy = True
