@@ -261,7 +261,7 @@ INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -435,8 +435,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '14'
-CURRENT_COMMUNITY = 'otse'
+SITE_CODE = '16'
+CURRENT_COMMUNITY = 'lentsweletau'
 CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
