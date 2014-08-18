@@ -178,6 +178,17 @@ class DemographicsReview(Demographics):
         app_label = 'bcpp_subject_review'
         proxy = True
 
+# class SubjectReferralReview(SubjectReferral):
+#    
+#     def save(self, *args, **kwargs):
+#         pass
+#    
+#     class Meta:
+#         app_label = 'bcpp_subject_review'
+#         verbose_name = 'Subject Referral Review'
+#         verbose_name_plural = "Subject Referral Review" 
+#         proxy = True
+
 
 class CommunityEngagementReview(CommunityEngagement):
 

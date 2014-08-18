@@ -19,12 +19,15 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
+from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
 from ..constants import  ABSENT, UNDECIDED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
+
+from django.conf import settings
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -82,6 +85,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         choices=RELATIONS,
         null=True,
         help_text="Relation to head of household")
+
+    inability_to_participate = models.CharField(
+        verbose_name=_("Does any of the following reasons apply to the participant?(Any of this reasons makes the participant unable to take part in the informed consent process)"),
+        max_length=17,
+        choices=INABILITY_TO_PARTICIPATE_REASON,
+        help_text=("Participant can only participate if NONE is selected."),
+        )
 
     study_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or "
@@ -209,6 +219,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         except:
             subject_htc = None
         return subject_htc
+    
+    @property
+    def bypass_household_log(self):
+        return settings.BYPASS_HOUSEHOLD_LOG
 
     @property
     def enrollment_options(self):
