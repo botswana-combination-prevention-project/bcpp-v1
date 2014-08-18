@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
@@ -8,6 +9,7 @@ from edc.base.model.validators import date_not_future
 from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+# from ..constants import RBD
 
 
 class HivTestReview (BaseScheduledVisitModel):
@@ -29,6 +31,15 @@ class HivTestReview (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+#         self.validate_participation_type(self)
+        super(HivTestReview, self).save(*args, **kwargs)
+
+#     def validate_participation_type(self, hiv_test_review, exception_cls=None):
+#         exception_cls = exception_cls or ValidationError
+#         if hiv_test_review.participation_type_string == RBD and hiv_test_review.recorded_hiv_result != 'POS':
+#             raise exception_cls('Please review Participation form. For a RBD only participation, \'positive\' HIV test result has to be chosen.')
 
     def get_test_code(self):
         return 'HIV'

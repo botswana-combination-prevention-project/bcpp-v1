@@ -2,7 +2,8 @@ from datetime import datetime
 
 from apps.bcpp_lab.models import SubjectRequisition
 
-from ..models import (HivResult, Pima, HivTestReview, HivCareAdherence, HivTestingHistory, HivResultDocumentation)
+from ..models import (HivResult, Pima, HivTestReview, HivCareAdherence, HivTestingHistory, HivResultDocumentation,
+                      ElisaHivResult)
 
 
 class SubjectStatusHelper(object):
@@ -10,6 +11,7 @@ class SubjectStatusHelper(object):
     # class attribute is accessed by the signal to ensure any modifications are caught in the post_save signal
     models = {'hiv_care_adherence': HivCareAdherence,
               'hiv_result': HivResult,
+              'elisa_hiv_result': ElisaHivResult,
               'hiv_result_documentation': HivResultDocumentation,
               'hiv_test_review': HivTestReview,
               'hiv_testing_history': HivTestingHistory,
@@ -25,6 +27,7 @@ class SubjectStatusHelper(object):
         self._hiv_result_datetime = None
         self._hiv_result_documentation_instance = None
         self._hiv_result_instance = None
+        self._elisa_result_instance = None
         self._hiv_test_review_instance = None
         self._hiv_testing_history_instance = None
         self._indirect_hiv_documentation = None
@@ -38,6 +41,8 @@ class SubjectStatusHelper(object):
         self._todays_cd4_result_datetime = None
         self._todays_hiv_result = None
         self._todays_hiv_result_datetime = None
+        self._elisa_hiv_result = None
+        self._elisa_hiv_result_datetime = None
         self._verbal_hiv_result = None
         self._vl_requisition_instance = None
         self._vl_sample_drawn_datetime = None
@@ -51,10 +56,10 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_result(self):
-        """Returns the hiv status considering today\'s result, the last documented result and a verbal result."""
+        """Returns the hiv status considering today\'s result, elisa hiv result, the last documented result and a verbal result."""
         if not self._hiv_result:
             self._hiv_result = (
-                self.todays_hiv_result or
+                (self.elisa_hiv_result or self.todays_hiv_result) or
                 (self.last_hiv_result if self.last_hiv_result == 'POS' else None) or
                 (self.documented_verbal_hiv_result if self.documented_verbal_hiv_result == 'POS' else None) or
                 (self.verbal_hiv_result if (self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)) else None))
@@ -62,30 +67,32 @@ class SubjectStatusHelper(object):
 
     @property
     def hiv_result_datetime(self):
-        """Returns the oldest hiv result datetime if POS, based on last then today, moost recent if NEG."""
+        """Returns the oldest hiv result datetime if POS, based on last, today or elisa most recent if NEG."""
         if not self._hiv_result_datetime:
             last_hiv_result_datetime = None
             if self.last_hiv_result_date:
+                #Documented Hiv Result, No test done => POS.
                 last_hiv_result_datetime = datetime(self.last_hiv_result_date.year, self.last_hiv_result_date.month, self.last_hiv_result_date.day)
             if self.hiv_result == 'POS':
-                self._hiv_result_datetime = last_hiv_result_datetime if self.last_hiv_result == 'POS' else self.todays_hiv_result_datetime  # take earliest if POS
+                #self.hiv_result == 'POS' could be known POS or from Today's Hiv Result of from Elisa's Hiv Result
+                self._hiv_result_datetime = last_hiv_result_datetime if self.last_hiv_result == 'POS' else (self.todays_hiv_result_datetime or self.elisa_hiv_result_datetime) # take earliest if POS
             else:
-                self._hiv_result_datetime = self.todays_hiv_result_datetime or last_hiv_result_datetime  # take latest if not POS
+                self._hiv_result_datetime = self.elisa_hiv_result_datetime or self.todays_hiv_result_datetime or last_hiv_result_datetime  # take latest if not POS
         return self._hiv_result_datetime
 
     @property
     def new_pos(self):
         """Returns True if combination of documents and test history show POS."""
-        if self.todays_hiv_result == 'POS' and self.recorded_hiv_result == 'POS':
+        if ((self.todays_hiv_result == 'POS' or self.elisa_hiv_result_datetime == 'POS') and self.recorded_hiv_result == 'POS'):
             return False
-        elif self.todays_hiv_result == 'POS' and self.verbal_hiv_result == 'POS' and not self.indirect_hiv_documentation:
+        elif ((self.todays_hiv_result == 'POS' or self.elisa_hiv_result_datetime == 'POS') and self.verbal_hiv_result == 'POS' and not self.indirect_hiv_documentation):
             return False
         elif self.verbal_hiv_result == 'POS' and (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation):
             return False
         elif self.recorded_hiv_result == 'POS':
             return False
         else:
-            if self.todays_hiv_result == 'POS':  # you only have today's result and possibly an undocumented verbal_hiv_result
+            if (self.todays_hiv_result == 'POS' or self.elisa_hiv_result_datetime == 'POS'):  # you only have today's result and possibly an undocumented verbal_hiv_result
                 return True
             else:
                 return None  # may have no result or just an undocumented verbal_hiv_result, which is not enough information.
@@ -251,13 +258,33 @@ class SubjectStatusHelper(object):
 
     @property
     def todays_hiv_result_datetime(self):
-        """Returns an hiv result from today's test, if it exists."""
+        """Returns an hiv result datetime from today's test, if it exists."""
         if not self._todays_hiv_result_datetime:
             try:
                 self._todays_hiv_result_datetime = self.hiv_result_instance.hiv_result_datetime
             except AttributeError:
                 self._todays_hiv_result_datetime = None
         return self._todays_hiv_result_datetime
+
+    @property
+    def elisa_hiv_result(self):
+        """Returns an hiv result from the Elisa result form, if it exists."""
+        if not self._elisa_hiv_result:
+            try:
+                self._elisa_hiv_result = self.elisa_result_instance.hiv_result
+            except AttributeError:
+                self._elisa_hiv_result = None
+        return self._elisa_hiv_result
+
+    @property
+    def elisa_hiv_result_datetime(self):
+        """Returns an hiv result datetime from Elisa result form, if it exists."""
+        if not self._elisa_hiv_result_datetime:
+            try:
+                self._elisa_hiv_result_datetime = self.elisa_result_instance.hiv_result_datetime
+            except AttributeError:
+                self._elisa_hiv_result_datetime = None
+        return self._elisa_hiv_result_datetime
 
     @property
     def verbal_hiv_result(self):
@@ -303,6 +330,15 @@ class SubjectStatusHelper(object):
             except self.models.get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
         return self._hiv_result_instance
+
+    @property
+    def elisa_result_instance(self):
+        if not self._elisa_result_instance:
+            try:
+                self._elisa_result_instance = self.models.get('elisa_hiv_result').objects.get(subject_visit=self.subject_visit)
+            except self.models.get('elisa_hiv_result').DoesNotExist:
+                self._elisa_result_instance = None
+        return self._elisa_result_instance
 
     @property
     def hiv_testing_history_instance(self):

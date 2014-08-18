@@ -5,7 +5,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from lis.specimen.lab_receive.models import BaseReceive
 
-# from .subject_requisition import SubjectRequisition
+from ..managers import ReceiveManager
 
 
 class Receive(BaseReceive):
@@ -16,7 +16,7 @@ class Receive(BaseReceive):
 
     subject_type = models.CharField(max_length=25, null=True, editable=False)
 
-    objects = models.Manager()
+    objects = ReceiveManager()
 
     def save(self, *args, **kwargs):
         self.subject_type = self.registered_subject.subject_type
@@ -25,11 +25,25 @@ class Receive(BaseReceive):
     def __unicode__(self):
         return self.receive_identifier
 
+    def deserialize_get_missing_fk(self, attrname):
+        retval = None
+#         if attrname == 'household_structure' and self.registered_subject:
+#             subject_identifier = self.registered_subject.subject_identifier
+#             if subject_identifier:
+#                 registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
+#                 if registered_subject:
+#                     if HouseholdMember.objects.filter(id=registered_subject.registration_identifier).exists():
+#                         retval = HouseholdMember.objects.get(id=registered_subject.registration_identifier).household_structure
+        return retval
+
     def requisition(self):
         #requisition = SubjectRequisition.objects.get(requisition_identifier=self.requisition_identifier)
         url = reverse('admin:bcpp_lab_subjectrequisition_changelist')
         return '<a href="{0}?q={1}">{1}</a>'.format(url, self.requisition_identifier)
     requisition.allow_tags = True
+
+    def natural_key(self):
+        return (self.receive_identifier, )
 
     class Meta:
         app_label = 'bcpp_lab'

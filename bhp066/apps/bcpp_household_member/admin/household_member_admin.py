@@ -29,12 +29,13 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
         return super(HouseholdMemberAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    fields = ('household_structure', 'first_name', 'initials', 'gender', 'age_in_years', 'present_today', 'study_resident', 'relation')
+    fields = ('household_structure', 'first_name', 'initials', 'gender', 'age_in_years', 'present_today', 'inability_to_participate', 'study_resident', 'relation')
 
     radio_fields = {
         "gender": admin.VERTICAL,
         "relation": admin.VERTICAL,
         "present_today": admin.VERTICAL,
+        "inability_to_participate": admin.VERTICAL,
         "study_resident": admin.VERTICAL,
         }
 
@@ -45,6 +46,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                     'relation',
                     'visit_attempts',
                     'member_status',
+                    'inability_to_participate',
                     'eligible_member',
                     'eligible_subject',
                     'enrollment_checklist_completed',
@@ -65,7 +67,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__household__plot__id',
         'relation', 'id']
 
-    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status',
+    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status','inability_to_participate',
                    'eligible_member', 'eligible_subject', 'enrollment_checklist_completed', 'enrollment_loss_completed', 'reported',
                    'refused', 'is_consented', 'eligible_htc', 'target', 'hiv_history', 'household_structure__household__community',
                    'modified', 'hostname_created', 'user_created', 'visit_attempts')

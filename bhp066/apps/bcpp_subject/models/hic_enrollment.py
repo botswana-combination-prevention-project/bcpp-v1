@@ -168,7 +168,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         subject_locator = SubjectLocator.objects.filter(subject_visit=self.subject_visit)
         # At least some information to contact the person should be available
         if subject_locator.exists():
-            if [subject_locator[0].subject_cell or
+            if (subject_locator[0].subject_cell or
                     subject_locator[0].subject_cell_alt or
                     subject_locator[0].subject_phone or
                     subject_locator[0].mail_address or
@@ -181,10 +181,10 @@ class HicEnrollment (BaseScheduledVisitModel):
                     subject_locator[0].subject_work_phone or
                     subject_locator[0].contact_physical_address or
                     subject_locator[0].contact_cell or
-                    subject_locator[0].contact_phone]:
+                    subject_locator[0].contact_phone):
                 return True
             else:
-                raise exception_cls('Please review \'subject_cell\', \'subject_cell_alt\' and \'subject_phone\' in SubjectLocator form before proceeding with this one.')
+                raise exception_cls('Please review SubjectLocator to ensure there is some way to contact the participant form before proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
 

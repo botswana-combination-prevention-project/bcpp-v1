@@ -34,6 +34,8 @@ if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+elif 'bcpp0' in socket.gethostname():
+    KEY_PATH = '/Volumes/keys'
 else:
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
@@ -290,8 +292,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '14'
-CURRENT_COMMUNITY = 'otse'
+SITE_CODE = '16'
+CURRENT_COMMUNITY = 'lentsweletau'
 CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
