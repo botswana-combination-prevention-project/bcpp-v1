@@ -13,12 +13,13 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class Demographics (BaseScheduledVisitModel):
 
     """CS002"""
-
+    
     religion = models.ManyToManyField(Religion,
         verbose_name=_("What is your religion affiliation?"),
         help_text="",
         )
     religion_other = OtherCharField()
+    
 
     ethnic = models.ManyToManyField(EthnicGroups,
         verbose_name=_("What is your ethnic group?"),
@@ -53,10 +54,11 @@ class Demographics (BaseScheduledVisitModel):
         verbose_name=_("Who do you currently live with ?"),
         help_text="[indicate all that apply]",
         )
-
+    
     history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "Demographics"
         verbose_name_plural = "Demographics"
+        

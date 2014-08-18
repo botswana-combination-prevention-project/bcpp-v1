@@ -98,8 +98,6 @@ class HouseholdDashboard(Dashboard):
         if self.household_log:
             if HouseholdLogEntry.objects.filter(household_log=self.household_log, report_datetime__year=today.year, report_datetime__month=today.month, report_datetime__day=today.day).exists():
                 has_household_log_entry = True
-                if self.household_assessment:
-                    has_household_log_entry = False
         return has_household_log_entry
 
     @property
