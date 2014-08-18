@@ -96,6 +96,13 @@ CATTLEPOSTLANDS_CHOICE = (
     ('not_answering', _('Don\'t want to answer')),
 )
 
+PARTIAL_PARTICIPATION_TYPE = (
+        ('Not Applicable', _('Not Applicable')),
+#         ('RBD Only', _('RBD Only')),
+#         ('HTC Only', _('HTC Only')),
+#         ('Questionnaires', _('Questionnaires only')),
+        ('Changed mind midway', _('Participant changed mind')),
+   )
 
 COMMUNITIES = (
     ('Bokaa', _('Bokaa')),
@@ -222,6 +229,13 @@ EDUCATION_CHOICE = (
     ('Higher than senior secondary (university, diploma, etc.)', _('Higher than senior secondary (university, diploma, etc.)')),
     ('not_answering', _('Don\'t want to answer')),
 )
+
+INABILITY_TO_PARTICIPATE_REASON = (
+           ('Mental Incapacity', _('Mental Incapacity')),
+           ('Deaf/Mute', _('Deaf/Mute')),
+           ('Too sick', _('Too sick')),
+           ('None', _('None')),
+        )
 
 EMPLOYMENT_CHOICE = (
     ('Not working', _('Not working')),
@@ -371,6 +385,13 @@ LASTSEX_CHOICE = (
     ('Months', _('Months')),
     ('Years', _('Years')),
     ('not_answering', _('Don\'t want to answer')),
+)
+
+TIME_UNIT_CHOICE = (
+        ('Days', _('Days')),
+        ('Months', _('Months')),
+        ('Years', _('Years')),
+        ('not_answering', _('Don\'t want to answer')),
 )
 
 FIRSTPARTNERLIVE_CHOICE = (
