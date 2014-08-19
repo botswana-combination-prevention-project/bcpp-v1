@@ -294,7 +294,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
         The subject's subject_locator instance is exported as well.
 
-        If there is no subject_locator, the subject_referral is not exported."""
+        If there is no subject_locator, the subject_referral is not exported.
+
+        ...see_also:: SubjectReferral"""
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
             if self.referral_code:
