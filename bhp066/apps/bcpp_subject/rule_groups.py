@@ -541,24 +541,25 @@ site_rule_groups.register(ReproductiveRuleGroup)
 
 
 class MedicalDiagnosesRuleGroup(RuleGroup):
-
+    #allowing the heartattack, cancer, tb forms to be made available whether or not the participant
+    #has a record. see redmine 314
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
-            predicate=('heart_attack_record', 'equals', 'Yes'),
+            predicate=(('heart_attack_record', 'equals', 'Yes'), ('heart_attack_record', 'equals', 'No', 'or')),
             consequence='new',
             alternative='not_required'),
         target_model=['heartattack'])
 
     cancer_record = ScheduledDataRule(
         logic=Logic(
-            predicate=('cancer_record', 'equals', 'Yes'),
+            predicate=(('cancer_record', 'equals', 'Yes'), ('cancer_record', 'equals', 'No', 'or')),
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
 
     tb_record = ScheduledDataRule(
         logic=Logic(
-            predicate=('tb_record', 'equals', 'Yes'),
+            predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
             consequence='new',
             alternative='not_required'),
         target_model=['tubercolosis', 'tbsymptoms'])
