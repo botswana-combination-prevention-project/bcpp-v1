@@ -23,25 +23,25 @@ class Command(BaseCommand):
         if not (os.path.exists(file_75_list) and os.path.exists(file_20_list) and os.path.exists(file_5_list)):
             raise IOError("Files do not exist in the path: {0}.", format(args[1]))
         else:
-            plots_75_list = open(file_75_list, 'r')
-            lines_75 = plots_75_list.readlines()
-#             lines_75 = lines_75[0].split('\n')
-            lines_75.pop(0)
-            num_75_pct = 0
-            num_20_pct = 0
-            for plot in lines_75:
-                plot = plot.split(',')
-                idnt = plot[0]
-                idnt = idnt.replace('\"', '')
-                gps_target_lat = float(plot[1])
-                gps_target_lon = float(plot[2])
-                if Plot.objects.filter(plot_identifier=idnt):
-                    print "Plot {0} already created".format(idnt)
-                else:
-                    plot_in_75 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat, gps_target_lon=gps_target_lon, community=community_name, htc=True)
-                    plot_in_75.save()
-                num_75_pct += 1
-                print "plots created {0} out of {1} in the 75%".format(num_75_pct, len(lines_75))
+#             plots_75_list = open(file_75_list, 'r')
+#             lines_75 = plots_75_list.readlines()
+# #             lines_75 = lines_75[0].split('\n')
+#             lines_75.pop(0)
+#             num_75_pct = 0
+#             num_20_pct = 0
+#             for plot in lines_75:
+#                 plot = plot.split(',')
+#                 idnt = plot[0]
+#                 idnt = idnt.replace('\"', '')
+#                 gps_target_lat = float(plot[1])
+#                 gps_target_lon = float(plot[2])
+#                 if Plot.objects.filter(plot_identifier=idnt):
+#                     print "Plot {0} already created".format(idnt)
+#                 else:
+#                     plot_in_75 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat, gps_target_lon=gps_target_lon, community=community_name, htc=True)
+#                     plot_in_75.save()
+#                 num_75_pct += 1
+#                 print "plots created {0} out of {1} in the 75%".format(num_75_pct, len(lines_75))
             plots_20_list = open(file_20_list, 'r')
             lines_20 = plots_20_list.readlines()
 #             lines_20 = lines_20[0].split('\r')
