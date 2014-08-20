@@ -12,7 +12,7 @@ class OodiPlotMapper(BasePlotMapper):
 
     landmarks = OODI_LANDMARKS
 
-    enhanced_care = True
+    intervention = True
 
     gps_center_lat = -24.425856
     gps_center_lon = 26.021626

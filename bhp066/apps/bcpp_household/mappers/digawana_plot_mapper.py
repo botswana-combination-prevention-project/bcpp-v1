@@ -12,7 +12,7 @@ class DigawanaPlotMapper(BasePlotMapper):
 
     landmarks = DIGAWANA_LANDMARKS
 
-    enhanced_care = True
+    intervention = True
 
     gps_center_lat = -25.330451
     gps_center_lon = 25.556502
