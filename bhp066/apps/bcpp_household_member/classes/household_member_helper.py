@@ -225,11 +225,9 @@ class HouseholdMemberHelper(object):
             if self.household_enrolled:
                 if self.household_member.age_in_years > 64:
                     self._eligible_htc = True
-                elif (not self.eligible_member and self.household_member.inability_to_participate == 'None') and self.household_member.age_in_years >= 16:
+                elif (not self.eligible_member and self.household_member.inability_to_participate == 'N/A') and self.household_member.age_in_years >= 16:
                     self._eligible_htc = True
                 elif self.eligible_member:
-#                     if self.household_member.age_in_years >= 16:
-#                         self._eligible_htc = True
                     if not self.enrollment_checklist_completed and self.refused:
                         self._eligible_htc = True
                     elif self.enrollment_checklist_completed and not self.eligible_subject:
@@ -238,8 +236,6 @@ class HouseholdMemberHelper(object):
                         self._eligible_htc = True
                     else:
                         pass
-#                 elif not self.eligible_subject and self.enrollment_checklist_completed:
-#                     self._eligible_htc = True
                 else:
                     pass
         return self._eligible_htc
@@ -251,8 +247,8 @@ class HouseholdMemberHelper(object):
 
     @property
     def eligible_member(self):
-        return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes' 
-                and self.household_member.inability_to_participate == 'None')
+        return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes'
+                and self.household_member.inability_to_participate == 'N/A')
 
     @property
     def eligible_subject(self):
@@ -270,12 +266,14 @@ class HouseholdMemberHelper(object):
 
     @enrollment_checklist_completed.setter
     def enrollment_checklist_completed(self, is_completed):
-        """If one is switching back to BHS_SCREEN for whatever reason, then
+        """Indicates that the enrollment loss form was completed or resets.
+
+        If one is switching back to BHS_SCREEN for whatever reason, then
         enrollment_checklist_completed needs to be set back to false and the
-        enrolment checklist deleted for that member."""
-        from ..models import EnrollmentChecklist, HouseholdMember
-        if not is_completed and EnrollmentChecklist.objects.filter(household_member=self.household_member).exists():
-            EnrollmentChecklist.objects.get(household_member=self.household_member).delete()
+        enrollment checklist deleted for that member."""
+        EnrollmentChecklist = models.get_model('bcpp_household_member', 'enrollmentchecklist')
+        if not is_completed:  # reset the field value and delete the checklist if it exists
+            EnrollmentChecklist.objects.filter(household_member=self.household_member).delete()
             self.household_member.enrollment_checklist_completed = False
             self.household_member.eligible_subject = False
 
