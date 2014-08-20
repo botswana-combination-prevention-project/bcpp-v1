@@ -120,4 +120,11 @@ RESIDENT_LAST_SEEN = (
     (UNKNOWN_OCCUPIED, 'Don\'t know'),  # replaced
 )
 
+INACCESSIBILITY_REASONS = (
+        ('impassible_road', 'impassible road'),
+        ('dogs', 'dogs'),
+        ('locked_gate', 'locked gate'),
+        ('other', 'other'),
+)
+
 NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))

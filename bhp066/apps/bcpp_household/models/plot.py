@@ -474,6 +474,38 @@ class Plot(BaseDispatchSyncUuidModel):
         return url
 
     @property
+    def plot_inaccessible(self):
+        from .plot_log import PlotLogEntry
+        plot_log = self.plot_log
+        try:
+            plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
+            log_statuses = []
+            for log_entry in plot_log_entries:
+                log_statuses.append(log_entry.log_status)
+            if len(set(log_statuses)) == 1 and log_statuses[0] == 'Inaccessible' and len(plot_log_entries) == 3:
+                plot_inaccessible = True
+        except:
+            plot_inaccessible = False
+        return plot_inaccessible
+
+    @property
+    def increase_plot_radius(self):
+        from .plot_log import PlotLogEntry
+        plot_log = self.plot_log
+        try:
+            plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
+            reason = plot_log_entries[2].reason
+            if reason in ['dogs', 'locked_gate'] and self.plot_inaccessible:
+                increase_radius = True
+        except:
+            increase_radius = False
+        return increase_radius
+
+    @property
+    def plot_radius_model_meta(self):
+        return get_model('bcpp_data_correction', 'IncreasePlotRadius')._meta
+
+    @property
     def plot_log(self):
         from .plot_log import PlotLog
         instance = None

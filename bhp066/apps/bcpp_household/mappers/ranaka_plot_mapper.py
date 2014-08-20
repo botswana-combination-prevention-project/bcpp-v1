@@ -12,6 +12,8 @@ class RanakaPlotMapper(BasePlotMapper):
 
     landmarks = RANAKA_LANDMARKS
 
+    enhanced_care = False
+
     gps_center_lat = -24.908703
     gps_center_lon = 25.463033
     radius = 4
