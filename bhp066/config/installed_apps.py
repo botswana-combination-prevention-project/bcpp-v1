@@ -12,7 +12,7 @@ MY_INSTALLED_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    # 'south',
+    #'south',
 
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
@@ -133,10 +133,8 @@ MY_INSTALLED_APPS = (
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
-
     'apps.bcpp_clinic',
     'apps.bcpp_clinic_lab',
-
     'tastypie',
     'edc.audit',
 )
