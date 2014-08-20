@@ -117,6 +117,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
 
     is_eligible = models.BooleanField(default=False)
 
+    update_values = models.BooleanField(default=False)
+
     objects = EnrollmentChecklistManager()
 
     history = AuditTrail()
@@ -142,7 +144,10 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         else:
             if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
-                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
+                if self.update_values:
+                    pass
+                else:
+                    raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
         self.household_member.eligible_subject = self.is_eligible
         if self.matches_household_member_values(self, self.household_member):
