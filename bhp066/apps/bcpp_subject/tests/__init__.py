@@ -1,4 +1,4 @@
-from .base_scheduled_model_test_case import BaseScheduledModelTestCase
+# from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 from .forms_tests import FormsTests
 from .natural_key_tests import NaturalKeyTests
 from .choice_tests import ChoiceTests
