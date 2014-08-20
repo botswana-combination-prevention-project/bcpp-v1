@@ -133,7 +133,7 @@ MY_INSTALLED_APPS = (
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
-    'apps.bcpp_administration',
+    'apps.bcpp_data_correction',
     'tastypie',
     'edc.audit',
 )
