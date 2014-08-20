@@ -1,15 +1,14 @@
-from .base_clinic_visit_model import BaseClinicVisitModel
-
-from apps.bcpp.choices import YES_NO_DWTA
-
-from .clinic_visit import ClinicVisit
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.entry_meta_data.managers import EntryMetaDataManager
+
+from apps.bcpp.choices import YES_NO_DWTA
+
+from .base_clinic_visit_model import BaseClinicVisitModel
+from .clinic_visit import ClinicVisit
 
 
 class ClinicMain (BaseClinicVisitModel):
