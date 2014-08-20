@@ -12,7 +12,7 @@ class BokaaPlotMapper(BasePlotMapper):
 
     landmarks = BOKAA_LANDMARKS
 
-    enhanced_care = False
+    intervention = False
 
     gps_center_lat = -24.425856
     gps_center_lon = 26.021626
