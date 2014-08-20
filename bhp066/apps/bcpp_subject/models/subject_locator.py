@@ -35,8 +35,8 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
         max_length=25,
         choices=YES_NO,
         verbose_name=_("If we are unable to contact the person indicated above, is there another"
-                      " individual (including next of kin) with whom the study team can get"
-                      " in contact with?"),
+                       " individual (including next of kin) with whom the study team can get"
+                       " in contact with?"),
         help_text="",
         )
 
@@ -124,13 +124,20 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     @property
     def ready_to_export_transaction(self):
-        """Evaluates to True if the subject has a referral instance with a referral code to avoid exporting someone who is not being referred."""
-        from .subject_referral import SubjectReferral
+        """Evaluates to True if the subject has a referral instance with a referral code to avoid exporting someone who is not being referred.
+
+        Subject referral must be exported now, if possible.
+
+        ...see_also:: SubjectReferral."""
         try:
-            return SubjectReferral.objects.get(subject_visit=self.subject_visit).referral_code
+            SubjectReferral = models.get_model('bcpp_subject', 'subjectreferral')
+            subject_referral = SubjectReferral.objects.get(subject_visit=self.subject_visit)
+            if subject_referral.referral_code:
+                subject_referral.export_history.serialize_to_export_transaction(subject_referral, 'I', None)
+                return True
         except SubjectReferral.DoesNotExist:
-            return False
-        return None
+            pass
+        return False
 
     def __unicode__(self):
         return unicode(self.subject_visit)
