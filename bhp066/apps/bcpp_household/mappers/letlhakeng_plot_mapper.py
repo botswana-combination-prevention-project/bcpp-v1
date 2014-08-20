@@ -12,7 +12,7 @@ class LetlhakengPlotMapper(BasePlotMapper):
 
     landmarks = LETLHAKENG_LANDMARKS
 
-    enhanced_care = False
+    intervention = False
 
     gps_center_lat = -24.099361
     gps_center_lon = 25.032163

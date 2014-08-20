@@ -12,7 +12,7 @@ class MolapowabojangPlotMapper(BasePlotMapper):
 
     landmarks = MOLAPOWABOJANG_LANDMARKS
 
-    enhanced_care = False
+    intervention = False
 
     gps_center_lat = -25.204009
     gps_center_lon = 25.562754
