@@ -49,7 +49,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 ),
             'entries': (
                 #  order app_label model_name default_entry_status additional
-                EntryTuple(10L, u'bcpp_subject', u'participation', REQUIRED, NOT_ADDITIONAL),
+                #EntryTuple(10L, u'bcpp_subject', u'participation', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(30L, u'bcpp_subject', u'communityengagement', REQUIRED, NOT_ADDITIONAL),
