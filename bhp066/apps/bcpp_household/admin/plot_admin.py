@@ -28,7 +28,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
 
     list_display = ('plot_identifier', 'action', 'status', 'access_attempts', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('status', 'bhs', 'created', 'community', ReplaceblePlotFilter, 'access_attempts', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day', 'modified')
+    list_filter = ('bhs', 'status', 'created', 'modified', 'community', ReplaceblePlotFilter, 'access_attempts', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day')
 
     search_fields = ('plot_identifier', 'cso_number', 'community', 'section', 'id')
 
