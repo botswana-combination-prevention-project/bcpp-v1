@@ -232,7 +232,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            predicate=func_known_pos,
             consequence='new',
             alternative='not_required'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
