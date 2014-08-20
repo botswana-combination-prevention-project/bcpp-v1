@@ -17,6 +17,7 @@
 <th>Log Report</th>
 <th>Map</th>
 <th>Community</th>
+<th>Increase Radius</th>
 <th>Modified</th>           
 <th>Modified By</th>
                                  
@@ -107,6 +108,13 @@
 	      {% endif %} 
         </td>       
       	<td>{{ plot.community|encrypted}}</td>
+      	<td>
+      	{% if plot.increase_plot_radius %}
+      		<p><A href="{% url plot_radius_model_meta|admin_urlname:'add' plot.pk %}?next=section_url&section_name=plot">Increase radius</A></p>
+      	{% else %}
+      		--
+      	{% endif %}
+      	</td>
         <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
         <td>{{ plot.user_modified }}</td>
       </tr>
