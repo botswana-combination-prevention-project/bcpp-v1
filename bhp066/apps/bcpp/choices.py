@@ -231,11 +231,11 @@ EDUCATION_CHOICE = (
 )
 
 INABILITY_TO_PARTICIPATE_REASON = (
-           ('Mental Incapacity', _('Mental Incapacity')),
-           ('Deaf/Mute', _('Deaf/Mute')),
-           ('Too sick', _('Too sick')),
-           ('None', _('None')),
-        )
+    ('Mental Incapacity', _('Mental Incapacity')),
+    ('Deaf/Mute', _('Deaf/Mute')),
+    ('Too sick', _('Too sick')),
+    ('N/A', _('ABLE to participate')),
+)
 
 EMPLOYMENT_CHOICE = (
     ('Not working', _('Not working')),
