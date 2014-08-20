@@ -71,10 +71,10 @@ class SubjectStatusHelper(object):
         if not self._hiv_result_datetime:
             last_hiv_result_datetime = None
             if self.last_hiv_result_date:
-                #Documented Hiv Result, No test done => POS.
+                # Documented Hiv Result, No test done => POS.
                 last_hiv_result_datetime = datetime(self.last_hiv_result_date.year, self.last_hiv_result_date.month, self.last_hiv_result_date.day)
             if self.hiv_result == 'POS':
-                #self.hiv_result == 'POS' could be known POS or from Today's Hiv Result of from Elisa's Hiv Result
+                # self.hiv_result == 'POS' could be known POS or from Today's Hiv Result of from Elisa's Hiv Result
                 self._hiv_result_datetime = last_hiv_result_datetime if self.last_hiv_result == 'POS' else (self.todays_hiv_result_datetime or self.elisa_hiv_result_datetime) # take earliest if POS
             else:
                 self._hiv_result_datetime = self.elisa_hiv_result_datetime or self.todays_hiv_result_datetime or last_hiv_result_datetime  # take latest if not POS
