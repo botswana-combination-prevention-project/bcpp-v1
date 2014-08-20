@@ -43,7 +43,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_clinic = models.CharField(
         max_length=50,
         choices=COMMUNITIES,
-        #default=site_mappers.get_current_mapper().map_area,
+        # default=site_mappers.get_current_mapper().map_area,
         help_text='Subject has been referred to this clinic. If other specify below.'
         )
 
@@ -145,7 +145,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         null=True,
         editable=False,
         help_text=('from HivCareAdherence.on_art() method. True if subject claims to be on ARV, False if not, None if unknown. See '
-                    'also art_documentation. (derived)'),
+                   'also art_documentation. (derived)'),
         )
 
     arv_documentation = models.NullBooleanField(
@@ -195,7 +195,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         null=True,
         editable=False,
         help_text='from SubjectRequisition. Datetime of viral load drawn.',
-         )
+        )
 
     pregnant = models.NullBooleanField(
         default=None,
@@ -290,7 +290,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     @property
     def ready_to_export_transaction(self):
-        """Evaluates to True if the instance has a referral code to avoid exporting someone who is not being referred."""
+        """Evaluates to True if the instance has a referral code to avoid exporting someone who is not being referred.
+
+        The subject's subject_locator instance is exported as well.
+
+        If there is no subject_locator, the subject_referral is not exported.
+
+        ...see_also:: SubjectReferral"""
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
             if self.referral_code:
