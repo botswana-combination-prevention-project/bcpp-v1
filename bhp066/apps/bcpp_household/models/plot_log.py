@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 from django.db import models
 from django.db.models import Min
 from django.db.models.loading import get_model
@@ -13,7 +14,7 @@ from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.validators import date_in_survey
 
 from .plot import Plot
-from ..choices import PLOT_LOG_STATUS
+from ..choices import PLOT_LOG_STATUS, INACCESSIBILITY_REASONS
 
 from ..managers import PlotLogManager, PlotLogEntryManager
 
@@ -48,6 +49,17 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
         verbose_name='What is the status of this log?',
         max_length=25,
         choices=PLOT_LOG_STATUS,
+        blank=True,
+        null=True)
+
+    reason = models.CharField(
+        verbose_name=_('Please indicate the reason why the plot is inaccessible.'),
+        max_length=25,
+        choices=INACCESSIBILITY_REASONS)
+
+    reason_other = models.CharField(
+        verbose_name=_('If Other, specify'),
+        max_length=100,
         blank=True,
         null=True)
 
