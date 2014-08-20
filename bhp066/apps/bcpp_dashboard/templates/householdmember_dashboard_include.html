@@ -127,7 +127,7 @@
             {% elif household_member.member_status == 'NOT_ELIGIBLE'%}
             	{% if household_member.age_in_years < 16 %}
             		<B>Under age 16</B>, cannot participate at any level.
-            	{% elif household_member.inability_to_participate != 'None' %}
+            	{% elif household_member.inability_to_participate != 'N/A' %}
     				<B>{{household_member.inability_to_participate}}</B>,  cannot participate at any level.
 				{% elif household_member.age_in_years > 64 %}
 					<B>Older than age 64</B>.

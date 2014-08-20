@@ -29,7 +29,7 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult
-from .factories import SubjectConsentFactory, SubjectVisitFactory, HivCareAdherenceFactory
+from .factories import SubjectConsentFactory, SubjectVisitFactory, HivCareAdherenceFactory, MedicalDiagnosesFactory
 
 
 class TestPlotMapper(Mapper):
@@ -455,6 +455,126 @@ class RuleGroupTests(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
+    def test_known_pos_stigma_forms(self):
+        """If known posetive, test stigma forms
+        """
+        self.subject_visit_female.delete()
+        self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_female)
+
+        hiv_test_history_options = {}
+        hiv_test_history_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivtestinghistory',
+            appointment=self.subject_visit_female.appointment)
+
+        stigma_options = {}
+        stigma_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='stigma',
+            appointment=self.subject_visit_female.appointment)
+
+        stigmaopinion_options = {}
+        stigmaopinion_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='stigmaopinion',
+            appointment=self.subject_visit_female.appointment)
+
+        hiv_testing_history = HivTestingHistoryFactory(subject_visit=self.subject_visit_female)
+        hiv_testing_history.save()
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_history_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **stigma_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **stigmaopinion_options).count(), 1)
+
+    def test_hiv_tested_forms(self):
+        """If known posetive, test hivtested forms
+        """
+        self.subject_visit_female.delete()
+        self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_female)
+
+        hiv_test_history_options = {}
+        hiv_test_history_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivtestinghistory',
+            appointment=self.subject_visit_female.appointment)
+
+        hiv_untested_options = {}
+        hiv_untested_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivuntested',
+            appointment=self.subject_visit_female.appointment)
+
+        hiv_tested_options = {}
+        hiv_tested_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivtested',
+            appointment=self.subject_visit_female.appointment)
+
+        hiv_testing_history = HivTestingHistoryFactory(subject_visit=self.subject_visit_female)
+        hiv_testing_history.save()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_history_options).count(), 1),
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_tested_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_untested_options).count(), 1)
+
+        hiv_testing_history.has_tested = 'No'
+        hiv_testing_history.save()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_untested_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_tested_options).count(), 1)
+
+    def test_cancer_hearattack_tb_forms(self):
+        """Medical diagnoses forms
+        """
+        self.subject_visit_female.delete()
+        self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_female)
+
+        heartattack_options = {}
+        heartattack_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='heartattack',
+            appointment=self.subject_visit_female.appointment)
+
+        cancer_options = {}
+        cancer_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='cancer',
+            appointment=self.subject_visit_female.appointment)
+
+        tbsymptoms_options = {}
+        tbsymptoms_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='tbsymptoms',
+            appointment=self.subject_visit_female.appointment)
+
+        medicaldiagnoses_options = {}
+        medicaldiagnoses_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='medicaldiagnoses',
+            appointment=self.subject_visit_female.appointment)
+
+        medical_diagnoses = MedicalDiagnosesFactory(subject_visit=self.subject_visit_female, heart_attack_record='Yes')
+        medical_diagnoses.save()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **medicaldiagnoses_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **heartattack_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **cancer_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **tbsymptoms_options).count(), 1)
+
+        medical_diagnoses.cancer_record = 'Yes'
+        medical_diagnoses.heart_attack_record = None
+        medical_diagnoses.save()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **heartattack_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **cancer_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **tbsymptoms_options).count(), 1)
+
+        medical_diagnoses.tb_record = 'Yes'
+        medical_diagnoses.cancer_record = None
+        medical_diagnoses.save()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **heartattack_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **cancer_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **tbsymptoms_options).count(), 1)
+
     def test_known_pos_on_art_no_doc_requires_cd4_only(self):
         """If previous result is POS on art but no evidence, need to run CD4 (Pima).
 
@@ -636,37 +756,37 @@ class RuleGroupTests(TestCase):
         circumsition_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='circumcision',
-            appointment=self.subject_visit_male.appointment)
+            appointment=subject_visit.appointment)
 
         circumcised_options = {}
         circumcised_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='circumcised',
-            appointment=self.subject_visit_male.appointment)
+            appointment=subject_visit.appointment)
 
         uncircumcised_options = {}
         uncircumcised_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='uncircumcised',
-            appointment=self.subject_visit_male.appointment)
+            appointment=subject_visit.appointment)
 
         reproductivehealth_options = {}
         reproductivehealth_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='reproductivehealth',
-            appointment=self.subject_visit_male.appointment)
+            appointment=subject_visit.appointment)
 
         pregnancy_options = {}
         pregnancy_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='pregnancy',
-            appointment=self.subject_visit_male.appointment)
+            appointment=subject_visit.appointment)
 
         nonpregnancy_options = {}
         nonpregnancy_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='nonpregnancy',
-            appointment=self.subject_visit_male.appointment)
+            appointment=subject_visit.appointment)
 
         if subject_visit == self.subject_visit_male:
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumsition_options).count(), 1)
