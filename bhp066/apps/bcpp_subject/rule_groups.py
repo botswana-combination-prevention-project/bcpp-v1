@@ -232,7 +232,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            predicate=func_known_pos,
             consequence='new',
             alternative='not_required'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
@@ -258,13 +258,13 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
-    microtube = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],)
+#     microtube = RequisitionRule(
+#         logic=Logic(
+#             predicate=func_todays_hiv_result_required,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Microtube'],)
 
 #     rbd_participation = ScheduledDataRule(
 #         logic=Logic(
@@ -294,8 +294,8 @@ class ReviewPositiveRuleGroup(RuleGroup):
     recorded_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
+            consequence='not_required',
+            alternative='new'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
 
     recorded_hivresult = ScheduledDataRule(
@@ -305,13 +305,13 @@ class ReviewPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    #added to make adherence, medicalcare and positiveparticipant forms unavailable for -ve participants
-    recorded_result_response = ScheduledDataRule(
-        logic=Logic(
-            predicate=('recorded_hiv_result', 'equals', 'NEG'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
+#     #added to make adherence, medicalcare and positiveparticipant forms unavailable for -ve participants
+#     recorded_result_response = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('recorded_hiv_result', 'equals', 'NEG'),
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -320,13 +320,13 @@ class ReviewPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    microtube = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],)
+#     microtube = RequisitionRule(
+#         logic=Logic(
+#             predicate=func_todays_hiv_result_required,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Microtube'],)
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -426,13 +426,13 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    microtube_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],)
+#     microtube_known_pos = RequisitionRule(
+#         logic=Logic(
+#             predicate=func_todays_hiv_result_required,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Microtube'],)
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -574,13 +574,22 @@ site_rule_groups.register(MedicalDiagnosesRuleGroup)
 class BaseRequisitionRuleGroup(RuleGroup):
 
     """Ensures an RBD requisition if HIV result is POS."""
-    rbd_for_pos = RequisitionRule(
+    rbd_vl_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_hiv_positive_today,
             consequence='new',
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw'], )
+        target_requisition_panels=['Research Blood Draw', 'Viral Load'], )
+
+    """Ensures a Microtube is not required for POS."""
+    microtube_for_neg = RequisitionRule(
+        logic=Logic(
+            predicate=func_hiv_positive_today,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'], )
 #
 #     """Ensures an VL requisition if HIV result is POS and participation in NOT RBD only."""
 #     vl_for_pos = RequisitionRule(
