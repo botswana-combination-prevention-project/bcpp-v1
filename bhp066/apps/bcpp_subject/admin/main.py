@@ -149,6 +149,8 @@ class HeartAttackAdmin(SubjectVisitModelAdmin):
        'dx_heart_attack',
        'dx_heart_attack_other',)
     filter_horizontal = ('dx_heart_attack',)
+    instructions = [("Note to Interviewer: This form is to be filled for all participants"
+                      " even if they do not have a record (on hand) of the diagnosis.")]
 admin.site.register(HeartAttack, HeartAttackAdmin)
 
 
@@ -160,6 +162,8 @@ class CancerAdmin(SubjectVisitModelAdmin):
        "date_cancer",
        'dx_cancer',)
     radio_fields = {'dx_cancer': admin.VERTICAL, }
+    instructions = [("Note to Interviewer: This form is to be filled for all participants"
+                      " even if they do not have a record (on hand) of the diagnosis.")]
 admin.site.register(Cancer, CancerAdmin)
 
 
@@ -172,6 +176,8 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
        'dx_tb',)
     radio_fields = {
         "dx_tb": admin.VERTICAL, }
+    instructions = [("Note to Interviewer: This form is to be filled for all participants"
+                      " even if they do not have a record (on hand) of the diagnosis.")]
 admin.site.register(Tubercolosis, TubercolosisAdmin)
 
 
