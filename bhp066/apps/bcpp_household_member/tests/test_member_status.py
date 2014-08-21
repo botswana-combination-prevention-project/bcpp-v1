@@ -74,10 +74,11 @@ class TestMemberStatus(SimpleTestCase):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18,
                                                   study_resident='Yes', household_structure=self.household_structure,
                                                   inability_to_participate='N/A')
-        # household_member.member_status = 'BHS_SCREEN'
+        self.assertEquals(household_member.member_status, BHS_SCREEN)
         household_member.created = datetime.today() - timedelta(days=1)
         household_member.save()
         pk = household_member.pk
+        # requery
         household_member = HouseholdMember.objects.get(pk=pk)
         enrollment_checklist = EnrollmentChecklistFactory(
             household_member=household_member,
@@ -87,6 +88,7 @@ class TestMemberStatus(SimpleTestCase):
             initials=household_member.initials,
             part_time_resident='Yes')
         household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
         self.assertEqual(enrollment_checklist.household_member.pk, household_member.pk)
         SubjectConsentFactory(
             household_member=household_member,
@@ -102,20 +104,23 @@ class TestMemberStatus(SimpleTestCase):
     def test_household_member1(self):
         """Assert not reported based on age and residency"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=64,
+                               study_resident='Yes', household_structure=self.household_structure)
         household_member = HouseholdMember.objects.get(household_structure=self.household_structure)
         self.assertEqual(household_member.member_status, BHS_SCREEN)
 
     def test_household_member1a(self):
         """Assert not reported based on age and residency, household not enrolled"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=64, study_resident='No', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=64,
+                               study_resident='No', household_structure=self.household_structure)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
 
     def test_household_member2(self):
         """Assert not reported based on age and residency, household not enrolled"""
         self.startup()
-        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=75, study_resident='Yes', household_structure=self.household_structure)
+        household_member = HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW',
+                                                  age_in_years=75, study_resident='Yes', household_structure=self.household_structure)
         self.assertFalse(household_member.eligible_member)
         self.assertFalse(household_member.eligible_htc)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
@@ -123,31 +128,36 @@ class TestMemberStatus(SimpleTestCase):
     def test_household_member2a(self):
         """Assert not reported based on age and residency, household not enrolled"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=75, study_resident='No', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=75,
+                               study_resident='No', household_structure=self.household_structure)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
 
     def test_household_member3(self):
         """Assert not eligible based on age and residency"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=15, study_resident='Yes', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=15,
+                               study_resident='Yes', household_structure=self.household_structure)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
 
     def test_household_member3a(self):
         """Assert not eligible based on age and residency"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=15, study_resident='No', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=15,
+                               study_resident='No', household_structure=self.household_structure)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
 
     def test_household_member4(self):
         """Assert not reported based on age and residency"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=16, study_resident='Yes', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=16, study_resident='Yes',
+                               household_structure=self.household_structure)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, BHS_SCREEN)
 
     def test_household_member5(self):
         """Assert not reported based on age and residency"""
         self.startup()
-        HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=16, study_resident='No', household_structure=self.household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=16,
+                               study_resident='No', household_structure=self.household_structure)
         self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
 
     def test_enrolled_household(self):
@@ -176,7 +186,8 @@ class TestMemberStatus(SimpleTestCase):
         self.startup()
         household_member = self.enroll_household()
         household_structure = HouseholdMember.objects.get(household_structure=household_member.household_structure).household_structure
-        HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='No', household_structure=household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EXW', age_in_years=64,
+                               study_resident='No', household_structure=household_structure)
         self.assertEqual(HouseholdMember.objects.get(initials='EXW', household_structure=household_structure).member_status, HTC_ELIGIBLE)
 
     def test_enrolled_household2(self):
@@ -184,7 +195,8 @@ class TestMemberStatus(SimpleTestCase):
         self.startup()
         household_member = self.enroll_household()
         household_structure = HouseholdMember.objects.get(household_structure=household_member.household_structure).household_structure
-        household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=75, study_resident='Yes', household_structure=household_structure)
+        household_member = HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EXW',
+                                                  age_in_years=75, study_resident='Yes', household_structure=household_structure)
         self.assertFalse(household_member.eligible_member)
         self.assertTrue(household_member.eligible_htc)
         self.assertEqual(HouseholdMember.objects.get(initials='EXW', household_structure=household_structure).member_status, HTC_ELIGIBLE)
@@ -194,7 +206,8 @@ class TestMemberStatus(SimpleTestCase):
         self.startup()
         household_member = self.enroll_household()
         household_structure = HouseholdMember.objects.get(household_structure=household_member.household_structure).household_structure
-        HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=75, study_resident='No', household_structure=household_structure)
+        HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EXW', age_in_years=75,
+                               study_resident='No', household_structure=household_structure)
         self.assertTrue(HouseholdMember.objects.get(initials='EXW', household_structure=household_structure).member_status == HTC_ELIGIBLE)
 
     def test_enrolled_household4(self):
