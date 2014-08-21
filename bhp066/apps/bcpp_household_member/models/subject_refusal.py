@@ -57,15 +57,16 @@ class SubjectRefusal (BaseMemberStatusModel):
         household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
-        if self.household_member.member_status != REFUSED:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
-        if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
-            raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
+#         if self.household_member.member_status != REFUSED:
+#             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
+#         if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
+#             raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         self.household_member.refused = True
-        household_member_helper = HouseholdMemberHelper(self.household_member)
-        self.household_member.member_status = household_member_helper.calculate_member_status_without_hint()
+        #household_member_helper = HouseholdMemberHelper(self.household_member)
+        #self.household_member.member_status = household_member_helper.calculate_member_status_without_hint()
+        self.household_member.member_status = REFUSED
         # important during dispatch, need to save instance to the correct db.
         self.household_member.save(using=kwargs.get('using', None))
         super(SubjectRefusal, self).save(*args, **kwargs)
