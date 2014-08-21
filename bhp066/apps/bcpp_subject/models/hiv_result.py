@@ -7,7 +7,6 @@ from edc.base.model.validators import datetime_not_future
 from edc.choices import YES_NO_NA
 
 from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
-from apps.bcpp_lab.models import SubjectRequisition
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
@@ -70,6 +69,7 @@ class HivResult (BaseScheduledVisitModel):
 
     def microtube_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
+        SubjectRequisition = models.get_model('bcpp_lab', 'SubjectRequisition')
         if not SubjectRequisition.objects.filter(subject_visit=self.subject_visit, panel__name='Microtube').exists():
             raise exception_cls('Today\'s Hiv Result cannot be saved before a Microtube Requisition.')
 

@@ -47,7 +47,6 @@ class Command(BaseCommand):
 #             lines_20 = lines_20[0].split('\r')
             total_plots_20 = len(lines_20)
             lines_20.pop(0)
-            print lines_20
             num_20_pct = 0
             for plot in lines_20:
                 plot = plot.split(',')
