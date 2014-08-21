@@ -132,7 +132,9 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False)
 
     # updated by subject_consent save method
-    enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented')
+    enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented. Updated by Household_structure save method.')
+
+    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime that household is enrolled. Updated by Household_structure save method.')
 
     objects = HouseholdManager()
 
@@ -148,6 +150,14 @@ class Household(BaseDispatchSyncUuidModel):
     def natural_key(self):
         return (self.household_identifier,)
     natural_key.dependencies = ['bcpp_household.household', ]
+
+    def save(self, *args, **kwargs):
+        #plot.bhs is the equivalent of household.enrolled and household_structure.enrolled
+        if self.enrolled and not self.plot.bhs:
+            self.plot.bhs = True
+            self.plot.enrolled_datetime = self.enrolled_datetime
+            self.plot.save()
+        super(Household, self).save(*args, **kwargs)
 
     def post_save_update_identifier(self, instance, created):
         """Updates the identifier field if this is a new instance."""
