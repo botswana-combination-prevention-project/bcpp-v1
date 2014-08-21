@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_is_future
+from edc.base.model.validators import datetime_is_future, date_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
@@ -15,7 +15,6 @@ from apps.bcpp.choices import COMMUNITIES
 from ..choices import REFERRAL_CODES
 from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
-from ..utils import next_clinic_date
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
@@ -44,11 +43,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                  ('refused', 'Subject refused referral the referral letter')),
         help_text='')
 
-    referral_appt_date = models.DateTimeField(  # check that this date is not greater than next_arv_clinic_appointment_date
+    referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        default=next_clinic_date(),
-        help_text="... or next refill / clinic date if on ART."
+        # default=next_clinic_date(),
+        help_text="... or next refill / clinic date if on ART.",
+        null=True,
+        editable=False
         )
 
     referral_clinic = models.CharField(
@@ -278,6 +279,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         blank=True,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment')
+        )
+
+    scheduled_appt_date = models.DateField(
+        verbose_name="Previously scheduled clinic appointment date",
+        validators=[date_is_future, ],
+        help_text="If the subject already has a scheduled clinic appointment, indicate the date",
+        null=True,
         )
 
     referral_appt_comment = models.CharField(
