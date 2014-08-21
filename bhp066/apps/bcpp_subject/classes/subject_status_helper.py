@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apps.bcpp_lab.models import SubjectRequisition
+from django.db.models import get_model
 
 from ..models import (HivResult, Pima, HivTestReview, HivCareAdherence, HivTestingHistory, HivResultDocumentation,
                       ElisaHivResult)
@@ -16,7 +16,7 @@ class SubjectStatusHelper(object):
               'hiv_test_review': HivTestReview,
               'hiv_testing_history': HivTestingHistory,
               'pima': Pima,
-              'subject_requisition': SubjectRequisition}
+              'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')}
 
     def __init__(self, visit_instance):
         self._defaulter = None
