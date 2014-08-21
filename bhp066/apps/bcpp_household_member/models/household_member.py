@@ -125,6 +125,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     refused = models.BooleanField(default=False, editable=False, help_text="updated by subject refusal save method only")
 
+    refused_htc = models.BooleanField(default=False, editable=False, help_text="updated by subject HTC save method only")
+
     htc = models.BooleanField(default=False, editable=False, help_text="updated by the subject HTC save method only")
 
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated by the subject consent save method only")

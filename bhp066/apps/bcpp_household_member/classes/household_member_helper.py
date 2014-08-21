@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED
+from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
 
 
 class HouseholdMemberHelper(object):
@@ -11,6 +11,7 @@ class HouseholdMemberHelper(object):
         self._member_status_absent = None
         self._member_status_htc = None
         self._member_status_refused = None
+        self._member_status_refused_htc = None
         self._member_status_undecided = None
         self._member_status_bhs_screen = None
         self._member_status_enrollment_loss = False
@@ -73,6 +74,7 @@ class HouseholdMemberHelper(object):
         self._member_status_htc = None
         if is_status and self.eligible_htc:
             self._member_status_htc = HTC_ELIGIBLE
+            self._member_status_refused_htc = False
         return self._member_status_htc
 
     @property
@@ -88,6 +90,7 @@ class HouseholdMemberHelper(object):
         if is_absent:
             self.subject_status_factory('SubjectAbsentee', ABSENT)
             self._member_status_absent = ABSENT
+            self.member_status_refused_htc = False
             self.member_status_undecided = False
             self.member_status_refused = False
             self.member_status_enrollment_loss = False
@@ -111,6 +114,7 @@ class HouseholdMemberHelper(object):
         if is_undecided:
             self.subject_status_factory('SubjectUndecided', UNDECIDED)
             self._member_status_undecided = UNDECIDED
+            self.member_status_refused_htc = False
             self.member_status_absent = False
             self.member_status_refused = False
             self.member_status_enrollment_loss = False
@@ -132,6 +136,7 @@ class HouseholdMemberHelper(object):
         self._member_status_refused = None
         if is_status:
             self._member_status_refused = REFUSED
+            self.member_status_refused_htc = False
             self.member_status_undecided = False
             self.member_status_absent = False
             self.member_status_enrollment_loss = False
@@ -144,6 +149,22 @@ class HouseholdMemberHelper(object):
         return self._member_status_refused
 
     @property
+    def member_status_refused_htc(self):
+        """Returns the current member status as undecided or None."""
+        return self._member_status_refused_htc
+
+    @member_status_refused_htc.setter
+    def member_status_refused_htc(self, is_status):
+        """Returns the current member status as refused htc or None."""
+        self._member_status_refused_htc = None
+        if is_status and self.household_member.refused_htc:
+            self._member_status_refused_htc = REFUSED_HTC
+#             self.member_status_undecided = False
+#             self.member_status_absent = False
+            self.member_status_htc = False
+        return self._member_status_refused_htc
+
+    @property
     def member_status_bhs_screen(self):
         """Returns the current member status as bhs_screen or None."""
         return self._member_status_bhs_screen
@@ -154,6 +175,7 @@ class HouseholdMemberHelper(object):
         self._member_status_bhs_screen = None
         if is_bhs_screen:
             self._member_status_bhs_screen = BHS_SCREEN
+            self.member_status_refused_htc = False
             self.member_status_undecided = False
             self.member_status_absent = False
             self.member_status_enrollment_loss = False
@@ -179,6 +201,7 @@ class HouseholdMemberHelper(object):
             if self.household_member.enrollment_loss_completed:
                 self._member_status_enrollment_loss = NOT_ELIGIBLE
             self.member_status_absent = False
+            self.member_status_refused_htc = False
             self.member_status_undecided = False
             self.member_status_refused = False
             self.member_status_bhs_screen = False
@@ -329,6 +352,8 @@ class HouseholdMemberHelper(object):
                     member_status = self.household_member.__class__.objects.get(pk=self.household_member.pk).member_status
                 elif member_status_hint == HTC_ELIGIBLE:
                     self.member_status_htc = True
+                elif member_status_hint == REFUSED_HTC:
+                    self.member_status_refused_htc = True
                 elif member_status_hint == HTC:
                     if self.eligible_member and self.eligible_htc and (self.refused or not self.eligible_subject):
                         member_status = HTC
@@ -347,11 +372,12 @@ class HouseholdMemberHelper(object):
                 member_status = BHS_ELIGIBLE
             elif (self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.member_status_enrollment_loss
                 and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
-                and not self.member_status_undecided):
+                and not self.member_status_undecided and not self.member_status_refused_htc):
                 member_status = BHS_SCREEN
             elif self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed and not self.eligible_htc:
                 member_status = NOT_ELIGIBLE
-            elif self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed and self.eligible_htc and not self.household_member.htc:
+            elif (self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed 
+                  and self.eligible_htc and not self.household_member.htc and not self.household_member.refused_htc):
                 member_status = HTC_ELIGIBLE
             elif not self.eligible_htc and (self.refused or self.member_status_refused == REFUSED):
                 member_status = REFUSED
@@ -363,6 +389,8 @@ class HouseholdMemberHelper(object):
                 member_status = NOT_ELIGIBLE
             elif self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.refused and self.member_status_enrollment_loss:
                 member_status = NOT_ELIGIBLE
+            elif self.household_member.refused_htc:
+                member_status = REFUSED_HTC
             elif self.household_member.htc:
                 member_status = HTC
             elif self.member_status_absent:
