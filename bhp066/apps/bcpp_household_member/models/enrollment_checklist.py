@@ -155,8 +155,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 self.is_eligible = True
         self.household_member.eligible_subject = self.is_eligible
         self.household_member.enrollment_checklist_completed = True
-        #important during dispatch, need to save instance to the correct db.
-        self.household_member.save(using=kwargs.get('using',None))
+        # important during dispatch, need to save instance to the correct db.
+        self.household_member.save(using=kwargs.get('using', None))
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
