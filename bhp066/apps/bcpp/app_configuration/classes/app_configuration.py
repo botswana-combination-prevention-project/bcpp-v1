@@ -14,7 +14,7 @@ from lis.specimen.lab_panel.classes import PanelTuple
 from apps.bcpp_survey.models import Survey
 
 study_start_datetime = datetime(2013, 10, 18, 10, 30, 00)
-study_end_datetime = datetime(2014, 10, 17, 16, 30, 00)
+study_end_datetime = datetime(2016, 10, 17, 16, 30, 00)
 
 
 class BcppAppConfiguration(BaseAppConfiguration):

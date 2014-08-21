@@ -9,7 +9,7 @@ from edc.base.model.models import BaseModel
 
 from .. import choices
 from .. import models
-
+test_community3
 
 class ChoiceTests(TestCase):
 
