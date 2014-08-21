@@ -5,5 +5,5 @@ from .eligibility_model_tests import EligibilityModelTests
 from .eligibility_form_tests import EligibilityFormTests
 from .enrollment_checklist_tests import EnrollmentChecklistTests
 from .household_member_tests import HouseholdMemberTests
-from .member_status_tests import MemberStatusTests
-from .member_status_choices_tests import MemberStatusChoicesTests
+from .test_member_status import TestMemberStatus
+from .test_member_status_choices import TestMemberStatusChoices
