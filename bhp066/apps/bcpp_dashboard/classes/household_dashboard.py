@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from edc.dashboard.base.classes import Dashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, 
+from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog,
                                         HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
 from apps.bcpp_household.helpers import ReplacementHelper
 
@@ -279,12 +279,12 @@ class HouseholdDashboard(Dashboard):
         if self.first_survey:
             # add members from most recent first survey to current survey
             household_structure = HouseholdStructure.objects.get(household=self.household_structure.household, survey=self.first_survey)
-            for hm in  HouseholdMember.objects.filter(household_structure__household=household_structure.household):
+            for hm in HouseholdMember.objects.filter(household_structure__household=household_structure.household):
                 if not HouseholdMember.objects.filter(
                         household_structure=self.household_structure,
                         registered_subject=hm.registered_subject):
                     options = {}
-                    [options.update({key: value}) for key, value in hm.__dict__.iteritems() if not key.startswith('_') and not key in self.base_fields]
+                    [options.update({key: value}) for key, value in hm.__dict__.iteritems() if not key.startswith('_') and key not in self.base_fields]
                     options.update({
                         'household_structure_id': self.household_structure.pk,
                         'registered_subject_id': hm.registered_subject.pk,
