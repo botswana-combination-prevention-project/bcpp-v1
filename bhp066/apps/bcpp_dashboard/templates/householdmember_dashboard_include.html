@@ -69,7 +69,7 @@
     <td>{{ household_member.visit_attempts }}</td>
     {% comment%} particpation {% endcomment %}
     <td id="participation">
-        {% if not household_member.is_consented and not household_member.member_status == 'NOT_ELIGIBLE' and not household_member.member_status == 'HTC' %}     
+        {% if not household_member.is_consented and not household_member.member_status == 'NOT_ELIGIBLE' and not household_member.member_status == 'HTC' and not household_member.member_status == 'REFUSED_HTC' %}     
     		<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
 	         {% csrf_token %}
 			    <select name="status" id="status" onchange="this.form.submit()">
@@ -161,7 +161,7 @@
                {% elif household_member.member_status == 'MOVED' %}
                     <A name="moved-{{household_member.pk}}" href="{{ household_member.moved_form_url }}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{% if 'Add' in household_member.moved_form_label %}<span style="color:white;background-color:red;">&nbsp;</span>&nbsp;{% endif %}{{ household_member.moved_form_label }}</A>
 
-               {% elif household_member.member_status == 'HTC' or household_member.member_status == 'HTC_ELIGIBLE' or household_member.member_status == 'REFUSED_HTC' %}
+               {% elif household_member.member_status == 'HTC' or household_member.member_status == 'HTC_ELIGIBLE' %}
                     {% if household_member.subject_htc %}
                         <A title="HTC" href="{% url subject_htc_meta|admin_urlname:'change' household_member.subject_htc.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">HTC {% if household_member.subject_htc.offered %}{{ household_member.subject_htc.outcome }} {% endif %}</A>
                     	<ol>
@@ -186,6 +186,11 @@
                     		{%endif%}
                     	</ol>
                     {% endif %}
+               {% elif household_member.member_status == 'REFUSED_HTC' %}
+               		<A title="HTC" href="{% url subject_htc_meta|admin_urlname:'change' household_member.subject_htc.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">HTC {% if household_member.subject_htc.offered %}{{ household_member.subject_htc.outcome }} {% endif %}</A>
+                    	<ol>
+             		  		<li><B>Refused HTC.</B>
+             		  	</ol>
                {%endif%}
             {% else %}
                     ----

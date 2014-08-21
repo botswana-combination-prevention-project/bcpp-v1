@@ -7,6 +7,7 @@ from edc.device.device.classes import Device
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_NA
 from edc.core.bhp_variables.models import StudySite
+from edc.core.bhp_string.classes import StringHelper
 
 from apps.bcpp_household_member.constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
 from apps.bcpp_household_member.exceptions import MemberStatusError
@@ -39,9 +40,7 @@ class SubjectHtc(BaseMemberStatusModel):
     accepted = models.CharField(
         verbose_name=_("Did the subject accept HTC"),
         max_length=25,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False)
+        choices=YES_NO)
 
     refusal_reason = models.CharField(
         verbose_name=_("If the subject did not accept HTC, please explain"),
@@ -53,7 +52,7 @@ class SubjectHtc(BaseMemberStatusModel):
     referred = models.CharField(
         verbose_name=_("Was the subject referred"),
         max_length=10,
-        choices=YES_NO_NA,
+        choices=YES_NO,
         help_text='Required if subject accepted HTC')
 
     referral_clinic = models.CharField(
@@ -76,18 +75,42 @@ class SubjectHtc(BaseMemberStatusModel):
         if not self.id:
             self.tracking_identifier = self.prepare_tracking_identifier()
         self.registered_subject = self.household_member.registered_subject
-        self.household_member.htc = True
+        if self.accepted == 'No':
+            self.household_member.htc = False
+            self.household_member.refused_htc = True
+            self.household_member.member_status = REFUSED_HTC
+        else:
+            self.household_member.htc = True
+            self.household_member.refused_htc = False
+            self.household_member.member_status = HTC
         self.household_member.save()
         super(SubjectHtc, self).save(*args, **kwargs)
 
     def prepare_tracking_identifier(self):
         device = Device()
-        site_code = None
-        if 'SITE_CODE' in dir(settings):
-            site_code = settings.SITE_CODE
-        if not site_code:
-            site_code = StudySite.objects.all()[0].site_code
-        return 'HTC{0}{1}{2}'.format(site_code, device.device_id, datetime.today().strftime('%Y%m%d%H%M'))
+        device_id =device.device_id
+        string = StringHelper()
+        length = 5
+        template = 'HTC{device_id}{random_string}'
+        opts = {'device_id': device_id, 'random_string': string.get_safe_random_string(length=length)}
+        tracking_identifier = template.format(**opts)
+        # look for a duplicate
+        if self.__class__.objects.filter(tracking_identifier=tracking_identifier):
+            n = 1
+            while self.__class__.objects.filter(tracking_identifier=tracking_identifier):
+                tracking_identifier = template.format(**opts)
+                n += 1
+                if n == len(string.safe_allowed_chars) ** length:
+                    raise TypeError('Unable prepare a unique htc tracking identifier, '
+                                    'all are taken. Increase the length of the random string')
+        return tracking_identifier
+#         device = Device()
+#         site_code = None
+#         if 'SITE_CODE' in dir(settings):
+#             site_code = settings.SITE_CODE
+#         if not site_code:
+#             site_code = StudySite.objects.all()[0].site_code
+#         return 'HTC{0}{1}{2}'.format(site_code, device.device_id, datetime.today().strftime('%Y%m%d%H%M'))
 
     class Meta:
         app_label = 'bcpp_household_member'
