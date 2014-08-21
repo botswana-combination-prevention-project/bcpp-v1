@@ -6,12 +6,13 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, EnrollmentChecklist, EnrollmentLoss
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory, SubjectHtcFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
@@ -21,7 +22,7 @@ from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 from ..exceptions import MemberStatusError
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED
+from ..constants import  (ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, HTC, REFUSED_HTC)
 
 
 class TestPlotMapper(Mapper):
@@ -118,12 +119,14 @@ class MemberStatusTests(TestCase):
             guardian='No',
             initials=household_member.initials,
             part_time_resident='Yes'), EnrollmentChecklist))
+        study_site = StudySite.objects.get(site_code='14')
         SubjectConsentFactory(
             household_member=household_member,
             first_name="ERIK",
             last_name='WERIK',
             gender='M',
             dob=date.today() - relativedelta(years=18),
+            study_site=study_site,
             initials=household_member.initials)
         return HouseholdMember.objects.get(pk=pk)
 
@@ -326,6 +329,46 @@ class MemberStatusTests(TestCase):
         self.assertFalse(household_member.eligible_subject)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+
+    def test_member_refusing_htc(self):
+        """Asserts that an eligible member that fails Eligibility but becomes HTC_ELIGIBLE as household is enrolled
+            then however refuses htc to end up with status REFUSED_HTC."""
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.enroll_household()
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=20),
+            guardian='No',
+            initials=household_member.initials,
+            part_time_resident='Yes',
+            has_identity='No')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertTrue(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
+
+        subject_htc = SubjectHtcFactory(household_member=household_member)
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, HTC)
+
+        subject_htc.accepted = 'No'
+        subject_htc.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, REFUSED_HTC)
+
+        subject_htc.accepted = 'Yes'
+        subject_htc.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, HTC)
 
     def test_change_household_member6a(self):
         """Start as Eligible and edit eligibility checklist to switch to Not Eligible"""
