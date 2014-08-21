@@ -89,10 +89,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text="Relation to head of household")
 
     inability_to_participate = models.CharField(
-        verbose_name=_("Does any of the following reasons apply to the participant?(Any of this reasons makes the participant unable to take part in the informed consent process)"),
+        verbose_name=_("Do any of the following reasons apply to the participant?"),
         max_length=17,
         choices=INABILITY_TO_PARTICIPATE_REASON,
-        help_text=("Participant can only participate if NONE is selected."),
+        help_text=("Participant can only participate if NONE is selected. (Any of these reasons make the participant unable to take part in the informed consent process)"),
         )
 
     study_resident = models.CharField(

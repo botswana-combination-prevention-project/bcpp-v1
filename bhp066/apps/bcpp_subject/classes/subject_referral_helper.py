@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.core.exceptions import ValidationError
 
 from edc.constants import NOT_REQUIRED, KEYED
@@ -44,10 +43,11 @@ class SubjectReferralHelper(SubjectStatusHelper):
         """Returns the model name of the first model used in the referral algorithm that's meta data is NOT set to KEYED or NOT_REQUIRED."""
         for model_cls in self.models.values():
             try:
-                scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(appointment=self.instance.subject_visit.appointment,
-                                                  entry__app_label=model_cls._meta.app_label,
-                                                  entry__model_name=model_cls._meta.object_name)
-                if scheduled_entry_meta_data.entry_status  not in [KEYED, NOT_REQUIRED]:
+                scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
+                    appointment=self.instance.subject_visit.appointment,
+                    entry__app_label=model_cls._meta.app_label,
+                    entry__model_name=model_cls._meta.object_name)
+                if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
                     return model_cls
             except ScheduledEntryMetaData.DoesNotExist:
                 pass
@@ -78,21 +78,23 @@ class SubjectReferralHelper(SubjectStatusHelper):
         if not self.hiv_result:
             if self.gender == 'M':
                 if self.circumcised == False:
-                    self._referral_code_list.append('SMC-UNK')  # refer if status unknown or indeterminate
+                    self._referral_code_list.append('SMC-UNK')  # refer if status unknown
                 elif self.circumcised == None:
-                    self._referral_code_list.append('SMC?UNK')  # refer if status unknown or indeterminate
+                    self._referral_code_list.append('SMC?UNK')  # refer if status unknown
             elif self.pregnant:
                 self._referral_code_list.append('UNK?-PR')
             else:
                 self._referral_code_list.append('TST-HIV')
         else:
             if self.hiv_result == 'IND':
-                self._referral_code_list.append('HIV-IND')
-                if self.gender == 'M':
-                    if not self.circumcised:
-                        self._referral_code_list.append('SMC-IND')
-                    elif self.circumcised == None:
-                        self._referral_code_list.append('SMC?IND')
+                # do not set referral_code_list a referral code if IND
+                pass
+#                 self._referral_code_list.append('HIV-IND')
+#                 if self.gender == 'M':
+#                     if not self.circumcised:
+#                         self._referral_code_list.append('SMC-IND')
+#                     elif self.circumcised == None:
+#                         self._referral_code_list.append('SMC?IND')
             elif self.hiv_result == 'NEG':
                 if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
                     self._referral_code_list.append('NEG!-PR')
