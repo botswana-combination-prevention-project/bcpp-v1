@@ -39,9 +39,7 @@ class SubjectHtc(BaseMemberStatusModel):
     accepted = models.CharField(
         verbose_name=_("Did the subject accept HTC"),
         max_length=25,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False)
+        choices=YES_NO)
 
     refusal_reason = models.CharField(
         verbose_name=_("If the subject did not accept HTC, please explain"),
@@ -76,7 +74,14 @@ class SubjectHtc(BaseMemberStatusModel):
         if not self.id:
             self.tracking_identifier = self.prepare_tracking_identifier()
         self.registered_subject = self.household_member.registered_subject
-        self.household_member.htc = True
+        if self.accepted == 'No':
+            self.household_member.htc = False
+            self.household_member.refused_htc = True
+            self.household_member.member_status = REFUSED_HTC
+        else:
+            self.household_member.htc = True
+            self.household_member.refused_htc = False
+            self.household_member.member_status = HTC
         self.household_member.save()
         super(SubjectHtc, self).save(*args, **kwargs)
 
