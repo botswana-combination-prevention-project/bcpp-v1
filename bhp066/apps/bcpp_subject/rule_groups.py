@@ -76,18 +76,28 @@ def func_no_verbal_hiv_result(visit_instance):
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
+def is_gender_female(visit_instance):
+    return visit_instance.appointment.registered_subject.gender.lower() == 'f'
+
+
+def is_gender_male(visit_instance):
+    return visit_instance.appointment.registered_subject.gender.lower() == 'm'
+
+
 class RegisteredSubjectRuleGroup(RuleGroup):
 
     gender_circumsion = ScheduledDataRule(
         logic=Logic(
-            predicate=('gender', 'equals', 'f'),
+            #predicate=('gender', 'equals', 'f'),
+            predicete=is_gender_female,
             consequence='not_required',
             alternative='new'),
         target_model=['circumcision', 'circumcised', 'uncircumcised'])
 
     gender_menopause = ScheduledDataRule(
         logic=Logic(
-            predicate=('gender', 'equals', 'm'),
+            #predicate=('gender', 'equals', 'm'),
+            predicete=is_gender_male,
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
