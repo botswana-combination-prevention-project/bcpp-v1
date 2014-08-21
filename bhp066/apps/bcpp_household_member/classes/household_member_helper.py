@@ -301,6 +301,7 @@ class HouseholdMemberHelper(object):
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'enrollmentchecklist')
         if not is_completed:  # reset the field value and delete the checklist if it exists
             EnrollmentChecklist.objects.filter(household_member=self.household_member).delete()
+            # TODO: aren't these values updated in the signal?
             self.household_member.enrollment_checklist_completed = False
             self.household_member.eligible_subject = False
 
