@@ -60,6 +60,10 @@ class HouseholdMemberHelper(object):
         return self.household_member.household_structure.enrolled
 
     @property
+    def plot_enrolled(self):
+        return self.household_member.household_structure.household.plot.bhs
+
+    @property
     def member_status(self):
         return self.member_status_absent or self.member_status_htc or self.member_status_enrollment_loss or self.member_status_refused or self.member_status_undecided
 
@@ -245,7 +249,7 @@ class HouseholdMemberHelper(object):
             4. is an eligible_member and fails eligibility and completes the loss form."""
         self._eligible_htc = False
         if not self.consented and not self.consenting:
-            if self.household_enrolled:
+            if self.plot_enrolled:
                 if self.household_member.age_in_years > 64:
                     self._eligible_htc = True
                 elif (not self.eligible_member and self.household_member.inability_to_participate == 'None') and self.household_member.age_in_years >= 16:
@@ -381,9 +385,9 @@ class HouseholdMemberHelper(object):
                 member_status = HTC_ELIGIBLE
             elif not self.eligible_htc and (self.refused or self.member_status_refused == REFUSED):
                 member_status = REFUSED
-            elif self.eligible_htc and self.refused and not self.household_member.htc:
+            elif self.eligible_htc and self.refused and not self.household_member.htc and not self.household_member.refused_htc:
                 member_status = HTC_ELIGIBLE
-            elif not self.eligible_member and self.eligible_htc and not self.household_member.htc:
+            elif not self.eligible_member and self.eligible_htc and not self.household_member.htc and not self.household_member.refused_htc:
                 member_status = HTC_ELIGIBLE
             elif not self.eligible_member and not self.eligible_htc:
                 member_status = NOT_ELIGIBLE
