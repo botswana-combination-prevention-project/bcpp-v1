@@ -18,7 +18,7 @@ from edc.subject.visit_schedule.models import VisitDefinition
 from ..models import SubjectConsent
 
 
-class SeleniumTests(LiveServerTestCase):
+class TestSelenium(LiveServerTestCase):
 
     fixtures = ['bhp_visit.json',
                 'bhp_entry.json']

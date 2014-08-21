@@ -14,7 +14,7 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
 
-class ConsentHistoryTests(TestCase):
+class TestConsentHistory(TestCase):
 
     def test_p1(self):
         site_lab_tracker.autodiscover()

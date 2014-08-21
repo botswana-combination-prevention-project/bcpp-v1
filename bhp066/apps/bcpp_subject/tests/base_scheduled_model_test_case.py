@@ -1,7 +1,7 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase, TransactionTestCase, SimpleTestCase
 
 
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -22,7 +22,7 @@ from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 
-class BaseScheduledModelTestCase(TransactionTestCase):
+class BaseScheduledModelTestCase(SimpleTestCase):
 
     app_label = 'bcpp_subject'
     community = None
