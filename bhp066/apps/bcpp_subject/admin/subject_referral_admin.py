@@ -38,8 +38,9 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'subject_referred',
-        'referral_appt_date',
         'referral_clinic',
+        'scheduled_appt_date',
+        'referral_appt_comment',
         'comment'
         )
 
@@ -47,6 +48,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         "referral_code": admin.VERTICAL,
         "referral_clinic": admin.VERTICAL,
         "subject_referred": admin.VERTICAL,
+        "referral_appt_comment": admin.VERTICAL,
         }
 
     def get_actions(self, request):
