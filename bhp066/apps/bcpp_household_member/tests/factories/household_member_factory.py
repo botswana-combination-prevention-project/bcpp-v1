@@ -15,4 +15,4 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     present_today = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     study_resident = 'Yes'
     target = 20
-    inability_to_participate = 'None'
+    inability_to_participate = 'N/A'
