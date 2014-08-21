@@ -1,6 +1,7 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from django.db.models import get_model
 from django.test import TestCase, TransactionTestCase, SimpleTestCase
 
 
@@ -22,12 +23,13 @@ from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 
-class BaseScheduledModelTestCase(SimpleTestCase):
+class BaseScheduledModelTestCase(TransactionTestCase):
 
     app_label = 'bcpp_subject'
     community = None
 
-    def setUp(self):
+    def startup(self):
+        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
@@ -64,6 +66,7 @@ class BaseScheduledModelTestCase(SimpleTestCase):
             guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
+        self.household_member_female = HouseholdMember.objects.get(pk=self.household_member_female.pk)
         print self.household_member_female.member_status
 
         enrollment_female = EnrollmentChecklistFactory(
@@ -74,7 +77,8 @@ class BaseScheduledModelTestCase(SimpleTestCase):
             guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
-        print self.household_member_female.member_status
+        self.household_member_male = HouseholdMember.objects.get(pk=self.household_member_male.pk)
+        print self.household_member_male.member_status
 
         self.site_code = StudySite.objects.get(site_code='14')
 

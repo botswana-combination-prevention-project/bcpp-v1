@@ -38,6 +38,7 @@ class TestSubjectReferralApptHelper(BaseScheduledModelTestCase):
     community = 'test_community82'
 
     def tests_hiv_result(self):
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
