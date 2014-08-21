@@ -344,8 +344,8 @@ class HouseholdMemberHelper(object):
             if self.eligible_subject:
                 member_status = BHS_ELIGIBLE
             elif (self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.member_status_enrollment_loss
-                and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
-                and not self.member_status_undecided):
+                    and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
+                    and not self.member_status_undecided):
                 member_status = BHS_SCREEN
             elif self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed and not self.eligible_htc:
                 member_status = NOT_ELIGIBLE

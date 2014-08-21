@@ -14,7 +14,7 @@ from .subject_status_helper import SubjectStatusHelper
 from collections import namedtuple
 
 
-class SubjectAppointmentHelper(SubjectStatusHelper):
+class SubjectReferralApptHelper(SubjectStatusHelper):
     """A class to determine the referral appointment date."""
 
     @property
