@@ -12,7 +12,7 @@ class LentsweletauPlotMapper(BasePlotMapper):
 
     landmarks = LENTSWELETAU_LANDMARKS
 
-    enhanced_care = True
+    intervention = True
 
     gps_center_lat = -24.252443
     gps_center_lon = 25.854249
