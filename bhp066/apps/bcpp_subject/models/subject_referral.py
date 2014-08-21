@@ -23,6 +23,17 @@ from .subject_locator import SubjectLocator
 
 site_mappers.autodiscover()
 
+REFERRAL_APPT_COMMENT = (
+    ('N/A', 'Not Applicable'),
+)
+
+REFERRAL_CLINIC_TYPES = (
+    ('ANC', 'ANC'),
+    ('IDCC', 'IDCC'),
+    ('SMC', 'SMC'),
+    ('SMC-ECC', 'SMC-ECC'),
+)
+
 
 class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
@@ -164,11 +175,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         )
 
     next_arv_clinic_appointment_date = models.DateField(
-         default=None,
-         null=True,
-         editable=False,
-         help_text="from HivCareAdherence.next_appointment_date. Next appointment date at the subject's ARV clinic."
-         )
+        default=None,
+        null=True,
+        editable=False,
+        help_text="from HivCareAdherence.next_appointment_date. Next appointment date at the subject's ARV clinic."
+        )
 
     cd4_result = models.DecimalField(
         null=True,
@@ -267,6 +278,22 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         blank=True,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
                    'information in this comment')
+        )
+
+    referral_appt_comment = models.CharField(
+        verbose_name='Reason not attending suggested appointment date',
+        max_length=50,
+        choices=REFERRAL_APPT_COMMENT,
+        default='N/A',
+        help_text='If subject is unsure about attending the suggested appointment date, indicate the reason.'
+        )
+
+    referral_clinic_type = models.CharField(
+        max_length=25,
+        choices=REFERRAL_CLINIC_TYPES,
+        help_text='',
+        null=True,
+        editable=False,
         )
 
     objects = ScheduledModelManager()
