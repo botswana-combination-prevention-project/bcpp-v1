@@ -330,7 +330,7 @@ class MemberStatusTests(TestCase):
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
 
-    def test_member_refusing_htc(self):
+    def test_member_refusing_htc_failed_eligibility(self):
         """Asserts that an eligible member that fails Eligibility but becomes HTC_ELIGIBLE as household is enrolled
             then however refuses htc to end up with status REFUSED_HTC."""
         household_member = HouseholdMemberFactory(
@@ -350,6 +350,39 @@ class MemberStatusTests(TestCase):
             initials=household_member.initials,
             part_time_resident='Yes',
             has_identity='No')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertTrue(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
+
+        subject_htc = SubjectHtcFactory(household_member=household_member)
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, HTC)
+
+        subject_htc.accepted = 'No'
+        subject_htc.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, REFUSED_HTC)
+
+        subject_htc.accepted = 'Yes'
+        subject_htc.save()
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEquals(household_member.member_status, HTC)
+
+    def test_member_refusing_htc_after_refusing_bhs(self):
+        """Asserts that an eligible member that refuses BHS but household is enrolled
+            then however refuses htc to end up with status REFUSED_HTC."""
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.enroll_household()
+        SubjectRefusalFactory(household_member=household_member)
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertFalse(household_member.eligible_subject)
