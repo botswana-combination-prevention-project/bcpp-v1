@@ -12,7 +12,7 @@ class OtsePlotMapper(BasePlotMapper):
 
     landmarks = OTSE_LANDMARKS
 
-    enhanced_care = True
+    intervention = True
 
     gps_center_lat = -25.033194
     gps_center_lon = 25.747132
