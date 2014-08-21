@@ -1,23 +1,7 @@
-MY_INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django.contrib.admindocs',
-    'django_extensions',   # DONT TOUCH!!
-    'django_databrowse',
-    'dajaxice',
-    'storages',
-    'dajax',
-    #'south',
-
+EDC_APPS = (
     'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
-
-    #'edc.base.admin',
+    # 'edc.base.admin',
     'edc.base.form',
     'edc.base.model',
 
@@ -91,51 +75,4 @@ MY_INSTALLED_APPS = (
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
     'edc.lab.lab_profile',
-
-    'lis.base.model',
-    'lis.labeling',
-    'lis.core.lab_common',
-    'lis.core.lab_flag',
-    'lis.core.lab_reference',
-    'lis.core.lab_grading',
-
-    'lis.core.lab_result_report',
-    'lis.core.bhp_research_protocol',
-    'lis.core.lock',
-
-    'lis.specimen.lab_aliquot_list',
-    'lis.specimen.lab_panel',
-    'lis.specimen.lab_test_code',
-    'lis.specimen.lab_receive',
-    'lis.specimen.lab_aliquot',
-    'lis.specimen.lab_order',
-    'lis.specimen.lab_result',
-    'lis.specimen.lab_result_item',
-
-    'lis.subject.lab_account',
-    'lis.subject.lab_patient',
-
-    'lis.exim.lab_export',
-    'lis.exim.lab_import',
-    'lis.exim.lab_import_lis',
-    'lis.exim.lab_import_dmis',
-
-    'apps.bcpp',
-    'apps.bcpp.app_configuration',
-    'apps.bcpp_list',
-    'apps.bcpp_dashboard',
-    'apps.bcpp_stats',
-    'apps.bcpp_household',
-    'apps.bcpp_subject',
-    'apps.bcpp_household_member',
-    'apps.bcpp_lab',
-    'apps.bcpp_survey',
-    'apps.bcpp_inspector',
-    'apps.bcpp_dispatch',
-    'apps.bcpp_analytics',
-    'apps.bcpp_data_correction',
-    'apps.bcpp_clinic',
-    'apps.bcpp_clinic_lab',
-    'tastypie',
-    'edc.audit',
 )
