@@ -6,7 +6,7 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
-# from edc.core.bhp_variables.models import StudySite
+from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
@@ -68,7 +68,7 @@ class TestMemberStatus(SimpleTestCase):
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
-        self.study_site = site_mappers.get_current_mapper()
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
 
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18,
