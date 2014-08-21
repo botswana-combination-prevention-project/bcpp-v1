@@ -104,7 +104,7 @@ urlpatterns += patterns(
     '',
     url(r'^dispatch/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_dispatch.urls')),
     url(r'^bcpp_household/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_household.urls')),
-    url(r'^bcpp_administration/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_administration.urls')),
+#     url(r'^bcpp_data_correction/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_data_correction.urls')),
 )
 
 urlpatterns += patterns(

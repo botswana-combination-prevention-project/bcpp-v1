@@ -12,6 +12,8 @@ class BokaaPlotMapper(BasePlotMapper):
 
     landmarks = BOKAA_LANDMARKS
 
+    intervention = False
+
     gps_center_lat = -24.425856
     gps_center_lon = 26.021626
     radius = 5.5

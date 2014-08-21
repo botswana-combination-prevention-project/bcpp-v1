@@ -1,35 +1,28 @@
-from datetime import datetime, date, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase, SimpleTestCase
 
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
-from edc.core.bhp_content_type_map.models import ContentTypeMap
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
+
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.models import Appointment
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
-from edc.subject.entry.tests.factories import EntryFactory
-from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.visit_schedule.tests.factories import MembershipFormFactory, ScheduleGroupFactory, VisitDefinitionFactory
 from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_household.models import Plot, Household, HouseholdStructure
+from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 
-class BaseScheduledModelTestCase(TestCase):
+class BaseScheduledModelTestCase(SimpleTestCase):
 
     app_label = 'bcpp_subject'
     community = None
@@ -39,20 +32,27 @@ class BaseScheduledModelTestCase(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
+
         BcppAppConfiguration()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-        plot = PlotFactory(community='test_community3', household_count=1, status='residential_habitable')
+        plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
-        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure, first_name='SUE', initials='SW', gender='F', age_in_years=25, study_resident='Yes', relation='sister')
-        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure, first_name='ERIK', initials='EW', gender='M', age_in_years=25, study_resident='Yes', relation='brother')
+        self.household_member_female = HouseholdMemberFactory(household_structure=household_structure,
+                                                              first_name='SUE', initials='SW', gender='F',
+                                                              age_in_years=25, study_resident='Yes', relation='sister',
+                                                              inability_to_participate='N/A')
+        self.household_member_male = HouseholdMemberFactory(household_structure=household_structure,
+                                                            first_name='ERIK', initials='EW', gender='M',
+                                                            age_in_years=25, study_resident='Yes', relation='brother',
+                                                            inability_to_participate='N/A')
         self.household_member_female.save()
         self.household_member_male.save()
 
@@ -64,6 +64,8 @@ class BaseScheduledModelTestCase(TestCase):
             guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
+        print self.household_member_female.member_status
+
         enrollment_female = EnrollmentChecklistFactory(
             household_member=self.household_member_female,
             initials=self.household_member_female.initials,
@@ -72,6 +74,7 @@ class BaseScheduledModelTestCase(TestCase):
             guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
+        print self.household_member_female.member_status
 
         self.site_code = StudySite.objects.get(site_code='14')
 
@@ -94,7 +97,7 @@ class BaseScheduledModelTestCase(TestCase):
             initials=enrollment_male.initials,
             study_site=self.site_code)
 
-        #FIXME: need this to be fixed, not getting gender right!
+        # FIXME: need this to be fixed, not getting gender right!
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
         appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female)
