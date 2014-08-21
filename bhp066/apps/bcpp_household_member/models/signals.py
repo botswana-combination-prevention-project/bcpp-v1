@@ -2,10 +2,10 @@ from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
+from .enrollment_checklist import EnrollmentChecklist, EnrollmentLoss
 from .household_member import HouseholdMember
 from .subject_refusal import SubjectRefusal
 from .subject_refusal_history import SubjectRefusalHistory
-from .enrollment_checklist import EnrollmentChecklist, EnrollmentLoss
 
 
 @receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
