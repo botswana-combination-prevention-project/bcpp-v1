@@ -65,7 +65,8 @@ class HouseholdMemberHelper(object):
 
     @property
     def member_status(self):
-        return self.member_status_absent or self.member_status_htc or self.member_status_enrollment_loss or self.member_status_refused or self.member_status_undecided
+        return (self.member_status_absent or self.member_status_htc or self.member_status_enrollment_loss or
+                self.member_status_refused or self.member_status_undecided)
 
     @property
     def member_status_htc(self):
@@ -199,7 +200,6 @@ class HouseholdMemberHelper(object):
 
     @member_status_enrollment_loss.setter
     def member_status_enrollment_loss(self, is_member_status_enrollment_loss):
-        from ..models import EnrollmentLoss
         self._member_status_enrollment_loss = None
         if is_member_status_enrollment_loss:
             if self.household_member.enrollment_loss_completed:
@@ -222,7 +222,7 @@ class HouseholdMemberHelper(object):
     @property
     def consented(self):
         """Returns True if the subject has consented.
- 
+
         ..note:: if the subject consent is in the process of being saved this will return False
                  while household_member.is_consented will be True. Attribute household_member.is_consented
                  is set to True in the subject_consent save method. """
@@ -334,7 +334,6 @@ class HouseholdMemberHelper(object):
         if self.consenting or self.consented:
             member_status = BHS
         elif self.eligible_member and not self.reported and self.household_member.present_today == 'No' and (self.household_member.modified - self.household_member.created).seconds < 15:
-        #elif self.eligible_member and not self.reported and self.household_member.present_today == 'No' and (self.household_member.modified - self.household_member.created).days < 1:
             self.member_status_absent = True
             member_status = self.member_status
         else:
@@ -373,17 +372,12 @@ class HouseholdMemberHelper(object):
             if self.eligible_subject:
                 member_status = BHS_ELIGIBLE
             elif (self.eligible_member and not self.eligible_subject and not self.eligible_htc and not self.member_status_enrollment_loss
-<<<<<<< HEAD
-                    and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
-                    and not self.member_status_undecided):
-=======
-                and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
-                and not self.member_status_undecided and not self.member_status_refused_htc):
->>>>>>> 142091f7664e8b7168747c83f7394b19cdd1bd20
+                  and not (self.refused or self.member_status_refused == REFUSED) and not (self.household_member.absent or self.member_status_absent == ABSENT)
+                  and not self.member_status_undecided):
                 member_status = BHS_SCREEN
             elif self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed and not self.eligible_htc:
                 member_status = NOT_ELIGIBLE
-            elif (self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed 
+            elif (self.eligible_member and not self.eligible_subject and self.enrollment_checklist_completed
                   and self.eligible_htc and not self.household_member.htc and not self.household_member.refused_htc):
                 member_status = HTC_ELIGIBLE
             elif not self.eligible_htc and (self.refused or self.member_status_refused == REFUSED):
