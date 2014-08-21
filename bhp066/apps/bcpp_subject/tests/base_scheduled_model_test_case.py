@@ -47,10 +47,12 @@ class BaseScheduledModelTestCase(SimpleTestCase):
         HouseholdMemberFactory(household_structure=household_structure)
         self.household_member_female = HouseholdMemberFactory(household_structure=household_structure,
                                                               first_name='SUE', initials='SW', gender='F',
-                                                              age_in_years=25, study_resident='Yes', relation='sister')
+                                                              age_in_years=25, study_resident='Yes', relation='sister',
+                                                              inability_to_participate='N/A')
         self.household_member_male = HouseholdMemberFactory(household_structure=household_structure,
                                                             first_name='ERIK', initials='EW', gender='M',
-                                                            age_in_years=25, study_resident='Yes', relation='brother')
+                                                            age_in_years=25, study_resident='Yes', relation='brother',
+                                                            inability_to_participate='N/A')
         self.household_member_female.save()
         self.household_member_male.save()
 
@@ -62,6 +64,8 @@ class BaseScheduledModelTestCase(SimpleTestCase):
             guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
+        print self.household_member_female.member_status
+
         enrollment_female = EnrollmentChecklistFactory(
             household_member=self.household_member_female,
             initials=self.household_member_female.initials,
@@ -70,6 +74,7 @@ class BaseScheduledModelTestCase(SimpleTestCase):
             guardian='N/A',
             part_time_resident='Yes',
             citizen='Yes')
+        print self.household_member_female.member_status
 
         self.site_code = StudySite.objects.get(site_code='14')
 

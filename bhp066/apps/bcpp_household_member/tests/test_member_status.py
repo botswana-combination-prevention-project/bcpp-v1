@@ -16,12 +16,11 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_subject.models import SubjectConsent
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 from ..exceptions import MemberStatusError
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED
+from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED
 
 
 class TestPlotMapper(Mapper):
@@ -37,14 +36,14 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class MemberStatusTests(TestCase):
+class TestMemberStatus(TestCase):
     def __init__(self, *args, **kwargs):
         self.household_member = None
         self.subject_consent = None
         self.enrollment_checklist = None
         self.registered_subject = None
         self.study_site = None
-        super(MemberStatusTests, self).__init__(*args, **kwargs)
+        super(TestMemberStatus, self).__init__(*args, **kwargs)
 
     def setUp(self):
         try:
