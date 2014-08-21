@@ -3,9 +3,10 @@ import platform
 import sys
 import socket
 
+from datetime import datetime
 from unipath import Path
 
-from installed_apps import MY_INSTALLED_APPS
+from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 
 # from logger import LOGGING
 
@@ -238,7 +239,7 @@ ROOT_URLCONF = 'config.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'config.wsgi.application'
 
-INSTALLED_APPS = MY_INSTALLED_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + EDC_APPS + LIS_APPS + LOCAL_APPS
 
 # django
 SESSION_COOKIE_AGE = 10000
@@ -318,9 +319,11 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 #  edc.device.device
 DEVICE_ID = '99'
 if str(DEVICE_ID) == '98':
-    PROJECT_TITLE = 'MIDDLE MAN:-Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'MIDDLEMAN:-Botswana Combination Prevention Project'
+elif str(DEVICE_ID) == '99':
+    PROJECT_TITLE = 'SERVER:-Botswana Combination Prevention Project'
 else:
-    PROJECT_TITLE = 'Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'FIELD:-Botswana Combination Prevention Project'
 
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
