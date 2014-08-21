@@ -16,5 +16,4 @@ class SubjectHtcFactory(BaseUuidModelFactory):
     household_member = factory.SubFactory(HouseholdMemberFactory)
     offered = 'Yes'
     accepted = 'Yes'
-    hiv_result = 'NEG'
     referred = 'No'
