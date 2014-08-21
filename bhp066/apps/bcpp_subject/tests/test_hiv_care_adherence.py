@@ -4,7 +4,7 @@ from .factories import HivCareAdherenceFactory
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 
 
-class HivCareAdherenceTests(BaseScheduledModelTestCase):
+class TestHivCareAdherence(BaseScheduledModelTestCase):
 
     def tests_referred_hiv(self):
         """if IND refer for HIV testing"""

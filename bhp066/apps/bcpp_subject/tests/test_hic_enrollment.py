@@ -31,7 +31,7 @@ from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, HicEnrollmen
 from apps.bcpp_survey.models import Survey
 
 
-class HicEnrollmentTests(TestCase):
+class TestHicEnrollment(TestCase):
 
     def test_p1(self):
         site_lab_tracker.autodiscover()
