@@ -65,6 +65,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
         if self.enrolled and not self.household.enrolled:
             self.household.enrolled = True
+            self.household.enrolled_datetime = self.enrolled_datetime
             self.household.save()
         super(HouseholdStructure, self).save(*args, **kwargs)
 

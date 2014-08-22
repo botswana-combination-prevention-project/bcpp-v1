@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 
@@ -6,7 +6,6 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
@@ -19,7 +18,7 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
-from ..constants import  ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED 
+from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED
 
 
 class TestPlotMapper(Mapper):
@@ -35,14 +34,14 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class MemberStatusChoicesTests(TestCase):
+class TestMemberStatusChoices(TestCase):
     def __init__(self, *args, **kwargs):
         self.household_member = None
         self.subject_consent = None
         self.enrollment_checklist = None
         self.registered_subject = None
         self.study_site = None
-        super(MemberStatusChoicesTests, self).__init__(*args, **kwargs)
+        super(TestMemberStatusChoices, self).__init__(*args, **kwargs)
 
     def setUp(self):
         try:
@@ -62,13 +61,13 @@ class MemberStatusChoicesTests(TestCase):
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18, study_resident='Yes', household_structure=self.household_structure)
         pk = household_member.pk
-        self.assertTrue(isinstance(EnrollmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=18),
             guardian='No',
             initials=household_member.initials,
-            part_time_resident='Yes'), EnrollmentChecklist))
+            part_time_resident='Yes')
         household_member = HouseholdMember.objects.get(pk=pk)
         SubjectConsentFactory(
             household_member=household_member,

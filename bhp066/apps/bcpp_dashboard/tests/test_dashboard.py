@@ -20,7 +20,7 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from ..classes import HouseholdDashboard
 
 
-class DashboardTests(TestCase):
+class TestDashboard(TestCase):
 
     app_label = 'testing'
 
