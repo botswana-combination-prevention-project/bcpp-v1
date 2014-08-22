@@ -13,7 +13,6 @@ from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from ..classes import SubjectStatusHelper
 
 
-
 class TestPlotMapper(Mapper):
     map_area = 'test_community82'
     map_code = '097'
