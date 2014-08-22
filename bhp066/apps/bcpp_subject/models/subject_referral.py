@@ -284,12 +284,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     scheduled_appt_date = models.DateField(
         verbose_name="Previously scheduled clinic appointment date",
         validators=[date_is_future, ],
-        help_text="If the subject already has a scheduled clinic appointment, indicate the date",
+        help_text=("Use the IDCC date. If subject is pregnant, use the ANC date instead of the IDCC date."
+                   "  If the subject does not have a scheduled appointment, leave blank"),
         null=True,
         )
 
     referral_appt_comment = models.CharField(
-        verbose_name='Reason not attending suggested appointment date',
+        verbose_name='Reason for not attending suggested appointment date',
         max_length=50,
         choices=REFERRAL_APPT_COMMENT,
         default='N/A',

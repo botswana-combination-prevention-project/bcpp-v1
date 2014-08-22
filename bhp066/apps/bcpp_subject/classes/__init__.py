@@ -1,4 +1,4 @@
 from .subject_status_helper import SubjectStatusHelper
 from .subject_referral_helper import SubjectReferralHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
-from .test_subject_referral_helper import TestSubjectReferralApptHelper
+from .test_subject_referral_appt_helper import TestSubjectReferralApptHelper
