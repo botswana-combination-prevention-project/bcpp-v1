@@ -13,3 +13,4 @@ from .replacement_history import ReplacementHistory
 from .signals import *
 from .representative_eligibility import RepresentativeEligibility
 from .base_representative_eligibility import BaseRepresentativeEligibility
+from .increase_plot_radius import IncreasePlotRadius

@@ -9,3 +9,4 @@ from .household_refusal_admin import HouseholdRefusalAdmin
 from .household_assessment_admin import HouseholdAssessmentAdmin
 from .replacement_history_admin import ReplacementHistoryAdmin
 from .representative_eligibility_admin import RepresentativeEligibilityAdmin
+from .increase_plot_radius_admin import IncreasePlotRadiusAdmin
