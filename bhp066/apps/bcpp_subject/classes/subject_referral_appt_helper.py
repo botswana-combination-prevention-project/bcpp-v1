@@ -1,9 +1,10 @@
-from datetime import date
+from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
-from edc.subject.appointment.models import Holiday
+# from edc.subject.appointment.models import Holiday
 
 from ..choices import REFERRAL_CODES
 
@@ -11,25 +12,28 @@ from ..utils import next_clinic_date
 
 
 class SubjectReferralApptHelper(object):
-    """A class to determine the referral appointment date."""
+    """A class to determine the referral appointment date.
 
-    def __init__(self, referral_code, scheduled_appt_date=None, smc_start_datetime=None):
-        self._referral_appt_date = None
-        self.referral_code = None
-        self.scheduled_appt_date = None
-        self.community_code = None
-        self.bcpp_clinic_days = None
-        self.smc_start_datetime = smc_start_datetime or settings.SMC_START_DATETIME
-        self.referral_clinic_type = 'IDCC'  # default
+    The referral code will determine the correct clinic,
+    IDCC, ANC, SMC, SMC-ECC, to pass to the method
+    :func:`next_appt_date.
+    """
+
+    def __init__(self, community_code, referral_code, today_date=None, scheduled_appt_date=None, smc_start_date=None,
+                 clinic_days=None, intervention_communities=None):
+        self.community_code = community_code
         if referral_code not in [item[0] for item in REFERRAL_CODES]:
             raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
         self.referral_code = referral_code
-        if date.today() > scheduled_appt_date:
-            raise TypeError('Expected future date for scheduled appointment, Got {0}'.format(scheduled_appt_date))
-        else:
-            rdelta = relativedelta(scheduled_appt_date, date.today())
-            if rdelta.years == 0 and ((rdelta.months == 1 and rdelta.days == 0) or (rdelta.months == 0)):
-                self.scheduled_appt_date = scheduled_appt_date
+        self.today_date = today_date or date.today()  # should come from the user as today's date??
+        self._scheduled_appt_date = scheduled_appt_date
+        self.smc_start_date = smc_start_date or settings.SMC_START_DATE
+        self.clinic_days = clinic_days or settings.CLINIC_DAYS
+        intervention_communities = intervention_communities or settings.INTERVENTION_COMMUNITIES
+        try:
+            self.intervention_community = intervention_communities[intervention_communities.index(self.community_code)]
+        except ValueError:
+            self.intervention_community = False
 
     def __repr__(self):
         return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)
@@ -39,47 +43,50 @@ class SubjectReferralApptHelper(object):
 
     @property
     def referral_appt_date(self):
-        """Returns the calculated referral appointment date based on the referral code and a scheduled appointment date."""
+        """Returns a referral_appt_datetime which is conditionally
+        a given scheduled date or a calculated date."""
+        referral_appt_datetime = None
+        try:
+            if self.scheduled_appt_date <= self.today_date + relativedelta(months=1):
+                referral_appt_datetime = datetime(self.scheduled_appt_date.years,
+                                                  self.scheduled_appt_date.months,
+                                                  self.scheduled_appt_date.days, 7, 30, 0)
+        except TypeError:
+            pass
+        referral_appt_datetime = referral_appt_datetime or next_clinic_date(self.community_code,
+                                                                            self.clinic_type,
+                                                                            today=self.today_date,
+                                                                            community_clinic_days=self.clinic_days)
+
+    @property
+    def clinic_type(self):
+        """Returns the calculated referral appointment date based on
+        the referral code and a scheduled appointment date."""
+        clinic_type = None
         if 'POS!-PR' in self.referral_code:
-            # schedule next ANC day
-            self._referral_appt_date = self.next_anc_date
-            self.referral_clinic_type = 'ANC'
+            clinic_type = 'ANC'
         elif 'POS!' in self.referral_code and not self.referral_code == 'POS!-PR':
-            # schedule next IDCC day
-            self._referral_appt_date = self.next_idcc_date
-            self.referral_clinic_type = 'IDCC'
-        elif 'MASA' in REFERRAL_CODES:
-            # next idcc date or schedule appt
-            self._referral_appt_date = self.scheduled_appt_date or self.next_idcc_date
-            self.referral_clinic_type = 'IDCC'
-        elif '-PR' in REFERRAL_CODES or '-AN' in REFERRAL_CODES:
-            # next ANC date or schedule appt
-            self._referral_appt_date = self.scheduled_appt_date or self.next_anc_date
-            self.referral_clinic_type = 'ANC'
-        elif 'SMC' in REFERRAL_CODES and self.intervention_community:
-            # next SMC date or schedule appt
-            self._referral_appt_date = self.scheduled_appt_date or self.next_smc_date
-            self.referral_clinic_type = 'SMC'
-        elif 'SMC' in REFERRAL_CODES and not self.intervention_community:
-            # next SMC-ECC date or schedule appt
-            self._referral_appt_date = self.scheduled_appt_date or self.next_smc_date
-            self.referral_clinic_type = 'SMC-ECC'
-        else:
-            # default everyone else to the next IDCC date
-            self._referral_appt_date = self.next_idcc_date()
-            self.referral_clinic_type = 'IDCC'
-        return self._referral_appt_date
+            clinic_type = 'IDCC'
+        elif 'MASA' in self.referral_code:
+            clinic_type = 'IDCC'
+        elif '-PR' in self.referral_code or '-AN' in self.referral_code:
+            clinic_type = 'ANC'
+        elif 'SMC' in self.referral_code and self.intervention_community:
+            clinic_type = 'SMC'
+        elif 'SMC' in self.referral_code and not self.intervention_community:
+            clinic_type = 'SMC-ECC'
+        return clinic_type
 
     @property
-    def next_idcc_date(self):
-        return next_clinic_date(self.community_code, self.referral_clinic_type, today=self.today, community_clinic_days=self.bcpp_clinic_days)
-
-    @property
-    def next_smc_date(self):
-        if self.today > self.smc_start_datetime:
-            return next_clinic_date(self.community_code, self.referral_clinic_type, today=self.today, community_clinic_days=self.bcpp_clinic_days)
-        return self.smc_start_datetime
-
-    @property
-    def next_anc_date(self):
-        return next_clinic_date(self.community_code, self.referral_clinic_type, today=self.today, community_clinic_days=self.bcpp_clinic_days)
+    def scheduled_appt_date(self):
+        """Returns a date as long as the date is within 1 month
+        of today otherwise returns None."""
+        try:
+            if self.today_date > self._scheduled_appt_date:
+                raise ValidationError('Expected future date for scheduled appointment, Got {0}'.format(self._scheduled_appt_date))
+        except TypeError:  # scheduled_appt_date == None
+            pass
+        rdelta = relativedelta(self._scheduled_appt_date, self.today_date)
+        if rdelta.years == 0 and ((rdelta.months == 1 and rdelta.days == 0) or (rdelta.months == 0)):
+            return self._scheduled_appt_date
+        return None
