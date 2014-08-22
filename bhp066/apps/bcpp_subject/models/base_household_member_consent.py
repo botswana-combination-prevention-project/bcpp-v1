@@ -18,8 +18,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     survey = models.ForeignKey(Survey, editable=False)  # this updates from household_member in save()
 
-    registered_subject = models.ForeignKey(
-        RegisteredSubject,  # this also updates from household_member in save()
+    registered_subject = models.ForeignKey(RegisteredSubject,  # this also updates from household_member in save()
         editable=False,
         null=True,
         help_text='one registered subject will be related to one household member for each survey')
