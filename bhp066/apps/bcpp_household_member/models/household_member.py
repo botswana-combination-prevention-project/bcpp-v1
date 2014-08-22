@@ -125,6 +125,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     refused = models.BooleanField(default=False, editable=False, help_text="updated by subject refusal save method only")
 
+    refused_htc = models.BooleanField(default=False, editable=False, help_text="updated by subject HTC save method only")
+
     htc = models.BooleanField(default=False, editable=False, help_text="updated by the subject HTC save method only")
 
     is_consented = models.BooleanField(default=False, editable=False, help_text="updated by the subject consent save method only")
@@ -220,7 +222,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         except:
             subject_htc = None
         return subject_htc
-    
+
     @property
     def bypass_household_log(self):
         return settings.BYPASS_HOUSEHOLD_LOG
@@ -314,7 +316,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return HouseholdMemberHelper(self).member_status_choices
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
-        #SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
+        # SubjectAbsentee would be called with model_pk=None whereas SubjectAbsenteeEntry would be called with model_pk=UUID
         url = ''
         pk = None
         app_label = 'bcpp_household_member'
@@ -413,7 +415,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 model_entry_instances = model_entry.objects.filter(subject_undecided=model_instance).order_by('report_datetime')
             elif model._meta.module_name == 'subjectabsentee':
                 model_entry_instances = model_entry.objects.filter(subject_absentee=model_instance).order_by('report_datetime')
-            #model_entry_count = model_entry_instances.count()
             for subject_undecided_entry in model_entry_instances:
                 report_datetime.append((subject_undecided_entry.report_datetime.strftime('%Y-%m-%d'), subject_undecided_entry.id))
             if self.visit_attempts < 3:
@@ -463,7 +464,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             if not subject_identifier:
                 subject_identifier = registered_subject.registration_identifier
         else:
-            #$ this should not be an option as all hsm's have a registered_subject instance
+            # this should not be an option as all hsm's have a registered_subject instance
             subject_identifier = self.id
         return subject_identifier
 

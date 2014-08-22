@@ -38,7 +38,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class ParticipationStatusTests(TestCase):
+class TestParticipationStatus(TestCase):
 
     def setUp(self):
         try:

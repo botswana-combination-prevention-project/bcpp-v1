@@ -216,7 +216,9 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=u'',
         editable=False)
 
-    bhs = models.NullBooleanField(editable=False)
+    bhs = models.NullBooleanField(editable=False, help_text='True indicates that plot is enrolled in to BHS. Updated by household save method')
+
+    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime that plot is enrolled. Updated by household save method')
 
     htc = models.NullBooleanField(default=False, editable=False)
 
