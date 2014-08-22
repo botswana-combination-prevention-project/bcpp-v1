@@ -109,8 +109,9 @@
         </td>       
       	<td>{{ plot.community|encrypted}}</td>
       	<td>
+      	{{ section_url }}
       	{% if plot.increase_plot_radius %}
-      		<p><A href="{% url plot_radius_model_meta|admin_urlname:'add' plot.pk %}?next=section_url&section_name=plot">Increase radius</A></p>
+      		<A href="{{ plot.increase_radius_urls }}?plot={{plot.pk}}&next=/bcpp/section/plot/">increase radius</A>
       	{% else %}
       		--
       	{% endif %}
