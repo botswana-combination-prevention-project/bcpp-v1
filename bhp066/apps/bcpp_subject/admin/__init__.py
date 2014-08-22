@@ -40,3 +40,4 @@ from .tb_symptoms_admin import TbSymptomsAdmin
 from .rbd_demographics_admin import RbdDemographicsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
 from .review import *
+from .correct_consent_admin import CorrectConsentAdmin
