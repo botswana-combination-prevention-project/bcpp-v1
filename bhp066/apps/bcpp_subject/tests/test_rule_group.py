@@ -46,7 +46,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class RuleGroupTests(TestCase):
+class TestRuleGroup(TestCase):
 
     app_label = 'bcpp_subject'
     community = 'test_community9'

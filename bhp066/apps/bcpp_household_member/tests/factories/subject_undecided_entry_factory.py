@@ -6,11 +6,13 @@ from edc.base.model.tests.factories import BaseUuidModelFactory
 
 from ...models import SubjectUndecidedEntry
 
-from ..factories import SubjectUndecidedFactory
+from .subject_undecided_factory import SubjectUndecidedFactory
 
 
 class SubjectUndecidedEntryFactory(BaseUuidModelFactory):
-    FACTORY_FOR = SubjectUndecidedEntry
+
+    class Meta:
+        model = SubjectUndecidedEntry
 
     report_datetime = factory.Sequence(lambda n: datetime.now() + timedelta(days=int(n)))
     reason_other = factory.Sequence(lambda n: 'reason_other{0}'.format(n))

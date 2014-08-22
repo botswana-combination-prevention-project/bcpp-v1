@@ -9,9 +9,9 @@ from edc.base.model.models import BaseModel
 
 from .. import choices
 from .. import models
-test_community3
 
-class ChoiceTests(TestCase):
+
+class TestChoice(TestCase):
 
     def test_p1(self):
         MAX_LENGTH = 0

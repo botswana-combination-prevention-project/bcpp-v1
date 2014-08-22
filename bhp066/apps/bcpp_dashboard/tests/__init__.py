@@ -1,2 +1,2 @@
-from dashboard_tests import DashboardTests
-from participation_status_tests import ParticipationStatusTests
+from test_dashboard import TestDashboard
+from test_participation_status import TestParticipationStatus

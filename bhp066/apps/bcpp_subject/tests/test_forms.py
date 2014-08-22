@@ -34,7 +34,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class FormsTests(TestCase):
+class TestForms(TestCase):
 
     def setUp(self):
         StudySpecificFactory()
