@@ -23,8 +23,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     """Collects information from the Head of Household on household economic status."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
-    household_member = models.OneToOneField(
-        HouseholdMember,
+    household_member = models.OneToOneField(HouseholdMember,
         help_text=_('Important: The household member must verbally consent before completing this questionnaire.'))
 
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False)
