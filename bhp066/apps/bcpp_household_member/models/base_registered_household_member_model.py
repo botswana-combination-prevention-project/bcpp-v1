@@ -17,9 +17,7 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
     """ base for membership form models that need a foreignkey to the registered subject and household_member model"""
 
-    registered_subject = models.ForeignKey(
-        RegisteredSubject,
-        null=True)
+    registered_subject = models.ForeignKey(RegisteredSubject, null=True)
 
     household_member = models.OneToOneField(HouseholdMember)
 

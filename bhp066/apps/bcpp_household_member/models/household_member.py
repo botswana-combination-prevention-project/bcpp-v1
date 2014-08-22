@@ -32,10 +32,7 @@ from django.conf import settings
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
 
-    household_structure = models.ForeignKey(
-        HouseholdStructure,
-        null=True,
-        blank=False)
+    household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)  # will always be set in post_save()
 

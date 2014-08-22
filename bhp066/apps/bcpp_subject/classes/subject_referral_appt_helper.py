@@ -1,6 +1,8 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings
+
 from edc.subject.appointment.models import Holiday
 
 from ..choices import REFERRAL_CODES
@@ -11,10 +13,13 @@ from ..utils import next_clinic_date
 class SubjectReferralApptHelper(object):
     """A class to determine the referral appointment date."""
 
-    def __init__(self, referral_code, scheduled_appt_date=None):
+    def __init__(self, referral_code, scheduled_appt_date=None, smc_start_datetime=None):
         self._referral_appt_date = None
         self.referral_code = None
         self.scheduled_appt_date = None
+        self.community_code = None
+        self.bcpp_clinic_days = None
+        self.smc_start_datetime = smc_start_datetime or settings.SMC_START_DATETIME
         self.referral_clinic_type = 'IDCC'  # default
         if referral_code not in [item[0] for item in REFERRAL_CODES]:
             raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
@@ -67,15 +72,14 @@ class SubjectReferralApptHelper(object):
 
     @property
     def next_idcc_date(self):
-        next_idcc_date = None
-        return next_idcc_date
+        return next_clinic_date(self.community_code, self.referral_clinic_type, today=self.today, community_clinic_days=self.bcpp_clinic_days)
 
     @property
     def next_smc_date(self):
-        next_smc_date = None
-        return next_smc_date
+        if self.today > self.smc_start_datetime:
+            return next_clinic_date(self.community_code, self.referral_clinic_type, today=self.today, community_clinic_days=self.bcpp_clinic_days)
+        return self.smc_start_datetime
 
     @property
     def next_anc_date(self):
-        next_anc_date = None
-        return next_anc_date
+        return next_clinic_date(self.community_code, self.referral_clinic_type, today=self.today, community_clinic_days=self.bcpp_clinic_days)
