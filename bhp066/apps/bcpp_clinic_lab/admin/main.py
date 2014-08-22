@@ -40,7 +40,7 @@ class ClinicRequisitionAdmin(ClinicRequisitionModelAdmin):
             'dashboard',
             'visit',
             "requisition_datetime",
-            "panel",
+            #"panel",
             'hostname_created',
             "priority",
             'is_receive',
@@ -70,18 +70,18 @@ class ClinicRequisitionAdmin(ClinicRequisitionModelAdmin):
 admin.site.register(ClinicRequisition, ClinicRequisitionAdmin)
 
 
-class PackingListAdmin(BasePackingListAdmin):
-
-    form = PackingListForm
-    requisition = [ClinicRequisition, ]
-    packing_list_item_model = ClinicPackingListItem
-
-admin.site.register(ClinicPackingList, PackingListAdmin)
-
-
-class PackingListItemAdmin(BasePackingListItemAdmin):
-
-    form = PackingListItemForm
-    requisition = [ClinicRequisition, ]
-
-admin.site.register(ClinicPackingListItem, BasePackingListItemAdmin)
+# class PackingListAdmin(BasePackingListAdmin):
+# 
+#     form = PackingListForm
+#     requisition = [ClinicRequisition, ]
+#     packing_list_item_model = ClinicPackingListItem
+# 
+# admin.site.register(ClinicPackingList, PackingListAdmin)
+# 
+# 
+# class PackingListItemAdmin(BasePackingListItemAdmin):
+# 
+#     form = PackingListItemForm
+#     requisition = [ClinicRequisition, ]
+# 
+# admin.site.register(ClinicPackingListItem, BasePackingListItemAdmin)
