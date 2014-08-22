@@ -3,8 +3,8 @@ from dateutil.relativedelta import relativedelta
 
 from edc.subject.appointment.models import Holiday
 
-
 from ..choices import REFERRAL_CODES
+
 from ..utils import next_clinic_date
 
 
@@ -15,6 +15,7 @@ class SubjectReferralApptHelper(object):
         self._referral_appt_date = None
         self.referral_code = None
         self.scheduled_appt_date = None
+        self.referral_clinic_type = 'IDCC'  # default
         if referral_code not in [item[0] for item in REFERRAL_CODES]:
             raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
         self.referral_code = referral_code
@@ -34,21 +35,34 @@ class SubjectReferralApptHelper(object):
     @property
     def referral_appt_date(self):
         """Returns the calculated referral appointment date based on the referral code and a scheduled appointment date."""
-        if 'POS!' in self.referral_code:
+        if 'POS!-PR' in self.referral_code:
+            # schedule next ANC day
+            self._referral_appt_date = self.next_anc_date
+            self.referral_clinic_type = 'ANC'
+        elif 'POS!' in self.referral_code and not self.referral_code == 'POS!-PR':
             # schedule next IDCC day
             self._referral_appt_date = self.next_idcc_date
+            self.referral_clinic_type = 'IDCC'
         elif 'MASA' in REFERRAL_CODES:
             # next idcc date or schedule appt
             self._referral_appt_date = self.scheduled_appt_date or self.next_idcc_date
+            self.referral_clinic_type = 'IDCC'
         elif '-PR' in REFERRAL_CODES or '-AN' in REFERRAL_CODES:
             # next ANC date or schedule appt
             self._referral_appt_date = self.scheduled_appt_date or self.next_anc_date
-        elif 'SMC' in REFERRAL_CODES:
+            self.referral_clinic_type = 'ANC'
+        elif 'SMC' in REFERRAL_CODES and self.intervention_community:
             # next SMC date or schedule appt
             self._referral_appt_date = self.scheduled_appt_date or self.next_smc_date
+            self.referral_clinic_type = 'SMC'
+        elif 'SMC' in REFERRAL_CODES and not self.intervention_community:
+            # next SMC-ECC date or schedule appt
+            self._referral_appt_date = self.scheduled_appt_date or self.next_smc_date
+            self.referral_clinic_type = 'SMC-ECC'
         else:
-            # everyone else to the next IDCC date
+            # default everyone else to the next IDCC date
             self._referral_appt_date = self.next_idcc_date()
+            self.referral_clinic_type = 'IDCC'
         return self._referral_appt_date
 
     @property
