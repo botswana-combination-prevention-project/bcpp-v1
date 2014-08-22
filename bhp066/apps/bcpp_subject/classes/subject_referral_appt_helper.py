@@ -5,7 +5,7 @@ from edc.subject.appointment.models import Holiday
 
 from ..choices import REFERRAL_CODES
 
-from ..utils import next_clinic_date as next_idcc_date
+from ..utils import next_clinic_date
 
 
 class SubjectReferralApptHelper(object):
