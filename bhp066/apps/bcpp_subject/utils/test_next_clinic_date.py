@@ -6,8 +6,8 @@ from django.test import SimpleTestCase
 from .next_clinic_date import next_clinic_date
 
 CLINIC_DAYS = {
-    '11': {'IDCC': (MO, WE), 'ANC': (MO, TU, WE, TH, FR), 'SMC': (MO, TU, WE, TH, FR), 'SMC-ECC': (MO, TU, WE, TH, FR)},
-    '12': {'IDCC': (MO, WE), 'ANC': (MO, TU, WE, TH, FR), 'SMC': (MO, TU, WE, TH, FR), 'SMC-ECC': (MO, TU, WE, TH, FR)},
+    '11': {'IDCC': (MO, WE), 'ANC': (MO, TU, WE, TH, FR), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+    '12': {'IDCC': (MO, WE), 'ANC': (MO, TU, WE, TH, FR), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
     }
 
 
@@ -24,6 +24,7 @@ class TestNextClinicDate(SimpleTestCase):
     community_clinic_days = None
 
     def calc_date(self):
+        self.community_clinic_days = CLINIC_DAYS.get(self.community_code)
         self.assertEqual(self.today.strftime('%a'), self.today_day, 'Today is not a {0}'.format(self.today_day))
         self.assertEqual(self.expected_appt_datetime.strftime('%a'),
                          self.expected_appt_day,
@@ -54,10 +55,6 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 20, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
 
     def test_idcc2(self):
@@ -68,10 +65,6 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 20, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
 
     def test_idcc3(self):
@@ -82,10 +75,6 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 25, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
 
     def test_idcc4(self):
@@ -96,10 +85,6 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 25, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
 
     def test_idcc5(self):
@@ -110,10 +95,6 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 25, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
 
     def test_smc5(self):
@@ -124,10 +105,6 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 25, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'SMC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
 
     def test_smc6(self):
@@ -138,8 +115,4 @@ class TestNextClinicDate(SimpleTestCase):
         self.expected_appt_datetime = datetime(2014, 8, 26, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'SMC'
-        self.community_clinic_days = {'11': {'IDCC': (MO, WE),
-                                             'ANC': (MO, TU, WE, TH, FR),
-                                             'SMC': (MO, TU, WE, TH, FR),
-                                             'SMC-ECC': (MO, TU, WE, TH, FR)}}
         self.calc_date()
