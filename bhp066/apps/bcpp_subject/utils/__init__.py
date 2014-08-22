@@ -1,1 +1,2 @@
-from next_clinic_date import next_clinic_date
+from .next_clinic_date import next_clinic_date
+from .test_next_clinic_date import TestNextClinicDate
