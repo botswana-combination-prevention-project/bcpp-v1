@@ -1,5 +1,6 @@
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
+from django.db.models import get_model
 
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
 from .enrollment_checklist import EnrollmentChecklist, EnrollmentLoss
@@ -31,12 +32,25 @@ def enrollment_checklist_on_post_delete(sender, instance, **kwargs):
             # re-save the member to recalc the member_status
             # If this gets deleted, then the process must be started again from BHS_SCREEN
             household_member = instance.household_member
-            if EnrollmentLoss.objects.filter(household_member=household_member).exists():
+            try:
                 EnrollmentLoss.objects.get(household_member=household_member).delete()
+            except EnrollmentLoss.DoesNotExist:
+                pass
             household_member.enrollment_checklist_completed = False
             household_member.enrollment_loss_completed = False
             household_member.eligible_subject = False
             household_member.save()
+
+
+@receiver(post_save, weak=False, dispatch_uid="enrollment_checklist_on_post_save")
+def enrollment_checklist_on_post_save(sender, instance, raw, created, using, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, EnrollmentChecklist):
+            household_member = HouseholdMember.objects.get(pk=instance.household_member.pk)
+            if instance.is_eligible:
+                household_member.eligible_subject = True
+            household_member.enrollment_checklist_completed = True
+            household_member.save(using=using)
 
 
 @receiver(pre_save, weak=False, dispatch_uid="household_member_on_pre_save")
