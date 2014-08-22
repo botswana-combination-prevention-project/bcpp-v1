@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 
-from django.db import transaction
+from django.test import SimpleTestCase
 
 from edc.map.classes import Mapper, site_mappers
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
@@ -12,11 +12,6 @@ from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 
 from ..classes import SubjectStatusHelper
 
-from .base_scheduled_model_test_case import BaseScheduledModelTestCase
-from .factories import (
-    HivCareAdherenceFactory, HivResultFactory,
-    HivTestReviewFactory, HivTestingHistoryFactory,
-    HivResultDocumentationFactory)
 
 
 class TestPlotMapper(Mapper):
@@ -33,14 +28,10 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class TestSubjectReferralApptHelper(BaseScheduledModelTestCase):
+class TestSubjectReferralApptHelper(SimpleTestCase):
 
     community = 'test_community82'
 
-    def tests_hiv_result(self):
-        self.startup()
-        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
-        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
-        self.assertIsNone(subject_status_helper.hiv_result)
-        self.assertIsNone(subject_status_helper.new_pos)
+    def test_idcc(self):
+        """Assert POS! referred to IDCC on next day if not pregnant"""
+        referral_code = 'POS!-LO'
