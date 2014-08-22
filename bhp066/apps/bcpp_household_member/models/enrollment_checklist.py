@@ -117,8 +117,6 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
 
     is_eligible = models.BooleanField(default=False)
 
-    update_values = models.BooleanField(default=False)
-
     objects = EnrollmentChecklistManager()
 
     history = AuditTrail()
@@ -144,19 +142,11 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         else:
             if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
-                if self.update_values:  # TODO: update what "values", rename to something more descriptive
-                    pass
-                else:
-                    raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
         self.is_eligible = False
-        self.household_member.eligible_subject = False
         if self.matches_household_member_values(self, self.household_member):
             if not self.enrollment_loss():
                 self.is_eligible = True
-                self.household_member.eligible_subject = True
-        self.household_member.enrollment_checklist_completed = True
-        # important during dispatch, need to save instance to the correct db.
-        self.household_member.save(using=kwargs.get('using', None))
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
