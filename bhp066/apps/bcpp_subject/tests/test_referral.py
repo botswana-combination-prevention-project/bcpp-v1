@@ -34,7 +34,7 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class ReferralTests(BaseScheduledModelTestCase):
+class TestReferral(BaseScheduledModelTestCase):
 
     community = 'test_community8'
 

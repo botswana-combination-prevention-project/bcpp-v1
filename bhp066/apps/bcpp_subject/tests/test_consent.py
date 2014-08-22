@@ -22,7 +22,7 @@ from apps.bcpp_survey.models import Survey
 from ..models import SubjectConsent
 
 
-class ConsentTests(TestCase):
+class TestConsent(TestCase):
 
     app_label = 'bcpp_subject'
 

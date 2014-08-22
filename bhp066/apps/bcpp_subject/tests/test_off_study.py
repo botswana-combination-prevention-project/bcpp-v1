@@ -4,7 +4,7 @@ from django.test import TestCase
 from ..models import SubjectConsent, SubjectVisit
 
 
-class OffStudyTests(TestCase):
+class TestOffStudy(TestCase):
     app_label = 'bcpp_subject'
     subject_consent = SubjectConsent
     consent_catalogue_name = 'v1'

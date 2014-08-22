@@ -33,7 +33,7 @@ from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocat
 from apps.bcpp_survey.models import Survey
 
 
-class NaturalKeyTests(TestCase):
+class TestNaturalKey(TestCase):
 
     def setUp(self):
         try:
