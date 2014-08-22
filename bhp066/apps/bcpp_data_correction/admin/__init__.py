@@ -1,1 +1,0 @@
-from .correct_consent_admin import CorrectConsentAdmin

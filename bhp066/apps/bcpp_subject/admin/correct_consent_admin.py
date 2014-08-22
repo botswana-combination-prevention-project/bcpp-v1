@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from ..forms import CorrectConsentForm
 from apps.bcpp_household.admin.base_household_model_admin import BaseHouseholdModelAdmin
 
