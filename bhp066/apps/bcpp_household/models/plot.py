@@ -453,6 +453,11 @@ class Plot(BaseDispatchSyncUuidModel):
         return entry_urls
     #log_entry_form_urls.allow_tags = True
 
+    @property
+    def increase_radius_urls(self):
+        increase_radius_url = self._get_form_url('increaseplotradius', model_pk=self.pk, add_url=True)
+        return increase_radius_url
+
     def _get_form_url(self, model, model_pk=None, add_url=None):
         url = ''
         pk = None
@@ -484,7 +489,7 @@ class Plot(BaseDispatchSyncUuidModel):
             log_statuses = []
             for log_entry in plot_log_entries:
                 log_statuses.append(log_entry.log_status)
-            if len(set(log_statuses)) == 1 and log_statuses[0] == 'Inaccessible' and len(plot_log_entries) == 3:
+            if len(set(log_statuses)) == 1 and log_statuses[0] == 'INACCESSIBLE' and len(plot_log_entries) == 3:
                 plot_inaccessible = True
         except:
             plot_inaccessible = False
@@ -502,10 +507,6 @@ class Plot(BaseDispatchSyncUuidModel):
         except:
             increase_radius = False
         return increase_radius
-
-    @property
-    def plot_radius_model_meta(self):
-        return get_model('bcpp_data_correction', 'IncreasePlotRadius')._meta
 
     @property
     def plot_log(self):
