@@ -9,3 +9,4 @@ from household_refusal_form import HouseholdRefusalForm
 from .household_assessment_form import HouseholdAssessmentForm
 from .replacement_history_form import ReplacementHistoryForm
 from .representative_eligibility_form import RepresentativeEligibilityForm
+from .increase_plot_radius_form import IncreasePlotRadiusForm
