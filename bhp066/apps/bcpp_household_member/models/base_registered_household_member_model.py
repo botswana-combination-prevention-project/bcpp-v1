@@ -17,9 +17,7 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
     """ base for membership form models that need a foreignkey to the registered subject and household_member model"""
 
-    registered_subject = models.ForeignKey(
-        RegisteredSubject,
-        null=True)
+    registered_subject = models.ForeignKey(RegisteredSubject, null=True)
 
     household_member = models.OneToOneField(HouseholdMember)
 
@@ -60,7 +58,7 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
             del kwargs['info_source']
         super(BaseRegisteredHouseholdMemberModel, self).save(*args, **kwargs)
 
-    def confirm_registered_subject_pk_on_post_save(self):
+    def confirm_registered_subject_pk_on_post_save(self, using):
         if self.registered_subject.pk != self.household_member.registered_subject.pk:
             raise TypeError('Expected self.registered_subject.pk == self.household_member.registered_subject.pk. Got {0} != {1}.'.format(self.registered_subject.pk, self.household_member.registered_subject.pk))
 

@@ -61,13 +61,13 @@ class TestMemberStatusChoices(TestCase):
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18, study_resident='Yes', household_structure=self.household_structure)
         pk = household_member.pk
-        self.assertTrue(isinstance(EnrollmentChecklistFactory(
+        EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=18),
             guardian='No',
             initials=household_member.initials,
-            part_time_resident='Yes'), EnrollmentChecklist))
+            part_time_resident='Yes')
         household_member = HouseholdMember.objects.get(pk=pk)
         SubjectConsentFactory(
             household_member=household_member,
