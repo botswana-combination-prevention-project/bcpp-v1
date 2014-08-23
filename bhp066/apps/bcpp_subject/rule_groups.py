@@ -109,66 +109,6 @@ class RegisteredSubjectRuleGroup(RuleGroup):
 
 site_rule_groups.register(RegisteredSubjectRuleGroup)
 
-#THIS IS NO LONGER USED... AT LEAST FOR NOW
-# class ParticipationRuleGroup(RuleGroup):
-#
-#     """Makes un-required forms unavailable based on participation"""
-#     rbd_participation_type = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('participation_type', 'equals', 'RBD Only'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=['communityengagement', 'demographics', 'education', 'hivmedicalcare',
-#                       'sexualbehaviour', 'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
-#                       'circumcision', 'circumcised', 'uncircumcised', 'reproductivehealth',
-#                       'pregnancy', 'nonpregnancy', 'medicaldiagnoses', 'heartattack', 'cancer',
-#                       'sti', 'tubercolosis', 'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion',
-#                       'positiveparticipant', 'accesstocare', 'hivresult', 'elisahivresult',
-#                       'hicenrollment', 'hivuntested'])
-#
-#     rbd_requsition = RequisitionRule(
-#         logic=Logic(
-#             predicate=('participation_type', 'equals', 'RBD Only'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Microtube'], )
-#
-#     htc_participation_type = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('participation_type', 'equals', 'HTC Only'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=['communityengagement', 'demographics', 'education', 'sexualbehaviour',
-#                       'monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner',
-#                       'circumcision', 'circumcised', 'uncircumcised',
-#                       'reproductivehealth', 'pregnancy', 'nonpregnancy',
-#                       'medicaldiagnoses', 'heartattack', 'cancer', 'sti', 'tubercolosis',
-#                       'tbsymptoms', 'substanceuse', 'stigma', 'stigmaopinion', 'hivmedicalcare'])
-#
-#     #3forms removed because they assume requisitions have been processed and for questionnaire only
-#     #participation there are no labs
-#     questionnaires_participation_type = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('participation_type', 'equals', 'Questionnaires'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=['hivresult', 'elisahivresult', 'pima'])
-#
-#     questionnaires_requsition = RequisitionRule(
-#         logic=Logic(
-#             predicate=('participation_type', 'equals', 'Questionnaires'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Microtube', 'Venous (HIV)', 'ELISA', 'Viral Load', 'Research Blood Draw'], )
-#
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         source_fk = (SubjectVisit, 'subject_visit')
-#         source_model = Participation
-# site_rule_groups.register(ParticipationRuleGroup)
-
 
 class ResourceUtilizationRuleGroup(RuleGroup):
 
@@ -268,21 +208,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='none'),
         target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant', 'stigma', 'stigmaopinion'])
 
-#     microtube = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_todays_hiv_result_required,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Microtube'],)
-
-#     rbd_participation = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('participation_type_string', 'equals', 'RBD'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=['pima', 'positiveparticipant', 'hivcareadherence', 'hivmedicalcare', 'hivtested', 'hivuntested'])
-
     def method_result(self):
         return True
 
@@ -315,14 +240,6 @@ class ReviewPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-#     #added to make adherence, medicalcare and positiveparticipant forms unavailable for -ve participants
-#     recorded_result_response = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('recorded_hiv_result', 'equals', 'NEG'),
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
-
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_todays_hiv_result_required,
@@ -330,87 +247,11 @@ class ReviewPositiveRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-#     microtube = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_todays_hiv_result_required,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Microtube'],)
-
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestReview
 site_rule_groups.register(ReviewPositiveRuleGroup)
-
-
-# class HivDocumentationGroup(RuleGroup):
-#
-#     pima_for_art_naive = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_art_naive,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['pima'])
-#
-# #    requires Todays HIV results form when the other HIV result documentation form  recorded result is POS
-#     require_todays_hiv_result = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_todays_hiv_result_required,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['hivresult'])
-#
-#     microtube = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_todays_hiv_result_required,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Microtube'],)
-#
-#     #Venus is not reuired untill Microtube does not have enoguh volume. That happens in HivResultReultGroup
-#     #Next two rules make sure its always NOT_REQUIRED when this form is being filled.
-#     venus_on_required1 = RequisitionRule(
-#         logic=Logic(
-#             predicate=('result_recorded', 'equals', 'POS'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Venous (HIV)'],)
-#
-#     venus_on_required2 = RequisitionRule(
-#         logic=Logic(
-#             predicate=('result_recorded', 'ne', 'POS'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Venous (HIV)'],)
-#
-#     #ELISA is not reuired untill Microtube result is IND. That happens in HivResultReultGroup
-#     #Next two rules make sure its always NOT_REQUIRED when this form is being fileed.
-#     elisa_on_required1 = RequisitionRule(
-#         logic=Logic(
-#             predicate=('result_recorded', 'equals', 'IND'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['ELISA'],)
-#
-#     elisa_on_required2 = RequisitionRule(
-#         logic=Logic(
-#             predicate=('result_recorded', 'ne', 'IND'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['ELISA'],)
-#
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         source_fk = (SubjectVisit, 'subject_visit')
-#         source_model = HivResultDocumentation
-# site_rule_groups.register(HivDocumentationGroup)
 
 
 class HivCareAdherenceRuleGroup(RuleGroup):
@@ -511,7 +352,7 @@ class CircumcisionRuleGroup(RuleGroup):
 site_rule_groups.register(CircumcisionRuleGroup)
 
 
-class MenopauseRuleGroup(RuleGroup):
+class ReproductiveRuleGroup(RuleGroup):
 
     menopause = ScheduledDataRule(
         logic=Logic(
@@ -519,15 +360,6 @@ class MenopauseRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['pregnancy', 'nonpregnancy'])
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
-        source_model = ReproductiveHealth
-site_rule_groups.register(MenopauseRuleGroup)
-
-
-class ReproductiveRuleGroup(RuleGroup):
 
     currently_pregnant = ScheduledDataRule(
         logic=Logic(
