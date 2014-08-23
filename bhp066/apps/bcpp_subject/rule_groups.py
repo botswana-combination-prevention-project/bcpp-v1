@@ -89,7 +89,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
     gender_circumsion = ScheduledDataRule(
         logic=Logic(
             #predicate=('gender', 'equals', 'f'),
-            predicete=is_gender_female,
+            predicate=is_gender_female,
             consequence='not_required',
             alternative='new'),
         target_model=['circumcision', 'circumcised', 'uncircumcised'])
@@ -97,7 +97,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
     gender_menopause = ScheduledDataRule(
         logic=Logic(
             #predicate=('gender', 'equals', 'm'),
-            predicete=is_gender_male,
+            predicate=is_gender_male,
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
