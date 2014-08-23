@@ -22,7 +22,7 @@ from edc.export.models.export_transaction import ExportTransaction
 
 class TestPlotMapper(Mapper):
     map_area = 'test_community8'
-    map_code = '097'
+    map_code = '11'  # has to be a code in the clinic days dictionary
     regions = []
     sections = []
     landmarks = []
@@ -48,7 +48,7 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('HIV-IND', subject_referral.referral_code)
+        self.assertIn('', subject_referral.referral_code)
 
     def tests_referred_smc1(self):
         """if NEG and male and NOT circumcised, refer for SMC"""

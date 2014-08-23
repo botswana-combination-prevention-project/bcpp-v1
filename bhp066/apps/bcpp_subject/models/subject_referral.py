@@ -12,7 +12,7 @@ from edc.map.classes import site_mappers
 from apps.bcpp.choices import COMMUNITIES
 
 
-from ..choices import REFERRAL_CODES
+from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..classes import SubjectReferralHelper, SubjectReferralApptHelper
 from ..managers import ScheduledModelManager
 
@@ -21,10 +21,6 @@ from .tb_symptoms import TbSymptoms
 from .subject_locator import SubjectLocator
 
 site_mappers.autodiscover()
-
-REFERRAL_APPT_COMMENT = (
-    ('N/A', 'Not Applicable'),
-)
 
 REFERRAL_CLINIC_TYPES = (
     ('ANC', 'ANC'),
@@ -292,7 +288,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_appt_comment = models.CharField(
         verbose_name='Reason for not attending suggested appointment date',
         max_length=50,
-        choices=REFERRAL_APPT_COMMENT,
+        choices=REFERRAL_APPT_COMMENTS,
         default='N/A',
         help_text='If subject is unsure about attending the suggested appointment date, indicate the reason.'
         )
