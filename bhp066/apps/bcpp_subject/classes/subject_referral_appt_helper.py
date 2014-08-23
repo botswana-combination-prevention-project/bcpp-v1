@@ -48,9 +48,9 @@ class SubjectReferralApptHelper(object):
         referral_appt_datetime = None
         try:
             if self.scheduled_appt_date <= self.today_date + relativedelta(months=1):
-                referral_appt_datetime = datetime(self.scheduled_appt_date.years,
-                                                  self.scheduled_appt_date.months,
-                                                  self.scheduled_appt_date.days, 7, 30, 0)
+                referral_appt_datetime = datetime(self.scheduled_appt_date.year,
+                                                  self.scheduled_appt_date.month,
+                                                  self.scheduled_appt_date.day, 7, 30, 0)
         except TypeError:
             pass
         return referral_appt_datetime or next_clinic_date(self.community_code,
