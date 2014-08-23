@@ -53,9 +53,12 @@ class SubjectReferralApptHelper(object):
                                                   self.scheduled_appt_date.day, 7, 30, 0)
         except TypeError:
             pass
+#         if referral_appt_datetime:
+#             # check falls on an clinic day, if not fail
         return referral_appt_datetime or next_clinic_date(self.community_code,
                                                           self.clinic_type,
-                                                          today=self.today_date)
+                                                          today=self.today_date,
+                                                          referral_code=self.referral_code)
 
     @property
     def clinic_type(self):
@@ -67,6 +70,10 @@ class SubjectReferralApptHelper(object):
         elif 'POS!' in self.referral_code and not self.referral_code == 'POS!-PR':
             clinic_type = 'IDCC'
         elif 'MASA' in self.referral_code:
+            clinic_type = 'IDCC'
+        elif 'TST-HIV' in self.referral_code:
+            clinic_type = 'IDCC'
+        elif 'TST-CD4' in self.referral_code:
             clinic_type = 'IDCC'
         elif '-PR' in self.referral_code or '-AN' in self.referral_code:
             clinic_type = 'ANC'
