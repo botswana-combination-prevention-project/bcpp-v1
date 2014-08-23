@@ -132,9 +132,15 @@ class Household(BaseDispatchSyncUuidModel):
         editable=False)
 
     # updated by subject_consent save method
-    enrolled = models.BooleanField(default=False, editable=False, help_text='Set to true if one member is consented. Updated by Household_structure save method.')
+    enrolled = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Set to true if one member is consented. Updated by Household_structure post_save.')
 
-    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime that household is enrolled. Updated by Household_structure save method.')
+    enrolled_datetime = models.DateTimeField(
+        null=True,
+        editable=False,
+        help_text='datetime that household is enrolled. Updated by Household_structure post_save.')
 
     objects = HouseholdManager()
 
@@ -151,30 +157,22 @@ class Household(BaseDispatchSyncUuidModel):
         return (self.household_identifier,)
     natural_key.dependencies = ['bcpp_household.household', ]
 
-    def save(self, *args, **kwargs):
-        #plot.bhs is the equivalent of household.enrolled and household_structure.enrolled
-        if self.enrolled and not self.plot.bhs:
-            self.plot.bhs = True
-            self.plot.enrolled_datetime = self.enrolled_datetime
-            self.plot.save()
-        super(Household, self).save(*args, **kwargs)
-
-    def post_save_update_identifier(self, instance, created):
+    def post_save_update_identifier(self, instance, created, using):
         """Updates the identifier field if this is a new instance."""
         if created:
             instance.community = instance.plot.community
             household_identifier = HouseholdIdentifier(plot_identifier=instance.plot.plot_identifier)
             instance.household_identifier = household_identifier.get_identifier()
-            instance.save()
+            instance.save(using=using)
 
-    def post_save_create_household_structure(self, instance, created):
+    def post_save_create_household_structure(self, instance, created, using):
         """Creates, for each defined survey, a household structure(s) for this household."""
         if created:
             HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
             Survey = models.get_model('bcpp_survey', 'Survey')  # checked for on pre-save
             for survey in Survey.objects.all():  # create a household_structure for each survey defined
-                if not HouseholdStructure.objects.filter(household__pk=instance.pk, survey=survey):
-                    HouseholdStructure.objects.create(household=instance, survey=survey)
+                if not HouseholdStructure.objects.using(using).filter(household__pk=instance.pk, survey=survey):
+                    HouseholdStructure.objects.using(using).create(household=instance, survey=survey)
 
     def get_subject_identifier(self):
         return self.household_identifier

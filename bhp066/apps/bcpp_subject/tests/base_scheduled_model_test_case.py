@@ -67,7 +67,7 @@ class BaseScheduledModelTestCase(TransactionTestCase):
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_female = HouseholdMember.objects.get(pk=self.household_member_female.pk)
-        print self.household_member_female.member_status
+        #print self.household_member_female.member_status
 
         enrollment_female = EnrollmentChecklistFactory(
             household_member=self.household_member_female,
@@ -78,7 +78,7 @@ class BaseScheduledModelTestCase(TransactionTestCase):
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_male = HouseholdMember.objects.get(pk=self.household_member_male.pk)
-        print self.household_member_male.member_status
+        #print self.household_member_male.member_status
 
         self.site_code = StudySite.objects.get(site_code='14')
 

@@ -7,7 +7,7 @@ from unipath import Path
 
 from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 
-from .bcpp_days import *
+from .bcpp_days import CLINIC_DAYS, SMC_ECC_START_DATE, SMC_START_DATE, INTERVENTION_COMMUNITIES
 from .databases import TESTING_SQLITE
 from .databases import TESTING_MYSQL
 from .databases import PRODUCTION_MYSQL
@@ -265,3 +265,7 @@ ALLOW_MODEL_SERIALIZATION = True
 
 # bypass household log to get to the subject dashboard.
 BYPASS_HOUSEHOLD_LOG = True
+CLINIC_DAYS = CLINIC_DAYS
+SMC_ECC_START_DATE = SMC_ECC_START_DATE
+SMC_START_DATE = SMC_START_DATE
+INTERVENTION_COMMUNITIES = INTERVENTION_COMMUNITIES

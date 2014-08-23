@@ -152,14 +152,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.gender)
 
     def save(self, *args, **kwargs):
+        using = kwargs.get('using')
         self.check_eligible_representative_filled(self.household_structure)
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_structure.household.household_identifier)
-        if household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
+        if self.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Household {0} replaced.'.format(self.household_structure.household.household_identifier))
         if not self.id:
             if not self.household_structure.enumerated:
                 self.household_structure.enumerated = True
-                self.household_structure.save()
+                self.household_structure.save(using=using)
         else:
             household_member_helper = HouseholdMemberHelper(self)
             if household_member_helper.consented:
@@ -170,7 +170,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.member_status = household_member_helper.calculate_member_status_with_hint(self.member_status)
         super(HouseholdMember, self).save(*args, **kwargs)
 
-    def enroll_household(self):
+    def enroll_household_on_first_consent(self, using):
         """Updates the household structure as enrolled if the member consents.
 
         ..note:: household structure will update the household as enrolled and the household members
@@ -180,8 +180,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             household_structure.enrolled = True
             household_structure.enrolled_household_member = self.pk
             household_structure.enrolled_datetime = datetime.today()
-            household_structure.save()
-            household_structure.refresh_member_status()
+            household_structure.save(using=using)
+            household_structure.refresh_member_status(using)
 
     def update_plot_eligible_members(self):
         self.household_structure.household.plot.eligible_members = self.__class__.objects.filter(
@@ -260,7 +260,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_structure__household__plot__plot_identifier')
 
-    def update_hiv_history_on_pre_save(self, **kwargs):
+    def update_hiv_history_on_pre_save(self, using, **kwargs):
         """Updates from lab_tracker."""
         self.hiv_history = self.get_hiv_history()
 
@@ -272,8 +272,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.household_structure.save(using=using)
         self.update_plot_eligible_members()
 
-    def update_registered_subject_on_post_save(self, **kwargs):
-        using = kwargs.get('using', None)
+    def update_registered_subject_on_post_save(self, using, **kwargs):
         if not self.internal_identifier:
             self.internal_identifier = self.id
             # decide now, either access an existing registered_subject or create a new one

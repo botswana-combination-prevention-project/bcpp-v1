@@ -13,7 +13,7 @@ from apps.bcpp.choices import COMMUNITIES
 
 
 from ..choices import REFERRAL_CODES
-from ..classes import SubjectReferralHelper
+from ..classes import SubjectReferralHelper, SubjectReferralApptHelper
 from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
@@ -312,16 +312,23 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)
+        return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(),
+                                         self.referral_code,
+                                         self.referral_appt_date,
+                                         self.referral_clinic)
 
     def save(self, *args, **kwargs):
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
-        subject_referral_helper.validate_referral_appt_date()
         if subject_referral_helper.missing_data:
-            raise ValueError('Some data is missing for the referral. Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
+            raise ValueError('Some data is missing for the referral. '
+                             'Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral.iteritems():
             setattr(self, field, value)
+        subject_referral_appt_helper = SubjectReferralApptHelper(subject_referral_helper.community_code,
+                                                                 subject_referral_helper.referral_code,
+                                                                 scheduled_appt_date=self.scheduled_appt_date)
+        self.referral_appt_date = subject_referral_appt_helper.referral_appt_datetime
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
@@ -348,10 +355,10 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     def get_referral_identifier(self):
         return self.id
 
-    def get_next_appt_date(self):
-        if self.urgent_referral:
-            return date.today()
-        return date.today + timedelta(days=7)
+#     def get_next_appt_date(self):
+#         if self.urgent_referral:
+#             return date.today()
+#         return date.today + timedelta(days=7)
 
     def survey(self):
         return self.subject_visit.household_member.household_structure.survey
