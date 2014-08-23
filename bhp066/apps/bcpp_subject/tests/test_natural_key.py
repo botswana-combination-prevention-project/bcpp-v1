@@ -65,16 +65,16 @@ class TestNaturalKey(TestCase):
         community = site_mappers.get_as_list()[0]
         site_mappers.autodiscover()
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
-        print 'No. of SURVEY = '+str(Survey.objects.all().count()) 
+        print 'No. of SURVEY = ' + str(Survey.objects.all().count())
         plot = PlotFactory(community=mapper().get_map_area())
-        print 'No. of HOUSEHOLDS = '+str(Household.objects.all().count())    
+        print 'No. of HOUSEHOLDS = ' + str(Household.objects.all().count())
         household = Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
         self.assertEquals(Survey.objects.all().count(), 3)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
         representative_eligibility = RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(household_structure=household_structure)
-        enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='Yes', dob=date(1989,01,01))
+        enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='Yes', dob=date(1989, 01, 01))
         study_site = StudySite.objects.all()[0]
         subject_consent = SubjectConsentFactory(study_site=study_site, household_member=household_member, registered_subject=household_member.registered_subject,
                                                 dob=enrollment_checklist.dob, initials=enrollment_checklist.initials)
@@ -86,16 +86,16 @@ class TestNaturalKey(TestCase):
         instances.append(registered_subject)
 
         print 'test natural key / get_by_natural_key on subject_visit'
-        print 'No. of ENTRIES = '+str(Entry.objects.all().count())
+        print 'No. of ENTRIES = ' + str(Entry.objects.all().count())
 #         content_type = ContentType.objects.get(app_label='bcpp_subject', model='subjectvisit')
 #         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
         self.assertEqual(VisitDefinition.objects.all().count(), 1)
-        visit_definition = VisitDefinition.objects.get(title = 'T0') #VisitDefinitionFactory(visit_tracking_content_type_map=content_type_map)
-        print 'No. of Appointments = '+str(Appointment.objects.all().count())
+        visit_definition = VisitDefinition.objects.get(title='T0')
+        print 'No. of Appointments = ' + str(Appointment.objects.all().count())
         appointment = Appointment.objects.get(visit_definition=visit_definition)
-        #print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
+        # print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_visit = SubjectVisitFactory(appointment=appointment, household_member=household_member)
-        #print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
+        # print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
         # SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
@@ -121,7 +121,7 @@ class TestNaturalKey(TestCase):
         # pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
             print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
-            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj)
+            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj, False, True, 'default')
             # pp.pprint(FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx))
             for transaction in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx)):
                 self.assertEqual(transaction.object.pk, obj.pk)

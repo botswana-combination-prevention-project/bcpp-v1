@@ -1,17 +1,18 @@
+from collections import namedtuple
 from django.core.exceptions import ValidationError
+from django.db.models import get_model
 
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
-from edc.subject.appointment.models import Holiday
+from edc.map.classes import site_mappers
+# from edc.subject.appointment.models import Holiday
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
 
 from ..choices import REFERRAL_CODES
 from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
-from ..utils import next_clinic_date
 
 from .subject_status_helper import SubjectStatusHelper
-from collections import namedtuple
 
 
 class SubjectReferralHelper(SubjectStatusHelper):
@@ -34,14 +35,20 @@ class SubjectReferralHelper(SubjectStatusHelper):
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
             })
+        self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member
         self.subject_identifier = self.instance.subject_visit.appointment.registered_subject.subject_identifier
+        mapper_cls = site_mappers.get_registry(self.household_member.household_structure.household.plot.community)
+        mapper = mapper_cls()
+        self.community_code = mapper.get_map_code()
 
     @property
     def missing_data(self):
         """Returns the model name of the first model used in the referral algorithm that's meta data is NOT set to KEYED or NOT_REQUIRED."""
-        for model_cls in self.models.values():
+        model_classes = self.models.values()
+        for model_cls in model_classes:
             try:
                 scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
                     appointment=self.instance.subject_visit.appointment,
@@ -50,6 +57,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
                 if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
                     return model_cls
             except ScheduledEntryMetaData.DoesNotExist:
+                pass
+            except AttributeError:  # NoneType?
                 pass
         return None
 
@@ -254,11 +263,11 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def validate_referral_appt_date(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         result = True
-        if self.instance.referral_appt_date != next_clinic_date():
-            result = False
-            if self.instance.referral_appt_date.strftime("%A") in ['Saturday', 'Sunday']:
-                raise exception_cls("You cannot schedule an appointment for a weekend day. Got \'{0}\''.".format(self.instance.referral_appt_date.strftime("%A")))
-            elif Holiday.objects.filter(holiday_date=self.instance.referral_appt_date.date()):
-                holiday = Holiday.objects.get(holiday_date=self.instance.referral_appt_date.date())
-                raise exception_cls("You cannot schedule an appointment on a holiday. Got \'{0}\''.".format(holiday.holiday_name))
+#         if self.instance.referral_appt_date != next_clinic_date():
+#             result = False
+#             if self.instance.referral_appt_date.strftime("%A") in ['Saturday', 'Sunday']:
+#                 raise exception_cls("You cannot schedule an appointment for a weekend day. Got \'{0}\''.".format(self.instance.referral_appt_date.strftime("%A")))
+#             elif Holiday.objects.filter(holiday_date=self.instance.referral_appt_date.date()):
+#                 holiday = Holiday.objects.get(holiday_date=self.instance.referral_appt_date.date())
+#                 raise exception_cls("You cannot schedule an appointment on a holiday. Got \'{0}\''.".format(holiday.holiday_name))
         return result

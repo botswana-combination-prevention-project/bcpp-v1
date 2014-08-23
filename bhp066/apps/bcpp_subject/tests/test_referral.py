@@ -40,6 +40,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_hiv(self):
         """if IND refer for HIV testing"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
