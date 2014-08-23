@@ -17,23 +17,22 @@ class HouseholdMemberHelper(object):
         self._member_status_enrollment_loss = False
         self.household_member = household_member
         if self.household_member.id:
-            member = self.household_member
-            if member.member_status == ABSENT:
+            if self.household_member.member_status == ABSENT:
                 self.member_status_absent = True
-            elif member.member_status == UNDECIDED:
+            elif self.household_member.member_status == UNDECIDED:
                 self.member_status_undecided = True
-            elif member.member_status == REFUSED:
+            elif self.household_member.member_status == REFUSED:
                 self.member_status_refused = True
-            elif member.member_status == BHS_SCREEN:
+            elif self.household_member.member_status == BHS_SCREEN:
                 self.member_status_bhs_screen = True
-            elif member.member_status == HTC_ELIGIBLE:
+            elif self.household_member.member_status == HTC_ELIGIBLE:
                 self.member_status_htc = True
-            elif member.member_status == NOT_ELIGIBLE:
+            elif self.household_member.member_status == NOT_ELIGIBLE:
                 self.member_status_enrollment_loss = True
         self._reported = None
 
     def __repr__(self):
-        return 'HouseholdMemberHelper({0.household_member!r})'.format(self)
+        return 'HouseholdMemberHelper({0.household_member!r} {0.household_member.member_status!r})'.format(self)
 
     def __str__(self):
         return '({0.household_member!r})'.format(self)
@@ -186,7 +185,7 @@ class HouseholdMemberHelper(object):
             self.member_status_enrollment_loss = False
             self.member_status_htc = False
             self.member_status_refused = False
-            self.enrollment_checklist_completed = False
+            # self.enrollment_checklist_completed = False  # this is a bad boy!!
         return self._member_status_bhs_screen
 
     @property
@@ -300,10 +299,12 @@ class HouseholdMemberHelper(object):
         enrollment checklist deleted for that member."""
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'enrollmentchecklist')
         if not is_completed:  # reset the field value and delete the checklist if it exists
-            EnrollmentChecklist.objects.filter(household_member=self.household_member).delete()
-            # TODO: aren't these values updated in the signal?
-            self.household_member.enrollment_checklist_completed = False
-            self.household_member.eligible_subject = False
+            try:
+                EnrollmentChecklist.objects.get(household_member=self.household_member).delete()
+                self.household_member.enrollment_checklist_completed = False
+                self.household_member.eligible_subject = False
+            except EnrollmentChecklist.DoesNotExist:
+                pass
 
     @property
     def enrollment_loss_completed(self):
@@ -314,10 +315,13 @@ class HouseholdMemberHelper(object):
 
     @enrollment_loss_completed.setter
     def enrollment_loss_completed(self, is_completed):
-        from ..models import EnrollmentLoss
-        if not is_completed and EnrollmentLoss.objects.filter(household_member=self.household_member).exists():
-            EnrollmentLoss.objects.get(household_member=self.household_member).delete()
-            self.household_member.enrollment_loss_completed = False
+        EnrollmentLoss = models.get_model('bcpp_household_member', 'EnrollmentLoss')
+        if not is_completed:
+            try:
+                EnrollmentLoss.objects.get(household_member=self.household_member).delete()
+                self.household_member.enrollment_loss_completed = False
+            except EnrollmentLoss.DoesNotExist:
+                pass
 
     @property
     def refused(self):
