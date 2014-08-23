@@ -43,7 +43,7 @@ class SubjectReferralApptHelper(object):
         """Returns a referral_appt_datetime which is conditionally
         a given scheduled date or a calculated date."""
         referral_appt_datetime = None
-        if 'SMC' in self.clinic_type:
+        if 'SMC' in self.referral_clinic_type:
             referral_appt_datetime = self.smc_appt_datetime(self.smc_start_date)
         elif self.referral_code == 'MASA-DF':
             pass  # will be next clinic date and will ignore a scheduled_appt_date
@@ -58,11 +58,11 @@ class SubjectReferralApptHelper(object):
             if not referral_appt_datetime and 'MASA' in self.referral_code:
                 referral_appt_datetime = self.masa_appt_datetime
         return referral_appt_datetime or next_clinic_date(self.community_code,
-                                                          self.clinic_type,
+                                                          self.referral_clinic_type,
                                                           self.base_datetime)
 
     @property
-    def clinic_type(self):
+    def referral_clinic_type(self):
         """Returns the calculated referral appointment date based on
         the referral code and a scheduled appointment date."""
         clinic_type = None
@@ -128,7 +128,7 @@ class SubjectReferralApptHelper(object):
             rdelta = relativedelta(scheduled_appt_datetime, self.base_datetime)
             if rdelta.years == 0 and ((rdelta.months == 1 and rdelta.days == 0) or (rdelta.months == 0)):
                 self._scheduled_appt_datetime = next_clinic_date(self.community_code,
-                                                                 self.clinic_type,
+                                                                 self.referral_clinic_type,
                                                                  scheduled_appt_datetime,
                                                                  allow_same_day=True)
 
@@ -147,7 +147,7 @@ class SubjectReferralApptHelper(object):
         """Returns a date as long as the date is within 1 month
         of today otherwise returns two weeks from base."""
         return next_clinic_date(self.community_code,
-                                self.clinic_type,
+                                self.referral_clinic_type,
                                 self.base_datetime + relativedelta(weeks=2))
 
     def smc_appt_datetime(self, smc_appt_date):
@@ -157,6 +157,6 @@ class SubjectReferralApptHelper(object):
         smc_appt_datetime = datetime(smc_appt_date.year, smc_appt_date.month, smc_appt_date.day, 7, 30, 0)
         if self.base_datetime > smc_appt_datetime:
             smc_appt_datetime = next_clinic_date(self.community_code,
-                                                 self.clinic_type,
+                                                 self.referral_clinic_type,
                                                  self.base_datetime)
         return smc_appt_datetime
