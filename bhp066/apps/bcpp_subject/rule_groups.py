@@ -6,7 +6,7 @@ from .classes import SubjectStatusHelper
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                     SexualBehaviour, HivCareAdherence, Circumcision,
                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, ElisaHivResult)
+                    HivResult, HivResultDocumentation, ElisaHivResult, Sti)
 
 # from .constants import RBD, Questionnaires
 
@@ -83,6 +83,29 @@ def is_gender_female(visit_instance):
 def is_gender_male(visit_instance):
     return visit_instance.appointment.registered_subject.gender.lower() == 'm'
 
+
+def func_heart_attack_record_value(visit_instance):
+    medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
+    for diagnoses in medical_diagnoses.diagnoses.all():
+        if diagnoses.name == 'Heart Disease or Stroke':
+            return True
+    return False
+
+
+def func_cancer_record_value(visit_instance):
+    medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
+    for diagnoses in medical_diagnoses.diagnoses.all():
+        if diagnoses.name == 'Cancer':
+            return True
+    return False
+
+
+def func_tb_record_value(visit_instance):
+    medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
+    for diagnoses in medical_diagnoses.diagnoses.all():
+        if diagnoses.name == 'Tubercolosis':
+            return True
+    return False
 
 class RegisteredSubjectRuleGroup(RuleGroup):
 
@@ -317,7 +340,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     ever_sex = ScheduledDataRule(
         logic=Logic(
-            predicate=(('ever_sex', 'equals', 'No'), ('ever_sex', 'equals', 'DWTA', 'or')),
+            predicate=('ever_sex', 'equals', 'No'),
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy'])
@@ -387,21 +410,24 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
     #has a record. see redmine 314
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('heart_attack_record', 'equals', 'Yes'), ('heart_attack_record', 'equals', 'No', 'or')),
+            #predicate=(('heart_attack_record', 'equals', 'Yes'), ('heart_attack_record', 'equals', 'No', 'or')),
+            predicate=func_heart_attack_record_value,
             consequence='new',
             alternative='not_required'),
         target_model=['heartattack'])
 
     cancer_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('cancer_record', 'equals', 'Yes'), ('cancer_record', 'equals', 'No', 'or')),
+            #predicate=(('cancer_record', 'equals', 'Yes'), ('cancer_record', 'equals', 'No', 'or')),
+            predicate=func_cancer_record_value,
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
 
     tb_record = ScheduledDataRule(
         logic=Logic(
-            predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
+            #predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
+            predicate=func_tb_record_value,
             consequence='new',
             alternative='not_required'),
         target_model=['tubercolosis', 'tbsymptoms'])
@@ -479,6 +505,13 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Venous (HIV)'], )
+
+    serve_sti_form = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_positive_today,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['sti'])
 
     class Meta:
         app_label = 'bcpp_subject'
