@@ -16,7 +16,7 @@ class SubjectStatusHelper(object):
               'hiv_test_review': HivTestReview,
               'hiv_testing_history': HivTestingHistory,
               'pima': Pima,
-              'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')}
+              }
 
     def __init__(self, visit_instance):
         self._defaulter = None
@@ -47,6 +47,8 @@ class SubjectStatusHelper(object):
         self._vl_requisition_instance = None
         self._vl_sample_drawn_datetime = None
         self.subject_visit = visit_instance
+
+        self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
 
     def __repr__(self):
         return 'SubjectStatusHelper({0.instance!r})'.format(self)

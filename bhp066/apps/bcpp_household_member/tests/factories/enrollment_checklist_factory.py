@@ -1,12 +1,18 @@
 import factory
+
 from datetime import date
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import EnrollmentChecklist
-from household_member_factory import HouseholdMemberFactory
+
+from .household_member_factory import HouseholdMemberFactory
 
 
 class EnrollmentChecklistFactory(BaseUuidModelFactory):
-    FACTORY_FOR = EnrollmentChecklist
+
+    class Meta:
+        model = EnrollmentChecklist
 
     household_member = factory.SubFactory(HouseholdMemberFactory)
     dob = date(1997, 10, 10)

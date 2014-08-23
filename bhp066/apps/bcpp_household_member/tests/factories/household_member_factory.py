@@ -6,7 +6,9 @@ from ...models import HouseholdMember
 
 
 class HouseholdMemberFactory(BaseUuidModelFactory):
-    FACTORY_FOR = HouseholdMember
+
+    class Meta:
+        model = HouseholdMember
 
     first_name = factory.Sequence(lambda n: 'first_name{0}'.format(n))
     initials = factory.Sequence(lambda n: 'initials{0}'.format(n))

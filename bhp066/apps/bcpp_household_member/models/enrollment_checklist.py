@@ -117,8 +117,6 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
 
     is_eligible = models.BooleanField(default=False)
 
-    update_values = models.BooleanField(default=False)
-
     objects = EnrollmentChecklistManager()
 
     history = AuditTrail()
@@ -136,7 +134,10 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        using = kwargs.get('using')
+        Household = models.get_model('bcpp_household', 'Household')
+        household = Household.objects.using(using).get(
+            household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} has its container replaced.'.format(household.household_identifier))
         if not self.pk:
@@ -144,19 +145,9 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN, self.household_member.member_status))
         else:
             if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
-                if self.update_values:
-                    pass
-                else:
-                    raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
-        self.is_eligible = False
-        self.household_member.eligible_subject = self.is_eligible
-        if self.matches_household_member_values(self, self.household_member):
-            if not self.enrollment_loss():
-                self.is_eligible = True
-        self.household_member.eligible_subject = self.is_eligible
-        self.household_member.enrollment_checklist_completed = True
-        # important during dispatch, need to save instance to the correct db.
-        self.household_member.save(using=kwargs.get('using', None))
+                raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
+        self.matches_household_member_values(self, self.household_member)
+        self.is_eligible = self.passes_enrollment_criteria(using)
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
@@ -176,42 +167,41 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             error_msg = 'Member is a minor. Got age {0}'.format(age_in_years)
         if error_msg:
             raise exception_cls(error_msg)
-        return True
 
-    def enrollment_loss(self):
+    def passes_enrollment_criteria(self, using):
         """Creates or updates (or deletes) the enrollment loss based on the reason for not passing the enrollment checklist."""
-        reason = []
+        loss_reason = []
         age_in_years = relativedelta(date.today(), self.dob).years
         if not (age_in_years >= 16 and age_in_years <= 64):
-            reason.append('Must be aged between >=16 and <=64 years.')
+            loss_reason.append('Must be aged between >=16 and <=64 years.')
         if self.has_identity.lower() == 'no':
-            reason.append('No valid identity.')
+            loss_reason.append('No valid identity.')
         if self.household_residency.lower() == 'No':
-            reason.append('Failed household residency requirement')
+            loss_reason.append('Failed household residency requirement')
         if self.part_time_resident.lower() != 'yes':
-            reason.append('Does not spend 3 or more nights per month in the community.')
+            loss_reason.append('Does not spend 3 or more nights per month in the community.')
         if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
-            reason.append('Not a citizen and not married to a citizen.')
+            loss_reason.append('Not a citizen and not married to a citizen.')
         if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and self.marriage_certificate.lower() == 'no':
-            reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
+            loss_reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
         if self.literacy.lower() == 'no':
-            reason.append('Illiterate with no literate witness.')
+            loss_reason.append('Illiterate with no literate witness.')
         if self.household_member.is_minor and self.guardian.lower() != 'yes':
-            reason.append('Minor without guardian available.')
-        if reason:
+            loss_reason.append('Minor without guardian available.')
+        if loss_reason:
             self.household_member.member_status = NOT_ELIGIBLE
             try:
-                enrollment_loss = EnrollmentLoss.objects.get(household_member=self.household_member)
+                enrollment_loss = EnrollmentLoss.objects.using(using).get(household_member=self.household_member)
                 enrollment_loss.report_datetime = datetime.today()
-                enrollment_loss.reason = reason
+                enrollment_loss.reason = loss_reason
             except EnrollmentLoss.DoesNotExist:
-                EnrollmentLoss.objects.create(
+                EnrollmentLoss.objects.using(using).create(
                     household_member=self.household_member,
                     report_datetime=datetime.today(),
-                    reason=';'.join(reason))
+                    reason=';'.join(loss_reason))
         else:
-            EnrollmentLoss.objects.filter(household_member=self.household_member).delete()
-        return reason
+            EnrollmentLoss.objects.using(using).filter(household_member=self.household_member).delete()
+        return False if loss_reason else True
 
     class Meta:
         app_label = "bcpp_household_member"

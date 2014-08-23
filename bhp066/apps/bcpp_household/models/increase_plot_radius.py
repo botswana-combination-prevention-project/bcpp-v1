@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.bcpp_household.models import Plot
+from .plot import Plot
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -8,9 +8,9 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 class IncreasePlotRadius(BaseDispatchSyncUuidModel):
 
-    plot = models.ForeignKey(Plot, null=True)
+    plot = models.ForeignKey(Plot)
 
-    radius = models.FloatField(default=.025, help_text='km')
+    radius = models.FloatField(default=25.0, help_text='meters')
 
     history = AuditTrail()
 
@@ -21,7 +21,7 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel):
         return (self.plot.plot_identifier,)
 
     def save(self, *args, **kwargs):
-        self.plot.target_radius = self.radius
+        self.plot.target_radius = (self.radius / 1000)
         self.plot.save()
         super(IncreasePlotRadius, self).save(*args, **kwargs)
 
@@ -35,4 +35,4 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel):
         return True
 
     class Meta:
-        app_label = 'bcpp_data_correction'
+        app_label = 'bcpp_household'
