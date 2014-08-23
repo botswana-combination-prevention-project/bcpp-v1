@@ -282,6 +282,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         validators=[date_is_future, ],
         help_text=("Use the IDCC date. If subject is pregnant, use the ANC date instead of the IDCC date."
                    "  If the subject does not have a scheduled appointment, leave blank"),
+        blank=True,
         null=True,
         )
 
