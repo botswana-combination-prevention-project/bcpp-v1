@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_is_future
+from edc.base.model.validators import datetime_is_future, date_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
@@ -13,15 +13,25 @@ from apps.bcpp.choices import COMMUNITIES
 
 
 from ..choices import REFERRAL_CODES
-from ..classes import SubjectReferralHelper
+from ..classes import SubjectReferralHelper, SubjectReferralApptHelper
 from ..managers import ScheduledModelManager
-from ..utils import next_clinic_date
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
 from .subject_locator import SubjectLocator
 
 site_mappers.autodiscover()
+
+REFERRAL_APPT_COMMENT = (
+    ('N/A', 'Not Applicable'),
+)
+
+REFERRAL_CLINIC_TYPES = (
+    ('ANC', 'ANC'),
+    ('IDCC', 'IDCC'),
+    ('SMC', 'SMC'),
+    ('SMC-ECC', 'SMC-ECC'),
+)
 
 
 class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
@@ -33,11 +43,13 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                  ('refused', 'Subject refused referral the referral letter')),
         help_text='')
 
-    referral_appt_date = models.DateTimeField(  # check that this date is not greater than next_arv_clinic_appointment_date
+    referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        default=next_clinic_date(),
-        help_text="... or next refill / clinic date if on ART."
+        # default=next_clinic_date(),
+        help_text="... or next refill / clinic date if on ART.",
+        null=True,
+        editable=False
         )
 
     referral_clinic = models.CharField(
@@ -164,11 +176,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         )
 
     next_arv_clinic_appointment_date = models.DateField(
-         default=None,
-         null=True,
-         editable=False,
-         help_text="from HivCareAdherence.next_appointment_date. Next appointment date at the subject's ARV clinic."
-         )
+        default=None,
+        null=True,
+        editable=False,
+        help_text="from HivCareAdherence.next_appointment_date. Next appointment date at the subject's ARV clinic."
+        )
 
     cd4_result = models.DecimalField(
         null=True,
@@ -269,6 +281,30 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                    'information in this comment')
         )
 
+    scheduled_appt_date = models.DateField(
+        verbose_name="Previously scheduled clinic appointment date",
+        validators=[date_is_future, ],
+        help_text=("Use the IDCC date. If subject is pregnant, use the ANC date instead of the IDCC date."
+                   "  If the subject does not have a scheduled appointment, leave blank"),
+        null=True,
+        )
+
+    referral_appt_comment = models.CharField(
+        verbose_name='Reason for not attending suggested appointment date',
+        max_length=50,
+        choices=REFERRAL_APPT_COMMENT,
+        default='N/A',
+        help_text='If subject is unsure about attending the suggested appointment date, indicate the reason.'
+        )
+
+    referral_clinic_type = models.CharField(
+        max_length=25,
+        choices=REFERRAL_CLINIC_TYPES,
+        help_text='',
+        null=True,
+        editable=False,
+        )
+
     objects = ScheduledModelManager()
 
     export_history = ExportHistoryManager()
@@ -276,16 +312,23 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(), self.referral_code, self.referral_appt_date, self.referral_clinic)
+        return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(),
+                                         self.referral_code,
+                                         self.referral_appt_date,
+                                         self.referral_clinic)
 
     def save(self, *args, **kwargs):
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
-        subject_referral_helper.validate_referral_appt_date()
         if subject_referral_helper.missing_data:
-            raise ValueError('Some data is missing for the referral. Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
+            raise ValueError('Some data is missing for the referral. '
+                             'Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral.iteritems():
             setattr(self, field, value)
+        subject_referral_appt_helper = SubjectReferralApptHelper(subject_referral_helper.community_code,
+                                                                 subject_referral_helper.referral_code,
+                                                                 scheduled_appt_date=self.scheduled_appt_date)
+        self.referral_appt_date = subject_referral_appt_helper.referral_appt_datetime
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
@@ -312,10 +355,10 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     def get_referral_identifier(self):
         return self.id
 
-    def get_next_appt_date(self):
-        if self.urgent_referral:
-            return date.today()
-        return date.today + timedelta(days=7)
+#     def get_next_appt_date(self):
+#         if self.urgent_referral:
+#             return date.today()
+#         return date.today + timedelta(days=7)
 
     def survey(self):
         return self.subject_visit.household_member.household_structure.survey

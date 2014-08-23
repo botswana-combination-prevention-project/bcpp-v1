@@ -216,9 +216,14 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=u'',
         editable=False)
 
-    bhs = models.NullBooleanField(editable=False, help_text='True indicates that plot is enrolled in to BHS. Updated by household save method')
+    bhs = models.NullBooleanField(
+        editable=False,
+        help_text='True indicates that plot is enrolled in to BHS. Updated by household_structure post_save')
 
-    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime that plot is enrolled. Updated by household save method')
+    enrolled_datetime = models.DateTimeField(
+        null=True,
+        editable=False,
+        help_text='datetime that plot is enrolled. Updated by household_structure post_save')
 
     htc = models.NullBooleanField(default=False, editable=False)
 
@@ -275,7 +280,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
                 self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
             self.action = self.get_action()
-            if self.id:
+            if self.id:  # TODO: only creates households if modified?
                 self.household_count = self.create_or_delete_households(self)
             if ((self.household_count == 0 and self.status in ['residential_habitable'])):
                 raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
@@ -312,28 +317,29 @@ class Plot(BaseDispatchSyncUuidModel):
         if not (len(set(allow_edit)) == 1):
             raise exception_cls("modifying plots is not allowed anymore where there is no at least one enrolled individual")
 
-    def delete_unused_households(self, instance):
+    def delete_unused_households(self, instance, using=None):
         """Deletes households and HouseholdStructure if member_count==0 and no log entry."""
+        using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
-        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
-            if Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
+        for household_structure in HouseholdStructure.objects.using(using).filter(household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
+            if Household.objects.using(using).filter(plot__pk=instance.pk).count() > instance.household_count:
                 try:
-                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).exists():
+                    if not HouseholdLogEntry.objects.using(using).filter(household_log__household_structure=household_structure).exists():
                         HouseholdLog.objects.filter(household_structure=household_structure).delete()
                         household_pk = unicode(household_structure.household.pk)
-                        household_structure.delete()
-                        household = Household.objects.get(pk=household_pk)
-                        identifier_history = HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier)
-                        for ind in identifier_history:
-                            ind.delete()
-                        household.delete()
+                        household_structure.delete(using=using)
+                        household = Household.objects.using(using).get(pk=household_pk)
+                        identifier_histories = HouseholdIdentifierHistory.objects.using(using).filter(identifier=household.household_identifier)
+                        for identifier_history in identifier_histories:
+                            identifier_history.delete(using=using)
+                        household.delete(using=using)
                 except IntegrityError:
                     pass
 
-    def create_or_delete_households(self, instance):
+    def create_or_delete_households(self, instance, using=None):
         """Creates or deletes households to try to equal the number of households reported on the plot instance.
 
         This gets called by a signal on add and on the save method on change.
@@ -341,22 +347,23 @@ class Plot(BaseDispatchSyncUuidModel):
             * If number is greater than actual household instances, households are created.
             * If number is less than actual household instances, households are deleted as long as
               there are no household members and the household log does not have entries."""
+        using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
         # check that tuple has not changed and has "residential_habitable"
         if instance.status:
             if instance.status not in [item[0] for item in PLOT_STATUS]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        existing_household_count = Household.objects.filter(plot__pk=instance.pk).count()
+        existing_household_count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
         if instance.status in ['residential_habitable'] and not (existing_household_count == instance.household_count):
-            if Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
-                while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
+            if Household.objects.using(using).filter(plot__pk=instance.pk).count() < instance.household_count:
+                while Household.objects.using(using).filter(plot__pk=instance.pk).count() < instance.household_count:
                     instance.create_household(instance)
-            elif Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
-                while Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
-                    instance.delete_unused_households(instance)
+            elif Household.objects.using(using).filter(plot__pk=instance.pk).count() > instance.household_count:
+                while Household.objects.using(using).filter(plot__pk=instance.pk).count() > instance.household_count:
+                    instance.delete_unused_households(instance, using)
             else:
                 pass
-        return Household.objects.filter(plot__pk=instance.pk).count()
+        return Household.objects.using(using).filter(plot__pk=instance.pk).count()
 
     def get_action(self):
         retval = 'unconfirmed'
@@ -453,6 +460,11 @@ class Plot(BaseDispatchSyncUuidModel):
         return entry_urls
     #log_entry_form_urls.allow_tags = True
 
+    @property
+    def increase_radius_urls(self):
+        increase_radius_url = self._get_form_url('increaseplotradius', model_pk=self.pk, add_url=True)
+        return increase_radius_url
+
     def _get_form_url(self, model, model_pk=None, add_url=None):
         url = ''
         pk = None
@@ -484,7 +496,7 @@ class Plot(BaseDispatchSyncUuidModel):
             log_statuses = []
             for log_entry in plot_log_entries:
                 log_statuses.append(log_entry.log_status)
-            if len(set(log_statuses)) == 1 and log_statuses[0] == 'Inaccessible' and len(plot_log_entries) == 3:
+            if len(set(log_statuses)) == 1 and log_statuses[0] == 'INACCESSIBLE' and len(plot_log_entries) == 3:
                 plot_inaccessible = True
         except:
             plot_inaccessible = False
@@ -502,10 +514,6 @@ class Plot(BaseDispatchSyncUuidModel):
         except:
             increase_radius = False
         return increase_radius
-
-    @property
-    def plot_radius_model_meta(self):
-        return get_model('bcpp_data_correction', 'IncreasePlotRadius')._meta
 
     @property
     def plot_log(self):
