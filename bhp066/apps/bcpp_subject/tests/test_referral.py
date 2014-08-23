@@ -52,6 +52,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc1(self):
         """if NEG and male and NOT circumcised, refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -64,6 +65,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc2(self):
         """if NEG and male and circumcised, do not refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -76,6 +78,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc3(self):
         """if new POS and male and circumcised, do not refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -88,6 +91,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc3a(self):
         """if new POS and male and  NOT circumcised, do not refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -100,6 +104,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc4(self):
         """if UNKNOWN HIV status and male and NOT circumcised, refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -112,6 +117,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc5(self):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -124,6 +130,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc5a(self):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -136,6 +143,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc5b(self):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -148,6 +156,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc6(self):
         """if NEG and male and unknown circumcision status, refer for SMC"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -160,6 +169,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_neg_female_pregnant1(self):
         """if NEG and female, and not pregnant, do not refer"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -172,6 +182,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_neg_female_pregnant2(self):
         """if NEG and female, and not pregnant, do not refer"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -185,6 +196,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_pos_female_pregnant(self):
         """if POS and female, pregnant, on-arv, refer ANC-POS"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -198,6 +210,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_pos_female_pregnant2(self):
         """if newly POS and female, and pregnant, refer"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -211,6 +224,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa_monitoring1(self):
         """if known POS, on ART,  Cd4 lo, refer as MASA monitoring low"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -224,6 +238,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa_monitoring2(self):
         """if known POS, on ART,  Cd4 hi, refer as MASA monitoring hi"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -236,6 +251,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_pos_female_pregnant3(self):
         """if POS and female, and pregnant, refer ANC-POS"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -248,6 +264,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_neg_female(self):
         """if NEG and female, refer ANC-NEG"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -260,6 +277,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_cd4(self):
         """if POS but no other data, refer for CD4"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -271,6 +289,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred1(self):
         """if known POS, high PIMA CD4 and art unknown, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -283,6 +302,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred2(self):
         """if known POS, low PIMA CD4 and art unknown, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -295,6 +315,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred3(self):
         """if known NEG but not tested today, high PIMA CD4 and art unknown, female"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -307,6 +328,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred4(self):
         """if new POS, high PIMA CD4 and art unknown, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -319,6 +341,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred5(self):
         """if new POS, low PIMA CD4 and art unknown, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -331,6 +354,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_urgent1(self):
         """if existing POS, low PIMA CD4 and art unknown, urgent referral"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -344,6 +368,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_urgent2(self):
         """if existing POS, low PIMA CD4 and art no, urgent referral"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -358,6 +383,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_urgent3(self):
         """if new POS, low PIMA CD4 and art unknown, urgent referral"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -371,6 +397,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_ccc3(self):
         """if new pos, high PIMA CD4 and not on art, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -384,6 +411,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa1(self):
         """if new pos, low PIMA CD4 and not on art, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -397,6 +425,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal1(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -409,6 +438,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_hiv_result1(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
@@ -419,6 +449,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_hiv_result2(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
@@ -430,6 +461,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_hiv_result2a(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
@@ -442,6 +474,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_hiv_result3(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
@@ -453,6 +486,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_hiv_result3a(self):
         """Evidence of being on ARV as reported on Care and Adherence does NOT confirm a verbal positive as evidence of HIV infection"""
+        self.startup()
         report_datetime = datetime.today()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         hiv_care_adherence = HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
@@ -464,6 +498,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_hiv_result4(self):
         """Other record confirms a verbal positive as evidence of HIV infection."""
+        self.startup()
         report_datetime = datetime.today()
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
@@ -480,6 +515,7 @@ class TestReferral(BaseScheduledModelTestCase):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
         from ..classes import SubjectStatusHelper
 
+        self.startup()
         report_datetime = datetime.today()
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
@@ -496,6 +532,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal1b(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -508,6 +545,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal2(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -521,6 +559,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal3(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -535,6 +574,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal4(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -549,6 +589,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal5(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -562,6 +603,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_verbal6(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -575,6 +617,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa2(self):
         """if new pos, high PIMA CD4 and on art, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -588,6 +631,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa3(self):
         """if pos, low CD4 and on art, """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -601,6 +645,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa4(self):
         """Tests pos today but have evidence on ART"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -614,6 +659,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_masa5(self):
         """if pos and defaulter """
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -625,6 +671,7 @@ class TestReferral(BaseScheduledModelTestCase):
         self.assertIn('MASA-DF', subject_referral.referral_code)
 
     def tests_subject_referral_field_attr1(self):
+        self.startup()
         report_datetime = datetime.today()
         today = datetime.today()
         today_date = datetime.today()
@@ -672,6 +719,7 @@ class TestReferral(BaseScheduledModelTestCase):
         self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
 
     def tests_subject_referral_field_attr2(self):
+        self.startup()
         report_datetime = datetime.today()
         today = datetime.today()
         today_date = date.today()
@@ -721,6 +769,7 @@ class TestReferral(BaseScheduledModelTestCase):
         self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
 
     def tests_subject_referral_field_attr3(self):
+        self.startup()
         yesterday = datetime.today() - timedelta(days=1)
         report_datetime = datetime.today()
         today = datetime.today()
@@ -770,6 +819,7 @@ class TestReferral(BaseScheduledModelTestCase):
         self.assertDictContainsSubset(expected, subject_referral_helper.subject_referral)
 
     def tests_subject_referral_field_attr4(self):
+        self.startup()
         yesterday = datetime.today() - timedelta(days=1)
         report_datetime = datetime.today()
         today = datetime.today()
@@ -820,6 +870,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr5(self):
         """if IND refer for HIV testing"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -841,6 +892,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr6(self):
         """if IND refer for HIV testing"""
+        self.startup()
         report_datetime = datetime.today()
         last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
@@ -865,6 +917,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr7(self):
         """ """
+        self.startup()
         report_datetime = datetime.today()
         last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
@@ -889,6 +942,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr8(self):
         """ """
+        self.startup()
         report_datetime = datetime.today()
         last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
@@ -913,6 +967,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr9(self):
         """ """
+        self.startup()
         report_datetime = datetime.today()
         #last_date = report_datetime.date() - relativedelta(years=3)
         panel = Panel.objects.get(name='Microtube')
@@ -937,6 +992,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def test_export_history1(self):
         """Asserts a referral is queued for export."""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.site_code, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -946,4 +1002,4 @@ class TestReferral(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertIn('SMC-NEG', subject_referral.referral_code)
-        self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk),1)
+        self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk).count(), 1)
