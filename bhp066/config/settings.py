@@ -3,10 +3,14 @@ import platform
 import sys
 import socket
 
-from datetime import datetime
 from unipath import Path
 
 from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
+
+from .bcpp_days import CLINIC_DAYS, SMC_ECC_START_DATE, SMC_START_DATE, INTERVENTION_COMMUNITIES
+from .databases import TESTING_SQLITE
+from .databases import TESTING_MYSQL
+from .databases import PRODUCTION_MYSQL
 
 # from logger import LOGGING
 
@@ -21,7 +25,6 @@ PROJECT_DIR = Path(__file__).ancestor(2)
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
 TEMPLATE_DIRS = (
-    #PROJECT_DIR.child('templates'),
     os.path.expanduser('~/source/edc_project/edc/templates/'),
 )
 FIXTURE_DIRS = (
@@ -38,97 +41,26 @@ elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
 else:
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
     # KEY_PATH = '/Volumes/keys'
     # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/twicet/dev/bhp/projs/git/bhp066_settings/bhp066/keys'
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Volumes/keys'
     KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
+
+# DATABASES
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
     if testing_db_name == 'sqlite':
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'default',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': ''},
-            'lab_api': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'lab',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-            'dispatch_destination': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'producer',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-        }
+        DATABASES = TESTING_SQLITE
     else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {
-                    'init_command': 'SET storage_engine=INNODB',
-                },
-                'NAME': 'test_default',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-            'dispatch_destination': {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {
-                    'init_command': 'SET storage_engine=INNODB',
-                },
-                'NAME': 'test_destination',
-                'USER': 'root',
-                'PASSWORD': 'cc3721b',
-                'HOST': '',
-                'PORT': '',
-            },
-        }
+        DATABASES = TESTING_MYSQL
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'bhp066',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '',
-            'PORT': '',
-        },
-        'lab_api': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET storage_engine=INNODB',
-            },
-            'NAME': 'lab',
-            'USER': 'root',
-            'PASSWORD': 'cc3721b',
-            'HOST': '',
-            'PORT': '',
-        },
-    }
+    DATABASES = PRODUCTION_MYSQL
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -333,3 +265,7 @@ ALLOW_MODEL_SERIALIZATION = True
 
 # bypass household log to get to the subject dashboard.
 BYPASS_HOUSEHOLD_LOG = True
+CLINIC_DAYS = CLINIC_DAYS
+SMC_ECC_START_DATE = SMC_ECC_START_DATE
+SMC_START_DATE = SMC_START_DATE
+INTERVENTION_COMMUNITIES = INTERVENTION_COMMUNITIES
