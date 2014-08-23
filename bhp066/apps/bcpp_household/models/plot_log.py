@@ -55,6 +55,7 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
     reason = models.CharField(
         verbose_name=_('Please indicate the reason why the plot is inaccessible.'),
         max_length=25,
+        blank=True,
         choices=INACCESSIBILITY_REASONS)
 
     reason_other = models.CharField(

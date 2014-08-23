@@ -5,11 +5,14 @@ from datetime import datetime, date, timedelta
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
 from ...models import SubjectAbsenteeEntry
-from ..factories import SubjectAbsenteeFactory
+
+from .subject_absentee_factory import SubjectAbsenteeFactory
 
 
 class SubjectAbsenteeEntryFactory(BaseUuidModelFactory):
-    FACTORY_FOR = SubjectAbsenteeEntry
+
+    class Meta:
+        model = SubjectAbsenteeEntry
 
     subject_absentee = factory.SubFactory(SubjectAbsenteeFactory)
     report_datetime = factory.Sequence(lambda n: date.today() + timedelta(days=int(n)))

@@ -1,5 +1,5 @@
 from datetime import datetime, date, timedelta
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.core import serializers
 from edc.core.crypto_fields.classes import FieldCryptor
 from django.db.models import get_app, get_models
@@ -9,21 +9,20 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.device.sync.classes import SerializeToTransaction
 from edc.map.classes import site_mappers
-from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal, HouseholdRefusalHistory
-from apps.bcpp_household.tests.factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
-                                                 PlotLogFactory, HouseholdLogFactory, HouseholdAssessmentFactory)
+from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal, HouseholdRefusalHistory
+from .factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
+                        PlotLogFactory, HouseholdLogFactory, HouseholdAssessmentFactory)
 
 
-class NaturalKeyTests(TestCase):
+class TestNaturalKeys(SimpleTestCase):
 
-    def setUp(self):
+    def startup(self):
+        from apps.bcpp.app_configuration.classes import BcppAppConfiguration
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
@@ -34,6 +33,7 @@ class NaturalKeyTests(TestCase):
 
     def test_p1(self):
         """Confirms all models have a natural_key method (except Audit models)"""
+        self.startup()
         app = get_app('bcpp_household')
         for model in get_models(app):
             if 'Audit' not in model._meta.object_name:
@@ -42,13 +42,15 @@ class NaturalKeyTests(TestCase):
 
     def test_p2(self):
         """Confirms all models have a get_by_natural_key manager method."""
+        self.startup()
         survey = Survey.objects.all()[0]
         print 'get a community name from the mapper classes'
         community = site_mappers.get_as_list()[0]
         site_mappers.autodiscover()
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
         print 'No. of SURVEY = ' + str(Survey.objects.all().count())
-        plot = PlotFactory(community=mapper().get_map_area())
+        plot = PlotFactory(community=mapper().get_map_area(), status='residential_habitable')
+        plot.save()
         print 'No. of HOUSEHOLDS = ' + str(Household.objects.all().count())
         household = Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
@@ -57,7 +59,7 @@ class NaturalKeyTests(TestCase):
         print 'No. of HOUSEHOLDS_STRUCTURE = ' + str(HouseholdStructure.objects.all().count())
         household_refusal = HouseholdRefusalFactory(household_structure=household_structure)
         print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
-        print 'HOUSEHOLD_REFUSAL='+str(HouseholdRefusal.objects.all()[0]) 
+        print 'HOUSEHOLD_REFUSAL=' + str(HouseholdRefusal.objects.all()[0]) 
 #         household_identifier_history =
         HouseholdRefusal.objects.get(household_structure=household_structure).delete()
         print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
@@ -100,7 +102,7 @@ class NaturalKeyTests(TestCase):
         # pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
             print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
-            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj)
+            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj, False, True, 'default')
             # pp.pprint(FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx))
             for transaction in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx)):
                 self.assertEqual(transaction.object.pk, obj.pk)
