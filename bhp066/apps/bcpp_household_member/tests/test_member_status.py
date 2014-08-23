@@ -44,15 +44,19 @@ class TestMemberStatus(SimpleTestCase):
     enrollment_checklist = None
     registered_subject = None
     study_site = None
+    household_structure = None
+    representative_eligibility = None
 
     def startup(self):
 
         from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 
         self.household_member = None
+        self.household_structure = None
         self.subject_consent = None
         self.enrollment_checklist = None
         self.registered_subject = None
+        self.representative_eligibility = None
         self.study_site = None
 
         try:
@@ -302,19 +306,18 @@ class TestMemberStatus(SimpleTestCase):
             present_today='No',
             study_resident='Yes')
         pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
-        household_member.member_status = BHS_SCREEN
         household_member.modified = household_member.created + timedelta(seconds=30)
         household_member.save()
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertEquals(household_member.member_status, BHS_SCREEN)
-        # self.assertEquals(household_member.member_status, ABSENT)
-        self.assertTrue(isinstance(EnrollmentChecklistFactory(
+        self.assertEquals(household_member.member_status, ABSENT)
+        household_member.member_status = BHS_SCREEN  # this would be changed by the user
+        enrollment_checklist = EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
             dob=date.today() - relativedelta(years=50),
             initials=household_member.initials,
-            part_time_resident='Yes'), EnrollmentChecklist))
+            part_time_resident='Yes')
+        self.assertTrue(enrollment_checklist.is_eligible)
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
 
     def test_change_household_member4(self):
@@ -480,10 +483,11 @@ class TestMemberStatus(SimpleTestCase):
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
         self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 0)
-        ec = EnrollmentChecklist.objects.get(household_member=household_member)
-        ec.has_identity = 'No'
-        ec.save()
+        enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
+        enrollment_checklist.has_identity = 'No'
+        enrollment_checklist.save()
         household_member = HouseholdMember.objects.get(pk=pk)
+        # FAILS HERE
         self.assertFalse(household_member.eligible_subject)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
@@ -634,10 +638,10 @@ class TestMemberStatus(SimpleTestCase):
             age_in_years=20,
             present_today='Yes',
             study_resident='Yes')
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
-        household_member.member_status = BHS_SCREEN
-        household_member.save()
+        # pk = household_member.pk
+        # household_member = HouseholdMember.objects.get(pk=pk)
+        # household_member.member_status = BHS_SCREEN
+        # household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.enroll_household()
