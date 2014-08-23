@@ -105,9 +105,6 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
                 'may_store_samples': self.may_store_samples}
         consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
         household_member = HouseholdMember.objects.get(id=consent.household_member_id)
-        erollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
-        erollment_checklist.update_values = True
-        erollment_checklist.save()
         household_member_fields = []
         consent_fields = []
         enrollment_fields = []
@@ -143,5 +140,4 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
         super(CorrectConsent, self).save(*args, **kwargs)
 
     class Meta:
-        app_label = 'bcpp_data_correction'
-
+        app_label = 'bcpp_subject'
