@@ -1,7 +1,9 @@
 from collections import OrderedDict
 
 from edc.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL, ADDITIONAL
-from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
+from edc.subject.visit_schedule.classes import (VisitScheduleConfiguration, site_visit_schedules,
+                                                EntryTuple, MembershipFormTuple, ScheduleGroupTuple,
+                                                RequisitionPanelTuple)
 
 from ..models import SubjectVisit, SubjectConsent
 
@@ -40,16 +42,21 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
-                # (entry_order app_label model_name requisition_panel_name panel_type aliquot_type_alpha_code default_entry_status additional)
-                RequisitionPanelTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'STORAGE', 'WB', REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Venous (HIV)', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB', NOT_REQUIRED, NOT_ADDITIONAL)
+                # (entry_order app_label model_name requisition_panel_name panel_type aliquot_type_alpha_code
+                #   default_entry_status additional)
+                RequisitionPanelTuple(10L, u'bcpp_lab', u'subjectrequisition', 'Research Blood Draw', 'TEST', 'WB',
+                                      NOT_REQUIRED, NOT_ADDITIONAL),
+                RequisitionPanelTuple(20L, u'bcpp_lab', u'subjectrequisition', 'Viral Load', 'TEST', 'WB',
+                                      NOT_REQUIRED, NOT_ADDITIONAL),
+                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Microtube', 'STORAGE', 'WB',
+                                      REQUIRED, NOT_ADDITIONAL),
+                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'Venous (HIV)', 'TEST', 'WB',
+                                      NOT_REQUIRED, NOT_ADDITIONAL),
+                RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB',
+                                      NOT_REQUIRED, NOT_ADDITIONAL)
                 ),
             'entries': (
                 #  order app_label model_name default_entry_status additional
-                #EntryTuple(10L, u'bcpp_subject', u'participation', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(30L, u'bcpp_subject', u'communityengagement', REQUIRED, NOT_ADDITIONAL),
@@ -89,7 +96,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(390L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(400L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             )}
-        }
+         }
     )
 
 site_visit_schedules.register(BcppSubjectVisitSchedule)

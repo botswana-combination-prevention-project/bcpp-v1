@@ -22,7 +22,7 @@ class SubjectReferralApptHelper(object):
     def __init__(self, community_code, referral_code, today_date=None, scheduled_appt_date=None, smc_start_date=None,
                  clinic_days=None, intervention_communities=None):
         self.community_code = community_code
-        if referral_code not in [item[0] for item in REFERRAL_CODES]:
+        if referral_code not in [item[0] for item in REFERRAL_CODES] + [None, '']:
             raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
         self.referral_code = referral_code
         self.today_date = today_date or date.today()  # should come from the user as today's date??
@@ -42,7 +42,7 @@ class SubjectReferralApptHelper(object):
         return '({0.referral_code!r})'.format(self)
 
     @property
-    def referral_appt_date(self):
+    def referral_appt_datetime(self):
         """Returns a referral_appt_datetime which is conditionally
         a given scheduled date or a calculated date."""
         referral_appt_datetime = None
@@ -53,10 +53,9 @@ class SubjectReferralApptHelper(object):
                                                   self.scheduled_appt_date.days, 7, 30, 0)
         except TypeError:
             pass
-        referral_appt_datetime = referral_appt_datetime or next_clinic_date(self.community_code,
-                                                                            self.clinic_type,
-                                                                            today=self.today_date,
-                                                                            community_clinic_days=self.clinic_days)
+        return referral_appt_datetime or next_clinic_date(self.community_code,
+                                                          self.clinic_type,
+                                                          today=self.today_date)
 
     @property
     def clinic_type(self):

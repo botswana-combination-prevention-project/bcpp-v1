@@ -93,6 +93,6 @@ class NaturalKeyTests(TestCase):
         # pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
             print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
-            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj)
+            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj, False, True, 'default')
             for transaction in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx)):
                 self.assertEqual(transaction.object.pk, obj.pk)
