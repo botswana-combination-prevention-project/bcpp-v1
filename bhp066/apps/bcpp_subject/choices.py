@@ -1,5 +1,15 @@
 from django.utils.translation import ugettext as _
 
+REFERRAL_APPT_COMMENTS = (
+    ("N/A", "not applicable"),
+    ("conflict", "have another commitment"),
+    ("prefer_other_facility", "prefer another health facility than the local clinic"),
+    ("prefer_other_date", "prefer to come on my own convenient time"),
+    ("undecided_thinking", "have to think about it"),
+    ("undecided_accepting_status", "need time to accept my HIV status"),
+    ("have_other_anc_appt", "have already registered with ANC and have another appointment"),
+)
+
 REFERRAL_CODES = (
     ('pending', '<data collection in progress>'),
     ('TST-CD4', 'POS any, need CD4 testing'),
