@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 
 
-def next_clinic_date(community_code, clinic, today=None, community_clinic_days=None):
+def next_clinic_date(community_code, clinic, today=None, community_clinic_days=None, referral_code=None):
     """Returns next clinic date that is not today or None."""
     next_clinic_datetime = None
     clinic_dates = []
