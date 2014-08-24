@@ -59,10 +59,10 @@ class HouseholdMemberHelper(object):
     def household_enrolled(self):
         return self.household_member.household_structure.enrolled
 
-#     @property
-#     def intervention_community(self):
-#         mapper = site_mappers.get_registry('lentsweletau')()
-#         return mapper.intervention
+    @property
+    def intervention_community(self):
+        mapper = site_mappers.get_current_mapper()
+        return mapper.intervention
 
     @property
     def plot_enrolled(self):
