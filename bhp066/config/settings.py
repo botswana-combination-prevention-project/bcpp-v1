@@ -11,6 +11,7 @@ from .bcpp_days import CLINIC_DAYS, SMC_ECC_START_DATE, SMC_START_DATE, INTERVEN
 from .databases import TESTING_SQLITE
 from .databases import TESTING_MYSQL
 from .databases import PRODUCTION_MYSQL
+from config.bcpp_days import BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE
 
 # from logger import LOGGING
 
@@ -42,11 +43,11 @@ elif socket.gethostname() == 'ckgathi':
 else:
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Volumes/keys'
+    KEY_PATH = '/Volumes/keys'
     # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
+#     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+#     KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 
@@ -265,6 +266,10 @@ ALLOW_MODEL_SERIALIZATION = True
 
 # bypass household log to get to the subject dashboard.
 BYPASS_HOUSEHOLD_LOG = True
+
+BHS_START_DATE = BHS_START_DATE
+BHS_END_DATE = BHS_END_DATE
+BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
 CLINIC_DAYS = CLINIC_DAYS
 SMC_ECC_START_DATE = SMC_ECC_START_DATE
 SMC_START_DATE = SMC_START_DATE
