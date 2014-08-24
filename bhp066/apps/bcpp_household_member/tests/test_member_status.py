@@ -6,6 +6,7 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp_household.models import Household, HouseholdStructure
@@ -94,15 +95,20 @@ class TestMemberStatus(SimpleTestCase):
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
         self.assertEqual(enrollment_checklist.household_member.pk, household_member.pk)
+        from django.db.models import signals
+        from edc.subject.subject.models import base_subject_get_or_create_registered_subject_on_post_save
+        signals.post_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         SubjectConsentFactory(
             household_member=household_member,
-            first_name="ERIK",
+            registered_subject=household_member.registered_subject,
+            first_name=household_member.first_name,
             last_name='WERIK',
-            gender='M',
+            gender=household_member.gender,
             dob=date.today() - relativedelta(years=18),
             initials=household_member.initials,
             study_site=self.study_site,
             )
+        signals.post_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         return HouseholdMember.objects.get(pk=pk)
 
     def test_household_member1(self):
@@ -388,6 +394,7 @@ class TestMemberStatus(SimpleTestCase):
     def test_member_refusing_htc_failed_eligibility(self):
         """Asserts that an eligible member that fails Eligibility but becomes HTC_ELIGIBLE as household is enrolled
             then however refuses htc to end up with status REFUSED_HTC."""
+        self.startup()
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             gender='M',
@@ -428,6 +435,7 @@ class TestMemberStatus(SimpleTestCase):
     def test_member_refusing_htc_after_refusing_bhs(self):
         """Asserts that an eligible member that refuses BHS but household is enrolled
             then however refuses htc to end up with status REFUSED_HTC."""
+        self.startup()
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
             gender='M',
@@ -487,7 +495,6 @@ class TestMemberStatus(SimpleTestCase):
         enrollment_checklist.has_identity = 'No'
         enrollment_checklist.save()
         household_member = HouseholdMember.objects.get(pk=pk)
-        # FAILS HERE
         self.assertFalse(household_member.eligible_subject)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
