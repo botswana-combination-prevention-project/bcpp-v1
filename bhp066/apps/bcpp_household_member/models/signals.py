@@ -43,6 +43,7 @@ def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
 def enrollment_checklist_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if isinstance(instance, EnrollmentChecklist):
+            instance.household_member.eligible_subject = False
             if instance.is_eligible:
                 instance.household_member.eligible_subject = True
             instance.household_member.enrollment_checklist_completed = True
