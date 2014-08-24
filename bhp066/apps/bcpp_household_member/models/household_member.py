@@ -339,16 +339,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     @property
     def subject_absentee_instance(self):
         """Returns the subject absentee instance for this member and creates a subject_absentee_instance if it does not exist."""
-        household_member_helper = HouseholdMemberHelper(self)
-        household_member_helper.household_member = self
-        return household_member_helper.subject_status_factory('SubjectAbsentee', ABSENT)
+        return HouseholdMemberHelper(self).subject_status_factory('SubjectAbsentee', ABSENT)
 
     @property
     def subject_undecided_instance(self):
         """Returns the subject undecided instance for this member and creates a subject_undecided_instance if it does not exist."""
-        household_member_helper = HouseholdMemberHelper(self)
-        household_member_helper.household_member = self
-        return household_member_helper.subject_status_factory('SubjectUndecided', UNDECIDED)
+        return HouseholdMemberHelper(self).subject_status_factory('SubjectUndecided', UNDECIDED)
 
     def render_absentee_info(self):
         """Renders the absentee information for the template."""
