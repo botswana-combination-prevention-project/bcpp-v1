@@ -1,3 +1,4 @@
+from django.conf import settings
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, SimpleTestCase, TransactionTestCase
@@ -59,6 +60,7 @@ class TestMemberStatus(SimpleTestCase):
         self.registered_subject = None
         self.representative_eligibility = None
         self.study_site = None
+        self.intervention = None
 
         try:
             site_lab_profiles.register(BcppSubjectProfile())
@@ -74,6 +76,7 @@ class TestMemberStatus(SimpleTestCase):
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
         self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
+        self.intervention = site_mappers.get_registry(settings.CURRENT_COMMUNITY)().intervention
 
     def enroll_household(self):
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=18,
@@ -124,7 +127,10 @@ class TestMemberStatus(SimpleTestCase):
         self.startup()
         HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=64,
                                study_resident='No', household_structure=self.household_structure)
-        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        else:
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, HTC_ELIGIBLE)
 
     def test_household_member2(self):
         """Assert not reported based on age and residency, household not enrolled"""
@@ -132,15 +138,22 @@ class TestMemberStatus(SimpleTestCase):
         household_member = HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW',
                                                   age_in_years=75, study_resident='Yes', household_structure=self.household_structure)
         self.assertFalse(household_member.eligible_member)
-        self.assertFalse(household_member.eligible_htc)
-        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertFalse(household_member.eligible_htc)
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        else:
+            self.assertTrue(household_member.eligible_htc)
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, HTC_ELIGIBLE)
 
     def test_household_member2a(self):
         """Assert not reported based on age and residency, household not enrolled"""
         self.startup()
         HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=75,
                                study_resident='No', household_structure=self.household_structure)
-        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        else:
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, HTC_ELIGIBLE)
 
     def test_household_member3(self):
         """Assert not eligible based on age and residency"""
@@ -168,7 +181,10 @@ class TestMemberStatus(SimpleTestCase):
         self.startup()
         HouseholdMemberFactory(inability_to_participate='N/A', first_name='ERIK', initials='EW', age_in_years=16,
                                study_resident='No', household_structure=self.household_structure)
-        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, NOT_ELIGIBLE)
+        else:
+            self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, HTC_ELIGIBLE)
 
     def test_enrolled_household(self):
         """Assert household is enrolled when subject consents"""
@@ -345,7 +361,7 @@ class TestMemberStatus(SimpleTestCase):
         self.assertFalse(household_member.refused)
 
     def test_change_household_member5(self):
-        """Asserts that an eligible member that refuses before eligibility is HTC ELIGIBLE."""
+        """Asserts that an eligible member that refuses before eligibility is REFUSED."""
         self.startup()
         household_member = HouseholdMemberFactory(
             household_structure=self.household_structure,
@@ -359,12 +375,12 @@ class TestMemberStatus(SimpleTestCase):
         household_member.save()
         household_member = HouseholdMember.objects.get(pk=pk)
         SubjectRefusalFactory(household_member=household_member)
-        self.assertEqual(household_member.member_status, REFUSED)
-        self.assertTrue(household_member.refused)
-#         household_member.member_status = REFUSED
-#         household_member.save()
-#         household_member = HouseholdMember.objects.get(pk=pk)
-#         self.assertEqual(household_member.member_status, REFUSED)
+        if self.intervention:
+            self.assertEqual(household_member.member_status, REFUSED)
+            self.assertTrue(household_member.refused)
+        else:
+            self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
+            self.assertTrue(household_member.refused)
 
     def test_change_household_member6(self):
         """Asserts that an eligible member that fails Eligibility is NOT ELIGIBLE if the household is not enrolled."""
@@ -388,8 +404,12 @@ class TestMemberStatus(SimpleTestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertFalse(household_member.eligible_subject)
-        self.assertFalse(household_member.eligible_htc)
-        self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertFalse(household_member.eligible_htc)
+            self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        else:
+            self.assertTrue(household_member.eligible_htc)
+            self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
 
     def test_member_refusing_htc_failed_eligibility(self):
         """Asserts that an eligible member that fails Eligibility but becomes HTC_ELIGIBLE as household is enrolled
@@ -496,8 +516,12 @@ class TestMemberStatus(SimpleTestCase):
         enrollment_checklist.save()
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertFalse(household_member.eligible_subject)
-        self.assertFalse(household_member.eligible_htc)
-        self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertFalse(household_member.eligible_htc)
+            self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        else:
+            self.assertTrue(household_member.eligible_htc)
+            self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
         self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 1)
 
     def test_change_household_member6b(self):
@@ -522,8 +546,12 @@ class TestMemberStatus(SimpleTestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.assertFalse(household_member.eligible_subject)
-        self.assertFalse(household_member.eligible_htc)
-        self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertFalse(household_member.eligible_htc)
+            self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        else:
+            self.assertTrue(household_member.eligible_htc)
+            self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
         self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 1)
         ec = EnrollmentChecklist.objects.get(household_member=household_member)
         ec.has_identity = 'Yes'
@@ -545,10 +573,6 @@ class TestMemberStatus(SimpleTestCase):
             study_resident='Yes')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        household_member.member_status = BHS_SCREEN
-        household_member.save()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
         EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -559,7 +583,10 @@ class TestMemberStatus(SimpleTestCase):
             has_identity='No')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        if self.intervention:
+            self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
+        else:
+            self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
         self.enroll_household()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
@@ -581,13 +608,7 @@ class TestMemberStatus(SimpleTestCase):
             study_resident='Yes')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        household_member.member_status = BHS_SCREEN
-        household_member.save()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
         self.enroll_household()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
         EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -614,13 +635,7 @@ class TestMemberStatus(SimpleTestCase):
             study_resident='Yes')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        household_member.member_status = BHS_SCREEN
-        household_member.save()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
         self.enroll_household()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
         EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -645,15 +660,9 @@ class TestMemberStatus(SimpleTestCase):
             age_in_years=20,
             present_today='Yes',
             study_resident='Yes')
-        # pk = household_member.pk
-        # household_member = HouseholdMember.objects.get(pk=pk)
-        # household_member.member_status = BHS_SCREEN
-        # household_member.save()
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         self.enroll_household()
-        pk = household_member.pk
-        household_member = HouseholdMember.objects.get(pk=pk)
         EnrollmentChecklistFactory(
             household_member=household_member,
             gender='M',
@@ -715,8 +724,15 @@ class TestMemberStatus(SimpleTestCase):
         SubjectRefusalFactory(household_member=household_member)
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        self.assertEquals(household_member.member_status, REFUSED)
-        self.assertFalse(household_member.eligible_subject)
-        self.assertFalse(household_member.enrollment_checklist_completed)
-        self.assertTrue(household_member.refused)
-        self.assertFalse(household_member.eligible_htc)
+        if self.intervention:
+            self.assertEquals(household_member.member_status, REFUSED)
+            self.assertFalse(household_member.eligible_subject)
+            self.assertFalse(household_member.enrollment_checklist_completed)
+            self.assertTrue(household_member.refused)
+            self.assertFalse(household_member.eligible_htc)
+        else:
+            self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
+            self.assertFalse(household_member.eligible_subject)
+            self.assertFalse(household_member.enrollment_checklist_completed)
+            self.assertTrue(household_member.refused)
+            self.assertTrue(household_member.eligible_htc)
