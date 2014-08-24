@@ -487,7 +487,6 @@ class TestMemberStatus(SimpleTestCase):
         enrollment_checklist.has_identity = 'No'
         enrollment_checklist.save()
         household_member = HouseholdMember.objects.get(pk=pk)
-        # FAILS HERE
         self.assertFalse(household_member.eligible_subject)
         self.assertFalse(household_member.eligible_htc)
         self.assertEquals(household_member.member_status, NOT_ELIGIBLE)
