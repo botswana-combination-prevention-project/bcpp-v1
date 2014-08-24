@@ -22,7 +22,8 @@ from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, E
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.tests.factories import SurveyFactory
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_lab.models import Panel
+from apps.bcpp_lab.models import Panel, AliquotType
+from apps.bcpp_list.models import Diagnoses
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -554,22 +555,28 @@ class TestRuleGroup(TestCase):
             entry__model_name='medicaldiagnoses',
             appointment=self.subject_visit_female.appointment)
 
-        medical_diagnoses = MedicalDiagnosesFactory(subject_visit=self.subject_visit_female, heart_attack_record='Yes')
+        diagnoses = Diagnoses.objects.create(name = 'Heart Disease or Stroke')
+        medical_diagnoses = MedicalDiagnosesFactory(subject_visit=self.subject_visit_female)
+        medical_diagnoses.diagnoses.add(diagnoses)
         medical_diagnoses.save()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **medicaldiagnoses_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **heartattack_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **cancer_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **tbsymptoms_options).count(), 1)
 
-        medical_diagnoses.cancer_record = 'Yes'
-        medical_diagnoses.heart_attack_record = None
+        medical_diagnoses.diagnoses.remove(diagnoses)
+        diagnoses.name = 'Cancer'
+        diagnoses.save()
+        medical_diagnoses.diagnoses.add(diagnoses)
         medical_diagnoses.save()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **heartattack_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **cancer_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **tbsymptoms_options).count(), 1)
 
-        medical_diagnoses.tb_record = 'Yes'
-        medical_diagnoses.cancer_record = None
+        medical_diagnoses.diagnoses.remove(diagnoses)
+        diagnoses.name = 'Tubercolosis'
+        diagnoses.save()
+        medical_diagnoses.diagnoses.add(diagnoses)
         medical_diagnoses.save()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **heartattack_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **cancer_options).count(), 1)
@@ -852,9 +859,10 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **elisa_hiv_result_options).count(), 1)
 
+        aliquot_type = AliquotType.objects.all()[0]
         site = StudySite.objects.all()[0]
         microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, site=site)
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
         HivResult.objects.create(
              subject_visit=self.subject_visit_male,
              hiv_result='IND',
@@ -864,7 +872,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **elisa_hiv_result_options).count(), 1)
 
         elisa_panel = Panel.objects.get(name='ELISA')
-        elisa = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=elisa_panel, site=site)
+        elisa = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=elisa_panel, aliquot_type=aliquot_type, site=site)
         ElisaHivResult.objects.create(
              subject_visit=self.subject_visit_male,
              hiv_result='POS',
