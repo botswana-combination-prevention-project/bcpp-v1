@@ -36,9 +36,9 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(NOT_ELIGIBLE, self.household_member.member_status))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
-        self.household_member.enrollment_loss_completed = True
+        #self.household_member.enrollment_loss_completed = True
         # important during dispatch, need to save instance to the correct db.
-        self.household_member.save(using=kwargs.get('using', None))
+        #self.household_member.save(using=kwargs.get('using', None))
         super(EnrollmentLoss, self).save(*args, **kwargs)
 
     def __unicode__(self):
