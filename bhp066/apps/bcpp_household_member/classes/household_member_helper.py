@@ -61,7 +61,8 @@ class HouseholdMemberHelper(object):
 
     @property
     def intervention_community(self):
-        mapper = site_mappers.get_registry('lentsweletau')()
+        from django.conf import settings
+        mapper = site_mappers.get_registry(settings.CURRENT_COMMUNITY)()
         return mapper.intervention
 
     @property
@@ -259,43 +260,34 @@ class HouseholdMemberHelper(object):
             2. is an eligible_member but refuses before eligibility
             3. is an eligible_member and refuses after passing eligibility
             4. is an eligible_member and fails eligibility and completes the loss form.
-            5. in CCC community a plot is not required to be enrolled for one to qualify for HTC"""
+            5. in CCC community a plot is NOT required to be enrolled for one to qualify for HTC"""
         self._eligible_htc = False
         if not self.consented and not self.consenting:
-            if self.plot_enrolled:
-                if self.household_member.age_in_years > 64:
-                    self._eligible_htc = True
-                elif (not self.eligible_member and self.household_member.inability_to_participate == 'N/A') and self.household_member.age_in_years >= 16:
-                    self._eligible_htc = True
-                elif self.eligible_member:
-                    if not self.enrollment_checklist_completed and self.refused:
-                        self._eligible_htc = True
-                    elif self.enrollment_checklist_completed and not self.eligible_subject:
-                        self._eligible_htc = True
-                    elif self.enrollment_checklist_completed and self.eligible_subject and self.refused:
-                        self._eligible_htc = True
-                    else:
-                        pass
-                else:
-                    pass
+            if self.intervention_community and self.plot_enrolled:
+                self._eligible_htc = self.evaluate_htc_eligibility
+            elif not self.intervention_community:
+                self._eligible_htc = self.evaluate_htc_eligibility
         return self._eligible_htc
 
-#     def evaluate_htc_eligibility(self):
-#         if self.household_member.age_in_years > 64:
-#             self._eligible_htc = True
-#         elif (not self.eligible_member and self.household_member.inability_to_participate == 'N/A') and self.household_member.age_in_years >= 16:
-#             self._eligible_htc = True
-#         elif self.eligible_member:
-#             if not self.enrollment_checklist_completed and self.refused:
-#                 self._eligible_htc = True
-#             elif self.enrollment_checklist_completed and not self.eligible_subject:
-#                 self._eligible_htc = True
-#             elif self.enrollment_checklist_completed and self.eligible_subject and self.refused:
-#                 self._eligible_htc = True
-#             else:
-#                 pass
-#         else:
-#             pass
+    @property
+    def evaluate_htc_eligibility(self):
+        eligible_htc = False
+        if self.household_member.age_in_years > 64:
+            eligible_htc = True
+        elif (not self.eligible_member and self.household_member.inability_to_participate == 'N/A') and self.household_member.age_in_years >= 16:
+            eligible_htc = True
+        elif self.eligible_member:
+            if not self.enrollment_checklist_completed and self.refused:
+                eligible_htc = True
+            elif self.enrollment_checklist_completed and not self.eligible_subject:
+                eligible_htc = True
+            elif self.enrollment_checklist_completed and self.eligible_subject and self.refused:
+                eligible_htc = True
+            else:
+                pass
+        else:
+            pass
+        return eligible_htc
 
     @property
     def subject_htc(self):
