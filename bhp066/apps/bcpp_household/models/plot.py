@@ -247,12 +247,13 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         if not self.allow_enrollement:
-            raise ValidationError('Not allowed to modify this Plot.')
-        # If the plot is replaced can not save this plot
-        if self.id and not kwargs.get('using'):
-            plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
-            if plot.replaced_by:
+            raise ValidationError('BHS enrollment for {0} ended on {1}. This plot may not be modified. See settings.BHS_END_DATE'.format(self.community, settings.BHS_END_DATE))
+        try:
+            # if plot is replaced abort the save
+            if self.__class__.objects.using(kwargs.get('using')).get(id=self.id).replaced_by:
                 raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
+        except self.__class__.DoesNotExist:
+            pass
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
@@ -280,8 +281,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
                 self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
             self.action = self.get_action()
-            if self.id:  # TODO: only creates households if modified?
-                self.household_count = self.create_or_delete_households(self)
+            self.household_count = self.create_or_delete_households(self)
             if ((self.household_count == 0 and self.status in ['residential_habitable'])):
                 raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
         super(Plot, self).save(*args, **kwargs)
@@ -342,7 +342,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def create_or_delete_households(self, instance, using=None):
         """Creates or deletes households to try to equal the number of households reported on the plot instance.
 
-        This gets called by a signal on add and on the save method on change.
+        This gets called by a household post_save signal and on the plot save method on change.
 
             * If number is greater than actual household instances, households are created.
             * If number is less than actual household instances, households are deleted as long as
