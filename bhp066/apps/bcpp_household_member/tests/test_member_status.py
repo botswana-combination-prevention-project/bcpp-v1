@@ -96,9 +96,10 @@ class TestMemberStatus(SimpleTestCase):
         self.assertEqual(enrollment_checklist.household_member.pk, household_member.pk)
         SubjectConsentFactory(
             household_member=household_member,
-            first_name="ERIK",
+            registered_subject=household_member.registered_subject,
+            first_name=household_member.first_name,
             last_name='WERIK',
-            gender='M',
+            gender=household_member.gender,
             dob=date.today() - relativedelta(years=18),
             initials=household_member.initials,
             study_site=self.study_site,
