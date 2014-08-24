@@ -3,9 +3,9 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 BHS_START_DATE = date(2014, 8, 27)
 BHS_FULL_ENROLLMENT_DATE = date(2014, 10, 7)
-BHS_END_DATE = date(2014, 10, 21)
-SMC_START_DATE = date(2014, 10, 15)
-SMC_ECC_START_DATE = date(2014, 7, 10)
+BHS_END_DATE = date(2014, 10, 28)
+SMC_START_DATE = date(2014, 10, 20)
+SMC_ECC_START_DATE = date(2014, 10, 22)
 
 INTERVENTION_COMMUNITIES = [11, 13, 15, 17, 19, 21, 23, 25, 27, 29]
 
@@ -34,7 +34,7 @@ CLINIC_DAYS = {
            'ANC': ((MO, TU, WE, TH, FR), ),
            'SMC': ((MO, TU, WE, TH, FR), SMC_START_DATE),
            'SMC-ECC': ((MO, TU, WE, TH, FR), SMC_ECC_START_DATE)},
-    '17': {'IDCC': ((MO, WE), ),
+    '17': {'IDCC': ((TU, TH), ),
            'ANC': ((MO, TU, WE, TH, FR), ),
            'SMC': ((MO, TU, WE, TH, FR), SMC_START_DATE),
            'SMC-ECC': ((MO, TU, WE, TH, FR), SMC_ECC_START_DATE)},
