@@ -61,8 +61,7 @@ class HouseholdMemberHelper(object):
 
     @property
     def intervention_community(self):
-        from django.conf import settings
-        mapper = site_mappers.get_registry(settings.CURRENT_COMMUNITY)()
+        mapper = site_mappers.get_current_mapper()
         return mapper.intervention
 
     @property
