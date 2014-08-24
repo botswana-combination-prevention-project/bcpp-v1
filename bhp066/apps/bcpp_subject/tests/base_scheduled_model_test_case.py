@@ -23,7 +23,7 @@ from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 
-class BaseScheduledModelTestCase(SimpleTestCase):
+class BaseScheduledModelTestCase(TestCase):
 
     app_label = 'bcpp_subject'
     community = None

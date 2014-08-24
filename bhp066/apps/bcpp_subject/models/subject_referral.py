@@ -326,6 +326,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                                                                  subject_referral_helper.referral_code,
                                                                  scheduled_appt_date=self.scheduled_appt_date)
         self.referral_appt_date = subject_referral_appt_helper.referral_appt_datetime
+        self.referral_clinic_type = subject_referral_appt_helper.referral_clinic_type
+        self.scheduled_appt_date = subject_referral_appt_helper.original_scheduled_appt_date
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
