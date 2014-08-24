@@ -103,7 +103,7 @@ class SubjectReferralApptHelper(object):
         """Returns a True if this community is an intervention community
         (CPC) otherwise False."""
         try:
-            self.intervention_community = site_mappers.get_registry(self.community_code).
+            self.intervention_community = site_mappers.get_registry(self.community_code)
             intervention_community = self.intervention_communities[
                 self.intervention_communities.index(self.community_code)]
         except ValueError:
