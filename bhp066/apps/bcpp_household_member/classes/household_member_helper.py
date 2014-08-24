@@ -17,19 +17,19 @@ class HouseholdMemberHelper(object):
         self._member_status_bhs_screen = None
         self._member_status_enrollment_loss = False
         self.household_member = household_member
-        if self.household_member.id:
-            if self.household_member.member_status == ABSENT:
-                self.member_status_absent = True
-            elif self.household_member.member_status == UNDECIDED:
-                self.member_status_undecided = True
-            elif self.household_member.member_status == REFUSED:
-                self.member_status_refused = True
-            elif self.household_member.member_status == BHS_SCREEN:
-                self.member_status_bhs_screen = True
-            elif self.household_member.member_status == HTC_ELIGIBLE:
-                self.member_status_htc = True
-            elif self.household_member.member_status == NOT_ELIGIBLE:
-                self.member_status_enrollment_loss = True
+#         if self.household_member.id:
+#             if self.household_member.member_status == ABSENT:
+#                 self.member_status_absent = True
+#             elif self.household_member.member_status == UNDECIDED:
+#                 self.member_status_undecided = True
+#             elif self.household_member.member_status == REFUSED:
+#                 self.member_status_refused = True
+#             elif self.household_member.member_status == BHS_SCREEN:
+#                 self.member_status_bhs_screen = True
+#             elif self.household_member.member_status == HTC_ELIGIBLE:
+#                 self.member_status_htc = True
+#             elif self.household_member.member_status == NOT_ELIGIBLE:
+#                 self.member_status_enrollment_loss = True
         self._reported = None
 
     def __repr__(self):
@@ -59,10 +59,10 @@ class HouseholdMemberHelper(object):
     def household_enrolled(self):
         return self.household_member.household_structure.enrolled
 
-#     @property
-#     def intervention_community(self):
-#         mapper = site_mappers.get_registry('lentsweletau')()
-#         return mapper.intervention
+    @property
+    def intervention_community(self):
+        mapper = site_mappers.get_registry('lentsweletau')()
+        return mapper.intervention
 
     @property
     def plot_enrolled(self):
