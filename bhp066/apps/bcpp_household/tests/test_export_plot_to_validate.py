@@ -34,7 +34,7 @@ class ExportPlotToValidateTest(TestCase):
         """Tests the if the exported plots are the right number and the correct ones."""
 
         community_name = 'lentsweletau'
-        # Plot statistics in the databse
+        # Plot statistics in the database
         db_all_plots = Plot.objects.all()  # Total number of plots in the database
         db_plots = []
         db_plots_75pct = []
