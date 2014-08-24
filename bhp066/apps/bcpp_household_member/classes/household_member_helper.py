@@ -142,7 +142,7 @@ class HouseholdMemberHelper(object):
     @member_status_refused.setter
     def member_status_refused(self, is_status):
         """Returns the current member status as refused or None."""
-        from ..models import SubjectRefusal
+        from ..models import SubjectRefusal, SubjectRefusalHistory
         self._member_status_refused = None
         if is_status:
             self._member_status_refused = REFUSED
@@ -155,7 +155,14 @@ class HouseholdMemberHelper(object):
         else:
             self.household_member.refused = False
             if SubjectRefusal.objects.filter(household_member=self.household_member):
-                SubjectRefusal.objects.get(household_member=self.household_member).delete()
+                subject_refusal = SubjectRefusal.objects.get(household_member=self.household_member)
+                options = {'household_member': subject_refusal.household_member,
+                       'survey': subject_refusal.survey,
+                       'refusal_date': subject_refusal.refusal_date,
+                       'reason': subject_refusal.reason,
+                       'reason_other': subject_refusal.reason_other}
+                SubjectRefusalHistory.objects.create(**options)
+                subject_refusal.delete()
         return self._member_status_refused
 
     @property
@@ -191,7 +198,7 @@ class HouseholdMemberHelper(object):
             self.member_status_enrollment_loss = False
             self.member_status_htc = False
             self.member_status_refused = False
-            # self.enrollment_checklist_completed = False  # this is a bad boy!!
+            self.enrollment_checklist_completed = False  # this is a bad boy!!
         return self._member_status_bhs_screen
 
     @property
@@ -320,15 +327,22 @@ class HouseholdMemberHelper(object):
 
         If one is switching back to BHS_SCREEN for whatever reason, then
         enrollment_checklist_completed needs to be set back to false and the
-        enrollment checklist deleted for that member."""
+        enrollment checklist deleted for that member,the same applies to enrollment_loss_completed and
+        deleting the enrollment_loss. This is all done in the enrollment_checklist_on_post_delete signal."""
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'enrollmentchecklist')
+        EnrollmentLoss = models.get_model('bcpp_household_member', 'enrollmentloss')
         if not is_completed:  # reset the field value and delete the checklist if it exists
             try:
                 EnrollmentChecklist.objects.get(household_member=self.household_member).delete()
-                self.household_member.enrollment_checklist_completed = False
-                self.household_member.eligible_subject = False
             except EnrollmentChecklist.DoesNotExist:
                 pass
+            try:
+                EnrollmentLoss.objects.get(household_member=self.household_member).delete()
+            except EnrollmentLoss.DoesNotExist:
+                pass
+            self.household_member.enrollment_checklist_completed = False
+            self.household_member.enrollment_loss_completed = False
+            self.household_member.eligible_subject = False
 
     @property
     def enrollment_loss_completed(self):
