@@ -191,3 +191,26 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
                              expected_appt_datetime,
                              referral_appt_day,
                              referral_appt_datetime))
+
+    def test_hiv1(self):
+        """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (SA->MO)"""
+        today_day = 'Sat'
+        expected_appt_day = 'Mon'
+        today = date(2014, 11, 1)
+        scheduled_appt_date = None
+        expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
+        community_code = '11'
+        referral_code = 'TST-HIV'
+        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
+        referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
+                         'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
+        self.assertEqual(referral_appt_day,
+                         expected_appt_day,
+                         'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
+                             expected_appt_day,
+                             expected_appt_datetime,
+                             referral_appt_day,
+                             referral_appt_datetime))
