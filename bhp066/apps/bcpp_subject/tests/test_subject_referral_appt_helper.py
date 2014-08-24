@@ -91,7 +91,7 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
-                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.clinic_type))
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
         self.assertEqual(referral_appt_day,
                          expected_appt_day,
                          'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
@@ -114,7 +114,7 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
-                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.clinic_type))
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
         self.assertEqual(referral_appt_day,
                          expected_appt_day,
                          'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
@@ -137,7 +137,7 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
-                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.clinic_type))
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
         self.assertEqual(referral_appt_day,
                          expected_appt_day,
                          'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
@@ -160,7 +160,7 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
-                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.clinic_type))
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
         self.assertEqual(referral_appt_day,
                          expected_appt_day,
                          'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
@@ -183,7 +183,7 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
-                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.clinic_type))
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
         self.assertEqual(referral_appt_day,
                          expected_appt_day,
                          'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
