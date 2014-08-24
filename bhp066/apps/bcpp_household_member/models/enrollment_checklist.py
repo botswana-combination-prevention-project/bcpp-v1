@@ -190,6 +190,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             loss_reason.append('Minor without guardian available.')
         if loss_reason:
             self.household_member.member_status = NOT_ELIGIBLE
+            self.household_member.enrollment_loss_completed = True
             try:
                 enrollment_loss = EnrollmentLoss.objects.using(using).get(household_member=self.household_member)
                 enrollment_loss.report_datetime = datetime.today()
@@ -201,6 +202,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                     reason=';'.join(loss_reason))
         else:
             EnrollmentLoss.objects.using(using).filter(household_member=self.household_member).delete()
+            self.household_member.enrollment_loss_completed = False
         return False if loss_reason else True
 
     class Meta:
