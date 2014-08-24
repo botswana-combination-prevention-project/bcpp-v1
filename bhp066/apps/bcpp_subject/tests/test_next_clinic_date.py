@@ -3,11 +3,11 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.test import SimpleTestCase
 
-from .next_clinic_date import next_clinic_date
+from ..utils import next_clinic_date
 
 CLINIC_DAYS = {
-    '11': {'IDCC': (MO, WE), 'ANC': (MO, TU, WE, TH, FR), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
-    '12': {'IDCC': (MO, WE), 'ANC': (MO, TU, WE, TH, FR), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+    '11': {'IDCC': ((MO, WE), ), 'ANC': ((MO, TU, WE, TH, FR), ), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+    '12': {'IDCC': ((MO, WE), ), 'ANC': ((MO, TU, WE, TH, FR), ), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
     }
 
 
@@ -22,6 +22,7 @@ class TestNextClinicDate(SimpleTestCase):
     community_code = None
     clinic = None
     community_clinic_days = None
+    referral_code = None
 
     def calc_date(self):
         self.community_clinic_days = CLINIC_DAYS.get(self.community_code)
@@ -116,3 +117,18 @@ class TestNextClinicDate(SimpleTestCase):
         self.community_code = '11'
         self.clinic = 'SMC'
         self.calc_date()
+
+    def test_same_day(self):
+        """Assert give Sat get next Mon"""
+        self.today_day = 'Mon'
+        self.expected_appt_day = 'Tue'
+        self.today = date(2014, 8, 25)
+        self.expected_appt_datetime = datetime(2014, 8, 25, 7, 30, 0)
+        self.community_code = '11'
+        self.clinic = 'IDCC'
+        self.assertEqual(next_clinic_date(self.community_code,
+                                          self.clinic,
+                                          self.today,
+                                          self.community_clinic_days,
+                                          allow_same_day=True),
+                         self.expected_appt_datetime)
