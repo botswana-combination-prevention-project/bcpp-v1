@@ -1,6 +1,6 @@
 from django.template.loader import render_to_string
 
-from apps.bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral
+from apps.bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral, CorrectConsent
 from apps.bcpp_lab.models import SubjectRequisition, PackingList
 
 
@@ -62,6 +62,9 @@ class SubjectDashboard(BaseSubjectDashboard):
     def locator_scheduled_visit_code(self):
         """ Returns visit where the locator is scheduled, TODO: maybe search visit definition for this?."""
         return '1000'
+    @property
+    def correct_consent_meta(self):
+        return CorrectConsent._meta
 
     @property
     def packing_list_model(self):
