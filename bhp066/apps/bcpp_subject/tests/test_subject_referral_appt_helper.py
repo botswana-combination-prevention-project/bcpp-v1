@@ -193,7 +193,7 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
                              referral_appt_datetime))
 
     def test_hiv1(self):
-        """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (SA->MO)"""
+        """Assert referred to VCT testing"""
         today_day = 'Sat'
         expected_appt_day = 'Mon'
         today = date(2014, 11, 1)
