@@ -324,6 +324,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
             setattr(self, field, value)
         subject_referral_appt_helper = SubjectReferralApptHelper(subject_referral_helper.community_code,
                                                                  subject_referral_helper.referral_code,
+                                                                 self.report_datetime,
                                                                  scheduled_appt_date=self.scheduled_appt_date)
         self.referral_appt_date = subject_referral_appt_helper.referral_appt_datetime
         self.referral_clinic_type = subject_referral_appt_helper.referral_clinic_type
