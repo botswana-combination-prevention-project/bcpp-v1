@@ -25,17 +25,19 @@ class CorrectConsentAdmin(BaseHouseholdModelAdmin):
         'gender_old',
         'guardian_name',
         'guardian_name_old',
-        'may_store_samples'
-        'may_store_samples_old'
+        'may_store_samples',
+        'may_store_samples_old',
         'is_literate',
         'is_literate_old',
         )
 
     radio_fields = {
         'gender': admin.VERTICAL,
-        'gender': admin.VERTICAL,
+        'gender_old': admin.VERTICAL,
         'is_literate': admin.VERTICAL,
+        'is_literate_old': admin.VERTICAL,
         'may_store_samples': admin.VERTICAL,
+        'may_store_samples_old': admin.VERTICAL,
         }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
