@@ -51,7 +51,7 @@ else:
 MANAGERS = ADMINS
 
 # DATABASES
-CONN_MAX_AGE = 60
+CONN_MAX_AGE = 15
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
