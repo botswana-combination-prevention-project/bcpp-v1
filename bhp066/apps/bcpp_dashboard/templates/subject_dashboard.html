@@ -47,7 +47,7 @@
 {% endblock %}
 {% if subject_consent %}
 {% block correct_consent %}
-<A href="{% url correct_consent_meta|admin_urlname:'add' %}?subject_consent={{subject_consent}}&next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct_consent</A>
+<A href="{% url correct_consent_meta|admin_urlname:'add' %}?subject_consent={{subject_consent}}&next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
 {% endblock correct_consent %}
 {% endif %}
 {% if subject_hiv_result %}

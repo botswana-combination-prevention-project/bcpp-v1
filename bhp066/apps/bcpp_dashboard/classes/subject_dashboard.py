@@ -29,6 +29,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             household_dashboard_url=self.household_dashboard_url,
             title='Research Subject Dashboard',
             subject_consent=self.consent,
+            correct_consent_meta=self.correct_consent_meta,
             subject_referral=self.subject_referral,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
@@ -62,6 +63,7 @@ class SubjectDashboard(BaseSubjectDashboard):
     def locator_scheduled_visit_code(self):
         """ Returns visit where the locator is scheduled, TODO: maybe search visit definition for this?."""
         return '1000'
+
     @property
     def correct_consent_meta(self):
         return CorrectConsent._meta
