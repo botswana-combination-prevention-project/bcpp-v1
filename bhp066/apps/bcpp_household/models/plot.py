@@ -506,6 +506,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def increase_plot_radius(self):
         from .plot_log import PlotLogEntry
         plot_log = self.plot_log
+        increase_radius = False
         try:
             plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
             reason = plot_log_entries[2].reason
