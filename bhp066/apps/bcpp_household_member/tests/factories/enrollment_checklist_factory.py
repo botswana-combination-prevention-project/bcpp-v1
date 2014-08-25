@@ -14,16 +14,17 @@ class EnrollmentChecklistFactory(BaseUuidModelFactory):
     class Meta:
         model = EnrollmentChecklist
 
+    # you need to set these
     household_member = factory.SubFactory(HouseholdMemberFactory)
     dob = date(1997, 10, 10)
-    guardian = 'N/A'
     gender = 'M'
+    initials = 'NN'
+    # these are defaults
+    has_identity = 'Yes'
+    guardian = 'N/A'
     citizen = 'Yes'
     legal_marriage = 'N/A'
     marriage_certificate = 'N/A'
-    # defaults for an eligible subject but user needs to add household_member, dob, gender, initials)
-    initials = 'NN'
-    has_identity = 'Yes'
     part_time_resident = 'Yes'
     household_residency = 'Yes'
     literacy = 'Yes'

@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from ..choices import REFERRAL_CODES
 
 from ..utils import next_clinic_date
+from edc.map.classes.controller import site_mappers
 
 
 class SubjectReferralApptHelper(object):
@@ -29,7 +30,7 @@ class SubjectReferralApptHelper(object):
         self.base_datetime = base_date or datetime.today()  # should come from the user as today's date??
         self.original_scheduled_appt_date = scheduled_appt_date
         self.scheduled_appt_datetime = scheduled_appt_date
-        self.smc_start_date = smc_start_date or settings.SMC_START_DATE
+        self.smc_start_date = smc_start_date or settings.SMC_START_DATE if self.intervention_community else settings.SMC_ECC_START_DATE
         self.clinic_days = clinic_days or settings.CLINIC_DAYS
 
     def __repr__(self):
@@ -73,7 +74,7 @@ class SubjectReferralApptHelper(object):
         elif 'MASA' in self.referral_code:
             clinic_type = 'IDCC'
         elif 'TST-HIV' in self.referral_code:
-            clinic_type = 'IDCC'
+            clinic_type = 'VCT'
         elif 'TST-CD4' in self.referral_code:
             clinic_type = 'IDCC'
         elif '-PR' in self.referral_code or '-AN' in self.referral_code:
@@ -101,12 +102,7 @@ class SubjectReferralApptHelper(object):
     def intervention_community(self):
         """Returns a True if this community is an intervention community
         (CPC) otherwise False."""
-        try:
-            intervention_community = self.intervention_communities[
-                self.intervention_communities.index(self.community_code)]
-        except ValueError:
-            intervention_community = False
-        return intervention_community
+        return site_mappers.get_current_mapper().intervention
 
     @property
     def scheduled_appt_datetime(self):
