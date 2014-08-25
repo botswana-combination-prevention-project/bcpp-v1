@@ -23,7 +23,7 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
     subject_visit = models.OneToOneField(SubjectVisit)
 
     report_datetime = models.DateTimeField(
-        verbose_name="Report Date and Time",
+        verbose_name="Report Date",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
