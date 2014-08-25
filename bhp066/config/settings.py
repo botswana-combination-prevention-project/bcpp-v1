@@ -14,7 +14,6 @@ from .databases import PRODUCTION_MYSQL
 from config.bcpp_days import BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE
 
 # from logger import LOGGING
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
@@ -63,6 +62,12 @@ if 'test' in sys.argv:
 else:
     DATABASES = PRODUCTION_MYSQL
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -252,12 +257,12 @@ SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constra
 #  edc.device.device
 DEVICE_ID = '99'
 if str(DEVICE_ID) == '98':
-    PROJECT_TITLE = 'MIDDLEMAN:-Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'MIDDLEMAN: Botswana Combination Prevention Project'
 elif str(DEVICE_ID) == '99':
-    PROJECT_TITLE = 'SERVER:-Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
 else:
-    PROJECT_TITLE = 'FIELD:-Botswana Combination Prevention Project'
-
+    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
+PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
