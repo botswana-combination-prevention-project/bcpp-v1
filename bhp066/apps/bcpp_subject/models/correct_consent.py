@@ -24,79 +24,89 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
 
     # may not be available when instance created (e.g. infants prior to birth report)
     first_name = EncryptedFirstnameField(
+        verbose_name="New First name",
         null=True,
+        blank=True,
         )
 
     first_name_old = EncryptedFirstnameField(
+        verbose_name="Old first name",
         null=True,
+        blank=True,
         )
 
     # may not be available when instance created (e.g. infants or household subject before consent)
     last_name = EncryptedLastnameField(
-        verbose_name="Last name",
+        verbose_name="New Last name",
         null=True,
+        blank=True,
         )
 
     last_name_old = EncryptedLastnameField(
-        verbose_name="Last name",
+        verbose_name="Old Last name",
         null=True,
+        blank=True,
         )
 
     # may not be available when instance created (e.g. infants)
     initials = EncryptedCharField(
+        verbose_name="New Initials value",
         validators=[RegexValidator(regex=r'^[A-Z]{2,3}$',
                                     message='Ensure initials consist of letters only in upper case, no spaces.'), ],
         null=True,
+        blank=True,
         )
 
     initials_old = EncryptedCharField(
+        verbose_name="Old Initials value",
         validators=[RegexValidator(regex=r'^[A-Z]{2,3}$',
                                     message='Ensure initials consist of letters only in upper case, no spaces.'), ],
         null=True,
+        blank=True,
         )
 
     dob = models.DateField(
-        verbose_name=_("Date of birth"),
+        verbose_name=_("New Date of birth"),
         validators=[
             dob_not_future,
             MinConsentAge,
             MaxConsentAge,
             ],
         null=True,
-        blank=False,
+        blank=True,
         help_text=_("Format is YYYY-MM-DD"),
         )
 
     dob_old = models.DateField(
-        verbose_name=_("Date of birth"),
+        verbose_name=_("Old Date of birth"),
         validators=[
             dob_not_future,
             MinConsentAge,
             MaxConsentAge,
             ],
         null=True,
-        blank=False,
+        blank=True,
         help_text=_("Format is YYYY-MM-DD"),
         )
 
     gender = models.CharField(
-        verbose_name="Gender",
+        verbose_name="New Gender value",
         choices=GENDER_UNDETERMINED,
         max_length=1,
         null=True,
-        blank=False,
+        blank=True,
         )
 
     gender_old = models.CharField(
-        verbose_name="Gender",
+        verbose_name="Old Gender value",
         choices=GENDER_UNDETERMINED,
         max_length=1,
         null=True,
-        blank=False,
+        blank=True,
         )
 
     guardian_name = EncryptedLastnameField(
-        verbose_name=("Guardian\'s Last and first name (minors only)"),
+        verbose_name=(" New Guardian\'s Last and first name (minors only)"),
         validators=[
             RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
             ],
@@ -106,7 +116,7 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
         )
 
     guardian_name_old = EncryptedLastnameField(
-        verbose_name=("Guardian\'s Last and first name (minors only)"),
+        verbose_name=("Old Guardian\'s Last and first name (minors only)"),
         validators=[
             RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
             ],
@@ -116,30 +126,34 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
         )
 
     may_store_samples = models.CharField(
-        verbose_name=_("Sample storage"),
+        verbose_name=_("New Sample storage value"),
         max_length=3,
+        blank=True,
         choices=YES_NO,
         help_text=("Does the subject agree to have samples stored after the study has ended")
         )
 
     may_store_samples_old = models.CharField(
-            verbose_name=_("Sample storage"),
+            verbose_name=_("Old Sample storage value"),
             max_length=3,
+            blank=True,
             choices=YES_NO,
             help_text=("Does the subject agree to have samples stored after the study has ended")
             )
 
     is_literate = models.CharField(
-        verbose_name="Is the participant LITERATE?",
+        verbose_name="New value of Is the participant LITERATE?",
         max_length=3,
+        blank=True,
         choices=YES_NO,
         default='-',
         help_text="( if 'No' provide witness\'s name here and with signature on the paper document.)",
         )
 
     is_literate_old = models.CharField(
-        verbose_name="Is the participant LITERATE?",
+        verbose_name="Old value of Is the participant LITERATE?",
         max_length=3,
+        blank=True,
         choices=YES_NO,
         default='-',
         help_text="( if 'No' provide witness\'s name here and with signature on the paper document.)",
@@ -162,7 +176,7 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
             raise OldConsentValueError("The existing subject gender: {0} does not match the old subject gender: {1} you are entering.".format(self.gender_old, self.subject_consent.gender))
         if self.may_store_samples and not (self.may_store_samples_old == self.subject_consent.may_store_samples):
             raise OldConsentValueError("The existing subject sample storage value: {0} does not match the old subject sample storage value: {1} you are entering.".format(self.may_store_samples_old, self.subject_consent.may_store_samples))
-        if self.is_literate and not (self.is_literate == self.subject_consent.is_literate):
+        if self.is_literate and not (self.is_literate_old == self.subject_consent.is_literate):
             raise OldConsentValueError("The existing subject literacy:  {0} does not match the old subject literacy: {1} you are entering.".format(self.is_literate, self.subject_consent.is_literate))
 
     class Meta:
