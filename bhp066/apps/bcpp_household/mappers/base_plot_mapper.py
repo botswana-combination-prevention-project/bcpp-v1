@@ -44,3 +44,11 @@ class BasePlotMapper(Mapper):
         degrees_e, minutes_e = self.deg_to_dms(self.gps_center_lon)
         degrees_s, minutes_s = self.deg_to_dms(self.gps_center_lat)
         return (degrees_s, minutes_s, degrees_e, minutes_e)
+
+    @property
+    def community_code(self):
+        return self.map_code
+
+    @property
+    def community_name(self):
+        return self.map_areas
