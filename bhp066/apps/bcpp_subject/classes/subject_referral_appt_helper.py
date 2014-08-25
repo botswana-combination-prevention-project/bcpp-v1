@@ -25,7 +25,7 @@ class SubjectReferralApptHelper(object):
         self._referral_code = None
         self._scheduled_appt_datetime = None
         self.community_code = community_code
-        self.intervention_communities = intervention_communities or settings.INTERVENTION_COMMUNITIES
+        self.intervention_communities = intervention_communities
         self.referral_code = referral_code
         self.base_datetime = base_date or datetime.today()  # should come from the user as today's date??
         self.original_scheduled_appt_date = scheduled_appt_date
@@ -102,7 +102,12 @@ class SubjectReferralApptHelper(object):
     def intervention_community(self):
         """Returns a True if this community is an intervention community
         (CPC) otherwise False."""
-        return site_mappers.get_current_mapper().intervention
+        try:
+            # this is just for testing -- can pass a list of community codes
+            intervention_community = True if self.community_code in self.intervention_communities else False
+        except TypeError:
+            intervention_community = site_mappers.get_current_mapper().intervention
+        return intervention_community
 
     @property
     def scheduled_appt_datetime(self):
