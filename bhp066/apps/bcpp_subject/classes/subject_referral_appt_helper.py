@@ -102,7 +102,7 @@ class SubjectReferralApptHelper(object):
     def intervention_community(self):
         """Returns a True if this community is an intervention community
         (CPC) otherwise False."""
-        return site_mappers.get_registry(self.community_name).intervention
+        return site_mappers.get_current_mapper().intervention
 
     @property
     def scheduled_appt_datetime(self):
