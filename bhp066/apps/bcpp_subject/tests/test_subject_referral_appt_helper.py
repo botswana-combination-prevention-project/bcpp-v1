@@ -1,13 +1,22 @@
+
+
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.test import SimpleTestCase
 
 from ..classes import SubjectReferralApptHelper
+from apps.bcpp_household.utils.clinic_days_tuple import ClinicDaysTuple
 
 CLINIC_DAYS = {
-    '11': {'IDCC': ((MO, WE), ), 'ANC': ((MO, TU, WE, TH, FR), ), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
-    '12': {'IDCC': ((MO, WE), ), 'ANC': ((MO, TU, WE, TH, FR), ), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+    '98': {'IDCC': ClinicDaysTuple((MO, WE), None),
+           'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+           'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 11, 24))},
+    '99': {'IDCC': ClinicDaysTuple((MO, WE), None),
+           'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+           'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+           'SMC': ClinicDaysTuple((WE, ), date(2014, 11, 15))},
     }
 
 
@@ -19,12 +28,15 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
     def test_masa1(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
         today_day = 'Mon'
-        expected_appt_day = 'Mon'
+        expected_appt_day = 'Wed'
         today = date(2014, 8, 25)
-        expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
-        community_code = '11'
+        expected_appt_datetime = datetime(2014, 9, 10, 7, 30, 0)
+        community_code = '98'
         referral_code = 'MASA-CC'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code)
+        scheduled_appt_date = None
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code, today, scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -42,9 +54,14 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         expected_appt_day = 'Wed'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 8, 27, 7, 30, 0)
-        community_code = '11'
+        community_code = '98'
         referral_code = 'MASA-DF'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today)
+        scheduled_appt_date = None
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -63,9 +80,13 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         today = date(2014, 8, 25)
         scheduled_appt_date = date(2014, 9, 17)
         expected_appt_datetime = datetime(2014, 8, 27, 7, 30, 0)
-        community_code = '11'
+        community_code = '98'
         referral_code = 'MASA-DF'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a referral datetime of {0}. Got {1}'.format(expected_appt_datetime, referral_appt_datetime))
@@ -84,9 +105,13 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         today = date(2014, 8, 26)
         scheduled_appt_date = date(2014, 9, 17)
         expected_appt_datetime = datetime(2014, 9, 17, 7, 30, 0)
-        community_code = '11'
+        community_code = '98'
         referral_code = 'MASA-CC'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
@@ -107,9 +132,13 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         today = date(2014, 8, 26)
         scheduled_appt_date = datetime(2014, 9, 9, 7, 30, 0)
         expected_appt_datetime = datetime(2014, 9, 10, 7, 30, 0)
-        community_code = '11'
+        community_code = '98'
         referral_code = 'MASA-CC'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
@@ -126,15 +155,48 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
     def test_smc1(self):
         """Assert referred on smc_start date for SMC subjected seen on a date before the smc start date"""
         today_day = 'Sat'
+        expected_appt_day = 'Mon'
+        today = date(2014, 8, 30)
+        scheduled_appt_date = None
+        expected_appt_datetime = datetime(2014, 11, 24, 7, 30, 0)
+        community_code = '98'
+        referral_code = 'SMC-NEG'
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
+        referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
+        referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(subject_referral_appt_helper.referral_clinic_type, 'SMC')
+        self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
+                         'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
+        self.assertEqual(referral_appt_day,
+                         expected_appt_day,
+                         'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
+                             expected_appt_day,
+                             expected_appt_datetime,
+                             referral_appt_day,
+                             referral_appt_datetime))
+
+    def test_smc1a(self):
+        """Assert referred on ECC smc_start date for SMC subjected seen on a date before the smc start date (start date is SAT)"""
+        today_day = 'Sat'
         expected_appt_day = 'Wed'
         today = date(2014, 8, 30)
         scheduled_appt_date = None
-        expected_appt_datetime = datetime(2014, 10, 15, 7, 30, 0)
-        community_code = '11'
+        expected_appt_datetime = datetime(2014, 11, 19, 7, 30, 0)
+        community_code = '99'
         referral_code = 'SMC-NEG'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(subject_referral_appt_helper.referral_clinic_type, 'SMC')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
                                              referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
@@ -149,13 +211,18 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
     def test_smc2(self):
         """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (TU->WE)"""
         today_day = 'Tue'
-        expected_appt_day = 'Wed'
-        today = date(2014, 10, 28)
+        expected_appt_day = 'Mon'
+        today = date(2014, 11, 28)
         scheduled_appt_date = None
-        expected_appt_datetime = datetime(2014, 10, 29, 7, 30, 0)
-        community_code = '11'
+        expected_appt_datetime = datetime(2014, 12, 1, 7, 30, 0)
+        community_code = '98'
         referral_code = 'SMC-NEG'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
+        self.assertEqual(subject_referral_appt_helper.referral_clinic_type, 'SMC')
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
@@ -173,14 +240,19 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         """Assert referred on on smc day for SMC subjected seen on a date AFTER the smc start date (SA->MO)"""
         today_day = 'Sat'
         expected_appt_day = 'Mon'
-        today = date(2014, 11, 1)
+        today = date(2014, 11, 29)
         scheduled_appt_date = None
-        expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
-        community_code = '11'
+        expected_appt_datetime = datetime(2014, 12, 1, 7, 30, 0)
+        community_code = '98'
         referral_code = 'SMC-NEG'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(subject_referral_appt_helper.referral_clinic_type, 'SMC')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
                          'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
                                              referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
@@ -199,9 +271,121 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         today = date(2014, 11, 1)
         scheduled_appt_date = None
         expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
-        community_code = '11'
+        community_code = '98'
         referral_code = 'TST-HIV'
-        subject_referral_appt_helper = SubjectReferralApptHelper(community_code, referral_code, today, scheduled_appt_date)
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
+        referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
+        referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
+                         'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
+        self.assertEqual(referral_appt_day,
+                         expected_appt_day,
+                         'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
+                             expected_appt_day,
+                             expected_appt_datetime,
+                             referral_appt_day,
+                             referral_appt_datetime))
+
+    def test_hiv2(self):
+        """Assert referred POS#-HI to IDCC testing"""
+        today_day = 'Sat'
+        expected_appt_day = 'Mon'
+        today = date(2014, 11, 1)
+        expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
+        community_code = '98'
+        referral_code = 'POS#-HI'
+        scheduled_appt_date = None
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
+        referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
+        referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
+                         'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
+        self.assertEqual(referral_appt_day,
+                         expected_appt_day,
+                         'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
+                             expected_appt_day,
+                             expected_appt_datetime,
+                             referral_appt_day,
+                             referral_appt_datetime))
+
+    def test_hiv3(self):
+        """Assert referred POS#-HI to IDCC testing"""
+        today_day = 'Sat'
+        expected_appt_day = 'Mon'
+        today = date(2014, 11, 1)
+        scheduled_appt_date = None
+        expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
+        community_code = '98'
+        referral_code = 'POS#-LO'
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
+        referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
+        referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
+                         'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
+        self.assertEqual(referral_appt_day,
+                         expected_appt_day,
+                         'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
+                             expected_appt_day,
+                             expected_appt_datetime,
+                             referral_appt_day,
+                             referral_appt_datetime))
+
+    def test_hiv4(self):
+        """Assert referred POS#-HI to IDCC testing"""
+        today_day = 'Sat'
+        expected_appt_day = 'Mon'
+        today = date(2014, 11, 1)
+        scheduled_appt_date = None
+        expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
+        community_code = '98'
+        referral_code = 'POS!-LO'
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
+        referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
+        referral_appt_day = referral_appt_datetime.strftime('%a')
+        self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
+                         'Got {2}{3}'.format(expected_appt_day, expected_appt_datetime,
+                                             referral_appt_day, referral_appt_datetime, subject_referral_appt_helper.referral_clinic_type))
+        self.assertEqual(referral_appt_day,
+                         expected_appt_day,
+                         'Expected {0} {1} from next_clinic_date(). Got {2} {3}'.format(
+                             expected_appt_day,
+                             expected_appt_datetime,
+                             referral_appt_day,
+                             referral_appt_datetime))
+
+    def test_hiv5(self):
+        """Assert referred POS#-HI to IDCC testing"""
+        today_day = 'Sat'
+        expected_appt_day = 'Mon'
+        today = date(2014, 11, 1)
+        scheduled_appt_date = None
+        expected_appt_datetime = datetime(2014, 11, 3, 7, 30, 0)
+        community_code = '98'
+        referral_code = 'POS!-HI'
+        subject_referral_appt_helper = SubjectReferralApptHelper(
+            community_code, referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
         self.assertEqual(referral_appt_datetime, expected_appt_datetime, 'Expected a {4} referral datetime of {0}{1}. '
