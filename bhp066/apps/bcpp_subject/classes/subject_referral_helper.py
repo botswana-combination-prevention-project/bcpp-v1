@@ -279,3 +279,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
     @property
     def referral_clinic(self):
         return self.subject_referral_appt_helper.community_name
+
+    @property
+    def original_scheduled_appt_date(self):
+        return self.subject_referral_appt_helper.original_scheduled_appt_date
