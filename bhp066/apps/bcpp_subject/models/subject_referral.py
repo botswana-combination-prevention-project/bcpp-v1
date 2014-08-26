@@ -298,7 +298,6 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_clinic_type = models.CharField(
         max_length=25,
         choices=REFERRAL_CLINIC_TYPES,
-        help_text='',
         null=True,
         editable=False,
         help_text='The clinic type of clinic the participant is referred to for services, (IDCC, VCT, ANC or SMC)'
