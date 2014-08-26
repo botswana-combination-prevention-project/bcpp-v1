@@ -44,7 +44,7 @@ class SubjectReferralApptHelper(object):
         """Returns a referral_appt_datetime which is conditionally
         a given scheduled date or a calculated date."""
         referral_appt_datetime = None
-        if 'SMC' in self.referral_clinic_type:
+        if 'SMC' in self.referral_code:
             referral_appt_datetime = self.smc_appt_datetime(self.smc_start_date)
         elif self.referral_code == 'MASA-DF':
             pass  # will be next clinic date and will ignore a scheduled_appt_date
