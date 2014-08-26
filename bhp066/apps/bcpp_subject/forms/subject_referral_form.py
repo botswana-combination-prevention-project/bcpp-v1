@@ -21,7 +21,7 @@ class SubjectReferralForm(BaseSubjectModelForm):
                 subject_referral_helper.referral_appt_date or subject_referral_helper.referral_clinic_type):
             raise forms.ValidationError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
                                         'Got {0}.'.format([subject_referral_helper.referral_code,
-                                                          subject_referral_helper.referral_appt_date,
+                                                          subject_referral_helper.referral_appt_datetime,
                                                           subject_referral_helper.referral_clinic_type]))
         return cleaned_data
 
