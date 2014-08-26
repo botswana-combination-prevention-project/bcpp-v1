@@ -51,6 +51,7 @@ else:
 MANAGERS = ADMINS
 
 # DATABASES
+CONN_MAX_AGE = 15
 testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
@@ -161,7 +162,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
@@ -170,7 +171,8 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.media",
                                "django.core.context_processors.static",
                                "django.core.context_processors.request",
-                               "django.contrib.messages.context_processors.messages")
+                               #"django.contrib.messages.context_processors.messages",
+                               )
 
 ROOT_URLCONF = 'config.urls'
 
