@@ -172,6 +172,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'in_clinic_flag',
                 'modified',
                 'referral_clinic_other',
+                'scheduled_appt_date',
                 'revision',
                 'subject_visit',
                 'user_created',
