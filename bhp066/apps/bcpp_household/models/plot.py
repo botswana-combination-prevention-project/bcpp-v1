@@ -3,7 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
-from django.db import models, IntegrityError
+from django.db import models, IntegrityError, transaction
 from django.db.models import Min
 from django.db.models.loading import get_model
 from django.utils.translation import ugettext as _
@@ -318,26 +318,30 @@ class Plot(BaseDispatchSyncUuidModel):
             raise exception_cls("modifying plots is not allowed anymore where there is no at least one enrolled individual")
 
     def delete_unused_households(self, instance, using=None):
-        """Deletes households and HouseholdStructure if member_count==0 and no log entry."""
+        """Deletes households and HouseholdStructure if member_count==0 and no log entry.
+
+        If there is a household log entry DONT delete."""
         using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
-        for household_structure in HouseholdStructure.objects.using(using).filter(household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
+        for household_structure in HouseholdStructure.objects.using(using).filter(
+                household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
             if Household.objects.using(using).filter(plot__pk=instance.pk).count() > instance.household_count:
-                try:
-                    if not HouseholdLogEntry.objects.using(using).filter(household_log__household_structure=household_structure).exists():
-                        HouseholdLog.objects.filter(household_structure=household_structure).delete()
-                        household_pk = unicode(household_structure.household.pk)
-                        household_structure.delete(using=using)
-                        household = Household.objects.using(using).get(pk=household_pk)
-                        identifier_histories = HouseholdIdentifierHistory.objects.using(using).filter(identifier=household.household_identifier)
-                        for identifier_history in identifier_histories:
-                            identifier_history.delete(using=using)
-                        household.delete(using=using)
-                except IntegrityError:
-                    pass
+                if not HouseholdLogEntry.objects.using(using).filter(
+                        household_log__household_structure=household_structure).exists():
+                    try:
+                        with transaction.atomic():
+                            HouseholdLog.objects.filter(household_structure=household_structure).delete()
+                            household = household_structure.household
+                            household_structure.delete(using=using)
+                            for identifier_history in HouseholdIdentifierHistory.objects.using(
+                                    using).filter(identifier=household.household_identifier):
+                                identifier_history.delete(using=using)
+                            household.delete(using=using)
+                    except IntegrityError:
+                        pass
 
     def create_or_delete_households(self, instance, using=None):
         """Creates or deletes households to try to equal the number of households reported on the plot instance.
