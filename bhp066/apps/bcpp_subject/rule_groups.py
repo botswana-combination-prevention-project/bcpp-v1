@@ -396,7 +396,7 @@ class ReproductiveRuleGroup(RuleGroup):
             predicate=('currently_pregnant', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
-        target_model=['pregnancy, nonpregnancy'])
+        target_model=['pregnancy', 'nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
