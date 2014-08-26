@@ -107,6 +107,7 @@ def func_tb_record_value(visit_instance):
             return True
     return False
 
+
 class RegisteredSubjectRuleGroup(RuleGroup):
 
     gender_circumsion = ScheduledDataRule(
@@ -377,19 +378,19 @@ site_rule_groups.register(CircumcisionRuleGroup)
 
 class ReproductiveRuleGroup(RuleGroup):
 
-    menopause = ScheduledDataRule(
-        logic=Logic(
-            predicate=('menopause', 'equals', 'Yes'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['pregnancy', 'nonpregnancy'])
-
     currently_pregnant = ScheduledDataRule(
         logic=Logic(
-            predicate=('currently_pregnant', 'equals', 'Yes'),
+            predicate=(('currently_pregnant', 'equals', 'Yes'), ('menopause', 'equals', 'No', 'and')),
             consequence='new',
             alternative='not_required'),
-        target_model=['pregnancy', 'nonpregnancy'])
+        target_model=['pregnancy'])
+
+    non_pregnant = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('currently_pregnant', 'equals', 'No'), ('menopause', 'equals', 'No', 'and')),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
