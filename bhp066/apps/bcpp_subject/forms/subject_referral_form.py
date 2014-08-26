@@ -18,7 +18,7 @@ class SubjectReferralForm(BaseSubjectModelForm):
             raise forms.ValidationError('Some data is missing for the referral. Complete \'{0}\' first '
                                         'and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
         if subject_referral_helper.referral_code and not (
-                subject_referral_helper.referral_appt_date or subject_referral_helper.referral_clinic_type):
+                subject_referral_helper.referral_appt_datetime or subject_referral_helper.referral_clinic_type):
             raise forms.ValidationError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
                                         'Got {0}.'.format([subject_referral_helper.referral_code,
                                                           subject_referral_helper.referral_appt_datetime,
