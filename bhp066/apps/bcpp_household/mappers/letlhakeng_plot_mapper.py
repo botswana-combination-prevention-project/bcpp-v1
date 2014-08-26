@@ -24,9 +24,9 @@ class LetlhakengPlotMapper(BasePlotMapper):
 
     intervention = False
     clinic_days = {
-        'IDCC': ClinicDaysTuple((MO, WE), None),
+        'IDCC': ClinicDaysTuple((TU, TH), None),
         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 20))}
+        'SMC': ClinicDaysTuple((WE, ), date(2014, 10, 22))}
 
 site_mappers.register(LetlhakengPlotMapper)
