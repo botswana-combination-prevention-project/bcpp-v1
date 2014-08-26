@@ -107,6 +107,17 @@ def func_tb_record_value(visit_instance):
             return True
     return False
 
+
+def evaluate_ever_had_sex_for_female(visit_instance):
+    sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
+    if visit_instance.appointment.registered_subject.gender.lower() == 'm':
+        return False
+    #if we come here then gender must be FEMALE
+    elif sexual_behaviour.ever_sex.lower() == 'yes':
+        return True
+    return False
+
+
 class RegisteredSubjectRuleGroup(RuleGroup):
 
     gender_circumsion = ScheduledDataRule(
@@ -340,9 +351,9 @@ class SexualBehaviourRuleGroup(RuleGroup):
 
     ever_sex = ScheduledDataRule(
         logic=Logic(
-            predicate=('ever_sex', 'equals', 'No'),
-            consequence='not_required',
-            alternative='new'),
+            predicate=evaluate_ever_had_sex_for_female,
+            consequence='new',
+            alternative='not_required'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
 
     class Meta:
@@ -377,19 +388,19 @@ site_rule_groups.register(CircumcisionRuleGroup)
 
 class ReproductiveRuleGroup(RuleGroup):
 
-    menopause = ScheduledDataRule(
-        logic=Logic(
-            predicate=('menopause', 'equals', 'Yes'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['pregnancy', 'nonpregnancy'])
-
     currently_pregnant = ScheduledDataRule(
         logic=Logic(
-            predicate=('currently_pregnant', 'equals', 'Yes'),
+            predicate=(('currently_pregnant', 'equals', 'Yes'), ('menopause', 'equals', 'No', 'and')),
             consequence='new',
             alternative='not_required'),
-        target_model=['pregnancy', 'nonpregnancy'])
+        target_model=['pregnancy'])
+
+    non_pregnant = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('currently_pregnant', 'equals', 'No'), ('menopause', 'equals', 'No', 'and')),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['nonpregnancy'])
 
     class Meta:
         app_label = 'bcpp_subject'
