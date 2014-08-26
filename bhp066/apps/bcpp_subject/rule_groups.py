@@ -389,13 +389,6 @@ class ReproductiveRuleGroup(RuleGroup):
             predicate=('currently_pregnant', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
-        target_model=['pregnancy, nonpregnancy'])
-
-    pregnant = ScheduledDataRule(
-        logic=Logic(
-            predicate=('currently_pregnant', 'equals', 'No'),
-            consequence='new',
-            alternative='not_required'),
         target_model=['pregnancy', 'nonpregnancy'])
 
     class Meta:
