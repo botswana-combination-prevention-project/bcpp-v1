@@ -329,6 +329,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         self.referral_appt_date = subject_referral_appt_helper.referral_appt_datetime
         self.referral_clinic_type = subject_referral_appt_helper.referral_clinic_type
         self.scheduled_appt_date = subject_referral_appt_helper.original_scheduled_appt_date
+        if self.referral_code and not (self.referral_appt_date or self.referral_clinic_type):
+            raise ValueError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
+                             'Got {0}.'.format([self.referral_code, self.referral_appt_date, self.referral_clinic_type]))
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
@@ -342,7 +345,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         ...see_also:: SubjectReferral"""
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
-            if self.referral_code:
+            if self.referral_code and self.referral_appt_date and self.referral_clinic_type:
                 if not SubjectLocator.export_history.export_transaction_model.objects.filter(object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
                     subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', None)
             else:
