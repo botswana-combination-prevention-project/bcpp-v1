@@ -324,14 +324,10 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                                  subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral.iteritems():
             setattr(self, field, value)
-        subject_referral_appt_helper = SubjectReferralApptHelper(subject_referral_helper.community_code,
-                                                                 subject_referral_helper.referral_code,
-                                                                 self.report_datetime,
-                                                                 scheduled_appt_date=self.scheduled_appt_date)
         self.referral_appt_date = subject_referral_helper.referral_appt_datetime
         self.referral_clinic_type = subject_referral_helper.referral_clinic_type
         self.referral_clinic = subject_referral_helper.referral_clinic
-        self.scheduled_appt_date = subject_referral_appt_helper.original_scheduled_appt_date
+        self.scheduled_appt_date = subject_referral_helper.original_scheduled_appt_date
         if self.referral_code and not (self.referral_appt_date or self.referral_clinic_type):
             raise ValueError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
                              'Got {0}.'.format([self.referral_code,
