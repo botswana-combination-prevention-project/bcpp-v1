@@ -1,7 +1,7 @@
 import os
+from unipath import Path
 
-# this could be /etc/mysql/django/ for security
-PATH = os.path.expanduser('~/source/bhp066_project/bhp066/config/etc/')
+PATH = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1).child('etc')
 
 PRODUCTION_MYSQL = {
     'default': {
