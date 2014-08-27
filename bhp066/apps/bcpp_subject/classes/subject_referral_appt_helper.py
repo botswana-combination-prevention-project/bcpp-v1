@@ -36,8 +36,8 @@ class SubjectReferralApptHelper(object):
         self._base_date = base_date or datetime.today()  # should come from the user as today's date??
         self._intervention_communities = intervention_communities
         self._referral_code = None
-        self.community_code = community_code or site_mappers.get_current_mapper().community_code
-        self.community_name = community_code or site_mappers.get_current_mapper().community_name
+        self.community_code = community_code or site_mappers.get_current_mapper().map_code
+        self.community_name = community_code or site_mappers.get_current_mapper().map_area
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
         try:
