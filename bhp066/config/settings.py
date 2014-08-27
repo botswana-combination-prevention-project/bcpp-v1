@@ -7,26 +7,29 @@ from unipath import Path
 
 from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 
-from .bcpp_days import CLINIC_DAYS, SMC_ECC_START_DATE, SMC_START_DATE, INTERVENTION_COMMUNITIES
 from .databases import TESTING_SQLITE
 from .databases import TESTING_MYSQL
 from .databases import PRODUCTION_MYSQL
-from config.bcpp_days import BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE
+from .bcpp_days import BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE
 
 # from logger import LOGGING
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
-# Path
+# PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
-SOURCE_DIR = Path(__file__).ancestor(3)
-PROJECT_DIR = Path(__file__).ancestor(2)
+
+SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(3)  # e.g. /home/django/source
+EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
+TEMPLATE_DIRS = (
+    EDC_DIR.child('templates'),
+)
+PROJECT_ROOT = Path(__file__).ancestor(3)  # e.g. /home/django/source/bhp066_project
+PROJECT_DIR = Path(__file__).ancestor(2)  # e.g. /home/django/source/hp066_project/bhp066
+ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
-TEMPLATE_DIRS = (
-    os.path.expanduser('~/source/edc_project/edc/templates/'),
-)
 FIXTURE_DIRS = (
     PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
 )
@@ -144,7 +147,9 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51'
+with open(os.path.join(ETC_DIR, 'secret_key.txt')) as f:
+    SECRET_KEY = f.read().strip()
+# SECRET_KEY = '0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51'
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
@@ -232,8 +237,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '14'
-CURRENT_COMMUNITY = 'otse'
+SITE_CODE = '16'
+CURRENT_COMMUNITY = 'lentsweletau'
 CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
@@ -277,7 +282,3 @@ BYPASS_HOUSEHOLD_LOG = True
 BHS_START_DATE = BHS_START_DATE
 BHS_END_DATE = BHS_END_DATE
 BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
-CLINIC_DAYS = CLINIC_DAYS
-SMC_ECC_START_DATE = SMC_ECC_START_DATE
-SMC_START_DATE = SMC_START_DATE
-INTERVENTION_COMMUNITIES = INTERVENTION_COMMUNITIES

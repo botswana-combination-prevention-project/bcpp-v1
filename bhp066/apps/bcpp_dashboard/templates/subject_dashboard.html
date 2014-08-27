@@ -47,7 +47,11 @@
 {% endblock %}
 {% if subject_consent %}
 {% block correct_consent %}
+{% if correct_consent %}
+<A href="{% url correct_consent_meta|admin_urlname:'change' subject_consent=subject_consent.pk %}?subject_consent={{subject_consent}}&next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+{% else %}
 <A href="{% url correct_consent_meta|admin_urlname:'add' %}?subject_consent={{subject_consent}}&next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+{% endif %}
 {% endblock correct_consent %}
 {% endif %}
 {% if subject_hiv_result %}
@@ -99,7 +103,7 @@
                 <ul>
                 <li><B>{{ subject_referral.referral_code }}</B> {% if subject_referral.urgent_referral %}<B>URGENT</B>{% endif %}
                 <li>Participant is '{{subject_referral.get_referral_code_display }}'
-                <li>Referral Clinic: {{subject_referral.referral_clinic_type }} at {{subject_referral.referral_clinic }}
+                <li>Referral Clinic: {{subject_referral.referral_clinic_type }} at {{subject_referral.referral_clinic|capfirst }}
                 <li>Appointment: {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }} 
                 </ul>
             {% endif %}                                                
