@@ -35,7 +35,10 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_code = 'MASA-CC'
         scheduled_appt_date = None
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code, today, scheduled_appt_date,
+            referral_code,
+            base_date=today,
+            scheduled_appt_date=scheduled_appt_date,
+            community_code=community_code,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
@@ -58,9 +61,10 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_code = 'MASA-DF'
         scheduled_appt_date = None
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
             scheduled_appt_date=scheduled_appt_date,
+            community_code=community_code,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
         referral_appt_day = referral_appt_datetime.strftime('%a')
@@ -83,8 +87,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'MASA-DF'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -108,8 +113,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'MASA-CC'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -135,8 +141,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'MASA-CC'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -162,8 +169,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -190,8 +198,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '99'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -218,8 +227,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         self.assertEqual(subject_referral_appt_helper.referral_clinic_type, 'SMC')
@@ -246,8 +256,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'SMC-NEG'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -274,8 +285,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'TST-HIV'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -301,8 +313,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         referral_code = 'POS#-HI'
         scheduled_appt_date = None
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -328,8 +341,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'POS#-LO'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -355,8 +369,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'POS!-LO'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
@@ -382,8 +397,9 @@ class TestSubjectReferralApptHelper(SimpleTestCase):
         community_code = '98'
         referral_code = 'POS!-HI'
         subject_referral_appt_helper = SubjectReferralApptHelper(
-            community_code, referral_code,
+            referral_code,
             base_date=today,
+            community_code=community_code,
             scheduled_appt_date=scheduled_appt_date,
             community_clinic_days=CLINIC_DAYS.get(community_code))
         referral_appt_datetime = subject_referral_appt_helper.referral_appt_datetime
