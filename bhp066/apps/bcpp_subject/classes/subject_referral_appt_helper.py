@@ -19,13 +19,25 @@ class SubjectReferralApptHelper(object):
     :func:`next_appt_date.
     """
 
-    def __init__(self, referral_code, community_code=None, base_date=None, scheduled_appt_date=None,
-                 community_clinic_days=None, intervention_communities=None):
+    def __init__(self, referral_code, base_date=None, scheduled_appt_date=None,
+                 community_code=None, community_clinic_days=None, intervention_communities=None):
+        """This class and its needed attribute values are wrapped by
+        the SubjectReferralHelper.
+
+        Usage:
+                subject_referral_appt_helper = SubjectReferralApptHelper(
+                    subject_referral.referral_code,
+                    base_date=subject_referral.report_datetime,
+                    scheduled_appt_date=subject_referral.scheduled_appt_date,
+                    )
+
+        See also tests."""
+
         self._base_date = base_date or datetime.today()  # should come from the user as today's date??
         self._intervention_communities = intervention_communities
         self._referral_code = None
-        self.community_code = community_code or site_mappers.get_current_mapper().community_code
-        self.community_name = community_code or site_mappers.get_current_mapper().community_name
+        self.community_code = community_code or site_mappers.get_current_mapper().map_code
+        self.community_name = community_code or site_mappers.get_current_mapper().map_area
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
         try:
