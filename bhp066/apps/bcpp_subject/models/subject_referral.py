@@ -8,7 +8,7 @@ from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
-from ..classes import SubjectReferralHelper, SubjectReferralApptHelper
+from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
