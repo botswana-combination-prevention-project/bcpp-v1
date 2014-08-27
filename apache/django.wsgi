@@ -1,10 +1,21 @@
 import os
 import sys
 #import site
-#import platform
+import platform
 
-VIRTUALENV_PATH = '/home/django/.virtualenvs/django-1.6.5/'
-SOURCE_ROOT_PATH = '/home/django//source/bhp066/develop/'
+# 1. apache cannot expand ~/, so include full path or place project under /var/www 
+# 2. macosx change /home /Users
+# 3. the user is django and virtualenv is installed under this account 
+# 4. note name of virtualenv, in this case it is "django-1.6". Change if needed.
+# 5. in this case the project is installed in source/bhp066/develop/
+
+if platform.system() == 'Darwin':
+    VIRTUALENV_PATH = '/Users/django/.virtualenvs/django-1.6/'
+    SOURCE_ROOT_PATH = '/Users/django/source/bhp066/develop/'
+    LOCAL_PROJECT_RELPATH = 'bhp066_project/bhp066/'
+
+VIRTUALENV_PATH = '/home/django/.virtualenvs/django-1.6/'
+SOURCE_ROOT_PATH = '/home/django/source/bhp066/develop/'
 LOCAL_PROJECT_RELPATH = 'bhp066_project/bhp066/'
 
 # Add the site-packages of the chosen virtualenv to work with
