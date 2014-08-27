@@ -328,11 +328,11 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         self.referral_clinic_type = subject_referral_helper.referral_clinic_type
         self.referral_clinic = subject_referral_helper.referral_clinic
         self.scheduled_appt_date = subject_referral_helper.original_scheduled_appt_date
-        if self.referral_code and not (self.referral_appt_date or self.referral_clinic_type):
-            raise ValueError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
-                             'Got {0}.'.format([self.referral_code,
-                                                self.referral_appt_date,
-                                                self.referral_clinic_type]))
+#         if self.referral_code and (not self.referral_appt_date or not self.referral_clinic_type):
+#             raise ValueError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
+#                              'Got {0}.'.format([self.referral_code,
+#                                                 self.referral_appt_date,
+#                                                 self.referral_clinic_type]))
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
