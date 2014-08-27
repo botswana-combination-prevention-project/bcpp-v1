@@ -43,7 +43,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self.subject_identifier = self.instance.subject_visit.appointment.registered_subject.subject_identifier
         mapper_cls = site_mappers.get_registry(self.household_member.household_structure.household.plot.community)
         mapper = mapper_cls()
-        self.community_code = mapper.get_map_code()
+        self.community_code = mapper.map_code
         self.subject_referral_appt_helper = SubjectReferralApptHelper(
             subject_referral.referral_code,
             base_date=subject_referral.report_datetime,
