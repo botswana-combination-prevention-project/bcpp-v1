@@ -1,13 +1,9 @@
-
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
 
-from apps.bcpp_subject.models.subject_consent import SubjectConsent
-from apps.bcpp_subject.exceptions import OldConsentValueError
-
-
+from edc.audit.audit_trail import AuditTrail
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future, datetime_is_after_consent
 from edc.choices.common import GENDER_UNDETERMINED
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.core.crypto_fields.fields import EncryptedFirstnameField, EncryptedCharField
@@ -15,12 +11,27 @@ from edc.core.crypto_fields.fields import EncryptedLastnameField
 from edc.choices.common import YES_NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
+from apps.bcpp_subject.models.subject_consent import SubjectConsent
+from apps.bcpp_subject.exceptions import OldConsentValueError
+
+from ..managers import CorrectConsentManager
+
 
 class CorrectConsent(BaseDispatchSyncUuidModel):
 
     """ Consent models should be subclasses of this """
 
-    subject_consent = models.ForeignKey(SubjectConsent)
+    subject_consent = models.OneToOneField(SubjectConsent)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Visit Date and Time",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_is_after_consent,
+            datetime_not_future,
+            ],
+        help_text='Date and time of this report'
+        )
 
     # may not be available when instance created (e.g. infants prior to birth report)
     first_name = EncryptedFirstnameField(
@@ -159,9 +170,19 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
         help_text="( if 'No' provide witness\'s name here and with signature on the paper document.)",
         )
 
+    objects = CorrectConsentManager()
+
+    history = AuditTrail()
+
+    def __unicode__(self):
+        return unicode(self.subject_consent)
+
     def save(self, *args, **kwargs):
         self.matches_old_consent_values()
         super(CorrectConsent, self).save(*args, **kwargs)
+
+    def natural_key(self):
+        return self.subject_consent.natural_key()
 
     def matches_old_consent_values(self):
         if self.first_name and not (self.first_name_old == self.subject_consent.first_name):
