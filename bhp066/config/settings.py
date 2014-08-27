@@ -17,15 +17,19 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
-# Path
+# PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
-SOURCE_DIR = Path(__file__).ancestor(3)
-PROJECT_DIR = Path(__file__).ancestor(2)
+
+SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(3)  # e.g. /home/django/source
+EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
+TEMPLATE_DIRS = (
+    EDC_DIR.child('templates'),
+)
+PROJECT_ROOT = Path(__file__).ancestor(3)  # e.g. /home/django/source/bhp066_project
+PROJECT_DIR = Path(__file__).ancestor(2)  # e.g. /home/django/source/hp066_project/bhp066
+ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
-TEMPLATE_DIRS = (
-    os.path.expanduser('~/source/edc_project/edc/templates/'),
-)
 FIXTURE_DIRS = (
     PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
 )
@@ -143,7 +147,9 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51'
+with open(os.path.join(ETC_DIR, 'secret_key.txt')) as f:
+    SECRET_KEY = f.read().strip()
+# SECRET_KEY = '0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51'
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
