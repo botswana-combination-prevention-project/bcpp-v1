@@ -30,6 +30,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             title='Research Subject Dashboard',
             subject_consent=self.consent,
             correct_consent_meta=self.correct_consent_meta,
+            correct_consent=self.correct_consent,
             subject_referral=self.subject_referral,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
@@ -67,6 +68,14 @@ class SubjectDashboard(BaseSubjectDashboard):
     @property
     def correct_consent_meta(self):
         return CorrectConsent._meta
+
+    @property
+    def correct_consent(self):
+        try:
+            correct_consent = CorrectConsent.objects.filter(self.subject_consent)
+        except CorrectConsent.DoesNotExist:
+            correct_consent = None
+        return correct_consent
 
     @property
     def packing_list_model(self):
