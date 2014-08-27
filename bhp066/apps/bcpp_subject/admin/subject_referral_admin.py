@@ -26,6 +26,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'dashboard',
         'subject_referred',
         'referral_code',
+        'referral_clinic_type',
         'referral_appt_date',
         'exported',
         'exported_datetime',
@@ -38,7 +39,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'subject_visit',
         'report_datetime',
         'subject_referred',
-        'referral_clinic',
         'scheduled_appt_date',
         'referral_appt_comment',
         'comment'
@@ -46,7 +46,6 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
 
     radio_fields = {
         "referral_code": admin.VERTICAL,
-        "referral_clinic": admin.VERTICAL,
         "subject_referred": admin.VERTICAL,
         "referral_appt_comment": admin.VERTICAL,
         }
@@ -68,31 +67,27 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
                      })
                 ),
-                'export_as_csv_action',
-                "Export Referrals to CSV")
+            'export_as_csv_action',
+            'Export Referrals to CSV')
         actions['export_referrals_for_cdc_action'] = (  # This is a django SortedDict (function, name, short_description)
             export_referrals_for_cdc_action(
                 delimiter='|',
                 encrypt=False,
                 strip=True,
-                exclude=['comment',
-                         'created',
-                         #'direct_hiv_documentation',
-                         'exported',
-                         'hostname_created',
-                         'hostname_modified',
-                         'in_clinic_flag',
-                         #'indirect_hiv_documentation',
-                         #'last_hiv_result',
-                         #'last_hiv_result_date',
-                         'modified',
-                         'referral_clinic_other',
-                         'revision',
-                         'subject_visit',
-                         'user_created',
-                         'user_modified',
-                         #'verbal_hiv_result',
-                        ],
+                exclude=[
+                    'comment',
+                    'created',
+                    'exported',
+                    'hostname_created',
+                    'hostname_modified',
+                    'in_clinic_flag',
+                    'modified',
+                    'referral_clinic_other',
+                    'scheduled_appt_date',
+                    'revision',
+                    'subject_visit',
+                    'user_created',
+                    'user_modified'],
                 extra_fields=OrderedDict(
                     {'plot_identifier': self.visit_model_foreign_key + '__household_member__household_structure__household__plot__plot_identifier',
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
@@ -103,8 +98,8 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
                      })
                 ),
-                'export_referrals_for_cdc_action',
-                "Export Referrals in CDC format (Manual)")
+            'export_referrals_for_cdc_action',
+            'Export Referrals in CDC format (Manual)')
         return actions
 
 admin.site.register(SubjectReferral, SubjectReferralAdmin)

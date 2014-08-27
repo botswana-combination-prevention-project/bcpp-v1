@@ -1,7 +1,7 @@
 import os
+from unipath import Path
 
-# this could be /etc/mysql/django/ for security
-PATH = os.path.expanduser('~/source/bhp066_project/bhp066/config/etc/')
+PATH = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1).child('etc')
 
 PRODUCTION_MYSQL = {
     'default': {
@@ -22,4 +22,15 @@ PRODUCTION_MYSQL = {
         'PORT': '',
         'ATOMIC_REQUESTS': True,
     },
+    'bcpp010-bhp066': {
+         'ENGINE': 'django.db.backends.mysql',
+         'OPTIONS': {
+             'init_command': 'SET storage_engine=INNODB',
+         },
+         'NAME': 'bhp066',
+         'USER': 'root',
+         'PASSWORD': 'cc3721b',
+         'HOST': '192.168.1.146',
+         'PORT': '',
+     },
 }
