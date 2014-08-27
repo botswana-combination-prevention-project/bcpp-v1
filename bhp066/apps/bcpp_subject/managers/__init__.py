@@ -4,3 +4,4 @@ from .grant_manager import GrantManager
 from .consent_history_manager import ConsentHistoryManager
 from .tb_symptoms_manager import TbSymptomsManager
 from .viral_load_result_manager import ViralLoadResultManager
+from .correct_consent_manager import CorrectConsentManager
