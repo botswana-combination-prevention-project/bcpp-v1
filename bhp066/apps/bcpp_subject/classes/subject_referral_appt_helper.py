@@ -19,13 +19,13 @@ class SubjectReferralApptHelper(object):
     :func:`next_appt_date.
     """
 
-    def __init__(self, community_code, referral_code, base_date=None, scheduled_appt_date=None,
+    def __init__(self, referral_code, community_code=None, base_date=None, scheduled_appt_date=None,
                  community_clinic_days=None, intervention_communities=None):
         self._base_date = base_date or datetime.today()  # should come from the user as today's date??
         self._intervention_communities = intervention_communities
         self._referral_code = None
-        self._scheduled_appt_date = scheduled_appt_date
-        self.community_code = community_code
+        self.community_code = community_code or site_mappers.get_current_mapper().community_code
+        self.community_name = community_code or site_mappers.get_current_mapper().community_name
         self.original_scheduled_appt_date = scheduled_appt_date
         self.referral_code = referral_code
         try:
@@ -52,9 +52,9 @@ class SubjectReferralApptHelper(object):
             try:
                 if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):
                     referral_appt_datetime = self.scheduled_appt_datetime
-            except TypeError as e:
-                if "can't compare datetime.datetime to NoneType" not in e:
-                    raise TypeError(e)
+            except TypeError as error_msg:
+                if "can't compare datetime.datetime to NoneType" not in error_msg:
+                    raise TypeError(error_msg)
                 pass
             if not referral_appt_datetime and 'MASA' in self.referral_code:
                 referral_appt_datetime = self.masa_appt_datetime
@@ -93,29 +93,18 @@ class SubjectReferralApptHelper(object):
             raise TypeError('Invalid referral code. Got {0}'.format(referral_code))
         self._referral_code = referral_code
 
-#     @property
-#     def intervention_community(self):
-#         """Returns a True if this community is an intervention community
-#         (CPC) otherwise False."""
-#         try:
-#             # this is just for testing -- can pass a list of community codes
-#             intervention_community = True if self.community_code in self._intervention_communities else False
-#         except TypeError:
-#             intervention_community = site_mappers.get_current_mapper().intervention
-#         return intervention_community
-
     @property
     def scheduled_appt_datetime(self):
         """Returns a datetime as long as the date is within 1 month
         of today otherwise leaves the date as None."""
         scheduled_appt_datetime = None
-        if self._scheduled_appt_date:
-            scheduled_appt_datetime = datetime(self._scheduled_appt_date.year,
-                                               self._scheduled_appt_date.month,
-                                               self._scheduled_appt_date.day, 7, 30, 0)
+        if self.original_scheduled_appt_date:
+            scheduled_appt_datetime = datetime(self.original_scheduled_appt_date.year,
+                                               self.original_scheduled_appt_date.month,
+                                               self.original_scheduled_appt_date.day, 7, 30, 0)
             if self.base_datetime > scheduled_appt_datetime:
                 raise ValidationError('Expected future date for scheduled appointment, '
-                                      'Got {0}'.format(self._scheduled_appt_date))
+                                      'Got {0}'.format(self.original_scheduled_appt_date))
             rdelta = relativedelta(scheduled_appt_datetime, self.base_datetime)
             if rdelta.years == 0 and ((rdelta.months == 1 and rdelta.days == 0) or (rdelta.months == 0)):
                 scheduled_appt_datetime = next_clinic_date(self.clinic_days,
@@ -140,7 +129,9 @@ class SubjectReferralApptHelper(object):
         """Returns a datetime that is either the smc start date or the
         next smc clinic day depending on whether today id before or
         after smc_start_date,"""
-        smc_appt_datetime = datetime(self.clinic_days.start_date.year, self.clinic_days.start_date.month, self.clinic_days.start_date.day, 7, 30, 0)
+        smc_appt_datetime = datetime(self.clinic_days.start_date.year,
+                                     self.clinic_days.start_date.month,
+                                     self.clinic_days.start_date.day, 7, 30, 0)
         if self.base_datetime > smc_appt_datetime:
             smc_appt_datetime = next_clinic_date(self.clinic_days,
                                                  self.base_datetime)
