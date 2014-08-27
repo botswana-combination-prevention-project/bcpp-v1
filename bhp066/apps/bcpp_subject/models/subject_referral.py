@@ -1,5 +1,3 @@
-from datetime import date, timedelta
-
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -8,9 +6,6 @@ from edc.base.model.validators import datetime_is_future, date_is_future
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
-
-from apps.bcpp.choices import COMMUNITIES
-
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..classes import SubjectReferralHelper, SubjectReferralApptHelper
@@ -26,7 +21,7 @@ REFERRAL_CLINIC_TYPES = (
     ('ANC', 'ANC'),
     ('IDCC', 'IDCC'),
     ('SMC', 'SMC'),
-    ('SMC-ECC', 'SMC-ECC'),
+    ('VCT', 'VCT'),
 )
 
 
@@ -42,23 +37,24 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral Appointment Date",
         validators=[datetime_is_future, ],
-        # default=next_clinic_date(),
-        help_text="... or next refill / clinic date if on ART.",
+        help_text=("The calculated referral appointment date communicated to the participant. See also "
+                   "attribute 'referral_appt_comment' for when the participant is unsure about attending "
+                   "on this date."),
         null=True,
         editable=False
         )
 
     referral_clinic = models.CharField(
         max_length=50,
-        choices=COMMUNITIES,
-        # default=site_mappers.get_current_mapper().map_area,
-        help_text='Subject has been referred to this clinic. If other specify below.'
+        editable=False,
+        help_text='The full name of the current community, e.g lentsweletau.'
         )
 
     referral_clinic_other = models.CharField(
         max_length=50,
         null=True,
-        blank=True,
+        editable=False,
+        help_text='(not used)',
         )
 
     gender = models.CharField(
@@ -94,16 +90,16 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         max_length=50,
         null=True,
         editable=False,
-        help_text=('HIV result datetime either from today\'s test or documentation provided by the subject or None. See '
-                   'also new_pos. (derived)'),
-         )
+        help_text=('HIV result datetime either from today\'s test or documentation provided by the subject or None. '
+                   'See also new_pos. (derived)'),
+        )
 
     todays_hiv_result = models.CharField(
         max_length=50,
         null=True,
         editable=False,
-        help_text=('from HIV result of test performed by the field RA (POS, NEG, IND) or None if not performed. The datetime '
-                   'of the result is hiv_result_datetime.'),
+        help_text=('from HIV result of test performed by the field RA (POS, NEG, IND) or None if not performed. '
+                   'The datetime of the result is hiv_result_datetime.'),
         )
 
     new_pos = models.NullBooleanField(
@@ -117,7 +113,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         max_length=50,
         null=True,
         editable=False,
-        help_text="Documented result from a participant's past record of HIV testing or valid documentation of positive status (derived)"
+        help_text=("Documented result from a participant's past record of HIV testing or valid documentation of "
+                   "positive status (derived)")
         )
 
     verbal_hiv_result = models.CharField(
@@ -138,22 +135,23 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     indirect_hiv_documentation = models.NullBooleanField(
         null=True,
         editable=False,
-        help_text=('from HivTestingHistory.other_record and from HivCareAdherence.arv_evidence. True if a document was seen that suggests the subject is '
-                   'HIV positive, False if not, None if unknown.'),
+        help_text=('from HivTestingHistory.other_record and from HivCareAdherence.arv_evidence. True if a document '
+                   'was seen that suggests the subject is HIV positive, False if not, None if unknown.'),
         )
 
     last_hiv_result_date = models.DateTimeField(
         null=True,
         editable=False,
-        help_text=('Recorded date of previous HIV test or of the document that provides supporting evidence of HIV infection (derived)'),
+        help_text=('Recorded date of previous HIV test or of the document that provides supporting evidence of HIV '
+                   'infection (derived)'),
         )
 
     on_art = models.NullBooleanField(
         default=None,
         null=True,
         editable=False,
-        help_text=('from HivCareAdherence.on_art() method. True if subject claims to be on ARV, False if not, None if unknown. See '
-                   'also art_documentation. (derived)'),
+        help_text=('from HivCareAdherence.on_art() method. True if subject claims to be on ARV, False if not, None if '
+                   'unknown. See also art_documentation. (derived)'),
         )
 
     arv_documentation = models.NullBooleanField(
@@ -209,7 +207,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         default=None,
         null=True,
         editable=False,
-        help_text="from ReproductiveHealth.currently_pregnant. True if currently pregnant, False if not, None if unknown.",
+        help_text=('from ReproductiveHealth.currently_pregnant. True if currently pregnant, False if not, None '
+                   'if unknown.'),
         )
 
     circumcised = models.NullBooleanField(
@@ -223,22 +222,24 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         default=None,
         null=True,
         editable=False,
-        help_text=('from eligibility checklist.part_time_resident. True if at least a part_time resident, False if not, None if unknown')
+        help_text=('from eligibility checklist.part_time_resident. True if at least a part_time resident, False if '
+                   'not, None if unknown')
         )
 
     permanent_resident = models.NullBooleanField(
         default=None,
         null=True,
         editable=False,
-        help_text=('from residence and mobility.permanent_resident. True if permanent resident, False if not, None if unknown')
+        help_text=('from residence and mobility.permanent_resident. True if permanent resident, False if not, None '
+                   'if unknown')
         )
 
     tb_symptoms = models.CharField(
         max_length=100,
         null=True,
         editable=False,
-        help_text=('list of symptoms from tb_symptoms. Any combination of Fever, cough, cough_blood, fever, night_sweat, '
-                   'lymph_nodes, weight_loss OR None'),
+        help_text=('list of symptoms from tb_symptoms. Any combination of Fever, cough, cough_blood, fever, '
+                   'night_sweat, lymph_nodes, weight_loss OR None'),
         )
 
     urgent_referral = models.NullBooleanField(
@@ -278,7 +279,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         )
 
     scheduled_appt_date = models.DateField(
-        verbose_name="Previously scheduled clinic appointment date",
+        verbose_name="Previously scheduled clinic appointment date in this BHS community",
         validators=[date_is_future, ],
         help_text=("Use the IDCC date. If subject is pregnant, use the ANC date instead of the IDCC date."
                    "  If the subject does not have a scheduled appointment, leave blank"),
@@ -297,9 +298,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     referral_clinic_type = models.CharField(
         max_length=25,
         choices=REFERRAL_CLINIC_TYPES,
-        help_text='',
         null=True,
         editable=False,
+        help_text='The clinic type of clinic the participant is referred to for services, (IDCC, VCT, ANC or SMC)'
         )
 
     objects = ScheduledModelManager()
@@ -319,19 +320,19 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         subject_referral_helper = SubjectReferralHelper(self)
         if subject_referral_helper.missing_data:
             raise ValueError('Some data is missing for the referral. '
-                             'Complete \'{0}\' first and try again.'.format(subject_referral_helper.missing_data._meta.verbose_name))
+                             'Complete \'{0}\' first and try again.'.format(
+                                 subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral.iteritems():
             setattr(self, field, value)
-        subject_referral_appt_helper = SubjectReferralApptHelper(subject_referral_helper.community_code,
-                                                                 subject_referral_helper.referral_code,
-                                                                 self.report_datetime,
-                                                                 scheduled_appt_date=self.scheduled_appt_date)
-        self.referral_appt_date = subject_referral_appt_helper.referral_appt_datetime
-        self.referral_clinic_type = subject_referral_appt_helper.referral_clinic_type
-        self.scheduled_appt_date = subject_referral_appt_helper.original_scheduled_appt_date
+        self.referral_appt_date = subject_referral_helper.referral_appt_datetime
+        self.referral_clinic_type = subject_referral_helper.referral_clinic_type
+        self.referral_clinic = subject_referral_helper.referral_clinic
+        self.scheduled_appt_date = subject_referral_helper.original_scheduled_appt_date
         if self.referral_code and not (self.referral_appt_date or self.referral_clinic_type):
             raise ValueError('Need referral_code, referral_appt_date and referral_clinic_type to continue. '
-                             'Got {0}.'.format([self.referral_code, self.referral_appt_date, self.referral_clinic_type]))
+                             'Got {0}.'.format([self.referral_code,
+                                                self.referral_appt_date,
+                                                self.referral_clinic_type]))
         super(SubjectReferral, self).save(*args, **kwargs)
 
     @property
@@ -346,10 +347,12 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
             if self.referral_code and self.referral_appt_date and self.referral_clinic_type:
-                if not SubjectLocator.export_history.export_transaction_model.objects.filter(object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
+                if not SubjectLocator.export_history.export_transaction_model.objects.filter(
+                        object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
                     subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', None)
             else:
-                if SubjectLocator.export_history.export_transaction_model.objects.filter(object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
+                if SubjectLocator.export_history.export_transaction_model.objects.filter(
+                        object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
                     subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'D', None)
         except SubjectLocator.DoesNotExist:
             pass
