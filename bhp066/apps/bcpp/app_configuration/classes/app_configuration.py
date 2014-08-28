@@ -6,6 +6,7 @@ from django.conf import settings
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
+from edc.device.sync.models import Producer
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
@@ -275,3 +276,10 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.datetime_start = survey_values.get('datetime_start')
                 survey.datetime_end = survey_values.get('datetime_end')
                 survey.save()
+
+    def refresh_producers_in_memory(self):
+        """The settings object in memory is updated with producer information from the producer table,
+            this is required for dispatch. NOTE: settings is reset every time apache restart, so need to 
+            resave them every time application boots up."""
+        for producer in Producer.objects.all():
+            producer.save()
