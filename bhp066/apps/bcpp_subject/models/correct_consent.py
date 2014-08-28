@@ -13,7 +13,7 @@ from edc.core.crypto_fields.fields import EncryptedFirstnameField, EncryptedChar
 from edc.core.crypto_fields.fields import EncryptedLastnameField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..manager import CorrectConsentManager
+from ..managers import CorrectConsentManager
 
 from .subject_consent import SubjectConsent
 
