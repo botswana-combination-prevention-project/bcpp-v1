@@ -11,14 +11,14 @@ from edc.choices.common import GENDER_UNDETERMINED
 from edc.choices.common import YES_NO
 from edc.core.crypto_fields.fields import EncryptedFirstnameField, EncryptedCharField
 from edc.core.crypto_fields.fields import EncryptedLastnameField
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 
 from ..managers import CorrectConsentManager
 
 from .subject_consent import SubjectConsent
 
 
-class CorrectConsent(BaseDispatchSyncUuidModel):
+class CorrectConsent(BaseSyncUuidModel):
 
     """A model linked to the subject consent to record corrections."""
 
