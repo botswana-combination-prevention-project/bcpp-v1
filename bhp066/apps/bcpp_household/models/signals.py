@@ -39,11 +39,13 @@ def household_structure_on_post_save(sender, instance, raw, created, using, **kw
                 household_assessment.delete(using=using)
             # update household if enrolled
             instance.household.enrolled = instance.enrolled or False  # household_structure uses NullBoolean
-            instance.household.enrolled_datetime = instance.enrolled_datetime
+            if instance.enrolled:
+                instance.household.enrolled_datetime = instance.enrolled_datetime
             instance.household.save(using=using)
             # update plot if enrolled
             instance.household.plot.bhs = instance.enrolled or False  # household_structure uses NullBoolean
-            instance.household.plot.enrolled_datetime = instance.enrolled_datetime
+            if instance.enrolled:
+                instance.household.plot.enrolled_datetime = instance.enrolled_datetime
             instance.household.plot.save(using=using)
 
 
