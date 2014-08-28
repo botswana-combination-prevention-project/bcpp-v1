@@ -12,6 +12,7 @@ class CorrectConsentAdmin(BaseModelAdmin):
 
     fields = (
         'subject_consent',
+        'report_datetime',
         'old_last_name',
         'new_last_name',
         'old_first_name',
@@ -29,6 +30,12 @@ class CorrectConsentAdmin(BaseModelAdmin):
         'old_is_literate',
         'new_is_literate',
         )
+
+    list_display = ('subject_consent', 'first_name', 'may_store_samples', 'is_literate')
+
+    list_filter = ('report_datetime', 'created', 'modified')
+
+    search_fields = ('subject_consent__subject_identifier', 'first_name')
 
     radio_fields = {
         'old_gender': admin.VERTICAL,
