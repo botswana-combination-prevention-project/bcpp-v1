@@ -30,6 +30,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             title='Research Subject Dashboard',
             subject_consent=self.consent,
             correct_consent_meta=self.correct_consent_meta,
+            correct_consent=self.correct_consent,
             subject_referral=self.subject_referral,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
@@ -54,6 +55,15 @@ class SubjectDashboard(BaseSubjectDashboard):
     @property
     def requisition_model(self):
         return SubjectRequisition
+
+    @property
+    def correct_consent(self):
+        """Returns to the subject consent, if it has been completed."""
+        try:
+            correct_consent = CorrectConsent.objects.get(subject_consent=self.consent)
+        except CorrectConsent.DoesNotExist:
+            correct_consent = None
+        return correct_consent
 
     @property
     def locator_model(self):
