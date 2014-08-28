@@ -1767,6 +1767,11 @@
       1001, 
       997, 
       998, 
+      1345, 
+      1346, 
+      1347, 
+      1342, 
+      1343, 
       307, 
       308, 
       292, 
@@ -5485,7 +5490,7 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2014-08-25T11:47:31", 
+    "last_login": "2014-08-27T14:34:45", 
     "groups": [], 
     "user_permissions": [], 
     "password": "pbkdf2_sha256$12000$iZXdpPj7X9Oa$c45+rPeW3aG0S/oXKo403hISHXjcDPLeNRHr44WMzwY=", 
@@ -5503,12 +5508,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:54:58", 
+    "last_login": "2014-08-27T11:22:30", 
     "groups": [
       5
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$hsuAiXCW2dl9$4UrY4eqj75vqEcQNNG4h6HNXoL+yxbWaBCj1efjS1og=", 
+    "password": "pbkdf2_sha256$12000$RJm5JTx7fzba$Dl55fFs8PFd5HCyY38iIOMf+H7cYa1dlWX61RdV80Do=", 
     "email": "jtshikedi@bhp.org.bw", 
     "date_joined": "2013-10-16T11:20:23"
   }
@@ -5523,12 +5528,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:42:37", 
+    "last_login": "2014-08-27T09:29:03", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$gfk74FccD9Cr$9U6eMBFrWTjBLptVnoKOrhJeP5E2y0JFDuA4BAO/pNE=", 
+    "password": "pbkdf2_sha256$12000$L0hOkFmOVMKY$viKRhvUM/OUJgKsR8zDXLjIrPpGwOEDCaqPBGY5yqj8=", 
     "email": "kmolokwane@bhp.org.bw", 
     "date_joined": "2013-10-16T12:21:35"
   }
@@ -5543,7 +5548,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-25T12:41:48", 
+    "last_login": "2014-08-27T14:30:03", 
     "groups": [
       4
     ], 
@@ -5563,12 +5568,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T09:11:42", 
+    "last_login": "2014-08-27T15:47:23", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$kOboRFGvTprS$z1rq2i6Uw6jbBTyT16p2XLvwfe9Z0I3QUiVVv2KlyU8=", 
+    "password": "pbkdf2_sha256$12000$Xo7C9epXne06$KUZm6v2CL/4hNTAF6YhOj1sTjK490teuYd1CTFKaJN0=", 
     "email": "moichubedi@bhp.org.bw", 
     "date_joined": "2013-10-16T14:04:56"
   }
@@ -5583,12 +5588,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:06:33", 
+    "last_login": "2014-08-27T15:06:21", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$0d4KrUyc5nwE$0WJOr/kkBogQbsaa4j0l5FUIc4OEHS7tBXkrmu75yPc=", 
+    "password": "pbkdf2_sha256$12000$bMXXsk7M7g3k$OPYki5gYDyR+08YGUX97JNy8e3Tjnc9lFwGFxc/WAKE=", 
     "email": "gtlhwaafalo@bhp.org.bw", 
     "date_joined": "2013-10-16T14:06:33"
   }
@@ -5603,7 +5608,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:08:05", 
+    "last_login": "2014-08-25T16:46:38", 
     "groups": [
       3
     ], 
@@ -5663,7 +5668,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-25T12:34:50", 
+    "last_login": "2014-08-27T14:24:12", 
     "groups": [
       3
     ], 
@@ -5703,7 +5708,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:45:52", 
+    "last_login": "2014-08-25T16:44:29", 
     "groups": [
       3
     ], 
@@ -5723,12 +5728,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:58:34", 
+    "last_login": "2014-08-25T15:48:03", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$E41PqnPkTH9L$Ry4wiE8MiCgL2KiON/57+vMhyt/UZXY76UQabMdl/bM=", 
+    "password": "pbkdf2_sha256$12000$UK5Gb8iILBDA$IvhlTq+Cg0FO9m5uHXqwC/iNgQ792CkpgSc9Xf0WKuA=", 
     "email": "ktshwene@bhp.org.bw", 
     "date_joined": "2013-10-16T14:17:54"
   }
@@ -5763,12 +5768,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:20:22", 
+    "last_login": "2014-08-27T11:13:50", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$7aMFyUeqOBQr$/tjJXUFrrOqfhLf5p7shKyYIGWZYn4uSKhrVJnU6A3M=", 
+    "password": "pbkdf2_sha256$12000$1gEOKJhGmtj6$pMn5PIrG7yZa3YR8/WlvC75dcYtTcSar73FjDLcRVy4=", 
     "email": "mmichael@bhp.org.bw", 
     "date_joined": "2013-10-16T14:20:22"
   }
@@ -5783,12 +5788,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:54:54", 
+    "last_login": "2014-08-27T11:11:56", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$H4Xi9pxAJwne$DYEWXcEajbHY1gXyPyxA8/q8MhDXtJaWnkwuP+hfv+o=", 
+    "password": "pbkdf2_sha256$12000$y6BeIP5T6RpC$skGlxxKpP19NTeeX2yruFDhU4br4rnCni1MDqQR6mKk=", 
     "email": "erathedi@bhp.org.bw", 
     "date_joined": "2013-10-16T14:24:39"
   }
@@ -5821,7 +5826,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:51:48", 
+    "last_login": "2014-08-25T16:47:22", 
     "groups": [
       3
     ], 
@@ -5841,12 +5846,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:40:26", 
+    "last_login": "2014-08-27T11:10:35", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$W0Lz303PM5ZM$MqDaX5huhEe2hhF75JQzKq9hH+HyeVljawru4aE2kJ0=", 
+    "password": "pbkdf2_sha256$12000$2mGHvVCEP2zk$XZxFd3UFMwHLpaBacvUeUQJgC4HSJH3dwo7j4qPhJmA=", 
     "email": "lmochoba@bhp.org.bw", 
     "date_joined": "2013-10-16T14:28:43"
   }
@@ -5861,12 +5866,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:30:19", 
+    "last_login": "2014-08-25T16:04:55", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$le12doBtWHZJ$KrRI4Qs9XAlvSxleJIFFsfoSY/1A4K6biWEQvnzgkwM=", 
+    "password": "pbkdf2_sha256$12000$6nMFcZ44ZW3t$1qPlpTb+06GcHhh9jGTgOYaZ0OhqVaxPRkhP6npk5KM=", 
     "email": "rmabutho@bhp.org.bw", 
     "date_joined": "2013-10-16T14:30:19"
   }
@@ -5881,12 +5886,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:55:19", 
+    "last_login": "2014-08-27T11:20:05", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$CgkpGrtQixZa$rQ5dTOOhi79wWRZwBbwFw/PNtcuqXaLqk3lOH/3UPOU=", 
+    "password": "pbkdf2_sha256$12000$6Tlk1X4n4HpQ$kIWHBWzwataXldnYcD/4liJ/mhZoV60yIQqimP89E3M=", 
     "email": "kmaotonyane@bhp.org.bw", 
     "date_joined": "2013-10-16T14:31:50"
   }
@@ -5901,12 +5906,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:33:04", 
+    "last_login": "2014-08-27T14:22:26", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$OKRjkAT6i15N$ORy3jkj+TDNUpsDhL2yMYqaCTFDUx9NRDCfJCTJAKa0=", 
+    "password": "pbkdf2_sha256$12000$QVcBu4hrNygj$nI7uUkmw2e0lbw7nP8KcM89FqjCtBd/r94kmk3VGbcA=", 
     "email": "kmakabe@bhp.org.bw", 
     "date_joined": "2013-10-16T14:33:04"
   }
@@ -5941,12 +5946,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-28T15:13:07", 
+    "last_login": "2014-08-25T17:27:53", 
     "groups": [
       4
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$cVolSQHS4r4d$f01o2mcIUlcndy9Rm5MmGjF1Ga8Vys9nlKRJvjx3XHg=", 
+    "password": "pbkdf2_sha256$10000$WxMrGUww8KeP$5Y8sLKpa+kbUPWFD39mIcOAgDWIWA6xCN0VxJtP0WsI=", 
     "email": "mmalomo@bhp.org.bw", 
     "date_joined": "2013-10-16T14:38:02"
   }
@@ -5961,12 +5966,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:49:39", 
+    "last_login": "2014-08-27T14:18:20", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$R5lR6fVXOUwA$kCmEFOZ3ZftXAz7niFB0zXV2R8MhrFTWJKR2UcUOzyA=", 
+    "password": "pbkdf2_sha256$12000$tNiyEXB5GKhz$t+jdP9QC8v7x0QhmooGSFT8KsgD5OpT9L22kbwsDQrQ=", 
     "email": "tmooketsi@bhp.org.bw", 
     "date_joined": "2013-10-16T14:39:23"
   }
@@ -6001,12 +6006,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:42:00", 
+    "last_login": "2014-08-27T10:41:47", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$JKrcUBUvDsxO$QleXX9JkyrMH4fXzP3ETw7VoQ3ENcdTm8h97860MCMg=", 
+    "password": "pbkdf2_sha256$12000$0jwgwPWdhn8U$0GnC5IYcdwZ7q7vRwCoh8+u3Aer9WvlJnBkR2m3+/Fk=", 
     "email": "smasole@bhp.org.bw", 
     "date_joined": "2013-10-16T14:42:00"
   }
@@ -6021,7 +6026,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:43:17", 
+    "last_login": "2014-08-25T16:55:10", 
     "groups": [
       3
     ], 
@@ -6041,7 +6046,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:44:51", 
+    "last_login": "2014-08-25T17:09:39", 
     "groups": [
       3
     ], 
@@ -6061,12 +6066,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:45:53", 
+    "last_login": "2014-08-27T14:57:33", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$XOnB2L7pYd6y$puPcwpcfZ+Z+rAawBM2FZtaRAAJL07miCGHfhf/LBFM=", 
+    "password": "pbkdf2_sha256$12000$ZRfT7lyhos12$3Q0HLQoTvZASQ3zji2Od3STly8tVTNPYyAofGqHQ2Qc=", 
     "email": "ltamuthiba@bhp.org.bw", 
     "date_joined": "2013-10-16T14:45:53"
   }
@@ -6081,12 +6086,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:56:14", 
+    "last_login": "2014-08-27T09:38:10", 
     "groups": [
       4
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$yv6EcuO0UEP6$lqN+KKZYJWzSv5fkITJLM6JFIBwrrUstmDLp0td6KQo=", 
+    "password": "pbkdf2_sha256$12000$Q4kSr4e0GPov$LEbknL3jBplkTtLn92S1Vh5InpY7O0iCbgAVe5nO3lU=", 
     "email": "wmangwegape@bhp.org.bw", 
     "date_joined": "2013-10-16T14:47:54"
   }
@@ -6101,12 +6106,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:45:03", 
+    "last_login": "2014-08-25T15:50:29", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$wuDPMTADF45r$ovjqh1BqLJWdfkCkf/Mex2X//AF5T9MyXzq1us3o13U=", 
+    "password": "pbkdf2_sha256$12000$6owjCIkpnT1p$0PzIRYZGS0VUK2OczIXl2Nm8QMnfkAzHlAxm9cs/oHg=", 
     "email": "kmmokele@bhp.org", 
     "date_joined": "2013-10-16T14:48:05"
   }
@@ -6121,12 +6126,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-28T12:16:15", 
+    "last_login": "2014-08-25T15:47:48", 
     "groups": [
       4
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$E84piFvTNrE4$+wmqXsNridJLK69QG7GmEQR2SuFYURipu7mo6P9IjCU=", 
+    "password": "pbkdf2_sha256$12000$jitf0j1jf4Bw$kxn07rA6CFqHsIR0d98W6L0SyQsFVWJB3BqW1AjLjVs=", 
     "email": "nmoilwanyane@bhp.org.bw", 
     "date_joined": "2013-10-16T14:51:07"
   }
@@ -6141,12 +6146,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:53:22", 
+    "last_login": "2014-08-27T11:07:19", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$dPwZtLT44IgF$dYbeo/bQ0kPs0ogiCFQh+kufOdV7kJ6/jbLJEn2mhuE=", 
+    "password": "pbkdf2_sha256$12000$Y9XjuADWWifb$VbfqF/fa8ANAbhrVy5slK3JbTHOwYaEuNq/NtZ0qgUg=", 
     "email": "ndapiwa@bhp.org.bw", 
     "date_joined": "2013-10-16T14:51:59"
   }
@@ -6161,12 +6166,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:48:45", 
+    "last_login": "2014-08-27T09:11:02", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$W0rpflzwUDbd$6rZVsVvOULDydI53wtMneeBOvXMJ7Q1XRj9xlyb4WBc=", 
+    "password": "pbkdf2_sha256$12000$SrGTnnNdVUv9$tSKr+wtd2zvPswl4UDreGiIYxUtn+M2m3BPEfVZt2hA=", 
     "email": "bsimon@bhp.org.bw", 
     "date_joined": "2013-10-16T14:52:23"
   }
@@ -6181,12 +6186,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T08:57:30", 
+    "last_login": "2014-08-25T15:49:31", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$cogD3AvazYs2$dZx+rzStv5gBJBPWWN0wf8g8hYJZdpYjsXDyoZxAlIw=", 
+    "password": "pbkdf2_sha256$12000$ZOqo9KMKiQCG$tSzp84VOnAb3BGx0HRMogIVj8XAB4s0JVColVIAz2Y0=", 
     "email": "kmoloi@bhp.org.bw", 
     "date_joined": "2013-10-16T14:53:05"
   }
@@ -6201,12 +6206,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T09:08:11", 
+    "last_login": "2014-08-27T15:02:48", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$hCS6aTZCgFL2$iiHDeBJJrFGZY3Xpk5vx5FWdUIDjtOhvugb09GB2fFg=", 
+    "password": "pbkdf2_sha256$12000$sXh1OS3iQ2rV$Almi1a5jHhqcU8/dd8PaLcR0cDPNo9COON0wIXUsRMY=", 
     "email": "kkgosikoma@bhp.org.bw", 
     "date_joined": "2013-10-16T14:53:45"
   }
@@ -6221,12 +6226,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:54:56", 
+    "last_login": "2014-08-25T16:00:56", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$1ShhLzcTP9Mj$jZf4Gzm0xCRIrMhor52r9KbeX1xmSKjdCArhu5P39Pg=", 
+    "password": "pbkdf2_sha256$12000$bk1HKNUaBHbo$DM/maHCEDr/7kehhet+pnuXPxKrP6dibv3nRkiN4p9c=", 
     "email": "pditlhage@bhp.org.bw", 
     "date_joined": "2013-10-16T14:54:56"
   }
@@ -6241,7 +6246,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-25T12:35:00", 
+    "last_login": "2014-08-27T09:42:47", 
     "groups": [
       3
     ], 
@@ -6261,7 +6266,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:56:33", 
+    "last_login": "2014-08-25T16:45:55", 
     "groups": [
       3
     ], 
@@ -6275,18 +6280,18 @@
   "pk": 43, 
   "model": "auth.user", 
   "fields": {
-    "username": "kolesitse", 
+    "username": "qolesitse", 
     "first_name": "Keoneeng Quinton", 
     "last_name": "Olesitse", 
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-16T14:56:59", 
+    "last_login": "2014-08-27T14:42:06", 
     "groups": [
       3
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$TwpZXq6omaWS$RT2GotwAFRgLNXkVHfsOg5IZR+bR16koX+KPz47HHfY=", 
+    "password": "pbkdf2_sha256$12000$I3FoFhjrbz5N$3Ij5cxK7Py+ldO6fBrlRtKzUp3Xcp8s6zgJ54wdLZPA=", 
     "email": "kolesitse@bhp.org.bw", 
     "date_joined": "2013-10-16T14:56:59"
   }
@@ -6401,12 +6406,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2013-10-25T11:12:22", 
+    "last_login": "2014-08-25T17:11:08", 
     "groups": [
       5
     ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$AHX56H0tvJTD$rHNQp0Fkwo7dvbcw0+ffd7hTimaNDx7TJkig69zDakY=", 
+    "password": "pbkdf2_sha256$12000$g1dZslMhFf6V$Ep9rh8lxQWl5W7UGcBE44Vik+oS/itrnXmfIUDNv7HQ=", 
     "email": "tmoruiemang@bhp.org.bw", 
     "date_joined": "2013-10-17T16:04:15"
   }
@@ -6421,7 +6426,7 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2014-08-25T12:37:59", 
+    "last_login": "2014-08-27T14:53:31", 
     "groups": [
       3
     ], 
@@ -6461,7 +6466,7 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2014-08-25T11:49:03", 
+    "last_login": "2014-08-27T14:34:20", 
     "groups": [], 
     "user_permissions": [], 
     "password": "pbkdf2_sha256$12000$IDzMbFzt4ExP$e074qHf9U33W+J+JSNQFwwrBHFEYg9Xw7dnxTzdj+bQ=", 
@@ -6479,7 +6484,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-23T15:56:34", 
+    "last_login": "2014-08-27T10:11:10", 
     "groups": [
       2, 
       3, 
@@ -6702,7 +6707,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-25T10:54:35", 
+    "last_login": "2014-08-27T10:31:27", 
     "groups": [
       3, 
       7
@@ -6744,7 +6749,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-25T10:46:54", 
+    "last_login": "2014-08-27T15:39:05", 
     "groups": [
       3, 
       7
@@ -6877,7 +6882,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-25T10:45:03", 
+    "last_login": "2014-08-27T14:13:16", 
     "groups": [
       3, 
       7
@@ -6920,7 +6925,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-08-23T17:14:09", 
+    "last_login": "2014-08-27T14:41:38", 
     "groups": [
       7
     ], 
@@ -7061,10 +7066,12 @@
     "first_name": "Onneile", 
     "last_name": "Ramatlhape", 
     "is_active": true, 
-    "is_superuser": true, 
+    "is_superuser": false, 
     "is_staff": true, 
     "last_login": "2014-04-01T15:10:09", 
-    "groups": [], 
+    "groups": [
+      5
+    ], 
     "user_permissions": [], 
     "password": "pbkdf2_sha256$10000$MR1vwGMN2kV4$dJW2RnATpbyGYJZ8R9i5TIv/QxWCJr8rPBegoFMTNqk=", 
     "email": "oramatlhape@bhp.org.bw", 
@@ -7081,10 +7088,12 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2014-04-01T16:07:26", 
-    "groups": [], 
+    "last_login": "2014-08-27T14:21:30", 
+    "groups": [
+      3
+    ], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$1sUNJlaqhSQe$8C+JZLhjuc8LKiHY3mI8RVyskXfT4f9XaqqFxzUU/I0=", 
+    "password": "pbkdf2_sha256$12000$auDYJpPnp0Cg$PK40qt5IsbkW9QlbPsmw3xhVSFFiKoN1Em2VNKhbk1g=", 
     "email": "tphakedi@bhp.org.bw", 
     "date_joined": "2014-04-01T16:07:26"
   }
@@ -7269,6 +7278,15 @@
     "user": 2, 
     "key": "63e56521a14458d4f2295ebc0c0a10d5f547804b", 
     "created": "2013-10-29T16:15:54"
+  }
+},
+{
+  "pk": 19, 
+  "model": "tastypie.apikey", 
+  "fields": {
+    "user": 82, 
+    "key": "47145922dac7160e2e2cbc280d4c59a5be20c632", 
+    "created": "2014-08-27T15:53:42"
   }
 }
 ]
