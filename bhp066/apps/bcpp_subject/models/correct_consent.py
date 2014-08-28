@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
+from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start, datetime_is_after_consent
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER_UNDETERMINED
@@ -22,6 +23,15 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
     """A model linked to the subject consent to record corrections."""
 
     subject_consent = models.OneToOneField(SubjectConsent)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Correction report date ad time",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_is_after_consent,
+            datetime_not_future,
+            ],
+        )
 
     old_first_name = EncryptedFirstnameField()
 
@@ -132,6 +142,9 @@ class CorrectConsent(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     objects = CorrectConsentManager()
+
+    def __unicode__(self):
+        return unicode(self.subject_consent)
 
     def save(self, *args, **kwargs):
         self.compare_old_fields_to_consent()
