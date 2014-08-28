@@ -29,6 +29,11 @@
 {% else %}    
     <td></td>  
 {% endif %}
+  {% if hiv_result %}
+    <td><B>Result: </B>{{ hiv_result.hiv_result|mask_hiv_result }} {{ elisa_hiv_result.hiv_result}}</td>
+    <td><B>Blood Draw Type: </B>{{ hiv_result.blood_draw_type  }}</td>            
+{% endif %}
+
 </tr>
 </table>
 {% block subject_consent %}
@@ -43,6 +48,7 @@
     <td><B>Date:</B> {{subject_consent.consent_datetime|date:"Y-m-d H:i" }}</td>
   </tr>
   </table>
+  
 {% endif %}
 {% endblock %}
 
@@ -55,16 +61,6 @@
         {% endif %}
     {% endif %}
 {% endblock correct_consent %}
-
-{% if subject_hiv_result %}
-<table>
-<tr style="background:lightyellow;">
-    <td><B>Result: </B>{{ subject_hiv_result.subject_hiv_result_option }}</td>
-    <td><B>Finger-prick: </B>{{ subject_hiv_result.sample_datetime_drawn|date:"Y-m-d H:i"  }}</td>    
-    <td><B>Release: </B>{{ subject_hiv_result.result_release_location }}</td>        
-</tr>
-</table>
-{% endif %}
 
 {% endblock %}
 
