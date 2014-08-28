@@ -1,6 +1,7 @@
 from django.template.loader import render_to_string
 
-from apps.bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral, CorrectConsent
+from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
+                                      CorrectConsent, ElisaHivResult, HivResult)
 from apps.bcpp_lab.models import SubjectRequisition, PackingList
 
 
@@ -32,6 +33,8 @@ class SubjectDashboard(BaseSubjectDashboard):
             correct_consent_meta=self.correct_consent_meta,
             correct_consent=self.correct_consent,
             subject_referral=self.subject_referral,
+            elisa_hiv_result=self.elisa_hiv_result,
+            hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
 
@@ -51,6 +54,22 @@ class SubjectDashboard(BaseSubjectDashboard):
         except SubjectReferral.DoesNotExist:
             subject_referral = None
         return subject_referral
+
+    @property
+    def hiv_result(self):
+        try:
+            hiv_result = HivResult.objects.get(subject_visit__household_member=self.household_member)
+        except HivResult.DoesNotExist:
+            hiv_result = None
+        return hiv_result
+
+    @property
+    def elisa_hiv_result(self):
+        try:
+            elisa_hiv_result = ElisaHivResult.objects.get(subject_visit__household_member=self.household_member)
+        except ElisaHivResult.DoesNotExist:
+            elisa_hiv_result = None
+        return elisa_hiv_result
 
     @property
     def requisition_model(self):
