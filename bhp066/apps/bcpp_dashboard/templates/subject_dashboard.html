@@ -45,11 +45,17 @@
   </table>
 {% endif %}
 {% endblock %}
-{% if subject_consent %}
+
 {% block correct_consent %}
-<A href="{% url correct_consent_meta|admin_urlname:'add' %}?subject_consent={{subject_consent}}&next={{ subject_dashboard_url|default:"dashboard_url" }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+    {% if subject_consent %}
+        {% if correct_consent %}
+            <A href="{% url correct_consent_meta|admin_urlname:'change' correct_consent.id %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+        {% else %}
+            <A href="{% url correct_consent_meta|admin_urlname:'add' %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+        {% endif %}
+    {% endif %}
 {% endblock correct_consent %}
-{% endif %}
+
 {% if subject_hiv_result %}
 <table>
 <tr style="background:lightyellow;">
