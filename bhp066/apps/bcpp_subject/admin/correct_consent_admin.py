@@ -1,47 +1,46 @@
 from django.contrib import admin
 
+from edc.base.modeladmin.admin import BaseModelAdmin
+
 from ..forms import CorrectConsentForm
-from apps.bcpp_household.admin.base_household_model_admin import BaseHouseholdModelAdmin
-from apps.bcpp_subject.models.subject_consent import SubjectConsent
-
-from ..models import CorrectConsent
+from ..models import CorrectConsent, SubjectConsent
 
 
-class CorrectConsentAdmin(BaseHouseholdModelAdmin):
+class CorrectConsentAdmin(BaseModelAdmin):
 
     form = CorrectConsentForm
 
     fields = (
         'subject_consent',
-        'last_name',
-        'last_name_old',
-        'first_name',
-        'first_name_old',
-        'initials',
-        'initials_old',
-        'dob',
-        'dob_old',
-        'gender',
-        'gender_old',
-        'guardian_name',
-        'guardian_name_old',
-        'may_store_samples',
-        'may_store_samples_old',
-        'is_literate',
-        'is_literate_old',
+        'old_last_name',
+        'new_last_name',
+        'old_first_name',
+        'new_first_name',
+        'old_initials',
+        'new_initials',
+        'old_dob',
+        'new_dob',
+        'old_gender',
+        'new_gender',
+        'old_guardian_name',
+        'new_guardian_name',
+        'old_may_store_samples',
+        'new_may_store_samples',
+        'old_is_literate',
+        'new_is_literate',
         )
 
     radio_fields = {
-        'gender': admin.VERTICAL,
-        'gender_old': admin.VERTICAL,
-        'is_literate': admin.VERTICAL,
-        'is_literate_old': admin.VERTICAL,
-        'may_store_samples': admin.VERTICAL,
-        'may_store_samples_old': admin.VERTICAL,
+        'old_gender': admin.VERTICAL,
+        'new_gender': admin.VERTICAL,
+        'old_is_literate': admin.VERTICAL,
+        'new_is_literate': admin.VERTICAL,
+        'old_may_store_samples': admin.VERTICAL,
+        'new_may_store_samples': admin.VERTICAL,
         }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "plot":
+        if db_field.name == "subject_consent":
             kwargs["queryset"] = SubjectConsent.objects.filter(id__exact=request.GET.get('subject_consent', 0))
         return super(CorrectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(CorrectConsent, CorrectConsentAdmin)
