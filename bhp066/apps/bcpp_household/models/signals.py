@@ -1,4 +1,5 @@
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
+from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 
 from .household import Household
@@ -29,29 +30,47 @@ def post_save_on_household(sender, instance, raw, created, using, **kwargs):
             instance.post_save_create_household_structure(instance, created, using)
 
 
+@receiver(pre_delete, weak=False, dispatch_uid="household_structure_on_pre_delete")
+def household_structure_on_pre_delete(sender, instance, using, **kwargs):
+    """Raises an exception if instance.eligible_members is not 0."""
+    if isinstance(instance, HouseholdStructure):
+        if not instance.eligible_members:
+            raise ValidationError('Cannot delete HouseholdStructure instance if eligible members equals {}'.format(instance.eligible_members))
+
+
 @receiver(post_save, weak=False, dispatch_uid="household_structure_on_post_save")
 def household_structure_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if isinstance(instance, HouseholdStructure):
             instance.create_household_log_on_post_save(**kwargs)
-            if instance.enumerated and instance.no_informant:
-                household_assessment = HouseholdAssessment.objects.using(using).filter(household_structure=instance)
-                household_assessment.delete(using=using)
-            # update household if enrolled
-            instance.household.enrolled = instance.enrolled or False  # household_structure uses NullBoolean
-            instance.household.enrolled_datetime = instance.enrolled_datetime
-            instance.household.save(using=using)
-            # update plot if enrolled
-            instance.household.plot.bhs = instance.enrolled or False  # household_structure uses NullBoolean
-            instance.household.plot.enrolled_datetime = instance.enrolled_datetime
-            instance.household.plot.save(using=using)
+            if not created:
+                if instance.enumerated and instance.no_informant:
+                    #  TODO: why is this being deleted?
+                    try:
+                        # TODO: be aware that deleting HouseholdAssessment will
+                        #       recall this post-save signal.
+                        HouseholdAssessment.objects.using(using).get(
+                            household_structure=instance).delete(using=using)
+                    except HouseholdAssessment.DoesNotExist:
+                        pass
+                # update household if enrolled
+                instance.household.enrolled = instance.enrolled or False  # uses NullBoolean
+                instance.household.enrolled_datetime = instance.enrolled_datetime
+                instance.household.save(using=using)
+                # update plot if enrolled
+                instance.household.plot.bhs = instance.enrolled or False  # uses NullBoolean
+                instance.household.plot.enrolled_datetime = instance.enrolled_datetime
+                instance.household.plot.save(using=using)
 
 
 @receiver(post_save, weak=False, dispatch_uid="create_household_on_post_save")
 def create_household_on_post_save(sender, instance, raw, created, using, **kwargs):
-    if not raw and created:
+    if not raw:
         if isinstance(instance, Plot):
-            instance.create_or_delete_households(instance, using)
+            original_household_count = instance.household_count
+            instance.household_count = instance.create_or_delete_households(instance, using)
+            if original_household_count != instance.household_count:
+                instance.save()
 
 
 @receiver(post_save, weak=False, dispatch_uid="plot_access_attempts_on_post_save")
