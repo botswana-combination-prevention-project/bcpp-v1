@@ -1,11 +1,15 @@
 import factory
+
 from datetime import date
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import GpsDevice
 
 
 class GpsDeviceFactory(BaseUuidModelFactory):
-    FACTORY_FOR = GpsDevice
+    class Meta:
+        model = GpsDevice
 
     display_index = 2
     version = factory.Sequence(lambda n: 'version{0}'.format(n))
