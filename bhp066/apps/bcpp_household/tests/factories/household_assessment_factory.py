@@ -8,6 +8,7 @@ from .household_structure_factory import HouseholdStructureFactory
 
 
 class HouseholdAssessmentFactory(BaseUuidModelFactory):
-    FACTORY_FOR = HouseholdAssessment
+    class Meta:
+        model = HouseholdAssessment
 
     household_structure = factory.SubFactory(HouseholdStructureFactory)
