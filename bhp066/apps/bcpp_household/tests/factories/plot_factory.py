@@ -1,12 +1,11 @@
 import factory
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import Plot
 
 
-class PlotFactory(BaseUuidModelFactory):
-    FACTORY_FOR = Plot
+class PlotFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Plot
 
     community = 'otse'
     household_count = 1
