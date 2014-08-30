@@ -10,7 +10,8 @@ from .household_structure_factory import HouseholdStructureFactory
 
 
 class RepresentativeEligibilityFactory(BaseUuidModelFactory):
-    FACTORY_FOR = RepresentativeEligibility
+    class Meta:
+        model = RepresentativeEligibility
 
     household_structure = factory.SubFactory(HouseholdStructureFactory)
     report_datetime = datetime.today()
