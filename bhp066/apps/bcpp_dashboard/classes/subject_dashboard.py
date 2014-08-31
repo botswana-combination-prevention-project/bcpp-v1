@@ -4,6 +4,7 @@ from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocat
                                       CorrectConsent, ElisaHivResult, HivResult)
 from apps.bcpp_lab.models import SubjectRequisition, PackingList
 
+from edc.subject.appointment.models import Appointment
 
 from .base_subject_dashboard import BaseSubjectDashboard
 
@@ -46,6 +47,27 @@ class SubjectDashboard(BaseSubjectDashboard):
         except SubjectConsent.DoesNotExist:
             subject_consent = None
         return subject_consent
+
+    @property
+    def appointment(self):
+        if not self._appointment:
+            if self.dashboard_model_name == 'appointment':
+                self._appointment = Appointment.objects.get(pk=self.dashboard_id)
+            elif self.dashboard_model_name == 'visit':
+                self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
+            elif self.dashboard_model_name == 'household_member':
+                try:
+                    #when an appointment is available
+                    self._appointment = Appointment.objects.get(registered_subject=self.registered_subject)
+                except Appointment.DoesNotExist:
+                    #when an appointment is not available (i.e. subject has not yet consented)
+                    self._appointment = None
+            else:
+                self._appointment = None
+            self._appointment_zero = None
+            self._appointment_code = None
+            self._appointment_continuation_count = None
+        return self._appointment
 
     @property
     def subject_referral(self):
