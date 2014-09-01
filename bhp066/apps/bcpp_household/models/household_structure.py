@@ -107,14 +107,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
-    def refresh_member_status(self, using):
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
-        household_members = HouseholdMember.objects.using(using).filter(household_structure__pk=self.pk)
-        for household_member in household_members:
-            household_member_helper = HouseholdMemberHelper(household_member)
-            household_member.member_status = household_member_helper.calculate_member_status_with_hint(household_member.member_status)
-            household_member.save(using=using)
-
     @property
     def vdc_form_status(self):
         status = None

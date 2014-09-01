@@ -63,12 +63,6 @@ class SubjectRefusal (BaseMemberStatusModel):
 #             raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
-        self.household_member.refused = True
-        #household_member_helper = HouseholdMemberHelper(self.household_member)
-        #self.household_member.member_status = household_member_helper.calculate_member_status_without_hint()
-        self.household_member.member_status = REFUSED
-        # important during dispatch, need to save instance to the correct db.
-        self.household_member.save(using=kwargs.get('using', None))
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:

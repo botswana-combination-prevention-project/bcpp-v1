@@ -1,6 +1,6 @@
 import factory
 
-from datetime import date
+from datetime import datetime, date
 
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
@@ -20,6 +20,7 @@ class EnrollmentChecklistFactory(BaseUuidModelFactory):
     gender = 'M'
     initials = 'NN'
     # these are defaults
+    report_datetime = datetime.today()
     has_identity = 'Yes'
     guardian = 'N/A'
     citizen = 'Yes'

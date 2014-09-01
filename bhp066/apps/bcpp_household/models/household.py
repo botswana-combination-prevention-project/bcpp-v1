@@ -5,7 +5,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..classes import HouseholdIdentifier
 from ..managers import HouseholdManager
 
 from .plot import Plot
@@ -146,6 +145,9 @@ class Household(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+#     def save(self, *args, **kwargs):
+#         return super(Household, self).save(*args, **kwargs)
+
     @property
     def mapper_name(self):
         return self.community
@@ -156,23 +158,6 @@ class Household(BaseDispatchSyncUuidModel):
     def natural_key(self):
         return (self.household_identifier,)
     natural_key.dependencies = ['bcpp_household.household', ]
-
-    def post_save_update_identifier(self, instance, created, using):
-        """Updates the identifier field if this is a new instance."""
-        if created:
-            instance.community = instance.plot.community
-            household_identifier = HouseholdIdentifier(plot_identifier=instance.plot.plot_identifier)
-            instance.household_identifier = household_identifier.get_identifier()
-            instance.save(using=using)
-
-    def post_save_create_household_structure(self, instance, created, using):
-        """Creates, for each defined survey, a household structure(s) for this household."""
-        if created:
-            HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
-            Survey = models.get_model('bcpp_survey', 'Survey')  # checked for on pre-save
-            for survey in Survey.objects.all():  # create a household_structure for each survey defined
-                if not HouseholdStructure.objects.using(using).filter(household__pk=instance.pk, survey=survey):
-                    HouseholdStructure.objects.using(using).create(household=instance, survey=survey)
 
     def get_subject_identifier(self):
         return self.household_identifier
