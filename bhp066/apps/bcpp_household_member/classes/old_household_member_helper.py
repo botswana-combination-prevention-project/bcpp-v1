@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 
+from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
 
 from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE, NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC
@@ -8,7 +9,8 @@ from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, BHS_LOSS, HTC, HT
 
 class HouseholdMemberHelper(object):
 
-    def __init__(self, household_member=None):
+    def __init__(self, household_member, using=None):
+        self.using = using or 'default'
         self._member_status_absent = None
         self._member_status_htc = None
         self._member_status_refused = None
@@ -95,21 +97,16 @@ class HouseholdMemberHelper(object):
     @member_status_absent.setter
     def member_status_absent(self, is_absent):
         self._member_status_absent = None
-        SubjectAbsentee = models.get_model('bcpp_household_member', 'SubjectAbsentee')
-        SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'SubjectAbsenteeEntry')
         if is_absent:
-            self.subject_status_factory('SubjectAbsentee', ABSENT)
             self._member_status_absent = ABSENT
             self.member_status_refused_htc = False
             self.member_status_undecided = False
             self.member_status_refused = False
             self.member_status_enrollment_loss = False
             self.member_status_htc = False
-            self.enrollment_checklist_completed = False
+            # self.enrollment_checklist_completed = False
         else:
             self.household_member.absent = False
-            if not SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=self.household_member).exists():
-                SubjectAbsentee.objects.filter(household_member=self.household_member).delete()
 
     @property
     def member_status_undecided(self):
@@ -119,20 +116,14 @@ class HouseholdMemberHelper(object):
     @member_status_undecided.setter
     def member_status_undecided(self, is_undecided):
         self._member_status_undecided = None
-        SubjectUndecided = models.get_model('bcpp_household_member', 'SubjectUndecided')
-        SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'SubjectUndecidedEntry')
         if is_undecided:
-            self.subject_status_factory('SubjectUndecided', UNDECIDED)
             self._member_status_undecided = UNDECIDED
             self.member_status_refused_htc = False
             self.member_status_absent = False
             self.member_status_refused = False
             self.member_status_enrollment_loss = False
             self.member_status_htc = False
-            self.enrollment_checklist_completed = False
-        else:
-            if not SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=self.household_member).exists():
-                SubjectUndecided.objects.filter(household_member=self.household_member).delete()
+            #self.enrollment_checklist_completed = False
 
     @property
     def member_status_refused(self):
@@ -151,17 +142,17 @@ class HouseholdMemberHelper(object):
             self.member_status_absent = False
             self.member_status_enrollment_loss = False
             self.member_status_htc = False
-            self.enrollment_checklist_completed = False
+            # self.enrollment_checklist_completed = False
         else:
             self.household_member.refused = False
-            if SubjectRefusal.objects.filter(household_member=self.household_member):
-                subject_refusal = SubjectRefusal.objects.get(household_member=self.household_member)
+            if SubjectRefusal.objects.using(self.using).filter(household_member=self.household_member):
+                subject_refusal = SubjectRefusal.objects.using(self.using).get(household_member=self.household_member)
                 options = {'household_member': subject_refusal.household_member,
                        'survey': subject_refusal.survey,
                        'refusal_date': subject_refusal.refusal_date,
                        'reason': subject_refusal.reason,
                        'reason_other': subject_refusal.reason_other}
-                SubjectRefusalHistory.objects.create(**options)
+                SubjectRefusalHistory.objects.using(self.using).create(**options)
                 subject_refusal.delete()
         return self._member_status_refused
 
@@ -198,7 +189,7 @@ class HouseholdMemberHelper(object):
             self.member_status_enrollment_loss = False
             self.member_status_htc = False
             self.member_status_refused = False
-            self.enrollment_checklist_completed = False  # this is a bad boy!!
+            # self.enrollment_checklist_completed = False  # this is a bad boy!!
         return self._member_status_bhs_screen
 
     @property
@@ -239,7 +230,7 @@ class HouseholdMemberHelper(object):
                  while household_member.is_consented will be True. Attribute household_member.is_consented
                  is set to True in the subject_consent save method. """
         SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
-        return SubjectConsent.objects.filter(household_member=self).exists()
+        return SubjectConsent.objects.using(self.using).filter(household_member=self).exists()
 
     @property
     def consenting(self):
@@ -273,67 +264,62 @@ class HouseholdMemberHelper(object):
         eligible_htc = False
         if self.household_member.age_in_years > 64:
             eligible_htc = True
-        elif (not self.eligible_member and self.household_member.inability_to_participate == 'N/A') and self.household_member.age_in_years >= 16:
+        elif (not self.eligible_member and self.household_member.inability_to_participate == NOT_APPLICABLE) and self.household_member.age_in_years >= 16:
             eligible_htc = True
-        elif self.eligible_member:
-            if not self.enrollment_checklist_completed and self.refused:
-                eligible_htc = True
-            elif self.enrollment_checklist_completed and not self.eligible_subject:
-                eligible_htc = True
-            elif self.enrollment_checklist_completed and self.eligible_subject and self.refused:
-                eligible_htc = True
-            else:
-                pass
-        else:
-            pass
+        elif self.eligible_member and self.refused:
+            eligible_htc = True
+        elif self.enrollment_checklist_completed and not self.eligible_subject:
+            eligible_htc = True
         return eligible_htc
 
     @property
     def subject_htc(self):
         SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
-        return SubjectHtc.objects.filter(household_member=self).exists()
+        return SubjectHtc.objects.using(self.using).filter(household_member=self).exists()
 
     @property
     def eligible_member(self):
         return ((self.household_member.is_minor or self.household_member.is_adult) and self.household_member.study_resident == 'Yes'
-                and self.household_member.inability_to_participate == 'N/A')
+                and self.household_member.inability_to_participate == NOT_APPLICABLE)
 
     @property
     def eligible_subject(self):
         """Returns True if subject is eligible as determined by passing the eligibility criteria in the enrollment checklist.
 
         This is set by the enrollment checklist save method."""
-        return self.household_member.eligible_subject
+        EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
+        return EnrollmentChecklist.objects.using(self.using).filter(household_member=self, is_eligible=True).exists()
 
     @property
     def enrollment_checklist_completed(self):
         """Returns True if subject has completed the enrollment checklist.
 
         This is set by the enrollment checklist save method."""
-        return self.household_member.enrollment_checklist_completed
+        EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
+        return EnrollmentChecklist.objects.using(self.using).filter(household_member=self).exists()
 
-    @enrollment_checklist_completed.setter
-    def enrollment_checklist_completed(self, is_completed):
-        """Indicates that the enrollment loss form was completed or resets.
-
-        If one is switching back to BHS_SCREEN for whatever reason, then
-        enrollment_checklist_completed needs to be set back to false and the
-        enrollment checklist deleted for that member,the same applies to enrollment_loss_completed and
-        deleting the enrollment_loss. This is all done in the enrollment_checklist_on_post_delete signal."""
-        EnrollmentChecklist = models.get_model('bcpp_household_member', 'enrollmentchecklist')
-        EnrollmentLoss = models.get_model('bcpp_household_member', 'enrollmentloss')
-        if not is_completed:  # reset the field value and delete the checklist if it exists
-            try:
-                EnrollmentChecklist.objects.get(household_member=self.household_member).delete()
-            except EnrollmentChecklist.DoesNotExist:
-                pass
-            try:
-                EnrollmentLoss.objects.get(household_member=self.household_member).delete()
-            except EnrollmentLoss.DoesNotExist:
-                pass
-            self.household_member.enrollment_checklist_completed = False
-            self.household_member.enrollment_loss_completed = False
-            self.household_member.eligible_subject = False
+#     @enrollment_checklist_completed.setter
+#     def enrollment_checklist_completed(self, is_completed):
+#         """Indicates that the enrollment loss form was completed or resets.
+# 
+#         If one is switching back to BHS_SCREEN for whatever reason, then
+#         enrollment_checklist_completed needs to be set back to false and the
+#         enrollment checklist deleted for that member,the same applies to enrollment_loss_completed and
+#         deleting the enrollment_loss. This is all done in the enrollment_checklist_on_post_delete signal."""
+#         EnrollmentChecklist = models.get_model('bcpp_household_member', 'enrollmentchecklist')
+#         EnrollmentLoss = models.get_model('bcpp_household_member', 'enrollmentloss')
+#         if not is_completed:  # reset the field value and delete the checklist if it exists
+#             try:
+#                 EnrollmentChecklist.objects.using(self.using).get(household_member=self.household_member).delete()
+#             except EnrollmentChecklist.DoesNotExist:
+#                 pass
+#             try:
+#                 EnrollmentLoss.objects.using(self.using).get(household_member=self.household_member).delete()
+#             except EnrollmentLoss.DoesNotExist:
+#                 pass
+#             self.household_member.enrollment_checklist_completed = False
+#             self.household_member.enrollment_loss_completed = False
+#             self.household_member.eligible_subject = False
 
     @property
     def enrollment_loss_completed(self):
@@ -347,7 +333,7 @@ class HouseholdMemberHelper(object):
         EnrollmentLoss = models.get_model('bcpp_household_member', 'EnrollmentLoss')
         if not is_completed:
             try:
-                EnrollmentLoss.objects.get(household_member=self.household_member).delete()
+                EnrollmentLoss.objects.using(self.using).get(household_member=self.household_member).delete()
                 self.household_member.enrollment_loss_completed = False
             except EnrollmentLoss.DoesNotExist:
                 pass
@@ -364,10 +350,12 @@ class HouseholdMemberHelper(object):
         return self.household_member.present_today
 
     def calculate_member_status_with_hint(self, member_status_hint):
-        """Updates the member status from the save method using a "hint" or value passed on from the model instance being saved."""
+        """Updates the member status from the save method using a "hint"
+        or value passed on from the model instance being saved."""
         if self.consenting or self.consented:
             member_status = BHS
-        elif self.eligible_member and not self.reported and self.household_member.present_today == 'No' and (self.household_member.modified - self.household_member.created).seconds < 15:
+        elif self.eligible_member and not self.reported and self.household_member.present_today == 'No':
+            # and (self.household_member.modified - self.household_member.created).seconds < 15):
             self.member_status_absent = True
             member_status = self.member_status
         else:
@@ -384,7 +372,7 @@ class HouseholdMemberHelper(object):
                 elif member_status_hint == NOT_ELIGIBLE:
                     self.member_status_enrollment_loss = True
                 elif member_status_hint == NOT_REPORTED:
-                    member_status = self.household_member.__class__.objects.get(pk=self.household_member.pk).member_status
+                    member_status = self.household_member.__class__.objects.using(self.using).get(pk=self.household_member.pk).member_status
                 elif member_status_hint == HTC_ELIGIBLE:
                     self.member_status_htc = True
                 elif member_status_hint == REFUSED_HTC:
@@ -435,23 +423,6 @@ class HouseholdMemberHelper(object):
             else:
                 pass
         return member_status
-
-    def subject_status_factory(self, model_string, member_status):
-        """Returns an instance of the specified subject status model and creates one if it does not exist."""
-        if model_string not in ['SubjectAbsentee', 'SubjectUndecided']:
-            raise TypeError('Invalid subject status model for this factory. Got {0}'.format(model_string))
-        instance = None
-        model_cls = models.get_model('bcpp_household_member', model_string)
-        try:
-            instance = model_cls.objects.get(household_member=self.household_member)
-        except model_cls.DoesNotExist:
-            instance = model_cls.objects.create(
-                report_datetime=datetime.today(),
-                registered_subject=self.household_member.registered_subject,
-                household_member=self.household_member,
-                survey=self.household_member.household_structure.survey,
-                )
-        return instance
 
     @property
     def member_status_choices(self):
