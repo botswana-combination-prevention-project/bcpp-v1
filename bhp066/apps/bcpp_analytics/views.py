@@ -14,7 +14,8 @@ from edc.core.bhp_birt_reports.classes import OperationalReportUtilities
 from edc.device.sync.models import Producer
 
 from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_household.constants import NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION
+from apps.bcpp_household.constants import (NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION,
+                                           CONFIRMED, UNCONFIRMED)
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household_member.constants import (ABSENT, BHS, HTC, REFUSED, UNDECIDED)
@@ -205,14 +206,17 @@ def operational_report_view(request, **kwargs):
     if community == '':
         for item in COMMUNITIES:
             plt = Plot.objects.all()
-            reached = reached + (plt.filter(action='confirmed', community__icontains=community,
-                                            modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
+            reached = reached + (plt.filter(action=CONFIRMED, community__icontains=community,
+                                            modified__gte=date_from, modified__lte=date_to,
+                                            user_modified__icontains=ra_username).count())
             values['1. Plots reached'] = reached
-            not_reached = not_reached + (plt.filter(action='unconfirmed', community__icontains=community,
-                                                    modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
+            not_reached = not_reached + (plt.filter(action=UNCONFIRMED, community__icontains=community,
+                                                    modified__gte=date_from, modified__lte=date_to,
+                                                    user_modified__icontains=ra_username).count())
             values['2. Plots not reached'] = not_reached
-            members = (HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
-                                                      created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username))
+            members = (HouseholdMember.objects.filter(
+                household_structure__household__plot__community__icontains=community,
+                created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username))
             members_val = members_val + (members.count())
             values['3. Total members'] = members_val
 
@@ -242,25 +246,36 @@ def operational_report_view(request, **kwargs):
             refused = refused + (age_eligible_refused.count())
             values['91. Age eligible members that REFUSED'] = refused
 
-            how_many_tested = how_many_tested + (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                                                          created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count())
+            how_many_tested = how_many_tested + (HivResult.objects.filter(
+                subject_visit__household_member__household_structure__household__plot__community__icontains=community,
+                created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count())
             values['92. Age eligible members that TESTED'] = how_many_tested
             values = collections.OrderedDict(sorted(values.items()))
 
             members_tobe_visited = []
-            absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                                created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
+            absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, 
+                                                household_structure__household__plot__community__icontains=community,
+                                                created__gte=date_from, created__lte=date_to,
+                                                user_created__icontains=ra_username).order_by('member_status')
             for mem in absentee_undecided:
                 if mem.member_status == UNDECIDED:
-                    undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
+                    undecided_entries = SubjectUndecidedEntry.objects.filter(
+                        subject_undecided__household_member=mem).order_by('next_appt_datetime')
                     if undecided_entries and mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
+                        members_tobe_visited.append(
+                            (str(mem), mem.member_status,
+                             mem.visit_attempts, 
+                             str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
                     elif mem.visit_attempts < 3:
                         members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
                 elif mem.member_status == ABSENT:
-                    absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('next_appt_datetime')
+                    absentee_entries = SubjectAbsenteeEntry.objects.filter(
+                        subject_absentee__household_member=mem).order_by('next_appt_datetime')
                     if absentee_entries and mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
+                        members_tobe_visited.append(
+                            (str(mem), mem.member_status,
+                             mem.visit_attempts,
+                             str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
                     elif mem.visit_attempts < 3:
                         members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
             communities = []
@@ -288,14 +303,18 @@ def operational_report_view(request, **kwargs):
     elif ra_username == '':
         for user in User.objects.filter(groups__name='field_research_assistant'):
             plt = Plot.objects.all()
-            reached = reached + (plt.filter(action='confirmed', community__icontains=community,
-                                            modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
+            reached = reached + (plt.filter(action=CONFIRMED, community__icontains=community,
+                                            modified__gte=date_from, modified__lte=date_to,
+                                            user_modified__icontains=ra_username).count())
             values['1. Plots reached'] = reached
-            not_reached = not_reached + (plt.filter(action='unconfirmed', community__icontains=community,
-                                                    modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count())
+            not_reached = not_reached + (plt.filter(action=UNCONFIRMED, community__icontains=community,
+                                                    modified__gte=date_from, modified__lte=date_to,
+                                                    user_modified__icontains=ra_username).count())
             values['2. Plots not reached'] = not_reached
-            members = (HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
-                                                      created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username))
+            members = (HouseholdMember.objects.filter(
+                household_structure__household__plot__community__icontains=community,
+                created__gte=date_from, created__lte=date_to,
+                user_created__icontains=ra_username))
             members_val = members_val + (members.count())
 
             values['3. Total members'] = members_val
@@ -368,10 +387,10 @@ def operational_report_view(request, **kwargs):
                 ra_usernames.insert(0, '---------')
     else:
         plt = Plot.objects.all()
-        reached = plt.filter(action='confirmed', community__icontains=community,
+        reached = plt.filter(action=CONFIRMED, community__icontains=community,
                              modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count()
         values['1. Plots reached'] = reached
-        not_reached = plt.filter(action='unconfirmed', community__icontains=community,
+        not_reached = plt.filter(action=UNCONFIRMED, community__icontains=community,
                                  modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count()
         values['2. Plots not reached'] = not_reached
         members = HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
