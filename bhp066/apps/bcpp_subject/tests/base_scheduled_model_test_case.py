@@ -11,6 +11,7 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
+from edc.constants import NOT_APPLICABLE
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
@@ -50,11 +51,11 @@ class BaseScheduledModelTestCase(TestCase):
         self.household_member_female = HouseholdMemberFactory(household_structure=household_structure,
                                                               first_name='SUE', initials='SW', gender='F',
                                                               age_in_years=25, study_resident='Yes', relation='sister',
-                                                              inability_to_participate='N/A')
+                                                              inability_to_participate=NOT_APPLICABLE)
         self.household_member_male = HouseholdMemberFactory(household_structure=household_structure,
                                                             first_name='ERIK', initials='EW', gender='M',
                                                             age_in_years=25, study_resident='Yes', relation='brother',
-                                                            inability_to_participate='N/A')
+                                                            inability_to_participate=NOT_APPLICABLE)
         self.household_member_female.save()
         self.household_member_male.save()
 
@@ -63,7 +64,7 @@ class BaseScheduledModelTestCase(TestCase):
             initials=self.household_member_male.initials,
             gender=self.household_member_male.gender,
             dob=date.today() - relativedelta(years=self.household_member_male.age_in_years),
-            guardian='N/A',
+            guardian=NOT_APPLICABLE,
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_female = HouseholdMember.objects.get(pk=self.household_member_female.pk)
@@ -74,7 +75,7 @@ class BaseScheduledModelTestCase(TestCase):
             initials=self.household_member_female.initials,
             gender=self.household_member_female.gender,
             dob=date.today() - relativedelta(years=self.household_member_female.age_in_years),
-            guardian='N/A',
+            guardian=NOT_APPLICABLE,
             part_time_resident='Yes',
             citizen='Yes')
         self.household_member_male = HouseholdMember.objects.get(pk=self.household_member_male.pk)
