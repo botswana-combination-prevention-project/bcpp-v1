@@ -1,5 +1,9 @@
 from django import forms
+
+from edc.constants import NOT_APPLICABLE
+
 from ..models import HivResult
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -38,7 +42,7 @@ class HivResultForm (BaseSubjectModelForm):
             raise forms.ValidationError('If test has been performed, what is the test result date time?')
         if cleaned_data.get('hiv_result') not in ['POS', 'NEG', 'IND'] and cleaned_data.get('blood_draw_type') in ['capillary', 'venous']:
             raise forms.ValidationError('No blood drawn but you said {0}. Please correct.'.format(cleaned_data.get('blood_draw_type')))
-        if cleaned_data.get('blood_draw_type') == 'capillary' and cleaned_data.get('insufficient_vol') == 'N/A':
+        if cleaned_data.get('blood_draw_type') == 'capillary' and cleaned_data.get('insufficient_vol') == NOT_APPLICABLE:
             raise forms.ValidationError('Please indicate if the capillary tube has sufficient volume.')
         if cleaned_data.get('blood_draw_type') == 'venous' and cleaned_data.get('insufficient_vol') in ['Yes', 'No']:
             raise forms.ValidationError('Venous blood drawn.  You do not need to indicate if volume is sufficient. Got {0}'.format(cleaned_data.get('insufficient_vol')))
