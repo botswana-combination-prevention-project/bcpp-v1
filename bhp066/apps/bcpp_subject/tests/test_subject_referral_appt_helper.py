@@ -3,7 +3,7 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import MO, TU, WE, TH, FR
 
-from django.test import SimpleTestCase
+from django.test import TestCase
 
 from ..classes import SubjectReferralApptHelper
 from apps.bcpp_household.utils.clinic_days_tuple import ClinicDaysTuple
@@ -20,7 +20,7 @@ CLINIC_DAYS = {
     }
 
 
-class TestSubjectReferralApptHelper(SimpleTestCase):
+class TestSubjectReferralApptHelper(TestCase):
     """Tests given a referral code correctly calculates the next appointment datetime.
 
     The calculated appointment dates will differ according to the referral code"""
