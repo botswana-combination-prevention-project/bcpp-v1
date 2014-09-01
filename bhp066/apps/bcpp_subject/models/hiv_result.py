@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future
 from edc.choices import YES_NO_NA
+from edc.constants import NOT_APPLICABLE
 
 from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
 
@@ -31,8 +32,8 @@ class HivResult (BaseScheduledVisitModel):
     blood_draw_type = models.CharField(
         verbose_name=_("What type of blood was used for the test"),
         max_length=15,
-        choices=(('capillary', 'Capillary'), ('venous', 'Venous'), ('N/A', 'Not applicable')),
-        default='N/A',
+        choices=(('capillary', 'Capillary'), ('venous', 'Venous'), (NOT_APPLICABLE, 'Not applicable')),
+        default=NOT_APPLICABLE,
         help_text="",
     )
 
@@ -40,7 +41,7 @@ class HivResult (BaseScheduledVisitModel):
         verbose_name=_('If capillary, is the volume less than 350uL?'),
         max_length=15,
         choices=YES_NO_NA,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text=_('Note: if capillary blood and less than 350uL, an additional venous blood draw is required')
     )
 
