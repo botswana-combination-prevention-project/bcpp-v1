@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from django.db import connection
 from django.test import TestCase
-from django.test.utils import teardown_test_environment
 from django.db.models import get_model
 
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -43,9 +42,9 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class PlotReplacementTests(TestCase):
+class TestPlotReplacement(TestCase):
 
-    def setUp(self):
+    def startup(self):
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
@@ -56,12 +55,6 @@ class PlotReplacementTests(TestCase):
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         self.dispatch_test_db = 'dispatch_destination'
-#         connection.creation.destroy_test_db(self.dispatch_test_db, verbosity=1)
-#         teardown_test_environment()
-
-    def tearDown(self):
-        self.dispatch_test_db = 'dispatch_destination'
-        connection.creation.destroy_test_db(self.dispatch_test_db, verbosity=1)
 
     def household_member_refused_factory(self, **kwargs):
         household_member = HouseholdMemberFactory(**kwargs)
