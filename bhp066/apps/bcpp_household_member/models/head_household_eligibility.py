@@ -28,12 +28,14 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
 
     def natural_key(self):
         if not self.household_member:
-            raise AttributeError("household_member cannot be None for household_head_eligibility with pk='\{0}\'".format(self.pk))
+            raise AttributeError("household_member cannot be None for household_head_eligibility "
+                                 "with pk='\{0}\'".format(self.pk))
         return self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household.household_member']
 
     def dispatch_container_lookup(self, using=None):
-        return (get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
+        return (get_model('bcpp_household', 'Plot'),
+                'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
         self.matches_household_member_values(self.household_member)
