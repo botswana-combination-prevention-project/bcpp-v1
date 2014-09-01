@@ -3,6 +3,7 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_is_future, date_is_future
+from edc.constants import NOT_APPLICABLE
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
@@ -291,7 +292,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         verbose_name='Reason for not attending suggested appointment date',
         max_length=50,
         choices=REFERRAL_APPT_COMMENTS,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text='If subject is unsure about attending the suggested appointment date, indicate the reason.'
         )
 
