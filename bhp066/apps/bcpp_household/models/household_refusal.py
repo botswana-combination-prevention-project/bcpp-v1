@@ -52,8 +52,6 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
         if self.household_structure.enrolled:
             raise ValidationError('Household is enrolled.')
-        self.household_structure.refused_enumeration = True
-        self.household_structure.save()
         super(BaseHouseholdRefusal, self).save(*args, **kwargs)
 
     def dispatch_container_lookup(self, using=None):
