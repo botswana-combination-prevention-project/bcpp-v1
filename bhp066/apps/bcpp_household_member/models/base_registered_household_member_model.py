@@ -51,13 +51,6 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
     def get_registration_datetime(self):
         return self.report_datetime
 
-    def save(self, *args, **kwargs):
-        if 'reason' in kwargs:
-            # remove two extra keys
-            del kwargs['reason']
-            del kwargs['info_source']
-        super(BaseRegisteredHouseholdMemberModel, self).save(*args, **kwargs)
-
     def confirm_registered_subject_pk_on_post_save(self, using):
         if self.registered_subject.pk != self.household_member.registered_subject.pk:
             raise TypeError('Expected self.registered_subject.pk == self.household_member.registered_subject.pk. Got {0} != {1}.'.format(self.registered_subject.pk, self.household_member.registered_subject.pk))
