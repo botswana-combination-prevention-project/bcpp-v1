@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
-from django.test import TestCase, SimpleTestCase
+from django.test import TestCase
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -10,7 +10,7 @@ from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_household.models import Household, HouseholdStructure
+from apps.bcpp_household.models import Household, HouseholdStructure, Plot
 from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -19,7 +19,7 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
 
-class TestConsentHistory(SimpleTestCase):
+class TestConsentHistory(TestCase):
 
     app_label = 'bcpp_subject'
     community = None
@@ -34,16 +34,17 @@ class TestConsentHistory(SimpleTestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_mappers.autodiscover()
-        self.study_site = StudySite.objects.get(site_code=site_mappers.community_code())
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
 
     def test_p1(self):
         self.startup()
         print 'get a community name from the mapper classes'
-        community = site_mappers.get_as_list()[0]
+        community = site_mappers.get_current_mapper().map_area
         print 'create a new survey'
         self.assertEquals(RegisteredSubject.objects.all().count(), 0)
         self.assertEquals(Household.objects.all().count(), 0)
         self.assertEquals(HouseholdStructure.objects.all().count(), 0)
+        self.assertEquals(Plot.objects.all().count(), 0)
         survey1, survey2, survey3 = [survey for survey in Survey.objects.all()]
         print('get site mappers')
         site_mappers.autodiscover()
@@ -51,10 +52,11 @@ class TestConsentHistory(SimpleTestCase):
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
         print('mapper is {0}'.format(mapper().get_map_area()))
         print('Create a plot, (note plot creates a HH if None exist)')
-        plot = PlotFactory(community=mapper().get_map_area(), status='residential_habitable')
+        plot = PlotFactory(community=community, household_count=1, status='residential_habitable')
         print plot
-        plot.save()
         household = Household.objects.get(plot=plot)
+        print [h.household for h in HouseholdStructure.objects.all()]
+        print [h.survey for h in HouseholdStructure.objects.all()]
         self.assertEquals(Household.objects.all().count(), 1)
         print 'assert hh structure created'
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)  # 3 surveys for each HH = 3 x 1 = 3
