@@ -88,7 +88,7 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot_log__plot__plot_identifier')
 
-    def allow_enrollement(self, plot_log_entry, exception_cls=None, using=None):
+    def allow_enrollment(self, plot_log_entry, exception_cls=None, using=None):
         """Stops enrollments."""
         exception_cls = exception_cls or ValidationError
         using = using or 'default'

@@ -6,4 +6,4 @@
 # from .enrollment_checklist_tests import EnrollmentChecklistTests
 # from .household_member_tests import HouseholdMemberTests
 from .test_member_status import TestMemberStatus
-# from .test_member_status_choices import TestMemberStatusChoices
+from .test_member_status_choices import TestMemberStatusChoices
