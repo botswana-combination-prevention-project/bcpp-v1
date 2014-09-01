@@ -7,6 +7,7 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
+from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 from edc.subject.consent.mixins.bw import IdentityFieldsMixin
@@ -44,7 +45,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         choices=YES_NO_NA,
         null=True,
         blank=False,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.",
         )
 
@@ -54,7 +55,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         choices=YES_NO_NA,
         null=True,
         blank=False,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.",
         )
 
@@ -97,39 +98,22 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             expected_member_status = BHS
         if self.household_member.member_status != expected_member_status:
             raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(expected_member_status, self.household_member.member_status, self.household_member))
-        if self.minor:
-            self.is_minor = 'Yes'
-        else:
-            self.is_minor = 'No'
+        self.is_minor = 'Yes' if self.minor else 'No'
         self.matches_enrollment_checklist(self, self.household_member)
         self.matches_hic_enrollment(self, self.household_member)
         self.community = self.household_member.household_structure.household.plot.community
-        self.household_member.is_consented = True
-        old_enrolled = self.household_member.household_structure.enrolled
-        if not self.save_member_if_not_verifying_consent(self.household_member, consent_verification=kwargs.get('consent_verification', None)):
-            # If you where verifying consent then remove 'consent_verification' frim kwargs, otherwise save will faill with
-            # 'Unexpecred keyword argument'.
-            kwargs.pop('consent_verification', None)
-        if self.household_member.household_structure.enrolled and not old_enrolled:
-            # recalculate household_member.member_status
-            household_members = HouseholdMember.objects.filter(household_structure=self.household_member.household_structure).exclude(pk=self.household_member.pk)
-            for household_member in household_members:
-                if not self.save_member_if_not_verifying_consent(household_member, consent_verification=kwargs.get('consent_verification', None)):
-                    # If you where verifying consent then remove 'consent_verification' frim kwargs, otherwise save will faill with
-                    # 'Unexpecred keyword argument'.
-                    kwargs.pop('consent_verification', None)
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
-    def save_member_if_not_verifying_consent(self, household_member, consent_verification=None):
-        # If we are verifying a consent on site-server, then you get an already dispatched error.
-        # We put a bypass in consent mode which is 'bypass_for_edit_dispatched_as_item()'
-        # We cannot put the same bypass in Household member because its manipulated from many different places and this will be risky
-        # Instead we dont save a household_member when verifying a consent. This is ubsolutely fine, only one value in consent is modified
-        # and nothing else depends on this value.
-        if not consent_verification:
-            household_member.save()
-            return True
-        return False
+#     def save_member_if_not_verifying_consent(self, household_member, consent_verification=None):
+#         # If we are verifying a consent on site-server, then you get an already dispatched error.
+#         # We put a bypass in consent mode which is 'bypass_for_edit_dispatched_as_item()'
+#         # We cannot put the same bypass in Household member because its manipulated from many different places and this will be risky
+#         # Instead we dont save a household_member when verifying a consent. This is ubsolutely fine, only one value in consent is modified
+#         # and nothing else depends on this value.
+#         if not consent_verification:
+#             household_member.save()
+#             return True
+#         return False
 
     def bypass_for_edit_dispatched_as_item(self):
         return True

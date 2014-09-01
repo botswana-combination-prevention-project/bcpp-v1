@@ -1,6 +1,6 @@
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
                         REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED,
-                        NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT)
+                        NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT, INACCESSIBLE, ACCESSIBLE)
 
 HOUSEHOLD_STATUS = (
     (ELIGIBLE_REPRESENTATIVE_PRESENT, 'Eligible Representative Present'),
@@ -55,16 +55,17 @@ PLOT_STATUS = (
     (NON_RESIDENTIAL, 'non-residential'),
     (RESIDENTIAL_NOT_HABITABLE, 'residential, not-habitable'),
     (RESIDENTIAL_HABITABLE, 'residential, habitable'),
+    (INACCESSIBLE, 'Inaccessible'),
     )
 
 PLOT_LOG_STATUS = (
-    ('ACCESSIBLE', 'Accessible'),
-    ('INACCESSIBLE', 'Inaccessible'),
+    (ACCESSIBLE, 'Accessible'),
+    (INACCESSIBLE, 'Inaccessible'),
 )
 
 NOT_ENUMERATED_REASONS = (
-        ('hoh_refused', 'HOH refusal'),
-        ('no_household_informant', 'No Household Informant'),
+    ('hoh_refused', 'HOH refusal'),
+    ('no_household_informant', 'No Household Informant'),
 )
 
 HOUSEHOLD_COMPLETION_STATUS = (
@@ -121,10 +122,10 @@ RESIDENT_LAST_SEEN = (
 )
 
 INACCESSIBILITY_REASONS = (
-        ('impassible_road', 'impassible road'),
-        ('dogs', 'dogs'),
-        ('locked_gate', 'locked gate'),
-        ('other', 'other'),
+    ('impassable_road', 'Road is impassable'),
+    ('dogs', 'Dogs prevent access'),
+    ('locked_gate', 'Gate is locked'),
+    ('OTHER', 'Other'),
 )
 
 NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))
