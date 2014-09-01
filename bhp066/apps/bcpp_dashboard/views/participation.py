@@ -16,7 +16,7 @@ def participation(request, **kwargs):
             household_member = HouseholdMember.objects.get(pk=form.cleaned_data.get('household_member'))
             if form.cleaned_data.get('status'):
                 household_member.member_status = form.cleaned_data.get('status')
-                household_member.save()
+                household_member.save(update_fields=['member_status'])
 #                 except ValidationError as e:
 #                     error_messages = e.message
 #                     messages.add_message(request, messages.ERROR, error_messages)
