@@ -84,7 +84,7 @@ class ReplacementHelper(object):
         replaceable = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
             if (self.household_structure.refused_enumeration or
-                self.household_structure.all_eligible_members_refused and
+                    self.household_structure.all_eligible_members_refused and
                     not self.household_structure.household.replaced_by):
                 replaceable = True
             elif (self.household_structure.eligible_representative_absent or
