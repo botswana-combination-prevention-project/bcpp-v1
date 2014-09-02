@@ -6,7 +6,7 @@ from .base_cdc import BaseCdc
 
 
 class CdcHtcIntake(BaseCdc):
-    """Aug 5 format"""
+    """Aug 30 format"""
     ART_documentation_ind = models.IntegerField(null=True)
     DOB = models.DateField(null=True)
     Prior_HIV_Test_Date = models.DateField(null=True)  # new
@@ -15,8 +15,10 @@ class CdcHtcIntake(BaseCdc):
     cd4_test_performed_ind = models.IntegerField(null=True)
     citizen_ind = models.IntegerField(null=True)
     community_name = models.IntegerField(null=True)
+    form_version = models.IntegerField(null=True)
     gender = models.IntegerField(null=True)
     have_omang_ind = models.IntegerField(null=True)
+    have_passport = models.IntegerField(null=True)
     hh_id = models.CharField(max_length=25, null=True)
     hiv_result_in_past_3m_ind = models.IntegerField(null=True)
     hiv_test_result = models.IntegerField(null=True)
@@ -27,7 +29,8 @@ class CdcHtcIntake(BaseCdc):
     mc_like_to_be_referred2 = models.IntegerField(null=True)
     mc_no_interest_reason = models.CharField(max_length=50, null=True)
     mc_phone_contact_permission = models.IntegerField(null=True)
-    mc_tent_appointment_date = models.DateField(null=True)
+    MC_tent_appointment_Date = models.DateField(null=True)
+    omang_pass_nbr = EncryptedIdentityField(max_length=25, null=True, unique=True)
     omang_nbr = EncryptedIdentityField(max_length=25, null=True)
     part_time_resident = models.IntegerField(null=True)
     permanent_resident_ind = models.IntegerField(null=True)
