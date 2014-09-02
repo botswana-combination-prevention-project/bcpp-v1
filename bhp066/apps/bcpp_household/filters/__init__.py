@@ -1,2 +1,2 @@
-from .replaceble_household_structure_filter import ReplacebleHouseholdStructureFilter
-from .replaceble_plot_filter import ReplaceblePlotFilter
+from .replaceable_household_structure_filter import ReplaceableHouseholdStructureFilter
+from .replaceable_plot_filter import ReplaceablePlotFilter

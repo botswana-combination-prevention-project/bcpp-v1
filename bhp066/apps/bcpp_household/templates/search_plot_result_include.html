@@ -90,9 +90,9 @@
 	        	{% else %}
 	                <A name="log_entry-{{plot.pk}}" href="{% url "create_plot_log_url" %}?plot={{ plot.pk }}"><li>add new entry</li></A>
 	            {% endif %}
-	            {% if plot.access_attempts == 3 %}
+	            {% if plot.access_attempts >= 3 %}
 	   				reached maximum visit attempts
-	            {% elif plot.action == 'confirmed' %}
+	            {% elif plot.action == CONFIRMED %}
 	   				not required
 	            {% endif %}
             </ol>
@@ -106,12 +106,12 @@
 	      {% else %}
 	           <span style="background-color:red;color:white;"> missing lat/lon!</span>
 	      {% endif %} 
-        </td>       
+        </td>
       	<td>{{ plot.community|encrypted}}</td>
       	<td>
       	{{ section_url }}
-      	{% if plot.increase_plot_radius %}
-      		<A href="{{ plot.increase_radius_urls }}?plot={{plot.pk}}&next=/bcpp/section/plot/">increase radius</A>
+      	{% if increase_plot_radius %}
+      	    <A href="{% url increase_plot_radius|get_meta|admin_urlname:'change' increase_plot_radius.pk %}?next=section_url&section_name=plot">{{ plot }}</A>
       	{% else %}
       		--
       	{% endif %}

@@ -8,6 +8,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_NA
 from edc.core.bhp_variables.models import StudySite
 from edc.core.bhp_string.classes import StringHelper
+from edc.constants import NOT_APPLICABLE
 
 from apps.bcpp_household_member.constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
 from apps.bcpp_household_member.exceptions import MemberStatusError
@@ -19,7 +20,7 @@ from .base_member_status_model import BaseMemberStatusModel
 
 
 HIV_RESULT = list(HIV_RESULT)
-HIV_RESULT.append(('N/A', 'Not applicable'))
+HIV_RESULT.append((NOT_APPLICABLE, 'Not applicable'))
 HIV_RESULT = tuple(HIV_RESULT)
 
 
@@ -75,20 +76,11 @@ class SubjectHtc(BaseMemberStatusModel):
         if not self.id:
             self.tracking_identifier = self.prepare_tracking_identifier()
         self.registered_subject = self.household_member.registered_subject
-        if self.accepted == 'No':
-            self.household_member.htc = False
-            self.household_member.refused_htc = True
-            self.household_member.member_status = REFUSED_HTC
-        else:
-            self.household_member.htc = True
-            self.household_member.refused_htc = False
-            self.household_member.member_status = HTC
-        self.household_member.save()
         super(SubjectHtc, self).save(*args, **kwargs)
 
     def prepare_tracking_identifier(self):
         device = Device()
-        device_id =device.device_id
+        device_id = device.device_id
         string = StringHelper()
         length = 5
         template = 'HTC{device_id}{random_string}'

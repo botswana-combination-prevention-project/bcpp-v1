@@ -3,13 +3,13 @@ from edc.core.identifier.classes import BaseIdentifier
 
 class PlotIdentifier(BaseIdentifier):
 
-    def __init__(self, community):
+    def __init__(self, community, using):
         identifier_format = '{community}{sequence}'
         app_name = 'bcpp_household'
         model_name = 'plotidentifierhistory'
         modulus = 11
         self.set_community(community)
-        super(PlotIdentifier, self).__init__(identifier_format=identifier_format, app_name=app_name, model_name=model_name, modulus=modulus)
+        super(PlotIdentifier, self).__init__(identifier_format=identifier_format, app_name=app_name, model_name=model_name, modulus=modulus, using=using)
 
     def set_community(self, value):
         if not value:
