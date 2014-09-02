@@ -182,14 +182,14 @@ class ReplacementHelper(object):
                         pass
                     household.replaced_by = plot.plot_identifier
                     plot.replaces = household.household_identifier
-                    household.save()
-                    plot.save()
+                    household.save(using='default')
+                    plot.save(using='default')
                     household.save(using=destination)
                 else:
                     household.replaced_by = plot.plot_identifier
                     plot.replaces = household.household_identifier
-                    household.save()
-                    plot.save()
+                    household.save(using='default')
+                    plot.save(using='default')
                     household.save(using=destination)
                 # Fetch and delete transactions created when saving to remote
                 OutgoingTransaction.objects.using(destination).filter(
@@ -231,8 +231,8 @@ class ReplacementHelper(object):
                 plot_a.replaced_by = plot_b.plot_identifier
                 plot_a.htc = True  # If a plot is replaced it goes to CDC
                 plot_b.replaces = plot_a.plot_identifier
-                plot_a.save()
-                plot_b.save()
+                plot_a.save(using='default')
+                plot_b.save(using='default')
                 plot_a.save(using=destination)
                 # Fetch and delete transactions created when saving to remote
                 OutgoingTransaction.objects.using(destination).filter(
