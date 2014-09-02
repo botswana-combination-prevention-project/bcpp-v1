@@ -6,7 +6,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from ..helpers import ReplacementHelper
 from ..managers import HouseholdStructureManager
@@ -107,14 +106,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
-    def refresh_member_status(self, using):
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
-        household_members = HouseholdMember.objects.using(using).filter(household_structure__pk=self.pk)
-        for household_member in household_members:
-            household_member_helper = HouseholdMemberHelper(household_member)
-            household_member.member_status = household_member_helper.calculate_member_status_with_hint(household_member.member_status)
-            household_member.save(using=using)
-
     @property
     def vdc_form_status(self):
         status = None
@@ -156,7 +147,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return eligible_representative_absent
 
     @property
-    def replaceble(self):
+    def replaceable(self):
         replacement_helper = ReplacementHelper()
         replacement_helper.household_structure = self
         return replacement_helper.replaceable
@@ -172,11 +163,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         """Returns the number of consented (or enrolled) household members in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
-
-    def create_household_log_on_post_save(self, **kwargs):
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        if not HouseholdLog.objects.filter(household_structure__pk=self.pk):
-            HouseholdLog.objects.create(household_structure=self)
 
     def plot(self):
         url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))

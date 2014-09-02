@@ -3,11 +3,20 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.test import SimpleTestCase
 
+from apps.bcpp_household.utils import ClinicDaysTuple
+
 from ..utils import next_clinic_date
 
-CLINIC_DAYS = {
-    '11': {'IDCC': ((MO, WE), ), 'ANC': ((MO, TU, WE, TH, FR), ), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
-    '12': {'IDCC': ((MO, WE), ), 'ANC': ((MO, TU, WE, TH, FR), ), 'SMC': ((MO, TU, WE, TH, FR), date(2014, 10, 15)), 'SMC-ECC': ((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+
+CLINIC_DAYS = {  # see the mapper classes for CLINIC days per community
+    '11': {'IDCC': ClinicDaysTuple((MO, WE), None),
+           'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 15)),
+           'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 7))},
+    '12': {'IDCC': ClinicDaysTuple((MO, WE), None),
+           'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+           'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 15)),
+           'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 7))},
     }
 
 
@@ -30,10 +39,8 @@ class TestNextClinicDate(SimpleTestCase):
         self.assertEqual(self.expected_appt_datetime.strftime('%a'),
                          self.expected_appt_day,
                          'Expected clinic day is not a {0}'.format(self.expected_appt_day))
-        calculated_appt_datetime = next_clinic_date(self.community_code,
-                                                    self.clinic,
-                                                    self.today,
-                                                    self.community_clinic_days)
+        calculated_appt_datetime = next_clinic_date(self.community_clinic_days.get(self.clinic),
+                                                    base_datetime=self.today)
         calculated_appt_day = calculated_appt_datetime.strftime('%a')
         self.assertEqual(calculated_appt_day,
                          self.expected_appt_day,
@@ -42,10 +49,9 @@ class TestNextClinicDate(SimpleTestCase):
                              self.expected_appt_datetime,
                              calculated_appt_day,
                              calculated_appt_datetime))
-        self.assertEqual(next_clinic_date(self.community_code,
-                                          self.clinic,
-                                          self.today,
-                                          self.community_clinic_days),
+        self.assertEqual(next_clinic_date(self.community_clinic_days.get(self.clinic),
+                                          base_datetime=self.today,
+                                          ),
                          self.expected_appt_datetime)
 
     def test_idcc1(self):
@@ -120,15 +126,43 @@ class TestNextClinicDate(SimpleTestCase):
 
     def test_same_day(self):
         """Assert give Sat get next Mon"""
+        community_clinic_days = CLINIC_DAYS.get('11')
         self.today_day = 'Mon'
         self.expected_appt_day = 'Tue'
         self.today = date(2014, 8, 25)
         self.expected_appt_datetime = datetime(2014, 8, 25, 7, 30, 0)
         self.community_code = '11'
         self.clinic = 'IDCC'
-        self.assertEqual(next_clinic_date(self.community_code,
-                                          self.clinic,
-                                          self.today,
-                                          self.community_clinic_days,
+        self.assertEqual(next_clinic_date(community_clinic_days.get(self.clinic),
+                                          base_datetime=self.today,
                                           allow_same_day=True),
                          self.expected_appt_datetime)
+
+    def test_previous_day(self):
+        """Assert that next clinic day can get revious day from a date"""
+        community_clinic_days = CLINIC_DAYS.get('11')
+        self.today_day = 'Mon'
+        self.expected_appt_day = 'Wed'
+        self.today = date(2014, 9, 25)
+        self.expected_appt_datetime = datetime(2014, 9, 24, 7, 30, 0)
+        self.clinic = 'IDCC'
+        self.assertEqual(next_clinic_date(community_clinic_days.get(self.clinic),
+                                          base_datetime=self.today,
+                                          allow_same_day=True,
+                                          subtract=True),
+                         self.expected_appt_datetime)
+
+    def test_previous_day2(self):
+        """Assert that next clinic day can get revious day from a date"""
+        community_clinic_days = CLINIC_DAYS.get('11')
+        self.today_day = 'Mon'
+        self.expected_appt_day = 'Wed'
+        self.today = date(2014, 9, 24)
+        self.expected_appt_datetime = datetime(2014, 9, 22, 7, 30, 0)
+        self.clinic = 'IDCC'
+        self.assertEqual(next_clinic_date(community_clinic_days.get(self.clinic),
+                                          base_datetime=self.today,
+                                          allow_same_day=False,
+                                          subtract=True),
+                         self.expected_appt_datetime)
+

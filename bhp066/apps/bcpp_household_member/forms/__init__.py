@@ -3,7 +3,7 @@ from .household_member_form import HouseholdMemberForm
 from .participation_form import ParticipationForm
 from .enrollment_checklist_form import EnrollmentChecklistForm
 from .household_info_form import HouseholdInfoForm
-from .head_household_eligibility_form import HouseholdHeadEligibilityForm
+from .household_head_eligibility_form import HouseholdHeadEligibilityForm
 from .subject_absentee_form import SubjectAbsenteeEntryForm, SubjectAbsenteeForm
 from .subject_moved_form import SubjectMovedForm
 from .subject_refusal_form import SubjectRefusalForm

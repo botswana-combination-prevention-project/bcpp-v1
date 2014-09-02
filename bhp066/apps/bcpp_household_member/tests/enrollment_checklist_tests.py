@@ -8,6 +8,7 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
+from edc.constants import NOT_APPLICABLE
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
@@ -103,8 +104,8 @@ class EnrollmentChecklistTests(TestCase):
         #self.assertEqual(EnrollmentLoss.objects.all().count(),1)
         #EnrollmentLoss.objects.get(household_member=household_member).delete()
         self.enrollment_checklist.citizen = 'Yes'
-        self.enrollment_checklist.legal_marriage = 'N/A'
-        self.enrollment_checklist.marriage_certificate = 'N/A'
+        self.enrollment_checklist.legal_marriage = NOT_APPLICABLE
+        self.enrollment_checklist.marriage_certificate = NOT_APPLICABLE
         self.enrollment_checklist.save()
         #self.household_member.member_status = 'BHS'
         #Edit enrollment checklist to say that they are part time residents
