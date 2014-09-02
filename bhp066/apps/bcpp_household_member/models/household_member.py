@@ -246,12 +246,17 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.eligible_htc = self.evaluate_htc_eligibility
         household_member_helper = HouseholdMemberHelper(self)
         self.member_status = household_member_helper.member_status(selected_member_status)
-        if kwargs.get('update_fields'):
-            update_fields = kwargs.get('update_fields')
-            kwargs.update({'update_fields': update_fields + ['member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']})
+        try:
+            update_fields = kwargs.get('update_fields') + [
+                'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
+#         if kwargs.get('update_fields'):
+#             update_fields = kwargs.get('update_fields')
+#             kwargs.update({'update_fields': update_fields + ['member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']})
         # print (self.member_status, kwargs.get('update_fields'))
         super(HouseholdMember, self).save(*args, **kwargs)
-
 
     @property
     def clear_refusal(self):
