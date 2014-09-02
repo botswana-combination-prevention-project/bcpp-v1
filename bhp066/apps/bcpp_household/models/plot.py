@@ -504,7 +504,6 @@ class Plot(BaseDispatchSyncUuidModel):
         return url
 
     @property
-<<<<<<< HEAD
     def plot_inaccessible(self):
         from .plot_log import PlotLogEntry
         plot_log = self.plot_log
@@ -540,8 +539,6 @@ class Plot(BaseDispatchSyncUuidModel):
         return increase_radius
 
     @property
-=======
->>>>>>> 7747f0cd2953db4f179dde0af57c08a014784a9f
     def plot_log(self):
         from .plot_log import PlotLog
         instance = None
