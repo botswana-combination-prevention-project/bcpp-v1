@@ -12,11 +12,17 @@ class SubjectAbsentee(BaseMemberStatusModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        household = models.get_model('bcpp_household', 'Household').objects.get(
+            household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
+        try:
+            update_fields = kwargs.get('update_fields') + ['registered_subject', 'survey', ]
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(SubjectAbsentee, self).save(*args, **kwargs)
 
     class Meta:

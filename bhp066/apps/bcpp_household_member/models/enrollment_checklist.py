@@ -21,7 +21,6 @@ from edc.base.model.validators import datetime_not_before_study_start, datetime_
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
 
-from .enrollment_loss import EnrollmentLoss
 from .household_member import HouseholdMember
 
 
@@ -167,6 +166,11 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
         self.matches_household_member_values(self, self.household_member)
         self.is_eligible, self.loss_reason = self.passes_enrollment_criteria(using)
+        try:
+            update_fields = kwargs.get('update_fields') + ['is_eligible', 'loss_reason', ]
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
