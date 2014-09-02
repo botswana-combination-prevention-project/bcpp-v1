@@ -8,10 +8,7 @@ from apps.bcpp_survey.tests.factories import SurveyFactory
 from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
                       PlotIdentifierHistory)
 
-from .factories import PlotFactory, HouseholdLogEntryFactory
-from apps.bcpp_household_member.tests.factories.household_member_factory import HouseholdMemberFactory
-from apps.bcpp_household_member.tests.factories.enrollment_checklist_factory import EnrollmentChecklistFactory
-from apps.bcpp_household.tests.factories.reprentative_eligibility_factory import RepresentativeEligibilityFactory
+from .factories import (PlotFactory, HouseholdLogEntryFactory)
 
 
 class TestHouseholds(TestCase):
