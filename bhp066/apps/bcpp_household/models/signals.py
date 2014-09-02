@@ -45,27 +45,15 @@ def household_structure_on_post_save(sender, instance, raw, created, using, **kw
         if isinstance(instance, HouseholdStructure):
             if created:
                 try:
-                    HouseholdLog.objects.get(household_structure__pk=instance.pk)
+                    HouseholdLog.objects.using(using).get(household_structure__pk=instance.pk)
                 except HouseholdLog.DoesNotExist:
-                    HouseholdLog.objects.create(household_structure=instance)
-            if not created:
-                if instance.enumerated and instance.no_informant:
-                    #  TODO: why is this being deleted?
-                    try:
-                        # TODO: be aware that deleting HouseholdAssessment will
-                        #       recall this post-save signal.
-                        HouseholdAssessment.objects.using(using).get(
-                            household_structure=instance).delete(using=using)
-                    except HouseholdAssessment.DoesNotExist:
-                        pass
-                # update household if enrolled
-                instance.household.enrolled = instance.enrolled or False  # uses NullBoolean
-                instance.household.enrolled_datetime = instance.enrolled_datetime if instance.enrolled else None
-                instance.household.save(using=using, update_fields=['enrolled', 'enrolled_datetime'])
-                # update plot if enrolled
-                instance.household.plot.bhs = instance.enrolled or False  # uses NullBoolean
-                instance.household.plot.enrolled_datetime = instance.enrolled_datetime
-                instance.household.plot.save(using=using, update_fields=['bhs', 'enrolled_datetime'])
+                    HouseholdLog.objects.using(using).create(household_structure=instance)
+            if instance.enumerated and instance.no_informant:
+                try:
+                    HouseholdAssessment.objects.using(using).get(
+                        household_structure=instance).delete(using=using)
+                except HouseholdAssessment.DoesNotExist:
+                    pass
 
 
 @receiver(post_save, weak=False, dispatch_uid="plot_on_post_save")
@@ -113,7 +101,7 @@ def plot_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
             if instance.plot_log.plot.access_attempts >= 3:
                 status_list = PlotLogEntry.objects.using(using).values_list('log_status').filter(
                     plot_log__plot=instance.plot_log.plot).order_by('report_datetime')
-                status_list = [x[0] for x in status_list]
+                status_list = [status[0] for status in status_list]
                 if len([status for status in status_list if status == INACCESSIBLE]) >= 3:
                     instance.plot_log.plot.status = INACCESSIBLE
                     update_fields.append('status')
@@ -147,9 +135,8 @@ def household_assessment_on_post_save(sender, instance, raw, created, using, **k
 @receiver(post_delete, weak=False, dispatch_uid="household_assessment_on_delete")
 def household_assessment_on_delete(sender, instance, using, **kwargs):
     if isinstance(instance, HouseholdAssessment):
-        household_structure = HouseholdStructure.objects.using(using).get(pk=instance.household_structure.pk)
-        household_structure.no_informant = False
-        household_structure.save(using=using, update_fields=['no_informant'])
+        instance.household_structure.no_informant = False
+        instance.household_structure.save(using=using, update_fields=['no_informant'])
 
 
 @receiver(post_save, weak=False, dispatch_uid='household_log_entry_on_post_save')
@@ -158,13 +145,16 @@ def household_log_entry_on_post_save(sender, instance, raw, created, using, **kw
     updates failed enumeration attempts and no_elgible_members."""
     if not raw:
         if isinstance(instance, HouseholdLogEntry):
-            household_structure = HouseholdStructure.objects.using(using).get(
-                pk=instance.household_log.household_structure.pk)
             if not instance.household_status == REFUSED_ENUMERATION:
-                HouseholdRefusal.objects.using(using).filter(household_structure=household_structure).delete()
-            # update enumeration attempts
-            if not household_structure.enumerated and instance.household_status in [
-                    ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION]:
-                household_structure.failed_enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(
-                    household_log__household_structure=household_structure).count()
-            household_structure.save(using=using, update_fields=['failed_enumeration_attempts'])
+                HouseholdRefusal.objects.using(using).filter(
+                    household_structure=instance.household_log.household_structure).delete()
+            # update failed enumeration attempts
+            if (not instance.household_log.household_structure.enumerated and 
+                    instance.household_status in [ELIGIBLE_REPRESENTATIVE_ABSENT,
+                                                  NO_HOUSEHOLD_INFORMANT,
+                                                  REFUSED_ENUMERATION]):
+                failed_enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(
+                    household_log__household_structure=instance.household_log.household_structure).count()
+                instance.household_log.household_structure.failed_enumeration_attempts = failed_enumeration_attempts
+                instance.household_log.household_structure.save(
+                    using=using, update_fields=['failed_enumeration_attempts'])
