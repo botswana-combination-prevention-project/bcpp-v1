@@ -29,16 +29,20 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        household = models.get_model('bcpp_household', 'Household').objects.get(
+            household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         if self.household_member.member_status != NOT_ELIGIBLE:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(NOT_ELIGIBLE, self.household_member.member_status))
+            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(
+                NOT_ELIGIBLE, self.household_member.member_status))
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
-        #self.household_member.enrollment_loss_completed = True
-        # important during dispatch, need to save instance to the correct db.
-        #self.household_member.save(using=kwargs.get('using', None))
+        try:
+            update_fields = kwargs.get('update_fields') + ['registered_subject', 'survey', ]
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(EnrollmentLoss, self).save(*args, **kwargs)
 
     def __unicode__(self):
