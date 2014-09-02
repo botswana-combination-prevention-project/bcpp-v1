@@ -519,7 +519,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return plot_inaccessible
 
     @property
-    def replaceble(self):
+    def replaceable(self):
         replacement_helper = ReplacementHelper()
         replacement_helper.plot = self
         return replacement_helper.replaceable
