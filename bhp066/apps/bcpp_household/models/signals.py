@@ -8,7 +8,7 @@ from ..classes import HouseholdIdentifier
 from .household import Household
 from .household_refusal import HouseholdRefusal
 from .household_refusal import HouseholdRefusalHistory
-from .household_log import HouseholdLogEntry
+from .household_log import HouseholdLogEntry, HouseholdLog
 from .household_assessment import HouseholdAssessment
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -40,7 +40,11 @@ def household_on_post_save(sender, instance, raw, created, using, **kwargs):
 def household_structure_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if isinstance(instance, HouseholdStructure):
-            instance.create_household_log_on_post_save(**kwargs)
+            if created:
+                try:
+                    HouseholdLog.objects.get(household_structure__pk=instance.pk)
+                except HouseholdLog.DoesNotExist:
+                    HouseholdLog.objects.create(household_structure=instance)
             if not created:
                 if instance.enumerated and instance.no_informant:
                     #  TODO: why is this being deleted?
