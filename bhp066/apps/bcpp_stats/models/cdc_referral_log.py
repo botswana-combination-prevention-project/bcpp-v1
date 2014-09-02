@@ -23,5 +23,8 @@ class CdcReferralLog(BaseCdc):
     studyid = models.CharField(max_length=25, null=True)
     visit_date = models.DateField(null=True)
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'
