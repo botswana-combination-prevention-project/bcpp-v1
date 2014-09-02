@@ -117,7 +117,7 @@ def plot_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
         if isinstance(instance, PlotLogEntry):
             instance.plot_log.plot.access_attempts = PlotLogEntry.objects.using(using).filter(plot_log__plot=instance.plot_log.plot).count()
             update_fields = ['access_attempts']
-            if instance.plot.access_attempts >= 3:
+            if instance.plot_log.plot.access_attempts >= 3:
                 status_list = PlotLogEntry.objects.using(using).values_list('log_status').filter(
                     plot_log__plot=instance.plot_log.plot).order_by('report_datetime')
                 status_list = [x[0] for x in status_list]
