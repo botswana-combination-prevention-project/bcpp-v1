@@ -144,6 +144,11 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.registered_subject = self.household_member.registered_subject
         self.verified_household_head(self.household_member)
+        try:
+            update_fields = kwargs.get('update_fields') + ['registered_subject', ]
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(HouseholdInfo, self).save(*args, **kwargs)
 
     def verified_household_head(self, household_member, exception_cls=None):

@@ -3,12 +3,11 @@ from datetime import datetime
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 
-from edc.map.classes import site_mappers
-
 from apps.bcpp_household.models import HouseholdStructure
 
 from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
-from .enrollment_checklist import EnrollmentChecklist, EnrollmentLoss
+from .enrollment_checklist import EnrollmentChecklist
+from .enrollment_loss import EnrollmentLoss
 from .household_head_eligibility import HouseholdHeadEligibility
 from .household_member import HouseholdMember
 from .subject_absentee import SubjectAbsentee
