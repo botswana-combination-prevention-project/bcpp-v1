@@ -86,6 +86,8 @@ class SubjectReferralApptHelper(object):
             clinic_type = 'VCT'
         elif 'TST-CD4' in self.referral_code:
             clinic_type = 'IDCC'
+        elif 'POS!-PR' in self.referral_code or 'POS#-PR' in self.referral_code or 'POS#-AN' in self.referral_code:
+            clinic_type = 'IDCC'
         elif '-PR' in self.referral_code or '-AN' in self.referral_code:
             clinic_type = 'ANC'
         elif 'SMC' in self.referral_code:
@@ -134,7 +136,8 @@ class SubjectReferralApptHelper(object):
         """Returns a date as long as the date is within 1 month
         of today otherwise returns two weeks from base."""
         return next_clinic_date(self.clinic_days,
-                                self.base_datetime + relativedelta(weeks=2))
+                                self.base_datetime + relativedelta(weeks=2),
+                                subtract=True)
 
     @property
     def smc_appt_datetime(self):
