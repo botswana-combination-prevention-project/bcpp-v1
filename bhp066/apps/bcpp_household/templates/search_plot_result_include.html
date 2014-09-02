@@ -83,6 +83,9 @@
         </td>
         <td>
         	<ol>
+        		{% if plot.action == CONFIRMED %}
+        			not required
+        		{% else %}
 	        	{% if plot.plot_log %}
 	        		{% for logs in plot.log_form_label %}
 					    <A name="log_entry-{{plot.pk}}" href="{{ plot.log_entry_form_urls|index_dictionary:logs.1 }}?plot_log={{plot.plot_log.pk}}&next=/bcpp/section/plot/"><li>{{ logs.0 }}</li></A>
@@ -94,6 +97,7 @@
 	   				reached maximum visit attempts
 	            {% elif plot.action == CONFIRMED %}
 	   				not required
+	            {% endif %}
 	            {% endif %}
             </ol>
         </td>
