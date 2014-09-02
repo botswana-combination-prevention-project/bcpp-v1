@@ -14,7 +14,7 @@ class Command(BaseCommand):
     """ A management command that writes the contents of a CSV file to a given model.
 
     Usage: python manage.py import_to_csv <source_path> <detsination_model>."""
-    args = '<source_path> <detsination_model> <export_prefix>'
+    args = '<source_path> <detsination_model> <export_prefix> <delete-existing>'
     help = 'Import CDC data from CSV into a given destinantion model'
     option_list = BaseCommand.option_list
 

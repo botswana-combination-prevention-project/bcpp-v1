@@ -28,5 +28,8 @@ class CdcScreening(BaseCdc):
     clin_cd4_dt = models.DateField(null=True)
     demo_dob = models.DateField(null=True)
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'
