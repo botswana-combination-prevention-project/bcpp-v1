@@ -11,12 +11,12 @@
 {% endblock %}
 
 {% block content%}
-	{% if replacebles %}
+	{% if replaceables %}
 		<table>
 		<thead>
 			<th>Plot/Household to replace</th>
 		</thead>
-		{% for item in replacebles %}
+		{% for item in replaceables %}
 			<tr><td>{{ item }}</td></tr>
 		{% endfor %}
 		<tr><td colspan="2"><a href="{% url 'replace_household_plot_url' %}/?producer_name={{ producer_name }}"><b>Replace household/plots</b></a> </td></tr>
