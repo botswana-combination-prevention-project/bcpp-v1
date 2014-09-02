@@ -4,7 +4,8 @@ from edc.dashboard.search.classes import BaseSearchByWord
 
 from ..models import Plot
 from .base_search_by_mixin import BaseSearchByMixin
-from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE
+from apps.bcpp_household.constants import (CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE,
+                                           NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE)
 
 
 class PlotSearchByWord(BaseSearchByMixin, BaseSearchByWord):
@@ -16,6 +17,7 @@ class PlotSearchByWord(BaseSearchByMixin, BaseSearchByWord):
 
     def contribute_to_context(self, context):
         context = super(PlotSearchByWord, self).contribute_to_context(context)
+        context.update({'CONFIRMED': CONFIRMED})
         return context
 
     def get_qset_by_filter_keyword(self):
