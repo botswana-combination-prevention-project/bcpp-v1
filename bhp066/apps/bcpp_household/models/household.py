@@ -8,6 +8,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from ..managers import HouseholdManager
 
 from .plot import Plot
+from ..exceptions import AlreadyReplaced
 
 
 class Household(BaseDispatchSyncUuidModel):
@@ -144,6 +145,17 @@ class Household(BaseDispatchSyncUuidModel):
     objects = HouseholdManager()
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        using = kwargs.get('using')
+        try:
+            # if household is replaced abort the save
+            if self.__class__.objects.using(using).get(id=self.id).replaced_by:
+                raise AlreadyReplaced('Household {0} has been replaced '
+                                      'by plot {1}.'.format(self.household_identifier, self.replaced_by))
+        except self.__class__.DoesNotExist:
+            pass
+        return super(Household, self).save(*args, **kwargs)
 
     @property
     def mapper_name(self):
