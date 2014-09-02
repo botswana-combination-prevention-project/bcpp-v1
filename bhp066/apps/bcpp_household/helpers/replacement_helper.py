@@ -83,11 +83,17 @@ class ReplacementHelper(object):
         """Returns True if a household meets the criteria to be replaced by a plot."""
         replaceable = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
-            if self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused and not self.household_structure.household.replaced_by:
+            if (self.household_structure.refused_enumeration or
+                self.household_structure.all_eligible_members_refused and
+                    not self.household_structure.household.replaced_by):
                 replaceable = True
-            elif self.household_structure.eligible_representative_absent or self.household_structure.all_eligible_members_absent and not self.household_structure.household.replaced_by:
+            elif (self.household_structure.eligible_representative_absent or
+                  self.household_structure.all_eligible_members_absent and
+                  not self.household_structure.household.replaced_by):
                 replaceable = True
-            elif self.household_structure.failed_enumeration and self.household_structure.no_informant and not self.household_structure.household.replaced_by:
+            elif (self.household_structure.failed_enumeration and
+                  self.household_structure.no_informant and
+                  not self.household_structure.household.replaced_by):
                 replaceable = True
             elif self.household_structure.vdc_form_status == RARELY_OCCUPIED:
                 replaceable = False
