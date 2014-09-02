@@ -80,17 +80,21 @@ class Command(BaseCommand):
                                                     try:
                                                         # try to convert to a date YYYY-MM-DDTHH:MM:SS or fail (saw this in an SMC file, not quite timezone aware)
                                                         row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%Y-%m-%dT%H:%M:%S')
-                                                    except ValueError as error_msg:
-                                                        # failed so print a warning and show the value
-                                                        raise ValueError('Row {0}. Unable to convert date string {1} to DateTime. Got {2}. {3}.'.format(
-                                                            i, field.name, row[header_row.index(field.name)] or None, error_msg))
+                                                    except ValueError:
+                                                        try:
+                                                            # this is the bad date e.g. 23NOV13 and assume century
+                                                            row[header_row.index(field.name)] = datetime.strptime(row[header_row.index(field.name)], '%d%b%y')
+                                                        except ValueError as error_msg:
+                                                            # failed so print a warning and show the value
+                                                            raise ValueError('In {4} Row {0}. Unable to convert date string {1} to DateTime. Got {2}. {3}.'.format(
+                                                                i, field.name, row[header_row.index(field.name)] or None, error_msg, model_name))
                                         elif 'Integer' in field.get_internal_type():
                                             # model field is an IntegerField
                                             try:
                                                 row[header_row.index(field.name)] = int(row[header_row.index(field.name)] or None)
                                             except ValueError as error_mgs:
                                                 # conversion of cell value to integer failed
-                                                raise ValueError('{0}. (value={2}) {1}'.format(field.name, error_mgs, row[header_row.index(field.name)]))
+                                                raise ValueError('In {3}, {0}. (value={2}) {1}'.format(field.name, error_mgs, row[header_row.index(field.name)], model_name))
                                         elif 'Char' in field.get_internal_type():
                                             # model field is an CharField
                                             # accept anything that is in the cell
@@ -101,10 +105,10 @@ class Command(BaseCommand):
                                                 row[header_row.index(field.name)] = float(row[header_row.index(field.name)])
                                             except ValueError as error_mgs:
                                                 # conversion of cell value to integer failed
-                                                raise ValueError('{0}. (value={2}) {1}'.format(field.name, error_mgs, row[header_row.index(field.name)]))
+                                                raise ValueError('in {3}, {0}. (value={2}) {1}'.format(field.name, error_mgs, row[header_row.index(field.name)], model_name))
                                         else:
                                             # model field is an of an unhandled type, so fail
-                                            raise TypeError('{0}. Unknown field type. Got. {1}'.format(field.name, field.get_internal_type()))
+                                            raise TypeError('In {1}, {0}. Unknown field type. Got. {1}'.format(field.name, field.get_internal_type(), model_name))
                                 except IndexError as error_mgs:
                                     # field name is not in the header!
                                     raise IndexError('{0}. {1}'.format(field.name, error_mgs))
