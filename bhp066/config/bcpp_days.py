@@ -2,10 +2,10 @@ from datetime import date
 from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 BHS_START_DATE = date(2014, 8, 27)
-BHS_FULL_ENROLLMENT_DATE = date(2014, 10, 7)
-BHS_END_DATE = date(2014, 10, 28)
-SMC_START_DATE = date(2014, 10, 20)
-SMC_ECC_START_DATE = date(2014, 10, 22)
+BHS_FULL_ENROLLMENT_DATE = date(2014, 11, 16)
+BHS_END_DATE = date(2014, 12, 7)
+SMC_START_DATE = date(2014, 10, 27)
+SMC_ECC_START_DATE = date(2014, 10, 29)
 
 # INTERVENTION_COMMUNITIES = [11, 13, 15, 17, 19, 21, 23, 25, 27, 29]
 #
