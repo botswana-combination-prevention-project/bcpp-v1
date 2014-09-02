@@ -25,7 +25,7 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, REFUSED
+from ..constants import ABSENT, UNDECIDED, REFUSED, BHS_SCREEN
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
@@ -229,27 +229,70 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.absent = True if (not self.id and self.present_today == 'No') else self.absent
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
-            self.undecided = True if selected_member_status == UNDECIDED else False
-            self.absent = True if selected_member_status == ABSENT else False
-            self.refused = True if selected_member_status == REFUSED else False
-        # TODO: this may be slightly redundant from signal ... need to confirm
-        if (self.intervention and self.household_structure.enrolled
-            and (self.age_in_years >= 16
-                 and (self.enrollment_loss_completed or not self.eligible_member))):
-            self.eligible_htc = True
-        elif (not self.intervention and (
-              self.age_in_years >= 16 and (
-                  self.enrollment_loss_completed or not self.eligible_member))):
-            self.eligible_htc = True
-        # get member status
+            if self.member_status == BHS_SCREEN:
+                self.undecided = False
+                self.absent = False
+                self.eligible_htc = False
+                if self.refused:
+                    self.clear_refusal
+                if self.enrollment_checklist_completed:
+                    self.clear_enrollment_checklist
+            else:
+                self.undecided = True if selected_member_status == UNDECIDED else False
+                self.absent = True if selected_member_status == ABSENT else False
+        if self.intervention and self.plot_enrolled:
+            self.eligible_htc = self.evaluate_htc_eligibility
+        elif not self.intervention_community:
+            self.eligible_htc = self.evaluate_htc_eligibility
         household_member_helper = HouseholdMemberHelper(self)
         self.member_status = household_member_helper.member_status(selected_member_status)
+        if kwargs.get('update_fields'):
+            update_fields = kwargs.get('update_fields')
+            kwargs.update({'update_fields': update_fields + ['member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']})
         # print (self.member_status, kwargs.get('update_fields'))
         super(HouseholdMember, self).save(*args, **kwargs)
+
+
+    @property
+    def clear_refusal(self):
+        from ..models import SubjectRefusal
+        self.refused = False
+        try:
+            SubjectRefusal.objects.get(household_member=self).delete()
+        except SubjectRefusal.DoesNotExist:
+            pass
+
+    @property
+    def clear_enrollment_checklist(self):
+        from ..models import EnrollmentChecklist
+        self.enrollment_checklist_completed = False
+        self.enrollment_loss_completed = False
+        self.eligible_subject = False
+        try:
+            EnrollmentChecklist.objects.get(household_member=self).delete()
+        except EnrollmentChecklist.DoesNotExist:
+            pass
+
+    @property
+    def evaluate_htc_eligibility(self):
+        eligible_htc = False
+        if self.age_in_years > 64:
+            eligible_htc = True
+        elif (not self.eligible_member and self.inability_to_participate == NOT_APPLICABLE) and self.household_member.age_in_years >= 16:
+            eligible_htc = True
+        elif self.eligible_member and self.refused:
+            eligible_htc = True
+        elif self.enrollment_checklist_completed and not self.eligible_subject:
+            eligible_htc = True
+        return eligible_htc
 
     @property
     def intervention(self):
         return site_mappers.get_current_mapper().intervention
+
+    @property
+    def plot_enrolled(self):
+        return self.household_structure.household.plot.bhs
 
     @property
     def is_eligible_member(self):
