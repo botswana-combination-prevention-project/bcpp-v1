@@ -3,7 +3,6 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
-from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from ..choices import UNDECIDED_REASON
 from ..managers import SubjectUndecidedEntryManager
@@ -28,7 +27,8 @@ class SubjectUndecidedEntry(BaseSubjectEntry):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         if self.subject_undecided.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
+                self._meta.object_name, self.pk))
         super(SubjectUndecidedEntry, self).save(*args, **kwargs)
 
     @property
