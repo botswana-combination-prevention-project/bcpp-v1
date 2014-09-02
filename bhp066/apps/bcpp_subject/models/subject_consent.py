@@ -204,4 +204,4 @@ class SubjectConsent(BaseSubjectConsent):
 
     class Meta:
         app_label = 'bcpp_subject'
-        unique_together = ('subject_identifier', 'survey')
+        unique_together = (('subject_identifier', 'survey'), ('first_name', 'dob', 'initials'))
