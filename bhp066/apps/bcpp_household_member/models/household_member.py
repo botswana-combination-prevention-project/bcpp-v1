@@ -242,7 +242,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 self.absent = True if selected_member_status == ABSENT else False
         if self.intervention and self.plot_enrolled:
             self.eligible_htc = self.evaluate_htc_eligibility
-        elif not self.intervention_community:
+        elif not self.intervention:
             self.eligible_htc = self.evaluate_htc_eligibility
         household_member_helper = HouseholdMemberHelper(self)
         self.member_status = household_member_helper.member_status(selected_member_status)
@@ -283,7 +283,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         eligible_htc = False
         if self.age_in_years > 64:
             eligible_htc = True
-        elif (not self.eligible_member and self.inability_to_participate == NOT_APPLICABLE) and self.household_member.age_in_years >= 16:
+        elif (not self.eligible_member and self.inability_to_participate == NOT_APPLICABLE) and self.age_in_years >= 16:
             eligible_htc = True
         elif self.eligible_member and self.refused:
             eligible_htc = True
