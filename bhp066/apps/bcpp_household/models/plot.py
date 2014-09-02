@@ -252,6 +252,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
+        update_fields = []
         if not self.allow_enrollment:
             raise ValidationError('BHS enrollment for {0} ended on {1}. This plot may not be modified. '
                                   'See settings.BHS_END_DATE'.format(self.community, settings.BHS_END_DATE))
@@ -285,6 +286,7 @@ class Plot(BaseDispatchSyncUuidModel):
                                            'replaces', 'replaced_by', 'selected']
                           ]:
                 setattr(self, field.name, None)
+                update_fields.append(field.name)
             self.action = self.get_action()
         else:
             if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
@@ -297,6 +299,12 @@ class Plot(BaseDispatchSyncUuidModel):
                     self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon,
                     self.target_radius) * 1000
             self.action = self.get_action()
+        try:
+            update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier']
+            update_fields = kwargs.get('update_fields') + update_fields
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(Plot, self).save(*args, **kwargs)
 
     @property

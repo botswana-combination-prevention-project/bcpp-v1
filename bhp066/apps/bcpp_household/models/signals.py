@@ -11,11 +11,13 @@ from .household_refusal import HouseholdRefusalHistory
 from .household_log import HouseholdLogEntry, HouseholdLog
 from .household_assessment import HouseholdAssessment
 from .household_structure import HouseholdStructure
+from .increase_plot_radius import IncreasePlotRadius
 from .plot import Plot
-from .plot_log import PlotLog, PlotLogEntry
+from .plot_log import PlotLogEntry
 
 from ..constants import (ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                         REFUSED_ENUMERATION, INACCESSIBLE)
+                         REFUSED_ENUMERATION, INACCESSIBLE, SEASONALLY_OCCUPIED,
+                         UNKNOWN_OCCUPIED, NEARLY_ALWAYS_OCCUPIED)
 
 
 @receiver(post_save, weak=False, dispatch_uid="household_on_post_save")
@@ -27,7 +29,8 @@ def household_on_post_save(sender, instance, raw, created, using, **kwargs):
             using = kwargs.get('using')
             if created:
                 instance.community = instance.plot.community
-                instance.household_identifier = HouseholdIdentifier(plot_identifier=instance.plot.plot_identifier).get_identifier()
+                instance.household_identifier = HouseholdIdentifier(
+                    plot_identifier=instance.plot.plot_identifier).get_identifier()
                 instance.save(using=using, update_fields=['household_identifier', 'community'])
             for survey in Survey.objects.using(using).all():
                 try:
@@ -98,24 +101,14 @@ def household_refusal_on_delete(sender, instance, using, **kwargs):
         instance.household_structure.save(using=using, update_fields=['refused_enumeration'])
 
 
-# @receiver(post_save, weak=False, dispatch_uid="plot_log_on_post_save")
-# def plot_log_on_post_save(sender, instance, raw, created, using, **kwargs):
-#     """Updates Plot's status from the Plot Log."""
-#     if not raw:
-#         if isinstance(instance, PlotLogEntry):
-#             if instance.log_status == INACCESSIBLE:
-#                 plot = Plot.objects.using(using).get(pk=instance.plot_log.plot.pk)
-#                 plot.status = INACCESSIBLE
-#                 plot.save(using=using, updated_fields=['status'])
-
-
 @receiver(post_save, weak=False, dispatch_uid="plot_log_entry_on_post_save")
 def plot_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
     """Updates Plot with the number of attempts and calculates if the
     plot.status is INACCESSIBLE."""
     if not raw:
         if isinstance(instance, PlotLogEntry):
-            instance.plot_log.plot.access_attempts = PlotLogEntry.objects.using(using).filter(plot_log__plot=instance.plot_log.plot).count()
+            instance.plot_log.plot.access_attempts = PlotLogEntry.objects.using(using).filter(
+                plot_log__plot=instance.plot_log.plot).count()
             update_fields = ['access_attempts']
             if instance.plot_log.plot.access_attempts >= 3:
                 status_list = PlotLogEntry.objects.using(using).values_list('log_status').filter(
@@ -125,6 +118,30 @@ def plot_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
                     instance.plot_log.plot.status = INACCESSIBLE
                     update_fields.append('status')
             instance.plot_log.plot.save(using=using, update_fields=update_fields)
+
+
+@receiver(post_save, weak=False, dispatch_uid='increase_plot_radius_on_post_save')
+def increase_plot_radius_on_post_save(sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        if isinstance(instance, IncreasePlotRadius):
+            instance.plot.target_radius = (instance.radius / 1000)
+            instance.plot.save(using=using, update_fields=['target_radius'])
+
+
+@receiver(post_save, weak=False, dispatch_uid='household_assessment_on_post_save')
+def household_assessment_on_post_save(sender, instance, raw, created, using, **kwargs):
+    """Updates HouseholdStructure by reseting failed_enumeration and calculating the
+    if there is an informant or not based on residency."""
+    if not raw:
+        if isinstance(instance, HouseholdAssessment):
+            update_fields = []
+            if created:
+                instance.household_structure.failed_enumeration = True
+                update_fields.append('failed_enumeration')
+            instance.household_structure.no_informant = instance.last_seen_home in [
+                SEASONALLY_OCCUPIED, UNKNOWN_OCCUPIED, NEARLY_ALWAYS_OCCUPIED]
+            update_fields.append('no_informant')
+            instance.household_structure.save(using=using, update_fields=update_fields)
 
 
 @receiver(post_delete, weak=False, dispatch_uid="household_assessment_on_delete")
@@ -141,20 +158,13 @@ def household_log_entry_on_post_save(sender, instance, raw, created, using, **kw
     updates failed enumeration attempts and no_elgible_members."""
     if not raw:
         if isinstance(instance, HouseholdLogEntry):
-            household_structure = HouseholdStructure.objects.using(using).get(pk=instance.household_log.household_structure.pk)
+            household_structure = HouseholdStructure.objects.using(using).get(
+                pk=instance.household_log.household_structure.pk)
             if not instance.household_status == REFUSED_ENUMERATION:
                 HouseholdRefusal.objects.using(using).filter(household_structure=household_structure).delete()
             # update enumeration attempts
-            if not household_structure.enumerated and instance.household_status in [ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION]:
-                household_structure.failed_enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(household_log__household_structure=household_structure).count()
+            if not household_structure.enumerated and instance.household_status in [
+                    ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION]:
+                household_structure.failed_enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(
+                    household_log__household_structure=household_structure).count()
             household_structure.save(using=using, update_fields=['failed_enumeration_attempts'])
-
-
-# @receiver(pre_save, weak=False, dispatch_uid="plot_on_pre_save")
-# def plot_on_pre_save(sender, instance, raw, **kwargs):
-#     """Checks that the survey exists."""
-#     if not raw:
-#         if isinstance(instance, (Plot)):
-#             instance.check_for_survey_on_pre_save(**kwargs)
-
-
