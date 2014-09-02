@@ -63,6 +63,11 @@ class SubjectRefusal (BaseMemberStatusModel):
 #             raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
+        try:
+            update_fields = kwargs.get('update_fields') + ['registered_subject', 'survey', ]
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:

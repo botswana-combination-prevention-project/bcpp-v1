@@ -76,6 +76,11 @@ class SubjectHtc(BaseMemberStatusModel):
         if not self.id:
             self.tracking_identifier = self.prepare_tracking_identifier()
         self.registered_subject = self.household_member.registered_subject
+        try:
+            update_fields = kwargs.get('update_fields') + ['registered_subject', 'survey', 'tracking_identifier']
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(SubjectHtc, self).save(*args, **kwargs)
 
     def prepare_tracking_identifier(self):

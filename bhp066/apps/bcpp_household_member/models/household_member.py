@@ -25,7 +25,7 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, REFUSED, BHS_SCREEN
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
