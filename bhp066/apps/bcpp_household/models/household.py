@@ -145,9 +145,6 @@ class Household(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
-#     def save(self, *args, **kwargs):
-#         return super(Household, self).save(*args, **kwargs)
-
     @property
     def mapper_name(self):
         return self.community
