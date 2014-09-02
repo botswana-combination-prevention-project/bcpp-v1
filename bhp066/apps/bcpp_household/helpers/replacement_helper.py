@@ -71,7 +71,7 @@ class ReplacementHelper(object):
         self.household = None
 
     @property
-    def replaceble(self):
+    def replaceable(self):
         """Returns True if a household or a plot meets the criteria to be replaced by plot."""
         if self.household_structure:
             return self.replaceable_household
