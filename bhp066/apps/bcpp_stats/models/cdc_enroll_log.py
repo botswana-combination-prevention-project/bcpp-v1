@@ -20,5 +20,8 @@ class CdcEnrollLog(BaseCdc):
     omang = EncryptedIdentityField(null=True)
     partid = models.CharField(max_length=25, null=True, help_text='Participant Identifier, e.g. BHS subject_identifier, HTC, etc')
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'
