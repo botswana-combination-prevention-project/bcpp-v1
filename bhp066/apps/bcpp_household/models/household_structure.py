@@ -6,7 +6,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from ..helpers import ReplacementHelper
 from ..managers import HouseholdStructureManager
@@ -148,7 +147,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return eligible_representative_absent
 
     @property
-    def replaceble(self):
+    def replaceable(self):
         replacement_helper = ReplacementHelper()
         replacement_helper.household_structure = self
         return replacement_helper.replaceable
@@ -164,11 +163,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         """Returns the number of consented (or enrolled) household members in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
-
-    def create_household_log_on_post_save(self, **kwargs):
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        if not HouseholdLog.objects.filter(household_structure__pk=self.pk):
-            HouseholdLog.objects.create(household_structure=self)
 
     def plot(self):
         url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))
