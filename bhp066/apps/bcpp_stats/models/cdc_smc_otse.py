@@ -10,6 +10,7 @@ class CdcSmcOtse(BaseCdc):
     FirstSaveTime = models.DateTimeField(null=True)
     GlobalRecordId = models.CharField(max_length=50, null=True)
     LastSaveTime = models.DateTimeField(null=True)
+    OrigSource = models.IntegerField(null=True)
     UniqueKey = models.IntegerField(null=True)
     identity_value = EncryptedIdentityField(null=True)
     mcVstIDtypeOM = EncryptedIdentityField(null=True)
@@ -34,6 +35,9 @@ class CdcSmcOtse(BaseCdc):
     mcfuOutcome5 = models.IntegerField(null=True)
     mcocmc = models.IntegerField(null=True)
     mcocmcdate = models.DateField(null=True)
+
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
 
     class Meta:
         app_label = 'bcpp_stats'
