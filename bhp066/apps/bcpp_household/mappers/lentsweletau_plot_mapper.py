@@ -1,5 +1,6 @@
-from datetime import date
 from dateutil.relativedelta import MO, TU, WE, TH, FR
+
+from django.conf import settings
 
 from edc.map.classes import site_mappers
 
@@ -28,6 +29,6 @@ class LentsweletauPlotMapper(BasePlotMapper):
         'IDCC': ClinicDaysTuple((MO, WE), None),
         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 20))}
+        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), settings.SMC_START_DATE)}
 
 site_mappers.register(LentsweletauPlotMapper)

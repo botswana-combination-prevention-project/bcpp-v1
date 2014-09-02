@@ -10,9 +10,12 @@ from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LO
 from .databases import TESTING_SQLITE
 from .databases import TESTING_MYSQL
 from .databases import PRODUCTION_MYSQL
-from .bcpp_days import BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE
+from .bcpp_days import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
+                        SMC_ECC_START_DATE, SMC_START_DATE)
 
 # from logger import LOGGING
+# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
@@ -184,7 +187,7 @@ ROOT_URLCONF = 'config.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'config.wsgi.application'
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + EDC_APPS + LIS_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + EDC_APPS + LIS_APPS + LOCAL_APPS  # + ('django_nose', )
 
 # django
 SESSION_COOKIE_AGE = 10000
@@ -282,3 +285,5 @@ BYPASS_HOUSEHOLD_LOG = True
 BHS_START_DATE = BHS_START_DATE
 BHS_END_DATE = BHS_END_DATE
 BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
+SMC_START_DATE = SMC_START_DATE
+SMC_ECC_START_DATE = SMC_ECC_START_DATE
