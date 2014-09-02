@@ -3,8 +3,10 @@ from collections import namedtuple
 from django.db.models import get_model
 
 from edc.constants import NOT_REQUIRED, KEYED
-from edc.entry_meta_data.models import ScheduledEntryMetaData
+from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.map.classes import site_mappers
+from edc.core.bhp_data_manager.models import TimePointStatus
+from edc.constants import CLOSED
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
 
@@ -41,32 +43,42 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member
         self.subject_identifier = self.instance.subject_visit.appointment.registered_subject.subject_identifier
-        mapper_cls = site_mappers.get_registry(self.household_member.household_structure.household.plot.community)
-        mapper = mapper_cls()
-        self.community_code = mapper.map_code
-        self.subject_referral_appt_helper = SubjectReferralApptHelper(
-            subject_referral.referral_code,
-            base_date=subject_referral.report_datetime,
-            scheduled_appt_date=subject_referral.scheduled_appt_date,
-            )
+        self.community_code = site_mappers.get_current_mapper().map_code
 
     @property
     def missing_data(self):
-        """Returns the model name of the first model used in the referral algorithm that's meta data is NOT set to KEYED or NOT_REQUIRED."""
+        """Returns the model name of the first model used in the referral algorithm that's 
+        meta data is NOT set to KEYED or NOT_REQUIRED.
+
+        If timepointstatus instance exists with status=CLOSED, the check is skipped."""
         model_classes = self.models.values()
-        for model_cls in model_classes:
-            try:
-                scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
-                    appointment=self.instance.subject_visit.appointment,
-                    entry__app_label=model_cls._meta.app_label,
-                    entry__model_name=model_cls._meta.object_name)
-                if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
-                    return model_cls
-            except ScheduledEntryMetaData.DoesNotExist:
-                pass
-            except AttributeError:  # NoneType?
-                pass
-        return None
+        first_model_cls = None
+        try:
+            TimePointStatus.objects.get(appointment=self.instance.subject_visit.appointment, status=CLOSED)
+        except TimePointStatus.DoesNotExist:
+            for model_cls in model_classes:
+                try:
+                    scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
+                        appointment=self.instance.subject_visit.appointment,
+                        entry__app_label=model_cls._meta.app_label,
+                        entry__model_name=model_cls._meta.object_name)
+                    if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
+                        first_model_cls = model_cls
+                        break
+                except ScheduledEntryMetaData.DoesNotExist:
+                    try:
+                        requisition_meta_data = RequisitionMetaData.objects.get(
+                            appointment=self.instance.subject_visit.appointment,
+                            lab_entry__app_label=model_cls._meta.app_label,
+                            lab_entry__model_name=model_cls._meta.object_name)
+                        if requisition_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
+                            first_model_cls = model_cls
+                            break
+                    except RequisitionMetaData.DoesNotExist:
+                        pass
+                except AttributeError:  # NoneType?
+                    pass
+        return first_model_cls
 
     @property
     def subject_referral(self):
@@ -267,6 +279,14 @@ class SubjectReferralHelper(SubjectStatusHelper):
             except self.models.get('subject_consent').DoesNotExist:
                 self._subject_consent_instance = None
         return self._subject_consent_instance
+
+    @property
+    def subject_referral_appt_helper(self):
+        return SubjectReferralApptHelper(
+            self.referral_code,
+            base_date=self.instance.report_datetime,
+            scheduled_appt_date=self.instance.scheduled_appt_date,
+            )
 
     @property
     def referral_appt_datetime(self):
