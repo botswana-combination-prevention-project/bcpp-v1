@@ -27,5 +27,8 @@ class CdcPimsLabDcf(BaseCdc):
     cd4vl_vldt = models.DateField(null=True)
     cd4vl_vlrsltdt = models.DateField(null=True)
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'

@@ -24,5 +24,8 @@ class CdcPimsVitalsDcf(BaseCdc):
     med_regimenother = models.CharField(max_length=25, null=True)
     srh_pmtctdt = models.DateField(null=True)
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'
