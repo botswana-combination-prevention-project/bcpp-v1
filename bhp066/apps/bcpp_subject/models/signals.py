@@ -44,8 +44,8 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
     if not raw:
         try:
             subject_visit = instance.visit
-            subject_referral = SubjectReferral.objects.using(using).get(subject_visit=subject_visit)
             if instance.__class__ in SubjectReferralHelper(instance).models.values():
+                subject_referral = SubjectReferral.objects.using(using).get(subject_visit=subject_visit)
                 subject_referral.save(using=using)
         except AttributeError:
             pass

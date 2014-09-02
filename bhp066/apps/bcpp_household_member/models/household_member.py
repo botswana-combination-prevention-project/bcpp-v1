@@ -1,6 +1,5 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
-# import pprint
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -26,7 +25,7 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED
+from ..constants import ABSENT, UNDECIDED, REFUSED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
@@ -230,10 +229,17 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.absent = True if (not self.id and self.present_today == 'No') else self.absent
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
+            self.undecided = True if selected_member_status == UNDECIDED else False
+            self.absent = True if selected_member_status == ABSENT else False
+            self.refused = True if selected_member_status == REFUSED else False
         # TODO: this may be slightly redundant from signal ... need to confirm
-        if self.intervention and self.household_structure.enrolled and (self.age_in_years >= 16 and (self.enrollment_loss_completed or not self.eligible_member)):
+        if (self.intervention and self.household_structure.enrolled
+            and (self.age_in_years >= 16
+                 and (self.enrollment_loss_completed or not self.eligible_member))):
             self.eligible_htc = True
-        elif not self.intervention and (self.age_in_years >= 16 and (self.enrollment_loss_completed or not self.eligible_member)):
+        elif (not self.intervention and (
+              self.age_in_years >= 16 and (
+                  self.enrollment_loss_completed or not self.eligible_member))):
             self.eligible_htc = True
         # get member status
         household_member_helper = HouseholdMemberHelper(self)
@@ -389,39 +395,22 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         # SubjectAbsentee would be called with model_pk=None
         # whereas SubjectAbsenteeEntry would be called with model_pk=UUID
         url = ''
-        pk = None
         app_label = 'bcpp_household_member'
         if add_url:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
             return url
-        if not self.registered_subject:
-            self.save()
-        if not model_pk:  # This is a like a SubjectAbsentee
+        elif not model_pk:
             model_class = models.get_model(app_label, model)
             try:
                 instance = model_class.objects.get(household_member=self)
-                pk = instance.id
+                model_pk = instance.id
             except:
-                pk = None
-        else:
-            pk = model_pk
-        if pk:
-            url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(pk, ))
+                model_pk = None
+        if model_pk:
+            url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(model_pk, ))
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
         return url
-
-    @property
-    def subject_absentee_instance(self):
-        """Returns the subject absentee instance for this member
-        and creates a subject_absentee_instance if it does not exist."""
-        return HouseholdMemberHelper(self).subject_status_factory('SubjectAbsentee', ABSENT)
-
-    @property
-    def subject_undecided_instance(self):
-        """Returns the subject undecided instance for this member
-        and creates a subject_undecided_instance if it does not exist."""
-        return HouseholdMemberHelper(self).subject_status_factory('SubjectUndecided', UNDECIDED)
 
     def render_absentee_info(self):
         """Renders the absentee information for the template."""
@@ -441,36 +430,86 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return self._get_form_url('subjectabsentee')
 
     @property
+    def subject_absentee_instance(self):
+        """Returns the subject absentee instance for this member
+        and creates a subject_absentee_instance if it does not exist."""
+        SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
+        try:
+            subject_absentee = SubjectAbsentee.objects.get(household_member__pk=self.pk)
+        except SubjectAbsentee.DoesNotExist:
+            subject_absentee = ''
+        return subject_absentee
+
+    @property
+    def subject_undecided_instance(self):
+        """Returns the subject undecided instance for this member
+        and creates a subject_undecided_instance if it does not exist."""
+        SubjectUndecided = models.get_model('bcpp_household_member', 'subjectundecided')
+        try:
+            subject_undecided = SubjectUndecided.objects.get(household_member__pk=self.pk)
+        except SubjectUndecided.DoesNotExist:
+            subject_undecided = ''
+        return subject_undecided
+
+    @property
     def absentee_entry_form_urls(self):
-        """Returns a url or urls to the subjectabsenteeentry(s) if an instance(s) exists."""
-        SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
-        absentee_entry_urls = {}
-        subject_absentee = self.subject_absentee_instance
-        for entry in SubjectAbsenteeEntry.objects.filter(
-                subject_absentee=subject_absentee).order_by('report_datetime'):
-            absentee_entry_urls[entry.pk] = self._get_form_url('subjectabsenteeentry', entry.pk)
-        add_url_2 = self._get_form_url('subjectabsenteeentry', model_pk=None, add_url=True)
-        absentee_entry_urls['add new entry'] = add_url_2
-        return absentee_entry_urls
+        """Returns a url or urls to the subjectabsenteeentry(s) if an instance(s) exists.
+
+        Urls are used on the Household Composition dashboard to allow edits of existing
+        instances and an option to add one more.
+
+        Format is {pk: }"""
+        urls = {}
+        app_label = 'bcpp_household_member'
+        model = 'subjectabsenteeentry'
+        SubjectAbsentee = models.get_model(app_label, 'subjectabsentee')
+        SubjectAbsenteeEntry = models.get_model(app_label, model)
+        try:
+            subject_absentee = SubjectAbsentee.objects.get(household_member=self)
+            for subject_absentee_entry in SubjectAbsenteeEntry.objects.filter(
+                    subject_absentee=subject_absentee).order_by('report_datetime'):
+                # add url for each existing instance
+                urls[subject_absentee_entry.pk] = reverse(
+                    'admin:{0}_{1}_change'.format(app_label, model),
+                    args=(subject_absentee_entry.pk, ))
+            # always add an extra add url
+            urls['add new entry'] = reverse('admin:{0}_{1}_add'.format(app_label, model))
+        except SubjectAbsentee.DoesNotExist:
+            pass
+        return urls
+
+    @property
+    def undecided_entry_form_urls(self):
+        """Returns a url or urls to the subject_undecided_entry(s) if an instance(s) exists.
+
+        Urls are used on the Household Composition dashboard to allow edits of existing
+        instances and an option to add one more.
+
+        Format is {pk: }"""
+        urls = {}
+        app_label = 'bcpp_household_member'
+        model = 'subjectundecidedentry'
+        SubjectUndecided = models.get_model(app_label, 'subjectundecided')
+        SubjectUndecidedEntry = models.get_model(app_label, model)
+        try:
+            subject_undecided = SubjectUndecided.objects.get(household_member=self)
+            for subject_undecided_entry in SubjectUndecidedEntry.objects.filter(
+                    subject_undecided=subject_undecided).order_by('report_datetime'):
+                # add url for each existing instance
+                urls[subject_undecided_entry.pk] = reverse(
+                    'admin:{0}_{1}_change'.format(app_label, model),
+                    args=(subject_undecided_entry.pk, ))
+            # always add an extra add url
+            urls['add new entry'] = reverse('admin:{0}_{1}_add'.format(app_label, model))
+        except SubjectUndecided.DoesNotExist:
+            pass
+        return urls
 
     def absentee_form_label(self):
         SubjectAbsentee = models.get_model('bcpp_household_member', 'subjectabsentee')
         SubjectAbsenteeEntry = models.get_model('bcpp_household_member', 'subjectabsenteeentry')
         return self.form_label_helper(SubjectAbsentee, SubjectAbsenteeEntry)
     absentee_form_label.allow_tags = True
-
-    @property
-    def undecided_entry_form_urls(self):
-        """Returns a url or urls to the subjectundecidedentry(s) if an instance(s) exists."""
-        SubjectUndecidedEntry = models.get_model('bcpp_household_member', 'subjectundecidedentry')
-        undecided_entry_urls = {}
-        subject_undecided = self.subject_undecided_instance
-        for entry in SubjectUndecidedEntry.objects.filter(
-                subject_undecided=subject_undecided).order_by('report_datetime'):
-            undecided_entry_urls[entry.pk] = self._get_form_url('subjectundecidedentry', entry.pk)
-        add_url_2 = self._get_form_url('subjectundecidedentry', model_pk=None, add_url=True)
-        undecided_entry_urls['add new entry'] = add_url_2
-        return undecided_entry_urls
 
     def undecided_form_label(self):
         SubjectUndecided = models.get_model('bcpp_household_member', 'subjectundecided')
@@ -604,3 +643,4 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         unique_together = (("household_structure", "first_name", "initials"),
                            ('registered_subject', 'household_structure'))
         app_label = 'bcpp_household_member'
+        index_together = [['id', 'registered_subject', 'created'], ]
