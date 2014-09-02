@@ -24,5 +24,8 @@ class CdcRefusal(BaseCdc):
     info_reasonnoartothr = models.IntegerField(null=True)
     info_reasonother = models.IntegerField(null=True)
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'
