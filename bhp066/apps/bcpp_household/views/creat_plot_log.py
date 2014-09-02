@@ -8,6 +8,7 @@ def create_plot_log(request):
     instance = None
     plot_pk = request.GET.get('plot')
     plot = get_model('bcpp_household', 'Plot').objects.get(pk=plot_pk)
+    # TODO: can't this be created in the plot post save signal?
     try:
         instance = PlotLog.objects.get(plot=plot)
     except PlotLog.DoesNotExist:

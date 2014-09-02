@@ -1,7 +1,8 @@
-from django.conf import settings
 from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sections
 from edc.map.classes import site_mappers
+
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household.constants import CONFIRMED
 
 from ..forms import GpsSearchForm
 from ..search import HouseholdSearchByWord, HouseholdSearchByGps
@@ -24,7 +25,8 @@ class SectionHouseholdView(BaseSectionForDashboardView):
             'current_survey': Survey.objects.current_survey(),
             'current_community': self.get_current_community(),
             'mapper_name': current_community,
-            'gps_search_form': GpsSearchForm(initial={'radius': 100})})
+            'gps_search_form': GpsSearchForm(initial={'radius': 100}),
+            'CONFIRMED': CONFIRMED})
         return context
 
     def get_current_community(self):

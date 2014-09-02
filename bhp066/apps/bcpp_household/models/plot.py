@@ -405,7 +405,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return False
 
     def is_plot(self):
-        return True
+        return True  # really?
 
     def is_dispatch_container_model(self):
         return True

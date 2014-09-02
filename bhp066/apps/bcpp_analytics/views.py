@@ -471,10 +471,10 @@ def replacement_report_view(request, **kwargs):
     replacement_values = {}
     accessment_forms_to_fill = 0
     household_refusal_forms_to_fill = 0
-    replaceble_households = 0
+    replaceable_households = 0
     replaced_households = 0
     replaced_plots = 0
-    replaceble_plots = 0
+    replaceable_plots = 0
     plots = None
     replacement_helper = ReplacementHelper()
     first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
@@ -500,21 +500,21 @@ def replacement_report_view(request, **kwargs):
     for producer in producers:
         producer_names.append(producer.name)
 
-    # Replaceble plots
+    # replaceable plots
     for plot in plots:
         replacement_helper.plot = plot
         if replacement_helper.replaceable_plot and not plot.replaced_by:
-            replaceble_plots += 1
+            replaceable_plots += 1
         if plot.replaced_by:
             replaced_plots += 1
 
     for household_structure in household_structures:
         household_status = None
         household_log = get_model('bcpp_household', 'HouseholdLog').objects.filter(household_structure=household_structure)
-        # Replaceble households
+        # replaceable households
         replacement_helper.household_structure = household_structure
         if replacement_helper.replaceable and not household_structure.household.replaced_by:
-            replaceble_households += 1
+            replaceable_households += 1
         if household_structure.household.replaced_by:
             replaced_households += 1
         # Number of household assessment forms to fill
@@ -532,7 +532,7 @@ def replacement_report_view(request, **kwargs):
 
         replacement_values['1. Total replaced households'] = replaced_households
         replacement_values['2. Total replaced plots'] = replaced_plots
-        replacement_values['3. Total number of replaceble households'] = replaceble_households
+        replacement_values['3. Total number of replaceable households'] = replaceable_households
         replacement_values['4. Total household assessment pending'] = accessment_forms_to_fill
         replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
 
