@@ -11,7 +11,7 @@ from ..constants import RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_
 
 
 class ReplacementHelper(object):
-    """Check replaceble household and plots, then replace them."""
+    """Check replaceable household and plots, then replace them."""
 
     def __init__(self):
         self._household_structure = None
@@ -81,33 +81,33 @@ class ReplacementHelper(object):
     @property
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot."""
-        replaceble = None
+        replaceable = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
             if self.household_structure.refused_enumeration or self.household_structure.all_eligible_members_refused and not self.household_structure.household.replaced_by:
-                replaceble = True
+                replaceable = True
             elif self.household_structure.eligible_representative_absent or self.household_structure.all_eligible_members_absent and not self.household_structure.household.replaced_by:
-                replaceble = True
+                replaceable = True
             elif self.household_structure.failed_enumeration and self.household_structure.no_informant and not self.household_structure.household.replaced_by:
-                replaceble = True
+                replaceable = True
             elif self.household_structure.vdc_form_status == RARELY_OCCUPIED:
-                replaceble = False
+                replaceable = False
             elif self.household_structure.enumerated and not self.household_structure.eligible_members:
-                replaceble = False
+                replaceable = False
             elif self.household_structure.enrolled:
-                replaceble = False
-        return replaceble
+                replaceable = False
+        return replaceable
 
     @property
     def replaceable_plot(self):
         """Returns True if a plot meets the criteria to be replaced by a plot."""
-        replaceble = None
+        replaceable = None
         if not self.plot.replaced_by and self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-            replaceble = True
+            replaceable = True
         elif not self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-            replaceble = False
+            replaceable = False
         else:
-            replaceble = None
-        return replaceble
+            replaceable = None
+        return replaceable
 
     def replaceable_households(self, survey, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
@@ -137,10 +137,10 @@ class ReplacementHelper(object):
         except get_model('bcpp_household', 'Plot').DoesNotExist:
             return None
 
-    def replace_household(self, replaceble_households, destination):
+    def replace_household(self, replaceable_households, destination):
         """Replaces a household with a plot.
 
-        This takes a list of replaceble households and plots that are to replace those households.
+        This takes a list of replaceable households and plots that are to replace those households.
         The replacement history model is udated to specify when the household was replaced and what it was replaced with."""
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
@@ -148,7 +148,7 @@ class ReplacementHelper(object):
             message = "Pending outgoing transaction on: " + str(destination)
             return message
         else:
-            for household, plot in zip(replaceble_households, plots):
+            for household, plot in zip(replaceable_households, plots):
                 if household.replaced_by:
                     try:
                         plot = get_model('bcpp_household', 'Plot').objects.get(replaces=household.household_identifier)
@@ -173,10 +173,10 @@ class ReplacementHelper(object):
                 replacing_plots.append(plot)
             return replacing_plots
 
-    def replace_plot(self, replaceble_plots, destination):
+    def replace_plot(self, replaceable_plots, destination):
         """Replaces a plot with a plot.
 
-        This takes a list of replaceble plots and replaces each with a plot.
+        This takes a list of replaceable plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
         plots = get_model('bcpp_household', 'Plot').objects.filter(selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         if self.synchronized(destination):
@@ -185,7 +185,7 @@ class ReplacementHelper(object):
         else:
             # plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
             replacing_plots = []
-            for plot_a, plot_b in zip(replaceble_plots, plots):
+            for plot_a, plot_b in zip(replaceable_plots, plots):
                 # if self.synchronized(destination):
                 if plot_a.replaced_by:
                     try:

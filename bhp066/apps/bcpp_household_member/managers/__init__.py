@@ -3,7 +3,7 @@ from .enrollment_checklist_manager import EnrollmentChecklistManager
 from .contact_log_manager import ContactLogManager, ContactLogItemManager
 from .enrollment_loss_manager import EnrollmentLossManager
 from .household_info_manager import HouseholdInfoManager
-from .head_household_eligibility_manager import HouseholdHeadEligibilityManager
+from .household_head_eligibility_manager import HouseholdHeadEligibilityManager
 from .subject_absentee_entry_manager import SubjectAbsenteeEntryManager
 from .subject_undecided_entry_manager import SubjectUndecidedEntryManager
 from .subject_refusal_history_manager import SubjectRefusalHistoryManager

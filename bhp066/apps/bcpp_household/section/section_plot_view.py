@@ -13,7 +13,6 @@ site_mappers.autodiscover()
 class SectionPlotView(BaseSectionView):
     section_name = 'plot'
     section_display_name = 'Plots'
-    #add_model = Plot
     section_display_index = 10
     section_template = 'section_bcpp_plot.html'
     search = [PlotSearchByWord, PlotSearchByGps]
