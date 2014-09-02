@@ -2,6 +2,7 @@ import os
 
 from django.core.management.base import BaseCommand, CommandError
 
+from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
 from apps.bcpp_household.models import Plot
 
 
@@ -45,9 +46,9 @@ class Command(BaseCommand):
                 removed_plots_75 = set(plot_identifiers_75) - set(current_db_plot_identifiers_75)
             plots = Plot.objects.filter(plot_identifier__in=current_db_plot_identifiers_75)
             for plot in plots:
-                if plot.action == 'confirmed':
+                if plot.action == CONFIRMED:
                     action_confirmed_75 += 1
-                elif plot.action == 'unconfirmed':
+                elif plot.action == UNCONFIRMED:
                     action_unconfirmed_75 += 1
             # The 20 percent plot list
             plots_20_list = open(file_20_list, 'r')
@@ -72,9 +73,9 @@ class Command(BaseCommand):
                 removed_plots_20 = set(plot_identifiers_20) - set(current_db_plot_identifiers_20)
             plots = Plot.objects.filter(plot_identifier__in=current_db_plot_identifiers_20)
             for plot in plots:
-                if plot.action == 'confirmed':
+                if plot.action == CONFIRMED:
                     action_confirmed_20 += 1
-                elif plot.action == 'unconfirmed':
+                elif plot.action == UNCONFIRMED:
                     action_unconfirmed_20 += 1
             # The 5 percent plot list
             plots_5_list = open(file_5_list, 'r')
@@ -99,9 +100,9 @@ class Command(BaseCommand):
                 removed_plots_5 = set(plot_identifiers_5) - set(current_db_plot_identifiers_5)
             plots = Plot.objects.filter(plot_identifier__in=current_db_plot_identifiers_5)
             for plot in plots:
-                if plot.action == 'confirmed':
+                if plot.action == CONFIRMED:
                     action_confirmed_5 += 1
-                elif plot.action == 'unconfirmed':
+                elif plot.action == UNCONFIRMED:
                     action_unconfirmed_5 += 1
             print "*******************"
             print "* 75 percent data *"

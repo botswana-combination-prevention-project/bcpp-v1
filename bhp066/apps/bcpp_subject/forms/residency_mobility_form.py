@@ -1,7 +1,10 @@
 from django import forms
-from ..models import ResidencyMobility
-from .base_subject_model_form import BaseSubjectModelForm
 
+from edc.constants import NOT_APPLICABLE
+
+from ..models import ResidencyMobility
+
+from .base_subject_model_form import BaseSubjectModelForm
 
 # ResidencyMobility
 class ResidencyMobilityForm (BaseSubjectModelForm):
@@ -25,10 +28,10 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant was staying in another community, specify the community')
 
         # this as in redmine issue 69
-        if cleaned_data.get('nights_away') == 'zero' and cleaned_data.get('cattle_postlands') != 'N/A':
+        if cleaned_data.get('nights_away') == 'zero' and cleaned_data.get('cattle_postlands') != NOT_APPLICABLE:
             raise forms.ValidationError('If participant spent zero nights away, times spent away should be Not applicable')
 
-        if cleaned_data.get('nights_away') != 'zero' and cleaned_data.get('cattle_postlands') == 'N/A':
+        if cleaned_data.get('nights_away') != 'zero' and cleaned_data.get('cattle_postlands') == NOT_APPLICABLE:
             raise forms.ValidationError('Participant has spent more than zero nights away, times spent away CANNOT be Not applicable')
 
         return cleaned_data

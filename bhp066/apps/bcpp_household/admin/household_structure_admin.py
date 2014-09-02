@@ -2,7 +2,7 @@ from django.contrib import admin
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.forms import HouseholdStructureForm
 from apps.bcpp_household.actions import export_as_kml_hs
-from apps.bcpp_household.filters import ReplacebleHouseholdStructureFilter
+from apps.bcpp_household.filters import ReplaceableHouseholdStructureFilter
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -41,7 +41,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'progress',
         'enrolled',
         'refused_enumeration',
-        ReplacebleHouseholdStructureFilter,
+        ReplaceableHouseholdStructureFilter,
         'enrolled_datetime',
         'modified',
         'user_modified',

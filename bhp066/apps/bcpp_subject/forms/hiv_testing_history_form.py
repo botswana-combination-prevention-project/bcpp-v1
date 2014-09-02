@@ -1,5 +1,9 @@
 from django import forms
+
+from edc.constants import NOT_APPLICABLE
+
 from ..models import HivTestingHistory
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -23,12 +27,12 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
             raise forms.ValidationError('If participant has tested, is a record is available? Got None.')
         if (cleaned_data.get('has_tested') != 'Yes' and
             ((cleaned_data.get('has_record') is not None) or (cleaned_data.get('when_hiv_test') is not None) or
-             (cleaned_data.get('verbal_hiv_result') is not None) or (cleaned_data.get('other_record') != 'N/A'))):
+             (cleaned_data.get('verbal_hiv_result') is not None) or (cleaned_data.get('other_record') != NOT_APPLICABLE))):
             raise forms.ValidationError('If participant has never tested, all questions should be answered None/Not Applicable.')
 
-        if cleaned_data.get('verbal_hiv_result') != 'POS' and cleaned_data.get('other_record') != 'N/A':
+        if cleaned_data.get('verbal_hiv_result') != 'POS' and cleaned_data.get('other_record') != NOT_APPLICABLE:
             raise forms.ValidationError('If participant is NOT POS, then any other documentation of HIV + should be Not Applicable.')
-        if cleaned_data.get('verbal_hiv_result') == 'POS' and cleaned_data.get('other_record') == 'N/A':
+        if cleaned_data.get('verbal_hiv_result') == 'POS' and cleaned_data.get('other_record') == NOT_APPLICABLE:
             raise forms.ValidationError('If participant is POS, then any other documentation of HIV + should be either \'Yes\' or \'No\'.')
         return cleaned_data
 

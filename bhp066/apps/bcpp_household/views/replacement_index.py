@@ -16,9 +16,9 @@ def replacement_index(request, **kwargs):
     if not producer_names:
         message = 'There are no producers in your producer table. Add producers to your producer table'
     return render_to_response(
-            template, {
-                'message': message,
-                'producer_names': producer_names,
-             },
-            context_instance=RequestContext(request)
-        )
+        template, {
+            'message': message,
+            'producer_names': producer_names,
+            },
+        context_instance=RequestContext(request)
+    )

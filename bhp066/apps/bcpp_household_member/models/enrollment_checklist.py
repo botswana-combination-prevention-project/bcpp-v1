@@ -10,11 +10,14 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA
+from edc.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
+
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
 
@@ -25,6 +28,15 @@ from .household_member import HouseholdMember
 class EnrollmentChecklist(BaseDispatchSyncUuidModel):
 
     household_member = models.OneToOneField(HouseholdMember)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Report Date and Time",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future,
+            ],
+        help_text=''
+        )
 
     initials = models.CharField(
         verbose_name='Initials',
@@ -77,7 +89,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         choices=YES_NO_NA,
         null=True,
         blank=False,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text=_("If 'NO' participant will not be enrolled."))
 
     marriage_certificate = models.CharField(
@@ -86,7 +98,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         choices=YES_NO_NA,
         null=True,
         blank=False,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.")
 
     # same as study_resident in household member
@@ -116,6 +128,13 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                     "witness available otherwise participant will not be enrolled."))
 
     is_eligible = models.BooleanField(default=False)
+
+    loss_reason = models.TextField(
+        verbose_name='Reason not eligible',
+        max_length=500,
+        null=True,
+        editable=False,
+        help_text='(stored for the loss form)')
 
     objects = EnrollmentChecklistManager()
 
@@ -147,7 +166,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
                 raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(BHS_SCREEN + ' or ' + NOT_ELIGIBLE + ' or ' + BHS_SCREEN, self.household_member.member_status))
         self.matches_household_member_values(self, self.household_member)
-        self.is_eligible = self.passes_enrollment_criteria(using)
+        self.is_eligible, self.loss_reason = self.passes_enrollment_criteria(using)
         super(EnrollmentChecklist, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, enrollment_checklist, household_member, exception_cls=None):
@@ -156,15 +175,15 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         exception_cls = exception_cls or ValidationError
         age_in_years = relativedelta(date.today(), enrollment_checklist.dob).years
         if age_in_years != household_member.age_in_years:
-            error_msg = 'Age does not match that entered on the household member. Got {0} <> {1}'.format(age_in_years, household_member.age_in_years)
+            error_msg = 'Enrollment Checklist Age does not match Household Member age. Got {0} <> {1}'.format(age_in_years, household_member.age_in_years)
         elif household_member.study_resident.lower() != enrollment_checklist.part_time_resident.lower():
-            error_msg = 'Residency does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.part_time_resident, household_member.study_resident)
+            error_msg = 'Enrollment Checklist Residency does not match Household Member residency. Got {0} <> {1}'.format(enrollment_checklist.part_time_resident, household_member.study_resident)
         elif household_member.initials.lower() != enrollment_checklist.initials.lower():
-            error_msg = 'Initials do not match those entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.initials, household_member.initials)
+            error_msg = 'Enrollment Checklist Initials do not match Household Member initials. Got {0} <> {1}'.format(enrollment_checklist.initials, household_member.initials)
         elif household_member.gender != enrollment_checklist.gender:
-            error_msg = 'Gender does not match that entered on the household member. Got {0} <> {1}'.format(enrollment_checklist.gender, household_member.gender)
+            error_msg = 'Enrollment Checklist Gender does not match Household Member gender. Got {0} <> {1}'.format(enrollment_checklist.gender, household_member.gender)
         elif household_member.is_minor and age_in_years >= 18:
-            error_msg = 'Member is a minor. Got age {0}'.format(age_in_years)
+            error_msg = 'Household Member is a minor. Got age {0}'.format(age_in_years)
         if error_msg:
             raise exception_cls(error_msg)
 
@@ -188,22 +207,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             loss_reason.append('Illiterate with no literate witness.')
         if self.household_member.is_minor and self.guardian.lower() != 'yes':
             loss_reason.append('Minor without guardian available.')
-        if loss_reason:
-            self.household_member.member_status = NOT_ELIGIBLE
-            self.household_member.enrollment_loss_completed = True
-            try:
-                enrollment_loss = EnrollmentLoss.objects.using(using).get(household_member=self.household_member)
-                enrollment_loss.report_datetime = datetime.today()
-                enrollment_loss.reason = loss_reason
-            except EnrollmentLoss.DoesNotExist:
-                EnrollmentLoss.objects.using(using).create(
-                    household_member=self.household_member,
-                    report_datetime=datetime.today(),
-                    reason=';'.join(loss_reason))
-        else:
-            EnrollmentLoss.objects.using(using).filter(household_member=self.household_member).delete()
-            self.household_member.enrollment_loss_completed = False
-        return False if loss_reason else True
+        return (False if loss_reason else True, loss_reason)
 
     class Meta:
         app_label = "bcpp_household_member"

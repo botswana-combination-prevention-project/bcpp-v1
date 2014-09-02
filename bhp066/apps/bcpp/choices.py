@@ -1,5 +1,7 @@
 from django.utils.translation import ugettext as _
 
+from edc.constants import NOT_APPLICABLE
+
 YES_NO_DONT_ANSWER = (
     ('Yes', _('Yes')),
     ('No', _('No')),
@@ -89,7 +91,7 @@ NIGHTSAWAY_CHOICE = (
 )
 
 CATTLEPOSTLANDS_CHOICE = (
-    ('N/A', _('Not Applicable')),
+    (NOT_APPLICABLE, _('Not Applicable')),
     ('Farm/lands', _('Farm/lands')),
     ('Cattle post', _('Cattle post')),
     ('Other community', _('Other community, specify:')),
@@ -139,7 +141,7 @@ COMMUNITIES = (
 )
 
 # REASONAWAY_CHOICE = (
-#     ('N/A', _('Not Applicable')),
+#     (NOT_APPLICABLE, _('Not Applicable')),
 #     ('Cattle post or farm/lands', _('Cattle post or farm/lands')),
 #     ('Work', _('Work')),
 #     ('Education', _('Education')),
@@ -231,10 +233,10 @@ EDUCATION_CHOICE = (
 )
 
 INABILITY_TO_PARTICIPATE_REASON = (
+    (NOT_APPLICABLE, _('ABLE to participate')),
     ('Mental Incapacity', _('Mental Incapacity')),
     ('Deaf/Mute', _('Deaf/Mute')),
     ('Too sick', _('Too sick')),
-    ('N/A', _('ABLE to participate')),
 )
 
 EMPLOYMENT_CHOICE = (

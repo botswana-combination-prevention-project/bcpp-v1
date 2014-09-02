@@ -18,7 +18,7 @@ class TestChoice(TestCase):
         MAX_LENGTH = 0
         TEXT = 1
         found = False
-        print 'check choices tuples fit in their fields (in English)'
+        # print 'check choices tuples fit in their fields (in English)'
         for language in settings.LANGUAGES:
             if language == ('en', 'English'):
                 found = True
@@ -29,7 +29,7 @@ class TestChoice(TestCase):
                     for tpl in c:
                         if dct.get(choice):
                             text = translator.ugettext(tpl[0])
-                            print (text, tpl[0])
+                            # print (text, tpl[0])
                             if dct.get(choice)[MAX_LENGTH] < len(text):
                                 dct.update({choice: (len(text), text)})
                         else:

@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from django.db import connection
 from django.test import TestCase
-from django.test.utils import teardown_test_environment
 from django.db.models import get_model
 
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -43,9 +42,9 @@ class TestPlotMapper(Mapper):
 site_mappers.register(TestPlotMapper)
 
 
-class PlotReplacementTests(TestCase):
+class TestPlotReplacement(TestCase):
 
-    def setUp(self):
+    def startup(self):
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
@@ -56,12 +55,6 @@ class PlotReplacementTests(TestCase):
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         self.dispatch_test_db = 'dispatch_destination'
-#         connection.creation.destroy_test_db(self.dispatch_test_db, verbosity=1)
-#         teardown_test_environment()
-
-    def tearDown(self):
-        self.dispatch_test_db = 'dispatch_destination'
-        connection.creation.destroy_test_db(self.dispatch_test_db, verbosity=1)
 
     def household_member_refused_factory(self, **kwargs):
         household_member = HouseholdMemberFactory(**kwargs)
@@ -149,7 +142,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
 
     def test_refusal_household1(self):
-        """Asserts that a household of refused members is replaceble."""
+        """Asserts that a household of refused members is replaceable."""
         plot = PlotFactory(
             community='test_community11',
             household_count=1,
@@ -186,7 +179,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_refusal_household1a(self):
-        """Asserts that a household of refused members is replaceble but if deleted is not replaceable."""
+        """Asserts that a household of refused members is replaceable but if deleted is not replaceable."""
 
         plot = PlotFactory(
             community='test_community11',
@@ -217,7 +210,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_refusal_household2(self):
-        """Asserts that a household of 3 refused members is replaceble."""
+        """Asserts that a household of 3 refused members is replaceable."""
 
         plot = PlotFactory(
             community='test_community11',
@@ -260,7 +253,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_refusal_household3(self):
-        """Asserts that a household of 3 refused members and two ineligible members is replaceble."""
+        """Asserts that a household of 3 refused members and two ineligible members is replaceable."""
         plot = PlotFactory(
             community='test_community11',
             household_count=1,
@@ -314,7 +307,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_refusal_household4(self):
-        """Asserts that if 2 households in a plot, 1 household with 3 refused members, the household is replaceble."""
+        """Asserts that if 2 households in a plot, 1 household with 3 refused members, the household is replaceable."""
         plot = PlotFactory(
             community='test_community11',
             household_count=2,
@@ -374,7 +367,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household1])
 
     def test_refusal_household5(self):
-        """Asserts that a household with 3 eligible members is not replaceble."""
+        """Asserts that a household with 3 eligible members is not replaceable."""
 
         plot = PlotFactory(
             community='test_community11',
@@ -420,7 +413,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_refusal_household6(self):
-        """Asserts that a household with a HOH who has refused is replaceble."""
+        """Asserts that a household with a HOH who has refused is replaceable."""
         plot = PlotFactory(
             community='test_community11',
             household_count=2,
@@ -446,7 +439,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household1])
 
     def test_refusal_household7(self):
-        """Asserts a plot with 2 households, A and B, where in household A the HOH has refused, A is replaceble."""
+        """Asserts a plot with 2 households, A and B, where in household A the HOH has refused, A is replaceable."""
         plot = PlotFactory(
             community='test_community11',
             household_count=2,
@@ -485,7 +478,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household1])
 
     def test_absentees_ineligibles1(self):
-        """Asserts a household with 1 absent member and no other eligible members is replaceble"""
+        """Asserts a household with 1 absent member and no other eligible members is replaceable"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -515,7 +508,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_absentees_ineligibles2(self):
-        """Asserts a household multiple members that are absent that its replaceble."""
+        """Asserts a household multiple members that are absent that its replaceable."""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -557,7 +550,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_absentees_ineligibles3(self):
-        """Asserts a household 3 members absent and 2 not absent that is not replaceble."""
+        """Asserts a household 3 members absent and 2 not absent that is not replaceable."""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -633,7 +626,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles5(self):
-        """Asserts a household without an informant after 3 enumeration attempt is replaceble if last_seen_home indicates 4_weeks_a_year"""
+        """Asserts a household without an informant after 3 enumeration attempt is replaceable if last_seen_home indicates 4_weeks_a_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -662,7 +655,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_absentees_ineligibles6(self):
-        """Asserts a household without an informant after 3 enumeration attempt is replaceble if last_seen_home indicates 1_night_less_than_4_weeks_year"""
+        """Asserts a household without an informant after 3 enumeration attempt is replaceable if last_seen_home indicates 1_night_less_than_4_weeks_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -691,7 +684,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles7(self):
-        """Asserts a household without an informant after 3 enumeration attempt is NOT replaceble if last_seen_home indicates never_spent_1_day_over_a_year"""
+        """Asserts a household without an informant after 3 enumeration attempt is NOT replaceable if last_seen_home indicates never_spent_1_day_over_a_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -720,7 +713,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles8(self):
-        """Asserts a household without an informant after 3 enumeration attempt is not replaceble if last_seen_home is unknown"""
+        """Asserts a household without an informant after 3 enumeration attempt is not replaceable if last_seen_home is unknown"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -749,7 +742,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_absentees_ineligibles9(self):
-        """Asserts a household without an informant after 2 enumeration attempts is not replaceble"""
+        """Asserts a household without an informant after 2 enumeration attempts is not replaceable"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -775,7 +768,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles10(self):
-        """Asserts a household without an informant after 1 enumeration attempt is not replaceble"""
+        """Asserts a household without an informant after 1 enumeration attempt is not replaceable"""
         print get_model('bcpp_household', 'Plot').objects.using(self.dispatch_test_db).all().count()
         plot = PlotFactory(
                 community='test_community11',
@@ -801,7 +794,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_check_absentees_ineligibles11(self):
-        """Asserts a household with present member that is replaceble"""
+        """Asserts a household with present member that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -827,7 +820,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles12(self):
-        """Asserts a household with 3 household log entries the last 1 with present status that is replaceble"""
+        """Asserts a household with 3 household log entries the last 1 with present status that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -855,7 +848,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles13(self):
-        """Asserts a household with 3 enumeration attempts with no eligible representative present, that is replaceble"""
+        """Asserts a household with 3 enumeration attempts with no eligible representative present, that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -883,7 +876,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_absentees_ineligibles14(self):
-        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceble"""
+        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -909,7 +902,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles15(self):
-        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceble"""
+        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -936,7 +929,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles16(self):
-        """Asserts a household with 3 enumeration attempts with 2 no household informant and no eligible representative present that is replaceble"""
+        """Asserts a household with 3 enumeration attempts with 2 no household informant and no eligible representative present that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -964,7 +957,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
 
     def test_absentees_ineligibles17(self):
-        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceble"""
+        """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceable"""
 
         plot = PlotFactory(
                 community='test_community11',
@@ -990,7 +983,7 @@ class PlotReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [])
 
     def test_absentees_ineligibles18(self):
-        """Asserts a household without an informant after 3 enumeration attempt is replaceble if last_seen_home indicates 1_night_less_than_4_weeks_year"""
+        """Asserts a household without an informant after 3 enumeration attempt is replaceable if last_seen_home indicates 1_night_less_than_4_weeks_year"""
         plot = PlotFactory(
                 community='test_community11',
                 household_count=1,
@@ -1061,9 +1054,9 @@ class PlotReplacementTests(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceble_household = replacement_helper.replaceable_households(self.survey1, producer.name)
+        replaceable_household = replacement_helper.replaceable_households(self.survey1, producer.name)
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer.name), [household])
-        self.assertEquals(replacement_helper.replace_household(replaceble_household, producer.name), [plot1])
+        self.assertEquals(replacement_helper.replace_household(replaceable_household, producer.name), [plot1])
 
     def test_household_replacement2(self):
         """assert if a household is replaced by a plot."""
@@ -1130,9 +1123,9 @@ class PlotReplacementTests(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceble_household = replacement_helper.replaceable_households(self.survey1, producer.name)
+        replaceable_household = replacement_helper.replaceable_households(self.survey1, producer.name)
         self.assertEquals((replacement_helper.replaceable_households(self.survey1, producer.name)).sort(), ([household1, household2, household3]).sort())
-        self.assertEquals((replacement_helper.replace_household(replaceble_household, producer.name)).sort(), ([plot1, plot2, plot3]).sort())
+        self.assertEquals((replacement_helper.replace_household(replaceable_household, producer.name)).sort(), ([plot1, plot2, plot3]).sort())
 
     def test_household_replacement3(self):
         """assert if a household is replaced by a plot."""
@@ -1179,9 +1172,9 @@ class PlotReplacementTests(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceble_household = replacement_helper.replaceable_households(self.survey1, producer)
+        replaceable_household = replacement_helper.replaceable_households(self.survey1, producer)
         self.assertEquals(replacement_helper.replaceable_households(self.survey1, producer), [household1])
-        self.assertEquals(replacement_helper.replace_household(replaceble_household, producer.name), [plot1])
+        self.assertEquals(replacement_helper.replace_household(replaceable_household, producer.name), [plot1])
 
     def test_plot_replacement1(self):
         """Assert that a plot that is invalid with a plot status of non residential with another plot"""
@@ -1201,9 +1194,9 @@ class PlotReplacementTests(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceble_plots = replacement_helper.replaceable_plots(producer.name)
+        replaceable_plots = replacement_helper.replaceable_plots(producer.name)
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
-        self.assertEquals(replacement_helper.replace_plot(replaceble_plots, producer.name), [plot1])
+        self.assertEquals(replacement_helper.replace_plot(replaceable_plots, producer.name), [plot1])
 
     def test_plot_replacement2(self):
         """Assert that a plot that is invalid with a plot status of residential not habitable with another plot"""
@@ -1223,12 +1216,12 @@ class PlotReplacementTests(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot1)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceble_plots = replacement_helper.replaceable_plots(producer.name)
+        replaceable_plots = replacement_helper.replaceable_plots(producer.name)
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
-        self.assertEquals(replacement_helper.replace_plot(replaceble_plots, producer.name), [plot1])
+        self.assertEquals(replacement_helper.replace_plot(replaceable_plots, producer.name), [plot1])
 
     def test_plot_replacement3(self):
-        """Assert that a plot that is not invalid is not replaceble"""
+        """Assert that a plot that is not invalid is not replaceable"""
         plot = PlotFactory(
                 community='test_community11',
                 status=RESIDENTIAL_HABITABLE,
@@ -1243,6 +1236,6 @@ class PlotReplacementTests(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceble_plots = replacement_helper.replaceable_plots(producer.name)
+        replaceable_plots = replacement_helper.replaceable_plots(producer.name)
         self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
-        self.assertEquals(replacement_helper.replace_plot(replaceble_plots), [])
+        self.assertEquals(replacement_helper.replace_plot(replaceable_plots), [])

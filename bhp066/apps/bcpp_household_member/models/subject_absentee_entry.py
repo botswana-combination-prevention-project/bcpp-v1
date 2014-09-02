@@ -28,15 +28,6 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
     def save(self, *args, **kwargs):
         if self.subject_absentee.household_member.household_structure.household.replaced_by:
             raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
-        household_member_helper = HouseholdMemberHelper(self.subject_absentee.household_member)
-        if not self.id:
-            household_member = self.subject_absentee.household_member
-            household_member.visit_attempts += 1
-            household_member.absent = False
-            if household_member.visit_attempts >= 3:
-                household_member.absent = True
-            household_member.member_status = household_member_helper.calculate_member_status_without_hint()
-            household_member.save()
         super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
 
     @property

@@ -29,7 +29,15 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
         return super(HouseholdMemberAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    fields = ('household_structure', 'first_name', 'initials', 'gender', 'age_in_years', 'present_today', 'inability_to_participate', 'study_resident', 'relation')
+    fields = ('household_structure',
+              'first_name',
+              'initials',
+              'gender',
+              'age_in_years',
+              'present_today',
+              'inability_to_participate',
+              'study_resident',
+              'relation')
 
     radio_fields = {
         "gender": admin.VERTICAL,
