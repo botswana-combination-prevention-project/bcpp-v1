@@ -13,11 +13,13 @@ from .household_member import HouseholdMember
 
 
 class HouseholdHeadEligibility(BaseRepresentativeEligibility):
-    """Determines if the household member is eligible to be treated as head of household or representative."""
+    """Determines if the household member is eligible to be treated
+    as head of household or representative."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
     household_member = models.OneToOneField(HouseholdMember,
-        help_text=('Important: The household member must verbally consent before completing this questionnaire.'))
+        help_text=('Important: The household member must verbally consent '
+                   'before completing this questionnaire.'))
 
     objects = HouseholdHeadEligibilityManager()
 
@@ -28,7 +30,8 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
 
     def natural_key(self):
         if not self.household_member:
-            raise AttributeError("household_member cannot be None for household_head_eligibility "
+            raise AttributeError("household_member cannot be None for "
+                                 "household_head_eligibility "
                                  "with pk='\{0}\'".format(self.pk))
         return self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household.household_member']
@@ -39,8 +42,6 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
 
     def save(self, *args, **kwargs):
         self.matches_household_member_values(self.household_member)
-        self.household_member.eligible_hoh = True
-        self.household_member.save()
         super(HouseholdHeadEligibility, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, household_member, exception_cls=None):

@@ -2,7 +2,7 @@ from django.contrib import admin
 from apps.bcpp_household.forms import PlotForm
 from apps.bcpp_household.actions import process_dispatch
 from apps.bcpp_household.models import Plot
-from apps.bcpp_household.filters import ReplaceblePlotFilter
+from apps.bcpp_household.filters import ReplaceablePlotFilter
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -28,7 +28,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
 
     list_display = ('plot_identifier', 'action', 'status', 'access_attempts', 'bhs', 'cso_number', 'community', 'section', 'created')
 
-    list_filter = ('bhs', 'status', 'created', 'modified', 'community', ReplaceblePlotFilter, 'access_attempts', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day')
+    list_filter = ('bhs', 'status', 'created', 'modified', 'community', ReplaceablePlotFilter, 'access_attempts', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day')
 
     search_fields = ('plot_identifier', 'cso_number', 'community', 'section', 'id')
 
