@@ -24,6 +24,7 @@ from apps.bcpp_survey.models import Survey
 from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
+from ..helpers import ReplacementHelper
 
 from .household_identifier_history import HouseholdIdentifierHistory
 
@@ -505,6 +506,12 @@ class Plot(BaseDispatchSyncUuidModel):
         except:
             plot_inaccessible = False
         return plot_inaccessible
+
+    @property
+    def replaceble(self):
+        replacement_helper = ReplacementHelper()
+        replacement_helper.plot = self
+        return replacement_helper.replaceable
 
     @property
     def increase_plot_radius(self):
