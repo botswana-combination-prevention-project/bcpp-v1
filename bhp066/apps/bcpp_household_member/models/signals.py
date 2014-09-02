@@ -35,8 +35,6 @@ def subject_refusal_on_post_delete(sender, instance, using, **kwargs):
                    'reason': instance.reason,
                    'reason_other': instance.reason_other}
         SubjectRefusalHistory.objects.using(using).create(**options)
-        household_member.refused = False
-        household_member.save(using=using)
 
 
 @receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
@@ -53,14 +51,6 @@ def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
                 household_member=instance.household_member).delete(using=using)
         except EnrollmentLoss.DoesNotExist:
             pass
-        instance.household_member.enrollment_checklist_completed = False
-        instance.household_member.enrollment_loss_completed = False
-        instance.household_member.eligible_subject = False
-        # household_member.member_status = BHS_SCREEN
-        instance.household_member.save(using=using, update_fields=['enrollment_checklist_completed',
-                                                                   'enrollment_loss_completed',
-                                                                   'eligible_subject',
-                                                                   'member_status'])
 
 
 @receiver(post_save, weak=False, dispatch_uid="enrollment_checklist_on_post_save")
@@ -171,7 +161,6 @@ def subject_xxx_on_post_save(sender, instance, raw, created, using, **kwargs):
             # update household member
             instance.household_member.reported = True  # because one of these forms is saved
             instance.household_member.enrollment_loss_completed = False
-            instance.household_member.eligible_htc = False
             instance.household_member.htc = False
             instance.household_member.refused_htc = False
             if isinstance(instance, SubjectAbsentee):
@@ -181,11 +170,6 @@ def subject_xxx_on_post_save(sender, instance, raw, created, using, **kwargs):
                 instance.household_member.absent = False
                 instance.household_member.refused = False
             elif isinstance(instance, SubjectRefusal):
-                intervention = site_mappers.get_current_mapper().intervention
-                if intervention and instance.household_member.household_structure.enrolled:
-                    instance.household_member.eligible_htc = True
-                elif not intervention:
-                    instance.household_member.eligible_htc = True
                 instance.household_member.refused = True
                 instance.household_member.absent = False
                 instance.household_member.undecided = False

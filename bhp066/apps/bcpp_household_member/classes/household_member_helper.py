@@ -20,8 +20,8 @@ class HouseholdMemberHelper(object):
             member_status = ABSENT
         elif self.household_member.undecided or selected_member_status == UNDECIDED:
             member_status = UNDECIDED
-        elif ((self.household_member.refused and not self.household_member.eligible_htc) or
-              selected_member_status == REFUSED):
+        elif ((self.household_member.refused or selected_member_status == REFUSED) and not self.household_member.eligible_htc and 
+             not self.household_member.htc and not self.household_member.refused_htc):
             member_status = REFUSED
         elif (self.household_member.refused and self.household_member.eligible_htc and
               not self.household_member.htc and not self.household_member.refused_htc):
