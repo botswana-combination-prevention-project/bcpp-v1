@@ -34,5 +34,8 @@ class CdcFollowup(BaseCdc):
     comp_date = models.DateField(null=True)
     lab_cd4_date = models.DateField(null=True)
 
+    date_created = models.DateField(null=True)
+    date_updated = models.DateField(null=True)
+
     class Meta:
         app_label = 'bcpp_stats'
