@@ -1,9 +1,11 @@
 from datetime import datetime
 
-from django.db.models.loading import get_model
+from django.db.models import get_model
 from django.db.models import Min
 
 from edc.device.dispatch.models import DispatchContainerRegister
+
+from edc.device.sync.models import OutgoingTransaction
 
 from apps.bcpp_survey.models import Survey
 
@@ -35,7 +37,7 @@ class ReplacementHelper(object):
 
     def synchronized(self, producer):
         """Checks if a producer has been synchronized."""
-        OutgoingTransaction = get_model('bcpp_household', 'OutgoingTransaction')
+        # OutgoingTransaction = get_model('bcpp_household', 'OutgoingTransaction')
         pending_transaction = False
         if OutgoingTransaction.objects.using(producer).filter(
                 is_ignored=False, is_consumed_server=False):
@@ -163,7 +165,7 @@ class ReplacementHelper(object):
         Plot = get_model('bcpp_household', 'Plot')
         HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
         ReplacementHistory = get_model('bcpp_household', 'ReplacementHistory')
-        OutgoingTransaction = get_model('sync', 'OutgoingTransaction')
+        # OutgoingTransaction = get_model('sync', 'OutgoingTransaction')
         plots = Plot.objects.filter(
             selected=FIVE_PERCENT, replaced_by=None, replaces=None)
         replacing_plots = []
@@ -208,7 +210,7 @@ class ReplacementHelper(object):
         This takes a list of replaceable plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
         Plot = get_model('bcpp_household', 'Plot')
-        OutgoingTransaction = get_model('sync', 'OutgoingTransaction')
+        # OutgoingTransaction = get_model('sync', 'OutgoingTransaction')
         ReplacementHistory = get_model('bcpp_household', 'ReplacementHistory')
         plots = Plot.objects.filter(
             selected=FIVE_PERCENT, replaced_by=None, replaces=None)
