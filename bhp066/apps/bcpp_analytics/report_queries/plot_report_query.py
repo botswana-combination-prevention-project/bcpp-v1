@@ -1,13 +1,17 @@
 from django.db.models import Count, Sum
 
+from apps.bcpp_household.constants import CONFIRMED
 from apps.bcpp_household.models.plot import Plot
+
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery
 
 
 class PlotReportQuery(TwoColumnReportQuery):
     def post_init(self, **kwargs):
-        self.plots_qs = Plot.objects.filter(community__iexact=self.community, created__gte=self.start_date, created__lte=self.end_date)
+        self.plots_qs = Plot.objects.filter(community__iexact=self.community,
+                                            created__gte=self.start_date,
+                                            created__lte=self.end_date)
 
     def build(self):
         self.targeted = self.targeted_qs().count()
@@ -29,7 +33,8 @@ class PlotReportQuery(TwoColumnReportQuery):
         return self.plots_qs.filter(selected__isnull=False)
 
     def confirmed_occupied_qs(self):
-        return self.targeted_qs().filter(action='confirmed', status__istartswith='occupied')
+        return self.targeted_qs().filter(action=CONFIRMED, status__istartswith='occupied')
 
     def plot_stats(self):
-        return self.confirmed_occupied_qs().aggregate(household_count=Sum('household_count'), verified_count=Count('pk'))
+        return self.confirmed_occupied_qs().aggregate(household_count=Sum('household_count'),
+                                                      verified_count=Count('pk'))
