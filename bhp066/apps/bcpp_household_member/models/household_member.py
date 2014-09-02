@@ -242,7 +242,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 self.absent = True if selected_member_status == ABSENT else False
         if self.intervention and self.plot_enrolled:
             self.eligible_htc = self.evaluate_htc_eligibility
-        elif not self.intervention_community:
+        elif not self.intervention:
             self.eligible_htc = self.evaluate_htc_eligibility
         household_member_helper = HouseholdMemberHelper(self)
         self.member_status = household_member_helper.member_status(selected_member_status)
