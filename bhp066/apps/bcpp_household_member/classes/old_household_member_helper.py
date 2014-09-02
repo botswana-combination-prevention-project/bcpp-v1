@@ -264,7 +264,7 @@ class HouseholdMemberHelper(object):
         eligible_htc = False
         if self.household_member.age_in_years > 64:
             eligible_htc = True
-        elif (not self.eligible_member and self.household_member.inability_to_participate == NOT_APPLICABLE) and self.household_member.age_in_years >= 16:
+        elif (not self.eligible_member and self.household_member.inability_to_participate == NOT_APPLICABLE) and self.age_in_years >= 16:
             eligible_htc = True
         elif self.eligible_member and self.refused:
             eligible_htc = True
