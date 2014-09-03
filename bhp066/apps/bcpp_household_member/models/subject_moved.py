@@ -59,8 +59,6 @@ class SubjectMoved(BaseMemberStatusModel):
         household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
-        kwargs['reason'] = 'moved'
-        kwargs['info_source'] = 'subject'
         self.survey = self.household_member.survey
         super(SubjectMoved, self).save(*args, **kwargs)
 
