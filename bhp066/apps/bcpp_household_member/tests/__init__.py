@@ -1,5 +1,5 @@
 # from .forms_tests import FormsTests
-# from .natural_key_tests import NaturalKeyTests
+from .natural_key_tests import NaturalKeyTests
 # # from .household_composition_tests import HouseholdCompositionTests
 # from .eligibility_model_tests import EligibilityModelTests
 # from .eligibility_form_tests import EligibilityFormTests
