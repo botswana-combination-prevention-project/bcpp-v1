@@ -54,7 +54,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
                 if instance.household_member.household_structure.enrolled:
                     household_members = instance.household_member.__class__.objects.filter(
                         household_structure__household__plot=instance.household_member.household_structure.household.plot
-                        ).exclude(pk=instance.household_member.pk)
+                        ).exclude(is_consented=True)#This includes instance.household_member
                     for household_member in household_members:
                         household_member.save(update_fields=['member_status'])
 
