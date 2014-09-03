@@ -10,7 +10,7 @@ class SubjectUndecided (BaseMemberStatusModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        if self.subject_undecided.household_member.household_structure.household.replaced_by:
+        if self.household_member.household_structure.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(
                 self.subject_undecided.household_member.household_structure.household.household_identifier))
         self.survey = self.household_member.survey
