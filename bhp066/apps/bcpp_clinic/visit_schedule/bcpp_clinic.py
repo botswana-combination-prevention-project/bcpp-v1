@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from edc.constants import NOT_REQUIRED, ADDITIONAL, REQUIRED, NOT_ADDITIONAL
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
 
 from apps.bcpp_lab.models import Panel, AliquotType
@@ -43,11 +44,11 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'instructions': None,
             'requisitions': (
                 # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type)
-                RequisitionPanelTuple(10L, u'bcpp_clinic_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB'),
-                RequisitionPanelTuple(20L, u'bcpp_clinic_lab', u'clinicrequisition', 'Viral Load', 'TEST', 'WB'),
+                RequisitionPanelTuple(10L, u'bcpp_clinic_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB', NOT_REQUIRED, ADDITIONAL),
+                RequisitionPanelTuple(20L, u'bcpp_clinic_lab', u'clinicrequisition', 'Viral Load', 'TEST', 'WB', NOT_REQUIRED, ADDITIONAL),
                 ),
             'entries': (
-                EntryTuple(10L, u'bcpp_clinic', u'clinicmain'),
+                EntryTuple(10L, u'bcpp_clinic', u'clinicmain', REQUIRED, NOT_ADDITIONAL),
             )}
         }
     )

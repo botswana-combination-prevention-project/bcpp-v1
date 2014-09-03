@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
+from edc.constants import NOT_APPLICABLE
 
 from apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE
 
@@ -56,7 +57,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
                       "where were you primarily staying?"),
         max_length=25,
         choices=CATTLEPOSTLANDS_CHOICE,
-        default='N/A',
+        default=NOT_APPLICABLE,
         help_text="",
         )
 

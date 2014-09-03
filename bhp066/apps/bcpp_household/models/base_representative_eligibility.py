@@ -1,8 +1,8 @@
 from django.db import models
 
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.choices.common import YES_NO
 from edc.base.model.validators import eligible_if_yes
+from edc.choices.common import YES_NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..exceptions import AlreadyReplaced
@@ -41,7 +41,8 @@ class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel):
         )
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_structure.household.household_identifier)
+        household = models.get_model('bcpp_household', 'Household').objects.get(
+            household_identifier=self.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         super(BaseRepresentativeEligibility, self).save(*args, **kwargs)
