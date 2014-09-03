@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.db.models import Max
 
 from edc.audit.audit_trail import AuditTrail
@@ -322,9 +323,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         self.tb_symptoms = TbSymptoms.objects.get_symptoms(self.subject_visit)
         subject_referral_helper = SubjectReferralHelper(self)
         if subject_referral_helper.missing_data:
-            raise ValueError('Some data is missing for the referral. '
-                             'Complete \'{0}\' first and try again.'.format(
-                                 subject_referral_helper.missing_data._meta.verbose_name))
+            raise ValidationError(('Some data is missing for the referral. '
+                                   'Complete \'{0}\' first and try again.').format(
+                                  subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral.iteritems():
             setattr(self, field, value)
         self.referral_appt_date = subject_referral_helper.referral_appt_datetime
@@ -338,6 +339,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         """Evaluates to True only if the instance has a referral code to avoid
         exporting referral data on someone who is not yet referred.
 
+        This method is used by the model manager ExportHistoryManager.
+
         The assumption is that the referral instance CANNOT be created without
         an existing SubjectLocator instance.
 
@@ -346,23 +349,26 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         If there is no subject_locator, the subject_referral is not exported.
 
         ...see_also:: SubjectReferral"""
-        export = False
+        export_subject_referral = False
         try:
+            # check if there is a subject locator.
+            # Cannot export this referral without the Subject Locator.
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
+            # check if referral is complete
             if (self.referral_code and self.referral_appt_date and self.referral_clinic_type):
                 try:
-                    # is there already an Insert tx? 
+                    # export the subject locator
                     SubjectLocator.export_history.export_transaction_model.objects.get(
                         object_name=SubjectLocator._meta.object_name,
                         tx_pk=subject_locator.pk,
                         export_change_type='I')
-                    # yes, so create an Update tx
-                    subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'U', None)
+                    SubjectLocator.export_history.serialize_to_export_transaction(
+                        subject_locator, 'U', 'default', force_export=True)
                 except SubjectLocator.export_history.export_transaction_model.DoesNotExist:
-                    # no previous tx, so create an Insert tx
-                    subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', None)
+                    SubjectLocator.export_history.serialize_to_export_transaction(
+                        subject_locator, 'I', 'default', force_export=True)
                 finally:
-                    export = True
+                    export_subject_referral = True
             else:
                 # there is no referral ready yet, need to send a Delete to the
                 # export tx receipient.
@@ -374,10 +380,10 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                         timestamp=aggr.get('timestamp__max'),
                         export_change_type='D')
                 except SubjectLocator.export_history.export_transaction_model.DoesNotExist:
-                    subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'D', None)
+                    SubjectLocator.export_history.serialize_to_export_transaction(subject_locator, 'D', None)
         except SubjectLocator.DoesNotExist:
             pass
-        return export
+        return export_subject_referral
 
     def get_referral_identifier(self):
         return self.id
