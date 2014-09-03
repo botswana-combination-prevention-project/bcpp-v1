@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Max
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_is_future, date_is_future
@@ -334,26 +335,49 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
 
     @property
     def ready_to_export_transaction(self):
-        """Evaluates to True if the instance has a referral code to avoid exporting someone who is not being referred.
+        """Evaluates to True only if the instance has a referral code to avoid
+        exporting referral data on someone who is not yet referred.
+
+        The assumption is that the referral instance CANNOT be created without
+        an existing SubjectLocator instance.
 
         The subject's subject_locator instance is exported as well.
 
         If there is no subject_locator, the subject_referral is not exported.
 
         ...see_also:: SubjectReferral"""
+        export = False
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
-            if self.referral_code and self.referral_appt_date and self.referral_clinic_type:
-                if not SubjectLocator.export_history.export_transaction_model.objects.filter(
-                        object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
+            if (self.referral_code and self.referral_appt_date and self.referral_clinic_type):
+                try:
+                    # is there already an Insert tx? 
+                    SubjectLocator.export_history.export_transaction_model.objects.get(
+                        object_name=SubjectLocator._meta.object_name,
+                        tx_pk=subject_locator.pk,
+                        export_change_type='I')
+                    # yes, so create an Update tx
+                    subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'U', None)
+                except SubjectLocator.export_history.export_transaction_model.DoesNotExist:
+                    # no previous tx, so create an Insert tx
                     subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'I', None)
+                finally:
+                    export = True
             else:
-                if SubjectLocator.export_history.export_transaction_model.objects.filter(
-                        object_name=SubjectLocator._meta.object_name, tx_pk=subject_locator.pk):
+                # there is no referral ready yet, need to send a Delete to the
+                # export tx receipient.
+                # is the last transaction not a D? if not, add one.
+                try:
+                    aggr = SubjectLocator.export_history.export_transaction_model.objects.filter(
+                        pk=subject_locator.pk).aggregate(Max('timestamp'), )
+                    SubjectLocator.export_history.export_transaction_model.objects.get(
+                        timestamp=aggr.get('timestamp__max'),
+                        export_change_type='D')
+                except SubjectLocator.export_history.export_transaction_model.DoesNotExist:
                     subject_locator.export_history.serialize_to_export_transaction(subject_locator, 'D', None)
         except SubjectLocator.DoesNotExist:
             pass
-        return self.referral_code
+        return export
 
     def get_referral_identifier(self):
         return self.id

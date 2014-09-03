@@ -124,16 +124,14 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     @property
     def ready_to_export_transaction(self):
-        """Evaluates to True if the subject has a referral instance with a referral code to avoid exporting someone who is not being referred.
-
-        Subject referral must be exported now, if possible.
+        """Evaluates to True only if the subject has a referral instance with a referral code
+        to avoid exporting locator information on someone who is not yet been referred.
 
         ...see_also:: SubjectReferral."""
         try:
             SubjectReferral = models.get_model('bcpp_subject', 'subjectreferral')
             subject_referral = SubjectReferral.objects.get(subject_visit=self.subject_visit)
             if subject_referral.referral_code:
-                subject_referral.export_history.serialize_to_export_transaction(subject_referral, 'I', None)
                 return True
         except SubjectReferral.DoesNotExist:
             pass

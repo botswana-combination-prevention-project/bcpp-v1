@@ -3,7 +3,7 @@ from collections import namedtuple
 from django.db.models import get_model
 
 from edc.constants import NOT_REQUIRED, KEYED
-from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
+from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.map.classes import site_mappers
 from edc.core.bhp_data_manager.models import TimePointStatus
 from edc.constants import CLOSED
@@ -18,7 +18,9 @@ from .subject_referral_appt_helper import SubjectReferralApptHelper
 
 
 class SubjectReferralHelper(SubjectStatusHelper):
-    """A class the determine the referral code."""
+    """A class that calculates the referral code or returns a blank string.
+
+    See property :func:`referral_code`"""
 
     def __init__(self, subject_referral):
         super(SubjectReferralHelper, self).__init__(subject_referral.subject_visit)
@@ -51,25 +53,26 @@ class SubjectReferralHelper(SubjectStatusHelper):
         meta data is NOT set to KEYED or NOT_REQUIRED.
 
         If timepointstatus instance exists with status=CLOSED, the check is skipped."""
-        model_classes = self.models.values()
-        panel = None
         first_model_cls = None
-        try:
-            TimePointStatus.objects.get(appointment=self.instance.subject_visit.appointment, status=CLOSED)
-        except TimePointStatus.DoesNotExist:
-            for model_cls in model_classes:
-                try:
-                    scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
-                        appointment=self.instance.subject_visit.appointment,
-                        entry__app_label=model_cls._meta.app_label,
-                        entry__model_name=model_cls._meta.object_name)
-                    if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
-                        first_model_cls = model_cls
-                        break
-                except ScheduledEntryMetaData.DoesNotExist:
-                    pass
-                except AttributeError:  # NoneType?
-                    pass
+        if not SubjectLocator.objects.filter(subject_visit=self.instance.subject_visit).exists():
+            first_model_cls = SubjectLocator  # required no matter what
+        else:
+            try:
+                TimePointStatus.objects.get(appointment=self.instance.subject_visit.appointment, status=CLOSED)
+            except TimePointStatus.DoesNotExist:
+                for model_cls in self.models.values():
+                    try:
+                        scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
+                            appointment=self.instance.subject_visit.appointment,
+                            entry__app_label=model_cls._meta.app_label,
+                            entry__model_name=model_cls._meta.object_name)
+                        if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
+                            first_model_cls = model_cls
+                            break
+                    except ScheduledEntryMetaData.DoesNotExist:
+                        pass
+                    except AttributeError:  # NoneType?
+                        pass
         return first_model_cls
 
     @property
@@ -110,7 +113,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
                 self._referral_code_list.append('TST-HIV')
         else:
             if self.hiv_result == 'IND':
-                # do not set referral_code_list a referral code if IND
+                # do not set referral_code_list to IND
                 pass
             elif self.hiv_result == 'NEG':
                 if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
