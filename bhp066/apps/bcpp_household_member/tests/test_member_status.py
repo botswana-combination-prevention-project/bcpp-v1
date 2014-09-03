@@ -268,6 +268,7 @@ class TestMemberStatus(TestCase):
             study_resident='Yes')
         household_member.present_today = 'No'
         household_member.save()
+        self.assertEqual(HouseholdMember.objects.get(household_structure=self.household_structure).member_status, BHS_SCREEN)
 
         # simulate user changes status on participation view
         household_member.member_status = ABSENT
@@ -280,7 +281,8 @@ class TestMemberStatus(TestCase):
         household_member = HouseholdMember.objects.get(pk=pk)
         household_member.modified = household_member.created + timedelta(seconds=30)
         household_member.member_status = BHS_SCREEN
-        household_member.save()
+        #still in participation view, simulating witching back to BHS_SCREEN from ABSENT
+        household_member.save(update_fields=['member_status'])
         self.assertEqual(household_member.member_status, BHS_SCREEN)
 
     def test_change_household_member2(self):
