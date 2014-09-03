@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from edc.core.bhp_data_manager.models import TimePointStatus
 from edc.constants import CLOSED
 
+from apps.bcpp_household_member.exceptions import MemberStatusError
+
 from .subject_consent import SubjectConsent
 
 from ..classes import SubjectReferralHelper
@@ -56,7 +58,10 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
                         household_structure__household__plot=instance.household_member.household_structure.household.plot
                         ).exclude(pk=instance.household_member.pk)
                     for household_member in household_members:
-                        household_member.save(update_fields=['member_status'])
+                        try:
+                            household_member.save(update_fields=['member_status'])
+                        except MemberStatusError:
+                            pass
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
