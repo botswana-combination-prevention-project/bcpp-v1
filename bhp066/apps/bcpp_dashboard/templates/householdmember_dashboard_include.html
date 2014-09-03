@@ -163,7 +163,7 @@
 
                {% elif household_member.member_status == 'HTC' or household_member.member_status == 'HTC_ELIGIBLE' %}
                     {% if household_member.subject_htc %}
-             		     Complete paper HTC intake form.<BR>
+             		     {% if household_member.intervention %} Complete paper HTC intake form.<BR> {% endif %}
              		     <A title="HTC" href="{% url subject_htc_meta|admin_urlname:'change' household_member.subject_htc.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">HTC {% if household_member.subject_htc.offered %}{{ household_member.subject_htc.outcome }}: <b>{{household_member.subject_htc.tracking_identifier}}</b> {% endif %}</A>
                     {% else %}
                     	<ol> 
@@ -185,10 +185,10 @@
                     	</ol>
                     {% endif %}
                {% elif household_member.member_status == 'REFUSED_HTC' %}
-               		<A title="HTC" href="{% url subject_htc_meta|admin_urlname:'change' household_member.subject_htc.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">HTC {% if household_member.subject_htc.offered %}{{ household_member.subject_htc.outcome }} {% endif %}</A>
-                    	<ol>
-             		  		<li><B>Refused HTC.</B>
-             		  	</ol>
+	               	<ol>
+	               		<B>Refused HTC.</B><br>
+	               		<A title="HTC" href="{% url subject_htc_meta|admin_urlname:'change' household_member.subject_htc.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_member={{household_member.pk}}">HTC {% if household_member.subject_htc.offered %}{{ household_member.subject_htc.outcome }}:{{household_member.subject_htc.tracking_identifier}}{% endif %}</A><br>
+               		</ol>
                {%endif%}
             {% else %}
                     ----
