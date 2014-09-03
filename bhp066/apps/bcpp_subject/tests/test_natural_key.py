@@ -23,6 +23,7 @@ from edc.subject.appointment.models import Appointment
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_lab.models import Panel, AliquotType
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
@@ -66,7 +67,7 @@ class TestNaturalKey(TestCase):
         site_mappers.autodiscover()
         mapper = site_mappers.get(site_mappers.get_as_list()[0])
         print 'No. of SURVEY = ' + str(Survey.objects.all().count())
-        plot = PlotFactory(community=mapper().get_map_area())
+        plot = PlotFactory(community='test_community6', household_count=1, status='residential_habitable')
         print 'No. of HOUSEHOLDS = ' + str(Household.objects.all().count())
         household = Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
@@ -101,9 +102,14 @@ class TestNaturalKey(TestCase):
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         # SubjectLocator : Independent Natural Key
         signals.post_save.disconnect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
-        requisition1 = SubjectRequisitionFactory(subject_visit=subject_visit)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        requisition1 = SubjectRequisitionFactory(subject_visit=subject_visit, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
 #         print requisition1.aliquot_type.numeric_code
-        requisition2 = SubjectRequisitionFactory(subject_visit=subject_visit)
+        elisa_panel = Panel.objects.get(name='ELISA')
+        requisition2 = SubjectRequisitionFactory(subject_visit=subject_visit, panel=elisa_panel, aliquot_type=aliquot_type, site=site)
         signals.post_save.connect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
         subject_locator = SubjectLocatorFactory(subject_visit=subject_visit, registered_subject=registered_subject)
         instances.append(subject_referral)
