@@ -48,6 +48,12 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
                     instance.consent_datetime
                 instance.household_member.household_structure.household.plot.save(
                     using=using, update_fields=['bhs', 'enrolled_datetime'])
+                #Resave members so that their member_status is re-calculated since the plot just got enrolled.
+                if instance.household_member.household_structure.enrolled:
+                    members = instance.household_member.__class__.objects.filter(household_structure__household__plot=instance.household_member.household_structure.household.plot)
+                    for member in members:
+                        if member != instance.household_member:
+                            member.save(update_fields=['member_status'])
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
