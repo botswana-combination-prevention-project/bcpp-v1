@@ -1,6 +1,12 @@
+from dateutil.relativedelta import MO, TU, WE, TH, FR
+
+from django.conf import settings
+
 from edc.map.classes import site_mappers
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, LETLHAKENG_LANDMARKS
+from ..utils import ClinicDaysTuple
 
 
 class LetlhakengPlotMapper(BasePlotMapper):
@@ -16,5 +22,12 @@ class LetlhakengPlotMapper(BasePlotMapper):
     gps_center_lon = 25.032163
     radius = 5.0
     location_boundary = ()
+
+    intervention = False
+    clinic_days = {
+        'IDCC': ClinicDaysTuple((TU, TH), None),
+        'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+        'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+        'SMC': ClinicDaysTuple((WE, ), settings.SMC_ECC_START_DATE)}
 
 site_mappers.register(LetlhakengPlotMapper)

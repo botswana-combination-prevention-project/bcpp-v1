@@ -6,7 +6,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from ..helpers import ReplacementHelper
 from ..managers import HouseholdStructureManager
@@ -33,25 +32,57 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     note = models.CharField("Note", max_length=250, blank=True)
 
-    enrolled = models.NullBooleanField(default=None, editable=False, help_text='enrolled by the subject consent of a household_member')
+    enrolled = models.NullBooleanField(
+        default=None,
+        editable=False,
+        help_text='enrolled by the subject consent of a household_member')
 
-    enrolled_household_member = models.CharField(max_length=36, null=True, editable=False, help_text='pk of consenting household_member that triggered the enroll')
+    enrolled_household_member = models.CharField(
+        max_length=36,
+        null=True,
+        editable=False,
+        help_text='pk of consenting household_member that triggered the enroll')
 
-    enrolled_datetime = models.DateTimeField(null=True, editable=False, help_text='datetime household_structure enrolled')
+    enrolled_datetime = models.DateTimeField(
+        null=True,
+        editable=False,
+        help_text='datetime household_structure enrolled')
 
-    enumerated = models.BooleanField(default=False, editable=False, help_text='Set to True when first household_member is enumerated')
+    enumerated = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Set to True when first household_member is enumerated')
 
-    enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
+    enumeration_attempts = models.IntegerField(
+        default=0,
+        editable=False,
+        help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
 
-    refused_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household enumeration refusal save method only')
+    refused_enumeration = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Updated by household enumeration refusal save method only')
 
-    failed_enumeration_attempts = models.IntegerField(default=0, editable=False, help_text='Updated by a signal on HouseholdLogEntry. Number of failed attempts to enumerate a household_structure.')
+    failed_enumeration_attempts = models.IntegerField(
+        default=0,
+        editable=False,
+        help_text=('Updated by a signal on HouseholdLogEntry. Number of failed attempts to'
+                   'enumerate a household_structure.'))
 
-    failed_enumeration = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
+    failed_enumeration = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Updated by household assessment save method only')
 
-    no_informant = models.BooleanField(default=False, editable=False, help_text='Updated by household assessment save method only')
+    no_informant = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Updated by household assessment save method only')
 
-    eligible_members = models.BooleanField(default=False, editable=False, help_text='Updated by household member save method and post_delete')
+    eligible_members = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Updated by household member save method and post_delete')
 
     objects = HouseholdStructureManager()
 
@@ -63,9 +94,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         if self.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
-        if self.enrolled and not self.household.enrolled:
-            self.household.enrolled = True
-            self.household.save()
         super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -77,14 +105,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
-
-    def refresh_member_status(self):
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
-        members = HouseholdMember.objects.filter(household_structure__pk=self.pk)
-        for member in members:
-            household_member_helper = HouseholdMemberHelper(member)
-            member.member_status = household_member_helper.calculate_member_status_with_hint(member.member_status)
-            member.save()
 
     @property
     def vdc_form_status(self):
@@ -100,7 +120,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
             absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True).count()
             if absent_member_count:
                 eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
-                return eligible_member_count == absent_member_count 
+                return eligible_member_count == absent_member_count
         return False
 
     @property
@@ -127,7 +147,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         return eligible_representative_absent
 
     @property
-    def replaceble(self):
+    def replaceable(self):
         replacement_helper = ReplacementHelper()
         replacement_helper.household_structure = self
         return replacement_helper.replaceable
@@ -143,11 +163,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         """Returns the number of consented (or enrolled) household members in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
-
-    def create_household_log_on_post_save(self, **kwargs):
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        if not HouseholdLog.objects.filter(household_structure__pk=self.pk):
-            HouseholdLog.objects.create(household_structure=self)
 
     def plot(self):
         url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))
@@ -176,4 +191,4 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household'
-        #unique_together = (('household', 'survey'), )
+        unique_together = ('survey', 'household')

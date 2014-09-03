@@ -1,8 +1,10 @@
 from django.template.loader import render_to_string
 
-from apps.bcpp_subject.models import SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral
+from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
+                                      CorrectConsent, ElisaHivResult, HivResult)
 from apps.bcpp_lab.models import SubjectRequisition, PackingList
 
+from edc.subject.appointment.models import Appointment
 
 from .base_subject_dashboard import BaseSubjectDashboard
 
@@ -29,7 +31,11 @@ class SubjectDashboard(BaseSubjectDashboard):
             household_dashboard_url=self.household_dashboard_url,
             title='Research Subject Dashboard',
             subject_consent=self.consent,
+            correct_consent_meta=self.correct_consent_meta,
+            correct_consent=self.correct_consent,
             subject_referral=self.subject_referral,
+            elisa_hiv_result=self.elisa_hiv_result,
+            hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             )
 
@@ -43,6 +49,27 @@ class SubjectDashboard(BaseSubjectDashboard):
         return subject_consent
 
     @property
+    def appointment(self):
+        if not self._appointment:
+            if self.dashboard_model_name == 'appointment':
+                self._appointment = Appointment.objects.get(pk=self.dashboard_id)
+            elif self.dashboard_model_name == 'visit':
+                self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
+            elif self.dashboard_model_name == 'household_member':
+                try:
+                    #when an appointment is available
+                    self._appointment = Appointment.objects.get(registered_subject=self.registered_subject)
+                except Appointment.DoesNotExist:
+                    #when an appointment is not available (i.e. subject has not yet consented)
+                    self._appointment = None
+            else:
+                self._appointment = None
+            self._appointment_zero = None
+            self._appointment_code = None
+            self._appointment_continuation_count = None
+        return self._appointment
+
+    @property
     def subject_referral(self):
         try:
             subject_referral = SubjectReferral.objects.get(subject_visit__household_member=self.household_member)
@@ -51,8 +78,33 @@ class SubjectDashboard(BaseSubjectDashboard):
         return subject_referral
 
     @property
+    def hiv_result(self):
+        try:
+            hiv_result = HivResult.objects.get(subject_visit__household_member=self.household_member)
+        except HivResult.DoesNotExist:
+            hiv_result = None
+        return hiv_result
+
+    @property
+    def elisa_hiv_result(self):
+        try:
+            elisa_hiv_result = ElisaHivResult.objects.get(subject_visit__household_member=self.household_member)
+        except ElisaHivResult.DoesNotExist:
+            elisa_hiv_result = None
+        return elisa_hiv_result
+
+    @property
     def requisition_model(self):
         return SubjectRequisition
+
+    @property
+    def correct_consent(self):
+        """Returns to the subject consent, if it has been completed."""
+        try:
+            correct_consent = CorrectConsent.objects.get(subject_consent=self.consent)
+        except CorrectConsent.DoesNotExist:
+            correct_consent = None
+        return correct_consent
 
     @property
     def locator_model(self):
@@ -62,6 +114,10 @@ class SubjectDashboard(BaseSubjectDashboard):
     def locator_scheduled_visit_code(self):
         """ Returns visit where the locator is scheduled, TODO: maybe search visit definition for this?."""
         return '1000'
+
+    @property
+    def correct_consent_meta(self):
+        return CorrectConsent._meta
 
     @property
     def packing_list_model(self):

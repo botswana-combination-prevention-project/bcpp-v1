@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.admin.admin import BaseModelAdmin
+from edc.base.modeladmin.admin import BaseModelAdmin
 
 from apps.bcpp_household.models import HouseholdStructure
 
@@ -16,6 +16,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
 
     fields = (
         'household_member',
+        'report_datetime',
         'initials',
         'dob',
         'gender',
@@ -29,9 +30,9 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "guardian",
         )
 
-    list_display = ('household_member', 'gender', 'is_eligible', )
+    list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', )
 
-    list_filter = ('household_member', 'gender', 'is_eligible',)
+    list_filter = ('household_member', 'gender', 'is_eligible', 'report_datetime')
 
     radio_fields = {
         'has_identity': admin.VERTICAL,

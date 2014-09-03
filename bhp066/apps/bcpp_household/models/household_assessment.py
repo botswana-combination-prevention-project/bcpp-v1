@@ -75,10 +75,6 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
             raise ValidationError('HouseholdStructure has been enumerated')
         if self.household_structure.failed_enumeration_attempts < 3:
             raise ValidationError('Three attempts are required before Household Assessment')
-        if not self.id:
-            self.household_structure.failed_enumeration = True
-        self.household_structure.no_informant = self.last_seen_home in [SEASONALLY_OCCUPIED, UNKNOWN_OCCUPIED, NEARLY_ALWAYS_OCCUPIED]
-        self.household_structure.save()
         super(HouseholdAssessment, self).save(*args, **kwargs)
 
     def natural_key(self):

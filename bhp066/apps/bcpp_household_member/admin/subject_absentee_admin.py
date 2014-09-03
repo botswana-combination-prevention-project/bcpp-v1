@@ -1,5 +1,6 @@
 from django.contrib import admin
-from edc.base.admin.admin import BaseModelAdmin, BaseTabularInline
+
+from edc.base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
 from ..forms import SubjectAbsenteeEntryForm
@@ -9,13 +10,13 @@ from ..models import HouseholdMember, SubjectAbsentee, SubjectAbsenteeEntry
 class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
 
     fields = (
-              'subject_absentee',
-              'report_datetime',
-              'next_appt_datetime',
-              'next_appt_datetime_source',
-              'reason',
-              'reason_other',
-              'contact_details')
+        'subject_absentee',
+        'report_datetime',
+        'next_appt_datetime',
+        'next_appt_datetime_source',
+        'reason',
+        'reason_other',
+        'contact_details')
 
     list_display = (
         'subject_absentee',
@@ -58,18 +59,17 @@ class SubjectAbsenteeAdmin(BaseRegisteredSubjectModelAdmin):
     subject_identifier_attribute = 'registration_identifier'
 
     search_fields = ['household_member__first_name',
-                    'household_member__household_structure__household__household_identifier', ]
+                     'household_member__household_structure__household__household_identifier', ]
     list_display = ['household_member',
                     'survey',
                     'report_datetime']
     list_filter = ['survey',
-                    'report_datetime',
-                    'hostname_created']
+                   'report_datetime',
+                   'hostname_created']
     fields = (
         'registered_subject',
         'household_member',
-        'report_datetime',
-        )
+        'report_datetime')
 
     readonly_fields = (
         'registered_subject',
