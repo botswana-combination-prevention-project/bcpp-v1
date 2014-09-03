@@ -68,23 +68,17 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
 
 @receiver(post_save, weak=False, dispatch_uid='time_point_status_on_post_save')
 def time_point_status_on_post_save(sender, instance, raw, created, using, **kwargs):
-    """Attempt to save the subject referral to refer participants that 
+    """Attempt to save the subject referral to refer participants that
     do not complete data collection (partial participation)."""
     if not raw:
         if isinstance(instance, (TimePointStatus, )):
             if instance.status == CLOSED:
                 try:
-                    # subject visit should always exist
                     subject_visit = SubjectVisit.objects.get(appointment=instance.appointment)
-                    # refresh an existing referral document
-                    subject_referral = SubjectReferral.objects.using(using).get(
+                    SubjectReferral.objects.using(using).get(
                         subject_visit=subject_visit)
-                    subject_referral.comment = '{} ({})'.format(
-                        subject_referral.comment,
-                        'Partial participation. Auto generated when time point closed.')
-                    subject_referral.save(using=using)
                 except SubjectReferral.DoesNotExist:
-                    # create a new document
+                    # create a new document and flag as partial
                     SubjectReferral.objects.using(using).create(
                         subject_visit=subject_visit,
                         subject_referred='No',
