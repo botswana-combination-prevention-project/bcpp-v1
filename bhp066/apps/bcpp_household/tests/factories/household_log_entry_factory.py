@@ -1,12 +1,17 @@
 import factory
+
 from datetime import datetime
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import HouseholdLogEntry
-from household_log_factory import HouseholdLogFactory
+
+from .household_log_factory import HouseholdLogFactory
 
 
 class HouseholdLogEntryFactory(BaseUuidModelFactory):
-    FACTORY_FOR = HouseholdLogEntry
+    class Meta:
+        model = HouseholdLogEntry
 
     household_log = factory.SubFactory(HouseholdLogFactory)
     report_datetime = datetime.now()

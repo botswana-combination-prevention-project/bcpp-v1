@@ -7,8 +7,7 @@ from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import  Plot
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from apps.bcpp_household.models import Plot
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -17,31 +16,27 @@ from ..choices import NEXT_APPOINTMENT_SOURCE
 
 class BaseSubjectEntry(BaseDispatchSyncUuidModel):
     """For absentee and undecided log models."""
-    report_datetime = models.DateField("Report date",
-        validators=[date_not_before_study_start, date_not_future],
-        )
+    report_datetime = models.DateField(
+        verbose_name="Report date",
+        validators=[date_not_before_study_start, date_not_future])
 
     reason_other = OtherCharField()
 
     next_appt_datetime = models.DateTimeField(
         verbose_name=_("Follow-up appointment"),
-        help_text=_("The date and time to meet with the subject")
-        )
+        help_text=_("The date and time to meet with the subject"))
 
     next_appt_datetime_source = models.CharField(
         verbose_name=_("Appointment date suggested by?"),
         max_length=25,
         choices=NEXT_APPOINTMENT_SOURCE,
-        help_text=''
-        )
+        help_text='')
 
     contact_details = EncryptedCharField(
         null=True,
         blank=True,
-        #editable=False,
         help_text=_('Information that can be used to contact someone, '
-                   'preferrably the subject, to confirm the appointment'),
-        )
+                    'preferrably the subject, to confirm the appointment'))
 
     comment = EncryptedTextField(
         verbose_name="Comments",
@@ -49,8 +44,7 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
         blank=True,
         null=True,
         help_text=('IMPORTANT: Do not include any names or other personally identifying '
-           'information in this comment')
-        )
+                   'information in this comment'))
 
     @property
     def in_replaced_household(self):

@@ -12,8 +12,7 @@ from apps.bcpp_survey.models import Survey
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
-    household_member = models.ForeignKey(HouseholdMember,
-        help_text='')
+    household_member = models.ForeignKey(HouseholdMember, help_text='')
 
     is_signed = models.BooleanField(default=False)
 
@@ -59,9 +58,8 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         """Users may override to add an additional strategy to detect duplicate identifiers."""
         pass
 
-    def post_save_update_registered_subject(self, **kwargs):
+    def post_save_update_registered_subject(self, using, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        using = kwargs.get('using', None)
         if re_pk.match(self.registered_subject.subject_identifier):
             self.registered_subject.subject_identifier = self.subject_identifier
         self.registered_subject.registration_status = 'CONSENTED'

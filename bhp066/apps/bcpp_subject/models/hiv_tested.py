@@ -22,7 +22,7 @@ class HivTested (HivTestingSupplemental):
 
     where_hiv_test = models.CharField(
         verbose_name=_("Where were you tested for HIV, the last"
-                      " [most recent] time you were tested?"),
+                       " [most recent] time you were tested?"),
         max_length=85,
         choices=WHEREHIVTEST_CHOICE,
         help_text="",
@@ -31,8 +31,8 @@ class HivTested (HivTestingSupplemental):
 
     why_hiv_test = models.CharField(
         verbose_name=_("Not including today's HIV test, which of the following"
-                      " statements best describes the reason you were tested the last"
-                      " [most recent] time you were tested before today?"),
+                       " statements best describes the reason you were tested the last"
+                       " [most recent] time you were tested before today?"),
         max_length=105,
         null=True,
         choices=WHYHIVTEST_CHOICE,

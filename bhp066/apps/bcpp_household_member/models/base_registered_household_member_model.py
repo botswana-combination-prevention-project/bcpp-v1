@@ -1,13 +1,14 @@
 from datetime import datetime
+
 from django.db import models
 
-from edc.subject.registration.models import RegisteredSubject
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
 from apps.bcpp_household.models import Plot
+from apps.bcpp_subject.managers import BaseRegisteredHouseholdMemberModelManager
+from apps.bcpp_survey.models import Survey
 
 from .household_member import HouseholdMember
 
@@ -16,14 +17,12 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
     """ base for membership form models that need a foreignkey to the registered subject and household_member model"""
 
-    registered_subject = models.ForeignKey(
-        RegisteredSubject,
-        null=True
-        )
+    registered_subject = models.ForeignKey(RegisteredSubject, null=True)
 
     household_member = models.OneToOneField(HouseholdMember)
 
-    report_datetime = models.DateTimeField("Report date",
+    report_datetime = models.DateTimeField(
+        verbose_name="Report date",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
@@ -37,7 +36,6 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
         return self.household_member
 
     def natural_key(self):
-        #return (self.report_datetime, ) + self.household_member.natural_key()
         return self.household_member.natural_key()  # OneToOne field with household_member, so it should be enough alone
     natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
@@ -53,14 +51,7 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
     def get_registration_datetime(self):
         return self.report_datetime
 
-    def save(self, *args, **kwargs):
-        if 'reason' in kwargs:
-            # remove two extra keys
-            del kwargs['reason']
-            del kwargs['info_source']
-        super(BaseRegisteredHouseholdMemberModel, self).save(*args, **kwargs)
-
-    def confirm_registered_subject_pk_on_post_save(self):
+    def confirm_registered_subject_pk_on_post_save(self, using):
         if self.registered_subject.pk != self.household_member.registered_subject.pk:
             raise TypeError('Expected self.registered_subject.pk == self.household_member.registered_subject.pk. Got {0} != {1}.'.format(self.registered_subject.pk, self.household_member.registered_subject.pk))
 
