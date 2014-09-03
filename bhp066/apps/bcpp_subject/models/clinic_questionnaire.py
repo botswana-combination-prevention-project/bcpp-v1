@@ -16,8 +16,7 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=YES_NO_DWTA,
-        help_text="",
-        )
+        help_text="")
 
     current_hiv_status = models.CharField(
         verbose_name=_("Please tell me your current HIV status?"),
@@ -25,8 +24,7 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=VERBALHIVRESULT_CHOICE,
-        help_text="",
-        )
+        help_text="")
 
     on_arv = models.CharField(
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
@@ -34,16 +32,14 @@ class ClinicQuestionnaire (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=YES_NO_DWTA,
-        help_text="",
-        )
+        help_text="")
 
     arv_evidence = models.CharField(
         verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
         choices=YES_NO,
         null=True,
         blank=True,
-        max_length=3,
-        )
+        max_length=3)
 
     history = AuditTrail()
 

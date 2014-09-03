@@ -5,6 +5,7 @@ from edc.map.classes import Mapper
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.constants import NOT_APPLICABLE
 
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
@@ -50,8 +51,8 @@ class EligibilityFormTests(SimpleTestCase):
     def test_returns_cleaned_data(self):
         form = EnrollmentChecklistForm()
         form.cleaned_data = {'citizen': 'Yes',
-                             'legal_marriage': 'N/A',
-                             'marriage_certificate': 'N/A',
+                             'legal_marriage': NOT_APPLICABLE,
+                             'marriage_certificate': NOT_APPLICABLE,
                              'marriage_certificate_no': ''}
         self.assertEqual(form.clean(), form.cleaned_data)
 
@@ -61,7 +62,7 @@ class EligibilityFormTests(SimpleTestCase):
         form.cleaned_data = {
             'citizen': 'Yes',
             'legal_marriage': 'Yes',
-            'marriage_certificate': 'N/A',
+            'marriage_certificate': NOT_APPLICABLE,
             'marriage_certificate_no': ''}
         self.assertRaisesMessage(ValidationError, 'Marital status is not applicable, Participant is a citizen.', form.clean)
 
@@ -69,7 +70,7 @@ class EligibilityFormTests(SimpleTestCase):
         form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'Yes',
-            'legal_marriage': 'N/A',
+            'legal_marriage': NOT_APPLICABLE,
             'marriage_certificate': 'Yes',
             'marriage_certificate_no': ''}
         self.assertRaisesMessage(ValidationError, 'Marriage Certificate is not applicable, Participant is a citizen.', form.clean)
@@ -79,8 +80,8 @@ class EligibilityFormTests(SimpleTestCase):
         form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'Yes',
-            'legal_marriage': 'N/A',
-            'marriage_certificate': 'N/A',
+            'legal_marriage': NOT_APPLICABLE,
+            'marriage_certificate': NOT_APPLICABLE,
             'marriage_certificate_no': '123'}
         self.assertRaisesMessage(ValidationError, 'Marriage Certificate Number is not required, Participant is a citizen.', form.clean)
 
@@ -88,8 +89,8 @@ class EligibilityFormTests(SimpleTestCase):
         form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
-            'legal_marriage': 'N/A',
-            'marriage_certificate': 'N/A',
+            'legal_marriage': NOT_APPLICABLE,
+            'marriage_certificate': NOT_APPLICABLE,
             'marriage_certificate_no': ''}
         self.assertRaises(ValidationError, form.clean)
 
@@ -99,7 +100,7 @@ class EligibilityFormTests(SimpleTestCase):
         form.cleaned_data = {
             'citizen': 'No',
             'legal_marriage': 'No',
-            'marriage_certificate': 'N/A',
+            'marriage_certificate': NOT_APPLICABLE,
             'marriage_certificate_no': ''}
         self.assertRaisesRegexp(ValidationError, 'not\ eligible', form.clean)
 
@@ -118,7 +119,7 @@ class EligibilityFormTests(SimpleTestCase):
         form = EnrollmentChecklistForm()
         form.cleaned_data = {
             'citizen': 'No',
-            'legal_marriage': 'N/A',
+            'legal_marriage': NOT_APPLICABLE,
             'marriage_certificate': 'Yes',
             'marriage_certificate_no': '123'}
         self.assertRaisesRegexp(ValidationError, 'legally married to a Botswana citizen', form.clean)

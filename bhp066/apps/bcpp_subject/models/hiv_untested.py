@@ -14,7 +14,7 @@ class HivUntested (HivTestingSupplemental):
 
     why_no_hiv_test = models.CharField(
         verbose_name=_("If you were not tested for HIV in the 12 months prior"
-                      " to today, what is the main reason why not?"),
+                       " to today, what is the main reason why not?"),
         max_length=55,
         null=True,
         choices=WHYNOHIVTESTING_CHOICE,

@@ -1,14 +1,24 @@
 from django.utils.translation import ugettext as _
 
+REFERRAL_APPT_COMMENTS = (
+    ("N/A", "not applicable"),
+    ("conflict", "have another commitment"),
+    ("prefer_other_facility", "prefer another health facility than the local clinic"),
+    ("prefer_other_date", "prefer to come on my own convenient time"),
+    ("undecided_thinking", "have to think about it"),
+    ("undecided_accepting_status", "need time to accept my HIV status"),
+    ("have_other_anc_appt", "have already registered with ANC and have another appointment"),
+)
+
 REFERRAL_CODES = (
     ('pending', '<data collection in progress>'),
     ('TST-CD4', 'POS any, need CD4 testing'),
     ('TST-HIV', 'HIV test'),
-    ('HIV-IND', 'HIV re-test (IND)'),
+    # ('HIV-IND', 'HIV re-test (IND)'),
     ('MASA-CC', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
-    ('SMC-IND', 'SMC (uncircumcised, hiv indeterminate)'),
-    ('SMC?IND', 'SMC (Unknown circumcision status, hiv indeterminate)'),
+    # ('SMC-IND', 'SMC (uncircumcised, hiv indeterminate)'),
+    # ('SMC?IND', 'SMC (Unknown circumcision status, hiv indeterminate)'),
     ('SMC-NEG', 'SMC (uncircumcised, hiv neg)'),
     ('SMC?NEG', 'SMC (Unknown circumcision status, hiv neg'),
     ('SMC-UNK', 'SMC (uncircumcised, hiv result not known)'),

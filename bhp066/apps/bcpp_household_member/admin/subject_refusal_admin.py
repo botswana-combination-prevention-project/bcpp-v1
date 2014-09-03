@@ -1,8 +1,11 @@
 from django.contrib import admin
+
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
+
 from apps.bcpp_household_member.models import HouseholdMember
-from ..models import SubjectRefusal
+
 from ..forms import SubjectRefusalForm
+from ..models import SubjectRefusal
 
 
 class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
@@ -17,9 +20,7 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'reason_other',
         'comment')
 
-    radio_fields = {
-        "reason": admin.VERTICAL,
-        }
+    radio_fields = {"reason": admin.VERTICAL}
 
     list_display = ('reason', )
 

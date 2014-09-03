@@ -24,19 +24,19 @@ class SubjectRefusal (BaseMemberStatusModel):
 
     reason = models.CharField(
         verbose_name=_("We respect your decision to decline. It would help us"
-                      " improve the study if you could tell us the main reason"
-                      " you do not want to participate in this study?"),
+                       " improve the study if you could tell us the main reason"
+                       " you do not want to participate in this study?"),
         max_length=50,
         choices=WHYNOPARTICIPATE_CHOICE,
-        help_text="",
-        )
+        help_text="")
+
     reason_other = OtherCharField()
 
     subject_refusal_status = models.CharField(
         verbose_name=_("Refusal status"),
         max_length=100,
         help_text=_("Change the refusal status from 'refused' to 'no longer refusing' if and"
-                   " when the subject changes their mind"),
+                    " when the subject changes their mind"),
         default='REFUSED',
         editable=False)
 
@@ -46,7 +46,7 @@ class SubjectRefusal (BaseMemberStatusModel):
         null=True,
         blank=True,
         help_text=_('IMPORTANT: Do not include any names or other personally identifying '
-                   'information in this comment'))
+                    'information in this comment'))
 
     history = AuditTrail()
 
@@ -57,17 +57,17 @@ class SubjectRefusal (BaseMemberStatusModel):
         household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
-        if self.household_member.member_status != REFUSED:
-            raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
-        if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
-            raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
+#         if self.household_member.member_status != REFUSED:
+#             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
+#         if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
+#             raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
-        self.household_member.refused = True
-        household_member_helper = HouseholdMemberHelper(self.household_member)
-        self.household_member.member_status = household_member_helper.calculate_member_status_without_hint()
-        #important during dispatch, need to save instance to the correct db.
-        self.household_member.save(using=kwargs.get('using',None))
+        try:
+            update_fields = kwargs.get('update_fields') + ['registered_subject', 'survey', ]
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     class Meta:

@@ -12,6 +12,8 @@ class OtsePlotMapper(BasePlotMapper):
 
     landmarks = OTSE_LANDMARKS
 
+    intervention = True
+
     gps_center_lat = -25.033194
     gps_center_lon = 25.747132
     radius = 5.5

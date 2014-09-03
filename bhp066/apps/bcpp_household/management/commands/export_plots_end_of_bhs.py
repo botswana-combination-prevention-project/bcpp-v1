@@ -6,7 +6,10 @@ from django.core.management.base import BaseCommand, CommandError
 from apps.bcpp_survey.models import Survey
 
 from apps.bcpp_household.choices import NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, ELIGIBLE_REPRESENTATIVE_PRESENT, RESIDENTIAL_HABITABLE
+from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
 from apps.bcpp_household.models import Plot, Household, HouseholdStructure, HouseholdLogEntry
+
+from ...choices import INACCESSIBLE
 
 
 class Command(BaseCommand):
@@ -14,7 +17,7 @@ class Command(BaseCommand):
     APP_NAME = 0
     MODEL_NAME = 1
     args = '<community name e.g otse>'
-    help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent.'
+    help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent. List that goes to CDC.'
 
     def handle(self, *args, **options):
         if not args or len(args) < 1:
@@ -32,18 +35,18 @@ class Command(BaseCommand):
         plots = Plot.objects.filter(community=community_name, selected__isnull=False)
         cdc_plots.append(['plot_identifier', 'action', 'status', 'household_count', 'gps_target_lat', 'gps_target_lon', 'enrolled', 'comment'])
         for plot in plots:
-            if plot.status in ['inaccessible', None]:
+            if plot.status in [INACCESSIBLE, None]:
                 cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
                 unconfirmed += 1
                 not_enrolled += 1
             elif plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
                 cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
-                if plot.action == 'unconfirmed':
+                if plot.action == UNCONFIRMED:
                     unconfirmed += 1
-                elif plot.action == 'confirmed':
+                elif plot.action == CONFIRMED:
                     confirmed += 1
                 not_enrolled += 1
-            if plot.household_count > 0 and plot.action == 'confirmed' and plot.status == RESIDENTIAL_HABITABLE:
+            if plot.household_count > 0 and plot.action == CONFIRMED and plot.status == RESIDENTIAL_HABITABLE:
                 confirmed += 1
                 households = Household.objects.filter(plot=plot)
                 household_structures = HouseholdStructure.objects.filter(household__in=households, survey=survey)

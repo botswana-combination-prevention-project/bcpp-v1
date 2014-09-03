@@ -9,7 +9,7 @@ from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
 class HouseholdMemberForm(BaseHouseholdMemberForm):
     def clean(self):
         cleaned_data = super(HouseholdMemberForm, self).clean()
-        self.instance.check_eligible_representative_filled(cleaned_data.get('household_structure', None), forms.ValidationError)
+        self.instance.check_eligible_representative_filled(cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
         if cleaned_data.get('relation') == 'Head' and not cleaned_data.get('age_in_years') >= 18:
             raise forms.ValidationError('Head of Household must be 18 years or older.')
         if cleaned_data.get('eligible_hoh') and cleaned_data.get('age_in_years') < 18:
@@ -26,11 +26,9 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
                 raise forms.ValidationError('{0} is the head of household already. Only one member may be the head of household.'.format(current_hoh))
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.instance)
-        except:
-            enrollment_checklist = None
-        if enrollment_checklist:
             enrollment_checklist.matches_household_member_values(enrollment_checklist, HouseholdMember(**cleaned_data), exception_cls=forms.ValidationError)
-
+        except:
+            pass
         return cleaned_data
 
     class Meta:

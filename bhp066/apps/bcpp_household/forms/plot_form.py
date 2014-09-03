@@ -15,11 +15,11 @@ class PlotForm(BaseModelForm):
         except:
             plot = None
         if plot:
-            plot.allow_enrollement(plot, Plot(**cleaned_data), exception_cls=forms.ValidationError)
+            plot.allow_enrollment(plot, Plot(**cleaned_data), exception_cls=forms.ValidationError)
         if self.instance:
             if not self.instance.community:
                 raise forms.ValidationError('Community may not be blank. Must be one of {1}.'.format(self.instance.community, ', '.join(site_mappers.get_as_list())))
-            if not self.instance.community in site_mappers.get_as_list():
+            if self.instance.community not in site_mappers.get_as_list():
                 raise forms.ValidationError('Unknown community {0}. Must be one of {1}.'.format(self.instance.community, ', '.join(site_mappers.get_as_list())))
 
             # verify gps to target before the save() method does
@@ -32,15 +32,10 @@ class PlotForm(BaseModelForm):
             mapper.verify_gps_location(gps_lat, gps_lon, forms.ValidationError)
             mapper.verify_gps_to_target(gps_lat, gps_lon, self.instance.gps_target_lat, self.instance.gps_target_lon, self.instance.target_radius, forms.ValidationError)
 
-#         if self.instance.id:
-#             self.instance.household_count = self.instance.create_or_delete_households(self.instance)
-#             if self.instance.household_count > 0:
-#                 self.cleaned_data['status'] = 'residential_habitable'
-
-        if not cleaned_data.get('household_count') and cleaned_data.get('status') in  ['residential_habitable']:
+        if not cleaned_data.get('household_count') and cleaned_data.get('status') in ['residential_habitable']:
             raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('household_count')))
 
-        if (cleaned_data.get('household_count') == 0 and cleaned_data.get('status') in  ['residential_habitable']) or (cleaned_data.get('household_count') and not cleaned_data.get('status') in  ['residential_habitable']):
+        if (cleaned_data.get('household_count') == 0 and cleaned_data.get('status') in ['residential_habitable']) or (cleaned_data.get('household_count') and not cleaned_data.get('status') in ['residential_habitable']):
             raise forms.ValidationError('Invalid number of households for plot that is {0}. Got {1}.'.format(cleaned_data.get('status'), cleaned_data.get('household_count')))
 
         if not cleaned_data.get('status') == 'residential_habitable' and cleaned_data.get('eligible_members') > 0:
