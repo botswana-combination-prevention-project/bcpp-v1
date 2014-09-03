@@ -1,24 +1,29 @@
-from datetime import datetime
-from django.core.exceptions import ValidationError
+from collections import namedtuple
+
+from django.db.models import get_model
 
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
-from edc.subject.appointment.models import Holiday
+from edc.map.classes import site_mappers
+from edc.core.bhp_data_manager.models import TimePointStatus
+from edc.constants import CLOSED
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
 
 from ..choices import REFERRAL_CODES
 from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
-from ..utils import next_clinic_date
 
 from .subject_status_helper import SubjectStatusHelper
-from collections import namedtuple
+from .subject_referral_appt_helper import SubjectReferralApptHelper
 
 
 class SubjectReferralHelper(SubjectStatusHelper):
+    """A class that calculates the referral code or returns a blank string.
 
-    def __init__(self, instance):
-        super(SubjectReferralHelper, self).__init__(instance.subject_visit)
+    See property :func:`referral_code`"""
+
+    def __init__(self, subject_referral):
+        super(SubjectReferralHelper, self).__init__(subject_referral.subject_visit)
         self._circumcised = None
         self._enrollment_checklist_instance = None
         self._subject_consent_instance = None
@@ -26,7 +31,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_clinic = None
         self._referral_code_list = []
         self._subject_referral = {}
-        self.instance = instance
+        self.instance = subject_referral
         self.models.update({
             'subject_locator': SubjectLocator,  # not required for anything here, but needed for export with the referral
             'circumcision': Circumcision,
@@ -35,27 +40,46 @@ class SubjectReferralHelper(SubjectStatusHelper):
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
             })
+        self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member
         self.subject_identifier = self.instance.subject_visit.appointment.registered_subject.subject_identifier
+        self.community_code = site_mappers.get_current_mapper().map_code
 
     @property
     def missing_data(self):
-        """Returns the model name of the first model used in the referral algorithm that's meta data is NOT set to KEYED or NOT_REQUIRED."""
-        for model_cls in self.models.values():
+        """Returns the model name of the first model used in the referral algorithm that's 
+        meta data is NOT set to KEYED or NOT_REQUIRED.
+
+        If timepointstatus instance exists with status=CLOSED, the check is skipped."""
+        first_model_cls = None
+        if not SubjectLocator.objects.filter(subject_visit=self.instance.subject_visit).exists():
+            first_model_cls = SubjectLocator  # required no matter what
+        else:
             try:
-                scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(appointment=self.instance.subject_visit.appointment,
-                                                  entry__app_label=model_cls._meta.app_label,
-                                                  entry__model_name=model_cls._meta.object_name)
-                if scheduled_entry_meta_data.entry_status  not in [KEYED, NOT_REQUIRED]:
-                    return model_cls
-            except ScheduledEntryMetaData.DoesNotExist:
-                pass
-        return None
+                TimePointStatus.objects.get(appointment=self.instance.subject_visit.appointment, status=CLOSED)
+            except TimePointStatus.DoesNotExist:
+                for model_cls in self.models.values():
+                    try:
+                        scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
+                            appointment=self.instance.subject_visit.appointment,
+                            entry__app_label=model_cls._meta.app_label,
+                            entry__model_name=model_cls._meta.object_name)
+                        if scheduled_entry_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
+                            first_model_cls = model_cls
+                            break
+                    except ScheduledEntryMetaData.DoesNotExist:
+                        pass
+                    except AttributeError:  # NoneType?
+                        pass
+        return first_model_cls
 
     @property
     def subject_referral(self):
-        """Returns a dictionary of the attributes {name: value, ...} from this class that match, by name, field attributes in the SubjectReferral model."""
+        """Returns a dictionary of the attributes {name: value, ...}
+        from this class that match, by name, field attributes in the
+        SubjectReferral model."""
         if not self._subject_referral:
             self._subject_referral = {}
             for attr in self.instance.__dict__:
@@ -66,7 +90,9 @@ class SubjectReferralHelper(SubjectStatusHelper):
 
     @property
     def subject_referral_tuple(self):
-        """Returns a dictionary of the attributes {name: value, ...} from this class that match, by name, field attributes in the SubjectReferral model."""
+        """Returns a dictionary of the attributes {name: value, ...}
+        from this class that match, by name, field attributes in the
+        SubjectReferral model."""
         Tpl = namedtuple('SubjectReferralTuple', 'subject_visit ' + '  '.join(self.subject_referral.keys()))
         self._subject_referral_tuple = Tpl(self.subject_visit, *self.subject_referral.values())
         return self._subject_referral_tuple
@@ -77,28 +103,24 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_code_list = []
         if not self.hiv_result:
             if self.gender == 'M':
-                if self.circumcised == False:
-                    self._referral_code_list.append('SMC-UNK')  # refer if status unknown or indeterminate
-                elif self.circumcised == None:
-                    self._referral_code_list.append('SMC?UNK')  # refer if status unknown or indeterminate
+                if self.circumcised:
+                    self._referral_code_list.append('TST-HIV')  # refer if status unknown
+                else:
+                    self._referral_code_list.append('SMC-UNK')  # refer if status unknown
             elif self.pregnant:
                 self._referral_code_list.append('UNK?-PR')
             else:
                 self._referral_code_list.append('TST-HIV')
         else:
             if self.hiv_result == 'IND':
-                self._referral_code_list.append('HIV-IND')
-                if self.gender == 'M':
-                    if not self.circumcised:
-                        self._referral_code_list.append('SMC-IND')
-                    elif self.circumcised == None:
-                        self._referral_code_list.append('SMC?IND')
+                # do not set referral_code_list to IND
+                pass
             elif self.hiv_result == 'NEG':
                 if self.gender == 'F' and self.pregnant:  # only refer F if pregnant
                     self._referral_code_list.append('NEG!-PR')
-                elif self.gender == 'M' and self.circumcised == False:  # only refer M if not circumcised
+                elif self.gender == 'M' and self.circumcised is False:  # only refer M if not circumcised
                     self._referral_code_list.append('SMC-NEG')
-                elif self.gender == 'M' and self.circumcised == None:  # only refer M if not circumcised
+                elif self.gender == 'M' and self.circumcised is None:  # only refer M if not circumcised
                     self._referral_code_list.append('SMC?NEG')
             elif self.hiv_result == 'POS':
                 if self.gender == 'F' and self.pregnant and self.on_art:
@@ -164,7 +186,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def citizen(self):
         citizen = None
         try:
-            citizen = self.enrollment_checklist_instance.citizen == 'Yes' and self.subject_consent_instance.identity is not None
+            citizen = self.enrollment_checklist_instance.citizen == ('Yes' and
+                                                                     self.subject_consent_instance.identity is not None)
         except AttributeError:
             citizen = None
         return citizen
@@ -173,7 +196,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def citizen_spouse(self):
         citizen_spouse = None
         try:
-            citizen_spouse = self.enrollment_checklist_instance.legal_marriage == 'Yes' and self.subject_consent_instance.identity is not None
+            citizen_spouse = (self.enrollment_checklist_instance.legal_marriage == 'Yes' and
+                              self.subject_consent_instance.identity is not None)
         except AttributeError:
             citizen_spouse = None
         return citizen_spouse
@@ -200,7 +224,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def permanent_resident(self):
         """Returns True if permanent resident as stated on ResidencyMobility."""
         try:
-            residency_mobility_instance = self.models.get('residency_mobility').objects.get(subject_visit=self.subject_visit)
+            residency_mobility_instance = self.models.get('residency_mobility').objects.get(
+                subject_visit=self.subject_visit)
             permanent_resident = self.convert_to_nullboolean(residency_mobility_instance.permanent_resident)
         except self.models.get('residency_mobility').DoesNotExist:
             permanent_resident = None
@@ -212,15 +237,12 @@ class SubjectReferralHelper(SubjectStatusHelper):
         if self.gender == 'F':
             if not self._pregnant:
                 try:
-                    reproductive_health = self.models.get('reproductive_health').objects.get(subject_visit=self.subject_visit)
+                    reproductive_health = self.models.get('reproductive_health').objects.get(
+                        subject_visit=self.subject_visit)
                     self._pregnant = self.convert_to_nullboolean(reproductive_health.currently_pregnant)
                 except self.models.get('reproductive_health').DoesNotExist:
                     self._pregnant = None
         return self._pregnant
-
-    @property
-    def referral_clinic(self):
-        return self.instance.referral_clinic if self.instance.referral_clinic != 'OTHER' else self.instance.referral_clinic_other
 
     @property
     def tb_symptoms(self):
@@ -232,31 +254,47 @@ class SubjectReferralHelper(SubjectStatusHelper):
     @property
     def urgent_referral(self):
         """Compares the referral_codes to the "urgent" referrals list and sets to true on a match."""
-        return True if [code for code in self.referral_code_list if code in ['MASA-DF', 'POS!-LO', 'POS#-LO', 'POS#-PR', 'POS!-PR']] else False
+        return True if [code for code in self.referral_code_list if code in ['MASA-DF', 'POS!-LO',
+                                                                             'POS#-LO', 'POS#-PR',
+                                                                             'POS!-PR']] else False
 
     @property
     def enrollment_checklist_instance(self):
         if not self._enrollment_checklist_instance:
-            self._enrollment_checklist_instance = self.models.get('enrollment_checklist').objects.get(household_member=self.subject_visit.household_member)
+            self._enrollment_checklist_instance = self.models.get('enrollment_checklist').objects.get(
+                household_member=self.subject_visit.household_member)
         return self._enrollment_checklist_instance
 
     @property
     def subject_consent_instance(self):
         if not self._subject_consent_instance:
             try:
-                self._subject_consent_instance = self.models.get('subject_consent').objects.get(household_member=self.household_member)
+                self._subject_consent_instance = self.models.get('subject_consent').objects.get(
+                    household_member=self.household_member)
             except self.models.get('subject_consent').DoesNotExist:
                 self._subject_consent_instance = None
         return self._subject_consent_instance
 
-    def validate_referral_appt_date(self, exception_cls=None):
-        exception_cls = exception_cls or ValidationError
-        result = True
-        if self.instance.referral_appt_date != next_clinic_date():
-            result = False
-            if self.instance.referral_appt_date.strftime("%A") in ['Saturday', 'Sunday']:
-                raise exception_cls("You cannot schedule an appointment for a weekend day. Got \'{0}\''.".format(self.instance.referral_appt_date.strftime("%A")))
-            elif Holiday.objects.filter(holiday_date=self.instance.referral_appt_date.date()):
-                holiday = Holiday.objects.get(holiday_date=self.instance.referral_appt_date.date())
-                raise exception_cls("You cannot schedule an appointment on a holiday. Got \'{0}\''.".format(holiday.holiday_name))
-        return result
+    @property
+    def subject_referral_appt_helper(self):
+        return SubjectReferralApptHelper(
+            self.referral_code,
+            base_date=self.instance.report_datetime,
+            scheduled_appt_date=self.instance.scheduled_appt_date,
+            )
+
+    @property
+    def referral_appt_datetime(self):
+        return self.subject_referral_appt_helper.referral_appt_datetime
+
+    @property
+    def referral_clinic_type(self):
+        return self.subject_referral_appt_helper.referral_clinic_type
+
+    @property
+    def referral_clinic(self):
+        return self.subject_referral_appt_helper.community_name
+
+    @property
+    def original_scheduled_appt_date(self):
+        return self.subject_referral_appt_helper.original_scheduled_appt_date

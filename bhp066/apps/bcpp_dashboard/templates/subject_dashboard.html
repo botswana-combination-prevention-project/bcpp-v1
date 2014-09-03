@@ -29,6 +29,11 @@
 {% else %}    
     <td></td>  
 {% endif %}
+  {% if hiv_result %}
+    <td><B>Result: </B>{{ hiv_result.hiv_result|mask_hiv_result }} {{ elisa_hiv_result.hiv_result}}</td>
+    <td><B>Blood Draw Type: </B>{{ hiv_result.blood_draw_type  }}</td>            
+{% endif %}
+
 </tr>
 </table>
 {% block subject_consent %}
@@ -43,17 +48,19 @@
     <td><B>Date:</B> {{subject_consent.consent_datetime|date:"Y-m-d H:i" }}</td>
   </tr>
   </table>
+  
 {% endif %}
 {% endblock %}
-{% if subject_hiv_result %}
-<table>
-<tr style="background:lightyellow;">
-    <td><B>Result: </B>{{ subject_hiv_result.subject_hiv_result_option }}</td>
-    <td><B>Finger-prick: </B>{{ subject_hiv_result.sample_datetime_drawn|date:"Y-m-d H:i"  }}</td>    
-    <td><B>Release: </B>{{ subject_hiv_result.result_release_location }}</td>        
-</tr>
-</table>
-{% endif %}
+
+{% block correct_consent %}
+    {% if subject_consent %}
+        {% if correct_consent %}
+            <A href="{% url correct_consent_meta|admin_urlname:'change' correct_consent.id %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+        {% else %}
+            <A href="{% url correct_consent_meta|admin_urlname:'add' %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
+        {% endif %}
+    {% endif %}
+{% endblock correct_consent %}
 
 {% endblock %}
 
@@ -94,8 +101,9 @@
                 <ul>
                 <li><B>{{ subject_referral.referral_code }}</B> {% if subject_referral.urgent_referral %}<B>URGENT</B>{% endif %}
                 <li>Participant is '{{subject_referral.get_referral_code_display }}'
-                <li>Referral Clinic: {{subject_referral.referral_clinic }}
-                <li>Appointment: {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }} 
+                <li>Referral Clinic: {{subject_referral.referral_clinic_type }} at {{subject_referral.referral_clinic|capfirst }}
+                <li>Appointment: {{ subject_referral.referral_appt_date|date:"l, Y-m-d" }}
+                {% if subject_referral.comment %}<li>{{ subject_referral.comment| wordwrap:20 }}{% endif %}
                 </ul>
             {% endif %}                                                
         </td>

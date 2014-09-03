@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from edc.base.admin.admin import BaseModelAdmin
+from edc.base.modeladmin.admin import BaseModelAdmin
 from apps.bcpp_household.models import PlotLogEntry, PlotLog
 from apps.bcpp_household.forms import PlotLogForm, PlotLogEntryForm
 

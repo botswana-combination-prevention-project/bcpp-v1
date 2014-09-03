@@ -1,9 +1,8 @@
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
-from django.db import models, IntegrityError
+from django.db import models, IntegrityError, transaction
 from django.db.models import Min
 from django.db.models.loading import get_model
 from django.utils.translation import ugettext as _
@@ -21,11 +20,11 @@ from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp_survey.models import Survey
 
-from ..choices import PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED
+from ..choices import (PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED, INACCESSIBLE)
+from ..constants import CONFIRMED, UNCONFIRMED
 from ..classes import PlotIdentifier
 from ..managers import PlotManager
-
-from .household_identifier_history import HouseholdIdentifierHistory
+from ..helpers import ReplacementHelper
 
 
 def is_valid_community(self, value):
@@ -42,36 +41,32 @@ class Plot(BaseDispatchSyncUuidModel):
         unique=True,
         help_text=_("Plot identifier"),
         editable=False,
-        db_index=True,
-        )
+        db_index=True)
 
     eligible_members = models.IntegerField(
         verbose_name="Approximate number of age eligible members",
         blank=True,
         null=True,
-        help_text=("Provide an approximation of the number of people who live in this residence who are age eligible."),)
+        help_text=("Provide an approximation of the number of people who live in this residence who are age eligible."))
 
     description = EncryptedTextField(
         verbose_name="Description of plot/residence",
         max_length=250,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     comment = EncryptedTextField(
         verbose_name="Comment",
         max_length=250,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     cso_number = EncryptedCharField(
         verbose_name="CSO Number",
         blank=True,
         null=True,
         db_index=True,
-        help_text=("provide the CSO number or leave BLANK."),
-        )
+        help_text=("provide the CSO number or leave BLANK."))
 
     household_count = models.IntegerField(
         verbose_name="Number of Households on this plot.",
@@ -85,100 +80,88 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=25,
         choices=TIME_OF_WEEK,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     time_of_day = models.CharField(
         verbose_name='Time of day when most of the eligible members will be available',
         max_length=25,
         choices=TIME_OF_DAY,
         blank=True,
-        null=True,
-        )
+        null=True)
 
     gps_degrees_s = EncryptedDecimalField(
         verbose_name='GPS Degrees-South',
         max_digits=10,
         null=True,
-        decimal_places=0,
-        )
+        decimal_places=0)
 
     gps_minutes_s = EncryptedDecimalField(
         verbose_name='GPS Minutes-South',
         max_digits=10,
         null=True,
-        decimal_places=4,
-        )
+        decimal_places=4)
 
     gps_degrees_e = EncryptedDecimalField(
         verbose_name='GPS Degrees-East',
         null=True,
         max_digits=10,
-        decimal_places=0,
-        )
+        decimal_places=0)
 
     gps_minutes_e = EncryptedDecimalField(
         verbose_name='GPS Minutes-East',
         max_digits=10,
         null=True,
-        decimal_places=4,
-        )
+        decimal_places=4)
 
     gps_lon = EncryptedDecimalField(
         verbose_name='longitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     gps_lat = EncryptedDecimalField(
         verbose_name='latitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     gps_target_lon = EncryptedDecimalField(
         verbose_name='target waypoint longitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     gps_target_lat = EncryptedDecimalField(
         verbose_name='target waypoint latitude',
         max_digits=10,
         null=True,
-        decimal_places=6,
-        )
+        decimal_places=6)
 
     status = models.CharField(
         verbose_name='Plot status',
         max_length=35,
         null=True,
-        choices=PLOT_STATUS,
-        )
+        choices=PLOT_STATUS)
 
     target_radius = models.FloatField(default=.025, help_text='km', editable=False)
 
     distance_from_target = models.FloatField(null=True, editable=True, help_text='distance in meters')
 
-    #20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of the plots which is 75 percent selected value is None
+    # 20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of 
+    # the plots which is 75 percent selected value is None
     selected = models.CharField(
         max_length=25,
         null=True,
         verbose_name='selected',
         choices=SELECTED,
-        editable=False,
-        )
+        editable=False)
 
     replaces = models.CharField(
         max_length=25,
         null=True,
         blank=True,
         editable=False,
-        help_text=("plot or household identifier that this plot replaces."),
-        )
+        help_text=("plot or household identifier that this plot replaces."))
 
     replaced_by = models.CharField(
         verbose_name='Identifier',
@@ -186,49 +169,48 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         editable=False,
-        help_text=u'The identifier of the plot that this plot was replaced by',
-        )
+        help_text=u'The identifier of the plot that this plot was replaced by')
 
     device_id = models.CharField(
         max_length=2,
         null=True,
-        editable=False,
-        )
+        editable=False)
 
     action = models.CharField(
         max_length=25,
         null=True,
-        default='unconfirmed',
+        default=UNCONFIRMED,
         editable=False)
 
     access_attempts = models.IntegerField(
         default=0,
         editable=False,
-        help_text='Number of attempts to access a plot to determine it\'s status.'
-        )
+        help_text='Number of attempts to access a plot to determine it\'s status.')
 
-    # Google map static images for this plots with different zoom levels. uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
-    uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16", max_length=25, null=True, blank=True, editable=False)
+    # Google map static images for this plots with different zoom levels.
+    # uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
+    uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16",
+                                       max_length=25, null=True, blank=True, editable=False)
 
-    uploaded_map_17 = models.CharField(verbose_name="Map image at zoom level 17", max_length=25, null=True, blank=True, editable=False)
+    uploaded_map_17 = models.CharField(verbose_name="Map image at zoom level 17",
+                                       max_length=25, null=True, blank=True, editable=False)
 
-    uploaded_map_18 = models.CharField(verbose_name="Map image at zoom level 18", max_length=25, null=True, blank=True, editable=False)
+    uploaded_map_18 = models.CharField(verbose_name="Map image at zoom level 18",
+                                       max_length=25, null=True, blank=True, editable=False)
 
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
         choices=COMMUNITIES,
         validators=[is_valid_community, ],
-        editable=False,
-        )
+        editable=False)
 
     section = models.CharField(
         max_length=25,
         null=True,
         verbose_name='Section',
         choices=SECTIONS,
-        editable=False,
-        )
+        editable=False)
 
     sub_section = models.CharField(
         max_length=25,
@@ -236,10 +218,17 @@ class Plot(BaseDispatchSyncUuidModel):
         verbose_name='Sub-section',
         choices=SUB_SECTIONS,
         help_text=u'',
-        editable=False,
-        )
+        editable=False)
 
-    bhs = models.NullBooleanField(editable=False)
+    bhs = models.NullBooleanField(
+        editable=False,
+        help_text=('True indicates that plot is enrolled in to BHS. '
+                   'Updated by household_structure post_save'))
+
+    enrolled_datetime = models.DateTimeField(
+        null=True,
+        editable=False,
+        help_text='datetime that plot is enrolled. Updated by household_structure post_save')
 
     htc = models.NullBooleanField(default=False, editable=False)
 
@@ -249,8 +238,7 @@ class Plot(BaseDispatchSyncUuidModel):
         blank=True,
         verbose_name='Identifier',
         help_text=u'The identifier of the plot that this plot is replaced by',
-        editable=False,
-        )
+        editable=False)
 
     objects = PlotManager()
 
@@ -263,13 +251,18 @@ class Plot(BaseDispatchSyncUuidModel):
         return (self.plot_identifier,)
 
     def save(self, *args, **kwargs):
-        if not self.allow_enrollement:
-            raise ValidationError('Not allowed to modify this Plot.')
-        # If the plot is replaced can not save this plot
-        if self.id and not kwargs.get('using'):
-            plot = models.get_model(self._meta.app_label, self._meta.object_name).objects.get(id=self.id)
-            if plot.replaced_by:
-                raise AlreadyReplaced('Plot {0} has been replaced by plot {1}.'.format(self.plot_identifier, self.replaced_by))
+        using = kwargs.get('using')
+        update_fields = []
+        if not self.allow_enrollment:
+            raise ValidationError('BHS enrollment for {0} ended on {1}. This plot may not be modified. '
+                                  'See settings.BHS_END_DATE'.format(self.community, settings.BHS_END_DATE))
+        try:
+            # if plot is replaced abort the save
+            if self.__class__.objects.using(using).get(id=self.id).replaced_by:
+                raise AlreadyReplaced('Plot {0} has been replaced '
+                                      'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
+        except self.__class__.DoesNotExist:
+            pass
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
@@ -280,115 +273,132 @@ class Plot(BaseDispatchSyncUuidModel):
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
-            plot_identifier = PlotIdentifier(community=mapper.get_map_code())
-            self.plot_identifier = plot_identifier.get_identifier()
+            self.plot_identifier = PlotIdentifier(mapper.get_map_code(), using).get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
-        if self.status == 'inaccessible':
+        if self.status == INACCESSIBLE:
             # reset any editable fields that the user changed
-            for field in  [fld for fld in self.__class__._meta.fields if fld.editable == False and fld.null == True and fld.name not in ['status', 'comment', 'sub_section', 'section', 'community', 'uploaded_map_18', 'uploaded_map_17', 'uploaded_map_16', 'action', 'replaces', 'replaced_by', 'selected']]:
+            for field in [fld for fld in self.__class__._meta.field
+                          if not fld.editable and fld.null and
+                          fld.name not in ['status', 'comment', 'sub_section',
+                                           'section', 'community', 'uploaded_map_18',
+                                           'uploaded_map_17', 'uploaded_map_16', 'action',
+                                           'replaces', 'replaced_by', 'selected']
+                          ]:
                 setattr(self, field.name, None)
+                update_fields.append(field.name)
             self.action = self.get_action()
         else:
             if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
                 self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
                 self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
                 mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-                mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius, MapperError)
-                self.distance_from_target = mapper.gps_distance_between_points(self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon, self.target_radius) * 1000
+                mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat,
+                                            self.gps_target_lon, self.target_radius, MapperError)
+                self.distance_from_target = mapper.gps_distance_between_points(
+                    self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon,
+                    self.target_radius) * 1000
             self.action = self.get_action()
-            if self.id:
-                self.household_count = self.create_or_delete_households(self)
-            if ((self.household_count == 0 and self.status in  ['residential_habitable'])):
-                raise ValidationError('Invalid number of households for plot that is {0}. Got {1}. Perhaps catch this in the form clean method.'.format(self.status, self.household_count))
+        try:
+            update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier']
+            update_fields = kwargs.get('update_fields') + update_fields
+            kwargs.update({'update_fields': update_fields})
+        except TypeError:
+            pass
         super(Plot, self).save(*args, **kwargs)
 
     @property
     def identifier_segment(self):
         return self.plot_identifier[:-3]
 
-    def create_household(self, instance):
-        Household = models.get_model('bcpp_household', 'Household')
-        Household.objects.create(**{
-           'plot': instance,
-            'gps_target_lat': instance.gps_target_lat,
-            'gps_target_lon': instance.gps_target_lon,
-            'gps_lat': instance.gps_lat,
-            'gps_lon': instance.gps_lon,
-            'gps_degrees_e': instance.gps_degrees_e,
-            'gps_degrees_s': instance.gps_degrees_s,
-            'gps_minutes_e': instance.gps_minutes_e,
-            'gps_minutes_s': instance.gps_minutes_s,
-            })
+    def create_household(self, count, instance=None, using=None):
+        instance = instance or self
+        using = using or 'default'
+        if instance.pk:
+            for _ in range(0, count):
+                Household = models.get_model('bcpp_household', 'Household')
+                Household.objects.create(**{
+                    'plot': instance,
+                    'gps_target_lat': instance.gps_target_lat,
+                    'gps_target_lon': instance.gps_target_lon,
+                    'gps_lat': instance.gps_lat,
+                    'gps_lon': instance.gps_lon,
+                    'gps_degrees_e': instance.gps_degrees_e,
+                    'gps_degrees_s': instance.gps_degrees_s,
+                    'gps_minutes_e': instance.gps_minutes_e,
+                    'gps_minutes_s': instance.gps_minutes_s})
 
-    def allow_enrollement(self, plot, exception_cls=None):
+    def allow_enrollment(self, plot, using, exception_cls=None):
         """Stops enrollments."""
-        allow_edit = False
-        first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+        plot = plot or self
+        using = using or 'default'
+        exception_cls = exception_cls or ValidationError
+        first_survey_start_datetime = Survey.objects.all().aggregate(
+            datetime_start=Min('datetime_start')).get('datetime_start')
         survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
-        household_structures = None
-        if get_model('bcpp_household', 'Plot').objects.get(plot_identifier=self.plot_identifier).household_count >= 1:
-            household_structures = get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey)
-            for household_structure in household_structures:
-                if household_structure.enrolled:
-                    allow_edit = True
-        if not (len(set(allow_edit)) == 1):
-            raise exception_cls("modifying plots is not allowed anymore where there is no at least one enrolled individual")
+        if not get_model('bcpp_household', 'HouseholdStructure').objects.using(using).get(survey=survey).enrolled:
+            raise exception_cls('BHS enrollment for {0} ended on {1}. This plot may not be modified. '
+                                'See settings.BHS_END_DATE'.format(self.community, settings.BHS_FULL_ENROLLMENT_DATE))
 
-    def delete_unused_households(self, instance):
-        """Deletes households and HouseholdStructure if member_count==0 and no log entry."""
+    def safe_delete_households(self, count, instance=None, using=None):
+        """Deletes households and HouseholdStructure if member_count==0 and no log entry.
+
+        If there is a household log entry, this DOES NOT delete the household."""
+        instance = instance or self
+        using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
-        for household_structure in HouseholdStructure.objects.filter(household__plot__pk=instance.pk, eligible_members=0).order_by('-created'):
-            if Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
+        for _ in range(count, 0):
+            for household in Household.objects.using(using).filter(plot=instance):
                 try:
-                    if not HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).exists():
-                        HouseholdLog.objects.filter(household_structure=household_structure).delete()
-                        household_pk = unicode(household_structure.household.pk)
-                        household_structure.delete()
-                        household = Household.objects.get(pk=household_pk)
-                        identifier_history = HouseholdIdentifierHistory.objects.filter(identifier=household.household_identifier)
-                        for ind in identifier_history:
-                            ind.delete()
+                    with transaction.atomic():
+                        try:
+                            HouseholdLog.objects.using(using).get(household_structure__household=household).delete()
+                        except HouseholdLog.DoesNotExist:
+                            pass
+                        try:
+                            HouseholdStructure.objects.using(using).get(household=household).delete()
+                        except HouseholdStructure.DoesNotExist:
+                            pass
                         household.delete()
+                        break
+                except ValidationError:
+                    pass
                 except IntegrityError:
                     pass
 
-    def create_or_delete_households(self, instance):
+    def create_or_delete_households(self, instance=None, using=None):
         """Creates or deletes households to try to equal the number of households reported on the plot instance.
 
-        This gets called by a signal on add and on the save method on change.
+        This gets called by a household post_save signal and on the plot save method on change.
 
             * If number is greater than actual household instances, households are created.
             * If number is less than actual household instances, households are deleted as long as
               there are no household members and the household log does not have entries."""
+        instance = instance or self
+        using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
         # check that tuple has not changed and has "residential_habitable"
         if instance.status:
             if instance.status not in [item[0] for item in PLOT_STATUS]:
-                raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status, PLOT_STATUS))
-        existing_household_count = Household.objects.filter(plot__pk=instance.pk).count()
-        if instance.status in  ['residential_habitable'] and not (existing_household_count == instance.household_count):
-            if Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
-                while Household.objects.filter(plot__pk=instance.pk).count() < instance.household_count:
-                    instance.create_household(instance)
-            elif Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
-                while Household.objects.filter(plot__pk=instance.pk).count() > instance.household_count:
-                    instance.delete_unused_households(instance)
-            else:
-                pass
-        return Household.objects.filter(plot__pk=instance.pk).count()
+                raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status,
+                                                                                              PLOT_STATUS))
+        existing_household_count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
+        if instance.status in ['residential_habitable']:
+            instance.create_household(instance.household_count - existing_household_count, using=using)
+            instance.safe_delete_households(instance.household_count - existing_household_count, using=using)
+        return Household.objects.using(using).filter(plot__pk=instance.pk).count()
 
     def get_action(self):
-        retval = 'unconfirmed'
+        retval = UNCONFIRMED
         if self.gps_lon and self.gps_lat:
-            retval = 'confirmed'
+            retval = CONFIRMED
         return retval
 
     def gps(self):
-        return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
+        return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s,
+                                          self.gps_degrees_e, self.gps_minutes_e)
 
     @property
     def producer_dispatched_to(self):
@@ -404,7 +414,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return False
 
     def is_plot(self):
-        return True
+        return True  # really?
 
     def is_dispatch_container_model(self):
         return True
@@ -417,11 +427,6 @@ class Plot(BaseDispatchSyncUuidModel):
         if dispatch_container.objects.filter(container_identifier=self.plot_identifier, is_dispatched=True).exists():
             return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
         return None
-
-    def check_for_survey_on_pre_save(self, **kwargs):
-        Survey = models.get_model('bcpp_survey', 'Survey')
-        if Survey.objects.all().count() == 0:
-            raise ImproperlyConfigured('Model Survey is empty. Please define at least one survey before creating a Plot.')
 
     def community_number(self):
         """Sets the community number to use for the plot identifier."""
@@ -445,36 +450,44 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def log_form_label(self):
-        from .plot_log import PlotLog, PlotLogEntry
-        report_datetime = []
-        if PlotLog.objects.filter(plot=self).exists():
-            plot_log_instance = PlotLog.objects.get(plot=self)
-            log_entry_instances = PlotLogEntry.objects.filter(plot_log=plot_log_instance).order_by('report_datetime')
-            entry_count = log_entry_instances.count()
-            for log_entry in log_entry_instances:
-                if log_entry.log_status:
-                    report_datetime.append((log_entry.log_status.lower()+'-'+log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
-                else:
-                    report_datetime.append((log_entry.report_datetime.strftime('%Y-%m-%d'),log_entry.id))
-            if self.access_attempts < 3 and self.action != 'confirmed':
-                report_datetime.append(('add new entry', 'add new entry'))
-        if not report_datetime and self.action != 'confirmed':
-            report_datetime.append(('add new entry', 'add new entry'))
-        return report_datetime
-    #log_form_label.allow_tags = True
+        # TODO: where is this used?
+        using = 'default'
+        PlotLog = models.get_model('bcpp_household', 'PlotLog')
+        PlotLogEntry = models.get_model('bcpp_household', 'PlotLogEntry')
+        form_label = []
+        try:
+            plot_log = PlotLog.objects.using(using).get(plot=self)
+            for plot_log_entry in PlotLogEntry.objects.using(using).filter(plot_log=plot_log).order_by('report_datetime'):
+                try:
+                    form_label.append((plot_log_entry.log_status.lower() + '-' + plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
+                except AttributeError:  # log_status is None ??
+                    form_label.append((plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
+        except PlotLog.DoesNotExist:
+            pass
+        if self.access_attempts < 3 and self.action != CONFIRMED:
+            form_label.append(('add new entry', 'add new entry'))
+        if not form_label and self.action != CONFIRMED:
+            form_label.append(('add new entry', 'add new entry'))
+        return form_label
 
     @property
     def log_entry_form_urls(self):
+        # TODO: where is this used?
+        # TODO: this does not belong on the plot model!
         """Returns a url or urls to the plotlogentry(s) if an instance(s) exists."""
-        from .plot_log import PlotLogEntry
+        using = 'default'
+        PlotLog = models.get_model('bcpp_household', 'PlotLog')
+        PlotLogEntry = models.get_model('bcpp_household', 'PlotLogEntry')
         entry_urls = {}
-        plot_log = self.plot_log
-        for entry in PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime'):
-            entry_urls[entry.pk] = self._get_form_url('plotlogentry', entry.pk)
-        add_url_2 = self._get_form_url('plotlogentry', model_pk=None, add_url=True)
-        entry_urls['add new entry'] = add_url_2
+        try:
+            plot_log = PlotLog.objects.using(using).get(plot=self)
+            for entry in PlotLogEntry.objects.using(using).filter(plot_log=plot_log).order_by('report_datetime'):
+                entry_urls[entry.pk] = self._get_form_url('plotlogentry', entry.pk)
+            add_url_2 = self._get_form_url('plotlogentry', model_pk=None, add_url=True)
+            entry_urls['add new entry'] = add_url_2
+        except PlotLog.DoesNotExist:
+            pass
         return entry_urls
-    #log_entry_form_urls.allow_tags = True
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         url = ''
@@ -497,6 +510,41 @@ class Plot(BaseDispatchSyncUuidModel):
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
         return url
+
+    @property
+    def plot_inaccessible(self):
+        from .plot_log import PlotLogEntry
+        plot_log = self.plot_log
+        try:
+            plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
+            log_statuses = []
+            for log_entry in plot_log_entries:
+                log_statuses.append(log_entry.log_status)
+            if len(set(log_statuses)) == 1 and log_statuses[0] == 'INACCESSIBLE' and len(plot_log_entries) == 3:
+                plot_inaccessible = True
+        except:
+            plot_inaccessible = False
+        return plot_inaccessible
+
+    @property
+    def replaceable(self):
+        replacement_helper = ReplacementHelper()
+        replacement_helper.plot = self
+        return replacement_helper.replaceable
+
+    @property
+    def increase_plot_radius(self):
+        from .plot_log import PlotLogEntry
+        plot_log = self.plot_log
+        increase_radius = False
+        try:
+            plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
+            reason = plot_log_entries[2].reason
+            if reason in ['dogs', 'locked_gate'] and self.plot_inaccessible:
+                increase_radius = True
+        except:
+            increase_radius = False
+        return increase_radius
 
     @property
     def plot_log(self):

@@ -1,8 +1,11 @@
 from django.contrib import admin
-from edc.base.admin.admin import BaseModelAdmin
+
+from edc.base.modeladmin.admin import BaseModelAdmin
+
 from apps.bcpp_household.models import HouseholdStructure
-from ..models import HouseholdInfo, HouseholdMember
+
 from ..forms import HouseholdInfoForm
+from ..models import HouseholdInfo, HouseholdMember
 
 
 class HouseholdInfoAdmin(BaseModelAdmin):
@@ -42,10 +45,7 @@ class HouseholdInfoAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            household_members = HouseholdMember.objects.none()
-            if HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh = True).exists():
-                household_members = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh = True)
-            kwargs["queryset"] = household_members
+            kwargs["queryset"] = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=True)
         if db_field.name == "household_structure":
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
         return super(HouseholdInfoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)

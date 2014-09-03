@@ -17,6 +17,7 @@
 <th>Log Report</th>
 <th>Map</th>
 <th>Community</th>
+<th>Increase Radius</th>
 <th>Modified</th>           
 <th>Modified By</th>
                                  
@@ -82,6 +83,9 @@
         </td>
         <td>
         	<ol>
+        		{% if plot.action == CONFIRMED %}
+        			not required
+        		{% else %}
 	        	{% if plot.plot_log %}
 	        		{% for logs in plot.log_form_label %}
 					    <A name="log_entry-{{plot.pk}}" href="{{ plot.log_entry_form_urls|index_dictionary:logs.1 }}?plot_log={{plot.plot_log.pk}}&next=/bcpp/section/plot/"><li>{{ logs.0 }}</li></A>
@@ -89,10 +93,11 @@
 	        	{% else %}
 	                <A name="log_entry-{{plot.pk}}" href="{% url "create_plot_log_url" %}?plot={{ plot.pk }}"><li>add new entry</li></A>
 	            {% endif %}
-	            {% if plot.access_attempts == 3 %}
+	            {% if plot.access_attempts >= 3 %}
 	   				reached maximum visit attempts
-	            {% elif plot.action == 'confirmed' %}
+	            {% elif plot.action == CONFIRMED %}
 	   				not required
+	            {% endif %}
 	            {% endif %}
             </ol>
         </td>
@@ -105,8 +110,16 @@
 	      {% else %}
 	           <span style="background-color:red;color:white;"> missing lat/lon!</span>
 	      {% endif %} 
-        </td>       
+        </td>
       	<td>{{ plot.community|encrypted}}</td>
+      	<td>
+      	{{ section_url }}
+      	{% if increase_plot_radius %}
+      	    <A href="{% url increase_plot_radius|get_meta|admin_urlname:'change' increase_plot_radius.pk %}?next=section_url&section_name=plot">{{ plot }}</A>
+      	{% else %}
+      		--
+      	{% endif %}
+      	</td>
         <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
         <td>{{ plot.user_modified }}</td>
       </tr>

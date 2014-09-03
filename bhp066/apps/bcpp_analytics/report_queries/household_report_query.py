@@ -1,5 +1,6 @@
+from apps.bcpp_household.constants import CONFIRMED
 from apps.bcpp_household.models.household import Household
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_PARTICIPATION as member_actions
+
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery
 
@@ -32,7 +33,7 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return data
 
     def targeted_qs(self):
-        return Household.objects.filter(plot__action='confirmed', created__gte=self.start_date, created__lte=self.end_date,
+        return Household.objects.filter(plot__action=CONFIRMED, created__gte=self.start_date, created__lte=self.end_date,
                                         plot__status__istartswith='occupied', community=self.community)
 
     def visited_qs(self):
@@ -45,8 +46,6 @@ class HouseholdReportQuery(TwoColumnReportQuery):
         return self.targeted_qs().filter(householdstructure__householdmember__eligible_member=True)
 
     def all_refused_qs(self):
-        #actions = [item[0] for item in member_actions if item[0] != 'REFUSED']
-        #return self.visited_qs().exclude(householdstructure__householdmember__member_status_full__in=actions)
         return self.visited_qs().filter(householdstructure__householdmember__refused=True)
 
     def age_elegible_qs(self):

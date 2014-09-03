@@ -4,13 +4,15 @@ from datetime import date, datetime
 
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-
 from ...models import SubjectRefusal
+
+from .household_member_factory import HouseholdMemberFactory
 
 
 class SubjectRefusalFactory(BaseUuidModelFactory):
-    FACTORY_FOR = SubjectRefusal
+
+    class Meta:
+        model = SubjectRefusal
 
     household_member = factory.SubFactory(HouseholdMemberFactory)
     report_datetime = datetime.today()
