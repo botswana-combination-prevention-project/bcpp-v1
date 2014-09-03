@@ -100,12 +100,10 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_code_list = []
         if not self.hiv_result:
             if self.gender == 'M':
-                if self.circumcised is False:
-                    self._referral_code_list.append('SMC-UNK')  # refer if status unknown
-                elif self.circumcised is None:
-                    self._referral_code_list.append('SMC?UNK')  # refer if status unknown
-                elif self.circumcised is True:
+                if self.circumcised:
                     self._referral_code_list.append('TST-HIV')  # refer if status unknown
+                else:
+                    self._referral_code_list.append('SMC-UNK')  # refer if status unknown
             elif self.pregnant:
                 self._referral_code_list.append('UNK?-PR')
             else:
