@@ -52,6 +52,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
 
         If timepointstatus instance exists with status=CLOSED, the check is skipped."""
         model_classes = self.models.values()
+        panel = None
         first_model_cls = None
         try:
             TimePointStatus.objects.get(appointment=self.instance.subject_visit.appointment, status=CLOSED)
@@ -66,16 +67,17 @@ class SubjectReferralHelper(SubjectStatusHelper):
                         first_model_cls = model_cls
                         break
                 except ScheduledEntryMetaData.DoesNotExist:
-                    try:
-                        requisition_meta_data = RequisitionMetaData.objects.get(
-                            appointment=self.instance.subject_visit.appointment,
-                            lab_entry__app_label=model_cls._meta.app_label,
-                            lab_entry__model_name=model_cls._meta.object_name)
-                        if requisition_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
-                            first_model_cls = model_cls
-                            break
-                    except RequisitionMetaData.DoesNotExist:
-                        pass
+                    pass
+#                     try:
+#                         requisition_meta_data = RequisitionMetaData.objects.get(
+#                             appointment=self.instance.subject_visit.appointment,
+#                             lab_entry__app_label=model_cls._meta.app_label,
+#                             lab_entry__model_name=model_cls._meta.object_name,)
+#                         if requisition_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
+#                             first_model_cls = model_cls
+#                             break
+#                     except RequisitionMetaData.DoesNotExist:
+#                         pass
                 except AttributeError:  # NoneType?
                     pass
         return first_model_cls
