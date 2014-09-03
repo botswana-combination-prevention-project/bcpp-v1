@@ -104,17 +104,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         self.community = self.household_member.household_structure.household.plot.community
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
-#     def save_member_if_not_verifying_consent(self, household_member, consent_verification=None):
-#         # If we are verifying a consent on site-server, then you get an already dispatched error.
-#         # We put a bypass in consent mode which is 'bypass_for_edit_dispatched_as_item()'
-#         # We cannot put the same bypass in Household member because its manipulated from many different places and this will be risky
-#         # Instead we dont save a household_member when verifying a consent. This is ubsolutely fine, only one value in consent is modified
-#         # and nothing else depends on this value.
-#         if not consent_verification:
-#             household_member.save()
-#             return True
-#         return False
-
     def bypass_for_edit_dispatched_as_item(self):
         return True
 
