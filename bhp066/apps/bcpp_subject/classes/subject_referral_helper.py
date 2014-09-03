@@ -68,16 +68,6 @@ class SubjectReferralHelper(SubjectStatusHelper):
                         break
                 except ScheduledEntryMetaData.DoesNotExist:
                     pass
-#                     try:
-#                         requisition_meta_data = RequisitionMetaData.objects.get(
-#                             appointment=self.instance.subject_visit.appointment,
-#                             lab_entry__app_label=model_cls._meta.app_label,
-#                             lab_entry__model_name=model_cls._meta.object_name,)
-#                         if requisition_meta_data.entry_status not in [KEYED, NOT_REQUIRED]:
-#                             first_model_cls = model_cls
-#                             break
-#                     except RequisitionMetaData.DoesNotExist:
-#                         pass
                 except AttributeError:  # NoneType?
                     pass
         return first_model_cls
@@ -114,6 +104,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
                     self._referral_code_list.append('SMC-UNK')  # refer if status unknown
                 elif self.circumcised is None:
                     self._referral_code_list.append('SMC?UNK')  # refer if status unknown
+                elif self.circumcised is True:
+                    self._referral_code_list.append('TST-HIV')  # refer if status unknown
             elif self.pregnant:
                 self._referral_code_list.append('UNK?-PR')
             else:
