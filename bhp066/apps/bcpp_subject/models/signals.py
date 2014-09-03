@@ -1,5 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from edc.core.bhp_data_manager.models import TimePointStatus
 from edc.constants import CLOSED
@@ -72,10 +74,10 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
     if not raw:
         try:
             if sender in SubjectReferralHelper.models.values():
-                subject_referral = SubjectReferral.objects.using(using).get(subject_visit=instance.visit)
+                subject_referral = SubjectReferral.objects.using(using).get(subject_visit=instance.subject_visit)
+                # calling save will run it through export_history manager. This may be noisy
+                # but it ensures all modifications get exported
                 subject_referral.save(using=using)
-        except AttributeError:
-            pass
         except SubjectReferral.DoesNotExist:
             pass
 
@@ -92,9 +94,14 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
                     SubjectReferral.objects.using(using).get(
                         subject_visit=subject_visit)
                 except SubjectReferral.DoesNotExist:
-                    # create a new document and flag as partial
-                    SubjectReferral.objects.using(using).create(
-                        subject_visit=subject_visit,
-                        subject_referred='No',
-                        comment='(Partial participation. Auto generated when time point closed.)'
-                        )
+                    # create a new instance and flag as partial
+                    try:
+                        SubjectReferral.objects.using(using).create(
+                            subject_visit=subject_visit,
+                            subject_referred='No',
+                            comment='(Partial participation. Auto generated when time point closed.)'
+                            )
+                    except ValidationError:
+                        # TODO: TimePointStatus form should catch this error instead
+                        # of hiding it like this
+                        pass
