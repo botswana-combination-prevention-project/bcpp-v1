@@ -26,7 +26,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
     See also edc.subject.consent.actions.flag_as_verified_against_paper."""
     if not raw:
         if isinstance(instance, (SubjectConsent, )):
-            if kwargs.get('updated_fields') != ['is_verified', 'is_verified_datetime']:
+            if kwargs.get('update_fields') != ['is_verified', 'is_verified_datetime']:
                 instance.post_save_update_registered_subject(using)
                 instance.household_member.is_consented = True
                 instance.household_member.save(using=using, update_fields=['is_consented'])
