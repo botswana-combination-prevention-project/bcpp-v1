@@ -16,8 +16,10 @@ class HouseholdMemberHelper(object):
         elif ((self.household_member.undecided or self.household_member.absent or self.household_member.refused)
               and selected_member_status == BHS_SCREEN):
             member_status = BHS_SCREEN
-        elif self.household_member.absent or selected_member_status == ABSENT:
+        elif (self.household_member.absent or selected_member_status == ABSENT) and self.household_member.eligible_member:
             member_status = ABSENT
+        elif (self.household_member.absent or selected_member_status == ABSENT) and not self.household_member.eligible_member:
+            member_status = NOT_ELIGIBLE
         elif self.household_member.undecided or selected_member_status == UNDECIDED:
             member_status = UNDECIDED
         elif ((self.household_member.refused or selected_member_status == REFUSED) and not self.household_member.eligible_htc and 
