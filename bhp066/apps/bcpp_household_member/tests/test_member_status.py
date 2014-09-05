@@ -257,6 +257,25 @@ class TestMemberStatus(TestCase):
         self.assertEqual(household_member.member_status, ABSENT)
         self.assertEquals(SubjectAbsentee.objects.filter(household_member=household_member).count(), 1)
 
+    def test_absent_for_underage_household_member(self):
+        """Asserts that an eligible member not present today is automatically creates a SubjectAbsentee."""
+        self.startup()
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=15,
+            present_today='No',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, NOT_ELIGIBLE)
+        household_member.age_in_years = 20
+        household_member.save()
+        self.assertEqual(household_member.member_status, ABSENT)
+        household_member.inability_to_participate = 'Deaf/Mute'
+        household_member.save()
+        self.assertEqual(household_member.member_status, NOT_ELIGIBLE)
+
     def test_change_household_member1(self):
         """Asserts that an eligible member present today but then set to no present today is  BHS_SCREEN"""
         self.startup()
