@@ -23,6 +23,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         self.list_filter = [
             'gender',
             'is_verified',
+            'is_verified_datetime',
             'language',
             'may_store_samples',
             'is_literate',
