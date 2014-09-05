@@ -32,10 +32,10 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_code_list = []
         self._subject_referral = {}
         self.instance = subject_referral
+        # this dict is also used in the signal
         self.models.update({
-            'subject_locator': SubjectLocator,  # not required for anything here, but needed for export with the referral
+            'subject_locator': SubjectLocator,
             'circumcision': Circumcision,
-            'enrollment_checklist': EnrollmentChecklist,
             'reproductive_health': ReproductiveHealth,
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
@@ -186,8 +186,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def citizen(self):
         citizen = None
         try:
-            citizen = self.enrollment_checklist_instance.citizen == ('Yes' and
-                                                                     self.subject_consent_instance.identity is not None)
+            citizen = self.enrollment_checklist_instance.citizen == (
+                'Yes' and self.subject_consent_instance.identity is not None)
         except AttributeError:
             citizen = None
         return citizen
@@ -261,7 +261,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
     @property
     def enrollment_checklist_instance(self):
         if not self._enrollment_checklist_instance:
-            self._enrollment_checklist_instance = self.models.get('enrollment_checklist').objects.get(
+            self._enrollment_checklist_instance = EnrollmentChecklist.objects.get(
                 household_member=self.subject_visit.household_member)
         return self._enrollment_checklist_instance
 
