@@ -15,7 +15,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
-from apps.bcpp_household_member.models import EnrollmentChecklist, HouseholdMember
+from apps.bcpp_household_member.models import EnrollmentChecklist
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
