@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 
+from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.core.bhp_data_manager.models import TimePointStatus
 from edc.constants import CLOSED
 
@@ -28,7 +29,9 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
     See also edc.subject.consent.actions.flag_as_verified_against_paper."""
     if not raw:
         if isinstance(instance, (SubjectConsent, )):
-            if kwargs.get('update_fields') != ['is_verified', 'is_verified_datetime']:
+            if sorted(kwargs.get('update_fields')) != sorted((['is_verified', 'is_verified_datetime'] +
+                                                              BASE_MODEL_UPDATE_FIELDS +
+                                                              BASE_UUID_MODEL_UPDATE_FIELDS)):
                 instance.post_save_update_registered_subject(using)
                 instance.household_member.is_consented = True
                 instance.household_member.save(using=using, update_fields=['is_consented'])
