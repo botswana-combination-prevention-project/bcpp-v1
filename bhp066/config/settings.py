@@ -7,12 +7,13 @@ from unipath import Path
 
 from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 
+from .bcpp_days import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
+                        SMC_ECC_START_DATE, SMC_START_DATE)
 from .databases import TESTING_SQLITE
 from .databases import TESTING_MYSQL
 from .databases import PRODUCTION_MYSQL
-from .bcpp_days import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
-                        SMC_ECC_START_DATE, SMC_START_DATE)
-
+from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
+                            EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 # from logger import LOGGING
 # TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -77,7 +78,7 @@ CACHES = {
 }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -195,11 +196,11 @@ SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # django email settings
-EMAIL_HOST = 'mail.bhp.org.bw'
-EMAIL_PORT = '25'
-EMAIL_HOST_USER = 'edcdev'
-EMAIL_HOST_PASSWORD = 'cc3721b'
-EMAIL_USE_TLS = True
+EMAIL_HOST = EMAIL_HOST
+EMAIL_PORT = EMAIL_PORT
+EMAIL_HOST_USER = EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = EMAIL_USE_TLS
 # EMAIL_AFTER_CONSUME = False
 
 # django auth
