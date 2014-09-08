@@ -87,8 +87,8 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
+#     def bypass_for_edit_dispatched_as_item(self):
+#         return True
 
 #     @property
 #     def allow_enrollment(self):
@@ -102,7 +102,8 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
 
     def __unicode__(self):
-        return unicode(self.household_log) + '(' + unicode(self.report_datetime) + ')'
+        household_log = self.household_log or None
+        return unicode(household_log) + '(' + unicode(self.report_datetime) + ')'
 
     class Meta:
         app_label = 'bcpp_household'
