@@ -82,8 +82,8 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
     def natural_key(self):
         return (self.report_datetime, ) + self.plot_log.natural_key()
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
+#     def bypass_for_edit_dispatched_as_item(self):
+#         return True
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot_log__plot__plot_identifier')
