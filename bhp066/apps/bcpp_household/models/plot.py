@@ -422,11 +422,14 @@ class Plot(BaseDispatchSyncUuidModel):
     def dispatched_as_container_identifier_attr(self):
         return 'plot_identifier'
 
+#     def dispatch_container_lookup(self):
+#         dispatch_container = models.get_model('dispatch', 'DispatchContainerRegister')
+#         if dispatch_container.objects.filter(container_identifier=self.plot_identifier, is_dispatched=True).exists():
+#             return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
+#         return None
+
     def dispatch_container_lookup(self):
-        dispatch_container = models.get_model('dispatch', 'DispatchContainerRegister')
-        if dispatch_container.objects.filter(container_identifier=self.plot_identifier, is_dispatched=True).exists():
-            return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
-        return None
+        return (self.__class__, 'plot_identifier')
 
     def community_number(self):
         """Sets the community number to use for the plot identifier."""
@@ -445,8 +448,8 @@ class Plot(BaseDispatchSyncUuidModel):
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
+#     def bypass_for_edit_dispatched_as_item(self):
+#         return True
 
     @property
     def log_form_label(self):
