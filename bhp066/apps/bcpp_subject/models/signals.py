@@ -87,6 +87,13 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
                 subject_referral.save(using=using)
         except SubjectReferral.DoesNotExist:
             pass
+        except AttributeError as attribute_error:
+            if 'has no attribute \'subject_visit\'' in str(attribute_error):
+                # subject_referral = query for the referral using enrollment checklist, subject consent, etc
+                # subject_referral.save(using=using)
+                pass
+            else:
+                raise
 
 
 @receiver(post_save, weak=False, dispatch_uid='time_point_status_on_post_save')
