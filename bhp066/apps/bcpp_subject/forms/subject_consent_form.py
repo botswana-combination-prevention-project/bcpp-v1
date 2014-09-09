@@ -72,8 +72,11 @@ class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
         cleaned_data = super(SubjectConsentForm, self).clean()
-        self.instance.matches_enrollment_checklist(SubjectConsent(**self.cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
-        self.instance.matches_hic_enrollment(SubjectConsent(**self.cleaned_data), cleaned_data.get('household_member'), forms.ValidationError)
+        options = cleaned_data
+        if 'consent_datetime' not in cleaned_data:
+            options.update({'consent_datetime': self.instance.consent_datetime})
+        self.instance.matches_enrollment_checklist(SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
+        self.instance.matches_hic_enrollment(SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
         return cleaned_data
 
     class Meta:
