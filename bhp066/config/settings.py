@@ -263,14 +263,16 @@ else:
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
 #  edc.device.device
-DEVICE_ID = '99'
+DEVICE_ID = 99
+SERVER_DEVICE_ID_LIST = [91, 92, 93, 94, 95, 96, 97, 99]
+MIDDLEMAN_DEVICE_ID_LIST = [98]
 if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLEMAN: Botswana Combination Prevention Project'
 elif str(DEVICE_ID) == '99':
     PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
     COMMUNITY = 'BHP'
-elif str(DEVICE_ID) in range(90, 97):
+elif str(DEVICE_ID) in map(str, range(91, 97)):
     PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
 else:
