@@ -343,7 +343,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def bypass_household_log(self):
-        return settings.BYPASS_HOUSEHOLD_LOG
+        try:
+            return settings.BYPASS_HOUSEHOLD_LOG
+        except AttributeError:
+            return False
 
     @property
     def enrollment_options(self):
