@@ -166,7 +166,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     @property
     def minor(self):
-        age_at_consent = relativedelta(self.consent_datetime.date(), self.dob).years
+        age_at_consent = relativedelta(date(self.consent_datetime.year,
+                                            self.consent_datetime.month,
+                                            self.consent_datetime.day),
+                                       self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
 
     @property
@@ -190,6 +193,10 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
+
+    def dispatch_container_lookup(self, using=None):
+        return (models.get_model('bcpp_household', 'Plot'),
+                'household_member__household_structure__household__plot__plot_identifier')
 
     class Meta:
         app_label = 'bcpp_subject'
