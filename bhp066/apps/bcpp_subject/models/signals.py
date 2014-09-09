@@ -17,7 +17,7 @@ from ..models import SubjectReferral, SubjectVisit
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
-def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
+def subject_consent_on_post_save(sender, instance, raw, created, using, update_fields, **kwargs):
     """Updates household_structure and household_members to reflect enrollment and
     changed member status.
 
@@ -29,10 +29,14 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
     See also edc.subject.consent.actions.flag_as_verified_against_paper."""
     if not raw:
         if isinstance(instance, (SubjectConsent, )):
-            if sorted(kwargs.get('update_fields')) != sorted((['is_verified', 'is_verified_datetime'] +
-                                                              BASE_MODEL_UPDATE_FIELDS +
-                                                              BASE_UUID_MODEL_UPDATE_FIELDS)):
-                instance.post_save_update_registered_subject(using)
+            try:
+                update_fields = sorted(update_fields)
+            except TypeError:
+                pass
+            if update_fields != sorted((['is_verified', 'is_verified_datetime'] +
+                                        BASE_MODEL_UPDATE_FIELDS +
+                                        BASE_UUID_MODEL_UPDATE_FIELDS)):
+                # instance.post_save_update_registered_subject(using) (called in base)
                 instance.household_member.is_consented = True
                 instance.household_member.save(using=using, update_fields=['is_consented'])
                 # update household_structure if enrolled
