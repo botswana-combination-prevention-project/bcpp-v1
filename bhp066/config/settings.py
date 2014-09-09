@@ -5,13 +5,11 @@ import socket
 
 from unipath import Path
 
-from installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
+from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 
 from .bcpp_days import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
                         SMC_ECC_START_DATE, SMC_START_DATE)
-from .databases import TESTING_SQLITE
-from .databases import TESTING_MYSQL
-from .databases import PRODUCTION_MYSQL
+from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 # from logger import LOGGING
@@ -270,6 +268,11 @@ if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLEMAN: Botswana Combination Prevention Project'
 elif str(DEVICE_ID) == '99':
     PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
+    BYPASS_HOUSEHOLD_LOG = True
+    COMMUNITY = 'BHP'
+elif str(DEVICE_ID) in range(90, 97):
+    PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
+    BYPASS_HOUSEHOLD_LOG = True
 else:
     PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
@@ -279,8 +282,6 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
 
-# bypass household log to get to the subject dashboard.
-BYPASS_HOUSEHOLD_LOG = True
 
 BHS_START_DATE = BHS_START_DATE
 BHS_END_DATE = BHS_END_DATE
