@@ -1,5 +1,5 @@
 from django.db.models import signals
-from edc.subject.subject.models import base_subject_get_or_create_registered_subject_on_post_save
+# from edc.subject.subject.models import base_subject_get_or_create_registered_subject_on_post_save
 from apps.bcpp_household_member.models import (base_household_member_consent_on_post_save, enrollment_checklist_on_post_delete,
                                                household_member_on_post_save, household_member_on_pre_save, subject_xxx_on_post_save,
                                                enrollment_checklist_on_post_save, subject_refusal_on_post_delete, subject_absentee_entry_on_post_save,
@@ -25,7 +25,7 @@ class BcppSignalManager(object):
         signals.post_save.disconnect(base_household_member_consent_on_post_save, weak=False, dispatch_uid="base_household_member_consent_on_post_save")
         signals.post_save.disconnect(plot_on_post_save, weak=False, dispatch_uid="plot_on_post_save")
         signals.post_save.disconnect(household_refusal_on_post_save, weak=False, dispatch_uid="household_refusal_on_post_save")
-        signals.post_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
+#        signals.post_save.disconnect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         signals.post_save.disconnect(household_on_post_save, weak=False, dispatch_uid="household_on_post_save")
         signals.post_save.disconnect(household_structure_on_post_save, weak=False, dispatch_uid="household_structure_on_post_save")
         signals.post_save.disconnect(plot_log_entry_on_post_save, weak=False, dispatch_uid="plot_log_entry_on_post_save")
@@ -50,7 +50,7 @@ class BcppSignalManager(object):
         signals.post_save.connect(base_household_member_consent_on_post_save, weak=False, dispatch_uid="base_household_member_consent_on_post_save")
         signals.post_save.connect(plot_on_post_save, weak=False, dispatch_uid="plot_on_post_save")
         signals.post_save.connect(household_refusal_on_post_save, weak=False, dispatch_uid="household_refusal_on_post_save")
-        signals.post_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
+#        signals.post_save.connect(base_subject_get_or_create_registered_subject_on_post_save, weak=False, dispatch_uid="base_subject_get_or_create_registered_subject_on_post_save")
         signals.post_save.connect(household_on_post_save, weak=False, dispatch_uid="household_on_post_save")
         signals.post_save.connect(household_structure_on_post_save, weak=False, dispatch_uid="household_structure_on_post_save")
         signals.post_save.connect(plot_log_entry_on_post_save, weak=False, dispatch_uid="plot_log_entry_on_post_save")
