@@ -180,8 +180,8 @@ class Household(BaseDispatchSyncUuidModel):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
 
-    def is_plot(self):
-        return False
+#     def is_plot(self):
+#         return False
 
     def structure(self):
         return """<a href="{url}" />structure</a>"""  # .format(url=url)
