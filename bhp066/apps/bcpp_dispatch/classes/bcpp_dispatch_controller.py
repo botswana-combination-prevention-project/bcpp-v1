@@ -10,7 +10,7 @@ from edc.device.dispatch.exceptions import DispatchError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from apps.bcpp_survey.models import Survey
-from .bcpp_signal_manager import BcppSignalManager
+# from .bcpp_signal_manager import BcppSignalManager
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class NullHandler(logging.Handler):
 nullhandler = logger.addHandler(NullHandler())
 
 
-class BcppDispatchController(DispatchController, BcppSignalManager):
+class BcppDispatchController(DispatchController):
 
     def __init__(self, using_source, using_destination, dispatch_container_instance, **kwargs):
         dispatch_container_app_label = 'bcpp_household'
@@ -52,13 +52,13 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
     def get_base_models_for_default_serialization(self):
         return [Survey]
 
-    def disconnect_signals(self):
-        """Disconnects signals before saving the serialized object in _to_json."""
-        self._disconnect_bcpp_signals()
-
-    def reconnect_signals(self):
-        """Reconnects signals after saving the serialized object in _to_json."""
-        self._reconnect_bcpp_signals()
+#     def disconnect_signals(self):
+#         """Disconnects signals before saving the serialized object in _to_json."""
+#         self._disconnect_bcpp_signals()
+# 
+#     def reconnect_signals(self):
+#         """Reconnects signals after saving the serialized object in _to_json."""
+#         self._reconnect_bcpp_signals()
 
     def pre_dispatch(self, plot, **kwargs):
         """Create household_structures before dispatch, if they don't exist."""
@@ -111,7 +111,7 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
                 self.dispatch_user_items_as_json(plot_log, plot, ['plot_id'])
                 if plot_log_entries:
                     self.dispatch_user_items_as_json(plot_log_entries, plot, ['plot_log_id, plot_id'])
-            #self.dispatch_user_container_as_json(plot)
+            # self.dispatch_user_container_as_json(plot)
             for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])
                 for survey in surveys:
@@ -142,7 +142,7 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
                                 )
                             for household_member in household_members:
                                 # dispatch consents
-                                #self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
+                                # self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
                                 # dispatch membership forms + consent
                                 self.dispatch_membership_forms(
                                     household_member.registered_subject,
@@ -170,7 +170,7 @@ class BcppDispatchController(DispatchController, BcppSignalManager):
                                     household_member.registered_subject,
                                     group_name='HIV',
                                     )
-                                #self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
+                                # self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
                                 self.dispatch_membership_form_inlines(
                                     'bcpp_household_member',
                                     household_member.registered_subject,
