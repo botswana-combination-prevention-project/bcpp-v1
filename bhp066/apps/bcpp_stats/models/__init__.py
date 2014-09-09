@@ -26,3 +26,5 @@ from .cdc_htc_enumeration import CdcHtcEnumeration
 from .cdc_htc_household import CdcHtcHousehold
 
 from .plot_25 import Plot25
+from .cdc_plot import CdcPlot
+from .cdc_referral_outcomes import CdcReferralOutcomes
