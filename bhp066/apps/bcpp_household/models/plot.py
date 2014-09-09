@@ -402,11 +402,10 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def producer_dispatched_to(self):
-        container = self.dispatch_container_lookup()
-        if container:
-            producer_name = container.producer.name
-            return producer_name.split('-')[0]
-        return 'Not Dispatched'
+        try:
+            return self.dispatched_container_item.producer.name
+        except AttributeError:
+            return 'Not Dispatched'
 
 #     def is_server(self):
 #         return Device().is_server
