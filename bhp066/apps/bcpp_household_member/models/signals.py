@@ -147,8 +147,8 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
             household_structure.save(using=using, update_fields=['enumerated', 'eligible_members'])
 
 
-@receiver(post_save, weak=False, dispatch_uid='subject_xxx_on_post_save')
-def subject_xxx_on_post_save(sender, instance, raw, created, using, **kwargs):
+@receiver(post_save, weak=False, dispatch_uid='subject_member_status_form_on_post_save')
+def subject_member_status_form_on_post_save(sender, instance, raw, created, using, **kwargs):
     """Deletes the Enrollment checklist if it exists and sets the
     household member booleans accordingly."""
     if not raw:
