@@ -15,7 +15,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
-from apps.bcpp_household_member.models import EnrollmentChecklist, HouseholdMember
+from apps.bcpp_household_member.models import EnrollmentChecklist
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
@@ -104,8 +104,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         self.community = self.household_member.household_structure.household.plot.community
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
+#     def bypass_for_edit_dispatched_as_item(self):
+#         return True
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -166,7 +166,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     @property
     def minor(self):
-        age_at_consent = relativedelta(self.consent_datetime.date(), self.dob).years
+        age_at_consent = relativedelta(date(self.consent_datetime.year,
+                                            self.consent_datetime.month,
+                                            self.consent_datetime.day),
+                                       self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
 
     @property
@@ -190,6 +193,10 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
+
+    def dispatch_container_lookup(self, using=None):
+        return (models.get_model('bcpp_household', 'Plot'),
+                'household_member__household_structure__household__plot__plot_identifier')
 
     class Meta:
         app_label = 'bcpp_subject'
