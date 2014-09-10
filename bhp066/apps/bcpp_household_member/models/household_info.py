@@ -131,15 +131,19 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         if not self.household_structure:
-            raise AttributeError("household_structure cannot be None for household_info with pk='\{0}\'".format(self.pk))
+            raise AttributeError("household_structure cannot be None for "
+                                 "household_info with pk='\{0}\'".format(self.pk))
         return self.household_structure.natural_key()
-    natural_key.dependencies = ['bcpp_household.household_structure', 'bcpp_household.household_member', 'registration.registered_subject']
+    natural_key.dependencies = ['bcpp_household.household_structure',
+                                'bcpp_household.household_member',
+                                'registration.registered_subject']
 
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_structure.household.household_identifier)
+        household = models.get_model('bcpp_household', 'Household').objects.get(
+            household_identifier=self.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.registered_subject = self.household_member.registered_subject
@@ -157,7 +161,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
         if not household_member:
             raise exception_cls('No Household Member selected.')
         if not household_member.eligible_hoh:
-            raise exception_cls('Household Member is not eligible Head Of Household. Fill head of household eligibility first.')
+            raise exception_cls('Household Member is not eligible Head Of Household. '
+                                'Fill head of household eligibility first.')
         return error_msg
 
     class Meta:
