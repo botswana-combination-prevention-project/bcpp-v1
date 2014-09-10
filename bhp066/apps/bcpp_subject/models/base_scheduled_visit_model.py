@@ -53,6 +53,7 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     @classmethod
     def visit_model(self):
+        """Used by search in audit_trail"""
         return SubjectVisit
 
     def is_dispatched_item_within_container(self, using=None):
