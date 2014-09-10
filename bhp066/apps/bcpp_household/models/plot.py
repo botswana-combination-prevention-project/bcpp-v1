@@ -402,19 +402,16 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def producer_dispatched_to(self):
-        container = self.dispatch_container_lookup()
-        if container:
-            producer_name = container.producer.name
-            return producer_name.split('-')[0]
-        return 'Not Dispatched'
+        try:
+            return self.dispatched_container_item.producer.name
+        except AttributeError:
+            return 'Not Dispatched'
 
-    def is_server(self):
-        if Device().device_id == '99':
-            return True
-        return False
+#     def is_server(self):
+#         return Device().is_server
 
-    def is_plot(self):
-        return True  # really?
+#     def is_plot(self):
+#         return True  # really? Doesn't a duck know it's a duck?
 
     def is_dispatch_container_model(self):
         return True
@@ -423,30 +420,27 @@ class Plot(BaseDispatchSyncUuidModel):
         return 'plot_identifier'
 
     def dispatch_container_lookup(self):
-        dispatch_container = models.get_model('dispatch', 'DispatchContainerRegister')
-        if dispatch_container.objects.filter(container_identifier=self.plot_identifier, is_dispatched=True).exists():
-            return dispatch_container.objects.get(container_identifier=self.plot_identifier, is_dispatched=True)
-        return None
-
-    def community_number(self):
-        """Sets the community number to use for the plot identifier."""
-        community_number = None
-        for commun in BCPP_VILLAGES:
-            if commun[1] == (site_mappers.get_current_mapper().map_area).title():
-                community_number = commun[0]
-                return community_number
-        return community_number
+        return (self.__class__, 'plot_identifier')
 
     def include_for_dispatch(self):
         return True
+
+#     def community_number(self):
+#         """Sets the community number to use for the plot identifier."""
+#         community_number = None
+#         for commun in BCPP_VILLAGES:
+#             if commun[1] == (site_mappers.get_current_mapper().map_area).title():
+#                 community_number = commun[0]
+#                 return community_number
+#         return community_number
 
     def get_contained_households(self):
         from apps.bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
+#     def bypass_for_edit_dispatched_as_item(self):
+#         return True
 
     @property
     def log_form_label(self):

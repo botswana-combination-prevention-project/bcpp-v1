@@ -48,6 +48,10 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
     def get_visit(self):
         return self.subject_visit
 
+    def dispatch_container_lookup(self, using=None):
+        return (('bcpp_household', 'Plot'),
+                'subject_visit__household_member__household_structure__household__plot__plot_identifier')
+
     def aliquot(self):
         url = reverse('admin:bcpp_lab_aliquot_changelist')
         return """<a href="{url}?q={requisition_identifier}" />aliquots</a>""".format(url=url, requisition_identifier=self.requisition_identifier)

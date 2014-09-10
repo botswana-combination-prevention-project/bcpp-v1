@@ -1,8 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib import messages
 from django.core.exceptions import ValidationError
 
+from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.core.bhp_data_manager.models import TimePointStatus
 from edc.constants import CLOSED
 
@@ -16,7 +16,7 @@ from ..models import SubjectReferral, SubjectVisit
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
-def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
+def subject_consent_on_post_save(sender, instance, raw, created, using, update_fields, **kwargs):
     """Updates household_structure and household_members to reflect enrollment and
     changed member status.
 
@@ -28,8 +28,14 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, **kwargs
     See also edc.subject.consent.actions.flag_as_verified_against_paper."""
     if not raw:
         if isinstance(instance, (SubjectConsent, )):
-            if kwargs.get('update_fields') != ['is_verified', 'is_verified_datetime']:
-                instance.post_save_update_registered_subject(using)
+            try:
+                update_fields = sorted(update_fields)
+            except TypeError:
+                pass
+            if update_fields != sorted((['is_verified', 'is_verified_datetime'] +
+                                        BASE_MODEL_UPDATE_FIELDS +
+                                        BASE_UUID_MODEL_UPDATE_FIELDS)):
+                # instance.post_save_update_registered_subject(using) (called in base)
                 instance.household_member.is_consented = True
                 instance.household_member.save(using=using, update_fields=['is_consented'])
                 # update household_structure if enrolled
@@ -74,12 +80,20 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
     if not raw:
         try:
             if sender in SubjectReferralHelper.models.values():
-                subject_referral = SubjectReferral.objects.using(using).get(subject_visit=instance.subject_visit)
+                subject_referral = SubjectReferral.objects.using(using).get(
+                    subject_visit=instance.subject_visit)
                 # calling save will run it through export_history manager. This may be noisy
                 # but it ensures all modifications get exported
                 subject_referral.save(using=using)
         except SubjectReferral.DoesNotExist:
             pass
+        except AttributeError as attribute_error:
+            if 'has no attribute \'subject_visit\'' in str(attribute_error):
+                # TODO: subject_referral = query for the referral using enrollment checklist, subject consent, etc
+                # subject_referral.save(using=using)
+                pass
+            else:
+                raise
 
 
 @receiver(post_save, weak=False, dispatch_uid='time_point_status_on_post_save')
