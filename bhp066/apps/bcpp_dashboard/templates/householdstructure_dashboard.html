@@ -28,16 +28,16 @@
 
 
 <div id="tile_wrapper">
+    {% if household.plot.is_dispatched and household.plot.is_current_device_server%}
+      <div align="center"><h2>The plot for this household is <font color="red">dispatched</font> to {{ household.user_container_instance.dispatched_container_item.producer.name }}</h2><h3>Information may be viewed but not changed</h3></div>    
+    {% endif %}
+    {% if household.plot.is_dispatched and not household.plot.is_current_device_server%}
+      <div align="center"><h1>This household has been <font color="red">returned</font> to the server. Please do not make any changes to it or it's members.</h1></div>
+    {% endif %}
 
     {% include "household_log_include.html" %}
 
     <H4>B. Household Composition Dashboard</H4>
-    {% if household.is_dispatched and household.is_current_device_server%}
-	<div align="center"><h1>This household is currently <font color="red">dispatched</font> to the netbook. Please do not make any changes to it or it's members.</h1></div>	
-	{% endif %}
-	{% if household.is_dispatched and not household.is_current_device_server%}
-	<div align="center"><h1>This household is currently <font color="red">returned</font> to the server. Please do not make any changes to it or it's members.</h1></div>
-	{% endif %}
     {% block dashboard_marquee %}
         <div id="dashboard_marquee">
             <b>Household:&nbsp;</b>
