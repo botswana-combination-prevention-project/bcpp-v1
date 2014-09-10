@@ -22,7 +22,7 @@ study_end_datetime = datetime(2016, 10, 17, 16, 30, 00)
 class BcppAppConfiguration(BaseAppConfiguration):
 
     def prepare(self):
-        super(BcppAppConfiguration, self).__init__()
+        super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
 
     global_configuration = {
