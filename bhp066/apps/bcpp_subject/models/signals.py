@@ -1,6 +1,5 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
@@ -81,7 +80,8 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
     if not raw:
         try:
             if sender in SubjectReferralHelper.models.values():
-                subject_referral = SubjectReferral.objects.using(using).get(subject_visit=instance.subject_visit)
+                subject_referral = SubjectReferral.objects.using(using).get(
+                    subject_visit=instance.subject_visit)
                 # calling save will run it through export_history manager. This may be noisy
                 # but it ensures all modifications get exported
                 subject_referral.save(using=using)
@@ -89,7 +89,7 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
             pass
         except AttributeError as attribute_error:
             if 'has no attribute \'subject_visit\'' in str(attribute_error):
-                # subject_referral = query for the referral using enrollment checklist, subject consent, etc
+                # TODO: subject_referral = query for the referral using enrollment checklist, subject consent, etc
                 # subject_referral.save(using=using)
                 pass
             else:
