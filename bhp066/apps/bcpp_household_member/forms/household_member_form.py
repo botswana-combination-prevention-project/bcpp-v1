@@ -36,7 +36,7 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
                         relation='Head')
                 else:
                     # existing instance cannot change to head if other exists
-                    current_hoh = HouseholdMember.objects.get(
+                    current_hoh = HouseholdMember.objects.filter(
                         household_structure=cleaned_data.get('household_structure'),
                         relation='Head').exclude(pk=self.instance.id)
                 if current_hoh:
