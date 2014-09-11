@@ -27,8 +27,8 @@ class PackingListItem(BasePackingListItem):
         if self.item_reference:
             aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             requisition = SubjectRequisition.objects.get(
-                                requisition_identifier=aliquot.receive.requisition_identifier
-                                )
+                requisition_identifier=aliquot.receive.requisition_identifier
+                )
             retval = requisition.drawn_datetime
         return retval
 
@@ -37,8 +37,8 @@ class PackingListItem(BasePackingListItem):
         if self.item_reference:
             aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             requisition = SubjectRequisition.objects.get(
-                                requisition_identifier=aliquot.receive.requisition_identifier
-                                )
+                requisition_identifier=aliquot.receive.requisition_identifier
+                )
             retval = requisition.user_created
         return retval
 
@@ -47,13 +47,13 @@ class PackingListItem(BasePackingListItem):
         if self.item_reference:
             aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             requisition = SubjectRequisition.objects.get(
-                                requisition_identifier=aliquot.receive.requisition_identifier
-                                )
+                requisition_identifier=aliquot.receive.requisition_identifier
+                )
             subject_identifier = requisition.subject()
             if subject_identifier:
                 registered_subject = RegisteredSubject.objects.get(
-                                        subject_identifier=subject_identifier
-                                    )
+                    subject_identifier=subject_identifier
+                    )
                 retval = registered_subject.gender
         return retval
 
