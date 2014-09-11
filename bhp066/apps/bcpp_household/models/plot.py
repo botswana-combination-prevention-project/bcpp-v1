@@ -143,11 +143,17 @@ class Plot(BaseDispatchSyncUuidModel):
         null=True,
         choices=PLOT_STATUS)
 
-    target_radius = models.FloatField(default=.025, help_text='km', editable=False)
+    target_radius = models.FloatField(
+        default=.025,
+        help_text='km',
+        editable=False)
 
-    distance_from_target = models.FloatField(null=True, editable=True, help_text='distance in meters')
+    distance_from_target = models.FloatField(
+        null=True,
+        editable=True,
+        help_text='distance in meters')
 
-    # 20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of 
+    # 20 percent plots is reperesented by 1 and 5 percent of by 2, the rest of
     # the plots which is 75 percent selected value is None
     selected = models.CharField(
         max_length=25,
@@ -189,14 +195,26 @@ class Plot(BaseDispatchSyncUuidModel):
 
     # Google map static images for this plots with different zoom levels.
     # uploaded_map_16, uploaded_map_17, uploaded_map_18 zoom level 16, 17, 18 respectively
-    uploaded_map_16 = models.CharField(verbose_name="Map image at zoom level 16",
-                                       max_length=25, null=True, blank=True, editable=False)
+    uploaded_map_16 = models.CharField(
+        verbose_name="Map image at zoom level 16",
+        max_length=25,
+        null=True,
+        blank=True,
+        editable=False)
 
-    uploaded_map_17 = models.CharField(verbose_name="Map image at zoom level 17",
-                                       max_length=25, null=True, blank=True, editable=False)
+    uploaded_map_17 = models.CharField(
+        verbose_name="Map image at zoom level 17",
+        max_length=25,
+        null=True,
+        blank=True,
+        editable=False)
 
-    uploaded_map_18 = models.CharField(verbose_name="Map image at zoom level 18",
-                                       max_length=25, null=True, blank=True, editable=False)
+    uploaded_map_18 = models.CharField(
+        verbose_name="Map image at zoom level 18",
+        max_length=25,
+        null=True,
+        blank=True,
+        editable=False)
 
     community = models.CharField(
         max_length=25,
@@ -230,7 +248,9 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         help_text='datetime that plot is enrolled. Updated by household_structure post_save')
 
-    htc = models.NullBooleanField(default=False, editable=False)
+    htc = models.NullBooleanField(
+        default=False,
+        editable=False)
 
     replaced_by = models.CharField(
         max_length=25,
@@ -276,29 +296,16 @@ class Plot(BaseDispatchSyncUuidModel):
             self.plot_identifier = PlotIdentifier(mapper.get_map_code(), using).get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
-        if self.status == INACCESSIBLE:
-            # reset any editable fields that the user changed
-            for field in [fld for fld in self.__class__._meta.field
-                          if not fld.editable and fld.null and
-                          fld.name not in ['status', 'comment', 'sub_section',
-                                           'section', 'community', 'uploaded_map_18',
-                                           'uploaded_map_17', 'uploaded_map_16', 'action',
-                                           'replaces', 'replaced_by', 'selected']
-                          ]:
-                setattr(self, field.name, None)
-                update_fields.append(field.name)
-            self.action = self.get_action()
-        else:
-            if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
-                self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
-                self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
-                mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
-                mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat,
-                                            self.gps_target_lon, self.target_radius, MapperError)
-                self.distance_from_target = mapper.gps_distance_between_points(
-                    self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon,
-                    self.target_radius) * 1000
-            self.action = self.get_action()
+        if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
+            self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
+            self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
+            mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
+            mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat,
+                                        self.gps_target_lon, self.target_radius, MapperError)
+            self.distance_from_target = mapper.gps_distance_between_points(
+                self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon,
+                self.target_radius) * 1000
+        self.action = self.get_action()
         try:
             update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier']
             update_fields = kwargs.get('update_fields') + update_fields
