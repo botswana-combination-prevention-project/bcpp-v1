@@ -27,17 +27,9 @@ class Receive(BaseReceive):
 
     def deserialize_get_missing_fk(self, attrname):
         retval = None
-#         if attrname == 'household_structure' and self.registered_subject:
-#             subject_identifier = self.registered_subject.subject_identifier
-#             if subject_identifier:
-#                 registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_identifier)
-#                 if registered_subject:
-#                     if HouseholdMember.objects.filter(id=registered_subject.registration_identifier).exists():
-#                         retval = HouseholdMember.objects.get(id=registered_subject.registration_identifier).household_structure
         return retval
 
     def requisition(self):
-        #requisition = SubjectRequisition.objects.get(requisition_identifier=self.requisition_identifier)
         url = reverse('admin:bcpp_lab_subjectrequisition_changelist')
         return '<a href="{0}?q={1}">{1}</a>'.format(url, self.requisition_identifier)
     requisition.allow_tags = True
