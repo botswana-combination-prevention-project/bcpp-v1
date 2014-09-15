@@ -10,6 +10,7 @@ from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
 from apps.bcpp_household.models import Plot, Household, HouseholdStructure, HouseholdLogEntry
 
 from ...choices import INACCESSIBLE
+from apps.bcpp_household.helpers.replacement_helper import ReplacementHelper
 
 
 class Command(BaseCommand):
@@ -58,7 +59,8 @@ class Command(BaseCommand):
                         report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).aggregate(Max('report_datetime')).get('report_datetime__max')
                         lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=household_structure, report_datetime=report_datetime)
                         if lastest_household_log_entry.household_status == ELIGIBLE_REPRESENTATIVE_PRESENT:
-                            if household_structure.all_eligible_members_refused:
+                            replacement_helper = ReplacementHelper(household_structure=household_structure)
+                            if replacement_helper.all_eligible_members_refused:
                                 household_reason.append("all members refused")
                             elif household_structure.all_eligible_members_absent:
                                 household_reason.append("all members absent")
