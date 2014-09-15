@@ -446,9 +446,6 @@ class Plot(BaseDispatchSyncUuidModel):
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 
-#     def bypass_for_edit_dispatched_as_item(self):
-#         return True
-
     @property
     def log_form_label(self):
         # TODO: where is this used?
