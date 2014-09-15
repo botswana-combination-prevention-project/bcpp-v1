@@ -485,9 +485,9 @@ def replacement_report_view(request, **kwargs):
     if request.POST.get('producer_name'):
         producer_name = request.POST.get('producer_name')
         p_ids = []
-        plots = Plot.objects.filter(selected__in=[1, 2])
+        plots = (plot for plot in Plot.objects.filter(selected__in=[1, 2]) if plot.producer_dispatched_to == producer_name)
         for plot in plots:
-            if producer_name.split('-')[0] == plot.producer_dispatched_to:
+            if producer_name == plot.producer_dispatched_to:
                 p_ids.append(plot.id)
         plots = Plot.objects.filter(id__in=p_ids)
         households = get_model('bcpp_household', 'Household').objects.filter(plot__in=plots)
@@ -530,17 +530,17 @@ def replacement_report_view(request, **kwargs):
         elif not get_model('bcpp_household', 'HouseholdRefusal').objects.filter(household_structure=household_structure) and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
             household_refusal_forms_to_fill += 1
 
-        replacement_values['1. Total replaced households'] = replaced_households
-        replacement_values['2. Total replaced plots'] = replaced_plots
-        replacement_values['3. Total number of replaceable households'] = replaceable_households
-        replacement_values['4. Total household assessment pending'] = accessment_forms_to_fill
-        replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
+    replacement_values['1. Total replaced households'] = replaced_households
+    replacement_values['2. Total replaced plots'] = replaced_plots
+    replacement_values['3. Total number of replaceable households'] = replaceable_households
+    replacement_values['4. Total household assessment pending'] = accessment_forms_to_fill
+    replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
 
-        replacement_values = collections.OrderedDict(sorted(replacement_values.items()))
+    replacement_values = collections.OrderedDict(sorted(replacement_values.items()))
 
-        return render_to_response(
-            'bcpp_analytics/replacement_report.html', {
-                'replacement_values': replacement_values,
-                'producer_names': producer_names},
-            context_instance=RequestContext(request)
-        )
+    return render_to_response(
+        'bcpp_analytics/replacement_report.html', {
+            'replacement_values': replacement_values,
+            'producer_names': producer_names},
+        context_instance=RequestContext(request)
+    )
