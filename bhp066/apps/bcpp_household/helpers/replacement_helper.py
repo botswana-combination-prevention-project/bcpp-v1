@@ -130,7 +130,7 @@ class ReplacementHelper(object):
         HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
         for household_structure in HouseholdStructure.objects.filter(survey=survey):
             self.household_structure = household_structure
-            if producer_name.split('-')[0] == household_structure.household.plot.producer_dispatched_to:
+            if producer_name == household_structure.household.plot.producer_dispatched_to:
                 if self.replaceable_household:
                     if not household_structure.household.replaced_by:
                         replaceable_households.append(household_structure.household)
@@ -142,7 +142,7 @@ class ReplacementHelper(object):
         Plot = get_model('bcpp_household', 'Plot')
         for plot in Plot.objects.filter(selected=FIVE_PERCENT):
             self.plot = plot
-            if producer_name.split('-')[0] == plot.producer_dispatched_to:
+            if producer_name == plot.producer_dispatched_to:
                 if self.replaceable_plot:
                     replaceable_plots.append(self.plot)
         return replaceable_plots
@@ -174,23 +174,11 @@ class ReplacementHelper(object):
             return message
         else:
             for household, plot in zip(replaceable_households, plots):
-                if household.replaced_by:
-                    try:
-                        plot = Plot.objects.get(
-                            replaces=household.household_identifier)
-                    except Plot.DoesNotExist:
-                        pass
-                    household.replaced_by = plot.plot_identifier
-                    plot.replaces = household.household_identifier
-                    household.save(using='default')
-                    plot.save(using='default')
-                    household.save(using=destination)
-                else:
-                    household.replaced_by = plot.plot_identifier
-                    plot.replaces = household.household_identifier
-                    household.save(using='default')
-                    plot.save(using='default')
-                    household.save(using=destination)
+                household.replaced_by = plot.plot_identifier
+                plot.replaces = household.household_identifier
+                household.save(update_fields=['replaced_by'], using='default')
+                plot.save(update_fields=['replaces'], using='default')
+                household.save(update_fields=['replaced_by'], using=destination)
                 # Fetch and delete transactions created when saving to remote
                 OutgoingTransaction.objects.using(destination).filter(
                     is_ignored=False, is_consumed_server=False).delete()
@@ -221,19 +209,12 @@ class ReplacementHelper(object):
             # plot_a  is a plot that is being replaced. plot_b is the plot that replaces plot_a.
             replacing_plots = []
             for plot_a, plot_b in zip(replaceable_plots, plots):
-                # if self.synchronized(destination):
-                if plot_a.replaced_by:
-                    try:
-                        plot_b = Plot.objects.get(
-                            replaces=plot_a.plot_identifier)
-                    except Plot.DoesNotExist:
-                        pass
                 plot_a.replaced_by = plot_b.plot_identifier
                 plot_a.htc = True  # If a plot is replaced it goes to CDC
                 plot_b.replaces = plot_a.plot_identifier
-                plot_a.save(using='default')
-                plot_b.save(using='default')
-                plot_a.save(using=destination)
+                plot_a.save(update_fields=['replaced_by'], using='default')
+                plot_b.save(update_fields=['replaces'], using='default')
+                plot_a.save(update_fields=['replaced_by'], using=destination)
                 # Fetch and delete transactions created when saving to remote
                 OutgoingTransaction.objects.using(destination).filter(
                     is_ignored=False, is_consumed_server=False).delete()
