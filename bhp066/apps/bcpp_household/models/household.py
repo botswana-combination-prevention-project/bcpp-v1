@@ -177,6 +177,9 @@ class Household(BaseDispatchSyncUuidModel):
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
 
+    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
+        return False
+
     def structure(self):
         return """<a href="{url}" />structure</a>"""  # .format(url=url)
     structure.allow_tags = True
