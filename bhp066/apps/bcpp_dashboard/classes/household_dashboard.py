@@ -145,8 +145,7 @@ class HouseholdDashboard(Dashboard):
 
     @property
     def replaceable(self):
-        replacement_helper = ReplacementHelper()
-        replacement_helper.household_structure = self.household_structure
+        replacement_helper = ReplacementHelper(household_structure=self.household_structure)
         return replacement_helper.replaceable
 
     @property
