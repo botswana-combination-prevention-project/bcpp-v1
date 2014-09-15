@@ -22,6 +22,13 @@ class SubjectUndecided (BaseMemberStatusModel):
             pass
         super(SubjectUndecided, self).save(*args, **kwargs)
 
+    def deserialize_prep(self, **kwargs):
+        #SubjectUndecided being deleted by an IncommingTransaction, we go ahead and delete it.
+        #This happens when we switch status from absentee and there are no absentee entries 
+        #attached to this SubjectUndecided.
+        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
+            self.delete()
+
     class Meta:
         app_label = 'bcpp_household_member'
         verbose_name = "Subject Undecided"

@@ -57,5 +57,11 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
 
+    def deserialize_prep(self, **kwargs):
+        #EnrollmentLoss being deleted by an IncommingTransaction, we ahead and delete it.
+        #Its no longer needed at all because member status changed.
+        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
+            self.delete()
+
     class Meta:
         app_label = 'bcpp_household_member'
