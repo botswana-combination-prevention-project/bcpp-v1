@@ -517,8 +517,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def replaceable(self):
-        replacement_helper = ReplacementHelper()
-        replacement_helper.plot = self
+        replacement_helper = ReplacementHelper(plot=self)
         return replacement_helper.replaceable
 
     @property

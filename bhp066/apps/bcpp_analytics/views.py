@@ -476,12 +476,17 @@ def replacement_report_view(request, **kwargs):
     replaced_plots = 0
     replaceable_plots = 0
     plots = None
-    replacement_helper = ReplacementHelper()
-    first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
-    survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
     household_structures = None
     producer_name = None
     households = None
+    HouseholdLogEntry = get_model('bcpp_household', 'HouseholdLogEntry')
+    Household = get_model('bcpp_household', 'Household')
+    HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
+    HouseholdLog = get_model('bcpp_household', 'HouseholdLog')
+    HouseholdAssessment = get_model('bcpp_household', 'HouseholdAssessment')
+    HouseholdRefusal = get_model('bcpp_household', 'HouseholdRefusal')
+    first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+    survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
     if request.POST.get('producer_name'):
         producer_name = request.POST.get('producer_name')
         p_ids = []
@@ -490,11 +495,11 @@ def replacement_report_view(request, **kwargs):
             if producer_name == plot.producer_dispatched_to:
                 p_ids.append(plot.id)
         plots = Plot.objects.filter(id__in=p_ids)
-        households = get_model('bcpp_household', 'Household').objects.filter(plot__in=plots)
-        household_structures = get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey, household__in=households)
+        households = Household.objects.filter(plot__in=plots)
+        household_structures = HouseholdStructure.objects.filter(survey=survey, household__in=households)
     else:
         plots = Plot.objects.filter(selected__in=[1, 2])
-        household_structures = get_model('bcpp_household', 'HouseholdStructure').objects.filter(survey=survey)
+        household_structures = HouseholdStructure.objects.filter(survey=survey)
     producers = Producer.objects.all()
     producer_names = []
     for producer in producers:
@@ -502,7 +507,7 @@ def replacement_report_view(request, **kwargs):
 
     # replaceable plots
     for plot in plots:
-        replacement_helper.plot = plot
+        replacement_helper = ReplacementHelper(plot=plot)
         if replacement_helper.replaceable_plot and not plot.replaced_by:
             replaceable_plots += 1
         if plot.replaced_by:
@@ -510,24 +515,24 @@ def replacement_report_view(request, **kwargs):
 
     for household_structure in household_structures:
         household_status = None
-        household_log = get_model('bcpp_household', 'HouseholdLog').objects.filter(household_structure=household_structure)
+        replacement_helper = ReplacementHelper(household_structure=household_structure)
+        household_log = HouseholdLog.objects.filter(household_structure=household_structure)
         # replaceable households
-        replacement_helper.household_structure = household_structure
         if replacement_helper.replaceable and not household_structure.household.replaced_by:
             replaceable_households += 1
         if household_structure.household.replaced_by:
             replaced_households += 1
         # Number of household assessment forms to fill
         try:
-            report_datetime = get_model('bcpp_household', 'HouseholdLogEntry').objects.filter(household_log=household_log).aggregate(Max('report_datetime')).get('report_datetime__max')
-            lastest_household_log_entry = get_model('bcpp_household', 'HouseholdLogEntry').objects.get(household_log__household_structure=household_structure, report_datetime=report_datetime)
+            report_datetime = HouseholdLogEntry.objects.filter(household_log=household_log).aggregate(Max('report_datetime')).get('report_datetime__max')
+            lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=household_structure, report_datetime=report_datetime)
             household_status = lastest_household_log_entry.household_status
-        except get_model('bcpp_household', 'HouseholdLogEntry').DoesNotExist:
+        except HouseholdLogEntry.DoesNotExist:
             household_status = None
         if household_structure.failed_enumeration_attempts == 3:
-            if not get_model('bcpp_household', 'HouseholdAssessment').objects.filter(household_structure=household_structure) and household_status == NO_HOUSEHOLD_INFORMANT:
+            if not HouseholdAssessment.objects.filter(household_structure=household_structure) and household_status == NO_HOUSEHOLD_INFORMANT:
                 accessment_forms_to_fill += 1
-        elif not get_model('bcpp_household', 'HouseholdRefusal').objects.filter(household_structure=household_structure) and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
+        elif not HouseholdRefusal.objects.filter(household_structure=household_structure) and household_status == REFUSED_ENUMERATION:  # Refusals forms to fill
             household_refusal_forms_to_fill += 1
 
     replacement_values['1. Total replaced households'] = replaced_households
