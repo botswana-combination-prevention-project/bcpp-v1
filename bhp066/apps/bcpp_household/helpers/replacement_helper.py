@@ -1,16 +1,20 @@
 from datetime import datetime
 
 from django.db.models import get_model
-from django.db.models import Min
+from django.db.models import Min, Max
 
 from edc.device.dispatch.models import DispatchContainerRegister
 
 from edc.device.sync.models import OutgoingTransaction
 
+from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
 
 from ..constants import (RESIDENTIAL_HABITABLE, NON_RESIDENTIAL,
                          RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT, RARELY_OCCUPIED)
+
+
+from ..models import Plot, Household, HouseholdStructure, ReplacementHistory, HouseholdLogEntry
 
 
 class ReplacementHelper(object):
@@ -76,7 +80,7 @@ class ReplacementHelper(object):
         replaceable = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
             if (self.household_structure.refused_enumeration or
-                    self.household_structure.all_eligible_members_refused and
+                    self.all_eligible_members_refused and
                     not self.household_structure.household.replaced_by):
                 replaceable = True
             elif (self.household_structure.eligible_representative_absent or
@@ -144,15 +148,15 @@ class ReplacementHelper(object):
 
         This takes a list of replaceable households and plots that
         are to replace those households. The replacement history model
-        is udated to specify when the household was replaced and what
+        is updated to specify when the household was replaced and what
         it was replaced with."""
-        Plot = get_model('bcpp_household', 'Plot')
-        HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
-        ReplacementHistory = get_model('bcpp_household', 'ReplacementHistory')
+        # Plot = get_model('bcpp_household', 'Plot')
+        # HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
+        # ReplacementHistory = get_model('bcpp_household', 'ReplacementHistory')
         # OutgoingTransaction = get_model('sync', 'OutgoingTransaction')
+        replacing_plots = []
         plots = Plot.objects.filter(
             selected=FIVE_PERCENT, replaced_by=None, replaces=None)
-        replacing_plots = []
         if self.synchronized(destination):
             message = "Pending outgoing transaction on: " + str(destination)
             return message
@@ -164,8 +168,9 @@ class ReplacementHelper(object):
                 plot.save(update_fields=['replaces'], using='default')
                 household.save(update_fields=['replaced_by'], using=destination)
                 # Fetch and delete transactions created when saving to remote
-                OutgoingTransaction.objects.using(destination).filter(
-                    is_ignored=False, is_consumed_server=False).delete()
+                # huh???????????!!!!!!!!!!!!!!!!!!!!!!!!!!
+#                 OutgoingTransaction.objects.using(destination).filter(
+#                     is_ignored=False, is_consumed_server=False).delete()
                 household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey)
                 # Creates a history of replacement
                 ReplacementHistory.objects.create(
@@ -211,17 +216,63 @@ class ReplacementHelper(object):
                 replacing_plots.append(plot_b)
             return replacing_plots
 
-    def household_replacement_reason(self, household_structure):
+    def household_replacement_reason(self):
         """check the reason why a plot or household is being replaced."""
         reason = None
-        if household_structure.all_eligible_members_absent:
+        if self.all_eligible_members_absent:
             reason = 'all members are absent'
-        elif household_structure.refused_enumeration:
+        elif self.household_structure.refused_enumeration:
             reason = 'HOH refusal'
-        elif household_structure.all_eligible_members_refused:
+        elif self.all_eligible_members_refused:
             reason = 'all eligible members refused'
-        elif household_structure.eligible_representative_absent:
+        elif self.eligible_representative_absent:
             reason = 'no eligible Representative'
-        elif household_structure.failed_enumeration and household_structure.no_informant:
+        elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
             reason = 'No informant'
         return reason
+
+    @property
+    def all_eligible_members_refused(self):
+        if self.household_structure.enumerated:
+            refused_members_count = HouseholdMember.objects.filter(
+                household_structure=self.household_structure,
+                eligible_member=True,
+                refused=True).count()
+            if refused_members_count:
+                eligible_member_count = HouseholdMember.objects.filter(
+                    household_structure=self.household_structure,
+                    eligible_member=True).count()
+                return eligible_member_count == refused_members_count
+        return False
+
+    @property
+    def all_eligible_members_absent(self):
+        if self.household_structure.enumerated:
+            absent_member_count = HouseholdMember.objects.filter(
+                household_structure=self.household_structure,
+                eligible_member=True,
+                absent=True,
+                visit_attempts=3).count()
+            if absent_member_count:
+                eligible_member_count = HouseholdMember.objects.filter(
+                    household_structure=self.household_structure,
+                    eligible_member=True).count()
+                return eligible_member_count == absent_member_count
+        return False
+
+    @property
+    def eligible_representative_absent(self):
+        eligible_representative_absent = False
+        if not self.household_structure.enumerated and self.household_structure.failed_enumeration_attempts >= 3:
+            try:
+                report_datetime = HouseholdLogEntry.objects.filter(
+                    household_log__household_structure=self.household_structure
+                    ).aggregate(Max('report_datetime')).get('report_datetime__max')
+                HouseholdLogEntry.objects.get(
+                    household_log__household_structure=self.household_structure,
+                    report_datetime=report_datetime,
+                    household_status='eligible_representative_absent')
+                eligible_representative_absent = True
+            except HouseholdLogEntry.DoesNotExist:
+                pass
+        return eligible_representative_absent
