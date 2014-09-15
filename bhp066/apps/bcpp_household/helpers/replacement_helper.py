@@ -16,10 +16,20 @@ from ..constants import (RESIDENTIAL_HABITABLE, NON_RESIDENTIAL,
 class ReplacementHelper(object):
     """Check replaceable household and plots, then replace them."""
 
-    def __init__(self):
-        self._household_structure = None
-        self._plot = None
-        self.household = None
+    def __init__(self, plot=None, household_structure=None):
+        if household_structure:
+            self.household_structure = household_structure
+            self.plot = household_structure.household.plot
+            self.household = household_structure.household
+        elif plot:
+            HouseholdStructure = get_model('bcpp_household', 'HouseholdStructure')
+            self.plot = plot
+            self.household_structure = HouseholdStructure.objects.get(household__plot=plot)
+            self.household = self.household_structure.household
+        else:
+            self.plot = None
+            self.household_structure = None
+            self.household = None
 
     def __repr__(self):
         return 'ReplacementHelper()'
@@ -50,32 +60,6 @@ class ReplacementHelper(object):
         first_survey_start_datetime = Survey.objects.all().aggregate(
             datetime_start=Min('datetime_start')).get('datetime_start')
         return Survey.objects.get(datetime_start=first_survey_start_datetime)
-
-    @property
-    def household_structure(self):
-        """Returns a household structure of a household."""
-        return self._household_structure
-
-    @household_structure.setter
-    def household_structure(self, household_structure):
-        """Sets the household structure (and household and plot
-        using the household structure)."""
-        self._household_structure = household_structure
-        self.household = household_structure.household
-        self._plot = household_structure.household.plot  # NOTE: accessing _plot instance attribute.
-
-    @property
-    def plot(self):
-        """Returns a plot instance."""
-        return self._plot
-
-    @plot.setter
-    def plot(self, plot):
-        """Sets the plot and clears the household and household
-        structure."""
-        self._plot = plot
-        self._household_structure = None  # NOTE: accessing _household_structure instance attribute.
-        self.household = None
 
     @property
     def replaceable(self):
