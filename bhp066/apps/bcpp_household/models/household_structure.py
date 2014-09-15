@@ -117,7 +117,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def all_eligible_members_absent(self):
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         if self.enumerated:
-            absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True).count()
+            absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True, visit_attempts=3).count()
             if absent_member_count:
                 eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
                 return eligible_member_count == absent_member_count
