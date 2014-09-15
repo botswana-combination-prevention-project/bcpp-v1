@@ -178,6 +178,8 @@ class Household(BaseDispatchSyncUuidModel):
         return (Plot, 'plot__plot_identifier')
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
+        if update_fields == ['replaced_by']:
+            return True
         return False
 
     def structure(self):
