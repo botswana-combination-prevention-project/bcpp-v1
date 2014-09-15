@@ -171,17 +171,11 @@ class Household(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household_identifier
 
-#     def bypass_for_edit_dispatched_as_item(self):
-#         return True
-
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
-
-#     def is_plot(self):
-#         return False
 
     def structure(self):
         return """<a href="{url}" />structure</a>"""  # .format(url=url)
