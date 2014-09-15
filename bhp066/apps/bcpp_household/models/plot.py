@@ -11,7 +11,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
-from edc.device.device.classes import Device
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
@@ -20,11 +19,10 @@ from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp_survey.models import Survey
 
-from ..choices import (PLOT_STATUS, SECTIONS, SUB_SECTIONS, BCPP_VILLAGES, SELECTED, INACCESSIBLE)
-from ..constants import CONFIRMED, UNCONFIRMED
+from ..choices import (PLOT_STATUS, SECTIONS, SUB_SECTIONS, SELECTED)
 from ..classes import PlotIdentifier
+from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
-from ..helpers import ReplacementHelper
 
 
 def is_valid_community(self, value):
@@ -517,6 +515,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def replaceable(self):
+        from ..helpers import ReplacementHelper
         replacement_helper = ReplacementHelper(plot=self)
         return replacement_helper.replaceable
 
