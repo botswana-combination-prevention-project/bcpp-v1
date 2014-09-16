@@ -406,11 +406,12 @@ class Plot(BaseDispatchSyncUuidModel):
                                           self.gps_degrees_e, self.gps_minutes_e)
 
     @property
-    def producer_dispatched_to(self):
+    def dispatched_to(self):
+        """Returns the producer name that the plot is dispatched to otherwise None."""
         try:
             return self.dispatched_container_item.producer.name
         except AttributeError:
-            return 'Not Dispatched'
+            return None
 
     def is_dispatch_container_model(self):
         return True
@@ -512,12 +513,6 @@ class Plot(BaseDispatchSyncUuidModel):
         except:
             plot_inaccessible = False
         return plot_inaccessible
-
-    @property
-    def replaceable(self):
-        from ..helpers import ReplacementHelper
-        replacement_helper = ReplacementHelper(plot=self)
-        return replacement_helper.replaceable
 
     @property
     def increase_plot_radius(self):
