@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.db.models import get_model
 from django.db.models import Min, Max
 
 from edc.device.sync.exceptions import PendingTransactionError
