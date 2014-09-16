@@ -29,7 +29,7 @@ def replace_household_plot(request):
             # not dispatched is added to the list of plots to be dispatched
             if replaceables:
                 plot_identifiers = [plot.plot_identifier for plot in replaceables]
-                for plot in Plot.objects.filter(selected=2, replaced__isnull=False).exclude(plot_identifier__in=plot_identifiers):
+                for plot in Plot.objects.filter(selected=2, replaces__isnull=False).exclude(plot_identifier__in=plot_identifiers):
                     if not plot.is_dispatched:
                         plot_identifiers.append(plot.plot_identifier)
                 pks = Plot.objects.filter(plot_identifier__in=plot_identifiers).values_list('pk')
