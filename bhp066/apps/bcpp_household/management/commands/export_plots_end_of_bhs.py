@@ -62,7 +62,7 @@ class Command(BaseCommand):
                             replacement_helper = ReplacementHelper(household_structure=household_structure)
                             if replacement_helper.all_eligible_members_refused:
                                 household_reason.append("all members refused")
-                            elif household_structure.all_eligible_members_absent:
+                            elif replacement_helper.all_eligible_members_absent:
                                 household_reason.append("all members absent")
                             else:
                                 household_reason.append("all members refused")

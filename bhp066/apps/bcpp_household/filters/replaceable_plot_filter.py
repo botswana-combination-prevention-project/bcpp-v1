@@ -1,6 +1,8 @@
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
+from ..helpers.replacement_helper import ReplacementHelper
+
 
 class ReplaceablePlotFilter(SimpleListFilter):
 
@@ -14,6 +16,7 @@ class ReplaceablePlotFilter(SimpleListFilter):
         if self.value():
             query_id_list = []
             for plot in queryset.all():
-                if plot.replaceable and not plot.replaced_by:
+                replacement_helper = ReplacementHelper(plot=plot)
+                if replacement_helper.replaceable_plot and not plot.replaced_by:
                     query_id_list.append(plot.id)
             return queryset.filter(id__in=query_id_list)
