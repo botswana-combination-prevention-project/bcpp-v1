@@ -501,6 +501,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def plot_inaccessible(self):
+        """Check if a plot is inaccessible after 3 attempts."""
         from .plot_log import PlotLogEntry
         plot_log = self.plot_log
         plot_inaccessible = False
