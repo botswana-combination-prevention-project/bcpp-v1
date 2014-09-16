@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import get_model, Max
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -105,19 +104,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
-    @property
-    def vdc_form_status(self):
-        status = None
-        HouseholdAssessment = get_model('bcpp_household', 'HouseholdAssessment')
-        if self.no_informant:
-            status = HouseholdAssessment.objects.get(household_structure=self).vdc_househould_status
-        return status
-
-    @property
-    def replaceable(self):
-        from ..helpers import ReplacementHelper
-        replacement_helper = ReplacementHelper(household_structure=self)
-        return replacement_helper.replaceable
+#     @property
+#     def replaceable(self):
+#         from ..helpers import ReplacementHelper
+#         replacement_helper = ReplacementHelper(household_structure=self)
+#         return replacement_helper.replaceable
 
     @property
     def member_count(self):
