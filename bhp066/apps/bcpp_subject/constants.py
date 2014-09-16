@@ -2,3 +2,5 @@
 FULL = 'FULL'
 # Questionnaires = 'Questionnaires'
 # HTC = 'HTC'
+DECLINED = 'Declined'
+NOT_PERFORMED = 'Not performed'
