@@ -1,9 +1,12 @@
+import socket
+
 from datetime import datetime
 
 from django.db.models import Min, Max
 
 from edc.device.sync.exceptions import PendingTransactionError
 from edc.device.sync.models import OutgoingTransaction
+from edc.device.device.classes import Device
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
@@ -49,6 +52,14 @@ class ReplacementHelper(object):
                 is_ignored=False, is_consumed_server=False):
             raise PendingTransactionError
         return False
+
+    def delete_server_transactions_on_producer(self, destination):
+        if Device.is_server():
+            try:
+                OutgoingTransaction.objects.using(destination).filter(
+                    is_ignored=False, is_consumed_server=False, hostname_created=socket.gethostname()).delete()
+            except OutgoingTransaction.DoesNotExist:
+                pass
 
     @property
     def survey(self):
@@ -156,7 +167,7 @@ class ReplacementHelper(object):
                         replacement_reason=self.household_replacement_reason(household_structure))
                     new_bhs_plots.append(available_plots[index])
                     # delete transactions created when saving to remote
-                    # self.outgoing_transactions(destination).delete()
+                    self.delete_server_transactions_on_producer(destination)
                 except IndexError:
                     break
         return new_bhs_plots
@@ -189,7 +200,7 @@ class ReplacementHelper(object):
                         replacement_reason='plot for plot replacement')
                     new_bhs_plots.append(available_plots[index])
                     # delete transactions created when saving to remote
-                    # self.outgoing_transactions(destination).delete()
+                    self.delete_server_transactions_on_producer(destination)
                 except IndexError:
                     break
         return new_bhs_plots
