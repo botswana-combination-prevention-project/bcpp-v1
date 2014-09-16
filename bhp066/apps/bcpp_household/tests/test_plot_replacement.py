@@ -57,7 +57,6 @@ class TestPlotReplacement(TestCase):
         self.dispatch_test_db = 'dispatch_destination'
 
     def household_member_refused_factory(self, **kwargs):
-        self.startup()
         household_member = HouseholdMemberFactory(**kwargs)
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
