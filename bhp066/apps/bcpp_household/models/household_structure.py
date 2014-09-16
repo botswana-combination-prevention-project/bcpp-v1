@@ -1,4 +1,3 @@
-from django.db.models import get_model, Max
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -7,9 +6,8 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
-from ..helpers import ReplacementHelper
-from ..managers import HouseholdStructureManager
 from ..exceptions import AlreadyReplaced
+from ..managers import HouseholdStructureManager
 
 from .household import Household
 from .plot import Plot
@@ -106,50 +104,11 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
 
-    @property
-    def vdc_form_status(self):
-        status = None
-        if self.no_informant:
-            status = get_model('bcpp_household', 'HouseholdAssessment').objects.get(household_structure=self).vdc_househould_status
-        return status
-
-    @property
-    def all_eligible_members_absent(self):
-        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
-        if self.enumerated:
-            absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True, visit_attempts=3).count()
-            if absent_member_count:
-                eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
-                return eligible_member_count == absent_member_count
-        return False
-
-    @property
-    def all_eligible_members_refused(self):
-        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
-        if self.enumerated:
-            refused_members_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, refused=True).count()
-            if refused_members_count:
-                eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
-                return eligible_member_count == refused_members_count
-        return False
-
-    @property
-    def eligible_representative_absent(self):
-        eligible_representative_absent = False
-        HouseholdLogEntry = get_model('bcpp_household', 'HouseholdLogEntry')
-        if not self.enumerated and self.failed_enumeration_attempts >= 3:
-            try:
-                report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self).aggregate(Max('report_datetime')).get('report_datetime__max')
-                HouseholdLogEntry.objects.get(household_log__household_structure=self, report_datetime=report_datetime, household_status='eligible_representative_absent')
-                eligible_representative_absent = True
-            except HouseholdLogEntry.DoesNotExist:
-                pass
-        return eligible_representative_absent
-
-    @property
-    def replaceable(self):
-        replacement_helper = ReplacementHelper(household_structure=self)
-        return replacement_helper.replaceable
+#     @property
+#     def replaceable(self):
+#         from ..helpers import ReplacementHelper
+#         replacement_helper = ReplacementHelper(household_structure=self)
+#         return replacement_helper.replaceable
 
     @property
     def member_count(self):

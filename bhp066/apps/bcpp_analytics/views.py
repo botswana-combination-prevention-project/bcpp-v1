@@ -308,9 +308,9 @@ def replacement_report_view(request, **kwargs):
     if request.POST.get('producer_name'):
         producer_name = request.POST.get('producer_name')
         p_ids = []
-        plots = (plot for plot in Plot.objects.filter(selected__in=[1, 2]) if plot.producer_dispatched_to == producer_name)
+        plots = (plot for plot in Plot.objects.filter(selected__in=[1, 2]) if plot.dispatched_to == producer_name)
         for plot in plots:
-            if producer_name == plot.producer_dispatched_to:
+            if producer_name == plot.dispatched_to:
                 p_ids.append(plot.id)
         plots = Plot.objects.filter(id__in=p_ids)
         households = Household.objects.filter(plot__in=plots)
@@ -336,7 +336,7 @@ def replacement_report_view(request, **kwargs):
         replacement_helper = ReplacementHelper(household_structure=household_structure)
         household_log = HouseholdLog.objects.filter(household_structure=household_structure)
         # replaceable households
-        if replacement_helper.replaceable and not household_structure.household.replaced_by:
+        if replacement_helper.replaceable_household and not household_structure.household.replaced_by:
             replaceable_households += 1
         if household_structure.household.replaced_by:
             replaced_households += 1
