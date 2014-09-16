@@ -516,20 +516,6 @@ class Plot(BaseDispatchSyncUuidModel):
         return plot_inaccessible
 
     @property
-    def increase_plot_radius(self):
-        from .plot_log import PlotLogEntry
-        plot_log = self.plot_log
-        increase_radius = False
-        try:
-            plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
-            reason = plot_log_entries[2].reason
-            if reason in ['dogs', 'locked_gate'] and self.plot_inaccessible:
-                increase_radius = True
-        except IndexError:
-            pass
-        return increase_radius
-
-    @property
     def plot_log(self):
         from .plot_log import PlotLog
         instance = None
