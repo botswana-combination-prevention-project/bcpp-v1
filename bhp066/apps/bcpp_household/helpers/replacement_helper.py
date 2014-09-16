@@ -64,12 +64,12 @@ class ReplacementHelper(object):
         replaceable = False
         try:
             if self.household_structure.household.plot.status == RESIDENTIAL_HABITABLE:
-                if (self.household_structure.refused_enumeration or
-                        self.all_eligible_members_refused and
+                if ((self.household_structure.refused_enumeration or
+                        self.all_eligible_members_refused) and
                         not self.household_structure.household.replaced_by):
                     replaceable = True
-                elif (self.eligible_representative_absent or
-                      self.all_eligible_members_absent and
+                elif ((self.eligible_representative_absent or
+                      self.all_eligible_members_absent) and
                       not self.household_structure.household.replaced_by):
                     replaceable = True
                 elif (self.household_structure.failed_enumeration and
@@ -187,7 +187,7 @@ class ReplacementHelper(object):
                         replacing_item=available_plots[index].plot_identifier,
                         replaced_item=replaceable_plot.plot_identifier,
                         replacement_datetime=datetime.now(),
-                        replacement_reason='Invalid plot replacement')
+                        replacement_reason='plot for plot replacement')
                     new_bhs_plots.append(available_plots[index])
                     # delete transactions created when saving to remote
                     # self.outgoing_transactions(destination).delete()
