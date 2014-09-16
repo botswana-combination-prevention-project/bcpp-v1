@@ -81,7 +81,7 @@ class HouseholdDashboard(Dashboard):
             allow_edit_members=self.allow_edit_members,
             has_household_log_entry=self.has_household_log_entry,
             lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
-            replaceable=self.replaceable,
+            replaceable=ReplacementHelper(household_structure=self.household_structure).replaceable_household,
             household_info=self.household_info,
             eligible_hoh=self.eligible_hoh,
             mapper_name=self.mapper_name,
@@ -142,11 +142,6 @@ class HouseholdDashboard(Dashboard):
             return lastest_household_log_entry.household_status
         except HouseholdLogEntry.DoesNotExist:
             return None
-
-    @property
-    def replaceable(self):
-        replacement_helper = ReplacementHelper(household_structure=self.household_structure)
-        return replacement_helper.replaceable
 
     @property
     def eligible_hoh(self):
