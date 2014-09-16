@@ -28,28 +28,9 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
                     'Member is Female but you selected a male relation. Got {0}.'.format(
                         [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
         if cleaned_data.get('relation') == 'Head':
-            try:
-                if not self.instance.id:
-                    # new instance cannot be head if another exists
-                    current_hoh = HouseholdMember.objects.get(
-                        household_structure=cleaned_data.get('household_structure'),
-                        relation='Head')
-                else:
-                    # existing instance cannot change to head if other exists
-                    current_hoh = HouseholdMember.objects.filter(
-                        household_structure=cleaned_data.get('household_structure'),
-                        relation='Head').exclude(pk=self.instance.id)
-                if current_hoh:
-                    raise forms.ValidationError('{0} is the head of household already. Only one member '
-                                                'may be the head of household.'.format(current_hoh))
-            except HouseholdMember.DoesNotExist:
-                pass
-#             if HouseholdMember.objects.filter(household_structure=cleaned_data.get('household_structure'),
-#                                               relation='Head').exclude(initials=cleaned_data.get('initials')):
-#                 current_hoh = HouseholdMember.objects.get(household_structure=cleaned_data.get('household_structure'),
-#                                                           relation='Head')
-#                 raise forms.ValidationError('{0} is the head of household already. Only one member '
-#                                             'may be the head of household.'.format(current_hoh))
+            #instance cannot be head if another head already exists
+            self.instance.check_head_household(
+            cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.instance)
             enrollment_checklist.matches_household_member_values(
