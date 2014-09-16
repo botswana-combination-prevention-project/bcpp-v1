@@ -16,6 +16,7 @@ from edc.device.sync.models import Producer
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household.constants import (NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION,
                                            CONFIRMED, UNCONFIRMED)
+from apps.bcpp_subject.constants import DECLINED, NOT_PERFORMED
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household_member.constants import (ABSENT, BHS, HTC, REFUSED, UNDECIDED)
@@ -191,272 +192,89 @@ def operational_report_view(request, **kwargs):
     date_to = utilities.date_format_utility(request.GET.get('date_to', ''), '2099-12-31')
 
     date_to += datetime.timedelta(days=1)
-
-    reached = 0
-    not_reached = 0
-    members_val = 0
-    age_eligible = 0
-    not_age_eligible = 0
-    research = 0
-    htc = 0
-    absent = 0
-    undecided = 0
-    refused = 0
-    how_many_tested = 0
-    if community == '':
-        for item in COMMUNITIES:
-            plt = Plot.objects.all()
-            reached = reached + (plt.filter(action=CONFIRMED, community__icontains=community,
+    plt = Plot.objects.all()
+    reached = (plt.filter(action=CONFIRMED, community__icontains=community,
+                                    modified__gte=date_from, modified__lte=date_to,
+                                    user_modified__icontains=ra_username).count())
+    values['1. Plots reached'] = reached
+    not_reached = (plt.filter(action=UNCONFIRMED, community__icontains=community,
                                             modified__gte=date_from, modified__lte=date_to,
                                             user_modified__icontains=ra_username).count())
-            values['1. Plots reached'] = reached
-            not_reached = not_reached + (plt.filter(action=UNCONFIRMED, community__icontains=community,
-                                                    modified__gte=date_from, modified__lte=date_to,
-                                                    user_modified__icontains=ra_username).count())
-            values['2. Plots not reached'] = not_reached
-            members = (HouseholdMember.objects.filter(
-                household_structure__household__plot__community__icontains=community,
-                created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username))
-            members_val = members_val + (members.count())
-            values['3. Total members'] = members_val
+    values['2. Plots not reached'] = not_reached
+    members = (HouseholdMember.objects.filter(
+        household_structure__household__plot__community__icontains=community,
+        created__gte=date_from, created__lte=date_to,
+        user_created__icontains=ra_username))
+    members_val = (members.count())
 
-            age_eligible = age_eligible + (members.filter(eligible_member=True).count())
-            values['4. Total age eligible members'] = age_eligible
+    values['3. Total members'] = members_val
 
-            not_age_eligible = not_age_eligible + (members.filter(eligible_member=False).count())
-            values['5. Total members not age eligible'] = not_age_eligible
+    age_eligible = (members.filter(eligible_member=True).count())
+    values['4. Total age eligible members'] = age_eligible
 
-            age_eligible_research = members.filter(eligible_member=True, member_status=BHS)
-            research = research + (age_eligible_research.count())
-            values['6. Age eligible members that consented for BHS'] = research
+    not_age_eligible = (members.filter(eligible_member=False).count())
+    values['5. Total members not age eligible'] = not_age_eligible
 
-            age_eligible_htc = members.filter(eligible_member=True, member_status__in=HTC)
-            htc = htc + (age_eligible_htc.count())
-            values['7. Age eligible members that agreed to HTC (not through BHS)'] = htc
+    age_eligible_research = members.filter(eligible_member=True, member_status=BHS)
+    research = (age_eligible_research.count())
+    values['6. Age eligible members that consented for BHS'] = research
 
-            age_eligible_absent = members.filter(eligible_member=True, member_status=ABSENT)
-            absent = absent + (age_eligible_absent.count())
-            values['8. Age eligible members that where ABSENT'] = absent
+    age_eligible_htc = members.filter(member_status=HTC)
+    htc = (age_eligible_htc.count())
+    values['7. Age eligible members that agreed to HTC (not through BHS)'] = htc
 
-            age_eligible_undecided = members.filter(eligible_member=True, member_status=UNDECIDED)
-            undecided = undecided + (age_eligible_undecided.count())
-            values['9. Age eligible members that where UNDECIDED'] = undecided
+    age_eligible_absent = members.filter(eligible_member=True, member_status=ABSENT)
+    absent = (age_eligible_absent.count())
+    values['8. Age eligible members that where ABSENT'] = absent
 
-            age_eligible_refused = members.filter(eligible_member=True, member_status=REFUSED)
-            refused = refused + (age_eligible_refused.count())
-            values['91. Age eligible members that REFUSED'] = refused
+    age_eligible_undecided = members.filter(eligible_member=True, member_status=UNDECIDED)
+    undecided = (age_eligible_undecided.count())
+    values['9. Age eligible members that where UNDECIDED'] = undecided
 
-            how_many_tested = how_many_tested + (HivResult.objects.filter(
-                subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count())
-            values['92. Age eligible members that TESTED'] = how_many_tested
-            values = collections.OrderedDict(sorted(values.items()))
-
-            members_tobe_visited = []
-            absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, 
-                                                household_structure__household__plot__community__icontains=community,
-                                                created__gte=date_from, created__lte=date_to,
-                                                user_created__icontains=ra_username).order_by('member_status')
-            for mem in absentee_undecided:
-                if mem.member_status == UNDECIDED:
-                    undecided_entries = SubjectUndecidedEntry.objects.filter(
-                        subject_undecided__household_member=mem).order_by('next_appt_datetime')
-                    if undecided_entries and mem.visit_attempts < 3:
-                        members_tobe_visited.append(
-                            (str(mem), mem.member_status,
-                             mem.visit_attempts, 
-                             str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
-                    elif mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-                elif mem.member_status == ABSENT:
-                    absentee_entries = SubjectAbsenteeEntry.objects.filter(
-                        subject_absentee__household_member=mem).order_by('next_appt_datetime')
-                    if absentee_entries and mem.visit_attempts < 3:
-                        members_tobe_visited.append(
-                            (str(mem), mem.member_status,
-                             mem.visit_attempts,
-                             str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
-                    elif mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-            communities = []
-            if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
-                # communities = [community[0].lower() for community in  COMMUNITIES]
-                for community in COMMUNITIES:
-                    if community[0].lower() != previous_community:
-                        communities.append(community[0])
-                communities.insert(0, previous_community)
-                communities.insert(1, '---------')
-            else:
-                communities = [community[0].lower() for community in COMMUNITIES]
-                communities.insert(0, '---------')
-
-            ra_usernames = []
-            if (previous_ra.find('----') == -1) and (not previous_ra == ''):
-                for ra_name in [user.username for user in User.objects.filter(groups__name='field_research_assistant')]:
-                    if ra_name != previous_ra:
-                        ra_usernames.append(ra_name)
-                ra_usernames.insert(0, previous_ra)
-                ra_usernames.insert(1, '---------')
-            else:
-                ra_usernames = [user.username for user in User.objects.filter(groups__name='field_research_assistant')]
-                ra_usernames.insert(0, '---------')
-    elif ra_username == '':
-        for user in User.objects.filter(groups__name='field_research_assistant'):
-            plt = Plot.objects.all()
-            reached = reached + (plt.filter(action=CONFIRMED, community__icontains=community,
-                                            modified__gte=date_from, modified__lte=date_to,
-                                            user_modified__icontains=ra_username).count())
-            values['1. Plots reached'] = reached
-            not_reached = not_reached + (plt.filter(action=UNCONFIRMED, community__icontains=community,
-                                                    modified__gte=date_from, modified__lte=date_to,
-                                                    user_modified__icontains=ra_username).count())
-            values['2. Plots not reached'] = not_reached
-            members = (HouseholdMember.objects.filter(
-                household_structure__household__plot__community__icontains=community,
-                created__gte=date_from, created__lte=date_to,
-                user_created__icontains=ra_username))
-            members_val = members_val + (members.count())
-
-            values['3. Total members'] = members_val
-
-            age_eligible = age_eligible + (members.filter(eligible_member=True).count())
-            values['4. Total age eligible members'] = age_eligible
-
-            not_age_eligible = not_age_eligible + (members.filter(eligible_member=False).count())
-            values['5. Total members not age eligible'] = not_age_eligible
-
-            age_eligible_research = members.filter(eligible_member=True, member_status=BHS)
-            research = research + (age_eligible_research.count())
-            values['6. Age eligible members that consented for BHS'] = research
-
-            age_eligible_htc = members.filter(eligible_member=True, member_status__in=HTC)
-            htc = htc + (age_eligible_htc.count())
-            values['7. Age eligible members that agreed to HTC (not through BHS)'] = htc
-
-            age_eligible_absent = members.filter(eligible_member=True, member_status=ABSENT)
-            absent = absent + (age_eligible_absent.count())
-            values['8. Age eligible members that where ABSENT'] = absent
-
-            age_eligible_undecided = members.filter(eligible_member=True, member_status=UNDECIDED)
-            undecided = undecided + (age_eligible_undecided.count())
-            values['9. Age eligible members that where UNDECIDED'] = undecided
-
-            age_eligible_refused = members.filter(eligible_member=True, member_status=REFUSED)
-            refused = refused + (age_eligible_refused.count())
-            values['91. Age eligible members that REFUSED'] = refused
-            how_many_tested = how_many_tested + (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                                 created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count())
-            values['92. Age eligible members that TESTED'] = how_many_tested
-            values = collections.OrderedDict(sorted(values.items()))
-            members_tobe_visited = []
-            absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                                created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
-            for mem in absentee_undecided:
-                if mem.member_status == UNDECIDED:
-                    undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
-                    if undecided_entries and mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
-                    elif mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-                elif mem.member_status == ABSENT:
-                    absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('next_appt_datetime')
-                    if absentee_entries and mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
-                    elif mem.visit_attempts < 3:
-                        members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-            communities = []
-            if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
-                # communities = [community[0].lower() for community in  COMMUNITIES]
-                for community in  COMMUNITIES:
-                    if community[0].lower() != previous_community:
-                        communities.append(community[0])
-                communities.insert(0, previous_community)
-                communities.insert(1, '---------')
-            else:
-                communities = [community[0].lower() for community in  COMMUNITIES]
-                communities.insert(0, '---------')
-            ra_usernames = []
-            if (previous_ra.find('----') == -1) and (not previous_ra == ''):
-                for ra_name in [user.username for user in User.objects.filter(groups__name='field_research_assistant')]:
-                    if ra_name != previous_ra:
-                        ra_usernames.append(ra_name)
-                ra_usernames.insert(0, previous_ra)
-                ra_usernames.insert(1, '---------')
-            else:
-                ra_usernames = [user.username for user in User.objects.filter(groups__name='field_research_assistant')]
-                ra_usernames.insert(0, '---------')
+    age_eligible_refused = members.filter(eligible_member=True, member_status=REFUSED)
+    refused = (age_eligible_refused.count())
+    values['91. Age eligible members that REFUSED'] = refused
+    how_many_tested = (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
+                                         created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).exclude(hiv_result__in=[DECLINED, NOT_PERFORMED]).count())
+    values['92. Age eligible members that TESTED'] = how_many_tested
+    values = collections.OrderedDict(sorted(values.items()))
+    members_tobe_visited = []
+    absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
+                                        created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
+    for mem in absentee_undecided:
+        if mem.member_status == UNDECIDED:
+            undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
+            if undecided_entries and mem.visit_attempts < 3:
+                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
+            elif mem.visit_attempts < 3:
+                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
+        elif mem.member_status == ABSENT:
+            absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('next_appt_datetime')
+            if absentee_entries and mem.visit_attempts < 3:
+                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
+            elif mem.visit_attempts < 3:
+                members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
+    communities = []
+    if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
+        # communities = [community[0].lower() for community in  COMMUNITIES]
+        for community in  COMMUNITIES:
+            if community[0].lower() != previous_community:
+                communities.append(community[0])
+        communities.insert(0, previous_community)
+        communities.insert(1, '---------')
     else:
-        plt = Plot.objects.all()
-        reached = plt.filter(action=CONFIRMED, community__icontains=community,
-                             modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count()
-        values['1. Plots reached'] = reached
-        not_reached = plt.filter(action=UNCONFIRMED, community__icontains=community,
-                                 modified__gte=date_from, modified__lte=date_to, user_modified__icontains=ra_username).count()
-        values['2. Plots not reached'] = not_reached
-        members = HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=community,
-                                                 created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username)
-        values['3. Total members'] = members.count()
-        age_eligible = members.filter(eligible_member=True).count()
-        values['4. Total age eligible members'] = age_eligible
-        not_age_eligible = members.filter(eligible_member=False).count()
-        values['5. Total members not age eligible'] = not_age_eligible
-        age_eligible_research = members.filter(eligible_member=True, member_status=BHS)
-        research = age_eligible_research.count()
-        values['6. Age eligible members that consented for BHS'] = research
-        age_eligible_htc = members.filter(eligible_member=True, member_status__in=HTC)
-        htc = age_eligible_htc.count()
-        values['7. Age eligible members that agreed to HTC (not through BHS)'] = htc
-        age_eligible_absent = members.filter(eligible_member=True, member_status=ABSENT)
-        absent = age_eligible_absent.count()
-        values['8. Age eligible members that where ABSENT'] = absent
-        age_eligible_undecided = members.filter(eligible_member=True, member_status=UNDECIDED)
-        undecided = age_eligible_undecided.count()
-        values['9. Age eligible members that where UNDECIDED'] = undecided
-        age_eligible_refused = members.filter(eligible_member=True, member_status=REFUSED)
-        refused = age_eligible_refused.count()
-        values['91. Age eligible members that REFUSED'] = refused
-        how_many_tested = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
-                                                   created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).count()
-        values['92. Age eligible members that TESTED'] = how_many_tested
-        values = collections.OrderedDict(sorted(values.items()))
-
-        members_tobe_visited = []
-        absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
-                                            created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).order_by('member_status')
-        for mem in absentee_undecided:
-            if mem.member_status == UNDECIDED:
-                undecided_entries = SubjectUndecidedEntry.objects.filter(subject_undecided__household_member=mem).order_by('next_appt_datetime')
-                if undecided_entries and mem.visit_attempts < 3:
-                    members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(undecided_entries[len(undecided_entries) - 1].next_appt_datetime)))
-                elif mem.visit_attempts < 3:
-                    members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-            elif mem.member_status == ABSENT:
-                absentee_entries = SubjectAbsenteeEntry.objects.filter(subject_absentee__household_member=mem).order_by('next_appt_datetime')
-                if absentee_entries and mem.visit_attempts < 3:
-                    members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, str(absentee_entries[len(absentee_entries) - 1].next_appt_datetime)))
-                elif mem.visit_attempts < 3:
-                    members_tobe_visited.append((str(mem), mem.member_status, mem.visit_attempts, '-------'))
-        communities = []
-        if (previous_community.find('----') == -1) and (not previous_community == ''):  # Passing filtered results
-            # communities = [community[0].lower() for community in  COMMUNITIES]
-            for community in COMMUNITIES:
-                if community[0].lower() != previous_community:
-                    communities.append(community[0])
-            communities.insert(0, previous_community)
-            communities.insert(1, '---------')
-        else:
-            communities = [community[0].lower() for community in COMMUNITIES]
-            communities.insert(0, '---------')
-        ra_usernames = []
-        if (previous_ra.find('----') == -1) and (not previous_ra == ''):
-            for ra_name in [user.username for user in User.objects.filter(groups__name='field_research_assistant')]:
-                if ra_name != previous_ra:
-                    ra_usernames.append(ra_name)
-            ra_usernames.insert(0, previous_ra)
-            ra_usernames.insert(1, '---------')
-        else:
-            ra_usernames = [user.username for user in User.objects.filter(groups__name='field_research_assistant')]
-            ra_usernames.insert(0, '---------')
+        communities = [community[0].lower() for community in  COMMUNITIES]
+        communities.insert(0, '---------')
+    ra_usernames = []
+    if (previous_ra.find('----') == -1) and (not previous_ra == ''):
+        for ra_name in [user.username for user in User.objects.filter(groups__name='field_research_assistant')]:
+            if ra_name != previous_ra:
+                ra_usernames.append(ra_name)
+        ra_usernames.insert(0, previous_ra)
+        ra_usernames.insert(1, '---------')
+    else:
+        ra_usernames = [user.username for user in User.objects.filter(groups__name='field_research_assistant')]
+        ra_usernames.insert(0, '---------')
     return render_to_response(
         'bcpp_analytics/operational_report.html', {'values': values,
                                                    'members_tobe_visited': members_tobe_visited,
