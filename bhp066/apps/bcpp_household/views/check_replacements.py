@@ -1,8 +1,5 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db.models import Min
-
-from apps.bcpp_survey.models import Survey
 
 from ..helpers import ReplacementHelper
 
@@ -15,27 +12,18 @@ def check_replacements(request):
     template = 'check_replacements.html'
     replaceables = []
     message = None
-    producer_name = None
-    if request.POST.get('producer_name'):
-        producer_name = request.POST.get('producer_name')
-        first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
-        survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
-        replacement_households = ReplacementHelper().replaceable_households(survey, producer_name)
-        replacement_plots = ReplacementHelper().replaceable_plots(producer_name)
-        if replacement_households and replacement_plots:
-            replaceables = replacement_households + replacement_plots
-        elif replacement_households and not replacement_plots:
-            replaceables = replacement_households
-        elif not replacement_households and replacement_plots:
-            replaceables = replacement_plots
+    producer_name = request.POST.get('producer_name')
+    if producer_name:
+        replacement_helper = ReplacementHelper()
+        replaceables = replacement_helper.replaceable_households(producer_name) + replacement_helper.replaceable_plots(producer_name)
     if not replaceables:
-        message = "There are no replaceable households and plots form producer " + str(producer_name)
+        message = "There are no replaceable households or plots from {}".format(str(producer_name))
     return render_to_response(
-            template, {
-                'replaceables': replaceables,
-                'replacement_count': len(replaceables),
-                'producer_name': producer_name,
-                'message': message,
-                },
-                context_instance=RequestContext(request)
-            )
+        template, {
+            'replaceables': replaceables,
+            'replacement_count': len(replaceables),
+            'producer_name': producer_name,
+            'message': message,
+            },
+        context_instance=RequestContext(request)
+        )
