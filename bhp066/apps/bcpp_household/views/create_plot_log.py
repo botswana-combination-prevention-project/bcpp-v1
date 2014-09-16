@@ -8,7 +8,8 @@ def create_plot_log(request):
     instance = None
     plot_pk = request.GET.get('plot')
     plot = get_model('bcpp_household', 'Plot').objects.get(pk=plot_pk)
-    # TODO: can't this be created in the plot post save signal?
+    # only allow a PlotLog to be created when the user tries
+    # by hitting the link.
     try:
         instance = PlotLog.objects.get(plot=plot)
     except PlotLog.DoesNotExist:
@@ -16,6 +17,6 @@ def create_plot_log(request):
             plot=plot
             )
     url = plot.log_entry_form_urls
-    key, entry_url = url.popitem()
+    _, entry_url = url.popitem()
     url_link = entry_url + "?plot_log=" + instance.pk + "&next=/bcpp/section/plot/"
     return HttpResponseRedirect(url_link)
