@@ -35,6 +35,7 @@ class ReplacementHelper(object):
         household_structure.failed_enumeration_attempts   # post_save
         household_structure.household
         household_structure.eligible_members   # post_save
+        household_structure.visit_attempts
     """
 
     def __init__(self, plot=None, household_structure=None):
@@ -100,6 +101,8 @@ class ReplacementHelper(object):
     @property
     def replaceable_plot(self):
         """Returns True if the plot meets the criteria to be replaced by another plot."""
+        # TODO: a plot, that is added as a replacement, itself can be replaced if not yet enrolled
+        # and residential habitable
         replaceable = False
         if (not self.plot.replaced_by and self.plot.replaces and
                 self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]):
