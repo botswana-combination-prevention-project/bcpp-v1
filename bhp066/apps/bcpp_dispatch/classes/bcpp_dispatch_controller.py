@@ -10,7 +10,6 @@ from edc.device.dispatch.exceptions import DispatchError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from apps.bcpp_survey.models import Survey
-# from .bcpp_signal_manager import BcppSignalManager
 
 logger = logging.getLogger(__name__)
 
@@ -52,14 +51,6 @@ class BcppDispatchController(DispatchController):
     def get_base_models_for_default_serialization(self):
         return [Survey]
 
-#     def disconnect_signals(self):
-#         """Disconnects signals before saving the serialized object in _to_json."""
-#         self._disconnect_bcpp_signals()
-# 
-#     def reconnect_signals(self):
-#         """Reconnects signals after saving the serialized object in _to_json."""
-#         self._reconnect_bcpp_signals()
-
     def pre_dispatch(self, plot, **kwargs):
         """Create household_structures before dispatch, if they don't exist."""
         survey = kwargs.get('survey', None)
@@ -72,7 +63,10 @@ class BcppDispatchController(DispatchController):
             for household in plot.get_contained_households():
                 if not HouseholdStructure.objects.using(self.get_using_source()).filter(household=household, survey=survey).exists():
                     # create household_structure, signal takes care of adding the members
-                    HouseholdStructure.objects.using(self.get_using_source()).create(household=household, survey=survey, member_count=0, note='created on dispatch')
+                    HouseholdStructure.objects.using(self.get_using_source()).create(household=household,
+                                                                                     survey=survey,
+                                                                                     member_count=0,
+                                                                                     note='created on dispatch')
 
     def dispatch_prep(self, **kwargs):
         """Get a household with the given identifier for dispatch to the specified producer.
@@ -115,13 +109,15 @@ class BcppDispatchController(DispatchController):
             for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])
                 for survey in surveys:
-                    household_structure = HouseholdStructure.objects.filter(household=household, survey=survey)
+                    self.dispatch_user_items_as_json(survey, plot)
+                for survey in surveys:
+                    household_structure = HouseholdStructure.objects.filter(household=household, survey_id=survey.id)
                     if household_structure:
-                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id', 'household_id'])
+                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id', 'household_id', 'survey_id'])
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
-                            self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])  # FIXME: One, what are the FK referring to
+                            self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
                             if household_log_entries:
                                 self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
                         household_members = HouseholdMember.objects.using(self.get_using_source()).filter(household_structure=household_structure)

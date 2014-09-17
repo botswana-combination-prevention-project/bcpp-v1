@@ -1,11 +1,13 @@
+from django.core.validators import RegexValidator
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.core.validators import RegexValidator
-from edc.base.model.models import BaseUuidModel
+
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
 from ..managers import SurveyManager
 
 
-class Survey (BaseUuidModel):
+class Survey (BaseDispatchSyncUuidModel):
 
     survey_name = models.CharField(
         verbose_name="Survey name",
@@ -43,21 +45,19 @@ class Survey (BaseUuidModel):
 
     def natural_key(self):
         return (self.survey_name, )
-    natural_key.dependencies = ['bcpp_survey.survey_group', ]
+    # natural_key.dependencies = ['bcpp_survey.survey_group', ]
 
     def __unicode__(self):
         return self.survey_name
-#
-#    def get_absolute_url(self):
-#        return "/bcpp_survey/survey/{0}/".format(self.id)
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.survey_slug = slugify(self.survey_name)
         super(Survey, self).save(*args, **kwargs)
 
+    def is_dispatchable_model(self):
+        return True
+
     class Meta:
         app_label = 'bcpp_survey'
-#         unique_together = (('survey_name', 'survey_group'),
-#                            ('survey_group', 'chronological_order'))
         ordering = ['survey_name', ]
