@@ -217,7 +217,6 @@ class Plot(BaseDispatchSyncUuidModel):
     community = models.CharField(
         max_length=25,
         help_text='If the community is incorrect, please contact the DMC immediately.',
-        choices=COMMUNITIES,
         validators=[is_valid_community, ],
         editable=False)
 
@@ -225,14 +224,12 @@ class Plot(BaseDispatchSyncUuidModel):
         max_length=25,
         null=True,
         verbose_name='Section',
-        choices=SECTIONS,
         editable=False)
 
     sub_section = models.CharField(
         max_length=25,
         null=True,
         verbose_name='Sub-section',
-        choices=SUB_SECTIONS,
         help_text=u'',
         editable=False)
 
@@ -487,9 +484,8 @@ class Plot(BaseDispatchSyncUuidModel):
         if not model_pk:  # This is a like a SubjectAbsentee
             model_class = models.get_model(app_label, model)
             try:
-                instance = model_class.objects.get(plot=self)
-                pk = instance.id
-            except:
+                pk = model_class.objects.get(plot=self).pk
+            except model_class.DoesNotExist:
                 pk = None
         else:
             pk = model_pk
