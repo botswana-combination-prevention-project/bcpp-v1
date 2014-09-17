@@ -28,14 +28,14 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
                     'Member is Female but you selected a male relation. Got {0}.'.format(
                         [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
         if cleaned_data.get('relation') == 'Head':
-            #instance cannot be head if another head already exists
+            # instance cannot be head if another head already exists
             self.instance.check_head_household(
-            cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
+                cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.instance)
             enrollment_checklist.matches_household_member_values(
                 enrollment_checklist, HouseholdMember(**cleaned_data), exception_cls=forms.ValidationError)
-        except:
+        except EnrollmentChecklist.DoesNotExist:
             pass
         return cleaned_data
 
