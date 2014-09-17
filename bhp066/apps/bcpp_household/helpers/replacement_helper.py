@@ -53,11 +53,14 @@ class ReplacementHelper(object):
             raise PendingTransactionError
         return False
 
-    def delete_server_transactions_on_producer(self, destination):
+    def delete_server_transactions_on_producer(self, destination, tx_pks):
         if Device.is_server():
             try:
                 OutgoingTransaction.objects.using(destination).filter(
-                    is_ignored=False, is_consumed_server=False, hostname_created=socket.gethostname()).delete()
+                    is_ignored=False, is_consumed_server=False,
+                    pk__in=tx_pks,
+                    hostname_created=socket.gethostname(),
+                    hostname_created=socket.gethostname()).delete()
             except OutgoingTransaction.DoesNotExist:
                 pass
 
