@@ -8,33 +8,26 @@ from ..managers import ReplacementHistoryManager
 
 
 class ReplacementHistory(BaseDispatchSyncUuidModel):
-
+    """A model that records the history of plots and households that have
+    been selected for replacement and replaced by a plot from the pool
+    of available plots (5%)."""
     replacing_item = models.CharField(
-        verbose_name='Item identifier used to replace another item',
+        verbose_name='Plot identifier of the plot that replaced a household or plot',
         max_length=25,
-        null=True,
-        # editable=False
-    )
+        )
 
     replaced_item = models.CharField(
-        verbose_name='Item identifier of an item being replaced',
+        verbose_name='Plot or household identifier replaced',
         max_length=25,
-        null=True,
-        # editable=False
-    )
+        )
 
-    replacement_datetime = models.DateTimeField(
-        verbose_name='Report Date/Time',
-        null=True,
-    )
+    replacement_datetime = models.DateTimeField()
 
     replacement_reason = models.CharField(
         verbose_name='Reason for replacement',
         max_length=100,
         help_text=_("Reasons could be absentees, refusals, e.t.c"),
-        null=True,
-        # editable=False,
-    )
+        )
 
     history = AuditTrail()
 

@@ -18,12 +18,23 @@ class ReplacementHelper(object):
     """Check replaceable household and plots, then replace them.
 
     Attributes involved:
-        plot.status
+
+        plot.replaced_by
+        plot.replaces
+        plot.htc
         household.replaced_by
-        household_structure.enumerated
-        household_structure.refused_enumeration
-        household_structure.no_informant
-        household_structure.failed_enumeration_attempts
+
+        plot.status  # user
+        plot.plot_identifier  # save
+        plot.dispatched_to  # dispatch
+        household.household_identifier  # save
+        household_structure.enumerated  # post_save
+        household_structure.refused_enumeration  # post_save
+        household_structure.no_informant  # post_save
+        household_structure.failed_enumeration   # post_save
+        household_structure.failed_enumeration_attempts   # post_save
+        household_structure.household
+        household_structure.eligible_members   # post_save
     """
 
     def __init__(self, plot=None, household_structure=None):
@@ -88,7 +99,7 @@ class ReplacementHelper(object):
 
     @property
     def replaceable_plot(self):
-        """Returns True if a plot meets the criteria to be replaced by another plot."""
+        """Returns True if the plot meets the criteria to be replaced by another plot."""
         replaceable = False
         if (not self.plot.replaced_by and self.plot.replaces and
                 self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]):
@@ -115,13 +126,6 @@ class ReplacementHelper(object):
                 if self.replaceable_plot:
                     replaceable_plots.append(self.plot)
         return replaceable_plots
-
-    def replaced_by(self, household_structure):
-        """Returns the plot instance that was used to replace the household_structure or None."""
-        try:
-            return Plot.objects.get(replaces=household_structure.household.household_identifier)
-        except Plot.DoesNotExist:
-            return None
 
     @property
     def available_plots(self):
@@ -177,7 +181,7 @@ class ReplacementHelper(object):
                 try:
                     replaceable_plot.replaced_by = available_plots[index].plot_identifier
                     replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
-                    replaceable_plot.save(update_fields=['replaced_by'], using='default')
+                    replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
                     replaceable_plot.save(update_fields=['replaced_by'], using=destination)
                     available_plots[index].replaces = replaceable_plot.plot_identifier
                     available_plots[index].save(update_fields=['replaces'], using='default')
@@ -194,23 +198,9 @@ class ReplacementHelper(object):
                     break
         return new_bhs_plots
 
-    def household_replacement_reason(self):
-        """check the reason why a plot or household is being replaced."""
-        reason = None
-        if self.all_eligible_members_absent:
-            reason = 'all members are absent'
-        elif self.household_structure.refused_enumeration:
-            reason = 'HOH refusal'
-        elif self.all_eligible_members_refused:
-            reason = 'all eligible members refused'
-        elif self.eligible_representative_absent:
-            reason = 'no eligible representative'
-        elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
-            reason = 'no informant'
-        return reason
-
     @property
     def all_eligible_members_refused(self):
+        """Returns True if all eligible members refuse participation in BHS."""
         if self.household_structure.enumerated:
             refused_members_count = HouseholdMember.objects.filter(
                 household_structure=self.household_structure,
@@ -225,6 +215,8 @@ class ReplacementHelper(object):
 
     @property
     def all_eligible_members_absent(self):
+        """Returns True if all eligible members are absent
+        after 3 attempts."""
         if self.household_structure.enumerated:
             absent_member_count = HouseholdMember.objects.filter(
                 household_structure=self.household_structure,
@@ -240,6 +232,11 @@ class ReplacementHelper(object):
 
     @property
     def eligible_representative_absent(self):
+        """Returns True if no household age eligible representative is available after
+        (x) attempts (e.g., VISIT_ATTEMPTS=3) to complete the HouseholdAssessment.
+
+        Information comes from the last HouseholdLog entry for a household that has
+        not been enumerated and has been visited at least 3 times"""
         eligible_representative_absent = False
         if (not self.household_structure.enumerated
                 and self.household_structure.failed_enumeration_attempts >= VISIT_ATTEMPTS):
@@ -258,6 +255,9 @@ class ReplacementHelper(object):
 
     @property
     def vdc_form_status(self):
+        """Returns True if the HouseholdAssessment for exists.
+
+        HouseholdAssessment is know as the VDC form in the field."""
         if self.household_structure.no_informant:
             try:
                 return HouseholdAssessment.objects.get(
@@ -265,3 +265,19 @@ class ReplacementHelper(object):
             except HouseholdAssessment.DoesNotExist:
                 pass
         return None
+
+    def household_replacement_reason(self):
+        """Returns the reason why a plot or household is being replaced."""
+        reason = None
+        if self.all_eligible_members_absent:
+            reason = 'all members are absent'
+        elif self.household_structure.refused_enumeration:
+            reason = 'HOH refusal'
+        elif self.all_eligible_members_refused:
+            reason = 'all eligible members refused'
+        elif self.eligible_representative_absent:
+            reason = 'no eligible representative'
+        elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
+            reason = 'no informant'
+        return reason
+
