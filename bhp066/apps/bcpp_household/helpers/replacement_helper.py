@@ -196,7 +196,7 @@ class ReplacementHelper(object):
                     replaceable_plot.replaced_by = available_plots[index].plot_identifier
                     replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
                     replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
-                    replaceable_plot.save(update_fields=['replaced_by'], using=destination)
+                    replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=destination)
                     available_plots[index].replaces = replaceable_plot.plot_identifier
                     available_plots[index].save(update_fields=['replaces'], using='default')
                     # Creates a history of replacement
