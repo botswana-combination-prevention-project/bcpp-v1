@@ -66,6 +66,8 @@ class SubjectReferralApptHelper(object):
             pass  # will be next clinic date and will ignore a scheduled_appt_date
         elif self.referral_code == 'POS#-AN':
             pass  # will be next clinic date and will ignore a scheduled_appt_date
+        elif self.referral_code in ['POS!-HI', 'POS!-LO', 'POS#-HI', 'POS#-LO']:
+            pass  # will be next clinic date and will ignore a scheduled_appt_date
         else:
             try:
                 if self.scheduled_appt_datetime <= self.base_datetime + relativedelta(months=1):

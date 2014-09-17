@@ -8,5 +8,5 @@ class BaseSubjectModelForm(BaseConsentedModelForm):
         super(BaseSubjectModelForm, self).__init__(*args, **kwargs)
         try:
             self.fields['subject_visit'].queryset = SubjectVisit.objects.filter(pk=self.instance.subject_visit.pk)
-        except:
+        except AttributeError:
             pass
