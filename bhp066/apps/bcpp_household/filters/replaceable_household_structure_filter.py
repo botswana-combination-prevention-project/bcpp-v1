@@ -17,6 +17,6 @@ class ReplaceableHouseholdStructureFilter(SimpleListFilter):
             query_id_list = []
             for household_structure in queryset.all():
                 replacement_helper = ReplacementHelper(household_structure=household_structure)
-                if replacement_helper.replaceable_household and not household_structure.household.replaced_by:
+                if replacement_helper.replaceable_household:
                     query_id_list.append(household_structure.id)
             return queryset.filter(id__in=query_id_list)

@@ -346,7 +346,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self)
-        except:
+        except EnrollmentChecklist.DoesNotExist:
             enrollment_checklist = None
         return enrollment_checklist
 
@@ -356,7 +356,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
         try:
             subject_htc = SubjectHtc.objects.get(household_member=self)
-        except:
+        except SubjectHtc.DoesNotExist:
             subject_htc = None
         return subject_htc
 
@@ -474,7 +474,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             try:
                 instance = model_class.objects.get(household_member=self)
                 model_pk = instance.id
-            except:
+            except model_class.DoesNotExist:
                 model_pk = None
         if model_pk:
             url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(model_pk, ))
