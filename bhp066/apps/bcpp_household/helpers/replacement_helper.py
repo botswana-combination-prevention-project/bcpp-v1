@@ -2,11 +2,14 @@ import socket
 
 from datetime import datetime
 
+from django.conf import settings
 from django.db.models import Min, Max
+from django.db import models, transaction
 
 from edc.device.sync.exceptions import PendingTransactionError
 from edc.device.sync.models import OutgoingTransaction
 from edc.device.device.classes import Device
+from edc.device.sync.models import Producer
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
@@ -60,16 +63,21 @@ class ReplacementHelper(object):
 
     def outgoing_transactions(self, producer):
         """Checks if a producer has OutgoingTransactions."""
+        producer_hostname = producer.split('-')[0]
         if OutgoingTransaction.objects.using(producer).filter(
-                is_ignored=False, is_consumed_server=False):
+                hostname_modified=producer_hostname, is_consumed_server=False,
+                is_consumed_middleman=False).exclude(is_ignored=True).exists():
             raise PendingTransactionError
         return False
 
-    def delete_server_transactions_on_producer(self, destination):
+    def delete_server_transactions_on_producer(self, destination, tx_pks):
         if Device.is_server():
             try:
                 OutgoingTransaction.objects.using(destination).filter(
-                    is_ignored=False, is_consumed_server=False, hostname_created=socket.gethostname()).delete()
+                    is_ignored=False, is_consumed_server=False,
+                    pk__in=tx_pks,
+                    hostname_created=socket.gethostname(),
+                    hostname_modified=socket.gethostname()).delete()
             except OutgoingTransaction.DoesNotExist:
                 pass
 
@@ -156,25 +164,26 @@ class ReplacementHelper(object):
         new_bhs_plots = []
         if not destination:
             raise TypeError('Expected a valid producer. Got None.')
+        self.load_producers()
         if not self.outgoing_transactions(destination):
             available_plots = self.available_plots
             for index, household in enumerate(self.replaceable_households(destination)):
                 try:
-                    household.replaced_by = available_plots[index].plot_identifier
-                    available_plots[index].replaces = household.household_identifier
-                    household.save(update_fields=['replaced_by'], using='default')
-                    available_plots[index].save(update_fields=['replaces'], using='default')
-                    household.save(update_fields=['replaced_by'], using=destination)
-                    household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey)
-                    # Creates a history of replacement
-                    ReplacementHistory.objects.create(
-                        replacing_item=available_plots[index].plot_identifier,
-                        replaced_item=household.household_identifier,
-                        replacement_datetime=datetime.now(),
-                        replacement_reason=self.household_replacement_reason(household_structure))
-                    new_bhs_plots.append(available_plots[index])
-                    # delete transactions created when saving to remote
-                    self.delete_server_transactions_on_producer(destination)
+                    with transaction.atomic():
+                        household.replaced_by = available_plots[index].plot_identifier
+                        available_plots[index].replaces = household.household_identifier
+                        household.save(update_fields=['replaced_by'], using='default')
+                        available_plots[index].save(update_fields=['replaces'], using='default')
+                        household.save(update_fields=['replaced_by'], using=destination)
+                        # Creates a history of replacement
+                        ReplacementHistory.objects.create(
+                            replacing_item=available_plots[index].plot_identifier,
+                            replaced_item=household.household_identifier,
+                            replacement_datetime=datetime.now(),
+                            replacement_reason=self.household_replacement_reason())
+                        new_bhs_plots.append(available_plots[index])
+                        # delete transactions created when saving to remote
+                        #self.delete_server_transactions_on_producer(destination)
                 except IndexError:
                     break
         return new_bhs_plots
@@ -187,27 +196,29 @@ class ReplacementHelper(object):
         new_bhs_plots = []
         if not destination:
             raise TypeError('Expected a valid producer. Got None.')
+        self.load_producers()
         if not self.outgoing_transactions(destination):
             # replaceable_plot is a plot that is eligible for replacement.
             # new_bhs_plot is a plot that is available to replace replaceable_plot.
             available_plots = self.available_plots
             for index, replaceable_plot in enumerate(self.replaceable_plots(destination)):
                 try:
-                    replaceable_plot.replaced_by = available_plots[index].plot_identifier
-                    replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
-                    replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
-                    replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=destination)
-                    available_plots[index].replaces = replaceable_plot.plot_identifier
-                    available_plots[index].save(update_fields=['replaces'], using='default')
-                    # Creates a history of replacement
-                    ReplacementHistory.objects.create(
-                        replacing_item=available_plots[index].plot_identifier,
-                        replaced_item=replaceable_plot.plot_identifier,
-                        replacement_datetime=datetime.now(),
-                        replacement_reason='plot for plot replacement')
-                    new_bhs_plots.append(available_plots[index])
-                    # delete transactions created when saving to remote
-                    self.delete_server_transactions_on_producer(destination)
+                    with transaction.atomic():
+                        replaceable_plot.replaced_by = available_plots[index].plot_identifier
+                        replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
+                        replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
+                        replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=destination)
+                        available_plots[index].replaces = replaceable_plot.plot_identifier
+                        available_plots[index].save(update_fields=['replaces'], using='default')
+                        # Creates a history of replacement
+                        ReplacementHistory.objects.create(
+                            replacing_item=available_plots[index].plot_identifier,
+                            replaced_item=replaceable_plot.plot_identifier,
+                            replacement_datetime=datetime.now(),
+                            replacement_reason='plot for plot replacement')
+                        new_bhs_plots.append(available_plots[index])
+                        # delete transactions created when saving to remote
+                        #self.delete_server_transactions_on_producer(destination)
                 except IndexError:
                     break
         return new_bhs_plots
@@ -295,3 +306,19 @@ class ReplacementHelper(object):
             reason = 'no informant'
         return reason
 
+    def load_producers(self):
+        """Add all producer database settings to the setting's file 'DATABASE' attribute."""
+    producers = Producer.objects.all()
+    if producers:
+        for producer in producers:
+            settings.DATABASES[producer.settings_key] = {
+                'ENGINE': 'django.db.backends.mysql',
+                'OPTIONS': {
+                    'init_command': 'SET storage_engine=INNODB',
+                },
+                'NAME': producer.db_user_name,
+                'USER': producer.db_user,
+                'PASSWORD': producer.db_password,
+                'HOST': producer.producer_ip,
+                'PORT': producer.port,
+            }
