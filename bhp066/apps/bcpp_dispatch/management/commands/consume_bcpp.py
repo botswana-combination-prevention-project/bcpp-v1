@@ -5,5 +5,6 @@ from ...classes import BcppConsumer
 
 class Command(BaseCommand):
 
-    def get_consumer(self):
+    @property
+    def consumer(self):
         return BcppConsumer()
