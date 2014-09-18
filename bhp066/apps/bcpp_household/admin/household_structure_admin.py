@@ -41,6 +41,7 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'progress',
         'enrolled',
         'refused_enumeration',
+        'household__community',
         ReplaceableHouseholdStructureFilter,
         'enrolled_datetime',
         'modified',
