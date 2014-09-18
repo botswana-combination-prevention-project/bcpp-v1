@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -267,10 +269,8 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
-        update_fields = []
-        if not self.allow_enrollment:
-            raise ValidationError('BHS enrollment for {0} ended on {1}. This plot may not be modified. '
-                                  'See settings.BHS_END_DATE'.format(self.community, settings.BHS_END_DATE))
+        update_fields = kwargs.get('update_fields')
+        self.allow_enrollment(using)
         try:
             # if plot is replaced abort the save
             if self.__class__.objects.using(using).get(id=self.id).replaced_by:
@@ -330,17 +330,19 @@ class Plot(BaseDispatchSyncUuidModel):
                     'gps_minutes_e': instance.gps_minutes_e,
                     'gps_minutes_s': instance.gps_minutes_s})
 
-    def allow_enrollment(self, plot, using, exception_cls=None):
-        """Stops enrollments."""
-        plot = plot or self
+    def allow_enrollment(self, using, exception_cls=None, plot_instance=None):
+        """Raises an exception if an attempt is made to edit a plot after
+        the BHS_FULL_ENROLLMENT_DATE or if the plot has been allocated to HTC."""
+        plot_instance = plot_instance or self
         using = using or 'default'
         exception_cls = exception_cls or ValidationError
-        first_survey_start_datetime = Survey.objects.all().aggregate(
-            datetime_start=Min('datetime_start')).get('datetime_start')
-        survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
-        if not get_model('bcpp_household', 'HouseholdStructure').objects.using(using).get(survey=survey).enrolled:
-            raise exception_cls('BHS enrollment for {0} ended on {1}. This plot may not be modified. '
-                                'See settings.BHS_END_DATE'.format(self.community, settings.BHS_FULL_ENROLLMENT_DATE))
+        if self.htc:
+            raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
+        if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
+            raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
+                                'data related to it, may not be modified. '
+                                'See settings.BHS_FULL_ENROLLMENT_DATE'.format(self.community, settings.BHS_FULL_ENROLLMENT_DATE))
+        return True
 
     def safe_delete_households(self, count, instance=None, using=None):
         """Deletes households and HouseholdStructure if member_count==0 and no log entry.

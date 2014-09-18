@@ -217,6 +217,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         selected_member_status = None
         using = kwargs.get('using')
+        self.allow_enrollment(using)
         self.check_eligible_representative_filled(self.household_structure, using=using)
         if self.household_structure.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(
@@ -257,6 +258,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #             kwargs.update({'update_fields': update_fields + ['member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']})
         # print (self.member_status, kwargs.get('update_fields'))
         super(HouseholdMember, self).save(*args, **kwargs)
+
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Raises an exception if the household is not enrolled
+        and BHS_FULL_ENROLLMENT_DATE is past."""
+        instance = instance or self
+        return self.household_structure.household.plot.allow_enrollment(
+            using, exception_cls=exception_cls,
+            plot_instance=instance.household_structure.household.plot)
 
     @property
     def clear_refusal(self):
