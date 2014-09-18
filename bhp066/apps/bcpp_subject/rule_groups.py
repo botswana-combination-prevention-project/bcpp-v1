@@ -4,23 +4,10 @@ from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, Schedul
 from .classes import SubjectStatusHelper
 
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
-                    SexualBehaviour, HivCareAdherence, Circumcision,
-                    HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                    HivResult, HivResultDocumentation, ElisaHivResult, Sti)
+                     SexualBehaviour, HivCareAdherence, Circumcision,
+                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
+                     HivResult, HivResultDocumentation, ElisaHivResult)
 
-# from .constants import RBD, Questionnaires
-
-
-# def func_hiv_tested(visit_instance):
-#     testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
-#     participation = Participation.objects.get(subject_visit=visit_instance)
-#     return testing_history.has_tested == 'Yes' and participation.participation_type != 'RBD Only'
-#
-#
-# def func_hiv_untested(visit_instance):
-#     testing_history = HivTestingHistory.objects.get(subject_visit=visit_instance)
-#     participation = Participation.objects.get(subject_visit=visit_instance)
-#     return testing_history.has_tested == 'No' and participation.participation_type != 'RBD Only'
 
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
@@ -29,20 +16,15 @@ def func_art_naive(visit_instance):
 
 
 def func_known_pos(visit_instance):
-    return SubjectStatusHelper(visit_instance).new_pos == False
+    return SubjectStatusHelper(visit_instance).new_pos is False
 
 
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required"""
     subject_status_helper = SubjectStatusHelper(visit_instance)
-#     participation = Participation.objects.get(subject_visit=visit_instance)
-#     if participation.participation_type_string == RBD:
-#         return False
-#     if participation.participation_type_string == Questionnaires:
-#         return False
     if subject_status_helper.todays_hiv_result:
         return True
-    return False if (subject_status_helper.new_pos == False) else True
+    return False if (subject_status_helper.new_pos is False) else True
 
 
 def func_hiv_negative_today(visit_instance):
@@ -60,19 +42,13 @@ def func_hiv_positive_today(visit_instance):
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
 
 
-# def func_hiv_positive_today_not_rbd(visit_instance):
-#     """Returns True if the participant has been determinied to be either known or newly diagnosed HIV positive
-#     and their participation is not RBD only."""
-#     participation = Participation.objects.get(subject_visit=visit_instance)
-#     return SubjectStatusHelper(visit_instance).hiv_result == 'POS' and participation.participation_type_string != RBD
-
-
 def func_not_required(visit_instance):
     return True
 
 
 def func_no_verbal_hiv_result(visit_instance):
-    """(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'), ('verbal_hiv_result', 'equals', 'not_answering', 'or'))"""
+    """(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'),
+    ('verbal_hiv_result', 'equals', 'not_answering', 'or'))"""
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
@@ -112,7 +88,7 @@ def evaluate_ever_had_sex_for_female(visit_instance):
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     if visit_instance.appointment.registered_subject.gender.lower() == 'm':
         return False
-    #if we come here then gender must be FEMALE
+    # if we come here then gender must be FEMALE
     elif sexual_behaviour.ever_sex.lower() == 'yes':
         return True
     return False
@@ -122,7 +98,6 @@ class RegisteredSubjectRuleGroup(RuleGroup):
 
     gender_circumsion = ScheduledDataRule(
         logic=Logic(
-            #predicate=('gender', 'equals', 'f'),
             predicate=is_gender_female,
             consequence='not_required',
             alternative='new'),
@@ -130,7 +105,6 @@ class RegisteredSubjectRuleGroup(RuleGroup):
 
     gender_menopause = ScheduledDataRule(
         logic=Logic(
-            #predicate=('gender', 'equals', 'm'),
             predicate=is_gender_male,
             consequence='not_required',
             alternative='new'),
@@ -187,7 +161,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     has_tested = ScheduledDataRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'Yes'),
-#             predicate=func_hiv_tested,
             consequence='new',
             alternative='not_required'),
         target_model=['hivtested'])
@@ -195,7 +168,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     hiv_untested = ScheduledDataRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'No'),
-#             predicate=func_hiv_untested,
             consequence='new',
             alternative='not_required'),
         target_model=['hivuntested'])
@@ -311,14 +283,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-#     microtube_known_pos = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_todays_hiv_result_required,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Microtube'],)
-
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -333,7 +297,7 @@ class SexualBehaviourRuleGroup(RuleGroup):
             predicate=('last_year_partners', 'gte', 1),
             consequence='new',
             alternative='not_required'),
-         target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
+        target_model=['monthsrecentpartner', 'monthssecondpartner', 'monthsthirdpartner'])
 
     last_year_partners = ScheduledDataRule(
         logic=Logic(
@@ -410,11 +374,10 @@ site_rule_groups.register(ReproductiveRuleGroup)
 
 
 class MedicalDiagnosesRuleGroup(RuleGroup):
-    # allowing the heartattack, cancer, tb forms to be made available whether or not the participant
-    # has a record. see redmine 314
+    """"Allows the heartattack, cancer, tb forms to be made available whether or not the participant
+    has a record. see redmine 314."""
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
-            #predicate=(('heart_attack_record', 'equals', 'Yes'), ('heart_attack_record', 'equals', 'No', 'or')),
             predicate=func_heart_attack_record_value,
             consequence='new',
             alternative='not_required'),
@@ -422,7 +385,6 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
     cancer_record = ScheduledDataRule(
         logic=Logic(
-            #predicate=(('cancer_record', 'equals', 'Yes'), ('cancer_record', 'equals', 'No', 'or')),
             predicate=func_cancer_record_value,
             consequence='new',
             alternative='not_required'),
@@ -430,7 +392,6 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
 
     tb_record = ScheduledDataRule(
         logic=Logic(
-            #predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
             predicate=func_tb_record_value,
             consequence='new',
             alternative='not_required'),
@@ -444,7 +405,6 @@ site_rule_groups.register(MedicalDiagnosesRuleGroup)
 
 
 class BaseRequisitionRuleGroup(RuleGroup):
-
     """Ensures an RBD requisition if HIV result is POS."""
     rbd_vl_for_pos = RequisitionRule(
         logic=Logic(
@@ -462,15 +422,6 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='new'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'], )
-#
-#     """Ensures an VL requisition if HIV result is POS and participation in NOT RBD only."""
-#     vl_for_pos = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_hiv_positive_today_not_rbd,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Viral Load'], )
 
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
@@ -501,7 +452,8 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition'), 'elisahivresult'],
         target_requisition_panels=['ELISA', ], )
 
-    """Ensures a venous blood draw requisition is required if insufficient volume in the capillary (microtube)."""
+    """Ensures a venous blood draw requisition is required if insufficient
+    volume in the capillary (microtube)."""
     venous_for_vol = RequisitionRule(
         logic=Logic(
             predicate=(('insufficient_vol', 'equals', 'Yes'), ('blood_draw_type', 'equals', 'venous', 'or'),),
