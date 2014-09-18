@@ -47,11 +47,11 @@ elif socket.gethostname() == 'ckgathi':
 else:
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    KEY_PATH = '/Volumes/keys'
+    #KEY_PATH = '/Volumes/keys'
     # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    #KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 

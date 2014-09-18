@@ -29,7 +29,7 @@ class SubjectMovedAdmin(BaseRegisteredSubjectModelAdmin):
     search_fields = [
         'household_member__first_name',
         'household_member__household_structure__household__household_identifier']
-    list_filter = ('survey',)
+    list_filter = ('survey', 'household_member__household_structure__household__community')
     radio_fields = {
         "moved_reason": admin.VERTICAL,
         "place_moved": admin.VERTICAL}
