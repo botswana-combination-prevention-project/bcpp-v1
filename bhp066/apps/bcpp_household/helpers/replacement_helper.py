@@ -175,7 +175,6 @@ class ReplacementHelper(object):
                         household.replaced_by = available_plots[index].plot_identifier
                         available_plots[index].replaces = household.household_identifier
                         household.save(update_fields=['replaced_by'], using='default')
-                        p = available_plots[index]
                         available_plots[index].save(update_fields=['replaces'], using='default')
                         household.save(update_fields=['replaced_by'], using=destination)
                         # Creates a history of replacement
