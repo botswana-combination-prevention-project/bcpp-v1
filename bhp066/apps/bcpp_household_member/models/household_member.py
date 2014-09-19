@@ -333,11 +333,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             current_hoh = HouseholdMember.objects.get(
                     household_structure=household_structure,
                     relation='Head')
-            #If i am not a new instance then make sure i am not comparing to myself.
+            # If i am not a new instance then make sure i am not comparing to myself.
             if self.id and current_hoh and (self.id != current_hoh.id):
                     raise exception_cls('{0} is the head of household already. Only one member '
                                                 'may be the head of household.'.format(current_hoh))
-            #If i am a new instance then i could not be comparing to myself as i do not exist in the DB yet
+            # If i am a new instance then i could not be comparing to myself as i do not exist in the DB yet
             elif not self.id and current_hoh:
                 raise exception_cls('{0} is the head of household already. Only one member '
                                                 'may be the head of household.'.format(current_hoh))
