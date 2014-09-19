@@ -54,7 +54,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     enumeration_attempts = models.IntegerField(
         default=0,
         editable=False,
-        help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
+        help_text=('Updated by a signal on HouseholdLogEntry. '
+                   'Number of attempts to enumerate a household_structure.'))
 
     refused_enumeration = models.BooleanField(
         default=False,
@@ -120,32 +121,43 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     @property
     def enrolled_member_count(self):
-        """Returns the number of consented (or enrolled) household members in this household for all surveys."""
+        """Returns the number of consented (or enrolled) household members
+        in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
-        return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
+        return HouseholdMember.objects.filter(household_structure__pk=self.pk,
+                                              is_consented=True).count()
 
     def plot(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))
-        return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.household.plot.plot_identifier)
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household', model_name='plot'))
+        return """<a href="{url}?q={q}" />plot</a>""".format(
+            url=url, q=self.household.plot.plot_identifier)
     plot.allow_tags = True
 
     def house(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='household'))
-        return """<a href="{url}?q={q}" />household</a>""".format(url=url, q=self.household.household_identifier)
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household', model_name='household'))
+        return """<a href="{url}?q={q}" />household</a>""".format(
+            url=url, q=self.household.household_identifier)
     house.allow_tags = True
 
     def members(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household_member', model_name='householdmember'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household_member', model_name='householdmember'))
         return """<a href="{url}?q={q}'" />members</a>""".format(url=url, q=self.pk)
     members.allow_tags = True
 
     def logs(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='householdlog'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household', model_name='householdlog'))
         return """<a href="{url}?q={q}'" />log</a>""".format(url=url, q=self.pk)
     logs.allow_tags = True
 
     def dashboard(self):
-        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk})
+        url = reverse('household_dashboard_url',
+                      kwargs={'dashboard_type': 'household',
+                              'dashboard_model': 'household_structure',
+                              'dashboard_id': self.pk})
         return """<a href="{url}" />composition</a>""".format(url=url)
     dashboard.allow_tags = True
 
