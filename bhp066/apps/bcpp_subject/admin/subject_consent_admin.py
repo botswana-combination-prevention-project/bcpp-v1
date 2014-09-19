@@ -27,6 +27,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'language',
             'may_store_samples',
             'is_literate',
+            'household_member__household_structure__household__community',
             'consent_datetime',
             'community',
             'created',

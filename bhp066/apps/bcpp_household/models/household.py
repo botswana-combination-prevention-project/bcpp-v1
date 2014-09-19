@@ -149,13 +149,20 @@ class Household(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         try:
-            # if household is replaced abort the save
             if self.__class__.objects.using(using).get(id=self.id).replaced_by:
                 raise AlreadyReplaced('Household {0} has been replaced '
                                       'by plot {1}.'.format(self.household_identifier, self.replaced_by))
         except self.__class__.DoesNotExist:
             pass
+        self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
+
+    @property
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Raises an exception if the plot is not enrolled and
+        BHS_FULL_ENROLLMENT_DATE is past."""
+        instance = instance or self
+        return self.plot.allow_enrollment(self, using, exception_cls, plot_instance=instance.plot)
 
     @property
     def mapper_name(self):
