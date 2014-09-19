@@ -42,6 +42,7 @@ class HouseholdInfoAdmin(BaseModelAdmin):
         "electrical_appliances",
         "transport_mode",
         )
+    list_filter = ('report_datetime', 'household_member__household_structure__household__community')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

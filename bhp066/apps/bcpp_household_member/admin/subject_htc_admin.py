@@ -37,7 +37,7 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member__first_name',
         'household_member__household_structure__household__household_identifier']
 
-    list_filter = ('report_datetime', 'offered', 'accepted', 'referred')
+    list_filter = ('report_datetime', 'offered', 'accepted', 'referred', 'household_member__household_structure__household__community')
 
     def get_readonly_fields(self, request, obj=None):
         super(SubjectHtcAdmin, self).get_readonly_fields(request, obj)
