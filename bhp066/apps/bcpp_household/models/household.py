@@ -26,7 +26,8 @@ class Household(BaseDispatchSyncUuidModel):
     household_sequence = models.IntegerField(
         editable=False,
         null=True,
-        help_text='is 1 for first household in plot, 2 for second, 3, etc. Embedded in household identifier.')
+        help_text=('is 1 for first household in plot, 2 for second, 3, etc. '
+                   'Embedded in household identifier.'))
 
     hh_int = models.IntegerField(
         null=True,
@@ -135,12 +136,14 @@ class Household(BaseDispatchSyncUuidModel):
     enrolled = models.BooleanField(
         default=False,
         editable=False,
-        help_text='Set to true if one member is consented. Updated by Household_structure post_save.')
+        help_text=('Set to true if one member is consented. '
+                   'Updated by Household_structure post_save.'))
 
     enrolled_datetime = models.DateTimeField(
         null=True,
         editable=False,
-        help_text='datetime that household is enrolled. Updated by Household_structure post_save.')
+        help_text=('datetime that household is enrolled. '
+                   'Updated by Household_structure post_save.'))
 
     objects = HouseholdManager()
 
@@ -151,18 +154,19 @@ class Household(BaseDispatchSyncUuidModel):
         try:
             if self.__class__.objects.using(using).get(id=self.id).replaced_by:
                 raise AlreadyReplaced('Household {0} has been replaced '
-                                      'by plot {1}.'.format(self.household_identifier, self.replaced_by))
+                                      'by plot {1}.'.format(self.household_identifier,
+                                                            self.replaced_by))
         except self.__class__.DoesNotExist:
             pass
         self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
 
-    @property
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Raises an exception if the plot is not enrolled and
         BHS_FULL_ENROLLMENT_DATE is past."""
         instance = instance or self
-        return self.plot.allow_enrollment(self, using, exception_cls, plot_instance=instance.plot)
+        return self.plot.allow_enrollment(using, exception_cls,
+                                          plot_instance=instance.plot)
 
     @property
     def mapper_name(self):
@@ -179,7 +183,8 @@ class Household(BaseDispatchSyncUuidModel):
         return self.household_identifier
 
     def gps(self):
-        return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
+        return "S{0} {1} E{2} {3}".format(
+            self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
