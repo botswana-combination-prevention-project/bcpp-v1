@@ -92,23 +92,25 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         if self.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
+
         super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()
     natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey']
 
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Raises an exception if the household is not enrolled
+        and BHS_FULL_ENROLLMENT_DATE is past."""
+        instance = instance or self
+        return self.household.plot.allow_enrollment(using, exception_cls=exception_cls,
+                                                    plot_instance=instance.household.plot)
+
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household__plot__plot_identifier')
 
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
-
-#     @property
-#     def replaceable(self):
-#         from ..helpers import ReplacementHelper
-#         replacement_helper = ReplacementHelper(household_structure=self)
-#         return replacement_helper.replaceable
 
     @property
     def member_count(self):

@@ -8,7 +8,7 @@ See also bcpp_household.mappers"""
 
 
 BHS_START_DATE = date(2014, 8, 27)
-BHS_FULL_ENROLLMENT_DATE = date(2014, 11, 16)
-BHS_END_DATE = date(2014, 12, 7)
+BHS_FULL_ENROLLMENT_DATE = date(2014, 10, 13)
+BHS_END_DATE = date(2014, 10, 31)
 SMC_START_DATE = date(2014, 10, 27)  # referenced by mapper
 SMC_ECC_START_DATE = date(2014, 10, 29)  # referenced by mapper
