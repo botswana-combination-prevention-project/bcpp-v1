@@ -16,6 +16,7 @@ from apps.bcpp_survey.models import Survey
 
 from ..constants import (RESIDENTIAL_HABITABLE, NON_RESIDENTIAL,
                          RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT, RARELY_OCCUPIED,
+                         NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, UNKNOWN_OCCUPIED,
                          ELIGIBLE_REPRESENTATIVE_ABSENT, VISIT_ATTEMPTS)
 from ..models import Plot, HouseholdStructure, ReplacementHistory, HouseholdLogEntry, HouseholdAssessment
 
@@ -103,7 +104,7 @@ class ReplacementHelper(object):
                       not self.household_structure.household.replaced_by):
                     replaceable = True
                 elif (self.household_structure.failed_enumeration and
-                      self.household_structure.no_informant and
+                      self.household_structure.no_informant and self.replaceble_vdc_form_status and
                       not self.household_structure.household.replaced_by):
                     replaceable = True
                 elif self.vdc_form_status == RARELY_OCCUPIED:
@@ -279,16 +280,22 @@ class ReplacementHelper(object):
         return eligible_representative_absent
 
     @property
-    def vdc_form_status(self):
+    def replaceble_vdc_form_status(self):
         """Returns True if the HouseholdAssessment for exists.
 
         HouseholdAssessment is know as the VDC form in the field."""
         if self.household_structure.no_informant:
             try:
-                return HouseholdAssessment.objects.get(
+                househod_assessment = HouseholdAssessment.objects.get(
                     household_structure=self.household_structure).vdc_househould_status
+                replaceble_status = [
+                        NEARLY_ALWAYS_OCCUPIED,
+                        SEASONALLY_OCCUPIED,
+                        UNKNOWN_OCCUPIED]
+                if househod_assessment in replaceble_status:
+                    return True
             except HouseholdAssessment.DoesNotExist:
-                pass
+                return False
         return None
 
     def household_replacement_reason(self):
