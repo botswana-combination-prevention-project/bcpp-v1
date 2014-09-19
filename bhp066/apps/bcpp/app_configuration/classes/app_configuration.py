@@ -129,7 +129,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                   ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}}
 
     labeling_setup = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'localhost', '127.0.0.1', True),
-                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'bcpplab1', None, False)],
+                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'bcpplab1', None, False),
+                                        LabelPrinterTuple('Zebra_Technologies_QLn320', 'localhost', '127.0.0.1', False)],
                       'client': [ClientTuple(hostname='bcpplab1',
                                              printer_name='Zebra_Technologies_ZTC_GK420t',
                                              cups_hostname='bcpplab1',
