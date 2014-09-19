@@ -30,6 +30,16 @@ class PlotLog(BaseDispatchSyncUuidModel):
     def __unicode__(self):
         return unicode(self.plot)
 
+    def save(self, *args, **kwargs):
+        using = kwargs.get('using,')
+        self.allow_enrollment(using)
+        super(PlotLog, self).save(*args, **kwargs)
+
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Stops enrollments."""
+        instance = instance or self
+        return self.plot.allow_enrollment(using, exception_cls, plot_instance=instance.plot)
+
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
 
@@ -79,26 +89,21 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
 
     objects = PlotLogEntryManager()
 
+    def save(self, *args, **kwargs):
+        using = kwargs.get('using,')
+        self.allow_enrollment(using)
+        super(PlotLogEntry, self).save(*args, **kwargs)
+
     def natural_key(self):
         return (self.report_datetime, ) + self.plot_log.natural_key()
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot_log__plot__plot_identifier')
 
-    def allow_enrollment(self, plot_log_entry, exception_cls=None, using=None):
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Stops enrollments."""
-        exception_cls = exception_cls or ValidationError
-        using = using or 'default'
-        allow_edit = []
-        households = None
-        first_survey_start_datetime = Survey.objects.using(using).all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
-        survey = Survey.objects.using(using).get(datetime_start=first_survey_start_datetime)
-        if self.plot_log.plot.household_count >= 1:
-            households = get_model('bcpp_household', 'Household').objects.filter(plot=self.plot_log.plot)
-            for household in households:
-                allow_edit.append(get_model('bcpp_household', 'HouseholdStructure').objects.get(survey=survey, household=household).enrolled)
-        if not (len(set(allow_edit)) == 1):
-            raise exception_cls("adding logs or modifying logs is not allowed anymore where there is no at least one enrolled individual")
+        instance = instance or self
+        return self.plot_log.plot.allow_enrollment(using, exception_cls, plot_instance=instance.plot_log.plot)
 
     def __unicode__(self):
         return unicode(self.plot_log) + '(' + unicode(self.report_datetime) + ')'

@@ -30,6 +30,8 @@ class SubjectUndecidedEntryAdmin(BaseModelAdmin):
         "subject_undecided_reason": admin.VERTICAL,
         "next_appt_datetime_source": admin.VERTICAL}
 
+    list_filter = ('report_datetime', 'subject_undecided__household_member__household_structure__household__community')
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "subject_undecided":
             kwargs["queryset"] = SubjectUndecided.objects.filter(id__exact=request.GET.get('subject_undecided', 0))
