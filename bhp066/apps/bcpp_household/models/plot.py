@@ -424,7 +424,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        if update_fields == ['replaces', 'htc'] or update_fields == ['replaced_by']:
+        if update_fields == ['replaces', 'htc'] or update_fields == ['replaces'] or update_fields == ['replaced_by']:
             return True
         return False
 
