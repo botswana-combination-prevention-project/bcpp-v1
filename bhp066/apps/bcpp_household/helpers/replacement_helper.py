@@ -134,7 +134,8 @@ class ReplacementHelper(object):
     def replaceable_households(self, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
         replaceable_households = []
-        for self.household_structure in HouseholdStructure.objects.filter(survey=self.survey).order_by('household__household_identifier'):
+        for self.household_structure in HouseholdStructure.objects.filter(
+                survey=self.survey).order_by('household__household_identifier'):
             if producer_name == self.household_structure.household.plot.dispatched_to:
                 if self.replaceable_household:
                     if not self.household_structure.household.replaced_by:
@@ -184,7 +185,7 @@ class ReplacementHelper(object):
                             replacement_reason=self.household_replacement_reason())
                         new_bhs_plots.append(available_plots[index])
                         # delete transactions created when saving to remote
-                        #self.delete_server_transactions_on_producer(destination)
+                        # self.delete_server_transactions_on_producer(destination)
                 except IndexError:
                     break
         return new_bhs_plots
@@ -219,7 +220,7 @@ class ReplacementHelper(object):
                             replacement_reason='plot for plot replacement')
                         new_bhs_plots.append(available_plots[index])
                         # delete transactions created when saving to remote
-                        #self.delete_server_transactions_on_producer(destination)
+                        # self.delete_server_transactions_on_producer(destination)
                 except IndexError:
                     break
         return new_bhs_plots

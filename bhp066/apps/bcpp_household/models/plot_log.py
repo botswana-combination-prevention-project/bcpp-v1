@@ -1,21 +1,16 @@
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 from django.db import models
-from django.db.models import Min
-from django.db.models.loading import get_model
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.core.crypto_fields.fields import EncryptedTextField
-
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_survey.models import Survey
 from apps.bcpp_survey.validators import date_in_survey
 
 from .plot import Plot
-from ..choices import PLOT_LOG_STATUS, INACCESSIBILITY_REASONS
 
+from ..choices import PLOT_LOG_STATUS, INACCESSIBILITY_REASONS
 from ..managers import PlotLogManager, PlotLogEntryManager
 
 
@@ -103,7 +98,8 @@ class PlotLogEntry(BaseDispatchSyncUuidModel):
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Stops enrollments."""
         instance = instance or self
-        return self.plot_log.plot.allow_enrollment(using, exception_cls, plot_instance=instance.plot_log.plot)
+        return self.plot_log.plot.allow_enrollment(
+            using, exception_cls, plot_instance=instance.plot_log.plot)
 
     def __unicode__(self):
         return unicode(self.plot_log) + '(' + unicode(self.report_datetime) + ')'

@@ -5,23 +5,21 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError, transaction
-from django.db.models import Min
-from django.db.models.loading import get_model
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
-from edc.core.crypto_fields.fields import (EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
+from edc.core.crypto_fields.fields import (EncryptedCharField,
+                                           EncryptedTextField,
+                                           EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household.exceptions import AlreadyReplaced
-from apps.bcpp_survey.models import Survey
 
-from ..choices import (PLOT_STATUS, SECTIONS, SUB_SECTIONS, SELECTED)
+from ..choices import (PLOT_STATUS, SELECTED)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
@@ -47,7 +45,8 @@ class Plot(BaseDispatchSyncUuidModel):
         verbose_name="Approximate number of age eligible members",
         blank=True,
         null=True,
-        help_text=("Provide an approximation of the number of people who live in this residence who are age eligible."))
+        help_text=(("Provide an approximation of the number of people "
+                    "who live in this residence who are age eligible.")))
 
     description = EncryptedTextField(
         verbose_name="Description of plot/residence",
@@ -282,8 +281,10 @@ class Plot(BaseDispatchSyncUuidModel):
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
-        if self.household_count > 9:
-            raise ValidationError('Number of households cannot exceed 9. Perhaps catch this in the forms.py')
+        if self.household_count > settings.MAX_HOUSEHOLDS_PER_PLOT:
+            raise ValidationError('Number of households cannot exceed {}. '
+                                  'Perhaps catch this in the forms.py. See '
+                                  'settings.MAX_HOUSEHOLDS_PER_PLOT'.format(settings.MAX_HOUSEHOLDS_PER_PLOT))
         # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
@@ -341,7 +342,8 @@ class Plot(BaseDispatchSyncUuidModel):
         if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
             raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
                                 'data related to it, may not be modified. '
-                                'See settings.BHS_FULL_ENROLLMENT_DATE'.format(self.community, settings.BHS_FULL_ENROLLMENT_DATE))
+                                'See settings.BHS_FULL_ENROLLMENT_DATE'.format(
+                                    self.community, settings.BHS_FULL_ENROLLMENT_DATE))
         return True
 
     def safe_delete_households(self, count, instance=None, using=None):
