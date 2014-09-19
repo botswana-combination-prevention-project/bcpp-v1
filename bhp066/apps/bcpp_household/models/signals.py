@@ -155,7 +155,8 @@ def household_log_entry_on_post_save(sender, instance, raw, created, using, **kw
                                                   REFUSED_ENUMERATION]):
                 failed_enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(
                     household_log__household_structure=instance.household_log.household_structure,
-                    status__in=[ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION]).count()
+                    household_status__in=[ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
+                                          REFUSED_ENUMERATION]).count()
                 instance.household_log.household_structure.failed_enumeration_attempts = failed_enumeration_attempts
                 instance.household_log.household_structure.save(
                     using=using, update_fields=['failed_enumeration_attempts'])
