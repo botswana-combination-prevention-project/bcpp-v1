@@ -10,6 +10,7 @@ from .bcpp_settings import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DA
                             SMC_ECC_START_DATE, SMC_START_DATE,
                             MAX_HOUSEHOLDS_PER_PLOT)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
+from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 
@@ -49,7 +50,7 @@ else:
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
     # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
-
+KEY_PATH = '/Volumes/keys'
 MANAGERS = ADMINS
 
 # DATABASES
@@ -219,8 +220,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '16'
-CURRENT_COMMUNITY = 'lentsweletau'
+SITE_CODE = SITE_CODE
+CURRENT_COMMUNITY = CURRENT_COMMUNITY
 CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
@@ -244,7 +245,7 @@ else:
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
 #  edc.device.device
-DEVICE_ID = 99
+DEVICE_ID = DEVICE_ID
 SERVER_DEVICE_ID_LIST = [91, 92, 93, 94, 95, 96, 97, 99]
 MIDDLEMAN_DEVICE_ID_LIST = [98]
 if str(DEVICE_ID) == '98':
@@ -273,3 +274,4 @@ BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
 SMC_START_DATE = SMC_START_DATE
 SMC_ECC_START_DATE = SMC_ECC_START_DATE
 MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
+LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']
