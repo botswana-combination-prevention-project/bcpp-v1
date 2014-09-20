@@ -11,7 +11,7 @@ class PlotLogEntryAdmin(BaseModelAdmin):
     date_hierarchy = 'modified'
     list_per_page = 15
     list_display = ('plot_log', 'log_status', 'report_datetime')
-    list_filter = ('log_status', 'report_datetime')
+    list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community')
     radio_fields = {
         }
 
