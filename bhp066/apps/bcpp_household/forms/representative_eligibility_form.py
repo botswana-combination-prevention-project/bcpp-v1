@@ -23,6 +23,7 @@ class RepresentativeEligibilityForm(BaseModelForm):
             raise ValidationError('The eligible household representative is absent. See Household Log.')
         except HouseholdLogEntry.DoesNotExist:
             pass
+        return cleaned_data
 
     class Meta:
         model = RepresentativeEligibility
