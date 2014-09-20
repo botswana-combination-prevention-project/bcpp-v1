@@ -1,5 +1,7 @@
 from lis.labeling.classes import ZplTemplateTuple
 
+"""Added here to override the default in app_configuration."""
+
 aliquot_label = ZplTemplateTuple(
     'aliquot_label', (
         ('^XA\n'
