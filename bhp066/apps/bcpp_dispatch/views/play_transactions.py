@@ -15,10 +15,10 @@ def play_transactions(request, **kwargs):
     """
     consumer = BcppConsumer()
     # TODO: this should not allow errors to pass!!
-    try:
-        consumer.consume()
-    except:
-        pass
+    #try:
+    consumer.consume()
+    #except:
+    #    pass
     message = consumer.get_consume_feedback()
     messages.add_message(request, messages.INFO, message)
     if 'EMAIL_AFTER_CONSUME' in dir(settings) and settings.EMAIL_AFTER_CONSUME:

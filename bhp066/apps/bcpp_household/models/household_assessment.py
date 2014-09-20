@@ -6,12 +6,9 @@ from edc.choices import YES_NO, YES_NO_DONT_KNOW
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.managers import HouseholdAssessmentManager
-
 from apps.bcpp_household.exceptions import AlreadyReplaced
 
-from ..choices import INELIGIBLE_REASON
-from ..choices import RESIDENT_LAST_SEEN
-from ..constants import SEASONALLY_OCCUPIED, UNKNOWN_OCCUPIED, NEARLY_ALWAYS_OCCUPIED
+from ..choices import INELIGIBLE_REASON, RESIDENT_LAST_SEEN
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
