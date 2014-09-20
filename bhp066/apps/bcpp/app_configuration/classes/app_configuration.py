@@ -3,6 +3,11 @@ from datetime import datetime, date
 
 from django.conf import settings
 
+try:
+    from config.labels import aliquot_label
+except ImportError:
+    aliquot_label = None
+
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
@@ -139,7 +144,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                              ip=None,
                                              aliases=None), ],
                       'zpl_template': [
-                          ZplTemplateTuple(
+                          aliquot_label or ZplTemplateTuple(
                               'aliquot_label', (
                                   ('^XA\n'
                                    '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS\n'
