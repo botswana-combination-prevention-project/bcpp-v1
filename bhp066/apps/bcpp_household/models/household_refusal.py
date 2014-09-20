@@ -10,18 +10,11 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
 
+from ..choices import HOUSEHOLD_REFUSAL
 from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
-
-
-HOUSEHOLD_REFUSAL = (
-    ('not_interested', 'Not Interested'),
-    ('does_not_have_time', 'Does not have time'),
-    ('DWTA', 'Don\'t want to answer'),
-    ('OTHER', 'Other'),
-)
 
 
 class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
