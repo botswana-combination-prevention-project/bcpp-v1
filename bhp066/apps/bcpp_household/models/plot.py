@@ -337,8 +337,8 @@ class Plot(BaseDispatchSyncUuidModel):
         plot_instance = plot_instance or self
         using = using or 'default'
         exception_cls = exception_cls or ValidationError
-        if self.id:
-            if self.__class__.objects.using(using).get(id=self.id).htc:
+        if plot_instance.id:
+            if plot_instance.__class__.objects.using(using).get(id=plot_instance.id).htc:
                 raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
         if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
             raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
