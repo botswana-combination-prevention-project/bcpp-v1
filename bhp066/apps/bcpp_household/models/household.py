@@ -197,7 +197,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        if update_fields == ['replaced_by']:
+        if 'replaced_by' in update_fields:
             return True
         return False
 
