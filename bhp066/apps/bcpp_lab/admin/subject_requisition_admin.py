@@ -4,7 +4,7 @@ from apps.bcpp_subject.models import SubjectVisit
 
 from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
 
-
+from ..actions import print_requisition_label
 from ..forms import SubjectRequisitionForm
 from ..models import SubjectRequisition, Panel
 
@@ -16,6 +16,8 @@ class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
     dashboard_type = 'subject'
 
     form = SubjectRequisitionForm
+    label_template_name = 'requisition_label'
+    actions = [print_requisition_label]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         panel_pk = request.GET.get('panel', 0)

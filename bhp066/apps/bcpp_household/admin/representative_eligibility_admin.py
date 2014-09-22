@@ -21,6 +21,7 @@ class RepresentativeEligibilityAdmin(BaseModelAdmin):
         "household_residency": admin.VERTICAL,
         "verbal_script": admin.VERTICAL,
         }
+    list_filter = ('report_datetime', 'household_structure__household__community')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":

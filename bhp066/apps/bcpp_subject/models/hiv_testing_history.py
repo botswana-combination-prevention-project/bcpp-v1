@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import  YES_NO_NA
+from edc.choices import YES_NO_NA
 
 from apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 
@@ -22,7 +22,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     when_hiv_test = models.CharField(
         verbose_name=_("When was the last [most recent]"
-                        " time you were tested for HIV?"),
+                       " time you were tested for HIV?"),
         max_length=25,
         null=True,
         blank=True,
@@ -30,10 +30,10 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="(verbal response)",
         )
 
-    #NOTE: this field triggers HivTestReview
+    # this field triggers HivTestReview
     has_record = models.CharField(
         verbose_name=_("Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
-                      " other] available to review?"),
+                       " other] available to review?"),
         max_length=45,
         null=True,
         blank=True,
@@ -51,7 +51,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="(verbal response)",
         )
 
-    #NOTE: this field triggers HivResultDocumentation
+    # this field triggers HivResultDocumentation
     other_record = models.CharField(
         verbose_name=_("Do you have any other available documentation of positive HIV status?"),
         max_length=3,
