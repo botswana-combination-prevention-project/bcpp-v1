@@ -20,7 +20,6 @@ EDC_APPS = (
     'edc.core.bhp_data_manager',
     'edc.core.bhp_variables',
     'edc.core.bhp_site_edc',
-    'edc.core.bhp_nmap',
     'edc.core.bhp_context',
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
