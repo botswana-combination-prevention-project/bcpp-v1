@@ -26,7 +26,8 @@ class Household(BaseDispatchSyncUuidModel):
     household_sequence = models.IntegerField(
         editable=False,
         null=True,
-        help_text='is 1 for first household in plot, 2 for second, 3, etc. Embedded in household identifier.')
+        help_text=('is 1 for first household in plot, 2 for second, 3, etc. '
+                   'Embedded in household identifier.'))
 
     hh_int = models.IntegerField(
         null=True,
@@ -113,6 +114,11 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this household is replaced by',
         editable=False)
 
+#     replaceable = models.BooleanField(
+#         default=False,
+#         editable=False,
+#         help_text='')
+
     comment = EncryptedTextField(
         max_length=250,
         help_text=_("You may provide a comment here or leave BLANK."),
@@ -135,12 +141,14 @@ class Household(BaseDispatchSyncUuidModel):
     enrolled = models.BooleanField(
         default=False,
         editable=False,
-        help_text='Set to true if one member is consented. Updated by Household_structure post_save.')
+        help_text=('Set to true if one member is consented. '
+                   'Updated by Household_structure post_save.'))
 
     enrolled_datetime = models.DateTimeField(
         null=True,
         editable=False,
-        help_text='datetime that household is enrolled. Updated by Household_structure post_save.')
+        help_text=('datetime that household is enrolled. '
+                   'Updated by Household_structure post_save.'))
 
     objects = HouseholdManager()
 
@@ -149,13 +157,22 @@ class Household(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         try:
-            # if household is replaced abort the save
             if self.__class__.objects.using(using).get(id=self.id).replaced_by:
                 raise AlreadyReplaced('Household {0} has been replaced '
-                                      'by plot {1}.'.format(self.household_identifier, self.replaced_by))
+                                      'by plot {1}.'.format(self.household_identifier,
+                                                            self.replaced_by))
         except self.__class__.DoesNotExist:
             pass
+        if using == 'default':  # don't check on remote machines
+            self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
+
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Raises an exception if the plot is not enrolled and
+        BHS_FULL_ENROLLMENT_DATE is past."""
+        instance = instance or self
+        return self.plot.allow_enrollment(using, exception_cls,
+                                          plot_instance=instance.plot)
 
     @property
     def mapper_name(self):
@@ -171,16 +188,17 @@ class Household(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household_identifier
 
-    def bypass_for_edit_dispatched_as_item(self):
-        return True
-
     def gps(self):
-        return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
+        return "S{0} {1} E{2} {3}".format(
+            self.gps_degrees_s, self.gps_minutes_s, self.gps_degrees_e, self.gps_minutes_e)
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'plot__plot_identifier')
 
-    def is_plot(self):
+    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
+        """Bypasses dispatched check if update_fields is set by the replacement_helper."""
+        if 'replaced_by' in update_fields:
+            return True
         return False
 
     def structure(self):

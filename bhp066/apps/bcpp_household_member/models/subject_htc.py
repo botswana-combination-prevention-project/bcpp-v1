@@ -31,7 +31,7 @@ class SubjectHtc(BaseMemberStatusModel):
         max_length=50,
         null=True,
         blank=True,
-        help_text='After saving, re-open this form and transcribe this tracking identifier in to the paper form.')
+        help_text='Transcribe this tracking identifier onto the paper HTC Intake form.')
 
     offered = models.CharField(
         verbose_name=_("Was the subject offered HTC"),

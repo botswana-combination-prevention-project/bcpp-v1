@@ -1,4 +1,5 @@
-from bhp_base_form.forms import BaseModelForm
+from edc.base.form.forms import BaseModelForm
+
 from ..models import HtcSubjectVisit
 
 
@@ -8,5 +9,5 @@ class BaseHtcScheduledModelForm(BaseModelForm):
         super(BaseHtcScheduledModelForm, self).__init__(*args, **kwargs)
         try:
             self.fields['htc_subject_visit'].queryset = HtcSubjectVisit.objects.filter(pk=self.instance.htc_visit.pk)
-        except:
+        except AttributeError:
             pass

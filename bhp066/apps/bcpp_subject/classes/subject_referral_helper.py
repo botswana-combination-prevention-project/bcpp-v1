@@ -40,7 +40,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
             })
-        self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        # self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
 
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member

@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
 from lis.specimen.lab_aliquot.managers import AliquotManager
@@ -28,8 +27,6 @@ class Aliquot(BaseAliquot):
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.receive.registered_subject.subject_identifier
-        #if self.source_aliquot and not self.primary_aliquot:
-        #    raise ValidationError('Primary aliquot may not be None')
         super(Aliquot, self).save(*args, **kwargs)
 
     def get_visit_model(self):
