@@ -28,7 +28,7 @@ class SubjectRefusalAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member__first_name',
         'household_member__household_structure__household__household_identifier']
 
-    list_filter = ('reason', )
+    list_filter = ('reason', 'household_member__household_structure__household__community')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
