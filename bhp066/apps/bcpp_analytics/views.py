@@ -22,7 +22,7 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household_member.constants import (ABSENT, BHS, HTC, REFUSED, UNDECIDED)
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
-from apps.bcpp_subject.models import HivResult
+from apps.bcpp_subject.models import HivResult, HicEnrollment
 from apps.bcpp_survey.models import Survey
 
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
@@ -237,6 +237,9 @@ def operational_report_view(request, **kwargs):
     how_many_tested = (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
                                          created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).exclude(hiv_result__in=[DECLINED, NOT_PERFORMED]).count())
     values['92. Age eligible members that TESTED'] = how_many_tested
+    how_many_hic = (HicEnrollment.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
+                                         created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username, hic_permission='Yes').count())
+    values['93. Age eligible members enrolled in to HIC'] = how_many_hic
     values = collections.OrderedDict(sorted(values.items()))
     members_tobe_visited = []
     absentee_undecided = members.filter(eligible_member=True, visit_attempts__lte=3, household_structure__household__plot__community__icontains=community,
