@@ -213,6 +213,16 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             loss_reason.append('Minor without guardian available.')
         return (False if loss_reason else True, loss_reason)
 
+    def deserialize_prep(self, **kwargs):
+        from django.db.models import signals
+        from .signals import enrollment_checklist_on_post_delete
+        #EnrollmentChecklist being deleted by an IncommingTransaction, we ahead and delete it.
+        #Its no longer needed at all because member status changed.
+        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
+            signals.post_delete.disconnect(enrollment_checklist_on_post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
+            self.delete()
+            signals.post_delete.connect(enrollment_checklist_on_post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
+
     class Meta:
         app_label = "bcpp_household_member"
         verbose_name = "Enrollment Checklist"
