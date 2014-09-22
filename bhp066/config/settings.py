@@ -6,14 +6,13 @@ import socket
 from unipath import Path
 
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
-
-from .bcpp_days import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
-                        SMC_ECC_START_DATE, SMC_START_DATE)
+from .bcpp_settings import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
+                            SMC_ECC_START_DATE, SMC_START_DATE,
+                            MAX_HOUSEHOLDS_PER_PLOT)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
+from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
-# from logger import LOGGING
-# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -21,7 +20,6 @@ ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
 
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
-
 SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(3)  # e.g. /home/django/source
 EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
 TEMPLATE_DIRS = (
@@ -45,13 +43,14 @@ if socket.gethostname() == 'mac.local':
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
 else:
+    KEY_PATH = '/Volumes/keys'  # community servers
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
     # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    KEY_PATH = '/Volumes/keys'
+    # KEY_PATH = '/Volumes/keys'
     # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    #KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    #KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
+    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 
@@ -76,7 +75,7 @@ CACHES = {
 }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', 'bhpserver']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -114,28 +113,13 @@ LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
-# MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
-# Absolute path to the directory that holds static files.
-# Example: "/home/media/media.lawrence.com/static/"
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
-
 # URL that handles the static files served from STATIC_ROOT.
-# Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
-
-
-# URL prefix for admin media -- CSS, JavaScript and images.
-# Make sure to use a trailing slash.
-# Examples: "http://foo.com/static/admin/", "/static/admin/".
-# ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # A list of locations of additional static files
 STATICFILES_DIRS = ()
@@ -145,13 +129,12 @@ STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'dajaxice.finders.DajaxiceFinder',
 )
 
 # Make this unique, and don't share it with anybody.
 with open(os.path.join(ETC_DIR, 'secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
-# SECRET_KEY = '0$q&@p=jz(+_r^+phzenyqi49#y2^3ot3h#jru+32z&+cm&j51'
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
@@ -230,7 +213,8 @@ SUBJECT_TYPES = ['subject']
 MAX_SUBJECTS = {'subject': 9999}
 
 # edc.device.dispatch
-DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member', 'bcpp_lab']
+DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
+                       'bcpp_lab', 'bcpp_survey']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
@@ -238,8 +222,8 @@ MAY_CREATE_NEW_KEYS = True
 FIELD_MAX_LENGTH = 'migration'
 
 # edc.map
-SITE_CODE = '16'
-CURRENT_COMMUNITY = 'lentsweletau'
+SITE_CODE = SITE_CODE
+CURRENT_COMMUNITY = CURRENT_COMMUNITY
 CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
@@ -263,7 +247,7 @@ else:
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
 
 #  edc.device.device
-DEVICE_ID = 99
+DEVICE_ID = DEVICE_ID
 SERVER_DEVICE_ID_LIST = [91, 92, 93, 94, 95, 96, 97, 99]
 MIDDLEMAN_DEVICE_ID_LIST = [98]
 if str(DEVICE_ID) == '98':
@@ -278,15 +262,18 @@ elif str(DEVICE_ID) in map(str, range(91, 97)):
 else:
     PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
+
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
 
-
+# bcpp_settings
 BHS_START_DATE = BHS_START_DATE
 BHS_END_DATE = BHS_END_DATE
 BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
 SMC_START_DATE = SMC_START_DATE
 SMC_ECC_START_DATE = SMC_ECC_START_DATE
+MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
+LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']
