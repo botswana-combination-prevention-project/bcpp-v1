@@ -3,12 +3,18 @@ from datetime import datetime, date
 
 from django.conf import settings
 
+try:
+    from config.labels import aliquot_label
+except ImportError:
+    aliquot_label = None
+
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
 from edc.device.sync.models import Producer
+from edc.device.device.classes import device
 
-from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple
+from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 
@@ -20,8 +26,8 @@ study_end_datetime = datetime(2016, 10, 17, 16, 30, 00)
 
 class BcppAppConfiguration(BaseAppConfiguration):
 
-    def __init__(self):
-        super(BcppAppConfiguration, self).__init__()
+    def prepare(self):
+        super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
 
     global_configuration = {
@@ -52,7 +58,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'subject_type': 'subject',
         'machine_type': 'SERVER',
         'hostname_prefix': 's030',
-        'device_id': '99'}
+        'device_id': device.device_id}
 
     holidays_setup = {'New Year': date(2014, 1, 01),
                       'New Year Holiday': date(2014, 1, 02),
@@ -96,9 +102,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'datetime_end': datetime(2016, 10, 29, 16, 30, 00)}
     }
 
-    study_site_setup = {'site_name': site_mappers.get_current_mapper().map_area,
-                        'site_code': site_mappers.get_current_mapper().map_code}
-
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                   PanelTuple('Viral Load', 'TEST', 'WB'),
@@ -130,21 +133,51 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
                                   ProfileItemTuple('ELISA', 'BC', 0.5, 1)]}}
 
-    labeling_setup = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', '127.0.0.1', True), LabelPrinterTuple('ZPL_ZPL_Label_Printer', '127.0.0.1', False)],
+    labeling_setup = {'label_printer': [LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'localhost', '127.0.0.1', True),
+                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GK420t', 'bcpplab1', None, False),
+                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GX430t', 'localhost', None, False),
+                                        LabelPrinterTuple('Zebra_Technologies_ZTC_GX430t', 'bcpplab1', None, False),
+                                        LabelPrinterTuple('Zebra_Technologies_QLn320', 'localhost', '127.0.0.1', False)],
+                      'client': [ClientTuple(hostname='bcpplab1',
+                                             printer_name='Zebra_Technologies_ZTC_GK420t',
+                                             cups_hostname='bcpplab1',
+                                             ip=None,
+                                             aliases=None), ],
                       'zpl_template': [
-                      ZplTemplateTuple(
-                          'aliquot_label', (
-                              """^XA
-                                 ^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS
-                                 ^FO300,34^BY1,3.0^BCN,50,N,N,N
-                                 ^BY^FD${aliquot_identifier}^FS
-                                 ^FO300,92^A0N,20,20^FD${aliquot_identifier}^FS
-                                 ^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS
-                                 ^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS
-                                 ^FO300,152^A0N,25,20^FD${drawn_datetime}^FS
-                                 ^XZ"""
-                          ),
-                          True)]
+                          aliquot_label or ZplTemplateTuple(
+                              'aliquot_label', (
+                                  ('^XA\n'
+                                   '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS\n'
+                                   '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
+                                   '^BY^FD${aliquot_identifier}^FS\n'
+                                   '^FO300,92^A0N,20,20^FD${aliquot_identifier}^FS\n'
+                                   '^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
+                                   '^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
+                                   '^FO300,152^A0N,25,20^FD${drawn_datetime}^FS\n'
+                                   '^XZ')), True),
+                          ZplTemplateTuple(
+                              'requisition_label', (
+                                  ('^XA\n'
+                                   '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS\n'
+                                   '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
+                                   '^BY^FD${requisition_identifier}^FS\n'
+                                   '^FO300,92^A0N,20,20^FD${requisition_identifier} ${panel}^FS\n'
+                                   '^FO300,112^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
+                                   '^FO300,132^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
+                                   '^FO300,152^A0N,25,20^FD${drawn_datetime}^FS\n'
+                                   '^XZ')), False),
+                          ZplTemplateTuple(
+                              'referral_label', (
+                                  ('^XA\n'
+                                   '^FO300,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}^FS\n'
+                                   '^FO300,34^BY1,3.0^BCN,50,N,N,N\n'
+                                   '^BY^FD${subject_identifier}^FS\n'
+                                   '^FO300,92^A0N,20,20^FD${subject_identifier} (${initials})^FS\n'
+                                   '^FO300,112^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
+                                   '^FO300,132^A0N,25,20^FDAPPT: ${referral_appt_datetime}^FS\n'
+                                   '^FO300,152^A0N,25,20^FDCLINIC: ${referral_clinic}^FS\n'
+                                   '^XZ')), False),
+                          ]
                       }
 
     consent_catalogue_list = [consent_catalogue_setup]
@@ -233,7 +266,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'File transfer status for {export_datetime} is as follows:\n\n') + (
-                                '* Site: {0}\n'.format(settings.SITE_CODE)) + (
+                                '* Site: {0}: {1}\n'.format(settings.SITE_CODE, settings.CURRENT_COMMUNITY)) + (
                                     '* Transfer Title: {notification_plan_name}\n'
                                     '* Status: {exit_status}\n'
                                     '* Status Message: {exit_status_message}\n'
@@ -253,7 +286,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             'of this message please direct them to Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'To unsubscribe, please contact Erik van Widenfelt (ew2789@gmail.com).\n\n'
                             'File transfer status for {export_datetime} is as follows:\n\n') + (
-                                '* Site: {0}\n'.format(settings.SITE_CODE)) + (
+                                '* Site: {0}: {1}\n'.format(settings.SITE_CODE, settings.CURRENT_COMMUNITY)) + (
                                 '* Transfer Title: {notification_plan_name}\n'
                                 '* Status: {exit_status}\n'
                                 '* Status Message: {exit_status_message}\n'
@@ -265,6 +298,11 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'cc_list': [],
         }
     }
+
+    @property
+    def study_site_setup(self):
+        return {'site_name': site_mappers.get_current_mapper().map_area,
+                'site_code': site_mappers.get_current_mapper().map_code}
 
     def update_or_create_survey(self):
         for survey_values in self.survey_setup.itervalues():
@@ -279,7 +317,9 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     def refresh_producers_in_memory(self):
         """The settings object in memory is updated with producer information from the producer table,
-            this is required for dispatch. NOTE: settings is reset every time apache restart, so need to 
+            this is required for dispatch. NOTE: settings is reset every time apache restart, so need to
             resave them every time application boots up."""
         for producer in Producer.objects.all():
             producer.save()
+
+bcpp_app_configuration = BcppAppConfiguration()

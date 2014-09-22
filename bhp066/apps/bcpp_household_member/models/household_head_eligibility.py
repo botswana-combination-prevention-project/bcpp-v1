@@ -45,11 +45,13 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
         super(HouseholdHeadEligibility, self).save(*args, **kwargs)
 
     def matches_household_member_values(self, household_member, exception_cls=None):
-        """Compares shared values on household_member form and returns True if all match."""
+        """Compares shared values on household_member form and
+        returns True if all match."""
         error_msg = None
         exception_cls = exception_cls or ValidationError
         if not household_member.age_in_years >= 18:
-            raise exception_cls('Household member must be over 18 years of age. Got {0}.'.format(household_member.age_in_years))
+            raise exception_cls('Household member must be over 18 years of age. '
+                                'Got {0}.'.format(household_member.age_in_years))
         return error_msg
 
     class Meta:
