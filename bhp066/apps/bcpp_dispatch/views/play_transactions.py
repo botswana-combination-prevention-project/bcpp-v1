@@ -1,11 +1,13 @@
 import socket
-from django.core.urlresolvers import reverse
+
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib import messages
-from django.shortcuts import redirect
 from django.core.mail import send_mail
-from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+
 from ..classes import BcppConsumer
 
 
@@ -15,10 +17,10 @@ def play_transactions(request, **kwargs):
     """
     consumer = BcppConsumer()
     # TODO: this should not allow errors to pass!!
-    try:
-        consumer.consume()
-    except:
-        pass
+    #try:
+    consumer.consume()
+    #except:
+    #    pass
     message = consumer.get_consume_feedback()
     messages.add_message(request, messages.INFO, message)
     if 'EMAIL_AFTER_CONSUME' in dir(settings) and settings.EMAIL_AFTER_CONSUME:

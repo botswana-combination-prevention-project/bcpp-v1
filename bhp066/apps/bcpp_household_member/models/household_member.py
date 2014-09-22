@@ -217,6 +217,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         selected_member_status = None
         using = kwargs.get('using')
+        self.allow_enrollment(using)
         self.check_eligible_representative_filled(self.household_structure, using=using)
         if self.household_structure.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(
@@ -257,6 +258,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #             kwargs.update({'update_fields': update_fields + ['member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']})
         # print (self.member_status, kwargs.get('update_fields'))
         super(HouseholdMember, self).save(*args, **kwargs)
+
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Raises an exception if the household is not enrolled
+        and BHS_FULL_ENROLLMENT_DATE is past."""
+        instance = instance or self
+        return self.household_structure.household.plot.allow_enrollment(
+            using, exception_cls=exception_cls,
+            plot_instance=instance.household_structure.household.plot)
 
     @property
     def clear_refusal(self):
@@ -316,6 +325,25 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             raise exception_cls('The Eligibility Checklist for an eligible '
                                 'representative has not been completed.')
 
+    def check_head_household(self, household_structure, using=None, exception_cls=None):
+        """Raises an exception if the HeadOusehold already exists in this household structure."""
+        exception_cls = exception_cls or ValidationError
+        using = using or 'default'
+        try:
+            current_hoh = HouseholdMember.objects.get(
+                    household_structure=household_structure,
+                    relation='Head')
+            # If i am not a new instance then make sure i am not comparing to myself.
+            if self.id and current_hoh and (self.id != current_hoh.id):
+                    raise exception_cls('{0} is the head of household already. Only one member '
+                                                'may be the head of household.'.format(current_hoh))
+            # If i am a new instance then i could not be comparing to myself as i do not exist in the DB yet
+            elif not self.id and current_hoh:
+                raise exception_cls('{0} is the head of household already. Only one member '
+                                                'may be the head of household.'.format(current_hoh))
+        except HouseholdMember.DoesNotExist:
+            pass
+
     def match_enrollment_checklist_values(self, household_member, exception_cls=None):
         if household_member.enrollment_checklist:
             household_member.enrollment_checklist.matches_household_member_values(
@@ -327,7 +355,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         EnrollmentChecklist = models.get_model('bcpp_household_member', 'EnrollmentChecklist')
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self)
-        except:
+        except EnrollmentChecklist.DoesNotExist:
             enrollment_checklist = None
         return enrollment_checklist
 
@@ -337,13 +365,16 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         SubjectHtc = models.get_model('bcpp_household_member', 'SubjectHtc')
         try:
             subject_htc = SubjectHtc.objects.get(household_member=self)
-        except:
+        except SubjectHtc.DoesNotExist:
             subject_htc = None
         return subject_htc
 
     @property
     def bypass_household_log(self):
-        return settings.BYPASS_HOUSEHOLD_LOG
+        try:
+            return settings.BYPASS_HOUSEHOLD_LOG
+        except AttributeError:
+            return False
 
     @property
     def enrollment_options(self):
@@ -452,7 +483,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             try:
                 instance = model_class.objects.get(household_member=self)
                 model_pk = instance.id
-            except:
+            except model_class.DoesNotExist:
                 model_pk = None
         if model_pk:
             url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(model_pk, ))
