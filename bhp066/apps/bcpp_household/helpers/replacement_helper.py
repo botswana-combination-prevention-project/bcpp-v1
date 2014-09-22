@@ -177,14 +177,7 @@ class ReplacementHelper(object):
                         plot.replaces = household.household_identifier
                         household.save(update_fields=['replaced_by'], using='default')
                         plot.save(update_fields=['replaces'], using='default')
-                        try:
-                            Household = household.__class__
-                            household = Household.objects.using(destination).get(id=household.id)
-                            household.save(update_fields=['replaced_by'], using=destination)
-                        except Household.DoesNotExist as does_not_exist:
-                            raise Household.DoesNotExist('Household not found on \'{}\'. Was it dispatched?. '
-                                                         'Got \'{}\''.format(
-                                                             destination, does_not_exist))
+                        household.save(update_fields=['replaced_by'], using=destination)
                         # Creates a history of replacement
                         ReplacementHistory.objects.create(
                             replacing_item=plot.plot_identifier,
