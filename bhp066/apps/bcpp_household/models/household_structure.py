@@ -1,4 +1,3 @@
-from django.db.models import get_model, Max
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -7,9 +6,8 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
-from ..helpers import ReplacementHelper
-from ..managers import HouseholdStructureManager
 from ..exceptions import AlreadyReplaced
+from ..managers import HouseholdStructureManager
 
 from .household import Household
 from .plot import Plot
@@ -56,7 +54,8 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     enumeration_attempts = models.IntegerField(
         default=0,
         editable=False,
-        help_text='Updated by a signal on HouseholdLogEntry. Number of attempts to enumerate a household_structure.')
+        help_text=('Updated by a signal on HouseholdLogEntry. '
+                   'Number of attempts to enumerate a household_structure.'))
 
     refused_enumeration = models.BooleanField(
         default=False,
@@ -94,63 +93,25 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         if self.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
+
         super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.household.natural_key() + self.survey.natural_key()
     natural_key.dependencies = ['bcpp_household.household', 'bcpp_survey.survey']
 
+    def allow_enrollment(self, using, exception_cls=None, instance=None):
+        """Raises an exception if the household is not enrolled
+        and BHS_FULL_ENROLLMENT_DATE is past."""
+        instance = instance or self
+        return self.household.plot.allow_enrollment(using, exception_cls=exception_cls,
+                                                    plot_instance=instance.household.plot)
+
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household__plot__plot_identifier')
 
     def get_subject_identifier(self):
         return self.household.plot.plot_identifier
-
-    @property
-    def vdc_form_status(self):
-        status = None
-        if self.no_informant:
-            status = get_model('bcpp_household', 'HouseholdAssessment').objects.get(household_structure=self).vdc_househould_status
-        return status
-
-    @property
-    def all_eligible_members_absent(self):
-        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
-        if self.enumerated:
-            absent_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, absent=True, visit_attempts=3).count()
-            if absent_member_count:
-                eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
-                return eligible_member_count == absent_member_count
-        return False
-
-    @property
-    def all_eligible_members_refused(self):
-        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
-        if self.enumerated:
-            refused_members_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True, refused=True).count()
-            if refused_members_count:
-                eligible_member_count = HouseholdMember.objects.filter(household_structure=self, eligible_member=True).count()
-                return eligible_member_count == refused_members_count
-        return False
-
-    @property
-    def eligible_representative_absent(self):
-        eligible_representative_absent = False
-        HouseholdLogEntry = get_model('bcpp_household', 'HouseholdLogEntry')
-        if not self.enumerated and self.failed_enumeration_attempts >= 3:
-            try:
-                report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=self).aggregate(Max('report_datetime')).get('report_datetime__max')
-                HouseholdLogEntry.objects.get(household_log__household_structure=self, report_datetime=report_datetime, household_status='eligible_representative_absent')
-                eligible_representative_absent = True
-            except HouseholdLogEntry.DoesNotExist:
-                pass
-        return eligible_representative_absent
-
-    @property
-    def replaceable(self):
-        replacement_helper = ReplacementHelper()
-        replacement_helper.household_structure = self
-        return replacement_helper.replaceable
 
     @property
     def member_count(self):
@@ -160,32 +121,43 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
 
     @property
     def enrolled_member_count(self):
-        """Returns the number of consented (or enrolled) household members in this household for all surveys."""
+        """Returns the number of consented (or enrolled) household members
+        in this household for all surveys."""
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
-        return HouseholdMember.objects.filter(household_structure__pk=self.pk, is_consented=True).count()
+        return HouseholdMember.objects.filter(household_structure__pk=self.pk,
+                                              is_consented=True).count()
 
     def plot(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='plot'))
-        return """<a href="{url}?q={q}" />plot</a>""".format(url=url, q=self.household.plot.plot_identifier)
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household', model_name='plot'))
+        return """<a href="{url}?q={q}" />plot</a>""".format(
+            url=url, q=self.household.plot.plot_identifier)
     plot.allow_tags = True
 
     def house(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='household'))
-        return """<a href="{url}?q={q}" />household</a>""".format(url=url, q=self.household.household_identifier)
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household', model_name='household'))
+        return """<a href="{url}?q={q}" />household</a>""".format(
+            url=url, q=self.household.household_identifier)
     house.allow_tags = True
 
     def members(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household_member', model_name='householdmember'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household_member', model_name='householdmember'))
         return """<a href="{url}?q={q}'" />members</a>""".format(url=url, q=self.pk)
     members.allow_tags = True
 
     def logs(self):
-        url = reverse('admin:{app_label}_{model_name}_changelist'.format(app_label='bcpp_household', model_name='householdlog'))
+        url = reverse('admin:{app_label}_{model_name}_changelist'.format(
+            app_label='bcpp_household', model_name='householdlog'))
         return """<a href="{url}?q={q}'" />log</a>""".format(url=url, q=self.pk)
     logs.allow_tags = True
 
     def dashboard(self):
-        url = reverse('household_dashboard_url', kwargs={'dashboard_type': 'household', 'dashboard_model': 'household_structure', 'dashboard_id': self.pk})
+        url = reverse('household_dashboard_url',
+                      kwargs={'dashboard_type': 'household',
+                              'dashboard_model': 'household_structure',
+                              'dashboard_id': self.pk})
         return """<a href="{url}" />composition</a>""".format(url=url)
     dashboard.allow_tags = True
 
