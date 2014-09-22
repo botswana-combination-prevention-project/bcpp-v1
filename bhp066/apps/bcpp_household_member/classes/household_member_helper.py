@@ -13,24 +13,29 @@ class HouseholdMemberHelper(object):
             member_status = BHS
         elif self.household_member.eligible_subject and not self.household_member.refused:
             member_status = BHS_ELIGIBLE
-        elif ((self.household_member.undecided or self.household_member.absent or self.household_member.refused)
+        elif ((self.household_member.undecided or self.household_member.absent or
+               self.household_member.refused)
               and selected_member_status == BHS_SCREEN):
             member_status = BHS_SCREEN
-        elif (self.household_member.absent or selected_member_status == ABSENT) and self.household_member.eligible_member:
+        elif ((self.household_member.absent or selected_member_status == ABSENT) and
+              self.household_member.eligible_member):
             member_status = ABSENT
-        elif (self.household_member.absent or selected_member_status == ABSENT) and not self.household_member.eligible_member:
+        elif ((self.household_member.absent or selected_member_status == ABSENT) and
+              not self.household_member.eligible_member):
             member_status = NOT_ELIGIBLE
         elif self.household_member.undecided or selected_member_status == UNDECIDED:
             member_status = UNDECIDED
-        elif ((self.household_member.refused or selected_member_status == REFUSED) and not self.household_member.eligible_htc and 
-             not self.household_member.htc and not self.household_member.refused_htc):
+        elif ((self.household_member.refused or selected_member_status == REFUSED) and
+              not self.household_member.eligible_htc and
+              not self.household_member.htc and not self.household_member.refused_htc):
             member_status = REFUSED
         elif (self.household_member.refused and self.household_member.eligible_htc and
               not self.household_member.htc and not self.household_member.refused_htc):
             member_status = HTC_ELIGIBLE
         elif not self.household_member.eligible_member and not self.household_member.eligible_htc:
             member_status = NOT_ELIGIBLE
-        elif (not self.household_member.eligible_subject and self.household_member.enrollment_checklist_completed and
+        elif (not self.household_member.eligible_subject and
+              self.household_member.enrollment_checklist_completed and
               not self.household_member.eligible_htc):
             member_status = NOT_ELIGIBLE
         elif self.household_member.htc:
@@ -96,8 +101,11 @@ class HouseholdMemberHelper(object):
                 elif self.household_member.eligible_htc:
                     options = [BHS_SCREEN, HTC_ELIGIBLE]
             else:
-                raise TypeError('ERROR: household_member.refused={0},self.household_member.eligible_htc={1},self.household_member.eligible_member={2} '
-                                'should never occur together'.format(self.household_member.refused, self.household_member.eligible_htc, self.household_member.eligible_member))
+                raise TypeError('ERROR: household_member.refused={0},self.household_member.eligible_htc={1}, '
+                                'self.household_member.eligible_member={2} '
+                                'should never occur together'.format(self.household_member.refused,
+                                                                     self.household_member.eligible_htc,
+                                                                     self.household_member.eligible_member))
         # append the current member_status
         options.append(self.household_member.member_status)
         # sort and remove duplicates

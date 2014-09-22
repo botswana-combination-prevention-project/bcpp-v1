@@ -9,6 +9,12 @@ HOUSEHOLD_STATUS = (
     (REFUSED_ENUMERATION, 'Refused Enumeration'),
     )
 
+HOUSEHOLD_REFUSAL = (
+    ('not_interested', 'Not Interested'),
+    ('does_not_have_time', 'Does not have time'),
+    ('DWTA', 'Don\'t want to answer'),
+    ('OTHER', 'Other'),
+)
 
 BCPP_VILLAGES = (
     (1, 'Dikwididi'),
