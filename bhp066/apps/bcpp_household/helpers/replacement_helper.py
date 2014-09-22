@@ -173,11 +173,16 @@ class ReplacementHelper(object):
                 try:
                     with transaction.atomic():
                         plot = available_plots[index]
-                        household.replaced_by = available_plots[index].plot_identifier
+                        household.replaced_by = plot.plot_identifier
                         plot.replaces = household.household_identifier
                         household.save(update_fields=['replaced_by'], using='default')
                         plot.save(update_fields=['replaces'], using='default')
-                        household.save(update_fields=['replaced_by'], using=destination)
+                        try:
+                            Household = household.__class__
+                            household = Household.objects.using(destination).get(id=household.id)
+                            household.save(update_fields=['replaced_by'], using=destination)
+                        except Household.DoesNotExist as does_not_exist:
+                            raise Household.DoesNotExist('Household not found on \'{}\'. Got \'{}\''.format(destination, does_not_exist))
                         # Creates a history of replacement
                         ReplacementHistory.objects.create(
                             replacing_item=plot.plot_identifier,
