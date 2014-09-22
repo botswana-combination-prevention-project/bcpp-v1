@@ -256,6 +256,11 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this plot is replaced by',
         editable=False)
 
+#     replaceable = models.BooleanField(
+#         default=False,
+#         editable=False,
+#         help_text='')
+
     objects = PlotManager()
 
     history = AuditTrail()
@@ -269,14 +274,11 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        self.allow_enrollment(using)
-        try:
-            # if plot is replaced abort the save
-            if self.__class__.objects.using(using).get(id=self.id).replaced_by:
-                raise AlreadyReplaced('Plot {0} has been replaced '
-                                      'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
-        except self.__class__.DoesNotExist:
-            pass
+        if using == 'default':  # do not check on remote systems
+            self.allow_enrollment(using)
+#         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
+#             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
+#                                   'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
@@ -337,8 +339,8 @@ class Plot(BaseDispatchSyncUuidModel):
         plot_instance = plot_instance or self
         using = using or 'default'
         exception_cls = exception_cls or ValidationError
-        if self.id:
-            if self.__class__.objects.using(using).get(id=self.id).htc:
+        if plot_instance.id:
+            if plot_instance.__class__.objects.using(using).get(id=plot_instance.id).htc:
                 raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
         if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
             raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '

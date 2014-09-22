@@ -13,6 +13,11 @@ class PlotForm(BaseModelForm):
         self.instance.allow_enrollment('default',
                                        plot_instance=Plot(**cleaned_data),
                                        exception_cls=forms.ValidationError)
+        if self.instance.replaced_by:
+            raise forms.ValidationError('Plot has been replaced and is not longer a BHS plot. '
+                                        '(replaced_by={}'.format(self.instance.replaced_by))
+        if self.instance.htc:
+            raise forms.ValidationError('Plot is not a BHS plot (htc=True).')
         if not self.instance.community:
             raise forms.ValidationError('Community may not be blank. Must be '
                                         'one of {1}.'.format(self.instance.community,
