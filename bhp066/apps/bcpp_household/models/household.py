@@ -114,6 +114,11 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this household is replaced by',
         editable=False)
 
+#     replaceable = models.BooleanField(
+#         default=False,
+#         editable=False,
+#         help_text='')
+
     comment = EncryptedTextField(
         max_length=250,
         help_text=_("You may provide a comment here or leave BLANK."),
