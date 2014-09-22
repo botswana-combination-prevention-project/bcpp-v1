@@ -163,7 +163,8 @@ class Household(BaseDispatchSyncUuidModel):
                                                             self.replaced_by))
         except self.__class__.DoesNotExist:
             pass
-        self.allow_enrollment(using)
+        if using == 'default':  # don't check on remote machines
+            self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
