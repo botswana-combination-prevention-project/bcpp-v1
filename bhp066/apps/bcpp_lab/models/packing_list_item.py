@@ -22,6 +22,15 @@ class PackingListItem(BasePackingListItem):
 
     objects = PackingListItemManager()
 
+    def save(self, *args, **kwargs):
+        if self.item_reference:
+            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
+            requisition = SubjectRequisition.objects.get(
+                requisition_identifier=aliquot.receive.requisition_identifier
+                )
+            self.panel = requisition.panel
+        super(PackingListItem, self).save(*args, **kwargs)
+
     def drawn_datetime(self):
         retval = "n/a"
         if self.item_reference:

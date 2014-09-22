@@ -16,3 +16,4 @@ INACCESSIBLE = 'inaccessible'
 ACCESSIBLE = 'accessible'
 CONFIRMED = 'confirmed'
 UNCONFIRMED = 'unconfirmed'
+VISIT_ATTEMPTS = 3

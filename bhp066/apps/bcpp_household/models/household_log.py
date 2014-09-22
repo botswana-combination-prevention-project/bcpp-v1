@@ -87,17 +87,6 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         super(HouseholdLogEntry, self).save(*args, **kwargs)
 
-#     def bypass_for_edit_dispatched_as_item(self):
-#         return True
-
-#     @property
-#     def allow_enrollment(self):
-#         """Stops enrollments."""
-#         allow_edit = False
-#         if self.household_log.household_structure.enrolled:
-#             allow_edit = True
-#         return allow_edit
-
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'household_log__household_structure__household__plot__plot_identifier')
 
