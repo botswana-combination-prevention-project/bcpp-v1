@@ -274,7 +274,8 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        self.allow_enrollment(using)
+        if using == 'default':  # do not chck on remote
+            self.allow_enrollment(using)
 #         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
 #             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
 #                                   'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
