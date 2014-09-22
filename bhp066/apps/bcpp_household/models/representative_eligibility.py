@@ -23,7 +23,8 @@ class RepresentativeEligibility(BaseRepresentativeEligibility):
 
     def natural_key(self):
         if not self.household_structure:
-            raise AttributeError("household_structure cannot be None for representative_eligibility with pk='\{0}\'".format(self.pk))
+            raise AttributeError("household_structure cannot be None for "
+                                 "representative_eligibility with pk='\{0}\'".format(self.pk))
         return self.household_structure.natural_key()
     natural_key.dependencies = ['bcpp_household.household_structure']
 

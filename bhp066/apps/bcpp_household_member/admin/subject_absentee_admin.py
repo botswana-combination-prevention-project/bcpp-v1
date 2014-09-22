@@ -28,6 +28,8 @@ class SubjectAbsenteeEntryAdmin(BaseModelAdmin):
         "reason": admin.VERTICAL,
         "next_appt_datetime_source": admin.VERTICAL}
 
+    list_filter = ('report_datetime', 'subject_absentee__household_member__household_structure__household__community')
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "subject_absentee":
             kwargs["queryset"] = SubjectAbsentee.objects.filter(id__exact=request.GET.get('subject_absentee', 0))
