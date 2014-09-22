@@ -8,7 +8,7 @@ from django.views.generic import RedirectView
 
 import django_databrowse
 
-from dajaxice.core import dajaxice_autodiscover
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
@@ -47,6 +47,7 @@ urlpatterns = patterns(
     (r'^admin/logout/$', RedirectView.as_view(url='/{app_name}/logout/'.format(app_name=APP_NAME))),
     (r'^admin/', include(admin.site.urls)),
     (r'^i18n/', include('django.conf.urls.i18n')),
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
 
 urlpatterns += patterns(
