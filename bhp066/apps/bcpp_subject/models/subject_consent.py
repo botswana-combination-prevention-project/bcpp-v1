@@ -104,9 +104,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         self.community = self.household_member.household_structure.household.plot.community
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
-#     def bypass_for_edit_dispatched_as_item(self):
-#         return True
-
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
 
