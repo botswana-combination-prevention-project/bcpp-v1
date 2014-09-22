@@ -1,3 +1,3 @@
 DEVICE_ID = 99
-SITE_CODE = '15'
-CURRENT_COMMUNITY = 'letlhakeng'
+SITE_CODE = '16'
+CURRENT_COMMUNITY = 'lentsweletau'
