@@ -306,7 +306,6 @@ class Plot(BaseDispatchSyncUuidModel):
         self.action = self.get_action()
         try:
             update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier']
-            update_fields = kwargs.get('update_fields') + update_fields
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
@@ -431,8 +430,9 @@ class Plot(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        if 'replaces' in update_fields or 'htc' in update_fields or 'replaced_by' in update_fields:
-            return True
+        if update_fields:
+            if 'replaces' in update_fields or 'htc' in update_fields or 'replaced_by' in update_fields:
+                return True
         return False
 
     def get_contained_households(self):
