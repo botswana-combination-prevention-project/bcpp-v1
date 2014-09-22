@@ -1,11 +1,13 @@
 import socket
-from django.core.urlresolvers import reverse
+
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib import messages
-from django.shortcuts import redirect
 from django.core.mail import send_mail
-from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+
 from ..classes import BcppConsumer
 
 
