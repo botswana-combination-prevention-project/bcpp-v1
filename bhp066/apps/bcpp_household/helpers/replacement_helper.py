@@ -172,18 +172,19 @@ class ReplacementHelper(object):
             for index, household in enumerate(self.replaceable_households(destination)):
                 try:
                     with transaction.atomic():
+                        plot = available_plots[index]
                         household.replaced_by = available_plots[index].plot_identifier
-                        available_plots[index].replaces = household.household_identifier
+                        plot.replaces = household.household_identifier
                         household.save(update_fields=['replaced_by'], using='default')
-                        available_plots[index].save(update_fields=['replaces'], using='default')
+                        plot.save(update_fields=['replaces'], using='default')
                         household.save(update_fields=['replaced_by'], using=destination)
                         # Creates a history of replacement
                         ReplacementHistory.objects.create(
-                            replacing_item=available_plots[index].plot_identifier,
+                            replacing_item=plot.plot_identifier,
                             replaced_item=household.household_identifier,
                             replacement_datetime=datetime.now(),
                             replacement_reason=self.household_replacement_reason())
-                        new_bhs_plots.append(available_plots[index])
+                        new_bhs_plots.append(plot)
                         # delete transactions created when saving to remote
                         # self.delete_server_transactions_on_producer(destination)
                 except IndexError:
