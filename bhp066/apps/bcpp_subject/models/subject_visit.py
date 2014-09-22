@@ -4,7 +4,6 @@ from edc.audit.audit_trail import AuditTrail
 from edc.subject.visit_tracking.models import BaseVisitTracking
 
 from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_list.models import Religion
 
 from ..choices import VISIT_UNSCHEDULED_REASON
 
@@ -23,7 +22,7 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
         choices=VISIT_UNSCHEDULED_REASON,
         )
 
-    history = AuditTrail()
+    history = AuditTrail(True)
 
     def save(self, *args, **kwargs):
         self.info_source = 'subject'
@@ -31,7 +30,10 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
         super(SubjectVisit, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return unicode(self.appointment)
+        return '{} {} ({}) {}'.format(self.appointment.registered_subject.subject_identifier,
+                                      self.appointment.registered_subject.first_name,
+                                      self.appointment.registered_subject.gender,
+                                      self.appointment.visit_definition.code)
 
     def dispatch_container_lookup(self):
         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')

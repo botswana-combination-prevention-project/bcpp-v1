@@ -13,6 +13,9 @@ from ...utils import strip_underscore, export_model_as_csv, summarize_model_data
 class Command(BaseCommand):
     """ A management command that writes the contents of a CSV file to a given model.
 
+    If you specify the export prefix it will export the data back to a file of the
+    same filename as source_path but with the export_prefix as the filename prefix.
+
     Usage: python manage.py import_to_csv <source_path> <detsination_model>."""
     args = '<source_path> <detsination_model> <export_prefix> <delete-existing>'
     help = 'Import CDC data from CSV into a given destinantion model'
@@ -98,7 +101,8 @@ class Command(BaseCommand):
                                         elif 'Char' in field.get_internal_type():
                                             # model field is an CharField
                                             # accept anything that is in the cell
-                                            row[header_row.index(field.name)] = row[header_row.index(field.name)]
+                                            # row[header_row.index(field.name)] = row[header_row.index(field.name)]
+                                            row[header_row.index(field.name)] = ''.join([i if ord(i) < 128 else ' ' for i in row[header_row.index(field.name)]])
                                         elif 'Float' in field.get_internal_type():
                                             # model field is an FloatField
                                             try:
