@@ -24,6 +24,8 @@ class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
         'last_seen_home': admin.VERTICAL,
         }
 
+    list_filter = ('household_structure__household__community',)
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))

@@ -10,7 +10,7 @@ class HouseholdStructureForm(BaseModelForm):
     def clean(self):
 
         cleaned_data = self.cleaned_data
-        #check if dispatched
+        # check if dispatched
         household = cleaned_data.get('household', None)
         if household:
             if household.is_dispatched_as_item():
@@ -20,8 +20,11 @@ class HouseholdStructureForm(BaseModelForm):
             if hasattr(settings, 'ALLOW_CHANGES_OTHER_SUVERYS') and settings.ALLOW_CHANGES_OTHER_SUVERYS:
                 pass
             else:
-                if not cleaned_data.get('survey').datetime_start <= datetime.today() or not datetime.today() <= cleaned_data.get('survey').datetime_end:
-                    raise forms.ValidationError('%s is not the current survey. You may only add/change data for the current survey' % (cleaned_data.get('survey').survey_name, ))
+                if (not cleaned_data.get('survey').datetime_start <= datetime.today() or
+                        not datetime.today() <= cleaned_data.get('survey').datetime_end):
+                    raise forms.ValidationError('%s is not the current survey. You may '
+                                                'only add/change data for the current '
+                                                'survey' % (cleaned_data.get('survey').survey_name, ))
 
         return cleaned_data
 

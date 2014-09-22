@@ -28,6 +28,7 @@ class SubjectVisitAdmin(BaseAppointmentModelAdmin):
     list_filter = (
         'report_datetime',
         'reason',
+        'household_member__household_structure__household__community',
         'appointment__appt_status',
         'appointment__visit_definition__code',
         )
