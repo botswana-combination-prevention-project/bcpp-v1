@@ -256,10 +256,10 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this plot is replaced by',
         editable=False)
 
-#     replaceable = models.BooleanField(
-#         default=False,
-#         editable=False,
-#         help_text='')
+    replaceable = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Updated by replacement helper')
 
     objects = PlotManager()
 
@@ -274,12 +274,10 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        if using == 'default':  # do not check on remote systems
-            self.allow_enrollment(using)
+        self.allow_enrollment(using)
 #         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
 #             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
 #                                   'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
-        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
@@ -294,6 +292,7 @@ class Plot(BaseDispatchSyncUuidModel):
             self.plot_identifier = PlotIdentifier(mapper.get_map_code(), using).get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
+        # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
         if (self.gps_degrees_e and self.gps_degrees_s and self.gps_minutes_e and self.gps_minutes_s):
             self.gps_lat = mapper.get_gps_lat(self.gps_degrees_s, self.gps_minutes_s)
             self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
@@ -338,14 +337,15 @@ class Plot(BaseDispatchSyncUuidModel):
         plot_instance = plot_instance or self
         using = using or 'default'
         exception_cls = exception_cls or ValidationError
-        if plot_instance.id:
-            if plot_instance.__class__.objects.using(using).get(id=plot_instance.id).htc:
-                raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
-        if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
-            raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
-                                'data related to it, may not be modified. '
-                                'See settings.BHS_FULL_ENROLLMENT_DATE'.format(
-                                    self.community, settings.BHS_FULL_ENROLLMENT_DATE))
+        if using == 'default':  # do not check on remote systems
+            if plot_instance.id:
+                if plot_instance.__class__.objects.using(using).get(id=plot_instance.id).htc:
+                    raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
+            if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
+                raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
+                                    'data related to it, may not be modified. '
+                                    'See settings.BHS_FULL_ENROLLMENT_DATE'.format(
+                                        self.community, settings.BHS_FULL_ENROLLMENT_DATE))
         return True
 
     def safe_delete_households(self, count, instance=None, using=None):
@@ -504,7 +504,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def plot_inaccessible(self):
-        """Check if a plot is inaccessible after 3 attempts."""
+        """Returns True if the plot is inaccessible as defined by its status and number of attempts."""
         from .plot_log import PlotLogEntry
         plot_log = self.plot_log
         plot_inaccessible = False
@@ -521,6 +521,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def plot_log(self):
+        """Returns an instance of the plot log."""
         from .plot_log import PlotLog
         instance = None
         try:
