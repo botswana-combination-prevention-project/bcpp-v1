@@ -12,9 +12,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from ...models import SubjectRequisition
         date_suffix = datetime.today().strftime('%Y%m%d')
-        file_path = '/tmp/subjectrequisition{0}.csv'.format(date_suffix)
-        with open(file_path, 'w') as f:
-            with open(file_path, 'w') as f:
+        with open('/tmp/subjectrequisition{0}.csv'.format(date_suffix), 'w') as f:
+            writer = csv.writer(f, delimiter=',')
             writer.writerow(['requisition_identifier', 'subject_identifier', 'initials', 'dob', 'requisition_datetime',
                              'is_drawn', 'drawn_datetime', 'aliquot_type', 'panel', 'community', 'is_received',
                              'is_received_datetime', 'is_labelled', 'is_labelled_datetime', 'is_packed'])
@@ -35,4 +34,4 @@ class Command(BaseCommand):
                                  subject_requisition.is_labelled_datetime,
                                  subject_requisition.is_packed,
                                  ])
-        return file_path
+        print '/tmp/subjectrequisition{0}.csv'.format(date_suffix)
