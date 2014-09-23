@@ -114,10 +114,10 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this household is replaced by',
         editable=False)
 
-#     replaceable = models.BooleanField(
-#         default=False,
-#         editable=False,
-#         help_text='')
+    replaceable = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text='Updated by replacement helper')
 
     comment = EncryptedTextField(
         max_length=250,
@@ -163,8 +163,7 @@ class Household(BaseDispatchSyncUuidModel):
                                                             self.replaced_by))
         except self.__class__.DoesNotExist:
             pass
-        if using == 'default':  # don't check on remote machines
-            self.allow_enrollment(using)
+        self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
