@@ -2,23 +2,19 @@ import socket
 
 from datetime import datetime
 
-from django.conf import settings
 from django.db.models import Min, Max
-from django.db import models, transaction
+from django.db import transaction
 
-from edc.device.sync.exceptions import PendingTransactionError
-from edc.device.sync.models import OutgoingTransaction
-from edc.device.device.classes import Device
-from edc.device.sync.models import Producer
+from edc.device.sync.helpers import TransactionHelper
+from edc.device.sync.utils import load_producer_db_settings
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
 
 from ..constants import (RESIDENTIAL_HABITABLE, NON_RESIDENTIAL,
-                         RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT, RARELY_OCCUPIED,
-                         NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, UNKNOWN_OCCUPIED,
+                         RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT,
                          ELIGIBLE_REPRESENTATIVE_ABSENT, VISIT_ATTEMPTS)
-from ..models import Plot, HouseholdStructure, ReplacementHistory, HouseholdLogEntry, HouseholdAssessment
+from ..models import Plot, Household, HouseholdStructure, ReplacementHistory, HouseholdLogEntry
 
 
 class ReplacementHelper(object):
@@ -26,10 +22,11 @@ class ReplacementHelper(object):
 
     Attributes involved:
 
-        plot.replaced_by
-        plot.replaces
+        plot.replaced_by: plot identifier of the new replacement plot
+        plot.replaces: plot or household identifier of the old plot
+            or household being replaced.
         plot.htc
-        household.replaced_by
+        household.replaced_by: plot identifier of the new replacement plot
 
         plot.status  # user
         plot.plot_identifier  # save
@@ -46,41 +43,51 @@ class ReplacementHelper(object):
     """
 
     def __init__(self, plot=None, household_structure=None):
+        """Sets household_structure, household and plot.
+
+        The household_structure takes precedent."""
+        self._household_structure = None
+        self._plot = None
         self.household_structure = household_structure
-        try:
-            self.household = household_structure.household
-        except AttributeError:
-            self.household = None
-        try:
-            self.plot = household_structure.household.plot
-        except AttributeError:
+        if not household_structure:
             self.plot = plot
 
     def __repr__(self):
-        return 'ReplacementHelper()'
+        return 'ReplacementHelper({})'.format(self.household_structure or self.plot)
 
     def __str__(self):
         return '()'
 
-    def outgoing_transactions(self, producer):
-        """Checks if a producer has OutgoingTransactions."""
-        producer_hostname = producer.split('-')[0]
-        if OutgoingTransaction.objects.using(producer).filter(
-                hostname_modified=producer_hostname, is_consumed_server=False,
-                is_consumed_middleman=False).exclude(is_ignored=True).exists():
-            raise PendingTransactionError
-        return False
+    @property
+    def household_structure(self):
+        return self._household_structure
 
-    def delete_server_transactions_on_producer(self, destination, tx_pks):
-        if Device.is_server():
-            try:
-                OutgoingTransaction.objects.using(destination).filter(
-                    is_ignored=False, is_consumed_server=False,
-                    pk__in=tx_pks,
-                    hostname_created=socket.gethostname(),
-                    hostname_modified=socket.gethostname()).delete()
-            except OutgoingTransaction.DoesNotExist:
-                pass
+    @household_structure.setter
+    def household_structure(self, household_structure):
+        """Sets the household structure, househol and plot otherwise
+        sets all to None."""
+        self._household_structure = household_structure
+        try:
+            self.household = household_structure.household
+            self.plot = household_structure.household.plot
+        except AttributeError:
+            self.household = None
+            self.plot = None
+
+    @property
+    def plot(self):
+        return self._plot
+
+    @plot.setter
+    def plot(self, plot):
+        """Sets the plot attr but raises an exception if an attempt
+        is made to change the plot attr set by the household structure setter."""
+        try:
+            if plot != self.household_structure.household.plot:
+                raise TypeError('Plot cannot be changed explicitly if household_structure is already set.')
+            self._plot = plot
+        except AttributeError:
+            self._plot = plot
 
     @property
     def survey(self):
@@ -91,28 +98,27 @@ class ReplacementHelper(object):
 
     @property
     def replaceable_household(self):
-        """Returns True if a household meets the criteria to be replaced by a plot."""
+        """Returns True if a household meets the criteria to be replaced by a plot.
+
+        * Plot where the household resides must be RESIDENTIAL_HABITABLE.
+        * household_structure.refused_enumeration is set in the post_save signal
+          when the houswehold_refusal is submitted"""
         replaceable = False
+        if self.household.replaced_by or self.household.enrolled:
+            return False
         try:
-            if self.household_structure.household.plot.status == RESIDENTIAL_HABITABLE:
-                if ((self.household_structure.refused_enumeration or
-                        self.all_eligible_members_refused) and
-                        not self.household_structure.household.replaced_by):
+            if self.plot.status == RESIDENTIAL_HABITABLE:
+                if self.household_structure.refused_enumeration:
                     replaceable = True
-                elif ((self.eligible_representative_absent or
-                      self.all_eligible_members_absent) and
-                      not self.household_structure.household.replaced_by):
+                elif self.all_eligible_members_refused:
+                    replaceable = True
+                elif self.eligible_representative_absent:
+                    replaceable = True
+                elif self.all_eligible_members_absent:
                     replaceable = True
                 elif (self.household_structure.failed_enumeration and
-                      self.household_structure.no_informant and self.replaceble_vdc_form_status and
-                      not self.household_structure.household.replaced_by):
+                      self.household_structure.no_informant):
                     replaceable = True
-                elif self.vdc_form_status == RARELY_OCCUPIED:
-                    replaceable = False
-                elif self.household_structure.enumerated and not self.household_structure.eligible_members:
-                    replaceable = False
-                elif self.household_structure.enrolled:
-                    replaceable = False
         except AttributeError as attribute_error:
             if 'has no attribute \'household\'' in str(attribute_error):
                 pass
@@ -127,36 +133,44 @@ class ReplacementHelper(object):
         if (not self.plot.replaced_by and self.plot.replaces and
                 self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]):
             replaceable = True
-        elif not self.plot.replaces and self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-            replaceable = False
         return replaceable
 
     def replaceable_households(self, producer_name):
         """Returns a list of households that meet the criteria to be replaced by a plot."""
         replaceable_households = []
         for self.household_structure in HouseholdStructure.objects.filter(
-                survey=self.survey).order_by('household__household_identifier'):
-            if producer_name == self.household_structure.household.plot.dispatched_to:
+                survey=self.survey,
+                household__replaced_by__isnull=True):
+            if producer_name == self.plot.dispatched_to:
                 if self.replaceable_household:
-                    if not self.household_structure.household.replaced_by:
-                        replaceable_households.append(self.household_structure.household)
+                    replaceable_households.append(self.household)
+        # reset instance attributes
+        self.household_structure = None
         return replaceable_households
 
-    def replaceable_plots(self, producer_name):
-        """Returns a list of plots that meet the criteria to be replaced by a plot."""
+    def replaceable_plots(self, producer_name=None):
+        """Returns a list of existing BHS plots that meet the criteria
+        to be replaced by a new plot from the pool of 5 percent.
+
+        A plot is replaceable if it is from the 5 percent, has been
+        allocated to BHS for confirmation and potential enrollment
+        (replaces__isnull=False, bhs=False) and meets other criteria
+        (self.replaceable_plot=True).
+
+        plot.dispatched_to is a property method which should indicate
+        that the plot is currently dispatched"""
         replaceable_plots = []
-        for self.plot in Plot.objects.filter(selected=FIVE_PERCENT).order_by('plot_identifier'):
-            if producer_name == self.plot.dispatched_to:
-                if self.replaceable_plot:
-                    replaceable_plots.append(self.plot)
+        for self.plot in Plot.objects.filter(selected=FIVE_PERCENT,
+                                             replaces__isnull=False,
+                                             bhs__isnull=True).order_by('plot_identifier'):
+            if not producer_name and self.replaceable_plot:
+                replaceable_plots.append(self.plot)
+            elif self.plot.dispatched_to == producer_name and self.replaceable_plot:
+                replaceable_plots.append(self.plot)
+        self.plot = None
         return replaceable_plots
 
-    @property
-    def available_plots(self):
-        return Plot.objects.filter(
-            selected=FIVE_PERCENT, replaced_by=None, replaces=None)
-
-    def replace_household(self, destination):
+    def replace_household(self, producer_name):
         """Replaces a household with a plot.
 
         This takes a list of replaceable households and plots that
@@ -164,66 +178,93 @@ class ReplacementHelper(object):
         is updated to specify when the household was replaced and what
         it was replaced with."""
         new_bhs_plots = []
-        if not destination:
+        if not producer_name:
             raise TypeError('Expected a valid producer. Got None.')
-        self.load_producers()
-        if not self.outgoing_transactions(destination):
+        load_producer_db_settings()
+        if not TransactionHelper().outgoing_transactions(socket.gethostname(),
+                                                         producer_name,
+                                                         raise_exception=True):
             available_plots = self.available_plots
-            for index, household in enumerate(self.replaceable_households(destination)):
+            for household in self.replaceable_households(producer_name):
                 try:
+                    # confirm household exists on remote
+                    Household.objects.using(producer_name).get(
+                        household_identifier=household.household_identifier)
+                    plot = available_plots.pop()
                     with transaction.atomic():
-                        plot = available_plots[index]
                         household.replaced_by = plot.plot_identifier
                         plot.replaces = household.household_identifier
                         household.save(update_fields=['replaced_by'], using='default')
                         plot.save(update_fields=['replaces'], using='default')
-                        household.save(update_fields=['replaced_by'], using=destination)
-                        # Creates a history of replacement
-                        ReplacementHistory.objects.create(
+                        ReplacementHistory.objects.using('default').create(
                             replacing_item=plot.plot_identifier,
                             replaced_item=household.household_identifier,
                             replacement_datetime=datetime.now(),
                             replacement_reason=self.household_replacement_reason())
+                        household.save(update_fields=['replaced_by'], using=producer_name)
                         new_bhs_plots.append(plot)
-                        # delete transactions created when saving to remote
-                        # self.delete_server_transactions_on_producer(destination)
-                except IndexError:
-                    break
+                        TransactionHelper().outgoing_transactions(socket.gethostname(),
+                                                                  producer_name).delete()
+                except Household.DoesNotExist:  # does not exist on producer
+                    pass
+                except IndexError as index_error:
+                    if 'pop from empty list' in str(index_error):
+                        break
+                    raise
         return new_bhs_plots
 
-    def replace_plot(self, destination):
+    @property
+    def available_plots(self):
+        """Returns a list of plot instances that are available to be used
+        as replacement plots."""
+        available_plots = []
+        for plot in Plot.objects.filter(selected=FIVE_PERCENT, replaces=None):
+            try:
+                ReplacementHistory.objects.using('default').get(
+                    replacing_item=plot.plot_identifier)
+            except ReplacementHistory.DoesNotExist:
+                available_plots.append(plot)
+        return available_plots
+
+    def replace_plot(self, producer_name):
         """Replaces a plot with a plot.
 
         This takes a list of replaceable plots and replaces each with a plot.
         The replacement history model is also update to keep track of what replace what."""
         new_bhs_plots = []
-        if not destination:
+        if not producer_name:
             raise TypeError('Expected a valid producer. Got None.')
-        self.load_producers()
-        if not self.outgoing_transactions(destination):
-            # replaceable_plot is a plot that is eligible for replacement.
-            # new_bhs_plot is a plot that is available to replace replaceable_plot.
+        load_producer_db_settings()
+        if not TransactionHelper().outgoing_transactions(socket.gethostname(),
+                                                         producer_name,
+                                                         raise_exception=True):
             available_plots = self.available_plots
-            for index, replaceable_plot in enumerate(self.replaceable_plots(destination)):
+            for replaceable_plot in self.replaceable_plots(producer_name):
                 try:
+                    available_plot = available_plots.pop()
+                    Plot.objects.using(producer_name).get(
+                        plot_identifier=available_plot.plot_identifier)
                     with transaction.atomic():
-                        replaceable_plot.replaced_by = available_plots[index].plot_identifier
+                        replaceable_plot.replaced_by = available_plot.plot_identifier
                         replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
                         replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
-                        replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=destination)
-                        available_plots[index].replaces = replaceable_plot.plot_identifier
-                        available_plots[index].save(update_fields=['replaces'], using='default')
-                        # Creates a history of replacement
+                        replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=producer_name)
+                        available_plot.replaces = replaceable_plot.plot_identifier
+                        available_plot.save(update_fields=['replaces'], using='default')
                         ReplacementHistory.objects.create(
-                            replacing_item=available_plots[index].plot_identifier,
+                            replacing_item=available_plot.plot_identifier,
                             replaced_item=replaceable_plot.plot_identifier,
                             replacement_datetime=datetime.now(),
                             replacement_reason='plot for plot replacement')
-                        new_bhs_plots.append(available_plots[index])
-                        # delete transactions created when saving to remote
-                        # self.delete_server_transactions_on_producer(destination)
-                except IndexError:
-                    break
+                        new_bhs_plots.append(available_plot)
+                        TransactionHelper().outgoing_transactions(socket.gethostname(),
+                                                                  producer_name).delete()
+                except Plot.DoesNotExist:
+                    pass
+                except IndexError as index_error:
+                    if 'pop from empty list' in str(index_error):
+                        break
+                    raise
         return new_bhs_plots
 
     @property
@@ -281,25 +322,6 @@ class ReplacementHelper(object):
                 pass
         return eligible_representative_absent
 
-    @property
-    def replaceble_vdc_form_status(self):
-        """Returns True if the HouseholdAssessment for exists.
-
-        HouseholdAssessment is know as the VDC form in the field."""
-        if self.household_structure.no_informant:
-            try:
-                househod_assessment = HouseholdAssessment.objects.get(
-                    household_structure=self.household_structure).vdc_househould_status
-                replaceble_status = [
-                        NEARLY_ALWAYS_OCCUPIED,
-                        SEASONALLY_OCCUPIED,
-                        UNKNOWN_OCCUPIED]
-                if househod_assessment in replaceble_status:
-                    return True
-            except HouseholdAssessment.DoesNotExist:
-                return False
-        return None
-
     def household_replacement_reason(self):
         """Returns the reason why a plot or household is being replaced."""
         reason = None
@@ -314,20 +336,3 @@ class ReplacementHelper(object):
         elif self.household_structure.failed_enumeration and self.household_structure.no_informant:
             reason = 'no informant'
         return reason
-
-    def load_producers(self):
-        """Add all producer database settings to the setting's file 'DATABASE' attribute."""
-    producers = Producer.objects.all()
-    if producers:
-        for producer in producers:
-            settings.DATABASES[producer.settings_key] = {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {
-                    'init_command': 'SET storage_engine=INNODB',
-                },
-                'NAME': producer.db_user_name,
-                'USER': producer.db_user,
-                'PASSWORD': producer.db_password,
-                'HOST': producer.producer_ip,
-                'PORT': producer.port,
-            }
