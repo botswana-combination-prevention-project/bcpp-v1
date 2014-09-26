@@ -1,32 +1,19 @@
-from django.conf import settings
+from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from edc.device.sync.models import Producer
+from edc.device.sync.exceptions import ProducerError
+from edc.device.sync.utils import load_producer_db_settings
 
 
 def load_producer_databases(request, **kwargs):
     """Add all producer database settings to the setting's file 'DATABASE' attribute."""
     template = 'load_producer_databases.html'
-    message = "No producers added. The producer table may be empty"
-    producers = Producer.objects.all()
-    if producers:
-        for producer in producers:
-            settings.DATABASES[producer.settings_key] = {
-                'ENGINE': 'django.db.backends.mysql',
-                'OPTIONS': {
-                    'init_command': 'SET storage_engine=INNODB',
-                },
-                'NAME': producer.db_user_name,
-                'USER': producer.db_user,
-                'PASSWORD': producer.db_password,
-                'HOST': producer.producer_ip,
-                'PORT': producer.port,
-            }
-        message = "{0} producer database settings added to the DATABASE settings attribute.".format(producers.count())
-
+    try:
+        load_producer_db_settings()
+        messages.add_message(request, messages.SUCCESS, 'Producers have been loaded from model Producer into settings.')
+    except ProducerError as producer_error:
+        messages.add_message(request, messages.ERROR, str(producer_error))
     return render_to_response(
-            template, {
-                'message': message,
-            },
-            context_instance=RequestContext(request))
+        template, {},
+        context_instance=RequestContext(request))
