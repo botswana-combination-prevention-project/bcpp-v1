@@ -114,8 +114,8 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this household is replaced by',
         editable=False)
 
-    replaceable = models.BooleanField(
-        default=False,
+    replaceable = models.NullBooleanField(
+        default=None,
         editable=False,
         help_text='Updated by replacement helper')
 
@@ -196,8 +196,12 @@ class Household(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        if 'replaced_by' in update_fields:
-            return True
+        try:
+            if 'replaced_by' in update_fields:
+                return True
+        except TypeError as type_error:
+            if '\'NoneType\' is not iterable' in str(type_error):
+                pass
         return False
 
     def structure(self):
