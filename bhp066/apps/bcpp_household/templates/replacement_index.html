@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content%}
-	<H4>Select producer to replace households/plots from.</H4>
+	<H4>Select a producer from which to replace households/plots:</H4>
 	{% if producer_names %}
 		<form action="{% url 'check_replacements_url' %}" method="post">
 	   	{% csrf_token %}
@@ -23,8 +23,12 @@
 		</select>
 		<input type="submit" value="submit">			
 		</form>
-	{% else %}
-		<B>{{ message }}</B>
+		</div>
 	{% endif %}
-
+	<BR>
+	<BR>
+	<BR>
+	<BR><p><A href="/admin/sync/producer/">Producers</A></p>
+	<BR>
+    <B>{{ message }}</B>   
 {% endblock content %}
