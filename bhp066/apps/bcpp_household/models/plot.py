@@ -17,8 +17,6 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
-
 from ..choices import (PLOT_STATUS, SELECTED)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
@@ -235,14 +233,16 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False)
 
     bhs = models.NullBooleanField(
+        default=None,
         editable=False,
-        help_text=('True indicates that plot is enrolled in to BHS. '
-                   'Updated by household_structure post_save'))
+        help_text=('True indicates that plot is enrolled into BHS. '
+                   'Updated by bcpp_subject.subject_consent post_save'))
 
     enrolled_datetime = models.DateTimeField(
         null=True,
         editable=False,
-        help_text='datetime that plot is enrolled. Updated by household_structure post_save')
+        help_text=('datetime that plot is enrolled into BHS. '
+                   'Updated by bcpp_subject.subject_consent post_save'))
 
     htc = models.NullBooleanField(
         default=False,
@@ -256,8 +256,8 @@ class Plot(BaseDispatchSyncUuidModel):
         help_text=u'The identifier of the plot that this plot is replaced by',
         editable=False)
 
-    replaceable = models.BooleanField(
-        default=False,
+    replaceable = models.NullBooleanField(
+        default=None,
         editable=False,
         help_text='Updated by replacement helper')
 
@@ -274,7 +274,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        self.allow_enrollment(using)
+        self.allow_enrollment(using, update_fields=update_fields)
 #         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
 #             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
 #                                   'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
@@ -331,15 +331,16 @@ class Plot(BaseDispatchSyncUuidModel):
                     'gps_minutes_e': instance.gps_minutes_e,
                     'gps_minutes_s': instance.gps_minutes_s})
 
-    def allow_enrollment(self, using, exception_cls=None, plot_instance=None):
+    def allow_enrollment(self, using, exception_cls=None, plot_instance=None, update_fields=None):
         """Raises an exception if an attempt is made to edit a plot after
         the BHS_FULL_ENROLLMENT_DATE or if the plot has been allocated to HTC."""
         plot_instance = plot_instance or self
         using = using or 'default'
+        update_fields = update_fields or []
         exception_cls = exception_cls or ValidationError
         if using == 'default':  # do not check on remote systems
             if plot_instance.id:
-                if plot_instance.__class__.objects.using(using).get(id=plot_instance.id).htc:
+                if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
             if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
                 raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
@@ -407,14 +408,6 @@ class Plot(BaseDispatchSyncUuidModel):
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s,
                                           self.gps_degrees_e, self.gps_minutes_e)
-
-    @property
-    def dispatched_to(self):
-        """Returns the producer name that the plot is dispatched to otherwise None."""
-        try:
-            return self.dispatched_container_item.producer.name
-        except AttributeError:
-            return None
 
     def is_dispatch_container_model(self):
         return True
