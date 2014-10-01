@@ -9,6 +9,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 from .plot_identifier_history import PlotIdentifierHistory
 from .plot_log import PlotLog, PlotLogEntry
+from .replaceable import Replaceable
 from .replacement_history import ReplacementHistory
 from .signals import *
 from .representative_eligibility import RepresentativeEligibility
