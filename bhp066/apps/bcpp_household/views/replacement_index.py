@@ -7,12 +7,14 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.db import OperationalError
 
 from edc.device.sync.helpers import TransactionHelper
 from edc.device.sync.models import Producer
 from edc.device.sync.exceptions import PendingTransactionError, ProducerError
 from edc.device.sync.utils import load_producer_db_settings, getproducerbyaddr
 
+from ..exceptions import ReplacementError
 from ..models import Replaceable
 
 ProducerStatus = namedtuple('ProducerStatus', 'producer_name settings_key ip online synced error replaceables_count replaceables_last_updated')
@@ -47,6 +49,9 @@ def replacement_index(request, **kwargs):
                 'Cannot find producer {} using IP={}. Please confirm both that the '
                 'the IP address in the Producer model and that the '
                 'machine is online and available to the server.'.format(producer.name, producer.producer_ip)))
+        except OperationalError as operational_error:
+            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
+                                   'Got {}'.format(producer.settings_key, str(operational_error)))
         except PendingTransactionError:
             error = True
             messages.add_message(request, messages.ERROR, (
