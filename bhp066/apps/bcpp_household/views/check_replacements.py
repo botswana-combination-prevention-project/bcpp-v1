@@ -40,8 +40,8 @@ def check_replacements(request):
     except PendingTransactionError as pending_transaction_error:
         messages.add_message(request, messages.ERROR, str(pending_transaction_error))
     except OperationalError as operational_error:
-        raise ReplacementError('Unable to connect to producer {} with current settings. '
-                               'Got {}'.format(producer_name, str(operational_error)))
+        messages.add_message(request, messages.ERROR, ('Unable to connect to producer {} with current settings. '
+                                                       'Got {}').format(producer_name, str(operational_error)))
     return render_to_response(
         template, {
             'replaceables': replaceables,
