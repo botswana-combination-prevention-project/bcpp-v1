@@ -1,8 +1,9 @@
 from django.contrib import admin
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household.forms import HouseholdStructureForm
+
 from apps.bcpp_household.actions import export_as_kml_hs
-from apps.bcpp_household.filters import ReplaceableHouseholdStructureFilter
+from apps.bcpp_household.forms import HouseholdStructureForm
+from apps.bcpp_household.models import HouseholdStructure
+
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -14,11 +15,6 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
 
     form = HouseholdStructureForm
     date_hierarchy = 'modified'
-
-#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-#         if db_field.name == "plot":
-#             kwargs["queryset"] = Plot.objects.filter(id__exact=request.GET.get('plot', 0))
-#         return super(HouseholdStructureAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (
         'survey',
@@ -42,7 +38,6 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'enrolled',
         'refused_enumeration',
         'household__community',
-        ReplaceableHouseholdStructureFilter,
         'enrolled_datetime',
         'modified',
         'user_modified',
