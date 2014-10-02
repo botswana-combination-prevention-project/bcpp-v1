@@ -50,8 +50,8 @@ def replacement_index(request, **kwargs):
                 'the IP address in the Producer model and that the '
                 'machine is online and available to the server.'.format(producer.name, producer.producer_ip)))
         except OperationalError as operational_error:
-            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
-                                   'Got {}'.format(producer.settings_key, str(operational_error)))
+            messages.add_message(request, messages.ERROR, ('Unable to connect to producer with settings key \'{}\'. '
+                'Got {}').format(producer.settings_key, str(operational_error)))
         except PendingTransactionError:
             error = True
             messages.add_message(request, messages.ERROR, (
