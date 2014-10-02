@@ -1,13 +1,15 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib import messages
+from django.db import OperationalError
+from django.contrib.auth.decorators import login_required
 
 from edc.device.sync.models import Producer
 from edc.device.sync.exceptions import PendingTransactionError, ProducerError
 from edc.device.sync.utils import load_producer_db_settings, getproducerbyaddr
 
 from ..helpers import ReplacementHelper
-from django.contrib.auth.decorators import login_required
+from ..exceptions import ReplacementError
 
 
 @login_required
@@ -37,6 +39,9 @@ def check_replacements(request):
         messages.add_message(request, messages.ERROR, str(producer_error))
     except PendingTransactionError as pending_transaction_error:
         messages.add_message(request, messages.ERROR, str(pending_transaction_error))
+    except OperationalError as operational_error:
+        raise ReplacementError('Unable to connect to producer {} with current settings. '
+                               'Got {}'.format(producer_name, str(operational_error)))
     return render_to_response(
         template, {
             'replaceables': replaceables,
