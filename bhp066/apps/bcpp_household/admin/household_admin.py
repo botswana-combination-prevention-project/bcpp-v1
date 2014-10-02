@@ -1,6 +1,10 @@
 from django.contrib import admin
-from apps.bcpp_household.models import Household
-from apps.bcpp_household.forms import HouseholdForm
+
+from ..actions import update_replaceables
+from ..filters import ReplacedByFilter
+from ..forms import HouseholdForm
+from ..models import Household
+
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -15,11 +19,13 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'report_datetime',
         'comment')
 
-    list_display = ('household_identifier', 'structure', 'plot', 'community', 'created')
+    list_display = ('household_identifier', 'structure', 'plot', 'community', 'replaceable', 'replaced_by', 'created')
 
-    list_filter = ('created', 'community')
+    list_filter = ('created', 'community', 'replaceable', ReplacedByFilter, 'hostname_modified')
 
-    search_fields = ('household_identifier', 'community', 'id', 'plot__id')
+    search_fields = ('household_identifier', 'community', 'id', 'plot__id', 'replaced_by')
 
-    readonly_fields = ('household_identifier',)
+    readonly_fields = ('household_identifier', )
+
+    actions = [update_replaceables, ]
 admin.site.register(Household, HouseholdAdmin)

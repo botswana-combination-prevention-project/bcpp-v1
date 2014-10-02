@@ -11,7 +11,7 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers, Mapper
-from edc.device.sync.utils import load_producer_db_settings
+from edc.device.sync.utils import load_producer_db_settings, update_producer_from_settings
 from edc.device.sync.tests.factories import ProducerFactory
 from edc.device.sync.helpers import TransactionHelper
 
@@ -129,6 +129,7 @@ class TestPlotReplacement(TestCase):
             replaces='ERIK')
         replacement_helper = ReplacementHelper()
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -159,6 +160,7 @@ class TestPlotReplacement(TestCase):
                 gps_minutes_e=44.366660 + float('0.000000{}'.format(i)),
                 selected=FIVE_PERCENT,)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -166,7 +168,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
         self.teardown(producer.name)
 
     def test_replacement_plot3(self):
@@ -189,6 +191,7 @@ class TestPlotReplacement(TestCase):
                 selected=FIVE_PERCENT,
                 replaces='H1234{}'.format(i))
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -196,7 +199,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
         self.teardown(producer.name)
 
     def test_refusal_household1(self):
@@ -216,6 +219,7 @@ class TestPlotReplacement(TestCase):
             gps_minutes_e=44.366660,
             selected=1)
         producer = ProducerFactory()
+        update_producer_from_settings()
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -238,7 +242,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_refusal_household1a(self):
@@ -267,6 +271,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -274,7 +279,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_refusal_household2(self):
@@ -315,6 +320,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -322,7 +328,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_refusal_household3(self):
@@ -375,6 +381,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -382,7 +389,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_refusal_household4(self):
@@ -440,6 +447,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -447,8 +455,8 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household1])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household1])
         self.teardown(producer.name)
 
     def test_refusal_household5(self):
@@ -491,6 +499,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -498,8 +507,8 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_refusal_household6(self):
@@ -524,6 +533,7 @@ class TestPlotReplacement(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
         HouseholdRefusalFactory(household_structure=household_structure, report_datetime=datetime.now(), reason='not_interested')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -531,7 +541,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household1])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household1])
         self.teardown(producer.name)
 
     def test_refusal_household7(self):
@@ -569,6 +579,7 @@ class TestPlotReplacement(TestCase):
             study_resident='Yes')
         HouseholdRefusalFactory(household_structure=household_structure1, report_datetime=datetime.now(), reason='not_interested')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -576,7 +587,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household1])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household1])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles1(self):
@@ -605,6 +616,7 @@ class TestPlotReplacement(TestCase):
             present_today='No',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -612,7 +624,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles2(self):
@@ -653,6 +665,7 @@ class TestPlotReplacement(TestCase):
             present_today='No',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -660,7 +673,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles3(self):
@@ -713,6 +726,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -720,7 +734,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_check_absentees_ineligibles4(self):
@@ -740,6 +754,7 @@ class TestPlotReplacement(TestCase):
                 gps_minutes_e=44.8981199,
                 selected=1)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -747,7 +762,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles5(self):
@@ -775,6 +790,7 @@ class TestPlotReplacement(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=SEASONALLY_OCCUPIED)  # Status value becomes seasonally occupied
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -782,7 +798,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles6(self):
@@ -810,6 +826,7 @@ class TestPlotReplacement(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_OCCUPIED)  # Status value becomes rarely occupied
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -817,7 +834,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles7(self):
@@ -845,6 +862,7 @@ class TestPlotReplacement(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEVER_OCCUPIED)  # Status value becomes never occupied
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -852,7 +870,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles8(self):
@@ -880,6 +898,7 @@ class TestPlotReplacement(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=UNKNOWN_OCCUPIED)  # Status value becomes None
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -887,7 +906,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles9(self):
@@ -912,6 +931,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=3))
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -919,7 +939,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles10(self):
@@ -943,6 +963,7 @@ class TestPlotReplacement(TestCase):
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT,)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -950,7 +971,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_check_absentees_ineligibles11(self):
@@ -974,6 +995,7 @@ class TestPlotReplacement(TestCase):
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT,)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -981,7 +1003,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles12(self):
@@ -1007,6 +1029,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT, report_datetime=datetime.today() - timedelta(days=1))
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1014,7 +1037,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles13(self):
@@ -1040,6 +1063,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=1))
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1047,7 +1071,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles14(self):
@@ -1071,6 +1095,7 @@ class TestPlotReplacement(TestCase):
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1078,7 +1103,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles15(self):
@@ -1103,6 +1128,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=3))
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=2))
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1110,7 +1136,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles16(self):
@@ -1136,6 +1162,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=1))
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1143,7 +1170,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles17(self):
@@ -1167,6 +1194,7 @@ class TestPlotReplacement(TestCase):
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
         HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT,)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1174,7 +1202,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles18(self):
@@ -1203,6 +1231,7 @@ class TestPlotReplacement(TestCase):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEARLY_ALWAYS_OCCUPIED)  # Status value becomes nearly always occupied occupied
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1211,7 +1240,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.teardown(producer.name)
 
     def test_household_replacement1(self):
@@ -1255,6 +1284,7 @@ class TestPlotReplacement(TestCase):
             present_today='No',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1270,7 +1300,7 @@ class TestPlotReplacement(TestCase):
         TransactionHelper().outgoing_transactions(socket.gethostname(),
                                                   producer.name).delete()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_households(producer.name), [household])
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
         self.assertEquals(replacement_helper.replace_household(producer.name), [plot1])
         self.teardown(producer.name)
 
@@ -1337,6 +1367,7 @@ class TestPlotReplacement(TestCase):
             present_today='No',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1345,30 +1376,29 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        replaceable_household = replacement_helper.replaceable_households(producer.name)
-        self.assertEquals((replacement_helper.replaceable_households(producer.name)).sort(), ([household1, household2, household3]).sort())
-        self.assertEquals((replacement_helper.replace_household(producer.name)).sort(), ([plot1, plot2, plot3]).sort())
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)).sort(), ([household1, household2, household3]).sort())
+        self.assertEquals(list(replacement_helper.replace_household(producer.name)).sort(), ([plot1, plot2, plot3]).sort())
         self.teardown(producer.name)
 
     def test_household_replacement3(self):
         """assert if a household is replaced by a plot."""
         self.startup()
         plot = PlotFactory(
-                community='test_community11',
-                household_count=2,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community11',
+            household_count=2,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         plot1 = PlotFactory(
-                community='test_community11',
-                selected=FIVE_PERCENT)
+            community='test_community11',
+            selected=FIVE_PERCENT)
         household1, household2 = Household.objects.filter(plot=plot)
         household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure1)
@@ -1393,6 +1423,7 @@ class TestPlotReplacement(TestCase):
             present_today='Yes',
             study_resident='Yes')
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1422,6 +1453,7 @@ class TestPlotReplacement(TestCase):
             community='test_community11',
             selected=FIVE_PERCENT)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1430,7 +1462,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [plot])
         self.assertEquals(replacement_helper.replace_plot(producer.name), [plot1])
         self.teardown(producer.name)
 
@@ -1452,6 +1484,7 @@ class TestPlotReplacement(TestCase):
             community='test_community11',
             selected=FIVE_PERCENT)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1460,7 +1493,7 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot1)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [plot])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [plot])
         self.assertEquals(replacement_helper.replace_plot(producer.name), [plot1])
         self.teardown(producer.name)
 
@@ -1480,6 +1513,7 @@ class TestPlotReplacement(TestCase):
             selected=FIVE_PERCENT)
         PlotFactory(community='test_community11', selected=FIVE_PERCENT)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1490,7 +1524,7 @@ class TestPlotReplacement(TestCase):
                                                dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(replacement_helper.replaceable_plots(producer.name), [])
+        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
         self.assertEquals(replacement_helper.replace_plot(producer.name), [])
         self.teardown(producer.name)
 
@@ -1543,6 +1577,7 @@ class TestPlotReplacement(TestCase):
             selected=FIVE_PERCENT)
         plot5 = PlotFactory(community='test_community11', selected=FIVE_PERCENT)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
@@ -1597,6 +1632,7 @@ class TestPlotReplacement(TestCase):
         household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
         household_structure2 = HouseholdStructure.objects.get(household=household2, survey=self.survey1)
         producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
         # print producer.name
         if not load_producer_db_settings():
             raise TypeError('no producers')
