@@ -13,9 +13,9 @@ from ..classes import BcppConsumer
 @login_required
 def play_transactions(request, **kwargs):
     """ Play all the incoming transactions pending on the server."""
-    consumer = BcppConsumer()
-    consumer.consume()
-    message = consumer.get_consume_feedback()
+    bcpp_consumer = BcppConsumer()
+    bcpp_consumer.consume()
+    message = bcpp_consumer.get_consume_feedback()
     messages.add_message(request, messages.INFO, message)
     try:
         if settings.EMAIL_AFTER_CONSUME:
