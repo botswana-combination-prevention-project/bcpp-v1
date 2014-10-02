@@ -13,9 +13,9 @@ class ReplacementHistoryAdmin(BaseHouseholdModelAdmin):
         'replacement_datetime',
         'replacement_reason'
         )
-    list_display = ('replacing_item', 'replaced_item', 'replacement_datetime', 'replacement_reason')
+    list_display = ('replaced_item', 'replacing_item', 'replacement_datetime', 'replacement_reason')
 
-    list_filter = ('replacing_item', 'replaced_item')
+    list_filter = ('replacement_datetime', 'replacement_reason')
 
     search_fields = ('replaced_item', 'replaced_item')
 
