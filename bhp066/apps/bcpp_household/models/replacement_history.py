@@ -12,12 +12,12 @@ class ReplacementHistory(BaseDispatchSyncUuidModel):
     been selected for replacement and replaced by a plot from the pool
     of available plots (5%)."""
     replacing_item = models.CharField(
-        verbose_name='Plot identifier of the plot that replaced a household or plot',
+        verbose_name='Replaced by',
         max_length=25,
         )
 
     replaced_item = models.CharField(
-        verbose_name='Plot or household identifier replaced',
+        verbose_name='Replaced item',
         max_length=25,
         )
 
