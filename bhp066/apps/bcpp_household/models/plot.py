@@ -159,21 +159,6 @@ class Plot(BaseDispatchSyncUuidModel):
         choices=SELECTED,
         editable=False)
 
-    replaces = models.CharField(
-        max_length=25,
-        null=True,
-        blank=True,
-        editable=False,
-        help_text=("plot or household identifier that this plot replaces."))
-
-    replaced_by = models.CharField(
-        verbose_name='Identifier',
-        max_length=25,
-        null=True,
-        blank=True,
-        editable=False,
-        help_text=u'The identifier of the plot that this plot was replaced by')
-
     device_id = models.CharField(
         max_length=2,
         null=True,
@@ -248,15 +233,22 @@ class Plot(BaseDispatchSyncUuidModel):
         default=False,
         editable=False)
 
+    replaces = models.CharField(
+        max_length=25,
+        null=True,
+        blank=True,
+        editable=False,
+        help_text=("plot or household identifier that this plot replaces."))
+
     replaced_by = models.CharField(
         max_length=25,
         null=True,
         blank=True,
-        verbose_name='Identifier',
-        help_text=u'The identifier of the plot that this plot is replaced by',
-        editable=False)
+        editable=False,
+        help_text=u'The identifier of the plot that this plot was replaced by')
 
     replaceable = models.NullBooleanField(
+        verbose_name='Replaceable?',
         default=None,
         editable=False,
         help_text='Updated by replacement helper')
@@ -309,6 +301,9 @@ class Plot(BaseDispatchSyncUuidModel):
         except TypeError:
             pass
         super(Plot, self).save(*args, **kwargs)
+
+    def get_identifier(self):
+        return self.plot_identifier
 
     @property
     def identifier_segment(self):

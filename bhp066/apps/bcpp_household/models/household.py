@@ -110,11 +110,11 @@ class Household(BaseDispatchSyncUuidModel):
     replaced_by = models.CharField(
         max_length=25,
         null=True,
-        verbose_name='Identifier',
         help_text=u'The identifier of the plot that this household is replaced by',
         editable=False)
 
     replaceable = models.NullBooleanField(
+        verbose_name='Replaceable?',
         default=None,
         editable=False,
         help_text='Updated by replacement helper')
@@ -165,6 +165,9 @@ class Household(BaseDispatchSyncUuidModel):
             pass
         self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
+
+    def get_identifier(self):
+        return self.household_identifier
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Raises an exception if the plot is not enrolled and
