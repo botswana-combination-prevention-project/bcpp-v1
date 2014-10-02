@@ -1,4 +1,7 @@
 {% extends "sync.html"%}
+{% load i18n %}
+{% load admin_urls %}
+{% load common_tags %}
 
 {% block usb_sync %}
 {% if is_server %}
@@ -14,7 +17,8 @@
     
 {% block consuming_app %}
 {% if is_server or is_middleman %}
-	<td><A href="/bhp_sync/consume/{{ producer.name }}/bcpp/">synchronize with server</A></td>
+	<td><A href="{% url 'sync_consume_producer_url' producer.name app_name %}">synchronize with server</A>
+	</td>
 {% else %}
 	<td>SYNC NOT AVAILABLE IN NETBOOK</td>
 {% endif %}
