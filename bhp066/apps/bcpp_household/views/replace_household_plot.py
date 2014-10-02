@@ -52,8 +52,9 @@ def replace_household_plot(request):
             raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
                                    'Got {}'.format(producer.settings_key, str(connection_does_not_exist)))
         except OperationalError as operational_error:
-            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
-                                   'Got {}'.format(producer.settings_key, str(operational_error)))
+            messages.add_message(request, messages.ERROR, (
+                'Unable to connect to producer with settings key \'{}\'. '
+                'Got {}').format(producer.settings_key, str(operational_error)))
         except PendingTransactionError as pending_transaction_error:
             messages.add_message(request, messages.ERROR, str(pending_transaction_error))
             # "Pending outgoing transaction on {}.".format(producer_name)
