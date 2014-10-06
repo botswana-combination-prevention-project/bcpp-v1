@@ -1,8 +1,10 @@
 from django.contrib import admin
-from apps.bcpp_household.forms import PlotForm
-from apps.bcpp_household.actions import process_dispatch
-from apps.bcpp_household.models import Plot
-from apps.bcpp_household.filters import ReplaceablePlotFilter
+
+from ..actions import process_dispatch, update_replaceables
+from ..filters import ReplacesFilter, ReplacedByFilter, DispatchedReplacesFilter
+from ..forms import PlotForm
+from ..models import Plot
+
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
 
@@ -26,9 +28,12 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'time_of_day',
         'description')
 
-    list_display = ('plot_identifier', 'action', 'status', 'access_attempts', 'bhs', 'cso_number', 'community', 'section', 'created')
+    list_display = ('plot_identifier', 'community', 'action', 'status', 'access_attempts', 'bhs', 'replaceable',
+                    'replaced_by', 'replaces', 'cso_number', 'created')
 
-    list_filter = ('bhs', 'status', 'created', 'modified', 'community', ReplaceablePlotFilter, 'access_attempts', 'section', 'sub_section', 'selected', 'action', 'time_of_week', 'time_of_day')
+    list_filter = ('bhs', 'status', 'created', 'modified', 'community', 'access_attempts', 'replaceable',
+                   ReplacedByFilter, ReplacesFilter, DispatchedReplacesFilter, 'hostname_modified', 'section', 'sub_section', 'selected',
+                   'action', 'time_of_week', 'time_of_day')
 
     search_fields = ('plot_identifier', 'cso_number', 'community', 'section', 'id')
 
@@ -38,6 +43,6 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'time_of_week': admin.VERTICAL,
         'time_of_day': admin.VERTICAL,
         }
-    actions = [process_dispatch, ]
+    actions = [process_dispatch, update_replaceables]
 
 admin.site.register(Plot, PlotAdmin)
