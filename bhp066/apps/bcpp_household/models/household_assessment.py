@@ -19,7 +19,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
     household_structure = models.OneToOneField(HouseholdStructure)
 
     residency = models.CharField(
-        verbose_name='Does anyone ever stay in this household?',
+        verbose_name=('Does anyone ever stay in this household?'),
         choices=YES_NO,
         max_length=25,
         null=True,
@@ -27,13 +27,14 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
         )
 
     member_count = models.IntegerField(
-        verbose_name="How many people live in this household (estimate)?",
+        verbose_name=("How many people live in this household (estimate)?"),
         null=True,
         blank=True,
         help_text=("Provide the number of members in this household."))
 
     eligibles = models.CharField(
-        verbose_name='In speaking with the individual(s) above, at least one member of this plot is potentially eligible',
+        verbose_name=('In speaking with the individual(s) above, at '
+                      'least one member of this plot is potentially eligible'),
         choices=YES_NO_DONT_KNOW,
         max_length=25,
         null=True,
@@ -42,7 +43,8 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
         )
 
     ineligible_reason = models.CharField(
-        verbose_name="If no members are eligible for this study, please state the reason for ineligility.",
+        verbose_name=('If no members are eligible for this study, please state '
+                      'the reason for ineligility.'),
         null=True,
         max_length=25,
         choices=INELIGIBLE_REASON,
@@ -50,7 +52,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
         blank=True)
 
     last_seen_home = models.CharField(
-        verbose_name='When was a resident last seen in this household?',
+        verbose_name=('When was a resident last seen in this household?'),
         choices=RESIDENT_LAST_SEEN,
         max_length=25,
         null=True,
@@ -67,7 +69,8 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         if self.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
+                self._meta.object_name, self.pk))
         if self.household_structure.enumerated:
             raise ValidationError('HouseholdStructure has been enumerated')
         if self.household_structure.failed_enumeration_attempts < 3:
