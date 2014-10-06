@@ -110,14 +110,14 @@ class Household(BaseDispatchSyncUuidModel):
     replaced_by = models.CharField(
         max_length=25,
         null=True,
-        verbose_name='Identifier',
         help_text=u'The identifier of the plot that this household is replaced by',
         editable=False)
 
-#     replaceable = models.BooleanField(
-#         default=False,
-#         editable=False,
-#         help_text='')
+    replaceable = models.NullBooleanField(
+        verbose_name='Replaceable?',
+        default=None,
+        editable=False,
+        help_text='Updated by replacement helper')
 
     comment = EncryptedTextField(
         max_length=250,
@@ -163,9 +163,11 @@ class Household(BaseDispatchSyncUuidModel):
                                                             self.replaced_by))
         except self.__class__.DoesNotExist:
             pass
-        if using == 'default':  # don't check on remote machines
-            self.allow_enrollment(using)
+        self.allow_enrollment(using)
         return super(Household, self).save(*args, **kwargs)
+
+    def get_identifier(self):
+        return self.household_identifier
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Raises an exception if the plot is not enrolled and
@@ -197,8 +199,12 @@ class Household(BaseDispatchSyncUuidModel):
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        if update_fields == ['replaced_by']:
-            return True
+        try:
+            if 'replaced_by' in update_fields:
+                return True
+        except TypeError as type_error:
+            if '\'NoneType\' is not iterable' in str(type_error):
+                pass
         return False
 
     def structure(self):

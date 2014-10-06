@@ -38,9 +38,10 @@ class BcppDispatchController(DispatchController):
             dispatch_url,
             **kwargs)
 
-    def get_surveys(self):
+    def get_surveys(self, using=None):
         """Imports the current survey instance on the producer."""
-        surveys = Survey.objects.using(self.get_using_source()).filter(datetime_start__lte=datetime.today())
+        using = using or self.get_using_source()
+        surveys = Survey.objects.using(using).filter(datetime_start__lte=datetime.today())
         if not surveys:
             raise DispatchError('Cannot find any surveys on \'{0}\' starting on or before today\'s date.'.format(self.get_using_source()))
         return surveys
@@ -82,7 +83,8 @@ class BcppDispatchController(DispatchController):
         if survey:
             surveys = [survey]
         else:
-            surveys = self.get_surveys()
+            # if surveys are not dispatched then they must be on the producer already.
+            surveys = self.get_surveys(self.get_using_destination())
         plot_identifier = self.get_container_register_instance().container_identifier
         logger.info("Dispatching data for plot {0}".format(plot_identifier))
         Plot = get_model('bcpp_household', 'plot')
@@ -108,8 +110,8 @@ class BcppDispatchController(DispatchController):
             # self.dispatch_user_container_as_json(plot)
             for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])
-                for survey in surveys:
-                    self.dispatch_user_items_as_json(survey, plot)
+                # for survey in surveys:
+                #    self.dispatch_user_items_as_json(survey, plot)
                 for survey in surveys:
                     household_structure = HouseholdStructure.objects.filter(household=household, survey_id=survey.id)
                     if household_structure:
