@@ -19,5 +19,6 @@ class HouseholdStructureManager(models.Manager):
         dashboard_type = 'household'
         dashboard_model = 'household_structure'
         dashboard_id = household_structure.pk
-        household_dashboard = HouseholdDashboard(dashboard_type, dashboard_id, dashboard_model, survey=household_structure.survey.pk)
+        household_dashboard = HouseholdDashboard(
+            dashboard_type, dashboard_id, dashboard_model, survey=household_structure.survey.pk)
         return household_dashboard.household_members
