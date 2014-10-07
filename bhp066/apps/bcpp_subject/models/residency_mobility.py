@@ -25,14 +25,14 @@ class ResidencyMobility (BaseScheduledVisitModel):
 
     permanent_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 14 or"
-                      " more nights per month in this community? "),
+                       " more nights per month in this community? "),
         max_length=10,
         choices=YES_NO,
         help_text=("If participant has moved into the "
-                  "community in the past 12 months, then "
-                  "since moving in has the participant typically "
-                  "spent more than 14 nights per month in this community. "
-                  "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
+                   "community in the past 12 months, then "
+                   "since moving in has the participant typically "
+                   "spent more than 14 nights per month in this community. "
+                   "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
         )
 
     intend_residency = models.CharField(
@@ -45,8 +45,8 @@ class ResidencyMobility (BaseScheduledVisitModel):
     # see redmine 423 and 401 and 126
     nights_away = models.CharField(
         verbose_name=_("In the past 12 months, in total how many nights did you spend away"
-                      " from this community, including visits to cattle post and lands?"
-                      "[If you don't know exactly, give your best guess]"),
+                       " from this community, including visits to cattle post and lands?"
+                       "[If you don't know exactly, give your best guess]"),
         max_length=35,
         choices=NIGHTSAWAY_CHOICE,
         help_text="",
@@ -54,7 +54,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
 
     cattle_postlands = models.CharField(
         verbose_name=_("In the past 12 months, during the times you were away from this community, "
-                      "where were you primarily staying?"),
+                       "where were you primarily staying?"),
         max_length=25,
         choices=CATTLEPOSTLANDS_CHOICE,
         default=NOT_APPLICABLE,
@@ -79,7 +79,8 @@ class ResidencyMobility (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
             if self.permanent_resident.lower() != 'yes' or self.intend_residency.lower() != 'no':
-                raise exception_cls('An HicEnrollment form exists for this subject. Values for \'permanent_resident\' and \'intend_residency\' cannot be changed.')
+                raise exception_cls('An HicEnrollment form exists for this subject. Values for '
+                                    '\'permanent_resident\' and \'intend_residency\' cannot be changed.')
 
     def __unicode__(self):
         return unicode(self.subject_visit)
