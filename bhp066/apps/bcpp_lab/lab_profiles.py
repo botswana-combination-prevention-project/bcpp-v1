@@ -2,7 +2,8 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 
 from edc.lab.lab_profile.classes import LabProfile
 
-from .models import Aliquot, AliquotType, Receive, SubjectRequisition, AliquotProfile, AliquotProfileItem, Panel
+from .models import (Aliquot, AliquotType, Receive, SubjectRequisition,
+                     AliquotProfile, AliquotProfileItem, Panel)
 
 
 class BaseBcppProfile(LabProfile):

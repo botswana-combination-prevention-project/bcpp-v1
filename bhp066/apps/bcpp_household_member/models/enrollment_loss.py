@@ -50,16 +50,18 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
 
     def natural_key(self):
         if not self.household_member:
-            raise AttributeError("household_member cannot be None for enrollment loss with pk='\{0}\'".format(self.pk))
+            raise AttributeError('household_member cannot be None for enrollment loss '
+                                 'with pk=\'{0}\''.format(self.pk))
         return self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household.household_member']
 
     def dispatch_container_lookup(self, using=None):
-        return (models.get_model('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
+        return (models.get_model('bcpp_household', 'Plot'),
+                'household_member__household_structure__household__plot__plot_identifier')
 
     def deserialize_prep(self, **kwargs):
-        #EnrollmentLoss being deleted by an IncommingTransaction, we ahead and delete it.
-        #Its no longer needed at all because member status changed.
+        # EnrollmentLoss being deleted by an IncommingTransaction, we ahead and delete it.
+        # Its no longer needed at all because member status changed.
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             self.delete()
 

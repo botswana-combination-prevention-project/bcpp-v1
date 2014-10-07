@@ -88,8 +88,10 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
-    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
-    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME), include('apps.{app_name}_clinic_dashboard.urls'.format(app_name=APP_NAME))),
+    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME),
+        include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
+    url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME),
+        include('apps.{app_name}_clinic_dashboard.urls'.format(app_name=APP_NAME))),
 )
 
 urlpatterns += patterns(
@@ -127,6 +129,7 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
-    url(r'^{app_name}/$'.format(app_name=APP_NAME), RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
+    url(r'^{app_name}/$'.format(app_name=APP_NAME),
+        RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
 )
