@@ -24,11 +24,13 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
         "household_residency": admin.VERTICAL,
         "verbal_script": admin.VERTICAL}
 
-    list_filter = ('report_datetime', 'user_created', 'user_modified', 'hostname_created', 'household_member__household_structure__household__community')
+    list_filter = ('report_datetime', 'user_created', 'user_modified', 'hostname_created',
+                   'household_member__household_structure__household__community')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=False)
+            kwargs["queryset"] = HouseholdMember.objects.filter(
+                household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=False)
         if db_field.name == "household_structure":
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
         return super(HouseholdHeadEligibilityAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)

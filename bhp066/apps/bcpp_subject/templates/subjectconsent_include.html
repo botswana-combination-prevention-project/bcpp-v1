@@ -25,7 +25,7 @@
             <td><A href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=subjectconsent.household_member.pk show='appointments' %}">{{ subjectconsent.subject_identifier }}</A></td>            
             <td>{{subjectconsent.first_name|encrypted}}</td>
             <td>{{subjectconsent.last_name|encrypted}}</td>            
-            <td>{{subjectconsent.initials}}</td>
+            <td>{{subjectconsent.initials|encrypted}}</td>
             <td>{{subjectconsent.gender}}</td>
             <td>{{subjectconsent.dob|date:"Y-m-d"}}</td>
             <td>{{subjectconsent.household_member.age_in_years}}</td>            
