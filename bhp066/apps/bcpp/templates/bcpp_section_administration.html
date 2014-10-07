@@ -1,0 +1,40 @@
+{% extends "section_administration.html"%}
+{% load admin_urls %}
+{% load url from future %}
+
+{% block admin_sections %}
+    <ul>
+    <li><A href="/admin/">All sections</A>
+    <li><A href="{% url plot_meta|admin_urlname:'changelist' %}">Plots</A>
+    <li><A href="{% url household_meta|admin_urlname:'changelist' %}">Households</A>
+    <li><A href="{% url replaceable_meta|admin_urlname:'changelist' %}">Replaceables</A>
+    <li><A href="{% url subjectconsent_meta|admin_urlname:'changelist' %}">Subject Consents</A>
+    </ul>
+
+{% endblock admin_sections %}
+
+{% block device_sync_export %}
+    <li><A href="{% url 'bcpp_sync_export_outgoing_url' %}">Export outgoing transactions to USB drive</A></li>
+{% endblock device_sync_export %}
+
+{% block device_inspector %}
+    {% if 'edc.device.inspector' in installed_apps %}
+        <li><A href="{% url 'admin:bcpp_inspector_subjectrequisitioninspector_changelist'%}">Inspect Middleman Sync Model</A></li>
+    {% endif %}
+{% endblock device_inspector %}
+
+{% block device_dispatch %}
+    <H5>Device Dispatch</H5>
+    <ul>
+    <li><A href="{% url 'admin:bcpp_household_plot_changelist' %}">Dispatch data to netbooks</A>
+      {% if 'edc.map' in installed_apps %}
+        <li><A href="{% url 'map_index_url' %}">Dispatch data to devices by Map</A>
+      {% endif %}
+    </ul>
+
+    <H5>Replacement</H5>
+    <ul>
+    <li><A href="{% url 'admin:bcpp_household_replaceable_changelist' %}">Update/View Replaceable Plots and Households (on Server)</A>
+    <li><A href="{% url "replacement_index_url" %}">Replace household/plots on netbooks</A>
+    </ul>
+{% endblock device_dispatch %}
