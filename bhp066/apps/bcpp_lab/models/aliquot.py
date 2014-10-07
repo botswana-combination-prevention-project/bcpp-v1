@@ -29,6 +29,10 @@ class Aliquot(BaseAliquot):
         self.subject_identifier = self.receive.registered_subject.subject_identifier
         super(Aliquot, self).save(*args, **kwargs)
 
+    @property
+    def specimen_identifier(self):
+        return self.aliquot_identifier[:-4]
+
     def get_visit_model(self):
         from apps.bcpp_subject.models import SubjectVisit
         return SubjectVisit

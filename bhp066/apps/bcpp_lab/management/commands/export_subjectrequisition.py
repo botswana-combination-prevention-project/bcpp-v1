@@ -33,5 +33,8 @@ class Command(BaseCommand):
                                  subject_requisition.is_labelled,
                                  subject_requisition.is_labelled_datetime,
                                  subject_requisition.is_packed,
+                                 # TODO: hiv_status / referral code
+                                 # TODO: hiv_status
+                                 # TODO: art_status
                                  ])
         print '/tmp/subjectrequisition{0}.csv'.format(date_suffix)
