@@ -19,7 +19,7 @@ class SubstanceUse (BaseScheduledVisitModel):
 
     smoke = models.CharField(
         verbose_name=_("Do you currently smoke any tobacco products, such as"
-                      " cigarettes, cigars, or pipes?"),
+                       " cigarettes, cigars, or pipes?"),
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",

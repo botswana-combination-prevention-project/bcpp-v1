@@ -40,7 +40,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
         )
     healthcare_expense = models.DecimalField(
         verbose_name=_("How much did you have to pay to the healthcare provider"
-                      " for the entire stay, including any medicines? "),
+                       " for the entire stay, including any medicines? "),
         max_digits=5,
         decimal_places=2,
         help_text="Pula",
@@ -53,7 +53,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
         )
     total_expenses = models.DecimalField(
         verbose_name=_("For this most recent hospitalization, how much did you have to pay for transport,"
-                      " food and accommodation, including fuel if you used your own car? "),
+                       " food and accommodation, including fuel if you used your own car? "),
         max_digits=5,
         decimal_places=2,
         null=True,
@@ -62,7 +62,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
         )
     hospitalization_costs = models.CharField(
         verbose_name=_("For this most recent hospitalization, were any of these costs by covered by"
-                      " anyone else, such as your medical aid or employer? "),
+                       " anyone else, such as your medical aid or employer? "),
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text=" ",

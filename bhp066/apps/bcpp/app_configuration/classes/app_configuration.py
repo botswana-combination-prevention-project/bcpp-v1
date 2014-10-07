@@ -2,6 +2,7 @@ from collections import OrderedDict
 from datetime import datetime, date
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 try:
     from config.labels import aliquot_label
@@ -18,6 +19,7 @@ from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTupl
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 
+from apps.bcpp_household.models import Plot
 from apps.bcpp_survey.models import Survey
 
 study_start_datetime = datetime(2013, 10, 18, 10, 30, 00)
@@ -303,6 +305,26 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     @property
     def study_site_setup(self):
+        """Returns a dictionary of the the site code and site name.
+
+        Confirms:
+            * mapper name an code match that in settings.
+            * plot identifier community prefix is the same as the site code.
+        """
+        map_code = site_mappers.get_current_mapper().map_code
+        if map_code != settings.SITE_CODE:
+            raise ImproperlyConfigured('Community code {} returned by mapper does not equal '
+                                       'settings.SITE_CODE {}.'.format(map_code, settings.SITE_CODE))
+        map_area = site_mappers.get_current_mapper().map_area
+        if map_area != settings.CURRENT_COMMUNITY:
+            raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
+                                       'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
+        if Plot.objects.all()[0].plot_identifier[:2] != map_code:
+            raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
+                                       'in Plot identifier {0}. Got {1} != {2}'.format(
+                                           Plot.objects.all()[0].plot_identifier,
+                                           Plot.objects.all()[0].plot_identifier[:2],
+                                           map_code))
         return {'site_name': site_mappers.get_current_mapper().map_area,
                 'site_code': site_mappers.get_current_mapper().map_code}
 
@@ -316,12 +338,5 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.datetime_start = survey_values.get('datetime_start')
                 survey.datetime_end = survey_values.get('datetime_end')
                 survey.save()
-
-    def refresh_producers_in_memory(self):
-        """The settings object in memory is updated with producer information from the producer table,
-            this is required for dispatch. NOTE: settings is reset every time apache restart, so need to
-            resave them every time application boots up."""
-        for producer in Producer.objects.all():
-            producer.save()
 
 bcpp_app_configuration = BcppAppConfiguration()
