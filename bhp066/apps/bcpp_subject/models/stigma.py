@@ -14,8 +14,8 @@ class Stigma (BaseScheduledVisitModel):
 
     anticipate_stigma = models.CharField(
         verbose_name=_("Would you be, or have you ever been,"
-                      " hesitant to take an HIV test due to fear of people\'s "
-                      "reaction if you tested positive for HIV."),
+                       " hesitant to take an HIV test due to fear of people\'s "
+                       "reaction if you tested positive for HIV."),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -32,7 +32,7 @@ class Stigma (BaseScheduledVisitModel):
 
     saliva_stigma = models.CharField(
         verbose_name=_("I fear that I could contract HIV if I come into contact"
-                      " with the saliva of a person living with HIV."),
+                       " with the saliva of a person living with HIV."),
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
@@ -41,7 +41,7 @@ class Stigma (BaseScheduledVisitModel):
 
     teacher_stigma = models.CharField(
         verbose_name=_("I think that if a teacher is living with HIV but"
-                      " is not sick, he/she should be allowed to continue teaching in the school."),
+                       " is not sick, he/she should be allowed to continue teaching in the school."),
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
@@ -50,7 +50,7 @@ class Stigma (BaseScheduledVisitModel):
 
     children_stigma = models.CharField(
         verbose_name=_("Children living with HIV should be able to attend school"
-                      " with children who are HIV negative."),
+                       " with children who are HIV negative."),
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,

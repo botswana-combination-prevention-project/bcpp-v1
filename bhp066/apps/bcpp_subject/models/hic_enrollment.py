@@ -14,7 +14,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class HicEnrollment (BaseScheduledVisitModel):
 
     hic_permission = models.CharField(
-        verbose_name=_("Is it okay for the project to visit you every year for the next three years for further questions and testing?"),
+        verbose_name=_('Is it okay for the project to visit you every year for '
+                       'the next three years for further questions and testing?'),
         max_length=25,
         choices=YES_NO,
         help_text=_('If \'No\', subject is not eligible.')
@@ -61,14 +62,16 @@ class HicEnrollment (BaseScheduledVisitModel):
     citizen_or_spouse = models.NullBooleanField(
         default=None,
         # editable=False,
-        help_text=_("From Subject Consent. Is participant a citizen, or married to citizen with a valid marriage certificate?"),
+        help_text=_('From Subject Consent. Is participant a citizen, or married to citizen '
+                    'with a valid marriage certificate?'),
         )
 
     locator_information = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text=_("From Subject Locator. Is the locator form filled and all necessary contact information collected?"),
+        help_text=_('From Subject Locator. Is the locator form filled and all '
+                    'necessary contact information collected?'),
         )
 
     consent_datetime = models.DateTimeField("Consent date and time",
@@ -83,7 +86,7 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     def save(self, *args, **kwargs):
         if self.hic_permission.lower() == 'yes':
-            #Only enforce the criteria if subjectt agrees to enroll in HIC
+            # Only enforce the criteria if subjectt agrees to enroll in HIC
             self.permanent_resident = self.is_permanent_resident()
             self.intend_residency = self.is_intended_residency()
             self.household_residency = self.is_household_residency()
@@ -103,7 +106,8 @@ class HicEnrollment (BaseScheduledVisitModel):
             if residency_mobility[0].permanent_resident.lower() == 'yes':
                 return True
             else:
-                raise exception_cls('Please review \'residency_mobility\' in ResidencyMobility form before proceeding with this one.')
+                raise exception_cls('Please review \'residency_mobility\' in ResidencyMobility '
+                                    'form before proceeding with this one.')
         else:
             raise exception_cls('Please fill ResidencyMobility form before proceeding with this one.')
 
@@ -115,7 +119,8 @@ class HicEnrollment (BaseScheduledVisitModel):
             if residency_mobility[0].intend_residency.lower() == 'no':
                 return True
             else:
-                raise exception_cls('Please review \'intend_residency\' in ResidencyMobility form before proceeding with this one.')
+                raise exception_cls('Please review \'intend_residency\' in ResidencyMobility '
+                                    'form before proceeding with this one.')
         else:
             raise exception_cls('Please fill ResidencyMobility form before proceeding with this one.')
 
@@ -127,7 +132,8 @@ class HicEnrollment (BaseScheduledVisitModel):
             if hiv_result[0].hiv_result.lower() == 'neg':
                 return 'NEG'
             else:
-                raise exception_cls('Please review \'hiv_result\' in Today\'s Hiv Result form before proceeding with this one.')
+                raise exception_cls('Please review \'hiv_result\' in Today\'s Hiv Result form '
+                                    'before proceeding with this one.')
         else:
             raise exception_cls('Please fill Today\'s Hiv Result form before proceeding with this one.')
 
@@ -139,7 +145,8 @@ class HicEnrollment (BaseScheduledVisitModel):
             if subject_consent[0].dob and subject_consent[0].consent_datetime:
                 return (subject_consent[0].dob, subject_consent[0].consent_datetime)
             else:
-                raise exception_cls('Please review \'dob\' and \'consent_datetime\' in SubjectConsent form before proceeding with this one.')
+                raise exception_cls('Please review \'dob\' and \'consent_datetime\' in SubjectConsent '
+                                    'form before proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 
@@ -155,10 +162,14 @@ class HicEnrollment (BaseScheduledVisitModel):
         from ..models import SubjectConsent
         subject_consent = SubjectConsent.objects.filter(household_member=self.subject_visit.household_member)
         if subject_consent.exists():
-            if ((subject_consent[0].citizen.lower() == 'yes') or (subject_consent[0].legal_marriage.lower() == 'yes' and subject_consent[0].marriage_certificate.lower() == 'yes')):
+            if ((subject_consent[0].citizen.lower() == 'yes') or (
+                    subject_consent[0].legal_marriage.lower() == 'yes' and
+                    subject_consent[0].marriage_certificate.lower() == 'yes')):
                 return True
             else:
-                raise exception_cls('Please review \'citizen\', \'legal_marriage\' and \'marriage_certificate\' in SubjectConsent form before proceeding with this one.')
+                raise exception_cls('Please review \'citizen\', \'legal_marriage\' and '
+                                    '\'marriage_certificate\' in SubjectConsent form before '
+                                    'proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 
@@ -184,7 +195,8 @@ class HicEnrollment (BaseScheduledVisitModel):
                     subject_locator[0].contact_phone):
                 return True
             else:
-                raise exception_cls('Please review SubjectLocator to ensure there is some way to contact the participant form before proceeding with this one.')
+                raise exception_cls('Please review SubjectLocator to ensure there is some '
+                                    'way to contact the participant form before proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
 

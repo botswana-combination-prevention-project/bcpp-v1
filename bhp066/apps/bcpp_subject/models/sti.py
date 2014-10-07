@@ -22,7 +22,7 @@ class Sti (BaseScheduledVisitModel):
 
     sti_dx = models.ManyToManyField(StiIllnesses,
         verbose_name=_("[Interviewer:] Indicate each potentially HIV-related illness that is reported"
-                      " by the participant and/or recorded in his or her medical records"),
+                       " by the participant and/or recorded in his or her medical records"),
         help_text="(tick all that apply)",
         )
     sti_dx_other = OtherCharField()

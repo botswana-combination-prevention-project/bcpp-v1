@@ -17,15 +17,15 @@ class OutpatientCare (BaseScheduledVisitModel):
 
     govt_health_care = models.CharField(
         verbose_name=_("In the last 3 months, did you seek care at a Government Primary"
-                  " Health Clinic/Post? Not including any visits for which you were hospitalized. "),
+                       " Health Clinic/Post? Not including any visits for which you were hospitalized. "),
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
         )
     dept_care = models.CharField(
         verbose_name=_("In the last 3 months, did you seek care at a Hospital Outpatient Department,"
-                  " including Govt, private and church/mission hospitals? Not including any visits"
-                  " for which you were hospitalized. "),
+                       " including Govt, private and church/mission hospitals? Not including any visits"
+                       " for which you were hospitalized. "),
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
@@ -44,7 +44,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         )
     care_visits = models.IntegerField(
         verbose_name=_("In the last 3 months, how many total outpatient visits have"
-                      " you to all of the above places? "),
+                       " you to all of the above places? "),
         max_length=2,
         null=True,
         blank=True,
@@ -52,7 +52,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         )
     facility_visited = models.CharField(
         verbose_name=_("For the most recent outpatient medical care visit in the past 3 months, which"
-                  " type of facility did you visit? "),
+                       " type of facility did you visit? "),
         max_length=65,
         choices=CARE_FACILITIES,
         help_text="if 'NOT Government Primary Health Clinic/Post' go to question Q9. ",
@@ -60,7 +60,7 @@ class OutpatientCare (BaseScheduledVisitModel):
 
     specific_clinic = models.CharField(
         verbose_name=_("For this most recent visit to a Government Primary Health Clinic/Post, "
-                  "which clinic did you visit? "),
+                       "which clinic did you visit? "),
         max_length=50,
         null=True,
         blank=True,
@@ -76,36 +76,36 @@ class OutpatientCare (BaseScheduledVisitModel):
 
     outpatient_expense = models.DecimalField(
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have to pay"
-                  " to the health care provider, including any medicines?"),
+                       " to the health care provider, including any medicines?"),
         max_digits=5,
         decimal_places=2,
         help_text="Pula",
         )
     travel_time = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, how long did it take you to get"
-                  " to the clinic? "),
+                       " to the clinic? "),
         max_length=25,
         choices=TRAVEL_HOURS,
         help_text="",
         )
     transport_expense = models.DecimalField(
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have"
-                      " to pay for transport, food and accommodation? [include cost for fuel if using"
-                      " a private car] "),
+                       " to pay for transport, food and accommodation? [include cost for fuel if using"
+                       " a private car] "),
         max_digits=5,
         decimal_places=2,
         help_text="Pula",
         )
     cost_cover = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, were any of these costs"
-                      " by covered by anyone else, such as your medical aid or employer? "),
+                       " by covered by anyone else, such as your medical aid or employer? "),
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
         )
     waiting_hours = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, how long did you have"
-                      " to wait before you were seen, from when you arrived at the facility? "),
+                       " to wait before you were seen, from when you arrived at the facility? "),
         max_length=25,
         choices=TRAVEL_HOURS,
         help_text="",
