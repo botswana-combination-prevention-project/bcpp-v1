@@ -6,7 +6,7 @@ import socket
 from unipath import Path
 
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
-from .bcpp_settings import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
+from .bcpp_settings import (APP_NAME, BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
                             SMC_ECC_START_DATE, SMC_START_DATE,
                             MAX_HOUSEHOLDS_PER_PLOT)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
@@ -17,6 +17,7 @@ from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
+APP_NAME = APP_NAME
 
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
@@ -26,12 +27,13 @@ TEMPLATE_DIRS = (
     EDC_DIR.child('templates'),
 )
 PROJECT_ROOT = Path(__file__).ancestor(3)  # e.g. /home/django/source/bhp066_project
-PROJECT_DIR = Path(__file__).ancestor(2)  # e.g. /home/django/source/hp066_project/bhp066
+PROJECT_DIR = Path(__file__).ancestor(2)  # e.g. /home/django/source/bhp066_project/bhp066
+APP_DIR = PROJECT_DIR.child('apps').child(APP_NAME)  # e.g. /home/django/source/bhp066_project/bhp066/apps/bcpp
 ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
 FIXTURE_DIRS = (
-    PROJECT_DIR.child('apps', 'bcpp', 'fixtures'),
+    APP_DIR.child('fixtures'),
 )
 STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('config')
@@ -188,7 +190,6 @@ EMAIL_USE_TLS = EMAIL_USE_TLS
 AUTH_PROFILE_MODULE = "bhp_userprofile.userprofile"
 
 # general
-APP_NAME = 'bcpp'
 PROJECT_NUMBER = 'BHP066'
 PROJECT_IDENTIFIER_PREFIX = '066'
 PROJECT_IDENTIFIER_MODULUS = 7
@@ -244,7 +245,8 @@ else:
     LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
                                    'DATABASE=BHPLAB')
 # edc.subject.consent
-SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False  # set to False so that the constraint can be expanded to subject_identifier + survey
+# set to False so that the constraint can be expanded to subject_identifier + survey
+SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False
 
 #  edc.device.device
 DEVICE_ID = DEVICE_ID
