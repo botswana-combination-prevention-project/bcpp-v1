@@ -14,7 +14,8 @@ class EnrollmentLossAdmin(BaseModelAdmin):
 
     list_display = ('report_datetime', 'user_created', 'user_modified', 'hostname_created')
 
-    list_filter = ('report_datetime', 'user_created', 'user_modified', 'hostname_created', 'household_member__household_structure__household__community')
+    list_filter = ('report_datetime', 'user_created', 'user_modified', 'hostname_created',
+                   'household_member__household_structure__household__community')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
