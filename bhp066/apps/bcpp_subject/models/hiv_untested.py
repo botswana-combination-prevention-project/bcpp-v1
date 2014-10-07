@@ -10,7 +10,8 @@ from .hiv_testing_supplemental import HivTestingSupplemental
 
 class HivUntested (HivTestingSupplemental):
 
-    """CS002- for those who have NOT tested for HIV. Its branch off from Q18 - HIV testing History"""
+    """CS002- for those who have NOT tested for HIV. Its
+    branch off from Q18 - HIV testing History"""
 
     why_no_hiv_test = models.CharField(
         verbose_name=_("If you were not tested for HIV in the 12 months prior"
