@@ -16,9 +16,9 @@ class ReproductiveHealth (BaseScheduledVisitModel):
 
     number_children = models.IntegerField(
         verbose_name=_("How many children have you given birth to? Please include any"
-                      " children that may have died at (stillbirth) or after birth. "
-                      "Do not include any current pregnancies or miscarriages that occur"
-                      " early in pregnancy (prior to 20 weeks)."),
+                       " children that may have died at (stillbirth) or after birth. "
+                       "Do not include any current pregnancies or miscarriages that occur"
+                       " early in pregnancy (prior to 20 weeks)."),
         max_length=2,
         default=0,
         help_text="",
@@ -33,7 +33,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
 
     family_planning = models.ManyToManyField(FamilyPlanning,
         verbose_name=_("In the past 12 months, have you used any methods to prevent"
-                      " pregnancy ?"),
+                       " pregnancy ?"),
         null=True,
         blank=True,
         help_text="check all that apply",

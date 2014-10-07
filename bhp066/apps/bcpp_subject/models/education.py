@@ -30,7 +30,7 @@ class Education (BaseScheduledVisitModel):
         verbose_name=_("In your main job what type of work do you do?"),
         max_length=45,
         choices=JOB_TYPE,
-        null=True, 
+        null=True,
         blank=True,
         help_text="",
         )
@@ -46,8 +46,8 @@ class Education (BaseScheduledVisitModel):
 
     job_description = models.CharField(
         verbose_name=_("Describe the work that you do or did in your most recent"
-                      " job. If you have more than one profession, choose the"
-                      " one you spend the most time doing."),
+                       " job. If you have more than one profession, choose the"
+                       " one you spend the most time doing."),
         max_length=65,
         choices=JOB_DESCRIPTION,
         blank=True,
@@ -57,8 +57,8 @@ class Education (BaseScheduledVisitModel):
 
     monthly_income = models.CharField(
         verbose_name=_("In the past month, how much money did you earn from"
-                      " work you did or received in payment [retirement benefits,"
-                      " child maintenance, food basket, etc]?"),
+                       " work you did or received in payment [retirement benefits,"
+                       " child maintenance, food basket, etc]?"),
         max_length=25,
         choices=MONTHLY_INCOME,
         blank=True,
