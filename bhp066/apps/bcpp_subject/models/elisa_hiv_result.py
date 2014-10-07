@@ -37,7 +37,8 @@ class ElisaHivResult (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
             if self.hiv_result.lower() != 'neg':
-                raise exception_cls('Result cannot be changed. HIC Enrollment form exists for this subject. Got {0}'.format(self.hiv_result))
+                raise exception_cls('Result cannot be changed. HIC Enrollment form exists '
+                                    'for this subject. Got {0}'.format(self.hiv_result))
 
     def elisa_requisition_checks(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
