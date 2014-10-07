@@ -16,9 +16,12 @@ class AliquotAdmin(BaseModelAdmin):
     actions = [print_aliquot_label, create_order,
                export_as_csv_action("Export as csv", fields=[], delimiter=',', exclude=['id', 'revision', 'hostname_created', 'hostname_modified', 'user_created', 'user_modified'],)]
 
-    list_display = ("aliquot_identifier", 'subject_identifier', 'processing', 'related', 'to_receive', 'drawn', "aliquot_type", 'aliquot_condition', 'is_packed', 'created', 'user_created', 'hostname_created')
+    list_display = ("aliquot_identifier", 'subject_identifier', 'processing', 'related',
+                    'to_receive', 'drawn', "aliquot_type", 'aliquot_condition', 'is_packed', 'created',
+                    'user_created', 'hostname_created')
 
-    search_fields = ('aliquot_identifier', 'receive__receive_identifier', 'receive__registered_subject__subject_identifier')
+    search_fields = ('aliquot_identifier', 'receive__receive_identifier',
+                     'receive__registered_subject__subject_identifier')
 
     list_filter = ('aliquot_type', 'aliquot_condition', AliquotCommunityFilter, 'created', 'user_created', 'hostname_created')
 
