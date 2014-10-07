@@ -388,11 +388,6 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     def get_referral_identifier(self):
         return self.id
 
-#     def get_next_appt_date(self):
-#         if self.urgent_referral:
-#             return date.today()
-#         return date.today + timedelta(days=7)
-
     def survey(self):
         return self.subject_visit.household_member.household_structure.survey
     survey.allow_tags = True

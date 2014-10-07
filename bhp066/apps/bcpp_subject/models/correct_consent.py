@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
-from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start, datetime_is_after_consent
+from edc.base.model.validators import (datetime_not_future, datetime_not_before_study_start,
+                                       datetime_is_after_consent)
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER_UNDETERMINED
