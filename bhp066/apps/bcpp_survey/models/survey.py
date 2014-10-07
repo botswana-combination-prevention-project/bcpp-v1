@@ -45,7 +45,6 @@ class Survey (BaseUuidModel):
 
     def natural_key(self):
         return (self.survey_name, )
-    # natural_key.dependencies = ['bcpp_survey.survey_group', ]
 
     def __unicode__(self):
         return self.survey_name

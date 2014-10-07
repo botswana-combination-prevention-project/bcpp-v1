@@ -15,7 +15,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     ever_sex = models.CharField(
         verbose_name=_("In your lifetime, have you ever had sex with anyone"
-                      " (including your spouse, friends, or someone you have just met)?"),
+                       " (including your spouse, friends, or someone you have just met)?"),
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
@@ -23,10 +23,10 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     lifetime_sex_partners = models.IntegerField(
         verbose_name=_("In your lifetime, how many different people have you had"
-                      " sex with?  Please remember to include casual and once-off partners"
-                      " (prostitutes and truck drivers) as well as long-term partners"
-                      " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
-                      "number, please give a best guess]"),
+                       " sex with?  Please remember to include casual and once-off partners"
+                       " (prostitutes and truck drivers) as well as long-term partners"
+                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
+                       "number, please give a best guess]"),
         max_length=3,
         null=True,
         blank=True,
@@ -35,10 +35,10 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     last_year_partners = models.IntegerField(
         verbose_name=_("In the past 12 months, how many different people have you had"
-                      " sex with?  Please remember to include casual and once-off partners"
-                      " (prostitutes and truck drivers) as well as long-term partners"
-                      " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
-                      "number, please give a best guess]"),
+                       " sex with?  Please remember to include casual and once-off partners"
+                       " (prostitutes and truck drivers) as well as long-term partners"
+                       " (spouses, boyfriends/girlfriends)[If you can't recall the exact "
+                       "number, please give a best guess]"),
         max_length=2,
         null=True,
         blank=True,
@@ -47,7 +47,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     more_sex = models.CharField(
         verbose_name=_("In the past 12 months, did you have sex with somebody"
-                      " living outside of the community?"),
+                       " living outside of the community?"),
         max_length=25,
         null=True,
         blank=True,
@@ -57,7 +57,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     first_sex = models.IntegerField(
         verbose_name=_("How old were you when you had sex for the first time?"
-                      " [If you can't recall the exact age, please give a best guess]"),
+                       " [If you can't recall the exact age, please give a best guess]"),
         max_length=2,
         null=True,
         blank=True,
@@ -67,7 +67,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     condom = models.CharField(
         verbose_name=_("During the last [most recent] time you had sex, did"
-                      " you or your partner use a condom?"),
+                       " you or your partner use a condom?"),
         max_length=25,
         null=True,
         blank=True,
@@ -77,7 +77,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
 
     alcohol_sex = models.CharField(
         verbose_name=_("During the last [most recent] time you had sex, were"
-                      " you or your partner drinking alcohol?"),
+                       " you or your partner drinking alcohol?"),
         max_length=25,
         null=True,
         blank=True,
