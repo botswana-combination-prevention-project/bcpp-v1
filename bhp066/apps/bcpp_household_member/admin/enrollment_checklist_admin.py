@@ -12,7 +12,8 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
 
     form = EnrollmentChecklistForm
 
-    instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject. After entering the required items, click SAVE.']
+    instructions = ['This form is a tool to assist the Interviewer to confirm the '
+                    'Eligibility status of the subject. After entering the required items, click SAVE.']
 
     fields = (
         'household_member',
@@ -32,7 +33,8 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
 
     list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', )
 
-    list_filter = ('household_member', 'gender', 'is_eligible', 'report_datetime', 'household_member__household_structure__household__community')
+    list_filter = ('household_member', 'gender', 'is_eligible', 'report_datetime',
+                   'household_member__household_structure__household__community')
 
     radio_fields = {
         'has_identity': admin.VERTICAL,
