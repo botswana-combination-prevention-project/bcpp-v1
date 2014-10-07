@@ -6,11 +6,8 @@ from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
 
 from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from apps.bcpp_household_member.constants import REFUSED
-from apps.bcpp_household_member.exceptions import MemberStatusError
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
-from apps.bcpp_household_member.classes import HouseholdMemberHelper
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -54,13 +51,10 @@ class SubjectRefusal (BaseMemberStatusModel):
         return self.report_datetime
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        household = models.get_model('bcpp_household', 'Household').objects.get(
+            household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
-#         if self.household_member.member_status != REFUSED:
-#             raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(REFUSED, self.household_member.member_status))
-#         if self.household_member.enrollment_checklist_completed and not self.household_member.eligible_subject:
-#             raise MemberStatusError('The Enrollment Checklist has been filled and subject is not eligible for BHS. Refusal form is not required')
         self.survey = self.household_member.survey
         self.registered_subject = self.household_member.registered_subject
         try:
@@ -73,8 +67,8 @@ class SubjectRefusal (BaseMemberStatusModel):
     def deserialize_prep(self, **kwargs):
         from django.db.models import signals
         from .signals import subject_refusal_on_post_delete
-        #SubjectRefusal being deleted by an IncommingTransaction, we ahead and delete it.
-        #Its no longer needed at all because member status changed.
+        # SubjectRefusal being deleted by an IncommingTransaction, we ahead and delete it.
+        # Its no longer needed at all because member status changed.
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             signals.post_delete.disconnect(subject_refusal_on_post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
             self.delete()

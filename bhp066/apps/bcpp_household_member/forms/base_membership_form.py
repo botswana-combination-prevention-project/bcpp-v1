@@ -19,5 +19,7 @@ class BaseMembershipForm(BaseModelForm):
             if subject_consent:
                 subject_consent = SubjectConsent.objects.get(household_member=household_member)
                 if cleaned_data.get('report_datetime', None) > subject_consent.consent_datetime:
-                    raise forms.ValidationError("Report may not be submitted for survey {}. Subject is already consented for this survey.".format(subject_consent.survey.survey_name,))
+                    raise forms.ValidationError('Report may not be submitted for survey {}. '
+                                                'Subject is already consented for this survey.'.format(
+                                                    subject_consent.survey.survey_name,))
         return cleaned_data

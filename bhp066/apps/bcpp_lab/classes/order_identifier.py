@@ -11,7 +11,8 @@ class OrderIdentifier(BaseIdentifier):
         model_name = 'orderidentifierhistory'
         modulus = 11
         self.community = settings.SITE_CODE
-        super(OrderIdentifier, self).__init__(identifier_format=identifier_format, app_name=app_name, model_name=model_name, modulus=modulus)
+        super(OrderIdentifier, self).__init__(identifier_format=identifier_format,
+                                              app_name=app_name, model_name=model_name, modulus=modulus)
 
     def get_identifier_prep(self, **kwargs):
         """ Users may override to pass non-default keyword arguments to get_identifier
