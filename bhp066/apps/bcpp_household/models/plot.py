@@ -313,7 +313,7 @@ class Plot(BaseDispatchSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         if instance.pk:
-            for _ in range(0, count):
+            for i in range(0, count):
                 Household = models.get_model('bcpp_household', 'Household')
                 Household.objects.create(**{
                     'plot': instance,
@@ -353,7 +353,7 @@ class Plot(BaseDispatchSyncUuidModel):
         Household = models.get_model('bcpp_household', 'Household')
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        for _ in range(count, 0):
+        for i in range(count, 0):
             for household in Household.objects.using(using).filter(plot=instance):
                 try:
                     with transaction.atomic():
@@ -437,9 +437,11 @@ class Plot(BaseDispatchSyncUuidModel):
         form_label = []
         try:
             plot_log = PlotLog.objects.using(using).get(plot=self)
-            for plot_log_entry in PlotLogEntry.objects.using(using).filter(plot_log=plot_log).order_by('report_datetime'):
+            for plot_log_entry in PlotLogEntry.objects.using(
+                    using).filter(plot_log=plot_log).order_by('report_datetime'):
                 try:
-                    form_label.append((plot_log_entry.log_status.lower() + '-' + plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
+                    form_label.append((plot_log_entry.log_status.lower() + '-' +
+                                       plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
                 except AttributeError:  # log_status is None ??
                     form_label.append((plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
         except PlotLog.DoesNotExist:
