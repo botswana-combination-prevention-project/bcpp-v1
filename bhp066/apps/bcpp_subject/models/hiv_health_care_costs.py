@@ -14,7 +14,8 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
 
     """CE001.
 
-    Read to Participant: The next set of questions are about you obtaining medical or clinical care related to HIV."""
+    Read to Participant: The next set of questions are
+    about you obtaining medical or clinical care related to HIV."""
 
     hiv_medical_care = models.CharField(
         verbose_name=_("Have you ever received HIV related medical/clinical care? "),
@@ -38,7 +39,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         )
     care_regularity = models.CharField(
         verbose_name=_("In the past 3 months, how many times did you have clinic visits to see a health care worker,"
-                      " a nurse, or doctor? "),
+                       " a nurse, or doctor? "),
         max_length=20,
         choices=CARE_REGULARITY,
         help_text="Do not include medicine re-fill visits.",
