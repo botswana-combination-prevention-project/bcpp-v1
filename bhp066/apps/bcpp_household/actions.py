@@ -4,61 +4,11 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 
-from .helpers import ReplacementHelper
-from .models import Replaceable, Household, Plot
+from .utils import update_replaceables as update_replaceables_for_action
 
 
 def update_replaceables(modeladmin, request, queryset, **kwargs):
-    Replaceable.objects.all().delete()
-    Household.objects.all().update(replaceable=False)
-    Household.objects.filter(replaced_by__isnull=False).update(replaceable=True)
-    Plot.objects.all().update(replaceable=False)
-    Plot.objects.filter(replaced_by__isnull=False).update(replaceable=True)
-    for plot in Plot.objects.filter(replaceable=True):
-        Replaceable.objects.create(
-            replaced=True,
-            replaced_reason='',
-            app_label=plot._meta.app_label,
-            model_name=plot._meta.object_name,
-            community=plot.community,
-            item_identifier=plot.plot_identifier,
-            item_pk=plot.pk,
-            plot_status=plot.status,
-            producer_name=None)
-    for household in Household.objects.filter(replaceable=True):
-        Replaceable.objects.create(
-            replaced=True,
-            replaced_reason='',
-            app_label=household._meta.app_label,
-            model_name=household._meta.object_name,
-            community=household.community,
-            item_identifier=household.get_identifier(),
-            item_pk=household.pk,
-            plot_status=household.plot.status,
-            producer_name=None)
-    replacement_helper = ReplacementHelper()
-    replaceables = list(replacement_helper.replaceable_households())
-    replaceables.extend(replacement_helper.replaceable_plots())
-    for replaceable, dispatch_item_register in replaceables:
-        try:
-            producer_name = dispatch_item_register.producer.name
-        except AttributeError:
-            producer_name = None
-        try:
-            plot_status = replaceable.plot.status
-        except AttributeError:
-            plot_status = replaceable.status
-        Replaceable.objects.create(
-            replaced=False,
-            app_label=replaceable._meta.app_label,
-            model_name=replaceable._meta.object_name,
-            community=replaceable.community,
-            item_identifier=replaceable.get_identifier(),
-            item_pk=replaceable.pk,
-            plot_status=plot_status,
-            producer_name=producer_name)
-        replaceable.replaceable = True
-        replaceable.save_base(update_fields='replaceable')
+    update_replaceables_for_action()
 update_replaceables.short_description = "Update replaceable plots and households. (also updates model Replaceables)"
 
 
@@ -76,97 +26,104 @@ def export_as_kml(modeladmin, request, queryset, **kwargs):
     to_email = User.objects.get(username=request.user).email
     firstname = User.objects.get(username=request.user).first_name or request.user
     if not to_email:
-        modeladmin.message_user(request, 'Send failed. Please update your email address in your user profile.'.format(request.user))
+        modeladmin.message_user(request, (
+            'Send failed. Please update your email address in your user profile.'
+            ).format(request.user))
     placemarks = ''
     for qs in queryset:
         p = (
-           '    <Placemark>\n'
-           '        <Point>\n'
-           '          <altitudeMode>clampToGround</altitudeMode>\n'
-           '          <coordinates>{gps_lat},{gps_lon},0</coordinates>\n'
-           '        </Point>\n'
-           '        <Snippet></Snippet>\n'
-           '        <description><![CDATA[&nbsp;]]></description>\n'
-           '        <name>{household_identifier} ({hh_int})</name>\n'
-           '        <styleUrl>#gv_waypoint</styleUrl>\n'
-           '    </Placemark>\n'
-           ).format(gps_lat=qs.household.gps_lat(),
-                    gps_lon=qs.household.gps_lon(),
-                    household_identifier=qs.household.household_identifier,
-                    hh_int=qs.household.hh_int)
-
+            '    <Placemark>\n'
+            '        <Point>\n'
+            '          <altitudeMode>clampToGround</altitudeMode>\n'
+            '          <coordinates>{gps_lat},{gps_lon},0</coordinates>\n'
+            '        </Point>\n'
+            '        <Snippet></Snippet>\n'
+            '        <description><![CDATA[&nbsp;]]></description>\n'
+            '        <name>{household_identifier} ({hh_int})</name>\n'
+            '        <styleUrl>#gv_waypoint</styleUrl>\n'
+            '    </Placemark>\n'
+            ).format(
+                gps_lat=qs.household.gps_lat(),
+                gps_lon=qs.household.gps_lon(),
+                household_identifier=qs.household.household_identifier,
+                hh_int=qs.household.hh_int)
         placemarks += p
-    kml = ('<?xml version="1.0" standalone="yes"?>\n'
-            '<kml xmlns="http://earth.google.com/kml/2.2">\n'
-            '  <Document>\n'
-            '    <Folder id="Waypoints">\n'
-            '      {placemarks}'
-            '      <name>Waypoints</name>\n'
-            '      <visibility>1</visibility>\n'
-            '    </Folder>\n'
-            ' <Snippet><![CDATA[created using python and my data]]></Snippet>\n'
-            ' <Style id="gv_waypoint_normal">\n'
-            '   <BalloonStyle>\n'
-            '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>$[name]</b></font></p> <p align="left">$[description]</p>]]></text>\n'
-            '   </BalloonStyle>\n'
-            '   <IconStyle>\n'
-            '     <Icon>\n'
-            '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
-            '     </Icon>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
-            '   </IconStyle>\n'
-            '   <LabelStyle>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <scale>1</scale>\n'
-            '   </LabelStyle>\n'
-            ' </Style>\n'
-            ' <Style id="gv_waypoint_highlight">\n'
-            '   <BalloonStyle>\n'
-            '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>$[name]</b></font></p> <p align="left">$[description]</p>]]></text>\n'
-            '   </BalloonStyle>\n'
-            '   <IconStyle>\n'
-            '     <Icon>\n'
-            '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
-            '     </Icon>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
-            '     <scale>1.2</scale>\n'
-            '   </IconStyle>\n'
-            '   <LabelStyle>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <scale>1</scale>\n'
-            '   </LabelStyle>\n'
-            ' </Style>\n'
-            ' <StyleMap id="gv_waypoint">\n'
-            '   <Pair>\n'
-            '     <key>normal</key>\n'
-            '    <styleUrl>#gv_waypoint_normal</styleUrl>\n'
-            '  </Pair>\n'
-            '   <Pair>\n'
-            '     <key>highlight</key>\n'
-            '     <styleUrl>#gv_waypoint_highlight</styleUrl>\n'
-            '   </Pair>\n'
-            ' </StyleMap>\n'
-            ' <StyleMap id="gv_trackpoint">\n'
-            '   <Pair>\n'
-            '     <key>normal</key>\n'
-            '     <styleUrl>#gv_trackpoint_normal</styleUrl>\n'
-            '   </Pair>\n'
-            '   <Pair>\n'
-            '     <key>highlight</key>\n'
-            '     <styleUrl>#gv_trackpoint_highlight</styleUrl>\n'
-            '   </Pair>\n'
-            ' </StyleMap>\n'
-            ' <name><![CDATA[bhp041]]></name>\n'
-            ' <open>0</open>\n'
-            ' <visibility>1</visibility>\n'
-            '</Document>\n'
-            '</kml>\n').format(placemarks=placemarks)
-    
+    kml = (
+        '<?xml version="1.0" standalone="yes"?>\n'
+        '<kml xmlns="http://earth.google.com/kml/2.2">\n'
+        '  <Document>\n'
+        '    <Folder id="Waypoints">\n'
+        '      {placemarks}'
+        '      <name>Waypoints</name>\n'
+        '      <visibility>1</visibility>\n'
+        '    </Folder>\n'
+        ' <Snippet><![CDATA[created using python and my data]]></Snippet>\n'
+        ' <Style id="gv_waypoint_normal">\n'
+        '   <BalloonStyle>\n'
+        '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>$[name]</b></font></p> '
+        '<p align="left">$[description]</p>]]></text>\n'
+        '   </BalloonStyle>\n'
+        '   <IconStyle>\n'
+        '     <Icon>\n'
+        '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
+        '     </Icon>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
+        '   </IconStyle>\n'
+        '   <LabelStyle>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <scale>1</scale>\n'
+        '   </LabelStyle>\n'
+        ' </Style>\n'
+        ' <Style id="gv_waypoint_highlight">\n'
+        '   <BalloonStyle>\n'
+        '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>$[name]</b></font></p> '
+        '<p align="left">$[description]</p>]]></text>\n'
+        '   </BalloonStyle>\n'
+        '   <IconStyle>\n'
+        '     <Icon>\n'
+        '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
+        '     </Icon>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
+        '     <scale>1.2</scale>\n'
+        '   </IconStyle>\n'
+        '   <LabelStyle>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <scale>1</scale>\n'
+        '   </LabelStyle>\n'
+        ' </Style>\n'
+        ' <StyleMap id="gv_waypoint">\n'
+        '   <Pair>\n'
+        '     <key>normal</key>\n'
+        '    <styleUrl>#gv_waypoint_normal</styleUrl>\n'
+        '  </Pair>\n'
+        '   <Pair>\n'
+        '     <key>highlight</key>\n'
+        '     <styleUrl>#gv_waypoint_highlight</styleUrl>\n'
+        '   </Pair>\n'
+        ' </StyleMap>\n'
+        ' <StyleMap id="gv_trackpoint">\n'
+        '   <Pair>\n'
+        '     <key>normal</key>\n'
+        '     <styleUrl>#gv_trackpoint_normal</styleUrl>\n'
+        '   </Pair>\n'
+        '   <Pair>\n'
+        '     <key>highlight</key>\n'
+        '     <styleUrl>#gv_trackpoint_highlight</styleUrl>\n'
+        '   </Pair>\n'
+        ' </StyleMap>\n'
+        ' <name><![CDATA[bhp041]]></name>\n'
+        ' <open>0</open>\n'
+        ' <visibility>1</visibility>\n'
+        '</Document>\n'
+        '</kml>\n').format(placemarks=placemarks)
+
     return kml
+
     subject, from_email, to = 'Household KML File', 'ewidenfelt', to_email
-    text_content = 'Hi {firstname}, \n\nPlease find attached the Household KML file you requested.\n\n Thanks.'.format(firstname=firstname)
+    text_content = ('Hi {firstname}, \n\nPlease find attached the Household KML file '
+                    'you requested.\n\n Thanks.').format(firstname=firstname)
     msg = EmailMessage(subject, text_content, from_email, [to])
     msg.attach('household.kml', kml, 'text/html')
     msg.send()
@@ -178,98 +135,102 @@ def export_as_kml_hs(modeladmin, request, queryset, **kwargs):
     to_email = User.objects.get(username=request.user).email
     firstname = User.objects.get(username=request.user).first_name or request.user
     if not to_email:
-        modeladmin.message_user(request, 'Send failed. Please update your email address in your user profile.'.format(request.user))
+        modeladmin.message_user(request, ('Send failed. Please update your email address in your '
+                                          'user profile.').format(request.user))
     placemarks = ''
     for qs in queryset:
         p = (
-           '    <Placemark>\n'
-           '        <Point>\n'
-           '          <altitudeMode>clampToGround</altitudeMode>\n'
-           '          <coordinates>{gps_lat},{gps_lon},0</coordinates>\n'
-           '        </Point>\n'
-           '        <Snippet></Snippet>\n'
-           '        <description><![CDATA[&nbsp;]]>{cso}</description>\n'
-           '        <name>({subject} {household_identifier} ({hh_int})</name>\n'
-           '        <styleUrl>#gv_waypoint</styleUrl>\n'
-           '    </Placemark>\n'
-           ).format(gps_lat=qs.household_structure.household.gps_lat(),
-                    gps_lon=qs.household_structure.household.gps_lon(),
-                    subject=qs.first_name,
-                    cso=qs.household_structure.household.cso_number,
-                    household_identifier=qs.household_structure.household.household_identifier,
-                    hh_int=qs.household_structure.household.hh_int)
-
+            '    <Placemark>\n'
+            '        <Point>\n'
+            '          <altitudeMode>clampToGround</altitudeMode>\n'
+            '          <coordinates>{gps_lat},{gps_lon},0</coordinates>\n'
+            '        </Point>\n'
+            '        <Snippet></Snippet>\n'
+            '        <description><![CDATA[&nbsp;]]>{cso}</description>\n'
+            '        <name>({subject} {household_identifier} ({hh_int})</name>\n'
+            '        <styleUrl>#gv_waypoint</styleUrl>\n'
+            '    </Placemark>\n'
+            ).format(
+                gps_lat=qs.household_structure.household.gps_lat(),
+                gps_lon=qs.household_structure.household.gps_lon(),
+                subject=qs.first_name,
+                cso=qs.household_structure.household.cso_number,
+                household_identifier=qs.household_structure.household.household_identifier,
+                hh_int=qs.household_structure.household.hh_int)
         placemarks += p
-    kml = ('<?xml version="1.0" standalone="yes"?>\n'
-            '<kml xmlns="http://earth.google.com/kml/2.2">\n'
-            '  <Document>\n'
-            '    <Folder id="Waypoints">\n'
-            '      {placemarks}'
-            '      <name>Waypoints</name>\n'
-            '      <visibility>1</visibility>\n'
-            '    </Folder>\n'
-            ' <Snippet><![CDATA[created using python and my data]]></Snippet>\n'
-            ' <Style id="gv_waypoint_normal">\n'
-            '   <BalloonStyle>\n'
-            '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>$[name]</b></font></p> <p align="left">$[description]</p>]]></text>\n'
-            '   </BalloonStyle>\n'
-            '   <IconStyle>\n'
-            '     <Icon>\n'
-            '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
-            '     </Icon>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
-            '   </IconStyle>\n'
-            '   <LabelStyle>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <scale>1</scale>\n'
-            '   </LabelStyle>\n'
-            ' </Style>\n'
-            ' <Style id="gv_waypoint_highlight">\n'
-            '   <BalloonStyle>\n'
-            '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>$[name]</b></font></p> <p align="left">$[description]</p>]]></text>\n'
-            '   </BalloonStyle>\n'
-            '   <IconStyle>\n'
-            '     <Icon>\n'
-            '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
-            '     </Icon>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
-            '     <scale>1.2</scale>\n'
-            '   </IconStyle>\n'
-            '   <LabelStyle>\n'
-            '     <color>FFFFFFFF</color>\n'
-            '     <scale>1</scale>\n'
-            '   </LabelStyle>\n'
-            ' </Style>\n'
-            ' <StyleMap id="gv_waypoint">\n'
-            '   <Pair>\n'
-            '     <key>normal</key>\n'
-            '    <styleUrl>#gv_waypoint_normal</styleUrl>\n'
-            '  </Pair>\n'
-            '   <Pair>\n'
-            '     <key>highlight</key>\n'
-            '     <styleUrl>#gv_waypoint_highlight</styleUrl>\n'
-            '   </Pair>\n'
-            ' </StyleMap>\n'
-            ' <StyleMap id="gv_trackpoint">\n'
-            '   <Pair>\n'
-            '     <key>normal</key>\n'
-            '     <styleUrl>#gv_trackpoint_normal</styleUrl>\n'
-            '   </Pair>\n'
-            '   <Pair>\n'
-            '     <key>highlight</key>\n'
-            '     <styleUrl>#gv_trackpoint_highlight</styleUrl>\n'
-            '   </Pair>\n'
-            ' </StyleMap>\n'
-            ' <name><![CDATA[bhp041]]></name>\n'
-            ' <open>0</open>\n'
-            ' <visibility>1</visibility>\n'
-            '</Document>\n'
-            '</kml>\n').format(placemarks=placemarks)
-
+    kml = (
+        '<?xml version="1.0" standalone="yes"?>\n'
+        '<kml xmlns="http://earth.google.com/kml/2.2">\n'
+        '  <Document>\n'
+        '    <Folder id="Waypoints">\n'
+        '      {placemarks}'
+        '      <name>Waypoints</name>\n'
+        '      <visibility>1</visibility>\n'
+        '    </Folder>\n'
+        ' <Snippet><![CDATA[created using python and my data]]></Snippet>\n'
+        ' <Style id="gv_waypoint_normal">\n'
+        '   <BalloonStyle>\n'
+        '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>'
+        '$[name]</b></font></p> <p align="left">$[description]</p>]]></text>\n'
+        '   </BalloonStyle>\n'
+        '   <IconStyle>\n'
+        '     <Icon>\n'
+        '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
+        '     </Icon>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
+        '   </IconStyle>\n'
+        '   <LabelStyle>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <scale>1</scale>\n'
+        '   </LabelStyle>\n'
+        ' </Style>\n'
+        ' <Style id="gv_waypoint_highlight">\n'
+        '   <BalloonStyle>\n'
+        '     <text><![CDATA[<p align="left" style="white-space:nowrap;"><font size="+1"><b>'
+        '$[name]</b></font></p> <p align="left">$[description]</p>]]></text>\n'
+        '   </BalloonStyle>\n'
+        '   <IconStyle>\n'
+        '     <Icon>\n'
+        '       <href>http://maps.google.ca/mapfiles/kml/pal4/icon56.png</href>\n'
+        '     </Icon>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <hotSpot x="0.5" xunits="fraction" y="0.5" yunits="fraction" />\n'
+        '     <scale>1.2</scale>\n'
+        '   </IconStyle>\n'
+        '   <LabelStyle>\n'
+        '     <color>FFFFFFFF</color>\n'
+        '     <scale>1</scale>\n'
+        '   </LabelStyle>\n'
+        ' </Style>\n'
+        ' <StyleMap id="gv_waypoint">\n'
+        '   <Pair>\n'
+        '     <key>normal</key>\n'
+        '    <styleUrl>#gv_waypoint_normal</styleUrl>\n'
+        '  </Pair>\n'
+        '   <Pair>\n'
+        '     <key>highlight</key>\n'
+        '     <styleUrl>#gv_waypoint_highlight</styleUrl>\n'
+        '   </Pair>\n'
+        ' </StyleMap>\n'
+        ' <StyleMap id="gv_trackpoint">\n'
+        '   <Pair>\n'
+        '     <key>normal</key>\n'
+        '     <styleUrl>#gv_trackpoint_normal</styleUrl>\n'
+        '   </Pair>\n'
+        '   <Pair>\n'
+        '     <key>highlight</key>\n'
+        '     <styleUrl>#gv_trackpoint_highlight</styleUrl>\n'
+        '   </Pair>\n'
+        ' </StyleMap>\n'
+        ' <name><![CDATA[bhp041]]></name>\n'
+        ' <open>0</open>\n'
+        ' <visibility>1</visibility>\n'
+        '</Document>\n'
+        '</kml>\n').format(placemarks=placemarks)
     subject, from_email, to = 'Household KML File', 'ewidenfelt', to_email
-    text_content = 'Hi {firstname}, \n\nPlease find attached the Household KML file you requested.\n\n Thanks.'.format(firstname=firstname)
+    text_content = ('Hi {firstname}, \n\nPlease find attached the Household KML '
+                    'file you requested.\n\n Thanks.').format(firstname=firstname)
     msg = EmailMessage(subject, text_content, from_email, [to])
     msg.attach('household.kml', kml, 'text/html')
     msg.send()

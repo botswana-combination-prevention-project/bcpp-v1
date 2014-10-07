@@ -35,15 +35,19 @@ class MemberSearchByWord(BaseSearchByWord):
     def get_qset_by_filter_keyword(self):
         """Returns a qset based on matching keyword.
 
-        If you predefine keywords, the search term will be intercepted and used to select a query instead."""
+        If you predefine keywords, the search term will be intercepted and
+        used to select a query instead."""
         qset_filter = Q()
         qset_exclude = Q()
-        if self.get_search_term().lower() in [item[1].lower() for item in HOUSEHOLD_MEMBER_PARTICIPATION] + ['-{0}'.format(item[1].lower()) for item in HOUSEHOLD_MEMBER_PARTICIPATION]:
+        if (self.get_search_term().lower() in [item[1].lower() for item in HOUSEHOLD_MEMBER_PARTICIPATION] +
+                ['-{0}'.format(item[1].lower()) for item in HOUSEHOLD_MEMBER_PARTICIPATION]):
             if self.get_search_term()[0] == '-':
-                search_term = [item[0] for item in HOUSEHOLD_MEMBER_PARTICIPATION if item == self.get_search_term()[1:]][0]
+                search_term = [item[0] for item in HOUSEHOLD_MEMBER_PARTICIPATION
+                               if item == self.get_search_term()[1:]][0]
                 qset_exclude = Q(member_status=search_term)
             else:
-                search_term = [item[0] for item in HOUSEHOLD_MEMBER_PARTICIPATION if item[1].lower() == self.get_search_term().lower()][0]
+                search_term = [item[0] for item in HOUSEHOLD_MEMBER_PARTICIPATION
+                               if item[1].lower() == self.get_search_term().lower()][0]
                 qset_filter = Q(member_status=search_term)
         if qset_filter or qset_exclude:
             return (qset_filter, qset_exclude)

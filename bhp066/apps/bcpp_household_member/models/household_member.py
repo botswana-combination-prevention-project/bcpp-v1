@@ -253,10 +253,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
-#         if kwargs.get('update_fields'):
-#             update_fields = kwargs.get('update_fields')
-#             kwargs.update({'update_fields': update_fields + ['member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']})
-        # print (self.member_status, kwargs.get('update_fields'))
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
@@ -292,7 +288,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         eligible_htc = False
         if self.age_in_years > 64:
             eligible_htc = True
-        elif (not self.eligible_member and self.inability_to_participate == NOT_APPLICABLE) and self.age_in_years >= 16:
+        elif ((not self.eligible_member and self.inability_to_participate == NOT_APPLICABLE) and
+              self.age_in_years >= 16):
             eligible_htc = True
         elif self.eligible_member and self.refused:
             eligible_htc = True
@@ -694,7 +691,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return consent_instance
 
     def deserialize_on_duplicate(self):
-        """Lets the deserializer know what to do if a duplicate is found, handled, and about to be saved."""
+        """Lets the deserializer know what to do if a duplicate is found,
+        handled, and about to be saved."""
         retval = False
         if (self.present_today.lower() == 'yes' or self.present_today.lower() == 'no'):
             if self.eligible_member and self.member_status:

@@ -188,7 +188,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'object_name': 'subjectreferral',
             'fields': [],
             'extra_fields': OrderedDict(
-                {'plot_identifier': 'subject_visit__household_member__household_structure__household__plot__plot_identifier',
+                {'plot_identifier': ('subject_visit__household_member__household_structure__'
+                                     'household__plot__plot_identifier'),
                  'dob': 'subject_visit__appointment__registered_subject__dob',
                  'first_name': 'subject_visit__appointment__registered_subject__first_name',
                  'identity': 'subject_visit__appointment__registered_subject__identity',
@@ -225,7 +226,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'object_name': 'subjectlocator',
             'fields': [],
             'extra_fields': OrderedDict(
-                {'plot_identifier': 'subject_visit__household_member__household_structure__household__plot__plot_identifier',
+                {'plot_identifier': ('subject_visit__household_member__household_structure__'
+                                     'household__plot__plot_identifier'),
                  'dob': 'subject_visit__appointment__registered_subject__dob',
                  'first_name': 'subject_visit__appointment__registered_subject__first_name',
                  'identity': 'subject_visit__appointment__registered_subject__identity',
