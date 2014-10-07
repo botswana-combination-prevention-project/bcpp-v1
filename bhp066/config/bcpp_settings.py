@@ -7,7 +7,7 @@ Dates: Dates specific to a BHS campaign.
        See also bcpp_household.mappers
 """
 
-
+APP_NAME = 'bcpp'
 BHS_START_DATE = date(2014, 8, 27)
 BHS_FULL_ENROLLMENT_DATE = date(2014, 10, 13)
 BHS_END_DATE = date(2014, 10, 31)

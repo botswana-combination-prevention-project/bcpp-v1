@@ -1,12 +1,9 @@
-from datetime import datetime
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from edc.device.device.classes import Device
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO, YES_NO_NA
-from edc.core.bhp_variables.models import StudySite
+from edc.choices import YES_NO
 from edc.core.bhp_string.classes import StringHelper
 from edc.constants import NOT_APPLICABLE
 
@@ -69,9 +66,12 @@ class SubjectHtc(BaseMemberStatusModel):
 
     def save(self, *args, **kwargs):
         if self.household_member.household_structure.household.replaced_by:
-            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(self._meta.object_name, self.pk))
+            raise AlreadyReplaced('Model {0}-{1} has its container replaced.'.format(
+                self._meta.object_name, self.pk))
         if self.household_member.member_status not in [HTC, HTC_ELIGIBLE, REFUSED_HTC]:
-            raise MemberStatusError('Expected member status to be on of {0}. Got {1}'.format([HTC, HTC_ELIGIBLE, REFUSED_HTC], self.household_member.member_status))
+            raise MemberStatusError('Expected member status to be on of {0}. '
+                                    'Got {1}'.format([HTC, HTC_ELIGIBLE, REFUSED_HTC],
+                                                     self.household_member.member_status))
         self.survey = self.household_member.survey
         if not self.id:
             self.tracking_identifier = self.prepare_tracking_identifier()
@@ -101,13 +101,6 @@ class SubjectHtc(BaseMemberStatusModel):
                     raise TypeError('Unable prepare a unique htc tracking identifier, '
                                     'all are taken. Increase the length of the random string')
         return tracking_identifier
-#         device = Device()
-#         site_code = None
-#         if 'SITE_CODE' in dir(settings):
-#             site_code = settings.SITE_CODE
-#         if not site_code:
-#             site_code = StudySite.objects.all()[0].site_code
-#         return 'HTC{0}{1}{2}'.format(site_code, device.device_id, datetime.today().strftime('%Y%m%d%H%M'))
 
     class Meta:
         app_label = 'bcpp_household_member'
