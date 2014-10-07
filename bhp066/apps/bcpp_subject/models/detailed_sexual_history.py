@@ -42,7 +42,8 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
         verbose_name=_("When was the last (most recent) time you had sex with"
                        " this person (how long ago)? "),
         max_length=2,
-        help_text="You can give either a date or the number of days/months/years since last sex. Interviewer, convert to days and record")
+        help_text=('You can give either a date or the number of days/months/years since last sex. '
+                   'Interviewer, convert to days and record'))
 
     last_sex_contact_other = OtherCharField(
         verbose_name=_("Record if number is in days/months/years"))
@@ -50,7 +51,8 @@ class DetailedSexualHistory (BaseScheduledVisitModel):
     first_sex_contact = models.IntegerField(
         verbose_name=_("When was the first time you had sex with this person (how long ago)? "),
         max_length=2,
-        help_text="You can give either a date or the number of days/months/years since last sex. Interviewer, convert to days and record")
+        help_text=('You can give either a date or the number of days/months/years since last sex. '
+                   'Interviewer, convert to days and record'))
 
     first_sex_contact_other = OtherCharField(
         verbose_name=_("Record if number is in days/months/years"))

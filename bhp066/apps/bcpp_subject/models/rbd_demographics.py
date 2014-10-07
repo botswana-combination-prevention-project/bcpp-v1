@@ -33,7 +33,7 @@ class RbdDemographics (BaseScheduledVisitModel):
 
     num_wives = models.IntegerField(
         verbose_name=_("WOMEN: How many wives does your husband have (including traditional marriage),"
-                        " including yourself?"),
+                       " including yourself?"),
         max_length=2,
         null=True,
         blank=True,
