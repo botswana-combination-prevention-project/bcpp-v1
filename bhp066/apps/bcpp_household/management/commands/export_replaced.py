@@ -21,13 +21,20 @@ class Command(BaseCommand):
             if header:
                 writer.writerow(header)
                 header = []
-            plots = [[p.plot_identifier, p.replaces, p.replaced_by, p.action, p.status, p.selected, p.bhs, p.htc] for p in Plot.objects.filter(replaces__isnull=False)]
+            plots = [
+                [p.plot_identifier, p.replaces, p.replaced_by, p.action, p.status,
+                 p.selected, p.bhs, p.htc] for p in Plot.objects.filter(replaces__isnull=False)]
             for tpl in plots:
                 writer.writerow(['plots (replaces)'] + tpl)
-            plots = [[p.plot_identifier, p.replaces, p.replaced_by, p.action, p.status, p.selected, p.bhs, p.htc] for p in Plot.objects.filter(replaced_by__isnull=False)]
+            plots = [
+                [p.plot_identifier, p.replaces, p.replaced_by, p.action, p.status, p.selected,
+                 p.bhs, p.htc] for p in Plot.objects.filter(replaced_by__isnull=False)]
             for tpl in plots:
                 writer.writerow(['plots (replaced_by)'] + tpl)
-            households = [[h.household_identifier, h.plot.replaces, h.replaced_by, h.plot.action, h.plot.status, h.plot.selected, h.plot.bhs, h.plot.htc] for h in Household.objects.filter(replaced_by__isnull=False)]
+            households = [
+                [h.household_identifier, h.plot.replaces, h.replaced_by, h.plot.action,
+                 h.plot.status, h.plot.selected, h.plot.bhs, h.plot.htc
+                 ] for h in Household.objects.filter(replaced_by__isnull=False)]
             for tpl in households:
                 writer.writerow(['households (replaced_by)'] + tpl)
         print ('~/plot_replacement_{}.csv').format(date_suffix)

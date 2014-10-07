@@ -2,10 +2,12 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models.loading import get_model
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
 from ..models import PlotLog
 
 
+@login_required
 def create_plot_log(request):
     instance = None
     plot_pk = request.GET.get('plot')
