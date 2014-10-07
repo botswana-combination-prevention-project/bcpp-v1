@@ -4,7 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE, FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE
+from apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE,
+                               FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE)
 
 from .base_circumcision import BaseCircumcision
 
@@ -31,7 +32,7 @@ class Uncircumcised (BaseCircumcision):
 
     future_reasons_smc = models.CharField(
         verbose_name=_("Which of the following might increase your willingness to"
-                        " be circumcised the most?"),
+                       " be circumcised the most?"),
         max_length=75,
         choices=FUTUREREASONSSMC_CHOICE,
         null=True,
@@ -40,7 +41,7 @@ class Uncircumcised (BaseCircumcision):
 
     service_facilities = models.CharField(
         verbose_name=_("Were you aware that circumcision services are provided "
-                        "free of charge at most health facilities?"),
+                       "free of charge at most health facilities?"),
         max_length=35,
         choices=YES_NO_DWTA,
         null=True,
@@ -49,7 +50,7 @@ class Uncircumcised (BaseCircumcision):
 
     aware_free = models.CharField(
         verbose_name=_("Where did you learn that circumcision services were "
-                        "available free at most health facilities?"),
+                       "available free at most health facilities?"),
         max_length=85,
         null=True,
         blank=True,
