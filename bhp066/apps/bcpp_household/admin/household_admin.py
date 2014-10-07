@@ -19,9 +19,10 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
         'report_datetime',
         'comment')
 
-    list_display = ('household_identifier', 'structure', 'plot', 'community', 'replaceable', 'replaced_by', 'created')
+    list_display = ('household_identifier', 'structure', 'plot', 'community', 'replaceable',
+                    'replaced_by', 'created', 'modified')
 
-    list_filter = ('created', 'community', 'replaceable', ReplacedByFilter, 'hostname_modified')
+    list_filter = ('created', 'modified', 'community', 'replaceable', ReplacedByFilter, 'hostname_modified')
 
     search_fields = ('household_identifier', 'community', 'id', 'plot__id', 'replaced_by')
 

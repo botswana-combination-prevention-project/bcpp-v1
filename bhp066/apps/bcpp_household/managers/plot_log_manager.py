@@ -16,4 +16,6 @@ class PlotLogEntryManager(models.Manager):
         PlotLog = models.get_model('bcpp_household', 'PlotLog')
         plot_log = PlotLog.objects.get_by_natural_key(plot_identifier)
         margin = timedelta(microseconds=999)
-        return self.get(report_datetime__range=(report_datetime - margin, report_datetime + margin), plot_log = plot_log)
+        return self.get(report_datetime__range=(
+            report_datetime - margin, report_datetime + margin),
+            plot_log = plot_log)
