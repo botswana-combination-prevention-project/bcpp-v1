@@ -33,11 +33,11 @@ class LabourMarketWages (BaseScheduledVisitModel):
 
     job_description_change = models.IntegerField(
         verbose_name=_("In the past 3 months, how many times have you changed your job? "
-                      "For example, changed your type of work or your employer. "),
+                       "For example, changed your type of work or your employer. "),
         max_length=2,
         null=True,
         blank=True,
-        help_text="Note: Enter number of times. If participant does not want to answer, leave blank",
+        help_text=("Note: Enter number of times. If participant does not want to answer, leave blank"),
         )
 
     days_worked = models.IntegerField(
@@ -98,7 +98,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
         )
     days_not_worked = models.IntegerField(
         verbose_name=_("How many days have you been prevented from working because of sickness"
-                      " or visits to seek healthcare in the last 3 months. "),
+                       " or visits to seek healthcare in the last 3 months. "),
         max_length=2,
         null=True,
         blank=True,
@@ -106,8 +106,8 @@ class LabourMarketWages (BaseScheduledVisitModel):
         )
     days_inactivite = models.IntegerField(
         verbose_name=_("How many days have you been prevented by illness from doing the things"
-                      " you normally do (studying, housework etc.) because of sickness or visits to"
-                      " seek healthcare in the last 3 months? "),
+                       " you normally do (studying, housework etc.) because of sickness or visits to"
+                       " seek healthcare in the last 3 months? "),
         max_length=2,
         null=True,
         blank=True,
