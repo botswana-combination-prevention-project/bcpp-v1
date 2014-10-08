@@ -319,12 +319,15 @@ class BcppAppConfiguration(BaseAppConfiguration):
         if map_area != settings.CURRENT_COMMUNITY:
             raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
                                        'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
-        if Plot.objects.all()[0].plot_identifier[:2] != map_code:
-            raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
-                                       'in Plot identifier {0}. Got {1} != {2}'.format(
-                                           Plot.objects.all()[0].plot_identifier,
-                                           Plot.objects.all()[0].plot_identifier[:2],
-                                           map_code))
+        try:
+            if Plot.objects.all()[0].plot_identifier[:2] != map_code:
+                raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
+                                           'in Plot identifier {0}. Got {1} != {2}'.format(
+                                               Plot.objects.all()[0].plot_identifier,
+                                               Plot.objects.all()[0].plot_identifier[:2],
+                                               map_code))
+        except IndexError:
+            pass
         return {'site_name': site_mappers.get_current_mapper().map_area,
                 'site_code': site_mappers.get_current_mapper().map_code}
 
