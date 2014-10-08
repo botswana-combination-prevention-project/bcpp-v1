@@ -13,7 +13,8 @@ def load_producer_databases(request, **kwargs):
     template = 'load_producer_databases.html'
     try:
         load_producer_db_settings()
-        messages.add_message(request, messages.SUCCESS, 'Producers have been loaded from model Producer into settings.')
+        messages.add_message(request, messages.SUCCESS, (
+            'Producers have been loaded from model Producer into settings.'))
     except ProducerError as producer_error:
         messages.add_message(request, messages.ERROR, str(producer_error))
     return render_to_response(
