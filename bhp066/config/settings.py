@@ -10,7 +10,7 @@ from .bcpp_settings import (APP_NAME, BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, 
                             SMC_ECC_START_DATE, SMC_START_DATE,
                             MAX_HOUSEHOLDS_PER_PLOT)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
-from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID
+from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 
@@ -230,7 +230,7 @@ CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
 GPX_TEMPLATE = os.path.join(STATIC_ROOT, 'gpx/template.gpx')
-VERIFY_GPS = False
+VERIFY_GPS = VERIFY_GPS
 
 # edc.lab
 LAB_SECTION = 'bcpp_lab'
