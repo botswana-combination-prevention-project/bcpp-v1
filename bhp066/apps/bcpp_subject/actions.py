@@ -19,11 +19,8 @@ def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manua
     """
     def export(modeladmin, request, queryset):
         referral_code_list = [key for key, value in REFERRAL_CODES if not key == 'pending']
-        queryset = queryset.filter(referral_code__in=referral_code_list,
-                                   in_clinic_flag=False,
-                                   # subject_visit__appointment__appt_status=DONE,
-                                   # exported=False,
-                                   )
+        queryset = queryset.filter(
+            referral_code__in=referral_code_list, in_clinic_flag=False)
         export_as_csv = ExportAsCsv(
             queryset,
             modeladmin=modeladmin,
