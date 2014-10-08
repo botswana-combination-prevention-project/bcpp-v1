@@ -1,5 +1,6 @@
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
+from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
+                                             Logic, RequisitionRule)
 
 from .classes import SubjectStatusHelper
 
@@ -10,7 +11,8 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 
 def func_art_naive(visit_instance):
-    """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
+    """Returns True if the participant is NOT on art or cannot
+    be confirmed to be on art"""
     subject_status_helper = SubjectStatusHelper(visit_instance)
     return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
 
@@ -38,7 +40,8 @@ def func_hiv_indeterminate_today(visit_instance):
 
 
 def func_hiv_positive_today(visit_instance):
-    """Returns True if the participant has been determinied to be either known or newly diagnosed HIV positive."""
+    """Returns True if the participant has been determinied
+    to be either known or newly diagnosed HIV positive."""
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
 
 
