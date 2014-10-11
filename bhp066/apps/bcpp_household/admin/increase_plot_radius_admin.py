@@ -13,8 +13,8 @@ class IncreasePlotRadiusAdmin(BaseHouseholdModelAdmin):
     form = IncreasePlotRadiusForm
 
     fields = ('radius', )
-    list_display = ('plot', 'radius', 'action', 'status')
+    list_display = ('plot', 'radius', 'action', 'status', 'producer', 'modified', 'created')
     list_filter = (ActionFilter, )
-    search_fields = ('plot__plot_identifier', )
+    search_fields = ('plot__plot_identifier', 'plot__hostname_modified')
     actions = [update_increaseplotradius]
 admin.site.register(IncreasePlotRadius, IncreasePlotRadiusAdmin)
