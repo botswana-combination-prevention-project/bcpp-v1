@@ -9,6 +9,7 @@
     <li><A href="{% url household_meta|admin_urlname:'changelist' %}">Households</A>
     <li><A href="{% url replaceable_meta|admin_urlname:'changelist' %}">Replaceables</A>
     <li><A href="{% url subjectconsent_meta|admin_urlname:'changelist' %}">Subject Consents</A>
+    <li><A href="{% url 'admin:bcpp_household_increaseplotradius_changelist' %}">Plot allowed to increase target radius</A>
     </ul>
 
 {% endblock admin_sections %}
