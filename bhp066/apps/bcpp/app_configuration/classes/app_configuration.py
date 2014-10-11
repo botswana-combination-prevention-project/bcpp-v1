@@ -12,7 +12,6 @@ except ImportError:
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
-from edc.device.sync.models import Producer
 from edc.device.device.classes import device
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
