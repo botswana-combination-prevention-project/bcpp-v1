@@ -1,8 +1,8 @@
-from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import DispatchItemRegister
 
 from .plot import Plot
 
@@ -33,6 +33,14 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel):
 
     def include_for_dispatch(self):
         return True
+
+    @property
+    def producer(self):
+        try:
+            dispatch_item_register = DispatchItemRegister.objects.using('default').get(item_pk=self.plot.pk)
+            return dispatch_item_register.producer
+        except DispatchItemRegister.DoesNotExist:
+            return None
 
     @property
     def action(self):
