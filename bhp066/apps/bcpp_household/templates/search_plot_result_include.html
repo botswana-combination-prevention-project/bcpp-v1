@@ -17,7 +17,7 @@
 <th>Log Report</th>
 <th>Map</th>
 <th>Community</th>
-<th>Increase Radius</th>
+<th>GPS Radius</th>
 <th>Modified</th>           
 <th>Modified By</th>
                                  
@@ -114,10 +114,10 @@
       	<td>{{ plot.community|encrypted}}</td>
       	<td>
       	{{ section_url }}
-      	{% if increase_plot_radius %}
-      	    <A href="{% url increase_plot_radius|get_meta|admin_urlname:'change' increase_plot_radius.pk %}?next=section_url&section_name=plot">{{ plot }}</A>
+      	{% if plot.increase_plot_radius.0 %}
+      	    <A href="{% url plot.increase_plot_radius.0|get_meta|admin_urlname:'change' plot.increase_plot_radius.0.pk %}?next=section_url&section_name=plot">{{ plot.target_radius_in_meters }}  meters</A>
       	{% else %}
-      		--
+      		{{ plot.target_radius_in_meters }} meters
       	{% endif %}
       	</td>
         <td>{{ plot.modified|default:plot.created|date:"Y-m-d" }}</td>
