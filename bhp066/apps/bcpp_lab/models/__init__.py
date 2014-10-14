@@ -12,3 +12,6 @@ from .packing_list_item import PackingListItem
 from .panel import Panel
 from .receive import Receive
 from .subject_requisition import SubjectRequisition
+
+from .clinic_requisition import ClinicRequisition
+from .signals import *
