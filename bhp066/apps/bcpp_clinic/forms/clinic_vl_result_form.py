@@ -5,10 +5,10 @@ from edc.constants import NEW
 from edc.entry_meta_data.models import RequisitionMetaData
 from edc.subject.entry.models import LabEntry
 
-from ..models import ViralLoadResult
+from ..models import ClinicVLResult
 
 
-class ViralLoadResultForm (BaseModelForm):
+class ClinicVLResultForm (BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -22,4 +22,4 @@ class ViralLoadResultForm (BaseModelForm):
         return cleaned_data
 
     class Meta:
-        model = ViralLoadResult
+        model = ClinicVLResult

@@ -11,14 +11,14 @@ from .base_clinic_visit_model import BaseClinicVisitModel
 from ..models import ClinicVisit
 
 
-class ViralLoadResult(BaseClinicVisitModel):
+class ClinicVLResult(BaseClinicVisitModel):
 
 #     sample_id = models.CharField(
 #         verbose_name='Sample Identifier',
 #         max_length=25,
 #         unique=True,
 #         help_text="It could be an Aliquot identifier if applicable.")
-    clinic = models.ForeignKey(StudySite)
+    site = models.ForeignKey(StudySite)
     clinician_initials = InitialsField(
         verbose_name='Clinician initial',
         default='--',
@@ -73,5 +73,5 @@ class ViralLoadResult(BaseClinicVisitModel):
 
     class Meta:
         app_label = "bcpp_clinic"
-        verbose_name = "Viral Load Result"
-        verbose_name_plural = "Viral Load Result"
+        verbose_name = "Clinic VL Result"
+        verbose_name_plural = "Clinic VL Result"

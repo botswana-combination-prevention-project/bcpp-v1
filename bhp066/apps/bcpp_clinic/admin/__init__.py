@@ -2,7 +2,7 @@ from .clinic_consent_admin import ClinicConsentAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .clinic_subject_locator_admin import ClinicSubjectLocatorAdmin
 from .clinic_visit_admin import ClinicVisitAdmin
-from .viral_load_result_admin import ViralLoadResultAdmin
+from .clinic_vl_result_admin import ClinicVLResultAdmin
 from .viral_load_tracking_admin import ViralLoadTrackingAdmin
 
 from .clinic_eligibility_admin import ClinicEligibilityAdmin
