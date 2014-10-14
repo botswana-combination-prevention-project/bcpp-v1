@@ -216,7 +216,8 @@ MAX_SUBJECTS = {'subject': 9999}
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
-                       'bcpp_lab', 'bcpp_survey']
+                       'bcpp_lab', 'bcpp_survey', 
+                       'bcpp_clinic', 'bcpp_clinic_lab', 'bcpp_clinic_dashboard']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
@@ -256,14 +257,14 @@ MIDDLEMAN_DEVICE_ID_LIST = [98]
 if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLEMAN: Botswana Combination Prevention Project'
 elif str(DEVICE_ID) == '99':
-    PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project (Survey & Clinic)'
     BYPASS_HOUSEHOLD_LOG = True
     COMMUNITY = 'BHP'
 elif str(DEVICE_ID) in map(str, range(91, 97)):
-    PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project (Survey & Clinic)'
     BYPASS_HOUSEHOLD_LOG = True
 else:
-    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project (Survey & Clinic)'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 
 # edc.device.inspector (middleman)
