@@ -5,7 +5,7 @@ from .clinic_questionnaire  import ClinicQuestionnaire
 from .clinic_subject_locator import ClinicSubjectLocator
 from .clinic_visit import ClinicVisit
 from .signals import *
-from .viral_load_result import ViralLoadResult
+from .clinic_vl_result import ClinicVLResult
 from .viral_load_tracking import ViralLoadTracking
 
 from .base_clinic_registered_subject_model import BaseClinicRegisteredSubjectModel
