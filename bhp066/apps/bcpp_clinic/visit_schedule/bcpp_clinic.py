@@ -18,7 +18,7 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
     # schedule groups
     # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
-        'group-1': ScheduleGroupTuple('group-1', 'clinic', None, None),
+        'group-2': ScheduleGroupTuple('group-2', 'clinic', None, None),
         })
 
     # visit_schedule
@@ -35,7 +35,7 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'window_upper_bound_unit': 'D',
             'grouping': None,
             'visit_tracking_model': ClinicVisit,
-            'schedule_group': 'group-1',
+            'schedule_group': 'group-2',
             'instructions': None,
             'requisitions': (
 #               # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type) OLD
@@ -45,7 +45,7 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'entries': (
             EntryTuple(10L, u'bcpp_clinic', u'clinicsubjectlocator', REQUIRED, NOT_ADDITIONAL,),
             EntryTuple(20L, u'bcpp_clinic', u'clinicquestionnaire', REQUIRED, NOT_ADDITIONAL,),
-            EntryTuple(30L, u'bcpp_clinic', u'viralloadresult', NOT_REQUIRED, ADDITIONAL,),
+            EntryTuple(30L, u'bcpp_clinic', u'clinicvlresult', NOT_REQUIRED, ADDITIONAL,),
             EntryTuple(40L, u'bcpp_clinic', u'viralloadtracking', NOT_REQUIRED, ADDITIONAL,),
             )}
         }
