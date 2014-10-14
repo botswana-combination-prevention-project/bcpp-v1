@@ -1,4 +1,0 @@
-from .clinic_visit_admin import ClinicVisitAdmin
-from .clinic_eligibility_admin import ClinicEligibilityAdmin
-from .clinic_consent_admin import ClinicConsentAdmin
-from .clinic_main_admin import ClinicMainAdmin
