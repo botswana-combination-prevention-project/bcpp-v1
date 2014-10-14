@@ -10,7 +10,7 @@ class ViralLoadTrackingRuleGroup(RuleGroup):
             predicate=('is_drawn', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
-        target_model=['viralloadresult'])
+        target_model=['clinicvlresult'])
 
     class Meta:
         app_label = 'bcpp_clinic'
