@@ -1,1 +1,0 @@
-from .clinic_model_manager import ClinicModelManager
