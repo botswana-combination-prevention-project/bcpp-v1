@@ -1,3 +1,4 @@
 DEVICE_ID = 99
 SITE_CODE = '16'
 CURRENT_COMMUNITY = 'lentsweletau'
+VERIFY_GPS = False
