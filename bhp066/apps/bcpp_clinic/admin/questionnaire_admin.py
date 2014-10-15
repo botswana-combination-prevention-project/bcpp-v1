@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from ..models import ClinicQuestionnaire
+from ..models import Questionnaire
 from .clinic_visit_model_admin import ClinicVisitModelAdmin
-from apps.bcpp_clinic.forms import ClinicQuestionnaireForm
+from apps.bcpp_clinic.forms import QuestionnaireForm
 
 
-class ClinicQuestionnaireAdmin(ClinicVisitModelAdmin):
+class QuestionnaireAdmin(ClinicVisitModelAdmin):
 
-    form = ClinicQuestionnaireForm
+    form = QuestionnaireForm
     fields = (
         "clinic_visit",
         'other_identifiers',
@@ -26,4 +26,4 @@ class ClinicQuestionnaireAdmin(ClinicVisitModelAdmin):
     search_fields = (
         'on_arv', 'other_identifiers', 'htc_and_or_pims'
         )
-admin.site.register(ClinicQuestionnaire, ClinicQuestionnaireAdmin)
+admin.site.register(Questionnaire, QuestionnaireAdmin)
