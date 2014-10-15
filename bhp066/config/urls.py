@@ -19,15 +19,18 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
-from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
+# from apps.bcpp.app_configuration.classes import bcpp_app_configuration
+#from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
+from apps.bcpp.app_configuration.classes import survey_clinic_app_configuration
+
 
 admin.autodiscover()
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
 site_mappers.autodiscover()
-bcpp_app_configuration.prepare()
-BcppClinicConfiguration().prepare()
+survey_clinic_app_configuration.prepare()
+# bcpp_app_configuration.prepare()
+#BcppClinicConfiguration().prepare()
 site_visit_schedules.autodiscover()
 site_visit_schedules.build_all()
 site_rule_groups.autodiscover()
