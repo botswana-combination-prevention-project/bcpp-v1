@@ -1,1 +1,2 @@
 from .app_configuration import BcppAppConfiguration, bcpp_app_configuration
+from .survey_clinic_app_configuration import SurveyClinicAppConfiguration, survey_clinic_app_configuration
