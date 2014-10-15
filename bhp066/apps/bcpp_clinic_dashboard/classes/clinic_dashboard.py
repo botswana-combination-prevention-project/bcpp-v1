@@ -1,5 +1,5 @@
 from apps.bcpp_clinic.models import ClinicConsent, ClinicVisit, ClinicSubjectLocator, ClinicEligibility
-from apps.bcpp_clinic_lab.models import ClinicRequisition, ClinicPackingList
+from apps.bcpp_lab.models import ClinicRequisition, PackingList
 
 from edc.dashboard.subject.classes import RegisteredSubjectDashboard
 from edc.subject.registration.models import RegisteredSubject
@@ -70,7 +70,7 @@ class ClinicDashboard(RegisteredSubjectDashboard):
 
     @property
     def packing_list_model(self):
-        return ClinicPackingList
+        return PackingList
 
     def render_labs(self, update=False):
         return ''

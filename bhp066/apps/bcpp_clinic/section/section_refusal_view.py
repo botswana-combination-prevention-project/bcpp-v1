@@ -8,7 +8,7 @@ from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sect
 class SectionRefusalView(BaseSectionForDashboardView):
     section_name = 'refusal'
     section_display_name = 'Clinic Refusals'
-    section_display_index = 50
+    section_display_index = 48
     section_template = 'section_bcpp_refusal.html'
     dashboard_url_name = 'refusal_dashboard_url'
     add_model = ClinicRefusal
