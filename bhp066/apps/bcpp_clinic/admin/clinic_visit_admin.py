@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from ..forms import ClinicVisitForm
 from ..models import ClinicVisit
-from apps.bcpp_clinic_lab.models import ClinicRequisition
+from apps.bcpp_lab.models import ClinicRequisition
 
 from edc.subject.appointment.admin import BaseAppointmentModelAdmin
 
