@@ -13,7 +13,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.entry_meta_data.managers import EntryMetaDataManager
 
 
-class ClinicQuestionnaire (BaseClinicVisitModel):
+class Questionnaire (BaseClinicVisitModel):
 
     other_identifiers = models.CharField(
         verbose_name=_("Does the participant have one of these identification numbers?"),
@@ -60,5 +60,5 @@ class ClinicQuestionnaire (BaseClinicVisitModel):
 
     class Meta:
         app_label = 'bcpp_clinic'
-        verbose_name = "Clinic Questionnaire"
-        verbose_name_plural = "Clinic Questionnaire"
+        verbose_name = "Questionnaire"
+        verbose_name_plural = "Questionnaire"

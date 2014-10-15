@@ -1,5 +1,5 @@
 from .clinic_consent_form import ClinicConsentForm
-from .clinic_questionnaire_form import ClinicQuestionnaireForm
+from .questionnaire_form import QuestionnaireForm
 from .clinic_subject_locator_form import ClinicSubjectLocatorForm
 from .clinic_visit_form import ClinicVisitForm
 from .clinic_vl_result_form import ClinicVLResultForm
