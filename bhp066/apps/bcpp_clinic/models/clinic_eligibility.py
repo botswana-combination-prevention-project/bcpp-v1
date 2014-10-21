@@ -179,12 +179,12 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
                 initials=self.initials,
                 dob=self.dob,
                 gender=self.gender,
-                subject_type='subject',
+                subject_type='clinic',
                 subject_identifier_as_pk=self.id,
                 registration_identifier=self.id,
                 registration_datetime=self.created,
                 user_created=self.user_created,
-                registration_status='member',)
+                registration_status='REGISTERED',)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
             print RegisteredSubject.objects.all().count()
