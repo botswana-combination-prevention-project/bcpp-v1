@@ -11,7 +11,7 @@ class ClinicDashboard(RegisteredSubjectDashboard):
 
     def __init__(self, *args, **kwargs):
         self.subject_dashboard_url = 'subject_dashboard_url'
-        self.dashboard_type_list = ['subject']
+        self.dashboard_type_list = ['clinic']
         kwargs.update({'dashboard_models': {'clinic_consent': ClinicEligibility}, 'membership_form_category': 'clinic'})
         self._requisition_model = ClinicRequisition
         self.visit_model = ClinicVisit
@@ -55,7 +55,7 @@ class ClinicDashboard(RegisteredSubjectDashboard):
 
     def set_membership_form_category(self):
         self._membership_form_category = self.membership_form_category
-        self._membership_form_category = 'subject'
+        self._membership_form_category = 'clinic'
         return self._membership_form_category
 
     def subject_hiv_status(self):
