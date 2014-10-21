@@ -17,7 +17,11 @@ from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
+ADMINS = (('erikvw', 'ew@2789@gmail.com'),
+          ('mkewagamang', 'mkewagamang@bhp.org.bw'),
+          ('opharatlhatlhe', 'opharatlhatlhe@bhp.org.bw'),
+          ('ckgathi', 'ckgathi@bhp.org.bw'),)
+
 APP_NAME = APP_NAME
 
 # PATHS
@@ -46,14 +50,8 @@ if socket.gethostname() == 'mac.local':
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
 else:
-    KEY_PATH = '/Volumes/keys'  # community servers
-    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Volumes/keys'
-    # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
-    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
+    #KEY_PATH = '/Volumes/keys'  # community servers
+    KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 
@@ -211,12 +209,13 @@ DAJAXICE_MEDIA_PREFIX = "dajaxice"
 
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
-SUBJECT_TYPES = ['subject']
-MAX_SUBJECTS = {'subject': 9999}
+SUBJECT_TYPES = ['subject', 'clinic']
+MAX_SUBJECTS = {'subject': 9999,
+                'clinic': 9999}
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
-                       'bcpp_lab', 'bcpp_survey', 
+                       'bcpp_lab', 'bcpp_survey'
                        'bcpp_clinic', 'bcpp_clinic_lab', 'bcpp_clinic_dashboard']
 
 # edc.crypto_fields
@@ -257,14 +256,14 @@ MIDDLEMAN_DEVICE_ID_LIST = [98]
 if str(DEVICE_ID) == '98':
     PROJECT_TITLE = 'MIDDLEMAN: Botswana Combination Prevention Project'
 elif str(DEVICE_ID) == '99':
-    PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project (Survey & Clinic)'
+    PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
     COMMUNITY = 'BHP'
 elif str(DEVICE_ID) in map(str, range(91, 97)):
-    PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project (Survey & Clinic)'
+    PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
 else:
-    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project (Survey & Clinic)'
+    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 
 # edc.device.inspector (middleman)
