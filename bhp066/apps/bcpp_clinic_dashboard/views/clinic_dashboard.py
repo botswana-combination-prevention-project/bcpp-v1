@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from ..classes import ClinicDashboard
+from apps.bcpp_clinic.models import ClinicConsent
 
 
 @login_required
@@ -13,7 +14,9 @@ def clinic_dashboard(request, **kwargs):
         dashboard_model=kwargs.get('dashboard_model'),
         registered_subject=kwargs.get('registered_subject'),
         show=kwargs.get('show'),
-        dashboard_type_list=['subject'],
+        dashboard_type_list=['clinic'],
+        dashboard_models={'clinic_consent': ClinicConsent},
+        app_label='bcpp_clinic'
         )
     dashboard.set_context()
     return render_to_response(
