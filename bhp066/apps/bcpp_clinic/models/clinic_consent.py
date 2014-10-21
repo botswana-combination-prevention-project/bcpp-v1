@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.core.exceptions import ValidationError
 import re
 
 from edc.audit.audit_trail import AuditTrail
@@ -13,6 +14,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
+from apps.bcpp_subject.models import SubjectConsent
 from .clinic_eligibility import ClinicEligibility
 from apps.clinic.choices import COMMUNITIES
 
@@ -47,7 +49,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
     def get_subject_type(self):
-        return 'subject'
+        return 'clinic'
 
     def get_site_code(self):
         return settings.SITE_CODE
@@ -81,7 +83,24 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
             self.registered_subject = eligibility.registered_subject
         else:
             raise ValueError('Could not find a ClinicEligibility. Ensure \'DOB\', \'first_name\', \'gender\' and \'initials\' match those in ClinicEligibility.')
+        self.save_clinic_consent()
         super(BaseClinicConsent, self).save(*args, **kwargs)
+
+    def save_clinic_consent(self, subject_identifier=None):
+        if SubjectConsent.objects.filter(first_name=self.first_name, last_name=self.last_name, identity=self.identity).exists():
+            raise ValidationError('We cannot consent a subject twice! Subject was already consented in BHS.')
+#         else:
+#             subject_consent = SubjectConsent.objects.get(first_name=self.first_name, last_name=self.last_name, identity=self.identity)
+#             registered_subject = subject_consent.registered_subject
+#             self.registered_subject = registered_subject
+#             subject_identifier = registered_subject.subject_identifier
+#         return subject_identifier
+
+    def is_dispatchable_model(self):
+        return False
+
+#     def dispatch_container_lookup(self):
+#         return None
 
     class Meta:
         abstract = True
