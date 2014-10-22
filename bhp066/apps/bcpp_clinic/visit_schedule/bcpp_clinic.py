@@ -40,7 +40,7 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'requisitions': (
 #               # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type) OLD
                 RequisitionPanelTuple(10L, u'bcpp_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB', REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Viral Load (clinic)', 'TEST', 'WB', NOT_REQUIRED, ADDITIONAL),
+                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Viral Load Clinic', 'TEST', 'WB', NOT_REQUIRED, ADDITIONAL),
                 ),
             'entries': (
             EntryTuple(10L, u'bcpp_clinic', u'clinicsubjectlocator', REQUIRED, NOT_ADDITIONAL,),

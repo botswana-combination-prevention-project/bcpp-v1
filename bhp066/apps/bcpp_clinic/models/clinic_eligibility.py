@@ -126,6 +126,9 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
         self.match_consent_values(self)
         if self.eligible_clinic_subject():
             self.is_eligible = True
+        subject = RegisteredSubject.objects.filter(first_name=self.first_name, initials=self.initials, dob=self.dob, gender=self.gender)
+        if subject.exists():
+            raise ValidationError('This subject already exists.CANNOT proceed with eligibility.')
         super(ClinicEligibility, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -187,8 +190,7 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
                 registration_status='REGISTERED',)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
-            print RegisteredSubject.objects.all().count()
-            self.save(using=using)
+            #self.save(using=using)
 
     def delete_enrollment_loss(self, **kwargs):
         """Deletes a clinic enrollment loss based if a clinic eligibility checklist is now passed."""
