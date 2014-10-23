@@ -48,6 +48,28 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
+    have_htc_pims = models.CharField(
+        verbose_name=_("Does the participant have one of these identification numbers?"),
+        max_length=30,
+        choices=(
+            ('barcode', 'Barcode Number'),
+            ('Htc identifier', 'Htc identifier'),
+            ('Pims identifier', 'Pims identifier'),
+            ('Htc_Pims', 'Htc and Pims identifier'),
+            ('Barcode_Pims', 'Barcode and Pims identifier'),
+            ('None', 'None'),
+            ),
+        help_text="",
+        )
+
+    htc_pims_id = models.CharField(
+        verbose_name=_("Enter the HTC and or PIMS identifiers(comma separated)?"),
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text="htc_identifier, pims_identifier",
+        )
+
     def get_subject_type(self):
         return 'clinic'
 
