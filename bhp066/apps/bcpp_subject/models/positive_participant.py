@@ -33,7 +33,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
 
     friend_stigma = models.CharField(
         verbose_name=_("I fear that if I disclosed my HIV status to my"
-                      " friends, they would lose respect for me."),
+                       " friends, they would lose respect for me."),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -42,7 +42,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
 
     family_stigma = models.CharField(
         verbose_name=_("I fear that if I disclosed my HIV status to my family,"
-                      " they would exclude me from usual family activities."),
+                       " they would exclude me from usual family activities."),
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
