@@ -126,7 +126,9 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
         self.match_consent_values(self)
         if self.eligible_clinic_subject():
             self.is_eligible = True
-        self.update_registered_subject()
+        subject = RegisteredSubject.objects.filter(first_name=self.first_name, initials=self.initials, dob=self.dob, gender=self.gender)
+        if subject.exists():
+            raise ValidationError('This subject already exists.CANNOT proceed with eligibility.')
         super(ClinicEligibility, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -144,19 +146,20 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
         error_msg = None
         exception_cls = exception_cls or ValidationError
         from apps.bcpp_clinic.models import ClinicConsent
-        consent = ClinicConsent.objects.filter(registered_subject__registration_identifier=self.id)
-        if consent.exists():
-            consent = consent[0]
-            if  eligibility_checklist.dob != consent.dob:
-                error_msg = "The DoB does not match that entered in the consent. {0} <> {1}".format(eligibility_checklist.dob, consent.dob)
-            if  eligibility_checklist.first_name != consent.first_name:
-                error_msg = "The first name does not match that entered in the consent. {0} <> {1}".format(eligibility_checklist.first_name, consent.first_name)
-            if  eligibility_checklist.initials != consent.initials:
-                error_msg = "The initials do not match those entered in the consent. {0} <> {1}".format(eligibility_checklist.initials, consent.initials)
-            if  eligibility_checklist.gender != consent.gender:
-                error_msg = "The gender does not match that entered in the consent. {0} <> {1}".format(eligibility_checklist.gender, consent.gender)
-            if error_msg:
-                raise exception_cls(error_msg)
+        if self.id:
+            consent = ClinicConsent.objects.filter(registered_subject__registration_identifier=self.id)
+            if consent.exists():
+                consent = consent[0]
+                if  eligibility_checklist.dob != consent.dob:
+                    error_msg = "The DoB does not match that entered in the consent. {0} <> {1}".format(eligibility_checklist.dob, consent.dob)
+                if  eligibility_checklist.first_name != consent.first_name:
+                    error_msg = "The first name does not match that entered in the consent. {0} <> {1}".format(eligibility_checklist.first_name, consent.first_name)
+                if  eligibility_checklist.initials != consent.initials:
+                    error_msg = "The initials do not match those entered in the consent. {0} <> {1}".format(eligibility_checklist.initials, consent.initials)
+                if  eligibility_checklist.gender != consent.gender:
+                    error_msg = "The gender does not match that entered in the consent. {0} <> {1}".format(eligibility_checklist.gender, consent.gender)
+                if error_msg:
+                    raise exception_cls(error_msg)
         return True
 
     def get_consent(self):
@@ -165,12 +168,8 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
             return clinic_consent.objects.filter(registered_subject__registration_identifier=self.id)[0]
         return None
 
-    def update_registered_subject(self, **kwargs):
+    def update_registered_subject_on_post_save(self, **kwargs):
         using = kwargs.get('using', None)
-
-        subject = RegisteredSubject.objects.filter(first_name=self.first_name, initials=self.initials, dob=self.dob, gender=self.gender)
-        if subject.exists():
-            raise ValidationError('This subject already exists.CANNOT proceed with eligibility.')
         # decide now, either access an existing registered_subject or create a new one
         if RegisteredSubject.objects.using(using).filter(registration_identifier=self.id).exists():
             registered_subject = RegisteredSubject.objects.using(using).get(registration_identifier=self.id)
