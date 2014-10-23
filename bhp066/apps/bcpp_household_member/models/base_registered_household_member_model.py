@@ -15,7 +15,8 @@ from .household_member import HouseholdMember
 
 class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
-    """ base for membership form models that need a foreignkey to the registered subject and household_member model"""
+    """ Base for membership form models that need a foreignkey to
+    the registered subject and household_member model"""
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True)
 
@@ -36,7 +37,7 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
         return self.household_member
 
     def natural_key(self):
-        return self.household_member.natural_key()  # OneToOne field with household_member, so it should be enough alone
+        return self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def dispatch_container_lookup(self, using=None):
@@ -53,7 +54,9 @@ class BaseRegisteredHouseholdMemberModel(BaseDispatchSyncUuidModel):
 
     def confirm_registered_subject_pk_on_post_save(self, using):
         if self.registered_subject.pk != self.household_member.registered_subject.pk:
-            raise TypeError('Expected self.registered_subject.pk == self.household_member.registered_subject.pk. Got {0} != {1}.'.format(self.registered_subject.pk, self.household_member.registered_subject.pk))
+            raise TypeError('Expected self.registered_subject.pk == self.household_member.'
+                            'registered_subject.pk. Got {0} != {1}.'.format(
+                                self.registered_subject.pk, self.household_member.registered_subject.pk))
 
     class Meta:
         ordering = ['household_member']

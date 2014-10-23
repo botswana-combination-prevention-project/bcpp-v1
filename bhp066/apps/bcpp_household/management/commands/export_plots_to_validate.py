@@ -1,13 +1,9 @@
 import csv
 import os
 
-from django.db.models import Min, Max
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.bcpp_survey.models import Survey
-
-from apps.bcpp_household.choices import NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, ELIGIBLE_REPRESENTATIVE_PRESENT, RESIDENTIAL_HABITABLE
-from apps.bcpp_household.models import Plot, Household, HouseholdStructure, HouseholdLogEntry
+from apps.bcpp_household.models import Plot
 
 
 class Command(BaseCommand):

@@ -1,16 +1,19 @@
 from django.db import models
 
-from .plot import Plot
-
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.dispatch.models import DispatchItemRegister
+
+from .plot import Plot
 
 
 class IncreasePlotRadius(BaseDispatchSyncUuidModel):
 
-    plot = models.ForeignKey(Plot)
+    plot = models.OneToOneField(Plot)
 
-    radius = models.FloatField(default=25.0, help_text='meters')
+    radius = models.FloatField(
+        default=25.0,
+        help_text='meters')
 
     history = AuditTrail()
 
@@ -18,12 +21,7 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel):
         return self.plot.plot_identifier
 
     def natural_key(self):
-        return (self.plot.plot_identifier,)
-
-    def save(self, *args, **kwargs):
-        self.plot.target_radius = (self.radius / 1000)
-        self.plot.save()
-        super(IncreasePlotRadius, self).save(*args, **kwargs)
+        return (self.plot.plot_identifier, )
 
     def dispatch_container_lookup(self):
         dispatch_container = models.get_model('dispatch', 'DispatchContainerRegister')
@@ -35,6 +33,22 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel):
 
     def include_for_dispatch(self):
         return True
+
+    @property
+    def producer(self):
+        try:
+            dispatch_item_register = DispatchItemRegister.objects.using('default').get(item_pk=self.plot.pk)
+            return dispatch_item_register.producer
+        except DispatchItemRegister.DoesNotExist:
+            return None
+
+    @property
+    def action(self):
+        return self.plot.action
+
+    @property
+    def status(self):
+        return self.plot.status
 
     class Meta:
         app_label = 'bcpp_household'

@@ -1,5 +1,6 @@
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.rule_groups.classes import RuleGroup, site_rule_groups, ScheduledDataRule, Logic, RequisitionRule
+from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
+                                             Logic, RequisitionRule)
 
 from .classes import SubjectStatusHelper
 
@@ -10,7 +11,8 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 
 def func_art_naive(visit_instance):
-    """Returns True if the participant is NOT on art or cannot be confirmed to be on art"""
+    """Returns True if the participant is NOT on art or cannot
+    be confirmed to be on art"""
     subject_status_helper = SubjectStatusHelper(visit_instance)
     return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
 
@@ -38,7 +40,8 @@ def func_hiv_indeterminate_today(visit_instance):
 
 
 def func_hiv_positive_today(visit_instance):
-    """Returns True if the participant has been determinied to be either known or newly diagnosed HIV positive."""
+    """Returns True if the participant has been determinied
+    to be either known or newly diagnosed HIV positive."""
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
 
 
@@ -186,12 +189,19 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
+    verbal_hiv_result_hiv_care = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivcareadherence'])
+
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_known_pos,
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
+        target_model=['hivmedicalcare', 'positiveparticipant'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -205,7 +215,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('verbal_hiv_result', 'equals', 'NEG'),
             consequence='not_required',
             alternative='new'),
-        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
+        target_model=['positiveparticipant', 'hivmedicalcare'])
 
     other_response = ScheduledDataRule(
         logic=Logic(

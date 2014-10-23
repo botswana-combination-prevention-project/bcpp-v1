@@ -1,7 +1,5 @@
 from collections import namedtuple
 
-from django.db.models import get_model
-
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.map.classes import site_mappers
@@ -186,8 +184,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def citizen(self):
         citizen = None
         try:
-            citizen = self.enrollment_checklist_instance.citizen == (
-                'Yes' and self.subject_consent_instance.identity is not None)
+            citizen = (self.enrollment_checklist_instance.citizen == 'Yes'
+                       and self.subject_consent_instance.identity is not None)
         except AttributeError:
             citizen = None
         return citizen

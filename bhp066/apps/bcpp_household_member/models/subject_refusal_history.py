@@ -5,10 +5,9 @@ from django_extensions.db.fields import UUIDField
 
 from edc.base.model.fields import OtherCharField
 
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.base.model.models import BaseUuidModel
 
 from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from apps.bcpp_household.models import Plot
 from apps.bcpp_survey.models import Survey
 
 from ..managers import SubjectRefusalHistoryManager
@@ -16,7 +15,7 @@ from ..managers import SubjectRefusalHistoryManager
 from .household_member import HouseholdMember
 
 
-class SubjectRefusalHistory(BaseDispatchSyncUuidModel):
+class SubjectRefusalHistory(BaseUuidModel):
 
     transaction = UUIDField()
 
@@ -47,20 +46,11 @@ class SubjectRefusalHistory(BaseDispatchSyncUuidModel):
     def natural_key(self):
         return (self.transaction, )
 
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_member__household_structure__household__plot__plot_identifier')
-
-    def is_dispatchable(self):
-        return True
-
     def get_report_datetime(self):
         return self.report_datetime
 
     def get_registration_datetime(self):
         return self.report_datetime
-
-    def dispatch_item_container_reference(self, using=None):
-        return (('bcpp_household', 'plot'), 'household_member__household_structure__household__plot')
 
     class Meta:
         app_label = 'bcpp_household_member'
