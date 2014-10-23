@@ -46,7 +46,7 @@ class ClinicDashboard(RegisteredSubjectDashboard):
         self._registered_subject = self.registered_subject
         if RegisteredSubject.objects.filter(subject_identifier=self.subject_identifier):
             self._registered_subject = RegisteredSubject.objects.get(subject_identifier=self.subject_identifier)
-            #self.registered_subject = self._registered_subject
+#             #self.registered_subject = self._registered_subject
 
     def get_registered_subject(self):
         if not self._registered_subject:
