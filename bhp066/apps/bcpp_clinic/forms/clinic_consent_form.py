@@ -78,6 +78,12 @@ class MainConsentForm(BaseSubjectConsentForm):
         last_name = cleaned_data.get("last_name")
         check_initials_field(first_name, last_name, initials)
 
+        if cleaned_data.get('have_htc_pims', None) != 'None' and not cleaned_data.get('htc_pims_id', None):
+            raise forms.ValidationError('Participant reports to have either HTC, PIMS identifier or both. Please enter that identifier.')
+
+        if cleaned_data.get('have_htc_pims', None) == 'None' and cleaned_data.get('htc_pims_id', None):
+            raise forms.ValidationError('Participant reports to NOT have either HTC, PIMS identifier or both. Please DO NOT enter any identifier.')
+
         return cleaned_data
 
 
