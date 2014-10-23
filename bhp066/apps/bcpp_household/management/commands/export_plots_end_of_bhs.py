@@ -5,7 +5,8 @@ from django.core.management.base import BaseCommand, CommandError
 
 from apps.bcpp_survey.models import Survey
 
-from apps.bcpp_household.choices import NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, ELIGIBLE_REPRESENTATIVE_PRESENT, RESIDENTIAL_HABITABLE
+from apps.bcpp_household.choices import (NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
+                                         ELIGIBLE_REPRESENTATIVE_PRESENT, RESIDENTIAL_HABITABLE)
 from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
 from apps.bcpp_household.models import Plot, Household, HouseholdStructure, HouseholdLogEntry
 
@@ -25,7 +26,8 @@ class Command(BaseCommand):
             raise CommandError('Missing \'using\' parameters.')
         community_name = args[0]
         cdc_plots = []
-        first_survey_start_datetime = Survey.objects.all().aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
+        first_survey_start_datetime = Survey.objects.all(
+            ).aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
         survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
         enrolled = []
         household_reason = []
@@ -34,14 +36,20 @@ class Command(BaseCommand):
         confirmed = 0
         unconfirmed = 0
         plots = Plot.objects.filter(community=community_name, selected__isnull=False)
-        cdc_plots.append(['plot_identifier', 'action', 'status', 'household_count', 'gps_target_lat', 'gps_target_lon', 'enrolled', 'comment'])
+        cdc_plots.append(
+            ['plot_identifier', 'action', 'status', 'household_count', 'gps_target_lat', 'gps_target_lon',
+             'enrolled', 'comment'])
         for plot in plots:
             if plot.status in [INACCESSIBLE, None]:
-                cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
+                cdc_plots.append(
+                    [plot.plot_identifier, plot.action, plot.status, plot.household_count,
+                     plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
                 unconfirmed += 1
                 not_enrolled += 1
             elif plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-                cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
+                cdc_plots.append(
+                    [plot.plot_identifier, plot.action, plot.status, plot.household_count,
+                     plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
                 if plot.action == UNCONFIRMED:
                     unconfirmed += 1
                 elif plot.action == CONFIRMED:
@@ -56,8 +64,11 @@ class Command(BaseCommand):
                 for household_structure in household_structures:
                     enrolled.append(household_structure.enrolled)
                     try:
-                        report_datetime = HouseholdLogEntry.objects.filter(household_log__household_structure=household_structure).aggregate(Max('report_datetime')).get('report_datetime__max')
-                        lastest_household_log_entry = HouseholdLogEntry.objects.get(household_log__household_structure=household_structure, report_datetime=report_datetime)
+                        report_datetime = HouseholdLogEntry.objects.filter(
+                            household_log__household_structure=household_structure).aggregate(
+                                Max('report_datetime')).get('report_datetime__max')
+                        lastest_household_log_entry = HouseholdLogEntry.objects.get(
+                            household_log__household_structure=household_structure, report_datetime=report_datetime)
                         if lastest_household_log_entry.household_status == ELIGIBLE_REPRESENTATIVE_PRESENT:
                             replacement_helper = ReplacementHelper(household_structure=household_structure)
                             if replacement_helper.all_eligible_members_refused:
@@ -76,15 +87,19 @@ class Command(BaseCommand):
 #                     if not plot.htc:
 #                         plot.htc = True
 #                         plot.save()
-                    cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'Yes', ''])
+                    cdc_plots.append(
+                        [plot.plot_identifier, plot.action, plot.status, plot.household_count,
+                         plot.gps_target_lat, plot.gps_target_lon, 'Yes', ''])
                 elif not enrolled[0]:
-                    cdc_plots.append([plot.plot_identifier, plot.action, plot.status, plot.household_count, plot.gps_target_lat, plot.gps_target_lon, 'No', '; '.join(household_reason)])
+                    cdc_plots.append(
+                        [plot.plot_identifier, plot.action, plot.status, plot.household_count,
+                         plot.gps_target_lat, plot.gps_target_lon, 'No', '; '.join(household_reason)])
                     not_enrolled += 1
                 else:
                     raise TypeError()
-        for plot_values in cdc_plots:
-            if not plot_values[0] == 'plot_identifier' and plot_values[6] == 'No':
-                plot_instance = Plot.objects.get(plot_identifier=plot_values[0])
+#        for plot_values in cdc_plots:
+#            if not plot_values[0] == 'plot_identifier' and plot_values[6] == 'No':
+#                plot_instance = Plot.objects.get(plot_identifier=plot_values[0])
 #                 plot_instance.htc = True
 #                 plot_instance.save()
         filename_25_pct = str(community_name) + '_25_pct.csv'
@@ -94,9 +109,12 @@ class Command(BaseCommand):
         writer.writerows(cdc_plots)
         plots_75_pct = Plot.objects.filter(community=community_name, selected__isnull=True)
         cdc_plots_75_pct = []
-        cdc_plots_75_pct.append(['Plot identifier', 'Plot confirmation status', 'Plot status', 'Original latitude coordinate', 'Original longitude coordinate'])
+        cdc_plots_75_pct.append(
+            ['Plot identifier', 'Plot confirmation status', 'Plot status',
+             'Original latitude coordinate', 'Original longitude coordinate'])
         for plot in plots_75_pct:
-            cdc_plots_75_pct.append([plot.plot_identifier, plot.action, plot.status, plot.gps_target_lat, plot.gps_target_lon])
+            cdc_plots_75_pct.append(
+                [plot.plot_identifier, plot.action, plot.status, plot.gps_target_lat, plot.gps_target_lon])
         cdc_file_75_pct = open(filename_75_pct, 'wb')
         writer_75_pct = csv.writer(cdc_file_75_pct, delimiter=',')
         writer_75_pct.writerows(cdc_plots_75_pct)

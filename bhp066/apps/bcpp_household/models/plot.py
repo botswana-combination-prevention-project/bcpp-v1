@@ -9,18 +9,18 @@ from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
-from edc.core.crypto_fields.fields import (EncryptedCharField,
-                                           EncryptedTextField,
-                                           EncryptedDecimalField)
+from edc.core.crypto_fields.fields import (
+    EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-from ..choices import (PLOT_STATUS, SELECTED)
+from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
+from collections import namedtuple
 
 
 def is_valid_community(self, value):
@@ -313,7 +313,7 @@ class Plot(BaseDispatchSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         if instance.pk:
-            for _ in range(0, count):
+            for i in range(0, count):
                 Household = models.get_model('bcpp_household', 'Household')
                 Household.objects.create(**{
                     'plot': instance,
@@ -353,7 +353,7 @@ class Plot(BaseDispatchSyncUuidModel):
         Household = models.get_model('bcpp_household', 'Household')
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        for _ in range(count, 0):
+        for i in range(count, 0):
             for household in Household.objects.using(using).filter(plot=instance):
                 try:
                     with transaction.atomic():
@@ -437,9 +437,11 @@ class Plot(BaseDispatchSyncUuidModel):
         form_label = []
         try:
             plot_log = PlotLog.objects.using(using).get(plot=self)
-            for plot_log_entry in PlotLogEntry.objects.using(using).filter(plot_log=plot_log).order_by('report_datetime'):
+            for plot_log_entry in PlotLogEntry.objects.using(
+                    using).filter(plot_log=plot_log).order_by('report_datetime'):
                 try:
-                    form_label.append((plot_log_entry.log_status.lower() + '-' + plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
+                    form_label.append((plot_log_entry.log_status.lower() + '-' +
+                                       plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
                 except AttributeError:  # log_status is None ??
                     form_label.append((plot_log_entry.report_datetime.strftime('%Y-%m-%d'), plot_log_entry.id))
         except PlotLog.DoesNotExist:
@@ -493,29 +495,45 @@ class Plot(BaseDispatchSyncUuidModel):
     @property
     def plot_inaccessible(self):
         """Returns True if the plot is inaccessible as defined by its status and number of attempts."""
-        from .plot_log import PlotLogEntry
-        plot_log = self.plot_log
-        plot_inaccessible = False
+        PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
+        return PlotLogEntry.objects.filter(plot_log__plot__id=self.id, log_status=INACCESSIBLE).count() >= 3
+
+    @property
+    def target_radius_in_meters(self):
+        return self.target_radius * 1000
+
+    @property
+    def increase_plot_radius(self):
+        """Returns an instance of IncreasePlotRadius if the user should be
+        allowed to change the target_radius otherwise returns None.
+
+        Plot must be inaccessible and the last reason (of 3) be either "dogs"
+        or "locked gate" """
+        PlotLogEntry = models.get_model('bcpp_household', 'PlotLogEntry')
+        IncreasePlotRadius = models.get_model('bcpp_household', 'IncreasePlotRadius')
+        created = False
+        increase_plot_radius = None
         try:
-            plot_log_entries = PlotLogEntry.objects.filter(plot_log=plot_log).order_by('report_datetime')
-            log_statuses = []
-            for log_entry in plot_log_entries:
-                log_statuses.append(log_entry.log_status)
-            if len(set(log_statuses)) == 1 and log_statuses[0] == 'INACCESSIBLE' and len(plot_log_entries) == 3:
-                plot_inaccessible = True
+            increase_plot_radius = IncreasePlotRadius.objects.get(plot=self)
+        except IncreasePlotRadius.DoesNotExist:
+            if self.plot_inaccessible:
+                plot_log_entries = PlotLogEntry.objects.filter(
+                    plot_log__plot__id=self.id).order_by('report_datetime')
+                if plot_log_entries[2].reason in ['dogs', 'locked_gate']:
+                    increase_plot_radius = IncreasePlotRadius.objects.create(plot=self)
+                    created = True
         except IndexError:
             pass
-        return plot_inaccessible
+        return increase_plot_radius, created
 
     @property
     def plot_log(self):
         """Returns an instance of the plot log."""
-        from .plot_log import PlotLog
-        instance = None
+        PlotLog = models.get_model('bcpp_household', 'plotlog')
         try:
-            instance = PlotLog.objects.get(plot=self)
+            instance = PlotLog.objects.get(plot__id=self.id)
         except PlotLog.DoesNotExist:
-            return instance
+            instance = None
         return instance
 
     class Meta:

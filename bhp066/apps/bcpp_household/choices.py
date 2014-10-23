@@ -1,6 +1,8 @@
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED,
-                        NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT, INACCESSIBLE, ACCESSIBLE)
+                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED,
+                        RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED,
+                        NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT,
+                        INACCESSIBLE, ACCESSIBLE)
 
 HOUSEHOLD_STATUS = (
     (ELIGIBLE_REPRESENTATIVE_PRESENT, 'Eligible Representative Present'),
@@ -120,9 +122,17 @@ INELIGIBLE_REASON = (
     )
 
 RESIDENT_LAST_SEEN = (
-    (NEARLY_ALWAYS_OCCUPIED, 'at least 1 person stays in the household for at least half the nights in the year'),  # replace
-    (SEASONALLY_OCCUPIED, 'at least 1 person stays in the household for at least 4 weeks but less than half the nights over the past year'),  # replace
-    (RARELY_OCCUPIED, 'at least 1 person stays in the household for 1 or more nights but less than 4 weeks over the past year'),  # NOT replaced
+    (NEARLY_ALWAYS_OCCUPIED, (
+        'at least 1 person stays in the household for at least half the nights in the year')
+     ),  # replace
+    (SEASONALLY_OCCUPIED, (
+        'at least 1 person stays in the household for at least 4 weeks '
+        'but less than half the nights over the past year')
+     ),  # replace
+    (RARELY_OCCUPIED, (
+        'at least 1 person stays in the household for 1 or more nights but '
+        'less than 4 weeks over the past year')
+     ),  # NOT replaced
     (NEVER_OCCUPIED, 'nobody spent at least 1 night in the household over the past year'),  # NOT replaced
     (UNKNOWN_OCCUPIED, 'Don\'t know'),  # replaced
 )
@@ -134,4 +144,8 @@ INACCESSIBILITY_REASONS = (
     ('OTHER', 'Other'),
 )
 
-NEXT_APPOINTMENT_SOURCE = (('neighbour', 'Neighbour'), ('household member', 'Household Member'), ('hbc', 'Field RA'), ('other', 'Other'))
+NEXT_APPOINTMENT_SOURCE = (
+    ('neighbour', 'Neighbour'),
+    ('household member', 'Household Member'),
+    ('hbc', 'Field RA'), ('other', 'Other')
+)

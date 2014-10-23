@@ -14,11 +14,8 @@ REFERRAL_CODES = (
     ('pending', '<data collection in progress>'),
     ('TST-CD4', 'POS any, need CD4 testing'),
     ('TST-HIV', 'HIV test'),
-    # ('HIV-IND', 'HIV re-test (IND)'),
     ('MASA-CC', 'Known POS, MASA continued care'),
     ('MASA-DF', 'Known POS, MASA defaulter (was on ART)'),
-    # ('SMC-IND', 'SMC (uncircumcised, hiv indeterminate)'),
-    # ('SMC?IND', 'SMC (Unknown circumcision status, hiv indeterminate)'),
     ('SMC-NEG', 'SMC (uncircumcised, hiv neg)'),
     ('SMC?NEG', 'SMC (Unknown circumcision status, hiv neg'),
     ('SMC-UNK', 'SMC (uncircumcised, hiv result not known)'),
@@ -62,7 +59,7 @@ RELATIONSHIP_TYPE = (
     ('Casual', _('Casual (known) partner')),
     ('One time partner', _('One time partner (previously unknown)')),
     ('Commercial sex worker', _('Commercial sex worker')),
-    ('Other, specify', _('Other, specify')), 
+    ('Other, specify', _('Other, specify')),
 )
 
 
@@ -106,7 +103,7 @@ SELF_CARE = (
     ('severe problems', _('I have severe problems washing or dressing myself')),
     ('unable to wash', _('I am unable to wash or dress myself')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
-) 
+)
 
 
 ACTIVITIES = (
@@ -171,12 +168,19 @@ TRAVEL_HOURS = (
 
 
 NO_MEDICALCARE_REASON = (
-    ('not thinking about HIV care', _('I am not thinking about HIV related medical/clinical care at this time')),
-    ('I am not ready to start', _('HIV related medical/clinical care for my HIV infection is important to me but I am not ready to start it yet')),
-    ('not yet tried to find a doctor', _('I have thought about starting HIV related medical/clinical care but have not yet tried to find a doctor or clinic')),
-    ('not yet tried to make an appointment', _('I have found a doctor or clinic for HIV related medical/clinical care but have not yet tried to make an appointment')),
-    ('no been successful yet', _('I have tried to obtain HIV related medical/clinical care from a doctor or clinic but have not been successful yet')),
-    ('I have an appointment for HIV care', _('I have an appointment for HIV related medical/clinical care for my HIV infection but have not been for it yet')),
+    ('not thinking about HIV care', _('I am not thinking about HIV related medical/clinical '
+                                      'care at this time')),
+    ('I am not ready to start', _('HIV related medical/clinical care for my HIV infection '
+                                  'is important to me but I am not ready to start it yet')),
+    ('not yet tried to find a doctor', _('I have thought about starting HIV related medical/'
+                                         'clinical care but have not yet tried to find a doctor or clinic')),
+    ('not yet tried to make an appointment', _('I have found a doctor or clinic for HIV related '
+                                               'medical/clinical care but have not yet tried to '
+                                               'make an appointment')),
+    ('no been successful yet', _('I have tried to obtain HIV related medical/clinical care from '
+                                 'a doctor or clinic but have not been successful yet')),
+    ('I have an appointment for HIV care', _('I have an appointment for HIV related medical/'
+                                             'clinical care for my HIV infection but have not been for it yet')),
     ('don\'t know where to go', _('I don\'t know where to go for HIV related medical/clinical care')),
     ('I do not have the money', _('I do not have the money for HIV related medical/clinical care')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
@@ -208,7 +212,7 @@ CARE_REGULARITY = (
     ('6-10 times', _('6-10 times')),
     ('More than 10 times', _('More than 10 times')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
-)  
+)
 
 
 DOCTOR_VISITS = (
@@ -229,7 +233,6 @@ JOB_TYPE = (
     ('agric', _('Self-employed in agriculture')),
     ('self full-time', _('Self-employed making money, full time')),
     ('self part-time', _('Self-employed making money, part time')),
-#     ('not working', _('Not working')),
     ('OTHER', _('Other')),
 )
 
@@ -275,7 +278,7 @@ EMPLOYMENT_INFO = (
     ('self-employed with own employees', _('Yes, self-employed with own employees')),
     ('not working', _('No, not working')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
-     )
+)
 
 JOB_DESCRIPTION = (
     ('farmer', _('Farmer (own land)')),
@@ -422,14 +425,14 @@ SMALLER_MEALS = (
     ('Don\'t want to answer', _('Don\'t want to answer')),
 )
 
- 
+
 ENROLMENT_REASON = (
     ('CD4 < 50', _('Most recent (within past 3 months) CD4 < 50')),
     ('CD4 50-100', _('Most recent (within past 3 months) CD4 50-100')),
     ('AIDS opportunistic infection/condition', _('Current AIDS opportunistic infection/condition')),
 )
- 
- 
+
+
 OPPORTUNISTIC_ILLNESSES = (
     ('Tuberculosis', _('Tuberculosis')),
     ('Wasting', _('Wasting')),
@@ -464,10 +467,10 @@ RELATION = (
 
 
 YES_NO_RECORD_REFUSAL = (
-        ('Yes', _('Yes')),
-        ('No', _('No')),
-        ('Don\'t want to answer',_('Don\'t want to answer')),
-        ('record refusal', _('Participant does not want to provide record')),
+    ('Yes', _('Yes')),
+    ('No', _('No')),
+    ('Don\'t want to answer', _('Don\'t want to answer')),
+    ('record refusal', _('Participant does not want to provide record')),
     )
 
 STI_DX = (

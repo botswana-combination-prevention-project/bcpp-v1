@@ -11,7 +11,7 @@ def participation(request, **kwargs):
     if request.method == 'POST':
         form = ParticipationForm(request.POST)
         if form.is_valid():
-            household_member = HouseholdMember.objects.get(pk=form.cleaned_data.get('household_member'))
+            household_member = HouseholdMember.objects.get(id=form.cleaned_data.get('household_member'))
             if form.cleaned_data.get('status'):
                 household_member.member_status = form.cleaned_data.get('status')
                 # use update_fields=['member_status'] and trap in household

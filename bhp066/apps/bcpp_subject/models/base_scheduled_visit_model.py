@@ -28,7 +28,8 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
             datetime_not_before_study_start,
             datetime_not_future, ],
         default=datetime.today(),
-        help_text='If reporting today, use today\'s date/time, otherwise use the date/time this information was reported.')
+        help_text=('If reporting today, use today\'s date/time, otherwise use '
+                   'the date/time this information was reported.'))
 
     objects = ScheduledModelManager()
 
@@ -67,20 +68,6 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
         if attrname == 'subject_visit':
             return self.subject_visit
         return retval
-
-#     @property
-#     def participation_type_string(self):
-#         from django.db.models import get_model
-#         participation = get_model('bcpp_subject', 'participation')
-#         instance = participation.objects.filter(subject_visit=self.subject_visit)
-#         if instance.exists() and instance[0].participation_type == 'RBD Only':
-#             return RBD
-#         if instance.exists() and instance[0].participation_type == 'Questionnaires':
-#             return Questionnaires
-#         if instance.exists() and instance[0].participation_type == 'HTC Only':
-#             return HTC
-#         #Always default to BHS full participation unless participation model is filled and indicates otherwise.
-#         return FULL
 
     class Meta:
         abstract = True
