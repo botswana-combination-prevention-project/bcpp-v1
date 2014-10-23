@@ -9,14 +9,14 @@ from edc.device.sync.exceptions import PendingTransactionError, ProducerError
 from edc.device.sync.utils import load_producer_db_settings, getproducerbyaddr
 
 from ..helpers import ReplacementHelper
-from ..exceptions import ReplacementError
 
 
 @login_required
 def check_replacements(request):
     """Get all plots to be replaced.
 
-    Filter plots to be replaced by calling replacement methods that return replacement household.
+    Filter plots to be replaced by calling replacement methods that
+    return replacement household.
     """
     template = 'check_replacements.html'
     replaceables = []
@@ -31,7 +31,8 @@ def check_replacements(request):
             replaceables.extend(list(replacement_helper.replaceable_households(producer.settings_key)))
         if not replaceables:
             messages.add_message(request, messages.INFO, (
-                "There are no replaceable plots or households dispatched to producer \'{}\'").format(str(producer.name)))
+                "There are no replaceable plots or households that are dispatched to "
+                "producer \'{}\'").format(str(producer.name)))
     except Producer.DoesNotExist:
         messages.add_message(request, messages.ERROR, (
             '\'{}\' not a valid producer. See model Producer.').format(producer_name))

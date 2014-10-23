@@ -25,7 +25,8 @@ class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel):
         )
 
     household_residency = models.CharField(
-        verbose_name='Does the respondent typically spend more nights on average in this household than in any other household in the same community?',
+        verbose_name=('Does the respondent typically spend more nights on average '
+                      'in this household than in any other household in the same community?'),
         max_length=3,
         choices=YES_NO,
         help_text="If 'NO' respondent cannot serve as Household Head/Representative.",

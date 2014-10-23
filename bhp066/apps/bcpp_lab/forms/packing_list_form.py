@@ -9,7 +9,7 @@ class PackingListForm (BasePackingListForm):
 
         self.requisition = [SubjectRequisition, Aliquot]
 
-        return  super(PackingListForm, self).clean()
+        return super(PackingListForm, self).clean()
 
     class Meta:
         model = PackingList
@@ -21,7 +21,7 @@ class PackingListItemForm (BasePackingListItemForm):
 
         self.requisition = [SubjectRequisition, Aliquot]
 
-        return  super(BasePackingListItemForm, self).clean()
+        return super(BasePackingListItemForm, self).clean()
 
     class Meta:
         model = PackingListItem

@@ -6,8 +6,12 @@ from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_PARTICIPATION
 class ParticipationForm(forms.Form):
     """A form to select the type of participation for a household member.
 
-    ...note:: configured and referenced directly on the household_member model via method participation_form()"""
-    status = forms.ChoiceField(required=False, choices=HOUSEHOLD_MEMBER_PARTICIPATION, widget=Select(attrs={'onchange': 'this.form.submit();'}))
+    ...note:: configured and referenced directly on the household_member
+              model via method participation_form()"""
+    status = forms.ChoiceField(required=False,
+                               choices=HOUSEHOLD_MEMBER_PARTICIPATION,
+                               widget=Select(attrs={'onchange': 'this.form.submit();'})
+                               )
     household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
     dashboard_id = forms.CharField(widget=forms.HiddenInput())

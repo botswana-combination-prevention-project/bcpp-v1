@@ -18,10 +18,12 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
     form = HouseholdMemberForm
     date_hierarchy = 'modified'
-    actions = [export_as_csv_action("Export as csv", fields=['initials', 'gender', 'age_in_years', 'present_today', 'study_resident', 'relation',
-                                                             'eligible_member',
-                                                             'eligible_subject',
-                                                             'member_status'], extra_fields={'plot_identifier': 'household_structure__household__plot__plot_identifier'})]
+    actions = [export_as_csv_action(
+        "Export as csv",
+        fields=[
+            'initials', 'gender', 'age_in_years', 'present_today', 'study_resident', 'relation',
+            'eligible_member', 'eligible_subject', 'member_status'],
+        extra_fields={'plot_identifier': 'household_structure__household__plot__plot_identifier'})]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
@@ -75,9 +77,12 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'household_structure__household__plot__id',
         'relation', 'id']
 
-    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident', 'member_status','inability_to_participate',
-                   'eligible_member', 'eligible_subject', 'enrollment_checklist_completed', 'enrollment_loss_completed', 'reported',
-                   'refused', 'is_consented', 'eligible_htc', 'target', 'hiv_history', 'household_structure__household__community',
+    list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident',
+                   'member_status', 'inability_to_participate',
+                   'eligible_member', 'eligible_subject', 'enrollment_checklist_completed',
+                   'enrollment_loss_completed', 'reported',
+                   'refused', 'is_consented', 'eligible_htc', 'target', 'hiv_history',
+                   'household_structure__household__community',
                    'modified', 'hostname_created', 'user_created', 'visit_attempts')
 
     list_per_page = 25
