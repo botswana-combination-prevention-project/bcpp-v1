@@ -44,7 +44,7 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
             if self.appointment.visit_definition.code == 'C0':
                 if self.reason in ['Initiation Visit', 'Other NON-VL Visit']:
                     for lab in lab_model:
-                        panel = Panel.objects.get(edc_name='Viral Load Clinic')
+                        panel = Panel.objects.get(edc_name='Viral Load (clinic)')
                         lab_entry = LabEntry.objects.filter(model_name=lab, requisition_panel_id=panel.id, visit_definition_id=self.appointment.visit_definition_id)
                         if lab_entry:
                             requisition_meta_data = RequisitionMetaData.objects.filter(appointment=self.appointment, lab_entry=lab_entry[0], registered_subject=self.registered_subject)
