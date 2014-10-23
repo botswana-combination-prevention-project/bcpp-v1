@@ -14,7 +14,8 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_subject.tests.factories import (SubjectConsentFactory, SubjectVisitFactory)
 from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
-from apps.bcpp_household.models import Household, HouseholdStructure, Survey
+from apps.bcpp_household.models import Household, HouseholdStructure
+from apps.bcpp_survey.models import Survey
 from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory, HouseholdMemberFactory
 from apps.bcpp_lab.tests.factories import (SubjectRequisitionFactory, ProcessingFactory, PackingListFactory)
 from apps.bcpp_lab.models import Aliquot, Panel, AliquotProfile, PackingListItem, AliquotType, Receive
