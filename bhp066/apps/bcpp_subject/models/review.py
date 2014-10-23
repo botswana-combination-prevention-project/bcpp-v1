@@ -1,12 +1,13 @@
 from . import (SubjectOffStudy, SubjectVisit, HicEnrollment, SubjectConsentHistory, SubjectConsent, SubjectLocator,
-               SubjectDeath, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission, HivHealthCareCosts,
-               LabourMarketWages, Grant, CeaEnrollmentChecklist, ResidencyMobility, Demographics, CommunityEngagement,
-               Education, HivTestingHistory, HivTestReview, HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner,
-               MonthsSecondPartner, MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised,
-               Uncircumcised, ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis, Sti, SubstanceUse,
-               Stigma, StigmaOpinion, PositiveParticipant, AccessToCare, HivResult, Pregnancy, NonPregnancy,
-               HivResultDocumentation, Pima, Cd4History, ClinicQuestionnaire, TbSymptoms, SubjectReferral, Participation,
-               RbdDemographics)
+               SubjectDeath, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission,
+               HivHealthCareCosts, LabourMarketWages, Grant, CeaEnrollmentChecklist, ResidencyMobility,
+               Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview,
+               HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner,
+               MonthsThirdPartner, HivCareAdherence, HivMedicalCare, Circumcision, Circumcised,
+               Uncircumcised, ReproductiveHealth, MedicalDiagnoses, HeartAttack, Cancer, Tubercolosis,
+               Sti, SubstanceUse, Stigma, StigmaOpinion, PositiveParticipant, AccessToCare,
+               HivResult, Pregnancy, NonPregnancy, HivResultDocumentation, Pima, Cd4History,
+               ClinicQuestionnaire, TbSymptoms, SubjectReferral, Participation, RbdDemographics)
 
 
 class SubjectOffStudyReview(SubjectOffStudy):
@@ -177,17 +178,6 @@ class DemographicsReview(Demographics):
     class Meta:
         app_label = 'bcpp_subject_review'
         proxy = True
-
-# class SubjectReferralReview(SubjectReferral):
-#    
-#     def save(self, *args, **kwargs):
-#         pass
-#    
-#     class Meta:
-#         app_label = 'bcpp_subject_review'
-#         verbose_name = 'Subject Referral Review'
-#         verbose_name_plural = "Subject Referral Review" 
-#         proxy = True
 
 
 class CommunityEngagementReview(CommunityEngagement):
@@ -558,4 +548,3 @@ class RbdDemographicsReview(RbdDemographics):
     class Meta:
         app_label = 'bcpp_subject_review'
         proxy = True
-

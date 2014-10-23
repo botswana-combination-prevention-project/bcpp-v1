@@ -68,7 +68,7 @@ class HouseholdMemberHelper(object):
                         options = [NOT_ELIGIBLE]
                     else:
                         if self.household_member.htc:
-                            options = [HTC]
+                            options = [HTC, BHS_SCREEN]
                         else:
                             options = [HTC_ELIGIBLE, BHS_SCREEN]
             elif self.household_member.eligible_member:
@@ -99,7 +99,7 @@ class HouseholdMemberHelper(object):
                 if not self.household_member.eligible_htc:
                     options = [opt for opt in options if opt not in [HTC_ELIGIBLE, HTC]]
                 elif self.household_member.eligible_htc:
-                    options = [BHS_SCREEN, HTC_ELIGIBLE]
+                    options = [BHS_SCREEN]
             else:
                 raise TypeError('ERROR: household_member.refused={0},self.household_member.eligible_htc={1}, '
                                 'self.household_member.eligible_member={2} '

@@ -38,7 +38,8 @@ class Command(BaseCommand):
                 if Plot.objects.filter(plot_identifier=idnt):
                     print "Plot {0} already created".format(idnt)
                 else:
-                    plot_in_75 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat, gps_target_lon=gps_target_lon, community=community_name, htc=True)
+                    plot_in_75 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat,
+                                      gps_target_lon=gps_target_lon, community=community_name, htc=True)
                     plot_in_75.save()
                 num_75_pct += 1
                 print "plots created {0} out of {1} in the 75%".format(num_75_pct, len(lines_75))
@@ -57,7 +58,8 @@ class Command(BaseCommand):
                 if Plot.objects.filter(plot_identifier=idnt):
                     print "Plot {0} already created".format(idnt)
                 else:
-                    lines_20 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat, gps_target_lon=gps_target_lon, selected=1, community=community_name)
+                    lines_20 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat,
+                                    gps_target_lon=gps_target_lon, selected=1, community=community_name)
                     lines_20.save()
                 num_20_pct += 1
                 print "plots created {0} out of {1} in the 20%".format(num_20_pct, total_plots_20)
@@ -77,7 +79,8 @@ class Command(BaseCommand):
                 if Plot.objects.filter(plot_identifier=idnt):
                     print "Plot {0} already created".format(idnt)
                 else:
-                    lines_5 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat, gps_target_lon=gps_target_lon, selected=2, community=community_name)
+                    lines_5 = Plot(plot_identifier=idnt, gps_target_lat=gps_target_lat,
+                                   gps_target_lon=gps_target_lon, selected=2, community=community_name)
                     lines_5.save()
                 num_5_pct += 1
                 print "plots created {0} out of {1} in the 5%".format(num_5_pct, total_lines_5)
