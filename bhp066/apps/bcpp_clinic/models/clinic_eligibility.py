@@ -126,9 +126,7 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
         self.match_consent_values(self)
         if self.eligible_clinic_subject():
             self.is_eligible = True
-        subject = RegisteredSubject.objects.filter(first_name=self.first_name, initials=self.initials, dob=self.dob, gender=self.gender)
-        if subject.exists():
-            raise ValidationError('This subject already exists.CANNOT proceed with eligibility.')
+        self.update_registered_subject()
         super(ClinicEligibility, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -167,8 +165,12 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
             return clinic_consent.objects.filter(registered_subject__registration_identifier=self.id)[0]
         return None
 
-    def update_registered_subject_on_post_save(self, **kwargs):
+    def update_registered_subject(self, **kwargs):
         using = kwargs.get('using', None)
+
+        subject = RegisteredSubject.objects.filter(first_name=self.first_name, initials=self.initials, dob=self.dob, gender=self.gender)
+        if subject.exists():
+            raise ValidationError('This subject already exists.CANNOT proceed with eligibility.')
         # decide now, either access an existing registered_subject or create a new one
         if RegisteredSubject.objects.using(using).filter(registration_identifier=self.id).exists():
             registered_subject = RegisteredSubject.objects.using(using).get(registration_identifier=self.id)
@@ -188,7 +190,6 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
                 registration_datetime=self.created,
                 user_created=self.user_created,
                 registration_status='REGISTERED',)
-            # set registered_subject for this hsm
             self.registered_subject = registered_subject
             #self.save(using=using)
 
