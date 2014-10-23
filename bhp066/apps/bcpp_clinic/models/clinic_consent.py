@@ -49,7 +49,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
     have_htc_pims = models.CharField(
-        verbose_name=_("Does the participant have one of these identification numbers?"),
+        verbose_name=("Does the participant have one of these identification numbers?"),
         max_length=30,
         choices=(
             ('barcode', 'Barcode Number'),
@@ -63,7 +63,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
         )
 
     htc_pims_id = models.CharField(
-        verbose_name=_("Enter the HTC and or PIMS identifiers(comma separated)?"),
+        verbose_name=("Enter the HTC and or PIMS identifiers(comma separated)?"),
         max_length=50,
         null=True,
         blank=True,

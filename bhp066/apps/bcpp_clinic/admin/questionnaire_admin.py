@@ -24,5 +24,5 @@ class QuestionnaireAdmin(ClinicVisitModelAdmin):
         }
     list_display = ('on_arv', 'cd4_count', 'report_datetime')
     list_filter = ('on_arv', 'report_datetime')
-    search_fields = ('on_arv')
+    search_fields = ('on_arv',)
 admin.site.register(Questionnaire, QuestionnaireAdmin)
