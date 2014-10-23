@@ -137,6 +137,9 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
     def get_registration_datetime(self):
         return self.registration_datetime
 
+    def get_registered_subject(self):
+        return self._registered_subject
+
     def eligible_clinic_subject(self):
         age_in_years = relativedelta(date.today(), self.dob).years
         return (self.hiv_status == 'POS' and self.part_time_resident == 'Yes' and self.legal_marriage != 'No'
