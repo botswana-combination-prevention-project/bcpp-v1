@@ -102,6 +102,12 @@ class SubjectHtc(BaseMemberStatusModel):
                                     'all are taken. Increase the length of the random string')
         return tracking_identifier
 
+    def deserialize_prep(self, **kwargs):
+        # SubjectHtc being deleted by an IncommingTransaction, we ahead and delete it.
+        # Its no longer needed at all because member status changed.
+        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
+            self.delete()
+
     class Meta:
         app_label = 'bcpp_household_member'
         verbose_name = "Subject Htc"

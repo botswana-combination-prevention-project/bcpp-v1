@@ -62,7 +62,7 @@ class TestMemberStatus(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        BcppAppConfiguration()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
@@ -395,7 +395,7 @@ class TestMemberStatus(TestCase):
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
         household_member.member_status = REFUSED
-        household_member.save()
+        household_member.save(update_fields=['member_status'])
         household_member = HouseholdMember.objects.get(pk=pk)
         SubjectRefusalFactory(household_member=household_member)
         if self.intervention:
@@ -478,6 +478,11 @@ class TestMemberStatus(TestCase):
             study_resident='Yes')
         self.enroll_household()
         household_member = HouseholdMember.objects.get(pk=household_member.pk)
+
+        household_member = HouseholdMember.objects.get(pk=household_member.pk)
+        self.assertEquals(household_member.member_status, BHS_SCREEN)
+        household_member.member_status = REFUSED
+        household_member.save(update_fields=['member_status'])
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
         self.assertFalse(subject_refusal.household_member.eligible_subject)
         self.assertTrue(subject_refusal.household_member.eligible_htc)
@@ -676,9 +681,12 @@ class TestMemberStatus(TestCase):
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
 
         # simulate user change using participation view
-        enrollment_checklist.household_member.member_status = REFUSED
-        enrollment_checklist.household_member.save()
-
+        household_member = HouseholdMember.objects.get(pk=enrollment_checklist.household_member.pk)
+        household_member.member_status = REFUSED
+        household_member.save(update_fields=['member_status'])
+        household_member = HouseholdMember.objects.get(pk=enrollment_checklist.household_member.pk)
+        self.assertEquals(household_member.member_status, REFUSED)
+        #member_status remains as REFUSED until refusal_log is filled.
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
         household_member = HouseholdMember.objects.get(pk=subject_refusal.household_member.pk)
         self.assertTrue(household_member.eligible_subject, 'Expected eligible subject to be True')
@@ -717,6 +725,8 @@ class TestMemberStatus(TestCase):
         # simulate user change through participation view
         household_member.member_status = REFUSED
         household_member.save(update_fields=['member_status'])
+        household_member = HouseholdMember.objects.get(pk=enrollment_checklist.household_member.pk)
+        self.assertEquals(household_member.member_status, REFUSED)
 
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
         household_member = HouseholdMember.objects.get(pk=subject_refusal.household_member.pk)
@@ -732,3 +742,41 @@ class TestMemberStatus(TestCase):
             self.assertFalse(household_member.enrollment_checklist_completed)
             self.assertTrue(household_member.refused)
             self.assertTrue(household_member.eligible_htc)
+
+    def test_member_htc_to_htc_eligible(self):
+        """Asserts that an eligible member in a household that is enrolled AFTER the member was added and who fails eligibility is HTC ELIGIBLE."""
+        self.startup()
+        household_member = self.enroll_household()
+        household_member = HouseholdMemberFactory(
+            household_structure=household_member.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        enrollment_checklist = EnrollmentChecklistFactory(
+            household_member=household_member,
+            gender='M',
+            dob=date.today() - relativedelta(years=20),
+            guardian='No',
+            initials=household_member.initials,
+            part_time_resident='Yes',
+            has_identity='No')
+        household_member = HouseholdMember.objects.get(pk=enrollment_checklist.household_member.pk)
+        self.assertFalse(household_member.eligible_subject)
+        self.assertTrue(household_member.enrollment_checklist_completed)
+        self.assertFalse(household_member.refused)
+        self.assertTrue(household_member.eligible_htc)
+        #A member that is HTC_ELIGIBLE can still be enrolled in to full BHS
+        self.assertEquals(household_member.member_status, HTC_ELIGIBLE)
+        #Perform HTC on a subject
+        subject_htc = SubjectHtcFactory(
+            household_member=household_member)
+        household_member = HouseholdMember.objects.get(pk=subject_htc.household_member.pk)
+        self.assertTrue(household_member.htc)
+        self.assertEquals(household_member.member_status, HTC)
+        #Come back from HTC to HTC_ELIGIBLE which means you can enroll the member in to BHS in the case that they have now
+        #agreed to fully participate
+        household_member.member_status = BHS_SCREEN
+        household_member.save(update_fields=['member_status'])
+        self.assertFalse(household_member.eligible_htc)
+        self.assertEquals(household_member.member_status, BHS_SCREEN)
