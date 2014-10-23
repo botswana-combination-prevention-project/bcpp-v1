@@ -16,7 +16,7 @@ def subject_consent_on_post_save(sender, instance, **kwargs):
 def clinic_eligibility_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not kwargs.get('raw', False):
         if isinstance(instance, ClinicEligibility):
-            #instance.update_registered_subject_on_post_save(**kwargs)
+            instance.update_registered_subject_on_post_save(**kwargs)
             if instance.is_eligible:
                 instance.delete_enrollment_loss(**kwargs)
             else:
