@@ -1,4 +1,6 @@
 {% load dispatch_tags %}
+{% load crypto_tags %}
+
 <div class="results">
       <table cellspacing="0" id="result_list">
         <thead><tr>
@@ -17,7 +19,7 @@
         <tbody>
       {% for hm in search_result.object_list %}
         <tr class="{% cycle 'row2' 'row1' %}">
-        <td>{{hm.first_name}} ({{hm.initials}})</td>
+        <td>{{hm.first_name|encrypted}} ({{hm.initials|encrypted}})</td>
         
         <td>
         {% if hm.is_consented%}

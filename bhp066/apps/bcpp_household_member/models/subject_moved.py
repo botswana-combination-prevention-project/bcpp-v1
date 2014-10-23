@@ -56,7 +56,8 @@ class SubjectMoved(BaseMemberStatusModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        household = models.get_model('bcpp_household', 'Household').objects.get(household_identifier=self.household_member.household_structure.household.household_identifier)
+        household = models.get_model('bcpp_household', 'Household').objects.get(
+            household_identifier=self.household_member.household_structure.household.household_identifier)
         if household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(household.household_identifier))
         self.survey = self.household_member.survey
@@ -64,7 +65,6 @@ class SubjectMoved(BaseMemberStatusModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-#         db_table = 'bcpp_subject_subjectmoved'
         verbose_name = "Subject Moved"
         verbose_name_plural = "Subject Moved"
         ordering = ['household_member']

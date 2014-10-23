@@ -59,8 +59,10 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel):
                     field = fld
                     break
         if not field:
-            raise TypeError('Method \'dispatch_container_lookup\' cannot find the "inline\'s" related field for class {0}'.format(self.__class__))
-        return (Plot, '{0}__household_member__household_structure__household__plot__plot_identifier'.format(field.name))
+            raise TypeError('Method \'dispatch_container_lookup\' cannot find the "inline\'s" '
+                            'related field for class {0}'.format(self.__class__))
+        return (Plot, ('{0}__household_member__household_structure__household__'
+                       'plot__plot_identifier').format(field.name))
 
     class Meta:
         abstract = True

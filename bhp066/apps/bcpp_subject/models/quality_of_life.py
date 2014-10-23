@@ -45,9 +45,9 @@ class QualityOfLife (BaseScheduledVisitModel):
         )
     health_today = models.IntegerField(
         verbose_name=_("We would like to know how good or bad your health is TODAY. "
-                      "This scale is numbered from 0 to 100. 100 means the 'best' health"
-                      " you can imagine. 0 means the 'worst' health you can imagine. "
-                      "Indicate on the scale how your health is TODAY.  "),
+                       "This scale is numbered from 0 to 100. 100 means the 'best' health"
+                       " you can imagine. 0 means the 'worst' health you can imagine. "
+                       "Indicate on the scale how your health is TODAY.  "),
         max_length=3,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         null=True,

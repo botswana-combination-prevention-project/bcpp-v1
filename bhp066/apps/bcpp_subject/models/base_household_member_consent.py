@@ -43,15 +43,23 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         .. note:: overriding to change the constraint to subject_identifier + survey
                   instead of just subject_identifier."""
         if not self.pk and self.subject_identifier:
-            if self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier, survey=self.survey):
-                obj = self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier, survey=self.survey)
+            if self.__class__.objects.using(using).filter(
+                    subject_identifier=self.subject_identifier, survey=self.survey):
+                obj = self.__class__.objects.using(using).filter(
+                    subject_identifier=self.subject_identifier, survey=self.survey)
                 raise IdentifierError('Attempt to insert duplicate value for '
-                                      'subject_identifier {0} and survey {2} when saving {1} on add. See {3}.'.format(self.subject_identifier, self, self.survey, obj))
+                                      'subject_identifier {0} and survey {2} when '
+                                      'saving {1} on add. See {3}.'.format(
+                                          self.subject_identifier, self, self.survey, obj))
         else:
-            if self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier, survey=self.survey).exclude(pk=self.pk):
-                obj = self.__class__.objects.using(using).filter(subject_identifier=self.subject_identifier, survey=self.survey).exclude(pk=self.pk)
+            if self.__class__.objects.using(using).filter(
+                    subject_identifier=self.subject_identifier, survey=self.survey).exclude(pk=self.pk):
+                obj = self.__class__.objects.using(using).filter(
+                    subject_identifier=self.subject_identifier, survey=self.survey).exclude(pk=self.pk)
                 raise IdentifierError('Attempt to insert duplicate value for '
-                                      'subject_identifier {0} and survey {2} when saving {1} on change. See {3}.'.format(self.subject_identifier, self, self.survey, obj))
+                                      'subject_identifier {0} and survey {2} when '
+                                      'saving {1} on change. See {3}.'.format(
+                                          self.subject_identifier, self, self.survey, obj))
         self.check_for_duplicate_subject_identifier()
 
     def check_for_duplicate_subject_identifier(self):
@@ -65,7 +73,9 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         self.registered_subject.registration_status = 'CONSENTED'
         self.registered_subject.save(using=using)
         if self.subject_identifier != self.registered_subject.subject_identifier:
-            raise TypeError('Subject identifier expected to be same as registered_subject subject_identifier. Got {0} != {1}'.format(self.subject_identifier, self.registered_subject.subject_identifier))
+            raise TypeError('Subject identifier expected to be same as registered_subject '
+                            'subject_identifier. Got {0} != {1}'.format(
+                                self.subject_identifier, self.registered_subject.subject_identifier))
 
     def dispatch_container_lookup(self, using=None):
         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
