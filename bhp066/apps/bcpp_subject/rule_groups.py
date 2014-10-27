@@ -189,12 +189,19 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
+    verbal_hiv_result_hiv_care = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivcareadherence'])
+
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_known_pos,
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'hivmedicalcare', 'positiveparticipant'])
+        target_model=['hivmedicalcare', 'positiveparticipant'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -208,7 +215,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('verbal_hiv_result', 'equals', 'NEG'),
             consequence='not_required',
             alternative='new'),
-        target_model=['positiveparticipant', 'hivcareadherence', 'hivmedicalcare'])
+        target_model=['positiveparticipant', 'hivmedicalcare'])
 
     other_response = ScheduledDataRule(
         logic=Logic(
