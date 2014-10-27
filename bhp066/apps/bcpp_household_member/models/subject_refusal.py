@@ -65,14 +65,10 @@ class SubjectRefusal (BaseMemberStatusModel):
         super(SubjectRefusal, self).save(*args, **kwargs)
 
     def deserialize_prep(self, **kwargs):
-        from django.db.models import signals
-        from .signals import subject_refusal_on_post_delete
         # SubjectRefusal being deleted by an IncommingTransaction, we ahead and delete it.
         # Its no longer needed at all because member status changed.
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
-            signals.post_delete.disconnect(subject_refusal_on_post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
             self.delete()
-            signals.post_delete.connect(subject_refusal_on_post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
 
     class Meta:
         app_label = "bcpp_household_member"
