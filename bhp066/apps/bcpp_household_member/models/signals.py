@@ -15,6 +15,7 @@ from .subject_absentee_entry import SubjectAbsenteeEntry
 from .subject_htc import SubjectHtc
 from .subject_refusal import SubjectRefusal
 from .subject_refusal_history import SubjectRefusalHistory
+from .subject_htc_history import SubjectHtcHistory
 from .subject_undecided import SubjectUndecided
 from .subject_undecided_entry import SubjectUndecidedEntry
 
@@ -29,11 +30,33 @@ def subject_refusal_on_post_delete(sender, instance, using, **kwargs):
         household_member = HouseholdMember.objects.using(using).get(
             pk=instance.household_member.pk)
         options = {'household_member': household_member,
+                   'report_datetime': instance.report_datetime,
                    'survey': instance.survey,
                    'refusal_date': instance.refusal_date,
                    'reason': instance.reason,
                    'reason_other': instance.reason_other}
         SubjectRefusalHistory.objects.using(using).create(**options)
+
+
+@receiver(post_delete, weak=False, dispatch_uid="subject_htc_on_post_delete")
+def subject_htc_on_post_delete(sender, instance, using, **kwargs):
+    """Delete SubjectHtc on change of member status from HTC but first puts a
+       copy into the history model."""
+    if isinstance(instance, SubjectHtc):
+        # update the history model
+        household_member = HouseholdMember.objects.using(using).get(
+            pk=instance.household_member.pk)
+        options = {'household_member': household_member,
+                   'survey': instance.survey,
+                   'report_datetime': instance.report_datetime,
+                   'tracking_identifier': instance.tracking_identifier,
+                   'offered': instance.offered,
+                   'accepted': instance.accepted,
+                   'refusal_reason': instance.refusal_reason,
+                   'referred': instance.referred,
+                   'referral_clinic': instance.referral_clinic,
+                   'comment': instance.comment}
+        SubjectHtcHistory.objects.using(using).create(**options)
 
 
 @receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
