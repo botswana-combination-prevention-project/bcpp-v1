@@ -25,7 +25,7 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
@@ -238,6 +238,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                     self.clear_refusal
                 if self.enrollment_checklist_completed:
                     self.clear_enrollment_checklist
+                if self.htc:
+                    self.clear_htc
+            if self.member_status == REFUSED:
+                if self.enrollment_checklist_completed:
+                    self.clear_enrollment_checklist
             else:
                 self.undecided = True if selected_member_status == UNDECIDED else False
                 self.absent = True if selected_member_status == ABSENT else False
@@ -249,7 +254,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         self.member_status = household_member_helper.member_status(selected_member_status)
         try:
             update_fields = kwargs.get('update_fields') + [
-                'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc']
+                'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc',
+                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc']
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
@@ -270,6 +276,16 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         try:
             SubjectRefusal.objects.get(household_member=self).delete()
         except SubjectRefusal.DoesNotExist:
+            pass
+
+    @property
+    def clear_htc(self):
+        from ..models import SubjectHtc
+        self.htc = False
+        self.eligible_htc = False
+        try:
+            SubjectHtc.objects.get(household_member=self).delete()
+        except SubjectHtc.DoesNotExist:
             pass
 
     @property

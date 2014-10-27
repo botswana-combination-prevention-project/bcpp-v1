@@ -57,7 +57,7 @@ class TestRuleGroup(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        BcppAppConfiguration()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
@@ -66,7 +66,7 @@ class TestRuleGroup(TestCase):
 
         survey = Survey.objects.all().order_by('datetime_start')[0]
 
-        study_site = StudySite.objects.get(site_code='14')
+        study_site = StudySite.objects.get(site_code='16')
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         RepresentativeEligibilityFactory(household_structure=household_structure)
@@ -639,6 +639,31 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+
+    def test_hiv_care_adherance_for_verbal_posetive_only(self):
+        """HivCareAdharance form should be made available any verbal positive,
+            not considering availability or lack thereof documentation.
+        """
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male,
+            has_tested='Yes',
+            when_hiv_test='1 to 5 months ago',
+            has_record='No',
+            verbal_hiv_result='POS',
+            other_record='No'
+            )
+
+        hiv_care_adherence_options = {}
+        hiv_care_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
     def test_known_pos_on_art_with_doc_requires_cd4_only(self):
         """If previous result is POS on art with doc evidence, do not run HIV or CD4.

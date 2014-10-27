@@ -8,4 +8,5 @@ from .subject_moved_admin import SubjectMoved
 from .subject_refusal_admin import SubjectRefusal
 from .subject_undecided_admin import SubjectUndecided
 from .subject_refusal_history_admin import SubjectRefusalHistory
+from .subject_htc_history_admin import SubjectHtcHistoryAdmin
 from .subject_htc_admin import SubjectHtcAdmin
