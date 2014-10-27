@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 #from ..models import SubjectReferral, ClinicSubjectLocator
 from ..models import ClinicSubjectLocator
 
+
 class ClinicSubjectLocatorIsReferredListFilter(SimpleListFilter):
 
     title = _('referred')
