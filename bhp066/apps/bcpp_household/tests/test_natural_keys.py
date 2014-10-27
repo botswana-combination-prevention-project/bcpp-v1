@@ -14,7 +14,7 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal, HouseholdRefusalHistory
+from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal
 from .factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
                         PlotLogFactory, HouseholdLogFactory, HouseholdAssessmentFactory)
 
@@ -63,8 +63,8 @@ class TestNaturalKeys(SimpleTestCase):
 #         household_identifier_history =
         HouseholdRefusal.objects.get(household_structure=household_structure).delete()
         print 'No. of HOUSEHOLDS_REFUSALS = ' + str(HouseholdRefusal.objects.all().count())
-        self.assertEqual(HouseholdRefusalHistory.objects.all().count(), 1)
-        household_ref_history = HouseholdRefusalHistory.objects.get(household_structure=household_structure)
+#         self.assertEqual(HouseholdRefusalHistory.objects.all().count(), 1)
+#         household_ref_history = HouseholdRefusalHistory.objects.get(household_structure=household_structure)
         household_structure.failed_enumeration_attempts = 3
         household_assesment = HouseholdAssessmentFactory(household_structure=household_structure)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -82,7 +82,7 @@ class TestNaturalKeys(SimpleTestCase):
         instances.append(household_structure)
         #instances.append(household_refusal)
         instances.append(household_assesment)
-        instances.append(household_ref_history)
+#         instances.append(household_ref_history)
 #         instances.append(household_identifier_history)
         instances.append(household_log)
         instances.append(plot_log_entry1)
