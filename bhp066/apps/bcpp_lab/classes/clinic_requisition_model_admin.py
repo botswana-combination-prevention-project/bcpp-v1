@@ -7,4 +7,4 @@ class ClinicRequisitionModelAdmin (BaseRequisitionModelAdmin):
 
     visit_model = ClinicVisit
     visit_fieldname = 'clinic_visit'
-    dashboard_type = 'subject'
+    dashboard_type = 'clinic'
