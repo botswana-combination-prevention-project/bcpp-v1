@@ -9,7 +9,7 @@ class ClinicSearchByWord(BaseSearchByWord):
     #search_model = ClinicConsent
     search_model = ClinicEligibility
     order_by = '-created'
-    template = 'clinicconsent_include.html'
+    template = 'cliniceligibility_include.html'
 
     def contribute_to_context(self, context):
         context = super(BaseSearchByWord, self).contribute_to_context(context)
