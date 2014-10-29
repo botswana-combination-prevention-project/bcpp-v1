@@ -76,13 +76,13 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
     def get_site_code(self):
         return settings.SITE_CODE
 
-    def get_registered_subject(self):
-        return self.registered_subject
+#     def get_registered_subject(self):
+#         return self.registered_subject
 
     def get_registration_datetime(self):
         return self.consent_datetime
 
-    def post_save_update_registered_subject(self, **kwargs):
+    def update_registered_subject(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
         if re_pk.match(self.registered_subject.subject_identifier):
@@ -105,18 +105,13 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
             self.registered_subject = eligibility.registered_subject
         else:
             raise ValueError('Could not find a ClinicEligibility. Ensure \'DOB\', \'first_name\', \'gender\' and \'initials\' match those in ClinicEligibility.')
-        self.save_clinic_consent()
+        self.validate_clinic_consent()
+        self.update_registered_subject()
         super(BaseClinicConsent, self).save(*args, **kwargs)
 
-    def save_clinic_consent(self, subject_identifier=None):
+    def validate_clinic_consent(self, subject_identifier=None):
         if SubjectConsent.objects.filter(first_name=self.first_name, last_name=self.last_name, identity=self.identity).exists():
             raise ValidationError('We cannot consent a subject twice! Subject was already consented in BHS.')
-#         else:
-#             subject_consent = SubjectConsent.objects.get(first_name=self.first_name, last_name=self.last_name, identity=self.identity)
-#             registered_subject = subject_consent.registered_subject
-#             self.registered_subject = registered_subject
-#             subject_identifier = registered_subject.subject_identifier
-#         return subject_identifier
 
     def is_dispatchable_model(self):
         return False
