@@ -6,7 +6,6 @@ from edc.dashboard.search.classes import BaseSearchByWord
 class ClinicSearchByWord(BaseSearchByWord):
 
     name = 'word'
-    #search_model = ClinicConsent
     search_model = ClinicEligibility
     order_by = '-created'
     template = 'cliniceligibility_include.html'
