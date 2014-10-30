@@ -97,6 +97,17 @@ BOKAA_LANDMARKS = (
 )
 
 OODI_LANDMARKS = (
+    ('Durban General Dealer', -24.56958502, 26.03885997),
+    ('Dutch Church Oodi', -24.57077801, 26.037125),
+    ('Garden Farm', -24.55395998, 26.03662804),
+    ('King Fishers Pruit', -24.56834299, 26.02631603),
+    ('New Look General Trading', -24.56596898, 26.04761898),
+    ('Oodi Clinic', -24.58096202, 26.04311404),
+    ('Oodi College Of Applied Arts', -24.58026901, 26.05043404),
+    ('Oodi Sub Landboard', -24.57028901, 26.056741),
+    ('Oodima Community School', -24.56132901, 26.04575501),
+    ('Public Stand Pipe', -24.56241497, 26.02982503),
+    ('Thitho Dry Clean', -24.57562803, 26.04283903)
 )
 
 LENTSWELETAU_LANDMARKS = (
