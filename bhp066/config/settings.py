@@ -51,7 +51,13 @@ elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
 else:
     #KEY_PATH = '/Volumes/keys'  # community servers
-    KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
+    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    # KEY_PATH = '/Volumes/keys'
+    # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
+    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 
@@ -68,12 +74,12 @@ if 'test' in sys.argv:
 else:
     DATABASES = PRODUCTION_MYSQL
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', 'bhpserver']
@@ -267,7 +273,7 @@ else:
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066']
+MIDDLE_MAN_LIST = ['bcpp358-bhp066']
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
