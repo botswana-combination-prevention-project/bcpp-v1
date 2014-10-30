@@ -328,18 +328,15 @@ def replacement_report_view(request, **kwargs):
 
     # replaceable plots
     for plot in plots:
-        replacement_helper = ReplacementHelper(plot=plot)
-        if replacement_helper.replaceable_plot and not plot.replaced_by:
+        if plot.replaceable:
             replaceable_plots += 1
         if plot.replaced_by:
             replaced_plots += 1
-
     for household_structure in household_structures:
         household_status = None
-        replacement_helper = ReplacementHelper(household_structure=household_structure)
         household_log = HouseholdLog.objects.filter(household_structure=household_structure)
         # replaceable households
-        if replacement_helper.replaceable_household and not household_structure.household.replaced_by:
+        if household_structure.household.replaceable:
             replaceable_households += 1
         if household_structure.household.replaced_by:
             replaced_households += 1
@@ -357,7 +354,7 @@ def replacement_report_view(request, **kwargs):
             household_refusal_forms_to_fill += 1
 
     replacement_values['1. Total replaced households'] = replaced_households
-    replacement_values['2. Total replaced plots'] = replaced_plots
+    replacement_values['2. Total replaced plots'] = 23
     replacement_values['3. Total number of replaceable households'] = replaceable_households
     replacement_values['4. Total household assessment pending'] = accessment_forms_to_fill
     replacement_values['5. Total Household refusals forms pending'] = household_refusal_forms_to_fill
