@@ -4,12 +4,12 @@ from django.dispatch import receiver
 from .clinic_consent import ClinicConsent
 from .clinic_eligibility import ClinicEligibility
 
-# 
-# @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
-# def subject_consent_on_post_save(sender, instance, **kwargs):
-#     if not kwargs.get('raw', False):
-#         if isinstance(instance, ClinicConsent):
-#             instance.post_save_update_registered_subject()
+
+@receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
+def subject_consent_on_post_save(sender, instance, **kwargs):
+    if not kwargs.get('raw', False):
+        if isinstance(instance, ClinicConsent):
+            instance.post_save_update_clinic_registered_subject(**kwargs)
 
 
 @receiver(post_save, weak=False, dispatch_uid="clinic_eligibility_on_post_save")
