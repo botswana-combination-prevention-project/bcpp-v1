@@ -1,6 +1,6 @@
 from datetime import datetime
 
-last_updated = datetime(2014, 8, 24)
+last_updated = datetime(2014, 11, 31)
 
 settings_list = [
     'ALLOW_MODEL_SERIALIZATION',
@@ -49,7 +49,7 @@ settings_list = [
     'SHORT_DATETIME_FORMAT',
     'SHORT_DATE_FORMAT',
     'SITE_CODE',
-    'SMC_ECC_START_DATE',
+    'CURRENT_SURVEY',
     'SMC_START_DATE',
     'SOURCE_DIR',
     'SUBJECT_APP_LIST',
