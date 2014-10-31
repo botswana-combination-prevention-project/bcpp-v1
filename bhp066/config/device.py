@@ -1,4 +1,4 @@
 DEVICE_ID = 99
-SITE_CODE = '16'
-CURRENT_COMMUNITY = 'lentsweletau'
+SITE_CODE = '18'
+CURRENT_COMMUNITY = 'oodi'
 VERIFY_GPS = False
