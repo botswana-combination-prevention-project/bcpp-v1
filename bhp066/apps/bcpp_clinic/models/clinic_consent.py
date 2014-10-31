@@ -16,7 +16,7 @@ from .clinic_off_study_mixin import ClinicOffStudyMixin
 
 from apps.bcpp_subject.models import SubjectConsent
 from .clinic_eligibility import ClinicEligibility
-from apps.clinic.choices import COMMUNITIES
+# from apps.clinic.choices import COMMUNITIES
 
 
 class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
@@ -46,7 +46,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
         help_text="If no, INELIGIBLE",
         )
 
-    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+    community = models.CharField(max_length=25, null=True, editable=False)
 
     have_htc_pims = models.CharField(
         verbose_name=("Does the participant have one of these identification numbers?"),
