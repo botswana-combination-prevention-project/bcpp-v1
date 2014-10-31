@@ -25,10 +25,10 @@ class LentsweletauPlotMapper(BasePlotMapper):
     location_boundary = ()
 
     intervention = True
-    clinic_days = {
-        'IDCC': ClinicDaysTuple((MO, WE), None),
-        'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), settings.SMC_START_DATE)}
+#     clinic_days = {
+#         'IDCC': ClinicDaysTuple((MO, WE), None),
+#         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+#         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+#         'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), settings.SMC_START_DATE)}
 
 site_mappers.register(LentsweletauPlotMapper)
