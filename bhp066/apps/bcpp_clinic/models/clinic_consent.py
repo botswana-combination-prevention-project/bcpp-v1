@@ -82,7 +82,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
     def get_registration_datetime(self):
         return self.consent_datetime
 
-    def update_registered_subject(self, **kwargs):
+    def post_save_update_clinic_registered_subject(self, **kwargs):
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         using = kwargs.get('using', None)
         if re_pk.match(self.registered_subject.subject_identifier):
@@ -106,7 +106,6 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
         else:
             raise ValueError('Could not find a ClinicEligibility. Ensure \'DOB\', \'first_name\', \'gender\' and \'initials\' match those in ClinicEligibility.')
         self.validate_clinic_consent()
-        self.update_registered_subject()
         super(BaseClinicConsent, self).save(*args, **kwargs)
 
     def validate_clinic_consent(self, subject_identifier=None):

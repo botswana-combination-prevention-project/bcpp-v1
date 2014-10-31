@@ -126,7 +126,11 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
         self.match_consent_values(self)
         if self.eligible_clinic_subject():
             self.is_eligible = True
-        subject = RegisteredSubject.objects.filter(first_name=self.first_name, initials=self.initials, dob=self.dob, gender=self.gender)
+        subject = RegisteredSubject.objects.filter(first_name=self.first_name,
+                                                   initials=self.initials,
+                                                   dob=self.dob,
+                                                   gender=self.gender,
+                                                   subject_type='subject')
         if subject.exists():
             raise ValidationError('This subject already exists.CANNOT proceed with eligibility.')
         super(ClinicEligibility, self).save(*args, **kwargs)
@@ -170,9 +174,16 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
 
     def update_registered_subject_on_post_save(self, **kwargs):
         using = kwargs.get('using', None)
+        registered_subject = None
         # decide now, either access an existing registered_subject or create a new one
         if RegisteredSubject.objects.using(using).filter(registration_identifier=self.id).exists():
             registered_subject = RegisteredSubject.objects.using(using).get(registration_identifier=self.id)
+            registered_subject.first_name = self.first_name
+            registered_subject.initials = self.initials
+            registered_subject.dob = self.dob
+            registered_subject.gender = self.gender
+            registered_subject.save(using=using)
+#             self.registered_subject = registered_subject
         else:
             # define registered_subject now as the audit trail requires access to the registered_subject object
             # even if no subject_identifier exists. That is, it is going to call
@@ -189,8 +200,12 @@ class ClinicEligibility (BaseClinicRegisteredSubjectModel):
                 registration_datetime=self.created,
                 user_created=self.user_created,
                 registration_status='REGISTERED',)
-            self.registered_subject = registered_subject
-            #self.save(using=using)
+#             self.registered_subject = registered_subject
+        data = {'registered_subject': registered_subject}
+        #call update() on the QuerySet of this instance in order to avoid another call to this
+        #Post save signal. If you call self.save(), you will get in to an infinite loop with
+        #execution recursively coming back to this post save signal.
+        self.__class__.objects.filter(id=self.id).update(**data)
 
     def delete_enrollment_loss(self, **kwargs):
         """Deletes a clinic enrollment loss based if a clinic eligibility checklist is now passed."""
