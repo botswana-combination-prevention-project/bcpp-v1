@@ -5,9 +5,6 @@ last_updated = datetime(2014, 11, 31)
 settings_list = [
     'ALLOW_MODEL_SERIALIZATION',
     'APP_NAME',
-    'BHS_END_DATE',
-    'BHS_FULL_ENROLLMENT_DATE',
-    'BHS_START_DATE',
     'BYPASS_HOUSEHOLD_LOG',
     'CLINIC_DAYS',
     'CURRENT_COMMUNITY',
@@ -50,7 +47,6 @@ settings_list = [
     'SHORT_DATE_FORMAT',
     'SITE_CODE',
     'CURRENT_SURVEY',
-    'SMC_START_DATE',
     'SOURCE_DIR',
     'SUBJECT_APP_LIST',
     'SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT',
