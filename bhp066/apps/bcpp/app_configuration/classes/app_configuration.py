@@ -30,6 +30,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def prepare(self):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
+        self.validate_bcpp_settings()
 
     global_configuration = {
         'dashboard':
@@ -340,5 +341,14 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.datetime_start = survey_values.get('datetime_start')
                 survey.datetime_end = survey_values.get('datetime_end')
                 survey.save()
+
+    def validate_bcpp_settings(self):
+        current_survey = None
+        try:
+            current_survey = Survey.objects.get(datetime_start__lt=datetime.today(), datetime_end__gt=datetime.today())
+        except Survey.MultipleObjectsReturned:
+            raise('')
+        if current_survey.survey_name != settings.CURRENT_SURVEY:
+            raise('')
 
 bcpp_app_configuration = BcppAppConfiguration()

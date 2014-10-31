@@ -4,10 +4,9 @@ import socket
 
 from unipath import Path
 
+from edc.map.classes import site_mappers
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
-from .bcpp_settings import (BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
-                            SMC_ECC_START_DATE, SMC_START_DATE,
-                            MAX_HOUSEHOLDS_PER_PLOT)
+from .bcpp_settings import MAX_HOUSEHOLDS_PER_PLOT
 from .databases import NETBOOK_MYSQL
 from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
@@ -252,10 +251,9 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 ALLOW_MODEL_SERIALIZATION = True
 
 # bcpp_settings
-BHS_START_DATE = BHS_START_DATE
-BHS_END_DATE = BHS_END_DATE
-BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
-SMC_START_DATE = SMC_START_DATE
-SMC_ECC_START_DATE = SMC_ECC_START_DATE
+BHS_START_DATE = site_mappers.get_current_mapper().bhs_start_date
+BHS_END_DATE = site_mappers.get_current_mapper().bhs_end_date
+BHS_FULL_ENROLLMENT_DATE = site_mappers.get_current_mapper().bhs_full_enrollment_date
+SMC_START_DATE = site_mappers.get_current_mapper().smc_start_date
 MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
 LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']
