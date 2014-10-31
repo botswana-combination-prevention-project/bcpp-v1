@@ -7,9 +7,7 @@ from unipath import Path
 
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
-                            PROTOCOL_REVISION, INSTITUTION, BHS_FULL_ENROLLMENT_DATE, BHS_START_DATE, BHS_END_DATE,
-                            SMC_ECC_START_DATE, SMC_START_DATE,
-                            MAX_HOUSEHOLDS_PER_PLOT)
+                            PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
@@ -27,8 +25,8 @@ EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/sou
 TEMPLATE_DIRS = (
     EDC_DIR.child('templates'),
 )
-PROJECT_ROOT = Path(__file__).ancestor(3)  # e.g. /home/django/source/bhp066_project
-PROJECT_DIR = Path(__file__).ancestor(2)  # e.g. /home/django/source/bhp066_project/bhp066
+PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source/bhp066_project
+PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project/bhp066
 APP_DIR = PROJECT_DIR.child('apps').child(APP_NAME)  # e.g. /home/django/source/bhp066_project/bhp066/apps/bcpp
 ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
 MEDIA_ROOT = PROJECT_DIR.child('media')
@@ -226,6 +224,7 @@ FIELD_MAX_LENGTH = 'migration'
 # edc.map
 SITE_CODE = SITE_CODE
 CURRENT_COMMUNITY = CURRENT_COMMUNITY
+CURRENT_SURVEY = CURRENT_SURVEY
 CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
@@ -273,10 +272,5 @@ MIDDLE_MAN_LIST = ['resourcemac-bhp066']
 ALLOW_MODEL_SERIALIZATION = True
 
 # bcpp_settings
-BHS_START_DATE = BHS_START_DATE
-BHS_END_DATE = BHS_END_DATE
-BHS_FULL_ENROLLMENT_DATE = BHS_FULL_ENROLLMENT_DATE
-SMC_START_DATE = SMC_START_DATE
-SMC_ECC_START_DATE = SMC_ECC_START_DATE
 MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
 LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']
