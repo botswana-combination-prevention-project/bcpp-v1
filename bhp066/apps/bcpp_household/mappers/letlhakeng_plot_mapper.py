@@ -24,10 +24,10 @@ class LetlhakengPlotMapper(BasePlotMapper):
     location_boundary = ()
 
     intervention = False
-    clinic_days = {
-        'IDCC': ClinicDaysTuple((TU, TH), None),
-        'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((WE, ), settings.SMC_ECC_START_DATE)}
+#     clinic_days = {
+#         'IDCC': ClinicDaysTuple((TU, TH), None),
+#         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+#         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+#         'SMC': ClinicDaysTuple((WE, ), settings.SMC_ECC_START_DATE)}
 
 site_mappers.register(LetlhakengPlotMapper)
