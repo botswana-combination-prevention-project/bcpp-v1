@@ -13,8 +13,8 @@ from .household_member import HouseholdMember
 
 
 class HouseholdHeadEligibility(BaseRepresentativeEligibility):
-    """Determines if the household member is eligible to be treated
-    as head of household or representative."""
+    """A model completed by the user that determines if the household member is eligible to act
+    as a head of household or household representative."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
     household_member = models.OneToOneField(HouseholdMember,

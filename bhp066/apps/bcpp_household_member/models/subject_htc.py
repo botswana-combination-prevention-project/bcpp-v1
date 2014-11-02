@@ -22,7 +22,8 @@ HIV_RESULT = tuple(HIV_RESULT)
 
 
 class SubjectHtc(BaseMemberStatusModel):
-
+    """A model completed by the user that captures HTC information for a household member
+    not participating in BHS."""
     tracking_identifier = models.CharField(
         verbose_name=_("HTC tracking identifier"),
         max_length=50,
