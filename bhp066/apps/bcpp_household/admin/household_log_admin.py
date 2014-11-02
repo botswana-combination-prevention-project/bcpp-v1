@@ -8,6 +8,8 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     form = HouseholdLogEntryForm
     date_hierarchy = 'modified'
     list_per_page = 15
+    fields = ('household_log', 'report_datetime', 'household_status',
+              'next_appt_datetime', 'next_appt_datetime_source', 'comment')
     list_display = ('household_log', 'report_datetime', 'next_appt_datetime')
     list_filter = ('household_log__household_structure__survey', 'report_datetime',
                    'next_appt_datetime', 'household_log__household_structure__household__community')
@@ -32,6 +34,7 @@ class HouseholdLogEntryInline(admin.TabularInline):
 
 class HouseholdLogAdmin(BaseModelAdmin):
     form = HouseholdLogForm
+    instructions = []
     inlines = [HouseholdLogEntryInline, ]
     date_hierarchy = 'modified'
     list_per_page = 15
