@@ -9,6 +9,7 @@ from apps.bcpp_household.forms import PlotLogForm, PlotLogEntryForm
 class PlotLogEntryAdmin(BaseModelAdmin):
     form = PlotLogEntryForm
     date_hierarchy = 'modified'
+    fields = ('plot_log', 'report_datetime', 'log_status', 'reason', 'reason_other', 'comment')
     list_per_page = 15
     list_display = ('plot_log', 'log_status', 'report_datetime')
     list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community')
@@ -76,6 +77,7 @@ class PlotLogEntryInline(admin.TabularInline):
 
 class PlotLogAdmin(BaseModelAdmin):
     form = PlotLogForm
+    instructions = []
     inlines = [PlotLogEntryInline, ]
     date_hierarchy = 'modified'
     list_per_page = 15
