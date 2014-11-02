@@ -15,10 +15,10 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
 
     form = HouseholdStructureForm
     date_hierarchy = 'modified'
-
-    fields = (
-        'survey',
-        'note')
+    instructions = []
+    # fields = (
+    #    'survey',
+    #    'note')
     list_display = (
         'plot',
         'survey',
