@@ -10,7 +10,7 @@ from ..managers import ContactLogManager, ContactLogItemManager
 
 
 class ContactLog(BaseDispatchSyncUuidModel):
-
+    """Not used"""
     objects = ContactLogManager()
 
     def natural_key(self):
@@ -24,7 +24,7 @@ class ContactLog(BaseDispatchSyncUuidModel):
 
 
 class ContactLogItem(BaseDispatchSyncUuidModel):
-
+    """Not used"""
     contact_log = models.ForeignKey(ContactLog)
 
     contact_datetime = models.DateTimeField()

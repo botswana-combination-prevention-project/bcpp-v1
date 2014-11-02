@@ -25,7 +25,7 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, HTC_ELIGIBLE
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
@@ -34,7 +34,7 @@ from edc.map.classes.controller import site_mappers
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user to represent an enumerated household member."""
     household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)
