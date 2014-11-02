@@ -20,7 +20,6 @@ from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
-from collections import namedtuple
 
 
 def is_valid_community(self, value):
@@ -30,7 +29,8 @@ def is_valid_community(self, value):
 
 
 class Plot(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user (and initially by the system) to represent a Plot
+    in the community."""
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
         max_length=25,
@@ -261,7 +261,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return self.plot_identifier
 
     def natural_key(self):
-        return (self.plot_identifier,)
+        return (self.plot_identifier, )
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
