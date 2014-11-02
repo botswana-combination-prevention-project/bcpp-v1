@@ -24,15 +24,18 @@ class BokaaPlotMapper(BasePlotMapper):
     radius = 5.5
     location_boundary = ()
 
-    bhs_start_date = date(2014, 11, 5)
-    bhs_full_enrollment_date = date(2014, 11, 28)
-    bhs_end_date = date(2014, 12, 20)
-    smc_start_date = date(2014, 12, 5)  # referenced by bcpp mappers
-
-    clinic_days = {
+    survey_dates = {'bcpp-year-1': dict(
+        bhs_start_date=date(2014, 11, 5),
+        bhs_full_enrollment_date=date(2014, 11, 28),
+        bhs_end_date=date(2014, 12, 20),
+        smc_start_date=date(2014, 12, 5))
+    }
+    clinic_days = {'bcpp-year-1': {
         'IDCC': ClinicDaysTuple((WE, ), None),
         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((FR, ), smc_start_date)}
+        'SMC': ClinicDaysTuple((FR, ), survey_dates['bcpp-year-1'].get('smc_start_date'))
+        }
+    }
 
 site_mappers.register(BokaaPlotMapper)

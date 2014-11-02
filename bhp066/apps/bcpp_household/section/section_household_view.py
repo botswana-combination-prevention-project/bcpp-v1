@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sections
 from edc.map.classes import site_mappers
 
@@ -20,11 +22,13 @@ class SectionHouseholdView(BaseSectionForDashboardView):
     search = {'word': HouseholdSearchByWord, 'gps': HouseholdSearchByGps}
 
     def contribute_to_context(self, context, request, *args, **kwargs):
-        current_community = site_mappers.get_current_mapper().map_area
+        current_survey = None
+        if settings.CURRENT_SURVEY:
+            current_survey = Survey.objects.current_survey()
         context.update({
-            'current_survey': Survey.objects.current_survey(),
-            'current_community': self.get_current_community(),
-            'mapper_name': current_community,
+            'current_survey': current_survey,
+            'current_community': str(site_mappers.get_current_mapper()()),
+            'mapper_name': site_mappers.get_current_mapper().map_area,
             'gps_search_form': GpsSearchForm(initial={'radius': 100}),
             'CONFIRMED': CONFIRMED})
         return context
