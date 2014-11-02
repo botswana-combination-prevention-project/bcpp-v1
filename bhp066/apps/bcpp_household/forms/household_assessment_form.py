@@ -14,8 +14,8 @@ class HouseholdAssessmentForm(BaseModelForm):
             raise forms.ValidationError('Question 9 must be answer when question 1 answer is No.')
         if cleaned_data.get('residency') == 'Yes' and not cleaned_data.get('member_count'):
             raise forms.ValidationError('If the answer to question 1 is yes question 2 must be answered.')
-        if cleaned_data.get('member_cound') and not cleaned_data.get('eligibles'):
-            raise forms.ValidationError('The If the are member please answer if there are eligibles or not.')
+        if cleaned_data.get('member_count') and not cleaned_data.get('eligibles'):
+            raise forms.ValidationError('If there are member please answer if eligible or not.')
         if cleaned_data.get('eligibles') == 'No' and not cleaned_data.get('ineligibble_reason'):
             raise forms.ValidationError('Specify the reason why member are not eligible.')
 
