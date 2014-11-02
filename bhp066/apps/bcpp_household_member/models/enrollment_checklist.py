@@ -25,7 +25,8 @@ from .household_member import HouseholdMember
 
 
 class EnrollmentChecklist(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user that captures and confirms BHS enrollment eligibility
+    criteria."""
     household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(
