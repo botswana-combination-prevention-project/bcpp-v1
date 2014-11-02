@@ -74,4 +74,6 @@ EDC_APPS = (
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
     'edc.lab.lab_profile',
+
+    'edc.audit',
 )
