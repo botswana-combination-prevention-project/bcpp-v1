@@ -1,3 +1,4 @@
+from datetime import date
 from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.conf import settings
@@ -25,10 +26,18 @@ class LentsweletauPlotMapper(BasePlotMapper):
     location_boundary = ()
 
     intervention = True
-#     clinic_days = {
-#         'IDCC': ClinicDaysTuple((MO, WE), None),
-#         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-#         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-#         'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), settings.SMC_START_DATE)}
+    survey_dates = {'bcpp-year-1': dict(
+        bhs_start_date=date(2014, 9, 5),
+        bhs_full_enrollment_date=date(2014, 10, 15),
+        bhs_end_date=date(2014, 10, 21),
+        smc_start_date=date(2014, 10, 27)),
+    }
+    clinic_days = {'bcpp-year-1': {
+        'IDCC': ClinicDaysTuple((MO, WE), None),
+        'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+        'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].get('smc_start_date'))
+        }
+    }
 
 site_mappers.register(LentsweletauPlotMapper)

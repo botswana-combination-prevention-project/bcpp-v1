@@ -1,5 +1,4 @@
 import os
-import platform
 import sys
 import socket
 
@@ -10,8 +9,10 @@ from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX,
                             PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS
+from .lab import LAB_IMPORT_DMIS_DATA_SOURCE
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -238,12 +239,9 @@ LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'
 GRADING_LIST = 'DAIDS_2004'
-if platform.system() == 'Darwin':
-    LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER=/usr/local/lib/libtdsodbc.so;SERVER=192.168.1.141;'
-                                   'PORT=1433;UID=sa;PWD=cc3721b;DATABASE=BHPLAB')
-else:
-    LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
-                                   'DATABASE=BHPLAB')
+
+LAB_IMPORT_DMIS_DATA_SOURCE = LAB_IMPORT_DMIS_DATA_SOURCE
+
 # edc.subject.consent
 # set to False so that the constraint can be expanded to subject_identifier + survey
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False
