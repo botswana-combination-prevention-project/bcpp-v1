@@ -12,17 +12,19 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
-    be confirmed to be on art"""
+    be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance)
     return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
 
 
 def func_known_pos(visit_instance):
+    """Returns True if participant is NOT a newly diagnosed POS as determined
+    by the SubjectStatusHelper.new_pos method."""
     return SubjectStatusHelper(visit_instance).new_pos is False
 
 
 def func_todays_hiv_result_required(visit_instance):
-    """Returns True if the an HIV test is required"""
+    """Returns True if the an HIV test is required."""
     subject_status_helper = SubjectStatusHelper(visit_instance)
     if subject_status_helper.todays_hiv_result:
         return True
@@ -40,30 +42,32 @@ def func_hiv_indeterminate_today(visit_instance):
 
 
 def func_hiv_positive_today(visit_instance):
-    """Returns True if the participant has been determinied
-    to be either known or newly diagnosed HIV positive."""
+    """Returns True if the participant is known or newly diagnosed HIV positive."""
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
 
 
 def func_not_required(visit_instance):
+    """Returns True (always)."""
     return True
 
 
 def func_no_verbal_hiv_result(visit_instance):
-    """(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'),
-    ('verbal_hiv_result', 'equals', 'not_answering', 'or'))"""
+    """Returns True if verbal_hiv_positive response is not POS or NEG."""
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
 def is_gender_female(visit_instance):
+    """Returns True if gender from RegisteredSubject is Female."""
     return visit_instance.appointment.registered_subject.gender.lower() == 'f'
 
 
 def is_gender_male(visit_instance):
+    """Returns True if gender from RegisteredSubject is Male."""
     return visit_instance.appointment.registered_subject.gender.lower() == 'm'
 
 
 def func_heart_attack_record_value(visit_instance):
+    """Returns True if at least one medical diagnosis is 'Heart Disease or Stroke'."""
     medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
     for diagnoses in medical_diagnoses.diagnoses.all():
         if diagnoses.name == 'Heart Disease or Stroke':
@@ -72,6 +76,7 @@ def func_heart_attack_record_value(visit_instance):
 
 
 def func_cancer_record_value(visit_instance):
+    """Returns True if at least one medical diagnosis is 'Cancer'."""
     medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
     for diagnoses in medical_diagnoses.diagnoses.all():
         if diagnoses.name == 'Cancer':
@@ -80,6 +85,7 @@ def func_cancer_record_value(visit_instance):
 
 
 def func_tb_record_value(visit_instance):
+    """Returns True if at least one medical diagnosis is 'Tubercolosis'."""
     medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
     for diagnoses in medical_diagnoses.diagnoses.all():
         if diagnoses.name == 'Tubercolosis':
@@ -88,6 +94,7 @@ def func_tb_record_value(visit_instance):
 
 
 def evaluate_ever_had_sex_for_female(visit_instance):
+    """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     if visit_instance.appointment.registered_subject.gender.lower() == 'm':
         return False
