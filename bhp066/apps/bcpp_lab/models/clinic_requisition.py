@@ -1,20 +1,19 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from ...clinic.choices import COMMUNITIES
+from edc.audit.audit_trail import AuditTrail
+from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
+from edc.lab.lab_requisition.models import BaseRequisition
+from edc.subject.entry.models import LabEntry, Entry
+
+from apps.bcpp_clinic.models import ClinicVisit
+from apps.clinic.choices import COMMUNITIES
 
 from ..managers import ClinicRequisitionManager
 
 from .aliquot_type import AliquotType
 from .packing_list import PackingList
 from .panel import Panel
-
-from apps.bcpp_clinic.models import ClinicVisit
-
-from edc.audit.audit_trail import AuditTrail
-from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
-from edc.lab.lab_requisition.models import BaseRequisition
-from edc.subject.entry.models import LabEntry, Entry
 
 
 class ClinicRequisition(BaseRequisition):
@@ -26,13 +25,6 @@ class ClinicRequisition(BaseRequisition):
     aliquot_type = models.ForeignKey(AliquotType)
 
     panel = models.ForeignKey(Panel)
-
-#    objects = ClinicRequisitionManager()
-
-    #subject_identifier = models.CharField(
-    #    max_length=25,
-    #    null=True,
-    #    editable=False)
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
@@ -51,7 +43,8 @@ class ClinicRequisition(BaseRequisition):
 
     def aliquot(self):
         url = reverse('admin:bcpp_lab_aliquot_changelist')
-        return """<a href="{url}?q={requisition_identifier}" />aliquots</a>""".format(url=url, requisition_identifier=self.requisition_identifier)
+        return """<a href="{url}?q={requisition_identifier}" />aliquots</a>""".format(
+            url=url, requisition_identifier=self.requisition_identifier)
     aliquot.allow_tags = True
 
     def dashboard(self):
