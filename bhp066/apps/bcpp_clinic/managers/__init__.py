@@ -1,1 +1,3 @@
 from .clinic_model_manager import ClinicModelManager
+from .scheduled_model_manager import ScheduledModelManager
+from .viral_load_result_manager import ViralLoadResultManager
