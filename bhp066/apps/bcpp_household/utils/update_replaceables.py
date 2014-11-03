@@ -1,8 +1,13 @@
+from __future__ import absolute_import
+
+from config.celery import app as celery_app
+
 from ..helpers import ReplacementHelper
 from ..models import Replaceable, Household, Plot
 
 
-def update_replaceables():
+@celery_app.task
+def update_replaceables(*args):
     """Updates the instances in Replaceables and returns the number of instances updated.
 
     Update is by deleting then creating."""

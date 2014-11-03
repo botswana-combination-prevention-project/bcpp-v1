@@ -8,7 +8,7 @@ class PackingList(BasePackingList):
     objects = PackingListManager()
 
     def natural_key(self):
-        return (self.list_datetime, )
+        return (self.timestamp, )
 
     class Meta:
         app_label = "bcpp_lab"

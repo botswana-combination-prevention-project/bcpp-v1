@@ -8,3 +8,19 @@
 
 {% block household_questionnaire %}
 {% endblock %}
+
+{% block search_tile %}
+    {% if not current_survey %}
+        Survey not selected
+    {%else%}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block search_result %}
+    {% if not current_survey %}
+        Survey not selected
+    {%else%}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}

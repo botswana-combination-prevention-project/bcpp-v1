@@ -5,7 +5,6 @@ from edc.base.form.forms import BaseModelForm
 class BaseSubjectEntryForm(BaseModelForm):
 
     def clean(self):
-
         cleaned_data = super(BaseSubjectEntryForm, self).clean()
         if cleaned_data.get('next_appt_datetime', None):
             if cleaned_data.get('next_appt_datetime') <= cleaned_data.get('report_datetime'):
