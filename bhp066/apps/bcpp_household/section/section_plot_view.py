@@ -18,11 +18,13 @@ class SectionPlotView(BaseSectionView):
     search = [PlotSearchByWord, PlotSearchByGps]
 
     def contribute_to_context(self, context, request, *args, **kwargs):
-        current_community = site_mappers.get_current_mapper().map_area
+        current_survey = None
+        if settings.CURRENT_SURVEY:
+            current_survey = Survey.objects.current_survey()
         context.update({
-            'current_survey': Survey.objects.current_survey(),
-            'current_community': self.get_current_community(),
-            'mapper_name': current_community,
+            'current_survey': current_survey,
+            'current_community': str(site_mappers.get_current_mapper()()),
+            'mapper_name': site_mappers.get_current_mapper().map_area,
             'use_gps_to_target_verification': settings.VERIFY_GPS
             })
         return context

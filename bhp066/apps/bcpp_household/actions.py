@@ -5,20 +5,33 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 
-from .utils import (update_replaceables as update_replaceables_for_action,
-                    update_increaseplotradius as update_increaseplotradius_for_action)
+from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
+
+from .utils import update_increaseplotradius, update_replaceables
 
 
-def update_replaceables(modeladmin, request, queryset, **kwargs):
-    update_replaceables_for_action()
-update_replaceables.short_description = "Update replaceable plots and households. (also updates model Replaceables)"
+def update_replaceables_action(modeladmin, request, queryset, **kwargs):
+    try:
+        already_running(update_replaceables)
+        result = update_replaceables.delay()
+        messages.add_message(request, messages.INFO, (
+            '{0.status}: Updating replaceable plots and households. ({0.id})').format(result))
+    except CeleryTaskAlreadyRunning as celery_task_already_running:
+        messages.add_message(request, messages.WARNING, str(celery_task_already_running))
+    except CeleryNotRunning as not_running:
+        messages.add_message(request, messages.WARNING, str(not_running))
+    except Exception as e:
+        messages.add_message(request, messages.ERROR, (
+            'Unable to run task. Celery got {}.'.format(str(e))))
+update_replaceables_action.short_description = (
+    'Update replaceable plots and households. (also updates model Replaceables)')
 
 
-def update_increaseplotradius(modeladmin, request, queryset, **kwargs):
-    updated = update_increaseplotradius_for_action()
+def update_increaseplotradius_action(modeladmin, request, queryset, **kwargs):
+    updated = update_increaseplotradius()
     messages.add_message(request, messages.SUCCESS, (
         "Added {} new plots. The target radius on these plots may increased.").format(updated))
-update_increaseplotradius.short_description = "Update increase plot radius for inaccessible plots"
+update_increaseplotradius_action.short_description = "Update increase plot radius for inaccessible plots"
 
 
 def process_dispatch(modeladmin, request, queryset, **kwargs):
