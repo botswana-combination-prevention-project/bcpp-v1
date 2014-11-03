@@ -10,9 +10,10 @@ except ImportError:
     aliquot_label = None
 
 from edc.apps.app_configuration.classes import BaseAppConfiguration
+from edc.device.device.classes import device
+from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
-from edc.device.device.classes import device
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
@@ -30,6 +31,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def prepare(self):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
+        # self.validate_bcpp_settings() (see mapper)
 
     global_configuration = {
         'dashboard':
@@ -90,11 +92,19 @@ class BcppAppConfiguration(BaseAppConfiguration):
             {'survey_name': 'BCPP Year 1',
              'survey_slug': 'bcpp-year-1',
              'datetime_start': study_start_datetime,
+<<<<<<< HEAD
              'datetime_end': datetime(2014, 12, 29, 16, 30, 00)},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'datetime_start': datetime(2014, 12, 30, 07, 00, 00),
+=======
+             'datetime_end': datetime(2014, 12, 31, 16, 30, 00)},
+        'bcpp-year-2':
+            {'survey_name': 'BCPP Year 2',
+             'survey_slug': 'bcpp-year-2',
+             'datetime_start': datetime(2015, 01, 01, 07, 00, 00),
+>>>>>>> 72808767a811bf557dd1f0325fd1d4fc2341f23a
              'datetime_end': datetime(2015, 10, 29, 16, 30, 00)},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
@@ -115,6 +125,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                          AliquotTypeTuple('Buffy Coat', 'BC', '16')]}
 
     lab_setup = {'bcpp': {
+                 'destination': [DestinationTuple('BHHRL', 'Botswana-Harvard HIV Reference Laboratory',
+                                                  'Gaborone', '3902671', 'bhhrl@bhp.org.bw')],
                  'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                            PanelTuple('Viral Load', 'TEST', 'WB'),
                            PanelTuple('Microtube', 'STORAGE', 'WB'),
@@ -340,5 +352,27 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.datetime_start = survey_values.get('datetime_start')
                 survey.datetime_end = survey_values.get('datetime_end')
                 survey.save()
+
+#     def validate_bcpp_settings(self):
+#         current_survey = Survey.objects.current_survey()
+#         if current_survey.survey_slug != settings.CURRENT_SURVEY:
+#             raise ImproperlyConfigured('The EDC is expecting the current survey to be {0}. But today\'s date pulled {1}'.
+#                                        format(settings.CURRENT_SURVEY, current_survey.survey_name))
+#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().bhs_start_date 
+#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().bhs_start_date):
+#             raise ImproperlyConfigured('BHS_START_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
+#                                        format(site_mappers.get_current_mapper().bhs_start_date, current_survey))
+#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().bhs_end_date 
+#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().bhs_end_date):
+#             raise ImproperlyConfigured('BHS_END_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
+#                                        format(site_mappers.get_current_mapper().bhs_end_date, current_survey))
+#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().bhs_full_enrollment_date 
+#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().bhs_full_enrollment_date):
+#             raise ImproperlyConfigured('BHS_FULL_ENROLLMENT_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
+#                                        format(settings.site_mappers.get_current_mapper().bhs_full_enrollment_date, current_survey))
+#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().smc_start_date 
+#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().smc_start_date):
+#             raise ImproperlyConfigured('SMC_START_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
+#                                        format(site_mappers.get_current_mapper().smc_start_date, current_survey))
 
 bcpp_app_configuration = BcppAppConfiguration()

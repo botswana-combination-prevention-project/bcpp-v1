@@ -15,7 +15,7 @@ from ..managers import PlotLogManager, PlotLogEntryManager
 
 
 class PlotLog(BaseDispatchSyncUuidModel):
-
+    """A system model to track an RA\'s attempts to confirm a Plot (related)."""
     plot = models.OneToOneField(Plot)
 
     history = AuditTrail()
@@ -47,7 +47,7 @@ class PlotLog(BaseDispatchSyncUuidModel):
 
 
 class PlotLogEntry(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user to track an RA\'s attempts to confirm a Plot."""
     plot_log = models.ForeignKey(PlotLog)
 
     report_datetime = models.DateTimeField(

@@ -20,7 +20,6 @@ from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
-from collections import namedtuple
 
 
 def is_valid_community(self, value):
@@ -30,7 +29,8 @@ def is_valid_community(self, value):
 
 
 class Plot(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user (and initially by the system) to represent a Plot
+    in the community."""
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
         max_length=25,
@@ -261,7 +261,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return self.plot_identifier
 
     def natural_key(self):
-        return (self.plot_identifier,)
+        return (self.plot_identifier, )
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
@@ -337,11 +337,11 @@ class Plot(BaseDispatchSyncUuidModel):
             if plot_instance.id:
                 if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
-            if not plot_instance.bhs and date.today() > settings.BHS_FULL_ENROLLMENT_DATE:
+            if not plot_instance.bhs and date.today() > site_mappers.get_current_mapper().bhs_full_enrollment_date:
                 raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
                                     'data related to it, may not be modified. '
-                                    'See settings.BHS_FULL_ENROLLMENT_DATE'.format(
-                                        self.community, settings.BHS_FULL_ENROLLMENT_DATE))
+                                    'See site_mappers'.format(
+                                        self.community, site_mappers.get_current_mapper().bhs_full_enrollment_date))
         return True
 
     def safe_delete_households(self, count, instance=None, using=None):

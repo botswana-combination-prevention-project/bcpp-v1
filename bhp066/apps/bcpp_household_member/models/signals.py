@@ -77,7 +77,7 @@ def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
 
 @receiver(post_save, weak=False, dispatch_uid="enrollment_checklist_on_post_save")
 def enrollment_checklist_on_post_save(sender, instance, raw, created, using, **kwargs):
-    """Updates household_member and removes the Loss form if it exusts."""
+    """Updates household_member and removes the Loss form if it exists."""
     if not raw:
         if isinstance(instance, EnrollmentChecklist):
             instance.household_member.eligible_subject = False

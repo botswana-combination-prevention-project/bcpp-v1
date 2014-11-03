@@ -12,7 +12,8 @@ from .subject_undecided import SubjectUndecided
 
 
 class SubjectUndecidedEntry(BaseSubjectEntry):
-
+    """A model completed by the user that captures information on the undecided status
+    of a household member potentially eligible for BHS."""
     subject_undecided = models.ForeignKey(SubjectUndecided)
 
     subject_undecided_reason = models.CharField(

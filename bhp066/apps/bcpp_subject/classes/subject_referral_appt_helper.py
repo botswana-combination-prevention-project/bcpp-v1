@@ -2,6 +2,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from edc.map.classes.controller import site_mappers
 # from edc.subject.appointment.models import Holiday
@@ -43,7 +44,8 @@ class SubjectReferralApptHelper(object):
         try:
             self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
         except AttributeError:
-            self.clinic_days = site_mappers.get_current_mapper().clinic_days.get(self.referral_clinic_type)
+            self.clinic_days = site_mappers.get_current_mapper().clinic_days.get(
+                settings.SURVEY_NAME).get(self.referral_clinic_type)
 
     def __repr__(self):
         return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)
