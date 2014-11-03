@@ -7,7 +7,7 @@ from ...models import ClinicConsent
 class ClinicConsentFactory(BaseConsentFactory):
     FACTORY_FOR = ClinicConsent
 
-    subject_identifier = None
+    #subject_identifier = None
     consent_datetime = datetime.today()
     may_store_samples = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     is_literate = (('Yes', 'Yes'), ('No', 'No'))[0][0]

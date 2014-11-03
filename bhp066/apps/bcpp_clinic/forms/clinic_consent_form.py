@@ -4,12 +4,13 @@ from django import forms
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 
 from edc.core.bhp_common.utils import check_initials_field
-from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.core.bhp_variables.models import StudySpecific
+from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp.choices import GENDER_UNDETERMINED
 
+from ..models import ClinicEligibility
+from ...clinic.choices import GENDER_UNDETERMINED
 from ..models import ClinicConsent
 
 
@@ -23,12 +24,21 @@ class MainConsentForm(BaseSubjectConsentForm):
 
     def clean(self):
 
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(MainConsentForm, self).clean()
         try:
             obj = StudySpecific.objects.all()[0]
         except IndexError:
             raise forms.ValidationError("Please contact your DATA/IT assistant to add your edc.core.bhp_variables site specifics")
-       
+
+        clinic_eligibility = ClinicEligibility.objects.filter(dob=cleaned_data.get('dob'),
+                                        gender=cleaned_data.get('gender'),
+                                        first_name=cleaned_data.get('first_name'),
+                                        initials=cleaned_data.get('initials'))
+        if clinic_eligibility.exists():
+            clinic_eligibility[0].match_consent_values(clinic_eligibility[0], exception_cls=forms.ValidationError)
+        else:
+            raise forms.ValidationError('Could not find a ClinicEligibility. Ensure \'DOB\', \'first_name\', \'gender\' and \'initials\' match those in ClinicEligibility.')
+
         if cleaned_data.get('is_minor') == 'Yes' and not cleaned_data.get('guardian_name', None):
             raise forms.ValidationError('You wrote subject is a minor but have not provided the guardian\'s name. Please correct.')
         if cleaned_data.get('is_minor') == 'No' and cleaned_data.get('guardian_name', None):
@@ -68,7 +78,13 @@ class MainConsentForm(BaseSubjectConsentForm):
         last_name = cleaned_data.get("last_name")
         check_initials_field(first_name, last_name, initials)
 
-        return super(MainConsentForm, self).clean()
+        if cleaned_data.get('have_htc_pims', None) != 'None' and not cleaned_data.get('htc_pims_id', None):
+            raise forms.ValidationError('Participant reports to have either HTC, PIMS identifier or both. Please enter that identifier.')
+
+        if cleaned_data.get('have_htc_pims', None) == 'None' and cleaned_data.get('htc_pims_id', None):
+            raise forms.ValidationError('Participant reports to NOT have either HTC, PIMS identifier or both. Please DO NOT enter any identifier.')
+
+        return cleaned_data
 
 
 class ClinicConsentForm(MainConsentForm):
