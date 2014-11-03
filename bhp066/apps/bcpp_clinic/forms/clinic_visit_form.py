@@ -1,10 +1,10 @@
 from django import forms
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 
-from edc.subject.consent.forms import BaseConsentedModelForm
-
 from ..models import ClinicVisit
-from ..choices import VISIT_REASON
+from apps.clinic.choices import VISIT_REASON
+
+from edc.subject.consent.forms import BaseConsentedModelForm
 
 
 class ClinicVisitForm (BaseConsentedModelForm):
