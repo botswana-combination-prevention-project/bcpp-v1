@@ -1,4 +1,10 @@
 DEVICE_ID = 99
+<<<<<<< HEAD
 SITE_CODE = '17'
 CURRENT_COMMUNITY = 'bokaa'
 VERIFY_GPS = True
+=======
+SITE_CODE = '18'
+CURRENT_COMMUNITY = 'oodi'
+VERIFY_GPS = False
+>>>>>>> 72808767a811bf557dd1f0325fd1d4fc2341f23a

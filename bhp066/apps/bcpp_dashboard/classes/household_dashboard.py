@@ -181,24 +181,24 @@ class HouseholdDashboard(Dashboard):
     @property
     def current_survey(self):
         """Sets to the current survey using today's date."""
-        current_survey = None
-        try:
-            current_survey = Survey.objects.get(datetime_start__lte=datetime.today(),
-                                                datetime_end__gte=datetime.today())
-        except Survey.DoesNotExist:
-            raise Survey.DoesNotExist('Unable to set attribute _survey given survey=None and today\'s '
-                                      'date. No survey exists to include the given datetime (today). '
-                                      'Either create a new survey or update an existing survey\'s '
-                                      'start and end date to include today.')
-        except MultipleObjectsReturned:
-            raise MultipleObjectsReturned('Unable to determine the current survey given survey=None and '
-                                          'today\'s date. More than one survey exists for the given '
-                                          'datetime (today). Either specify a survey or given a '
-                                          'different date. Got {0}.'.format(
-                                              Survey.objects.filter(datetime_start__lte=datetime.today(),
-                                                                    datetime_end__gte=datetime.today()))
-                                          )
-        return current_survey
+#         current_survey = None
+#         try:
+#             current_survey = Survey.objects.get(datetime_start__lte=datetime.today(),
+#                                                 datetime_end__gte=datetime.today())
+#         except Survey.DoesNotExist:
+#             raise Survey.DoesNotExist('Unable to set attribute _survey given survey=None and today\'s '
+#                                       'date. No survey exists to include the given datetime (today). '
+#                                       'Either create a new survey or update an existing survey\'s '
+#                                       'start and end date to include today.')
+#         except MultipleObjectsReturned:
+#             raise MultipleObjectsReturned('Unable to determine the current survey given survey=None and '
+#                                           'today\'s date. More than one survey exists for the given '
+#                                           'datetime (today). Either specify a survey or given a '
+#                                           'different date. Got {0}.'.format(
+#                                               Survey.objects.filter(datetime_start__lte=datetime.today(),
+#                                                                     datetime_end__gte=datetime.today()))
+#                                           )
+        return Survey.objects.current_survey()
 
     @property
     def first_survey(self):

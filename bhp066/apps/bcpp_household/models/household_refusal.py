@@ -58,7 +58,8 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
 
 
 class HouseholdRefusal(BaseHouseholdRefusal):
-
+    """A model completed by the user to indicate the reason why a household
+    cannot be enumerated."""
     objects = HouseholdRefusalManager()
 
     history = AuditTrail()
@@ -73,6 +74,7 @@ class HouseholdRefusal(BaseHouseholdRefusal):
 
 
 class HouseholdRefusalHistory(BaseHouseholdRefusal):
+    """A system model to keep a history of deleted household refusal instances."""
 
     transaction = UUIDField()
 
