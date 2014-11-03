@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -10,12 +12,15 @@ from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdStructureManager
 
 from .household import Household
+
 from .plot import Plot
 
 
 class HouseholdStructure(BaseDispatchSyncUuidModel):
 
-    """ Each year/survey a new household_structure is created for the household """
+    """A system model that links a household to its household members
+    for a given survey year and helps track the enrollment status, enumeration
+    status, enumeration attempts and other system values. """
 
     household = models.ForeignKey(Household)
 
@@ -93,7 +98,9 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         if self.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
-
+        # test survey vs created date + survey_slug
+        if self.id:
+            Survey.objects.current_survey(report_datetime=datetime.today(), survey_slug=self.survey.survey_slug)
         super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):

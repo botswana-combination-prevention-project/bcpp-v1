@@ -8,6 +8,7 @@ REFERRAL_APPT_COMMENTS = (
     ("undecided_thinking", "have to think about it"),
     ("undecided_accepting_status", "need time to accept my HIV status"),
     ("have_other_anc_appt", "have already registered with ANC and have another appointment"),
+    ("personal_reasons", "personal reasons"),
 )
 
 REFERRAL_CODES = (
