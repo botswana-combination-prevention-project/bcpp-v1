@@ -8,10 +8,12 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from ..managers import HouseholdManager
 
 from .plot import Plot
+
 from ..exceptions import AlreadyReplaced
 
 
 class Household(BaseDispatchSyncUuidModel):
+    """A system model that represents the household asset. See also HouseholdStructure."""
 
     plot = models.ForeignKey(Plot, null=True)
 

@@ -15,9 +15,11 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     list_per_page = 30
     list_max_show_all = 1000
 
-    fields = (
-        'report_datetime',
-        'comment')
+    instructions = []
+
+    # fields = (
+    #    'report_datetime',
+    #    'comment')
 
     list_display = ('household_identifier', 'structure', 'plot', 'community', 'replaceable',
                     'replaced_by', 'created', 'modified')

@@ -8,7 +8,9 @@ from .plot import Plot
 
 
 class IncreasePlotRadius(BaseDispatchSyncUuidModel):
+    """A model completed by the user to allow a plot\'s GPS target radius to be changed.
 
+    An instance is auto created once the criteria is met. See method plot.increase_plot_radius."""
     plot = models.OneToOneField(Plot)
 
     radius = models.FloatField(
