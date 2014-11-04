@@ -21,13 +21,13 @@ class OodiPlotMapper(BasePlotMapper):
 
     gps_center_lat = -24.425856
     gps_center_lon = 26.021626
-    radius = 5.5
+    radius = 300
     location_boundary = ()
 
     bhs_start_date = date(2014, 11, 5)
     bhs_full_enrollment_date = date(2014, 11, 28)
     bhs_end_date = date(2014, 12, 20)
-    smc_start_date = date(2014, 12, 1)  # referenced by bcpp mappers
+    smc_start_date = date(2014, 12, 8)  # referenced by bcpp mappers
 
     clinic_days = {
         'IDCC': ClinicDaysTuple((MO, ), None),
