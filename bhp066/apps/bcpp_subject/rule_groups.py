@@ -387,13 +387,6 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['tubercolosis'])
 
-    tb_record_tbsymptoms = ScheduledDataRule(
-        logic=Logic(
-            predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['tbsymptoms'])
-
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
