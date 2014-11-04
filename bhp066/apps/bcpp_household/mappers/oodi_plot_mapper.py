@@ -21,7 +21,7 @@ class OodiPlotMapper(BasePlotMapper):
 
     gps_center_lat = -24.425856
     gps_center_lon = 26.021626
-    radius = 5.5
+    radius = 300
     location_boundary = ()
 
     survey_dates = {'bcpp-year-1': dict(
