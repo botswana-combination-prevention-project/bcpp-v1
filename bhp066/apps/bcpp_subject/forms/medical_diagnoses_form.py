@@ -10,6 +10,9 @@ class MedicalDiagnosesForm (BaseSubjectModelForm):
     def clean(self):
         cleaned_data = super(MedicalDiagnosesForm, self).clean()
         diagnoses_list = []
+        if not cleaned_data.get('diagnoses', None):
+            raise forms.ValidationError('You have to provide a previous diagnoses, otherwise \'None\'.')
+
         for diagnoses in cleaned_data.get('diagnoses'):
             diagnoses_list.append(diagnoses.name)
 
