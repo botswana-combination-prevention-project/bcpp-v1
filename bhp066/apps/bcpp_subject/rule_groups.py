@@ -66,33 +66,6 @@ def is_gender_male(visit_instance):
     return visit_instance.appointment.registered_subject.gender.lower() == 'm'
 
 
-def func_heart_attack_record_value(visit_instance):
-    """Returns True if at least one medical diagnosis is 'Heart Disease or Stroke'."""
-    medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
-    for diagnoses in medical_diagnoses.diagnoses.all():
-        if diagnoses.name == 'Heart Disease or Stroke':
-            return True
-    return False
-
-
-def func_cancer_record_value(visit_instance):
-    """Returns True if at least one medical diagnosis is 'Cancer'."""
-    medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
-    for diagnoses in medical_diagnoses.diagnoses.all():
-        if diagnoses.name == 'Cancer':
-            return True
-    return False
-
-
-def func_tb_record_value(visit_instance):
-    """Returns True if at least one medical diagnosis is 'Tubercolosis'."""
-    medical_diagnoses = MedicalDiagnoses.objects.get(subject_visit=visit_instance)
-    for diagnoses in medical_diagnoses.diagnoses.all():
-        if diagnoses.name == 'Tubercolosis':
-            return True
-    return False
-
-
 def evaluate_ever_had_sex_for_female(visit_instance):
     """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
@@ -395,24 +368,31 @@ class MedicalDiagnosesRuleGroup(RuleGroup):
     has a record. see redmine 314."""
     heart_attack_record = ScheduledDataRule(
         logic=Logic(
-            predicate=func_heart_attack_record_value,
+            predicate=('heart_attack_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['heartattack'])
 
     cancer_record = ScheduledDataRule(
         logic=Logic(
-            predicate=func_cancer_record_value,
+            predicate=('cancer_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
         target_model=['cancer'])
 
-    tb_record = ScheduledDataRule(
+    tb_record_tubercolosis = ScheduledDataRule(
         logic=Logic(
-            predicate=func_tb_record_value,
+            predicate=('tb_record', 'equals', 'Yes'),
             consequence='new',
             alternative='not_required'),
-        target_model=['tubercolosis', 'tbsymptoms'])
+        target_model=['tubercolosis'])
+
+    tb_record_tbsymptoms = ScheduledDataRule(
+        logic=Logic(
+            predicate=(('tb_record', 'equals', 'Yes'), ('tb_record', 'equals', 'No', 'or')),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['tbsymptoms'])
 
     class Meta:
         app_label = 'bcpp_subject'
