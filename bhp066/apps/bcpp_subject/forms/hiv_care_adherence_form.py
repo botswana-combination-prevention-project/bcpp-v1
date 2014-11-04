@@ -37,7 +37,7 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         if cleaned_data.get('ever_taken_arv', None) == 'Yes' and not cleaned_data.get('first_arv'):
             raise forms.ValidationError('If participant has taken ARV\'s, give the date when these were first started.')
         # if participant has never taken ARV's, dont give a reason why they stopped.
-        if cleaned_data.get('ever_taken_arv', None) == 'No' and cleaned_data.get('why_no_arv'):
+        if cleaned_data.get('ever_taken_arv', None) == 'No' and cleaned_data.get('arv_stop'):
             raise forms.ValidationError('If participant has NEVER taken ARV\'s, reason why they stopped should be \'None\'.')
         # if was recommended to take arv's but never taken arv's give reason why
         if cleaned_data.get('ever_recommended_arv', None) == 'Yes' and cleaned_data.get('ever_taken_arv', None) == 'No' and not cleaned_data.get('why_no_arv'):
