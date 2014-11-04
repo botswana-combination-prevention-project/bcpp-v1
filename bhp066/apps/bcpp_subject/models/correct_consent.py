@@ -1,3 +1,5 @@
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -34,21 +36,27 @@ class CorrectConsent(BaseSyncUuidModel):
             ],
         )
 
-    old_first_name = EncryptedFirstnameField()
+    old_first_name = EncryptedFirstnameField(
+            null=True,
+            blank=True,
+            )
 
     new_first_name = EncryptedFirstnameField(
         null=True,
         blank=True,
         )
 
-    old_last_name = EncryptedLastnameField()
-
+    old_last_name = EncryptedLastnameField(
+            null=True,
+            blank=True,
+            )
     new_last_name = EncryptedLastnameField(
         null=True,
         blank=True,
         )
 
     old_initials = EncryptedCharField(
+        blank=True,
         validators=[RegexValidator(
             regex=r'^[A-Z]{2,3}$',
             message='Ensure initials consist of letters only in upper case, no spaces.'), ],
@@ -64,6 +72,7 @@ class CorrectConsent(BaseSyncUuidModel):
 
     old_dob = models.DateField(
         verbose_name=_("Old Date of birth"),
+        blank=True,
         validators=[
             dob_not_future,
             MinConsentAge,
@@ -86,6 +95,7 @@ class CorrectConsent(BaseSyncUuidModel):
 
     old_gender = models.CharField(
         choices=GENDER_UNDETERMINED,
+        blank=True,
         max_length=1)
 
     new_gender = models.CharField(
@@ -116,6 +126,7 @@ class CorrectConsent(BaseSyncUuidModel):
     old_may_store_samples = models.CharField(
         verbose_name=_("Old Sample storage"),
         max_length=3,
+        blank=True,
         choices=YES_NO,
         )
 
@@ -129,6 +140,7 @@ class CorrectConsent(BaseSyncUuidModel):
     old_is_literate = models.CharField(
         verbose_name="(Old) Is the participant LITERATE?",
         max_length=3,
+        blank=True,
         choices=YES_NO,
         )
 
@@ -149,10 +161,40 @@ class CorrectConsent(BaseSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.compare_old_fields_to_consent()
+        self.update_household_member_and_enrollment_checklist()
         super(CorrectConsent, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.subject_consent.natural_key()
+
+    def update_household_member_and_enrollment_checklist(self):
+        #household member updates
+        household_member = self.subject_consent.household_member
+        enrollment_checklist = household_member.enrollment_checklist
+        if self.new_first_name:
+            household_member.first_name = self.new_first_name
+            self.subject_consent.first_name = self.new_first_name
+        if self.new_initials:
+            household_member.intials = self.new_initials
+            enrollment_checklist.initials = self.new_initials
+            self.subject_consent.initials = self.new_initials
+        if self.new_gender:
+            household_member.gender = self.new_gender
+            enrollment_checklist.gender = self.new_gender
+            self.subject_consent.gender = self.new_gender
+        if self.new_dob:
+            household_member.age_in_years = relativedelta(date.today(), self.new_dob).years
+            enrollment_checklist.dob = self.new_dob
+            self.subject_consent.dob = self.new_dob
+        if self.new_guardian_name:
+            enrollment_checklist.guardian = self.new_guardian_name
+            self.subject_consent.guardian_name = self.new_guardian_name
+        if self.new_is_literate:
+            enrollment_checklist.literacy = self.new_is_literate
+            self.subject_consent.is_literate = self.new_is_literate
+        household_member.save(update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
+        enrollment_checklist.save(update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
+        self.subject_consent.save(update_fields=['first_name', 'last_name', 'initials', 'gender', 'is_literate', 'dob', 'guardian_name'])
 
     def compare_old_fields_to_consent(self, instance=None, exception_cls=None):
         """Raises an exception if an 'old_" field does not match the value
@@ -163,7 +205,6 @@ class CorrectConsent(BaseSyncUuidModel):
         for field in instance._meta.fields:
             if field.name.startswith('old_'):
                 if not getattr(instance, field.name) == getattr(instance.subject_consent, field.name.split('old_')[1]):
-                    print field.name
                     raise ValidationError("Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
                         field.name.split('old_')[1],
                         field.name,
