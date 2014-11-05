@@ -29,6 +29,7 @@ class CorrectConsent(BaseSyncUuidModel):
 
     report_datetime = models.DateTimeField(
         verbose_name="Correction report date ad time",
+        null=True,
         validators=[
             datetime_not_before_study_start,
             datetime_is_after_consent,
@@ -57,6 +58,7 @@ class CorrectConsent(BaseSyncUuidModel):
 
     old_initials = EncryptedCharField(
         blank=True,
+        null=True,
         validators=[RegexValidator(
             regex=r'^[A-Z]{2,3}$',
             message='Ensure initials consist of letters only in upper case, no spaces.'), ],
@@ -72,6 +74,7 @@ class CorrectConsent(BaseSyncUuidModel):
 
     old_dob = models.DateField(
         verbose_name=_("Old Date of birth"),
+        null=True,
         blank=True,
         validators=[
             dob_not_future,
@@ -96,6 +99,7 @@ class CorrectConsent(BaseSyncUuidModel):
     old_gender = models.CharField(
         choices=GENDER_UNDETERMINED,
         blank=True,
+        null=True,
         max_length=1)
 
     new_gender = models.CharField(
@@ -127,6 +131,7 @@ class CorrectConsent(BaseSyncUuidModel):
         verbose_name=_("Old Sample storage"),
         max_length=3,
         blank=True,
+        null=True,
         choices=YES_NO,
         )
 
@@ -134,6 +139,7 @@ class CorrectConsent(BaseSyncUuidModel):
         verbose_name=_("New Sample storage"),
         max_length=3,
         blank=True,
+        null=True,
         choices=YES_NO,
         )
 
@@ -141,6 +147,7 @@ class CorrectConsent(BaseSyncUuidModel):
         verbose_name="(Old) Is the participant LITERATE?",
         max_length=3,
         blank=True,
+        null=True,
         choices=YES_NO,
         )
 
@@ -148,8 +155,8 @@ class CorrectConsent(BaseSyncUuidModel):
         verbose_name="(New) Is the participant LITERATE?",
         max_length=3,
         blank=True,
+        null=True,
         choices=YES_NO,
-        default='-',
         )
 
     history = AuditTrail()
@@ -175,7 +182,7 @@ class CorrectConsent(BaseSyncUuidModel):
             household_member.first_name = self.new_first_name
             self.subject_consent.first_name = self.new_first_name
         if self.new_initials:
-            household_member.intials = self.new_initials
+            household_member.initials = self.new_initials
             enrollment_checklist.initials = self.new_initials
             self.subject_consent.initials = self.new_initials
         if self.new_gender:
@@ -204,12 +211,13 @@ class CorrectConsent(BaseSyncUuidModel):
         # for each field prefixed with old compare to the consent
         for field in instance._meta.fields:
             if field.name.startswith('old_'):
-                if not getattr(instance, field.name) == getattr(instance.subject_consent, field.name.split('old_')[1]):
-                    raise ValidationError("Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
-                        field.name.split('old_')[1],
-                        field.name,
-                        getattr(instance.subject_consent, field.name.split('old_')[1]),
-                        getattr(instance, field.name) or None))
+                if getattr(instance, field.name):
+                    if not getattr(instance, field.name) == getattr(instance.subject_consent, field.name.split('old_')[1]):
+                        raise ValidationError("Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
+                            field.name.split('old_')[1],
+                            field.name,
+                            getattr(instance.subject_consent, field.name.split('old_')[1]),
+                            getattr(instance, field.name) or None))
 
     def dashboard(self):
         ret = None
