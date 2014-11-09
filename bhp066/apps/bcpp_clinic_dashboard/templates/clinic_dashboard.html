@@ -5,6 +5,7 @@
 {% load url from future %}
 
 {% block clinic_dashboard_marquee %}
+{{ clinic_consent }}
 <table>
 <tr style="background:lightyellow;">
     <td><B>Name:</B> {{registered_subject.first_name|encrypted }} ({{ registered_subject.initials }}) <i>{{registered_subject.gender|gender }}</i></td>
