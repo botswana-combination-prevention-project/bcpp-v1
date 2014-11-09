@@ -13,4 +13,5 @@ class SectionClinicView(BaseSectionForDashboardView):
     dashboard_url_name = 'subject_dashboard_url'
     add_model = ClinicEligibility
     search = {'word': ClinicSearchByWord}
+
 site_sections.register(SectionClinicView)
