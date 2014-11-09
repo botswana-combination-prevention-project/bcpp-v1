@@ -1,5 +1,4 @@
 from django.db import models
-#from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
@@ -11,17 +10,12 @@ from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
 
-# from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_off_study_mixin import ClinicOffStudyMixin
-#from apps.bcpp_household.models  import Plot
-
-#from ..managers import ScheduledModelManager
-
 from .clinic_visit import ClinicVisit
 
 
 class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseLocator):
-
+    """A model completed by the user for locator data from consented participants."""
     clinic_visit = models.ForeignKey(ClinicVisit)
 
     alt_contact_cell_number = EncryptedCharField(
@@ -36,8 +30,8 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         max_length=25,
         choices=YES_NO,
         verbose_name=_("If we are unable to contact the person indicated above, is there another"
-                      " individual (including next of kin) with whom the study team can get"
-                      " in contact with?"),
+                       " individual (including next of kin) with whom the study team can get"
+                       " in contact with?"),
         help_text="",
         )
 
@@ -90,23 +84,14 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
     entry_meta_data_manager = EntryMetaDataManager(ClinicVisit)
 
     def save(self, *args, **kwargs):
-#        self.hic_enrollment_checks()
-        # as long as locator is on a visit schedule, need to update self.registered_subject manually
         if self.clinic_visit:
             if not self.registered_subject:
-                self.registered_subject = self.registered_subject = self.clinic_visit.appointment.registered_subject
+                self.registered_subject = self.clinic_visit.appointment.registered_subject
         super(ClinicSubjectLocator, self).save(*args, **kwargs)
 
-#     def hic_enrollment_checks(self, exception_cls=None):
-#         from .hic_enrollment import HicEnrollment
-#         exception_cls = exception_cls or ValidationError
-#         if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
-#             if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
-#                 raise exception_cls('An HicEnrollment form exists for this subject. At least one of \'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
-#
-#     def natural_key(self):
-#         return self.subject_visit.natural_key()
-#
+    def natural_key(self):
+        return self.subject_visit.natural_key()
+
     def get_visit(self):
         return self.clinic_visit
 
@@ -117,16 +102,6 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
 
     def get_report_datetime(self):
         return self.created
-
-#    @property
-#     def ready_to_export_transaction(self):
-#         """Evaluates to True if the subject has a referral instance with a referral code to avoid exporting someone who is not being referred."""
-#         from .subject_referral import SubjectReferral
-#         try:
-#             return SubjectReferral.objects.get(subject_visit=self.subject_visit).referral_code
-#         except SubjectReferral.DoesNotExist:
-#             return False
-#         return None
 
     def __unicode__(self):
         return unicode(self.clinic_visit)
