@@ -1,6 +1,7 @@
 from django import forms
 
 from ..models import ClinicSubjectLocator
+
 from .base_clinic_model_form import BaseClinicModelForm
 
 
@@ -8,13 +9,6 @@ class ClinicSubjectLocatorForm (BaseClinicModelForm):
 
     def clean(self):
         cleaned_data = super(ClinicSubjectLocatorForm, self).clean()
-#         instance = None
-#         if self.instance.id:
-#             instance = self.instance
-#         else:
-#             instance = ClinicSubjectLocator(**self.cleaned_data)
-#         # validating that some contact numbers exist when HicEnrollment form exists.
-        #instance.hic_enrollment_checks(forms.ValidationError)
         # validating home_visits
         if cleaned_data.get('home_visit_permission', None) == 'No' and cleaned_data.get('physical_address', None):
             raise forms.ValidationError('If participant has not given permission to make home_visits, do not give physical(home) address details')

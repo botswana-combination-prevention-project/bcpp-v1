@@ -1,6 +1,6 @@
-from ..models import ClinicRefusal
-
 from edc.base.form.forms import BaseModelForm
+
+from ..models import ClinicRefusal
 
 
 class ClinicRefusalForm(BaseModelForm):
