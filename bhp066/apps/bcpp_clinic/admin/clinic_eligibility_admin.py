@@ -1,44 +1,66 @@
 from django.contrib import admin
 
-from ..forms import ClinicEligibilityForm
-from ..models import ClinicEligibility
-
 from edc.base.modeladmin.admin import BaseModelAdmin
+
+from ..forms import ClinicEligibilityForm
+from ..models import ClinicEligibility, ClinicHouseholdMember
 
 
 class ClinicEligibilityAdmin(BaseModelAdmin):
 
     form = ClinicEligibilityForm
 
-    instructions = ['This form is a tool to assist the Interviewer to confirm the Eligibility status of the subject.']
+    instructions = ['This form is a tool to assist the Interviewer to confirm the '
+                    'Eligibility status of the subject. After entering the required items, click SAVE.']
 
     fields = (
+        #'household_member',
+        'report_datetime',
         'first_name',
         'initials',
-        'gender',
         'dob',
-        'inability_to_participate',
+        'gender',
         'has_identity',
-        'citizen',
+        'identity',
+        'identity_type',
+        "citizen",
         "legal_marriage",
-        'marriage_certificate',
+        "marriage_certificate",
         "part_time_resident",
-        'literacy',
-        "hiv_status",)
+        "literacy",
+        "guardian",
+        'inability_to_participate',
+        "hiv_status",
+        )
+
+    list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', 'is_consented', 'is_refused')
+
+    list_filter = ('household_member', 'gender', 'is_eligible', 'is_consented', 'is_refused', 'report_datetime',
+                   'community')
+
     radio_fields = {
+        'has_identity': admin.VERTICAL,
+        "gender": admin.VERTICAL,
+        "citizen": admin.VERTICAL,
+        "identity_type": admin.VERTICAL,
+        "legal_marriage": admin.VERTICAL,
+        "marriage_certificate": admin.VERTICAL,
         "part_time_resident": admin.VERTICAL,
+        "literacy": admin.VERTICAL,
+        "guardian": admin.VERTICAL,
         "inability_to_participate": admin.VERTICAL,
         "hiv_status": admin.VERTICAL,
-        "legal_marriage": admin.VERTICAL,
-        "citizen": admin.VERTICAL,
-        "marriage_certificate": admin.VERTICAL,
-        "literacy": admin.VERTICAL}
-    list_display = ('registered_subject', 'is_eligible', 'registration_datetime')
-    list_filter = ('is_eligible', )
+        }
+
     search_fields = (
-        'registered_subject__subject_identifier',
-        'initials',
+        'household_member',
         'first_name',
+        'initials',
         )
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "household_member":
+            kwargs["queryset"] = ClinicHouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))
+        return super(ClinicEligibilityAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(ClinicEligibility, ClinicEligibilityAdmin)

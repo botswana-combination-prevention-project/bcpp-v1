@@ -17,7 +17,7 @@ class BaseClinicVisitModel(ClinicOffStudyMixin, BaseConsentedUuidModel):
 
     clinic_visit = models.OneToOneField(ClinicVisit)
 
-    report_datetime = models.DateTimeField("Today's date",
+    report_datetime = models.DateTimeField("Report date/time",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
