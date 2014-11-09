@@ -126,48 +126,45 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
     """Updates enumerated, eligible_members on household structure."""
     if not raw:
         if isinstance(instance, HouseholdMember):
-            household_structure = HouseholdStructure.objects.using(using).get(
-                pk=instance.household_structure.pk)
             # update registered subject
             instance.update_registered_subject_on_post_save(using, **kwargs)
-            # create subject absentee if member_status == ABSENT otherwise delete the entries
-            if instance.absent or instance.present_today == 'No':
-                try:
-                    SubjectAbsentee.objects.using(using).get(household_member=instance)
-                except SubjectAbsentee.DoesNotExist:
-                    SubjectAbsentee.objects.using(using).create(
-                        report_datetime=datetime.today(),
-                        registered_subject=instance.registered_subject,
-                        household_member=instance,
-                        survey=household_structure.survey,
-                        )
-            # FIXME: why delete these ?
-            # else:
-            #    SubjectAbsenteeEntry.objects.using(using).filter(
-            #         subject_absentee__household_member=instance).delete()
-            # create subject undecided if member_status == UNDECIDED otherwise delete the entries
-            if instance.undecided:
-                try:
-                    SubjectUndecided.objects.using(using).get(household_member=instance)
-                except SubjectUndecided.DoesNotExist:
-                    SubjectUndecided.objects.using(using).create(
-                        report_datetime=datetime.today(),
-                        registered_subject=instance.registered_subject,
-                        household_member=instance,
-                        survey=household_structure.survey,
-                        )
-            # FIXME: why delete these ?
-            # else:
-            #    SubjectUndecidedEntry.objects.using(using).filter(
-            #       subject_undecided__household_member=instance).delete()
-            # update household structure
-            if not household_structure.enumerated:
-                household_structure.enumerated = True
-            household_structure.eligible_members = False
-            if HouseholdMember.objects.using(using).filter(
-                    household_structure=household_structure, eligible_member=True):
-                household_structure.eligible_members = True
-            household_structure.save(using=using, update_fields=['enumerated', 'eligible_members'])
+
+            try:
+                household_structure = HouseholdStructure.objects.using(using).get(
+                    pk=instance.household_structure.pk)
+                # create subject absentee if member_status == ABSENT otherwise delete the entries
+                if instance.absent or instance.present_today == 'No':
+                    try:
+                        SubjectAbsentee.objects.using(using).get(household_member=instance)
+                    except SubjectAbsentee.DoesNotExist:
+                        SubjectAbsentee.objects.using(using).create(
+                            report_datetime=datetime.today(),
+                            registered_subject=instance.registered_subject,
+                            household_member=instance,
+                            survey=household_structure.survey,
+                            )
+                # create subject undecided if member_status == UNDECIDED otherwise delete the entries
+                if instance.undecided:
+                    try:
+                        SubjectUndecided.objects.using(using).get(household_member=instance)
+                    except SubjectUndecided.DoesNotExist:
+                        SubjectUndecided.objects.using(using).create(
+                            report_datetime=datetime.today(),
+                            registered_subject=instance.registered_subject,
+                            household_member=instance,
+                            survey=household_structure.survey,
+                            )
+                # update household structure
+                if not household_structure.enumerated:
+                    household_structure.enumerated = True
+                household_structure.eligible_members = False
+                if HouseholdMember.objects.using(using).filter(
+                        household_structure=household_structure, eligible_member=True):
+                    household_structure.eligible_members = True
+                household_structure.save(using=using, update_fields=['enumerated', 'eligible_members'])
+            except AttributeError:
+                # expect a household_structure pk exception if coming from bcpp_clinic
+                pass
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_member_status_form_on_post_save')
