@@ -38,16 +38,18 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'schedule_group': 'clinic',
             'instructions': None,
             'requisitions': (
-#               # (entry_order, app_label, model_name, panel.name, panel.edc_name, panel.panel_type, aliquot_type) OLD
-                RequisitionPanelTuple(10L, u'bcpp_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB', REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Viral Load (clinic)', 'TEST', 'WB', NOT_REQUIRED, ADDITIONAL),
+                RequisitionPanelTuple(10L, u'bcpp_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB',
+                                      REQUIRED, NOT_ADDITIONAL),
+                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Viral Load', 'TEST', 'WB',
+                                      NOT_REQUIRED, ADDITIONAL),
                 ),
             'entries': (
-            EntryTuple(10L, u'bcpp_clinic', u'clinicsubjectlocator', REQUIRED, NOT_ADDITIONAL,),
-            EntryTuple(20L, u'bcpp_clinic', u'questionnaire', REQUIRED, NOT_ADDITIONAL,),
-            EntryTuple(30L, u'bcpp_clinic', u'clinicvlresult', NOT_REQUIRED, ADDITIONAL,),
-            EntryTuple(40L, u'bcpp_clinic', u'viralloadtracking', NOT_REQUIRED, ADDITIONAL,),
-            )}
+                EntryTuple(10L, u'bcpp_clinic', u'clinicsubjectlocator', REQUIRED, NOT_ADDITIONAL,),
+                EntryTuple(20L, u'bcpp_clinic', u'questionnaire', REQUIRED, NOT_ADDITIONAL,),
+                EntryTuple(30L, u'bcpp_clinic', u'clinicvlresult', NOT_REQUIRED, ADDITIONAL,),
+                EntryTuple(40L, u'bcpp_clinic', u'viralloadtracking', NOT_REQUIRED, ADDITIONAL,),
+                )
+            }
         }
     )
 
