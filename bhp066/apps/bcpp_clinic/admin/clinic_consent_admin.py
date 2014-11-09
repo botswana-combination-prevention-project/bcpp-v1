@@ -13,9 +13,8 @@ class ClinicConsentAdmin(BaseConsentModelAdmin):
 
     def __init__(self, *args, **kwargs):
         super(ClinicConsentAdmin, self).__init__(*args, **kwargs)
-        for fld in ['is_incarcerated']:
-            self.fields.remove(fld)
-        for flds in ['have_htc_pims', 'htc_pims_id']:
-            self.fields.append(flds)
+        self.fields.remove('is_incarcerated')
+        self.fields.extend(['lab_identifier', 'htc_identifier', 'pims_identifier'])
+        self.list_filter.append('community')
 
 admin.site.register(ClinicConsent, ClinicConsentAdmin)
