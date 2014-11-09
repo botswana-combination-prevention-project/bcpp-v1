@@ -258,7 +258,10 @@ class Plot(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return self.plot_identifier
+        if site_mappers.get_current_mapper()().clinic_plot_identifier == self.plot_identifier:
+            return 'BCPP-CLINIC'
+        else:
+            return self.plot_identifier
 
     def natural_key(self):
         return (self.plot_identifier, )
@@ -334,14 +337,15 @@ class Plot(BaseDispatchSyncUuidModel):
         update_fields = update_fields or []
         exception_cls = exception_cls or ValidationError
         if using == 'default':  # do not check on remote systems
+            mapper_instance = site_mappers.get_current_mapper()()
             if plot_instance.id:
                 if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
-            if not plot_instance.bhs and date.today() > site_mappers.get_current_mapper().bhs_full_enrollment_date:
+            if not plot_instance.bhs and date.today() > mapper_instance.current_survey_dates.bhs_full_enrollment_date:
                 raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
                                     'data related to it, may not be modified. '
                                     'See site_mappers'.format(
-                                        self.community, site_mappers.get_current_mapper().bhs_full_enrollment_date))
+                                        self.community, mapper_instance.current_survey_dates.bhs_full_enrollment_date))
         return True
 
     def safe_delete_households(self, count, instance=None, using=None):
@@ -379,17 +383,18 @@ class Plot(BaseDispatchSyncUuidModel):
 
             * If number is greater than actual household instances, households are created.
             * If number is less than actual household instances, households are deleted as long as
-              there are no household members and the household log does not have entries."""
+              there are no household members and the household log does not have entries.
+            * bcpp_clinic is a special case to allow for a plot to represent the BCPP Clinic."""
         instance = instance or self
         using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
         # check that tuple has not changed and has "residential_habitable"
         if instance.status:
-            if instance.status not in [item[0] for item in PLOT_STATUS]:
+            if instance.status not in [item[0] for item in list(PLOT_STATUS) + [('bcpp_clinic', 'BCPP Clinic')]]:
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status,
                                                                                               PLOT_STATUS))
         existing_household_count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
-        if instance.status in ['residential_habitable']:
+        if instance.status in ['residential_habitable', 'bcpp_clinic']:
             instance.create_household(instance.household_count - existing_household_count, using=using)
             instance.safe_delete_households(instance.household_count - existing_household_count, using=using)
         return Household.objects.using(using).filter(plot__pk=instance.pk).count()
