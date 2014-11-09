@@ -1,8 +1,10 @@
 from django.contrib import admin
 
+from ..filters import ClinicCommunityListFilter
+from ..forms import QuestionnaireForm
 from ..models import Questionnaire
+
 from .clinic_visit_model_admin import ClinicVisitModelAdmin
-from apps.bcpp_clinic.forms import QuestionnaireForm
 
 
 class QuestionnaireAdmin(ClinicVisitModelAdmin):
@@ -10,8 +12,6 @@ class QuestionnaireAdmin(ClinicVisitModelAdmin):
     form = QuestionnaireForm
     fields = (
         "clinic_visit",
-#         'other_identifiers',
-#         'htc_and_or_pims',
         "report_datetime",
         "on_arv",
         "knows_last_cd4",
@@ -20,9 +20,8 @@ class QuestionnaireAdmin(ClinicVisitModelAdmin):
     radio_fields = {
         "on_arv": admin.VERTICAL,
         "knows_last_cd4": admin.VERTICAL,
-#         "other_identifiers": admin.VERTICAL
         }
-    list_display = ('on_arv', 'cd4_count', 'report_datetime')
-    list_filter = ('on_arv', 'report_datetime')
+    list_display = ('clinic_visit', 'on_arv', 'cd4_count', 'report_datetime')
+    list_filter = ('on_arv', ClinicCommunityListFilter, 'report_datetime')
     search_fields = ('on_arv',)
 admin.site.register(Questionnaire, QuestionnaireAdmin)

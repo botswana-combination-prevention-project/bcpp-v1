@@ -10,18 +10,11 @@ class ClinicEnrollmentLossAdmin(BaseModelAdmin):
 
     form = ClinicEnrollmentLossForm
 
-    fields = ('registration_datetime', 'reason')
+    fields = ('household_member', 'report_datetime', 'reason')
 
-    list_display = ('registered_subject', 'registration_datetime', 'user_created', 'user_modified', 'hostname_created')
+    list_display = ('household_member', 'report_datetime', 'reason', 'user_created', 'user_modified', 'hostname_created')
 
-    list_filter = ('registration_datetime', 'user_created', 'user_modified', 'hostname_created')
+    list_filter = ('community', 'report_datetime', 'reason', 'user_created', 'user_modified', 'hostname_created')
 
-#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-#         if db_field.name == "registered_subject":
-#             registered_subject = RegisteredSubject.objects.none()
-#             if RegisteredSubject.objects.filter(household_structure__exact=request.GET.get('household_structure', 0)):
-#                 registered_subject = RegisteredSubject.objects.filter(household_structure__exact=request.GET.get('household_structure', 0))
-#             kwargs["queryset"] = registered_subject
-#         return super(ClinicEnrollmentLossAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
+    instructions = []
 admin.site.register(ClinicEnrollmentLoss, ClinicEnrollmentLossAdmin)
