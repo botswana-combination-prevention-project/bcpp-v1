@@ -1,3 +1,6 @@
+from .clinic_household_member_manager import ClinicHouseholdMemberManager
 from .clinic_model_manager import ClinicModelManager
+from .clinic_refusal_history_manager import ClinicRefusalHistoryManager
+from .consent_history_manager import ConsentHistoryManager
 from .scheduled_model_manager import ScheduledModelManager
 from .viral_load_result_manager import ViralLoadResultManager
