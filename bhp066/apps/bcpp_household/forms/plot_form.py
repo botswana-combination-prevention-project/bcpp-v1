@@ -10,6 +10,9 @@ class PlotForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
+        if self.instance.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
+            raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
+                                        'It may not be edited by a user.')
         self.instance.allow_enrollment('default',
                                        plot_instance=Plot(**cleaned_data),
                                        exception_cls=forms.ValidationError)
