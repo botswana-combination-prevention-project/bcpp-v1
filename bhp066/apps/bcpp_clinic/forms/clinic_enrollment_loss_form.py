@@ -1,6 +1,6 @@
-from ..models import ClinicEnrollmentLoss
-
 from edc.base.form.forms import BaseModelForm
+
+from ..models import ClinicEnrollmentLoss
 
 
 class ClinicEnrollmentLossForm(BaseModelForm):
