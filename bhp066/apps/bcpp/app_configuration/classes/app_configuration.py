@@ -353,26 +353,4 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.datetime_end = survey_values.get('datetime_end')
                 survey.save()
 
-#     def validate_bcpp_settings(self):
-#         current_survey = Survey.objects.current_survey()
-#         if current_survey.survey_slug != settings.CURRENT_SURVEY:
-#             raise ImproperlyConfigured('The EDC is expecting the current survey to be {0}. But today\'s date pulled {1}'.
-#                                        format(settings.CURRENT_SURVEY, current_survey.survey_name))
-#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().bhs_start_date 
-#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().bhs_start_date):
-#             raise ImproperlyConfigured('BHS_START_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
-#                                        format(site_mappers.get_current_mapper().bhs_start_date, current_survey))
-#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().bhs_end_date 
-#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().bhs_end_date):
-#             raise ImproperlyConfigured('BHS_END_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
-#                                        format(site_mappers.get_current_mapper().bhs_end_date, current_survey))
-#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().bhs_full_enrollment_date 
-#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().bhs_full_enrollment_date):
-#             raise ImproperlyConfigured('BHS_FULL_ENROLLMENT_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
-#                                        format(settings.site_mappers.get_current_mapper().bhs_full_enrollment_date, current_survey))
-#         if (not current_survey.datetime_start.date() <= site_mappers.get_current_mapper().smc_start_date 
-#             or current_survey.datetime_end.date() <= site_mappers.get_current_mapper().smc_start_date):
-#             raise ImproperlyConfigured('SMC_START_DATE={0} does not fall within the current {1} survey\'s start and end datetimes.'.
-#                                        format(site_mappers.get_current_mapper().smc_start_date, current_survey))
-
 bcpp_app_configuration = BcppAppConfiguration()
