@@ -4,20 +4,22 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_future, date_not_before_study_start
-from edc.choices.common import GENDER
-from edc.core.bhp_variables.models import StudySite
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.map.classes import site_mappers
 
-from .base_clinic_registered_subject_model import BaseClinicRegisteredSubjectModel
+from apps.bcpp_household_member.models import HouseholdMember
 
 
-class ClinicRefusal (BaseClinicRegisteredSubjectModel):
+class ClinicRefusal(BaseDispatchSyncUuidModel):
+    "A model completed by the user for eligible participants who decide not to participate."""
+    household_member = models.OneToOneField(HouseholdMember, null=True)
 
     refusal_date = models.DateField(
         verbose_name=_("Date subject refused participation"),
         validators=[date_not_before_study_start, date_not_future],
         help_text="Date format is YYYY-MM-DD")
 
-    site = models.ForeignKey(StudySite, null=True)
+    community = models.CharField(max_length=25, editable=False)
 
     reason = models.CharField(
         verbose_name=_("We respect your decision to decline. It would help us"
@@ -37,11 +39,6 @@ class ClinicRefusal (BaseClinicRegisteredSubjectModel):
 
     reason_other = OtherCharField()
 
-    gender = models.CharField(
-        verbose_name='Gender',
-        max_length=1,
-        choices=GENDER)
-
     comment = models.CharField(
         verbose_name=_("Comment"),
         max_length=250,
@@ -52,13 +49,13 @@ class ClinicRefusal (BaseClinicRegisteredSubjectModel):
 
     history = AuditTrail()
 
-    def get_registration_datetime(self):
-        return self.report_datetime
-
     def __unicode__(self):
         return "for participant"
 
+    def save(self, *args, **kwargs):
+        self.community = site_mappers.get_current_mapper().map_area
+        super(ClinicRefusal, self).save(*args, **kwargs)
+
     class Meta:
         app_label = "bcpp_clinic"
-        verbose_name = "Subject Refusal"
-        verbose_name_plural = "Subject Refusal"
+        verbose_name = 'Clinic Refusal'

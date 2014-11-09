@@ -1,17 +1,23 @@
 from django.db import models
 
-from .clinic_off_study_mixin import ClinicOffStudyMixin
-
-from apps.clinic.choices import VISIT_UNSCHEDULED_REASON
-
 from edc.audit.audit_trail import AuditTrail
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.lab.lab_clinic_api.models import Panel
 from edc.subject.entry.models import LabEntry, Entry
 from edc.subject.visit_tracking.models import BaseVisitTracking
 
+from apps.bcpp_household_member.models import HouseholdMember
+from apps.clinic.choices import VISIT_UNSCHEDULED_REASON
+
+from .clinic_off_study_mixin import ClinicOffStudyMixin
+
 
 class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
+    """A model completed by the user to indicate track the actual appointment or visit.
+
+    The model captures actual report date, time and location (home, clinic, etc)."""
+
+    household_member = models.ForeignKey(HouseholdMember)
 
     reason_unscheduled = models.CharField(
         verbose_name="If 'Unscheduled' above, provide reason for the unscheduled visit",
@@ -36,33 +42,53 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         return unicode(self.appointment)
 
     def get_requisition(self):
-        """Confirms the visit code and visit reason before updating the VL requisition metadata status to NEW."""
+        """Confirms the visit code and visit reason before
+        updating the VL requisition metadata status to NEW."""
         lab_model = ['clinicrequisition']
         from ...bcpp_clinic.models import ClinicConsent
-        check_consent = ClinicConsent.objects.filter(subject_identifier=self.registered_subject.subject_identifier)
+        check_consent = ClinicConsent.objects.filter(
+            subject_identifier=self.registered_subject.subject_identifier)
         if check_consent[0]:
             if self.appointment.visit_definition.code == 'C0':
                 if self.reason in ['Initiation Visit', 'Other NON-VL Visit']:
                     for lab in lab_model:
                         panel = Panel.objects.get(edc_name='Viral Load (clinic)')
-                        lab_entry = LabEntry.objects.filter(model_name=lab, requisition_panel_id=panel.id, visit_definition_id=self.appointment.visit_definition_id)
+                        lab_entry = LabEntry.objects.filter(
+                            model_name=lab,
+                            requisition_panel_id=panel.id,
+                            visit_definition_id=self.appointment.visit_definition_id)
                         if lab_entry:
-                            requisition_meta_data = RequisitionMetaData.objects.filter(appointment=self.appointment, lab_entry=lab_entry[0], registered_subject=self.registered_subject)
+                            requisition_meta_data = RequisitionMetaData.objects.filter(
+                                appointment=self.appointment,
+                                lab_entry=lab_entry[0],
+                                registered_subject=self.registered_subject)
                             if not requisition_meta_data:
-                                requisition_meta_data = RequisitionMetaData.objects.create(appointment=self.appointment, lab_entry=lab_entry[0], registered_subject=self.registered_subject)
+                                requisition_meta_data = RequisitionMetaData.objects.create(
+                                    appointment=self.appointment,
+                                    lab_entry=lab_entry[0],
+                                    registered_subject=self.registered_subject)
                             else:
                                 requisition_meta_data = requisition_meta_data[0]
                             requisition_meta_data.entry_status = 'NEW'
                             requisition_meta_data.save()
 
     def ccc_masa_visit_reason_forms(self):
-        """Confirms the visit code and visit reason before updating the VL tracking scheduled metadata status to NEW."""
+        """Confirms the visit code and visit reason before
+        updating the VL tracking scheduled metadata status to NEW."""
         if self.appointment.visit_definition.code == 'C0':
             if self.reason in ['MASA Scheduled VL Visit', 'CCC visit']:
-                entry = Entry.objects.get(model_name='viralloadtracking', visit_definition_id=self.appointment.visit_definition_id)
-                scheduled_meta_data = ScheduledEntryMetaData.objects.filter(appointment=self.appointment, entry=entry, registered_subject=self.registered_subject)
+                entry = Entry.objects.get(
+                    model_name='viralloadtracking',
+                    visit_definition_id=self.appointment.visit_definition_id)
+                scheduled_meta_data = ScheduledEntryMetaData.objects.filter(
+                    appointment=self.appointment,
+                    entry=entry,
+                    registered_subject=self.registered_subject)
                 if not scheduled_meta_data:
-                    scheduled_meta_data = ScheduledEntryMetaData.objects.create(appointment=self.appointment, entry=entry, registered_subject=self.registered_subject)
+                    scheduled_meta_data = ScheduledEntryMetaData.objects.create(
+                        appointment=self.appointment,
+                        entry=entry,
+                        registered_subject=self.registered_subject)
                 else:
                     scheduled_meta_data = scheduled_meta_data[0]
                 scheduled_meta_data.entry_status = 'NEW'
