@@ -12,7 +12,7 @@ from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS
 from .lab import LAB_IMPORT_DMIS_DATA_SOURCE
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
-
+from .middleman import MIDDLE_MAN_LIST
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -270,7 +270,7 @@ else:
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['bcpp358-bhp066']
+MIDDLE_MAN_LIST = MIDDLE_MAN_LIST
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
