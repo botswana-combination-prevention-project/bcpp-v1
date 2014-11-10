@@ -1,1 +1,1 @@
-MIDDLEMAN = ['bcpp358-bhp066']
+MIDDLE_MAN_LIST = ['bcpp358-bhp066']
