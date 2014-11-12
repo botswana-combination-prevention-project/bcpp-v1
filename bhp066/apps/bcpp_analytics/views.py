@@ -20,7 +20,7 @@ from apps.bcpp_subject.constants import DECLINED, NOT_PERFORMED
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household_member.constants import (ABSENT, BHS, HTC, REFUSED, UNDECIDED)
-from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.models import HouseholdMember, SubjectRefusal, SubjectRefusalHistory
 from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
 from apps.bcpp_subject.models import HivResult, HicEnrollment
 from apps.bcpp_survey.models import Survey
@@ -231,8 +231,8 @@ def operational_report_view(request, **kwargs):
     undecided = (age_eligible_undecided.count())
     values['9. Age eligible members that where UNDECIDED'] = undecided
 
-    age_eligible_refused = members.filter(eligible_member=True, member_status=REFUSED)
-    refused = (age_eligible_refused.count())
+    age_eligible_refused = SubjectRefusal.objects.filter(household_member__household_structure__household__plot__community__icontains=community)
+    refused = age_eligible_refused.count()
     values['91. Age eligible members that REFUSED'] = refused
     how_many_tested = (HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=community,
                                          created__gte=date_from, created__lte=date_to, user_created__icontains=ra_username).exclude(hiv_result__in=[DECLINED, NOT_PERFORMED]).count())
