@@ -1,11 +1,12 @@
 from dateutil.relativedelta import MO, TU, WE, TH, FR
-
 from datetime import date
+
 from edc.map.classes import site_mappers
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, OODI_LANDMARKS
 
-from ..utils import ClinicDaysTuple
+from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
 class OodiPlotMapper(BasePlotMapper):
@@ -24,7 +25,7 @@ class OodiPlotMapper(BasePlotMapper):
     radius = 300
     location_boundary = ()
 
-    survey_dates = {'bcpp-year-1': dict(
+    survey_dates = {'bcpp-year-1': SurveyDatesTuple(
         bhs_start_date=date(2014, 11, 5),
         bhs_full_enrollment_date=date(2014, 11, 28),
         bhs_end_date=date(2014, 12, 20),
@@ -34,7 +35,7 @@ class OodiPlotMapper(BasePlotMapper):
         'IDCC': ClinicDaysTuple((MO, ), None),
         'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
         'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].get('smc_start_date')),
+        'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].smc_start_date),
         }
     }
 
