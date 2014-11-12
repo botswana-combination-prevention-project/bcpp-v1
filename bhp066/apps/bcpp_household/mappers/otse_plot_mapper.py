@@ -1,6 +1,12 @@
+from dateutil.relativedelta import MO, TU, WE, TH, FR
+from datetime import date
+
 from edc.map.classes import site_mappers
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, OTSE_LANDMARKS
+
+from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
 class OtsePlotMapper(BasePlotMapper):

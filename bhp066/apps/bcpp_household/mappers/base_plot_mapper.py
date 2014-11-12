@@ -1,11 +1,15 @@
 from datetime import datetime, time
 
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
 from edc.map.classes import Mapper
 from edc.map.choices import ICONS, OTHER_ICONS
 
-from apps.bcpp_household.models import Plot
 from apps.bcpp_survey.models import Survey
-from django.core.exceptions import ImproperlyConfigured
+
+from ..choices import NON_RESIDENTIAL
+from ..models import Plot
 
 
 class BasePlotMapper(Mapper):
@@ -69,18 +73,18 @@ class BasePlotMapper(Mapper):
         """Verifies that the dates fall within the survey."""
         for survey_slug, survey_dates in self.survey_dates.iteritems():
             try:
-                bhs_start_datetime = datetime.combine(survey_dates.get('bhs_start_date'), time.min)
+                bhs_start_datetime = datetime.combine(survey_dates.bhs_start_date, time.min)
                 Survey.objects.current_survey(
                     report_datetime=bhs_start_datetime,
                     survey_slug=survey_slug,
                     datetime_label='bhs_start_datetime')
                 bhs_full_enrollment_datetime = datetime.combine(
-                    survey_dates.get('bhs_full_enrollment_date'), time.min)
+                    survey_dates.bhs_full_enrollment_date, time.min)
                 Survey.objects.current_survey(
                     report_datetime=bhs_full_enrollment_datetime,
                     survey_slug=survey_slug,
                     datetime_label='bhs_full_enrollment_date')
-                bhs_end_datetime = datetime.combine(survey_dates.get('bhs_end_date'), time.min)
+                bhs_end_datetime = datetime.combine(survey_dates.bhs_end_date, time.min)
                 Survey.objects.current_survey(
                     report_datetime=bhs_end_datetime,
                     survey_slug=survey_slug,
@@ -95,3 +99,37 @@ class BasePlotMapper(Mapper):
         degrees_e, minutes_e = self.deg_to_dms(self.gps_center_lon)
         degrees_s, minutes_s = self.deg_to_dms(self.gps_center_lat)
         return (degrees_s, minutes_s, degrees_e, minutes_e)
+
+    @property
+    def current_survey_slug(self):
+        """Returns the survey_slug from the Survey instance using settings.CURRENT_SURVEY."""
+        return Survey.objects.current_survey(survey_slug=settings.CURRENT_SURVEY).survey_slug
+
+    @property
+    def current_survey_dates(self):
+        return self.survey_dates.get(self.current_survey_slug)
+
+    @property
+    def current_clinic_days(self):
+        return self.clinic_days.get(self.current_survey_slug)
+
+    @property
+    def clinic_plot(self):
+        """Returns and, if needed, creates a non-residential plot to represent the CLINIC."""
+        try:
+            plot = Plot.objects.get(plot_identifier=self.clinic_plot_identifier)
+        except Plot.DoesNotExist:
+            plot = Plot.objects.create(
+                plot_identifier=self.clinic_plot_identifier,
+                household_count=1,
+                status='bcpp_clinic',
+                community=self.map_area,
+                action='confirmed',
+                description='BCPP Community Clinic')
+        return plot
+
+    @property
+    def clinic_plot_identifier(self):
+        if not self.map_code:
+            raise TypeError('Expected a value for mapper.map_code, Got None.')
+        return '{}0000-00'.format(self.map_code)
