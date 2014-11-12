@@ -1,4 +1,5 @@
 from edc.subject.consent.forms import BaseConsentedModelForm
+
 from ..models import ClinicVisit
 
 
