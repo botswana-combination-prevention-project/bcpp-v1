@@ -1,1 +1,1 @@
-from .bcpp_clinic_configuration import BcppClinicConfiguration
+# from .bcpp_clinic_configuration import BcppClinicConfiguration

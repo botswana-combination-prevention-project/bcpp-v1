@@ -208,11 +208,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0} {1} {2}{3}'.format(
+        return '{0} {1} {2}{3} {4}'.format(
             mask_encrypted(self.first_name),
             self.initials,
             self.age_in_years,
-            self.gender)
+            self.gender,
+            '' if self.is_bhs else 'non-BHS')
 
     def save(self, *args, **kwargs):
         selected_member_status = None
@@ -705,6 +706,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 consent_instance = consent_model.objects.get(household_member=self.id)
                 break
         return consent_instance
+
+    @property
+    def is_bhs(self):
+        """Returns True if the member was survey as part of the BHS."""
+        return self.household_structure.household.plot.plot_identifier != \
+            site_mappers.get_current_mapper()().clinic_plot.plot_identifier
 
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found,

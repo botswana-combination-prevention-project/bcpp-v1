@@ -28,6 +28,4 @@ class ConsentHistoryManager(BaseConsentHistoryManager):
             )
         if not created:
             inst.consent_datetime = consent_inst.consent_datetime
-#             inst.consent_datetime = consent_inst.survey
-#             inst.consent_datetime = consent_inst.household_member
             inst.save(using=using)

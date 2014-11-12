@@ -9,7 +9,9 @@ class HivResultFilter(SimpleListFilter):
     parameter_name = 'hiv_result'
 
     def lookups(self, request, model_admin):
-        return (('POS', 'HIV Positive'), ('NEG', 'HIV Negative'), ('IND', 'Indeterminate'), ('Declined', 'declined'), ('Not performed', 'not performed'),)
+        return (('POS', 'HIV Positive'), ('NEG', 'HIV Negative'),
+                ('IND', 'Indeterminate'), ('Declined', 'declined'),
+                ('Not performed', 'not performed'),)
 
     def queryset(self, request, queryset):
         if self.value():

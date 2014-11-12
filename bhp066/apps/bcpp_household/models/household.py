@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.map.classes import site_mappers
 
 from ..managers import HouseholdManager
 
@@ -183,6 +184,8 @@ class Household(BaseDispatchSyncUuidModel):
         return self.community
 
     def __unicode__(self):
+        if site_mappers.get_current_mapper()().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
+            return 'BCPP-CLINIC'
         return self.household_identifier
 
     def natural_key(self):
