@@ -223,7 +223,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             raise AlreadyReplaced('Household {0} replaced.'.format(
                 self.household_structure.household.household_identifier))
         # check if consented. If update fields is set then bypass (see SubjectConsent post-save signal)
-        if self.is_consented and kwargs.get('update_fields') != ['is_consented']:
+        if self.is_consented and not kwargs.get('update_fields'):
             raise MemberStatusError('Household member is consented. Changes are not allowed. '
                                     'Perhaps catch this in the form.')
         self.eligible_member = self.is_eligible_member
