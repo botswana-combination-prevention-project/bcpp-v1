@@ -3,7 +3,7 @@ from edc.subject.off_study.models import BaseOffStudy
 
 
 class ClinicOffStudy(BaseOffStudy):
-
+    """A model completed by the user to indicate a subject is no longer on study."""
     history = AuditTrail()
 
     class Meta:

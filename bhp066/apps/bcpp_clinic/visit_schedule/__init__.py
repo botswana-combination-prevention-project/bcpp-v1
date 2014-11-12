@@ -1,1 +1,1 @@
-from .bcpp_clinic import BcppClinicVisitSchedule
+from bcpp_clinic import BcppClinicVisitSchedule
