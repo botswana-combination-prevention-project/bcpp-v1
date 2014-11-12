@@ -147,6 +147,7 @@ class SubjectReferralApptHelper(object):
         of today otherwise returns two weeks from base."""
         return next_clinic_date(self.clinic_days,
                                 self.base_datetime + relativedelta(weeks=2),
+                                allow_same_day=True,
                                 subtract=True)
 
     @property
