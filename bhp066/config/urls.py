@@ -13,12 +13,14 @@ from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 from edc.core.bhp_data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
 from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.dashboard.subject.views import additional_requisition
 from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
 from apps.bcpp.app_configuration.classes import bcpp_app_configuration
+
 
 admin.autodiscover()
 site_lab_profiles.autodiscover()
@@ -49,6 +51,11 @@ urlpatterns = patterns(
     (r'^i18n/', include('django.conf.urls.i18n')),
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
+
+#this is for additional_requisitions
+urlpatterns += patterns('',
+                        url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME), additional_requisition, name="add_requisition"),
+                        )
 
 urlpatterns += patterns(
     '',
