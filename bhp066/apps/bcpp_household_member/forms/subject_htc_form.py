@@ -22,20 +22,16 @@ class SubjectHtcForm(BaseModelForm):
                 raise forms.ValidationError('Please indicate the referral clinic.')
             if cleaned_data.get('referred') == 'No' and cleaned_data.get('referral_clinic'):
                 raise forms.ValidationError('Subject was not referred. The referral clinic is not applicable.')
-            if cleaned_data.get('accepted') == 'Yes' and cleaned_data.get('hiv_result') == 'Declined':
-                raise forms.ValidationError('You wrote subject accepted HTC but declined testing. Please correct.')
 
         else:
             if cleaned_data.get('accepted') != NOT_APPLICABLE:
-                raise forms.ValidationError('HTC was not offered HTC. Whether subject accepted is not applicable.')
+                raise forms.ValidationError('Household member was not offered HTC. Whether subject accepted is not applicable.')
             if cleaned_data.get('refusal_reason'):
-                raise forms.ValidationError('You wrote HTC was not offered. Refusal reason is not applicable.')
+                raise forms.ValidationError('You wrote HTC was not offered. Refusal reason should be left blank.')
             if cleaned_data.get('referred') != NOT_APPLICABLE:
-                raise forms.ValidationError('HTC was not offered HTC. Whether subject was referred is not applicable.')
+                raise forms.ValidationError('Household member was not offered HTC. Whether subject was referred is not applicable.')
             if cleaned_data.get('referral_clinic'):
-                raise forms.ValidationError('HTC was not offered HTC. A referral clinic is not applicable.')
-            if cleaned_data.get('hiv_result') != NOT_APPLICABLE:
-                raise forms.ValidationError('HTC was not offered HTC. An HIV result is not applicable.')
+                raise forms.ValidationError('Household member was not offered HTC. A referral clinic should be left blank.')
         return cleaned_data
 
     class Meta:
