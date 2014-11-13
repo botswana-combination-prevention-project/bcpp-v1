@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.device.device.classes import Device
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO
+from edc.choices import YES_NO, YES_NO_NA
 from edc.core.bhp_string.classes import StringHelper
 from edc.constants import NOT_APPLICABLE
 
@@ -39,7 +39,7 @@ class SubjectHtc(BaseMemberStatusModel):
     accepted = models.CharField(
         verbose_name=_("Did the subject accept HTC"),
         max_length=25,
-        choices=YES_NO)
+        choices=YES_NO_NA)
 
     refusal_reason = models.CharField(
         verbose_name=_("If the subject did not accept HTC, please explain"),
@@ -51,7 +51,7 @@ class SubjectHtc(BaseMemberStatusModel):
     referred = models.CharField(
         verbose_name=_("Was the subject referred"),
         max_length=10,
-        choices=YES_NO,
+        choices=YES_NO_NA,
         help_text='Required if subject accepted HTC')
 
     referral_clinic = models.CharField(
