@@ -20,6 +20,8 @@ from .subject_visit import SubjectVisit
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
+    """A model completed by the user to that captures participant locator information
+    and permission to contact."""
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
