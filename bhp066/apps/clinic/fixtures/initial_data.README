@@ -1,5 +1,0 @@
-# updated 20140404
-python manage.py dumpdata --indent=2 auth.user auth.group tastypie.apikey sync.producer > apps/bcpp/fixtures/initial_data.json
-
-# file is renamed _initial_data so that tests dont load it.
-git
