@@ -7,7 +7,7 @@ from edc.lab.lab_requisition.models import BaseRequisition
 from edc.subject.entry.models import LabEntry, Entry
 
 from apps.bcpp_clinic.models import ClinicVisit
-from apps.clinic.choices import COMMUNITIES
+from apps.bcpp.choices import COMMUNITIES
 
 from ..managers import ClinicRequisitionManager
 
@@ -58,7 +58,7 @@ class ClinicRequisition(BaseRequisition):
 
     def change_metadata_status_on_post_save(self, **kwargs):
         """Changes the viralloadresult metadata status to NEW only if VL requisition is KEYED."""
-        lab_entry = LabEntry.objects.get(requisition_panel__name='Viral Load (clinic)')
+        lab_entry = LabEntry.objects.get(requisition_panel__name='Viral Load', app_label='bcpp_lab', model_name='clinicrequisition')
         requisition_meta_data = RequisitionMetaData.objects.filter(appointment=self.clinic_visit.appointment,
                                                                    lab_entry=lab_entry,
                                                                    registered_subject=self.clinic_visit.appointment.registered_subject)
