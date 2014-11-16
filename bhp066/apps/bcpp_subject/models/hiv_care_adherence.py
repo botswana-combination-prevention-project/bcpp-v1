@@ -12,6 +12,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HivCareAdherence (BaseScheduledVisitModel):
+    """A model completed by the user on the participant's access to and adherence to HIV care."""
 
     first_positive = models.DateField(
         verbose_name=_("When was your first positive HIV test result?"),
