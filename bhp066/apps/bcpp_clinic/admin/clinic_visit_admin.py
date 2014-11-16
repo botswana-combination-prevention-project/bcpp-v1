@@ -6,7 +6,7 @@ from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_lab.models import ClinicRequisition
 
 from ..forms import ClinicVisitForm
-from ..models import ClinicVisit
+from ..models import ClinicVisit, ClinicEligibility
 
 
 class ClinicVisitAdmin(BaseAppointmentModelAdmin):
@@ -47,15 +47,20 @@ class ClinicVisitAdmin(BaseAppointmentModelAdmin):
         'household_member',
         "appointment",
         "report_datetime",
-        "reason",
         "comments"
         )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            household_members = HouseholdMember.objects.none()
-            if HouseholdMember.objects.filter(id=request.GET.get('household_member', 0)):
-                household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member', 0))
+            try:
+                HouseholdMember.objects.get(id=request.GET.get('household_member'))
+                household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member'))
+            except HouseholdMember.DoesNotExist:
+                try:
+                    household_member = ClinicEligibility.objects.get(id=request.GET.get('dashboard_id')).household_member
+                    household_members = HouseholdMember.objects.filter(id=household_member.pk)
+                except (HouseholdMember.DoesNotExist, ClinicEligibility.DoesNotExist):
+                    household_members = HouseholdMember.objects.none()
             kwargs["queryset"] = household_members
         return super(ClinicVisitAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
