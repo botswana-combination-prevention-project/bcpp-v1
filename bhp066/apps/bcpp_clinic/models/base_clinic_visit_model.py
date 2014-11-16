@@ -1,14 +1,15 @@
 from datetime import datetime
+
 from django.db import models
-
-from ..managers import ClinicModelManager
-
-from .clinic_off_study_mixin import ClinicOffStudyMixin
-from .clinic_visit import ClinicVisit
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.subject.consent.models import BaseConsentedUuidModel
+
+from .clinic_off_study_mixin import ClinicOffStudyMixin
+from .clinic_visit import ClinicVisit
+
+from ..managers import ClinicModelManager
 
 
 class BaseClinicVisitModel(ClinicOffStudyMixin, BaseConsentedUuidModel):
