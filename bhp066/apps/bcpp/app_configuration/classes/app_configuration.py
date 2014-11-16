@@ -78,14 +78,22 @@ class BcppAppConfiguration(BaseAppConfiguration):
                       'Boxing Day': date(2014, 12, 26),
                       }
 
-    consent_catalogue_setup = {
-        'name': 'bcpp-year-1',
-        'content_type_map': 'subjectconsent',
-        'consent_type': 'study',
-        'version': 1,
-        'start_datetime': study_start_datetime,
-        'end_datetime': study_end_datetime,
-        'add_for_app': 'bcpp_subject'}
+    consent_catalogue_list = [
+            {'name': 'bcpp-year-1',
+             'content_type_map': 'subjectconsent',
+             'consent_type': 'study',
+             'version': 1,
+             'start_datetime': study_start_datetime,
+             'end_datetime': study_end_datetime,
+             'add_for_app': 'bcpp_subject'},
+            {'name': 'bcpp-clinic',
+             'content_type_map': 'clinicconsent',
+             'consent_type': 'study',
+             'version': 1,
+             'start_datetime': study_start_datetime,
+             'end_datetime': study_end_datetime,
+             'add_for_app': 'bcpp_clinic'},
+        ]
 
     survey_setup = {
         'bcpp-year-1':
@@ -185,7 +193,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
                           ]
                       }
 
-    consent_catalogue_list = [consent_catalogue_setup]
 
     export_plan_setup = {
         'bcpp_subject.subjectreferral': {
