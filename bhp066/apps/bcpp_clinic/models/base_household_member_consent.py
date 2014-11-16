@@ -1,4 +1,5 @@
 import re
+
 from django.db import models
 
 from edc.core.identifier.exceptions import IdentifierError
