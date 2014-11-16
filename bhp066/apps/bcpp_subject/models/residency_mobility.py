@@ -14,7 +14,7 @@ from .hic_enrollment import HicEnrollment
 
 class ResidencyMobility (BaseScheduledVisitModel):
 
-    """CS002"""
+    """A model completed by the user on the residency status of the participant."""
 
     length_residence = models.CharField(
         verbose_name=_('How long have you lived in this community?'),

@@ -4,6 +4,7 @@ from .base_sexual_partner import BaseSexualPartner
 
 
 class MonthsRecentPartner (BaseSexualPartner):
+    """A model completed by the user on the participant's recent sexual behaviour."""
 
     history = AuditTrail()
 

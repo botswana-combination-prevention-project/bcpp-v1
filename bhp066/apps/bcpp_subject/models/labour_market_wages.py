@@ -13,7 +13,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class LabourMarketWages (BaseScheduledVisitModel):
 
-    """CE001"""
+    """A model completed by the user to capture information about
+    the participants experience in the labour market."""
 
     employed = models.CharField(
         verbose_name=_("Are you currently employed? "),
