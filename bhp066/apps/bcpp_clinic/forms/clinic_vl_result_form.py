@@ -14,7 +14,7 @@ class ClinicVlResultForm (BaseModelForm):
         cleaned_data = self.cleaned_data
         vl_requisition_metadata = RequisitionMetaData.objects.get(
             appointment=cleaned_data.get('clinic_visit').appointment,
-            lab_entry=LabEntry.objects.get(requisition_panel__name='Viral Load (clinic)')
+            lab_entry=LabEntry.objects.get(requisition_panel__name='Clinic Viral Load')
             )
         if vl_requisition_metadata.entry_status == NEW:
             raise forms.ValidationError('If a Viral Load Clinic Requisition is required, '
