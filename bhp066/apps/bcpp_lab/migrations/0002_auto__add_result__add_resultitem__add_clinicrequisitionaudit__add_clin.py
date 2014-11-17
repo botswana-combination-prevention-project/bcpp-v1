@@ -8,40 +8,8 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'AliquotCondition'
-        db.create_table(u'bcpp_lab_aliquotcondition', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=250, unique=True, null=True, db_index=True)),
-            ('short_name', self.gf('django.db.models.fields.CharField')(max_length=250, unique=True, null=True, db_index=True)),
-            ('display_index', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
-            ('field_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
-            ('version', self.gf('django.db.models.fields.CharField')(default='1.0', max_length=35)),
-        ))
-        db.send_create_signal('bcpp_lab', ['AliquotCondition'])
-
-        # Adding model 'AliquotType'
-        db.create_table(u'bcpp_lab_aliquottype', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('alpha_code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=15)),
-            ('numeric_code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=2)),
-        ))
-        db.send_create_signal('bcpp_lab', ['AliquotType'])
-
-        # Adding model 'Receive'
-        db.create_table(u'bcpp_lab_receive', (
+        # Adding model 'Result'
+        db.create_table(u'bcpp_lab_result', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
@@ -50,232 +18,57 @@ class Migration(SchemaMigration):
             ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
             ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('receive_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, unique=True, null=True, db_index=True)),
-            ('requisition_identifier', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=25, null=True, blank=True)),
-            ('drawn_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
-            ('receive_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 17, 0, 0), db_index=True)),
-            ('visit', self.gf('django.db.models.fields.CharField')(max_length=25)),
-            ('clinician_initials', self.gf('django.db.models.fields.CharField')(max_length=3)),
-            ('receive_condition', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('result_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, db_index=True)),
+            ('result_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
+            ('release_status', self.gf('django.db.models.fields.CharField')(default='NEW', max_length=25, db_index=True)),
+            ('release_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True, null=True, blank=True)),
+            ('release_username', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('dmis_result_guid', self.gf('django.db.models.fields.CharField')(max_length=36, null=True, blank=True)),
             ('import_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
-            ('registered_subject', self.gf('django.db.models.fields.related.ForeignKey')(related_name='bcpp_receive', null=True, to=orm['registration.RegisteredSubject'])),
-            ('requisition_model_name', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
+            ('order_item', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.OrderItem'])),
+            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, db_index=True)),
+        ))
+        db.send_create_signal('bcpp_lab', ['Result'])
+
+        # Adding model 'ResultItem'
+        db.create_table(u'bcpp_lab_resultitem', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('result_item_value', self.gf('django.db.models.fields.CharField')(max_length=25, db_index=True)),
+            ('result_item_value_as_float', self.gf('django.db.models.fields.FloatField')(null=True, db_index=True)),
+            ('result_item_quantifier', self.gf('django.db.models.fields.CharField')(default='=', max_length=25)),
+            ('result_item_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True)),
+            ('result_item_operator', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
+            ('grade_range', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('grade_flag', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
+            ('grade_message', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('grade_warn', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('reference_flag', self.gf('django.db.models.fields.CharField')(max_length=5, null=True, blank=True)),
+            ('reference_range', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('validation_status', self.gf('django.db.models.fields.CharField')(default='P', max_length=10, db_index=True)),
+            ('validation_datetime', self.gf('django.db.models.fields.DateTimeField')(db_index=True, null=True, blank=True)),
+            ('validation_username', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, null=True, blank=True)),
+            ('validation_reference', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('comment', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('error_code', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, db_index=True)),
+            ('receive_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, db_index=True)),
+            ('import_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('test_code', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['lab_clinic_api.TestCode'])),
+            ('result', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Result'])),
             ('subject_type', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
         ))
-        db.send_create_signal('bcpp_lab', ['Receive'])
+        db.send_create_signal('bcpp_lab', ['ResultItem'])
 
-        # Adding model 'Aliquot'
-        db.create_table(u'bcpp_lab_aliquot', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('primary_aliquot', self.gf('django.db.models.fields.related.ForeignKey')(related_name='primary', null=True, to=orm['bcpp_lab.Aliquot'])),
-            ('source_aliquot', self.gf('django.db.models.fields.related.ForeignKey')(related_name='source', null=True, to=orm['bcpp_lab.Aliquot'])),
-            ('aliquot_identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=25)),
-            ('aliquot_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 17, 0, 0))),
-            ('count', self.gf('django.db.models.fields.IntegerField')(null=True)),
-            ('medium', self.gf('django.db.models.fields.CharField')(default='TUBE', max_length=25)),
-            ('original_measure', self.gf('django.db.models.fields.DecimalField')(default='5.00', max_digits=10, decimal_places=2)),
-            ('current_measure', self.gf('django.db.models.fields.DecimalField')(default='5.00', max_digits=10, decimal_places=2)),
-            ('measure_units', self.gf('django.db.models.fields.CharField')(default='mL', max_length=25)),
-            ('status', self.gf('django.db.models.fields.CharField')(default='available', max_length=25)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-            ('is_packed', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('receive_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('receive', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Receive'])),
-            ('aliquot_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotType'], null=True)),
-            ('aliquot_condition', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotCondition'], null=True, blank=True)),
-        ))
-        db.send_create_signal('bcpp_lab', ['Aliquot'])
-
-        # Adding unique constraint on 'Aliquot', fields ['receive', 'count']
-        db.create_unique(u'bcpp_lab_aliquot', ['receive_id', 'count'])
-
-        # Adding model 'AliquotProfile'
-        db.create_table('bcpp_lab_profile', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
-            ('aliquot_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotType'])),
-        ))
-        db.send_create_signal('bcpp_lab', ['AliquotProfile'])
-
-        # Adding model 'AliquotProcessing'
-        db.create_table('bcpp_lab_processing', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('print_labels', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('aliquot', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Aliquot'])),
-            ('profile', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotProfile'])),
-        ))
-        db.send_create_signal('bcpp_lab', ['AliquotProcessing'])
-
-        # Adding model 'AliquotProfileItem'
-        db.create_table('bcpp_lab_profileitem', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('volume', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=10, decimal_places=1)),
-            ('count', self.gf('django.db.models.fields.IntegerField')()),
-            ('profile', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotProfile'])),
-            ('aliquot_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotType'])),
-        ))
-        db.send_create_signal('bcpp_lab', ['AliquotProfileItem'])
-
-        # Adding unique constraint on 'AliquotProfileItem', fields ['profile', 'aliquot_type']
-        db.create_unique('bcpp_lab_profileitem', ['profile_id', 'aliquot_type_id'])
-
-        # Adding model 'Order'
-        db.create_table(u'bcpp_lab_order', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('order_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 17, 0, 0))),
-        ))
-        db.send_create_signal('bcpp_lab', ['Order'])
-
-        # Adding model 'OrderIdentifierHistory'
-        db.create_table(u'bcpp_lab_orderidentifierhistory', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('identifier', self.gf('django.db.models.fields.CharField')(unique=True, max_length=36)),
-            ('padding', self.gf('django.db.models.fields.IntegerField')(default=4)),
-            ('sequence_number', self.gf('django.db.models.fields.IntegerField')()),
-            ('device_id', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('is_derived', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('sequence_app_label', self.gf('django.db.models.fields.CharField')(default='bhp_identifier', max_length=50)),
-            ('sequence_model_name', self.gf('django.db.models.fields.CharField')(default='sequence', max_length=50)),
-        ))
-        db.send_create_signal('bcpp_lab', ['OrderIdentifierHistory'])
-
-        # Adding model 'Panel'
-        db.create_table(u'bcpp_lab_panel', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50, db_index=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
-            ('panel_type', self.gf('django.db.models.fields.CharField')(default='TEST', max_length=15)),
-        ))
-        db.send_create_signal('bcpp_lab', ['Panel'])
-
-        # Adding M2M table for field test_code on 'Panel'
-        m2m_table_name = db.shorten_name(u'bcpp_lab_panel_test_code')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('panel', models.ForeignKey(orm['bcpp_lab.panel'], null=False)),
-            ('testcode', models.ForeignKey(orm['lab_clinic_api.testcode'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['panel_id', 'testcode_id'])
-
-        # Adding M2M table for field aliquot_type on 'Panel'
-        m2m_table_name = db.shorten_name(u'bcpp_lab_panel_aliquot_type')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('panel', models.ForeignKey(orm['bcpp_lab.panel'], null=False)),
-            ('aliquottype', models.ForeignKey(orm['bcpp_lab.aliquottype'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['panel_id', 'aliquottype_id'])
-
-        # Adding model 'OrderItemAudit'
-        db.create_table(u'bcpp_lab_orderitem_audit', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-            ('order', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_orderitem', to=orm['bcpp_lab.Order'])),
-            ('aliquot', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_orderitem', to=orm['bcpp_lab.Aliquot'])),
-            ('panel', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_orderitem', null=True, to=orm['bcpp_lab.Panel'])),
-            ('order_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('order_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 17, 0, 0))),
-            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
-            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
-            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-        ))
-        db.send_create_signal('bcpp_lab', ['OrderItemAudit'])
-
-        # Adding model 'OrderItem'
-        db.create_table(u'bcpp_lab_orderitem', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('order', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Order'])),
-            ('aliquot', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Aliquot'])),
-            ('panel', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Panel'], null=True)),
-            ('order_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('order_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 17, 0, 0))),
-            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-        ))
-        db.send_create_signal('bcpp_lab', ['OrderItem'])
-
-        # Adding model 'PackingList'
-        db.create_table(u'bcpp_lab_packinglist', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('list_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 17, 0, 0))),
-            ('list_comment', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('list_items', self.gf('django.db.models.fields.TextField')(max_length=1000)),
-            ('timestamp', self.gf('django.db.models.fields.CharField')(max_length=35, null=True)),
-        ))
-        db.send_create_signal('bcpp_lab', ['PackingList'])
-
-        # Adding model 'SubjectRequisitionAudit'
-        db.create_table(u'bcpp_lab_subjectrequisition_audit', (
+        # Adding model 'ClinicRequisitionAudit'
+        db.create_table(u'bcpp_lab_clinicrequisition_audit', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
@@ -288,7 +81,7 @@ class Migration(SchemaMigration):
             ('requisition_datetime', self.gf('django.db.models.fields.DateTimeField')()),
             ('specimen_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
             ('protocol', self.gf('django.db.models.fields.CharField')(max_length=10, null=True, blank=True)),
-            ('site', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectrequisition', null=True, to=orm['bhp_variables.StudySite'])),
+            ('site', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_clinicrequisition', null=True, to=orm['bhp_variables.StudySite'])),
             ('clinician_initials', self.gf('django.db.models.fields.CharField')(default='--', max_length=3, null=True, blank=True)),
             ('priority', self.gf('django.db.models.fields.CharField')(default='normal', max_length=25)),
             ('is_drawn', self.gf('django.db.models.fields.CharField')(default='Yes', max_length=3)),
@@ -305,20 +98,20 @@ class Migration(SchemaMigration):
             ('is_labelled_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('is_lis', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('subject_visit', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectrequisition', to=orm['bcpp_subject.SubjectVisit'])),
-            ('packing_list', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='_audit_subjectrequisition', null=True, to=orm['bcpp_lab.PackingList'])),
-            ('aliquot_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectrequisition', to=orm['bcpp_lab.AliquotType'])),
-            ('panel', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_subjectrequisition', to=orm['bcpp_lab.Panel'])),
+            ('clinic_visit', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_clinicrequisition', to=orm['bcpp_clinic.ClinicVisit'])),
+            ('packing_list', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='_audit_clinicrequisition', null=True, to=orm['bcpp_lab.PackingList'])),
+            ('aliquot_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_clinicrequisition', to=orm['bcpp_lab.AliquotType'])),
+            ('panel', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_clinicrequisition', to=orm['bcpp_lab.Panel'])),
             ('community', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
             ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
             ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
             ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
         ))
-        db.send_create_signal('bcpp_lab', ['SubjectRequisitionAudit'])
+        db.send_create_signal('bcpp_lab', ['ClinicRequisitionAudit'])
 
-        # Adding model 'SubjectRequisition'
-        db.create_table(u'bcpp_lab_subjectrequisition', (
+        # Adding model 'ClinicRequisition'
+        db.create_table(u'bcpp_lab_clinicrequisition', (
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
             ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
@@ -348,114 +141,71 @@ class Migration(SchemaMigration):
             ('is_labelled_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
             ('is_lis', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
-            ('subject_visit', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_subject.SubjectVisit'])),
+            ('clinic_visit', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_clinic.ClinicVisit'])),
             ('packing_list', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.PackingList'], null=True, blank=True)),
             ('aliquot_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.AliquotType'])),
             ('panel', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Panel'])),
             ('community', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
         ))
-        db.send_create_signal('bcpp_lab', ['SubjectRequisition'])
+        db.send_create_signal('bcpp_lab', ['ClinicRequisition'])
 
-        # Adding unique constraint on 'SubjectRequisition', fields ['subject_visit', 'panel', 'is_drawn']
-        db.create_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'panel_id', 'is_drawn'])
-
-        # Adding M2M table for field test_code on 'SubjectRequisition'
-        m2m_table_name = db.shorten_name(u'bcpp_lab_subjectrequisition_test_code')
+        # Adding M2M table for field test_code on 'ClinicRequisition'
+        m2m_table_name = db.shorten_name(u'bcpp_lab_clinicrequisition_test_code')
         db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('subjectrequisition', models.ForeignKey(orm['bcpp_lab.subjectrequisition'], null=False)),
+            ('clinicrequisition', models.ForeignKey(orm['bcpp_lab.clinicrequisition'], null=False)),
             ('testcode', models.ForeignKey(orm['lab_clinic_api.testcode'], null=False))
         ))
-        db.create_unique(m2m_table_name, ['subjectrequisition_id', 'testcode_id'])
+        db.create_unique(m2m_table_name, ['clinicrequisition_id', 'testcode_id'])
 
-        # Adding model 'PackingListItem'
-        db.create_table(u'bcpp_lab_packinglistitem', (
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
-            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
-            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
-            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
-            ('requisition', self.gf('django.db.models.fields.CharField')(max_length=36, null=True)),
-            ('item_reference', self.gf('django.db.models.fields.CharField')(max_length=25)),
-            ('item_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('item_description', self.gf('django.db.models.fields.TextField')(max_length=100, null=True, blank=True)),
-            ('item_priority', self.gf('django.db.models.fields.CharField')(max_length=35, null=True)),
-            ('old_panel_id', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
-            ('packing_list', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.PackingList'], null=True)),
-            ('panel', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_lab.Panel'], null=True, blank=True)),
-        ))
-        db.send_create_signal('bcpp_lab', ['PackingListItem'])
+        # Adding field 'PackingListItem.received'
+        db.add_column(u'bcpp_lab_packinglistitem', 'received',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
+        # Adding field 'PackingListItem.received_datetime'
+        db.add_column(u'bcpp_lab_packinglistitem', 'received_datetime',
+                      self.gf('django.db.models.fields.DateTimeField')(null=True),
+                      keep_default=False)
+
+        # Adding field 'PackingList.destination'
+        db.add_column(u'bcpp_lab_packinglist', 'destination',
+                      self.gf('django.db.models.fields.related.OneToOneField')(to=orm['lab_packing.Destination'], unique=True, null=True),
+                      keep_default=False)
+
+        # Adding field 'PackingList.received'
+        db.add_column(u'bcpp_lab_packinglist', 'received',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'SubjectRequisition', fields ['subject_visit', 'panel', 'is_drawn']
-        db.delete_unique(u'bcpp_lab_subjectrequisition', ['subject_visit_id', 'panel_id', 'is_drawn'])
+        # Deleting model 'Result'
+        db.delete_table(u'bcpp_lab_result')
 
-        # Removing unique constraint on 'AliquotProfileItem', fields ['profile', 'aliquot_type']
-        db.delete_unique('bcpp_lab_profileitem', ['profile_id', 'aliquot_type_id'])
+        # Deleting model 'ResultItem'
+        db.delete_table(u'bcpp_lab_resultitem')
 
-        # Removing unique constraint on 'Aliquot', fields ['receive', 'count']
-        db.delete_unique(u'bcpp_lab_aliquot', ['receive_id', 'count'])
+        # Deleting model 'ClinicRequisitionAudit'
+        db.delete_table(u'bcpp_lab_clinicrequisition_audit')
 
-        # Deleting model 'AliquotCondition'
-        db.delete_table(u'bcpp_lab_aliquotcondition')
+        # Deleting model 'ClinicRequisition'
+        db.delete_table(u'bcpp_lab_clinicrequisition')
 
-        # Deleting model 'AliquotType'
-        db.delete_table(u'bcpp_lab_aliquottype')
+        # Removing M2M table for field test_code on 'ClinicRequisition'
+        db.delete_table(db.shorten_name(u'bcpp_lab_clinicrequisition_test_code'))
 
-        # Deleting model 'Receive'
-        db.delete_table(u'bcpp_lab_receive')
+        # Deleting field 'PackingListItem.received'
+        db.delete_column(u'bcpp_lab_packinglistitem', 'received')
 
-        # Deleting model 'Aliquot'
-        db.delete_table(u'bcpp_lab_aliquot')
+        # Deleting field 'PackingListItem.received_datetime'
+        db.delete_column(u'bcpp_lab_packinglistitem', 'received_datetime')
 
-        # Deleting model 'AliquotProfile'
-        db.delete_table('bcpp_lab_profile')
+        # Deleting field 'PackingList.destination'
+        db.delete_column(u'bcpp_lab_packinglist', 'destination_id')
 
-        # Deleting model 'AliquotProcessing'
-        db.delete_table('bcpp_lab_processing')
-
-        # Deleting model 'AliquotProfileItem'
-        db.delete_table('bcpp_lab_profileitem')
-
-        # Deleting model 'Order'
-        db.delete_table(u'bcpp_lab_order')
-
-        # Deleting model 'OrderIdentifierHistory'
-        db.delete_table(u'bcpp_lab_orderidentifierhistory')
-
-        # Deleting model 'Panel'
-        db.delete_table(u'bcpp_lab_panel')
-
-        # Removing M2M table for field test_code on 'Panel'
-        db.delete_table(db.shorten_name(u'bcpp_lab_panel_test_code'))
-
-        # Removing M2M table for field aliquot_type on 'Panel'
-        db.delete_table(db.shorten_name(u'bcpp_lab_panel_aliquot_type'))
-
-        # Deleting model 'OrderItemAudit'
-        db.delete_table(u'bcpp_lab_orderitem_audit')
-
-        # Deleting model 'OrderItem'
-        db.delete_table(u'bcpp_lab_orderitem')
-
-        # Deleting model 'PackingList'
-        db.delete_table(u'bcpp_lab_packinglist')
-
-        # Deleting model 'SubjectRequisitionAudit'
-        db.delete_table(u'bcpp_lab_subjectrequisition_audit')
-
-        # Deleting model 'SubjectRequisition'
-        db.delete_table(u'bcpp_lab_subjectrequisition')
-
-        # Removing M2M table for field test_code on 'SubjectRequisition'
-        db.delete_table(db.shorten_name(u'bcpp_lab_subjectrequisition_test_code'))
-
-        # Deleting model 'PackingListItem'
-        db.delete_table(u'bcpp_lab_packinglistitem')
+        # Deleting field 'PackingList.received'
+        db.delete_column(u'bcpp_lab_packinglist', 'received')
 
 
     models = {
@@ -485,6 +235,27 @@ class Migration(SchemaMigration):
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'visit_definition': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['visit_schedule.VisitDefinition']"}),
             'visit_instance': ('django.db.models.fields.CharField', [], {'default': "'0'", 'max_length': '1', 'null': 'True', 'db_index': 'True', 'blank': 'True'})
+        },
+        'bcpp_clinic.clinicvisit': {
+            'Meta': {'object_name': 'ClinicVisit'},
+            'appointment': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['appointment.Appointment']", 'unique': 'True'}),
+            'comments': ('django.db.models.fields.TextField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'info_source': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'info_source_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'reason': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'reason_missed': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
+            'reason_unscheduled': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
         'bcpp_household.household': {
             'Meta': {'ordering': "['-household_identifier']", 'object_name': 'Household'},
@@ -728,6 +499,85 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
+        'bcpp_lab.clinicrequisition': {
+            'Meta': {'object_name': 'ClinicRequisition'},
+            'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.AliquotType']"}),
+            'clinic_visit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_clinic.ClinicVisit']"}),
+            'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
+            'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'drawn_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'estimated_volume': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '7', 'decimal_places': '2'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'is_drawn': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '3'}),
+            'is_labelled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_labelled_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'is_lis': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_packed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_receive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_receive_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'item_count_total': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
+            'item_type': ('django.db.models.fields.CharField', [], {'default': "'tube'", 'max_length': '25'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.PackingList']", 'null': 'True', 'blank': 'True'}),
+            'panel': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.Panel']"}),
+            'priority': ('django.db.models.fields.CharField', [], {'default': "'normal'", 'max_length': '25'}),
+            'protocol': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
+            'reason_not_drawn': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'requisition_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'requisition_identifier': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bhp_variables.StudySite']", 'null': 'True'}),
+            'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'unique': 'True', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'test_code': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['lab_clinic_api.TestCode']", 'null': 'True', 'blank': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_lab.clinicrequisitionaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'ClinicRequisitionAudit', 'db_table': "u'bcpp_lab_clinicrequisition_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'aliquot_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_clinicrequisition'", 'to': "orm['bcpp_lab.AliquotType']"}),
+            'clinic_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_clinicrequisition'", 'to': "orm['bcpp_clinic.ClinicVisit']"}),
+            'clinician_initials': ('django.db.models.fields.CharField', [], {'default': "'--'", 'max_length': '3', 'null': 'True', 'blank': 'True'}),
+            'comments': ('django.db.models.fields.TextField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'drawn_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'estimated_volume': ('django.db.models.fields.DecimalField', [], {'default': '5.0', 'max_digits': '7', 'decimal_places': '2'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
+            'is_drawn': ('django.db.models.fields.CharField', [], {'default': "'Yes'", 'max_length': '3'}),
+            'is_labelled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_labelled_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'is_lis': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_packed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_receive': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_receive_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'item_count_total': ('django.db.models.fields.IntegerField', [], {'default': '1'}),
+            'item_type': ('django.db.models.fields.CharField', [], {'default': "'tube'", 'max_length': '25'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'_audit_clinicrequisition'", 'null': 'True', 'to': "orm['bcpp_lab.PackingList']"}),
+            'panel': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_clinicrequisition'", 'to': "orm['bcpp_lab.Panel']"}),
+            'priority': ('django.db.models.fields.CharField', [], {'default': "'normal'", 'max_length': '25'}),
+            'protocol': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
+            'reason_not_drawn': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'requisition_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'requisition_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_clinicrequisition'", 'null': 'True', 'to': "orm['bhp_variables.StudySite']"}),
+            'specimen_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
         'bcpp_lab.order': {
             'Meta': {'object_name': 'Order'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -799,6 +649,7 @@ class Migration(SchemaMigration):
         'bcpp_lab.packinglist': {
             'Meta': {'object_name': 'PackingList'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'destination': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['lab_packing.Destination']", 'unique': 'True', 'null': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
@@ -806,6 +657,7 @@ class Migration(SchemaMigration):
             'list_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 17, 0, 0)'}),
             'list_items': ('django.db.models.fields.TextField', [], {'max_length': '1000'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'received': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'timestamp': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -825,6 +677,8 @@ class Migration(SchemaMigration):
             'old_panel_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             'packing_list': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.PackingList']", 'null': 'True'}),
             'panel': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.Panel']", 'null': 'True', 'blank': 'True'}),
+            'received': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'received_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
             'requisition': ('django.db.models.fields.CharField', [], {'max_length': '36', 'null': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -866,6 +720,61 @@ class Migration(SchemaMigration):
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'visit': ('django.db.models.fields.CharField', [], {'max_length': '25'})
+        },
+        'bcpp_lab.result': {
+            'Meta': {'ordering': "['result_identifier']", 'object_name': 'Result'},
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'dmis_result_guid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'null': 'True', 'blank': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'import_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'order_item': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.OrderItem']"}),
+            'release_datetime': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'release_status': ('django.db.models.fields.CharField', [], {'default': "'NEW'", 'max_length': '25', 'db_index': 'True'}),
+            'release_username': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'result_datetime': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
+            'result_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'db_index': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_lab.resultitem': {
+            'Meta': {'ordering': "('-result_item_datetime',)", 'object_name': 'ResultItem'},
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'error_code': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'grade_flag': ('django.db.models.fields.CharField', [], {'max_length': '5', 'null': 'True', 'blank': 'True'}),
+            'grade_message': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'grade_range': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'grade_warn': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'import_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'receive_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'db_index': 'True'}),
+            'reference_flag': ('django.db.models.fields.CharField', [], {'max_length': '5', 'null': 'True', 'blank': 'True'}),
+            'reference_range': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'result': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_lab.Result']"}),
+            'result_item_datetime': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True'}),
+            'result_item_operator': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'result_item_quantifier': ('django.db.models.fields.CharField', [], {'default': "'='", 'max_length': '25'}),
+            'result_item_value': ('django.db.models.fields.CharField', [], {'max_length': '25', 'db_index': 'True'}),
+            'result_item_value_as_float': ('django.db.models.fields.FloatField', [], {'null': 'True', 'db_index': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'db_index': 'True'}),
+            'subject_type': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
+            'test_code': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['lab_clinic_api.TestCode']"}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'validation_datetime': ('django.db.models.fields.DateTimeField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'validation_reference': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'validation_status': ('django.db.models.fields.CharField', [], {'default': "'P'", 'max_length': '10', 'db_index': 'True'}),
+            'validation_username': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '50', 'null': 'True', 'blank': 'True'})
         },
         'bcpp_lab.subjectrequisition': {
             'Meta': {'unique_together': "(('subject_visit', 'panel', 'is_drawn'),)", 'object_name': 'SubjectRequisition'},
@@ -1047,6 +956,22 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'lab_packing.destination': {
+            'Meta': {'object_name': 'Destination'},
+            'address': ('django.db.models.fields.TextField', [], {'max_length': '250'}),
+            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '25'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'email': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'tel': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
