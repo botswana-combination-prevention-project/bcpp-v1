@@ -221,7 +221,7 @@ MAX_SUBJECTS = {'subject': 9999,
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
                        'bcpp_lab', 'bcpp_survey'
-                       'bcpp_clinic', 'bcpp_clinic_lab', 'bcpp_clinic_dashboard']
+                       'bcpp_clinic']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
