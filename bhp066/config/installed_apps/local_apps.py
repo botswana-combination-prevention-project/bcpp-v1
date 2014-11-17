@@ -13,6 +13,5 @@ LOCAL_APPS = (
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
     'apps.bcpp_clinic',
-    'apps.bcpp_clinic_lab',
     'apps.bcpp_clinic_sync',
 )
