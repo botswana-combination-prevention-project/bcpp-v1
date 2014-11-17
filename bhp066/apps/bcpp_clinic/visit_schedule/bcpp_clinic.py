@@ -40,7 +40,7 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'requisitions': (
                 RequisitionPanelTuple(10L, u'bcpp_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB',
                                       REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Viral Load', 'TEST', 'WB',
+                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Clinic Viral Load', 'TEST', 'WB',
                                       NOT_REQUIRED, ADDITIONAL),
                 ),
             'entries': (
