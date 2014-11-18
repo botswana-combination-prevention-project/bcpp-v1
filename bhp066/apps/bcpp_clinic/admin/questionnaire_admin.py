@@ -26,4 +26,7 @@ class QuestionnaireAdmin(ClinicVisitModelAdmin):
     list_display = ('clinic_visit', 'registration_type', 'on_arv', 'cd4_count', 'report_datetime')
     list_filter = ('on_arv', ClinicCommunityListFilter, 'report_datetime')
     search_fields = ('on_arv',)
+    instructions = [("Note to Interviewer: The OTHER NON Viral LOAD visit also refers to:"
+                     " A patient who may be coming in for a: i. Drug Refill, ii. CD4 count"
+                     " iii. Phlebotomy, iv. Sick visit, etc ")]
 admin.site.register(Questionnaire, QuestionnaireAdmin)
