@@ -447,11 +447,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if not self.internal_identifier:
             self.internal_identifier = self.id
             # decide now, either access an existing registered_subject or create a new one
-            if RegisteredSubject.objects.using(using).filter(
-                    registration_identifier=self.internal_identifier).exists():
+            try:
                 registered_subject = RegisteredSubject.objects.using(using).get(
                     registration_identifier=self.internal_identifier)
-            else:
+            except RegisteredSubject.DoesNotExist:
                 # define registered_subject now as the audit trail requires access
                 # to the registered_subject object even if no subject_identifier
                 # exists. That is, it is going to call get_subject_identifier().
