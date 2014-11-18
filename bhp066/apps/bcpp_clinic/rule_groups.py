@@ -21,8 +21,7 @@ site_rule_groups.register(InitiationRequisitionRuleGroup)
 
 
 class MasaRuleGroup(RuleGroup):
-    '''confirms visit reason before
-    updating the VL tracking scheduled metadata status to NEW.'''
+
     is_drawn = ScheduledDataRule(
         logic=Logic(
             predicate=(('registration_type', 'equals', 'MASA Scheduled VL Visit'), ('registration_type', 'equals', 'CCC visit', 'or')),
