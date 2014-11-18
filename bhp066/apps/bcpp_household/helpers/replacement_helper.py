@@ -52,6 +52,7 @@ class ReplacementHelper(object):
         The household_structure takes precedent."""
         self._household_structure = None
         self._plot = None
+        self._replacement_reason = None
         self.recently_replaced = {'households': [], 'plots': []}
         self.household_structure = household_structure
         if not household_structure:
@@ -78,6 +79,7 @@ class ReplacementHelper(object):
         except AttributeError:
             self.household = None
             self.plot = None
+        # self._replacement_reason = None
 
     @property
     def plot(self):
@@ -94,6 +96,7 @@ class ReplacementHelper(object):
             self._plot = plot
         except AttributeError:
             self._plot = plot
+        # self._replacement_reason = None
 
     @property
     def survey(self):
@@ -130,22 +133,29 @@ class ReplacementHelper(object):
         # self.replacement_reason = None
         if self.household.replaced_by or self.household.enrolled:
             return False
-        try:
-            if self.plot.status == RESIDENTIAL_HABITABLE:
-                if self.household_structure.refused_enumeration:
-                    replaceable = True
-                elif self.all_eligible_members_refused:
-                    replaceable = True
-                elif self.eligible_representative_absent:
-                    replaceable = True
-                elif self.all_eligible_members_absent:
-                    replaceable = True
-                elif (self.household_structure.failed_enumeration and
-                      self.household_structure.no_informant):
-                    replaceable = True
-        except AttributeError as attribute_error:
-            if 'has no attribute \'household\'' in str(attribute_error):
-                pass
+        if self.replacement_reason:
+            replaceable = True
+#         try:
+#             if self.plot.status == RESIDENTIAL_HABITABLE:
+#                 if self.household_structure.refused_enumeration:
+#                     replaceable = True
+#                     # self.replacement_reason = 'household refused_enumeration'
+#                 elif self.all_eligible_members_refused:
+#                     replaceable = True
+#                     # self.replacement_reason = 'household all_eligible_members_refused'
+#                 elif self.eligible_representative_absent:
+#                     replaceable = True
+#                     # self.replacement_reason = 'household eligible_representative_absent'
+#                 elif self.all_eligible_members_absent:
+#                     replaceable = True
+#                     self.replacement_reason = 'household all_eligible_members_absent'
+#                 elif (self.household_structure.failed_enumeration and
+#                       self.household_structure.no_informant):
+#                     replaceable = True
+#                     # self.replacement_reason = 'household failed_enumeration no_informant'
+#         except AttributeError as attribute_error:
+#             if 'has no attribute \'household\'' in str(attribute_error):
+#                 pass
         return replaceable
 
     @property
@@ -155,9 +165,11 @@ class ReplacementHelper(object):
         Also, a plot, that is added as a replacement, itself can be replaced if not yet enrolled
         and residential habitable."""
         replaceable = False
-        if (not self.plot.replaced_by and self.plot.replaces and
-                self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]):
-            replaceable = True
+        self.replacement_reason = None
+        if not self.plot.replaced_by and not self.plot.bhs and self.plot.selected == FIVE_PERCENT:
+            if self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+                replaceable = True
+                self.replacement_reason = 'replaced. NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE 5% plot'
         return replaceable
 
     def replaceable_households(self, using_producer=None):
@@ -267,7 +279,7 @@ class ReplacementHelper(object):
                                 replacing_item=plot.plot_identifier,
                                 replaced_item=replaceable_household.household_identifier,
                                 replacement_datetime=datetime.now(),
-                                replacement_reason=self.household_replacement_reason(replaceable_household))
+                                replacement_reason=self.replacement_reason)
                         new_bhs_plots.append(plot)
                         self.recently_replaced['households'].append(replaceable_household)
                     except Household.DoesNotExist:
@@ -316,7 +328,7 @@ class ReplacementHelper(object):
                                 replacing_item=available_plot.plot_identifier,
                                 replaced_item=replaceable_plot.plot_identifier,
                                 replacement_datetime=datetime.now(),
-                                replacement_reason='replacement is NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE')
+                                replacement_reason=self.replacement_reason)
                         new_bhs_plots.append(available_plot)
                         self.recently_replaced['plots'].append(replaceable_plot)
                     except Plot.DoesNotExist:
@@ -388,25 +400,3 @@ class ReplacementHelper(object):
             except HouseholdLogEntry.DoesNotExist:
                 pass
         return eligible_representative_absent
-
-    def household_replacement_reason(self, household):
-        replacement_reason = None
-        self.household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
-        self.plot = household.plot
-        try:
-            if self.plot.status == RESIDENTIAL_HABITABLE:
-                if self.household_structure.refused_enumeration:
-                    replacement_reason = 'household refused_enumeration'
-                elif self.all_eligible_members_refused:
-                    replacement_reason = 'household all_eligible_members_refused'
-                elif self.eligible_representative_absent:
-                    replacement_reason = 'household eligible_representative_absent'
-                elif self.all_eligible_members_absent:
-                    replacement_reason = 'household all_eligible_members_absent'
-                elif (self.household_structure.failed_enumeration and
-                      self.household_structure.no_informant):
-                    replacement_reason = 'household failed_enumeration no_informant'
-        except AttributeError as attribute_error:
-            if 'has no attribute \'household\'' in str(attribute_error):
-                pass
-        return replacement_reason
