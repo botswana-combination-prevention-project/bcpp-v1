@@ -30,6 +30,7 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
     def save(self, *args, **kwargs):
         self.info_source = 'subject'
         self.reason = 'clinic RBD'
+        self.appointment.appt_type = 'clinic'
         #self.get_requisition()
         #self.ccc_masa_visit_reason_forms()
         super(ClinicVisit, self).save(*args, **kwargs)
