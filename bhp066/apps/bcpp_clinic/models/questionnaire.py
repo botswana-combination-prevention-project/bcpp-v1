@@ -11,8 +11,21 @@ from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_visit import ClinicVisit
 
 
-class Questionnaire (BaseClinicVisitModel):
+class Questionnaire(BaseClinicVisitModel):
     """A model completed by the user that captures ARV and CD4 data."""
+
+    registration_type = models.CharField(
+        verbose_name=_("What type of Clinic Registration is this?"),
+        max_length=35,
+        choices=(
+                 ('Initiation Visit', _('Initiation Visit')),
+                 ('MASA Scheduled VL Visit', _('MASA Scheduled Viral Load Visit')),
+                 ('CCC visit', _('CCC Enrollment Visit')),
+                 ('Other NON-VL Visit', _('Other NON-Viral Load Visit'))
+                 ),
+        help_text="",
+        )
+
     on_arv = models.CharField(
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
