@@ -116,6 +116,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                   PanelTuple('Viral Load', 'TEST', 'WB'),
+                  PanelTuple('Clinic Viral Load', 'TEST', 'WB'),
                   PanelTuple('Microtube', 'STORAGE', 'WB'),
                   PanelTuple('ELISA', 'TEST', 'WB'),
                   PanelTuple('Venous (HIV)', 'TEST', 'WB'),
@@ -129,6 +130,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                                   'Gaborone', '3902671', 'bhhrl@bhp.org.bw')],
                  'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                            PanelTuple('Viral Load', 'TEST', 'WB'),
+                           PanelTuple('Clinic Viral Load', 'TEST', 'WB'),
                            PanelTuple('Microtube', 'STORAGE', 'WB'),
                            PanelTuple('ELISA', 'TEST', 'WB'),
                            PanelTuple('Venous (HIV)', 'TEST', 'WB'),
@@ -136,11 +138,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
                  'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
                                   AliquotTypeTuple('Plasma', 'PL', '32'),
                                   AliquotTypeTuple('Buffy Coat', 'BC', '16')],
-                 'profile': [ProfileTuple('Microtube', 'WB'), ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
+                 'profile': [ProfileTuple('Microtube', 'WB'),
+                             ProfileTuple('Viral Load', 'WB'),
+                             ProfileTuple('Clinic Viral Load', 'WB'),
+                             ProfileTuple('Genotyping', 'WB'),
+                             ProfileTuple('ELISA', 'WB')],
                  'profile_item': [ProfileItemTuple('Microtube', 'PL', 0.3, 1),
                                   ProfileItemTuple('Microtube', 'BC', 0.2, 1),
                                   ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
                                   ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
+                                  ProfileItemTuple('Clinic Viral Load', 'PL', 1.0, 2),
+                                  ProfileItemTuple('Clinic Viral Load', 'BC', 0.5, 1),
                                   ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
                                   ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
@@ -192,7 +200,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                    '^XZ')), False),
                           ]
                       }
-
 
     export_plan_setup = {
         'bcpp_subject.subjectreferral': {
