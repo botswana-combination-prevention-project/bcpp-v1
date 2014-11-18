@@ -31,7 +31,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def prepare(self):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
-        # self.validate_bcpp_settings() (see mapper)
 
     global_configuration = {
         'dashboard':
@@ -63,36 +62,37 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'hostname_prefix': 's030',
         'device_id': device.device_id}
 
-    holidays_setup = {'New Year': date(2014, 1, 01),
-                      'New Year Holiday': date(2014, 1, 02),
-                      'Good Fiday': date(2014, 4, 18),
-                      'Easter Monday': date(2014, 4, 21),
-                      'Labour Day': date(2014, 5, 01),
-                      'Ascension Day': date(2014, 5, 29),
-                      'Sir Seretse Khama Day': date(2014, 7, 01),
-                      'President\'s Day': date(2014, 7, 17),
-                      'President\'s Day Holiday': date(2014, 7, 21),
-                      'Independence Day': date(2014, 9, 30),
-                      'Botswana Day Holiday': date(2014, 10, 01),
-                      'Christmas Day': date(2014, 12, 25),
-                      'Boxing Day': date(2014, 12, 26),
-                      }
+    holidays_setup = {
+        'New Year': date(2014, 1, 01),
+        'New Year Holiday': date(2014, 1, 02),
+        'Good Fiday': date(2014, 4, 18),
+        'Easter Monday': date(2014, 4, 21),
+        'Labour Day': date(2014, 5, 01),
+        'Ascension Day': date(2014, 5, 29),
+        'Sir Seretse Khama Day': date(2014, 7, 01),
+        'President\'s Day': date(2014, 7, 17),
+        'President\'s Day Holiday': date(2014, 7, 21),
+        'Independence Day': date(2014, 9, 30),
+        'Botswana Day Holiday': date(2014, 10, 01),
+        'Christmas Day': date(2014, 12, 25),
+        'Boxing Day': date(2014, 12, 26),
+        }
 
     consent_catalogue_list = [
-            {'name': 'bcpp-year-1',
-             'content_type_map': 'subjectconsent',
-             'consent_type': 'study',
-             'version': 1,
-             'start_datetime': study_start_datetime,
-             'end_datetime': study_end_datetime,
-             'add_for_app': 'bcpp_subject'},
-            {'name': 'bcpp-clinic',
-             'content_type_map': 'clinicconsent',
-             'consent_type': 'study',
-             'version': 1,
-             'start_datetime': study_start_datetime,
-             'end_datetime': study_end_datetime,
-             'add_for_app': 'bcpp_clinic'},
+        {'name': 'bcpp-year-1',
+         'content_type_map': 'subjectconsent',
+         'consent_type': 'study',
+         'version': 1,
+         'start_datetime': study_start_datetime,
+         'end_datetime': study_end_datetime,
+         'add_for_app': 'bcpp_subject'},
+        {'name': 'bcpp-clinic',
+         'content_type_map': 'clinicconsent',
+         'consent_type': 'study',
+         'version': 1,
+         'start_datetime': study_start_datetime,
+         'end_datetime': study_end_datetime,
+         'add_for_app': 'bcpp_clinic'},
         ]
 
     survey_setup = {
