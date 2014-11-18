@@ -15,6 +15,7 @@ from edc.constants import NOT_APPLICABLE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
+from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
 from apps.bcpp_clinic.models.clinic_refusal import ClinicRefusal
@@ -198,6 +199,13 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         if update_fields == ['is_consented'] or update_fields == ['is_refused']:
             pass
         else:
+            if not self.id:
+                try:
+                    registered_subject = RegisteredSubject.objects.get(identity=self.identity)
+                    raise ValueError('A subject with this OMANG is alreay registered. See {}. '
+                                     'Perhaps catch this on the form'.format(registered_subject))
+                except RegisteredSubject.DoesNotExist:
+                    pass
             self.age_in_years = relativedelta(self.report_datetime.date(), self.dob).years
             self.household_member = self.clinic_household_member
             self.is_eligible, self.loss_reason = self.passes_enrollment_criteria()
@@ -335,3 +343,4 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         app_label = "bcpp_clinic"
         verbose_name = "Clinic Eligibility"
         verbose_name_plural = "Clinic Eligibility"
+        unique_together = ['first_name', 'initials']
