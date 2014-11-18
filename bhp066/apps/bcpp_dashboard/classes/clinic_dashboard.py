@@ -34,6 +34,7 @@ class ClinicDashboard(BaseSubjectDashboard):
             subject_dashboard_url=self.subject_dashboard_url,
             title='Clinic Subject Dashboard',
             subject_consent=self.consent,
+            clinic_consent=self.consent,
             household_member=self.household_member,
             )
 
