@@ -50,3 +50,20 @@ class ViralLoadTrackingRuleGroup(RuleGroup):
         source_fk = (ClinicVisit, 'clinic_visit')
         source_model = ViralLoadTracking
 site_rule_groups.register(ViralLoadTrackingRuleGroup)
+
+
+class ViralLoadTrackingRequisitionRuleGroup(RuleGroup):
+
+    initiation = RequisitionRule(
+        logic=Logic(
+            predicate=('is_drawn', 'equals', 'No'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'clinicrequisition')],
+        target_requisition_panels=['Clinic Viral Load'],)
+
+    class Meta:
+        app_label = 'bcpp_clinic'
+        source_fk = (ClinicVisit, 'clinic_visit')
+        source_model = ViralLoadTracking
+site_rule_groups.register(ViralLoadTrackingRequisitionRuleGroup)
