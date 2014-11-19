@@ -2,6 +2,7 @@ from datetime import date
 
 from django.conf import settings
 
+from edc.device.device.classes import device
 from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
@@ -37,5 +38,6 @@ class SectionClinicView(BaseSectionForDashboardView):
             })
         return context
 
-if site_mappers.get_current_mapper().intervention:
+# only include section for CPC or the central server
+if site_mappers.get_current_mapper().intervention or device.device_id == '99':
     site_sections.register(SectionClinicView)
