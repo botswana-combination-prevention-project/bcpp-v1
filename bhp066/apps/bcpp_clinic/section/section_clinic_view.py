@@ -1,6 +1,14 @@
+from datetime import date
+
+from django.conf import settings
+
+from edc.map.classes import site_mappers
+
+from apps.bcpp_survey.models import Survey
+
 from ..search import ClinicSearchByWord
 
-from ..models import ClinicEligibility
+from ..models import ClinicEligibility, DailyLog
 
 from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sections
 
@@ -14,4 +22,20 @@ class SectionClinicView(BaseSectionForDashboardView):
     add_model = ClinicEligibility
     search = {'word': ClinicSearchByWord}
 
-site_sections.register(SectionClinicView)
+    def contribute_to_context(self, context, request, *args, **kwargs):
+        try:
+            daily_log = DailyLog.objects.get(report_date=date.today())
+        except DailyLog.DoesNotExist:
+            daily_log = None
+        current_survey = None
+        if settings.CURRENT_SURVEY:
+            current_survey = Survey.objects.current_survey()
+        context.update({
+            'current_survey': current_survey,
+            'current_community': str(site_mappers.get_current_mapper()()),
+            'daily_log': daily_log,
+            })
+        return context
+
+if site_mappers.get_current_mapper().intervention:
+    site_sections.register(SectionClinicView)
