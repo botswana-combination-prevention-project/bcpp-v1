@@ -331,13 +331,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Raises an exception if the RepresentativeEligibility form has not been completed.
 
         Without RepresentativeEligibility, a HouseholdMember cannot be added."""
-        exception_cls = exception_cls or ValidationError
-        using = using or 'default'
-        try:
-            RepresentativeEligibility.objects.using(using).get(household_structure=household_structure)
-        except RepresentativeEligibility.DoesNotExist:
-            raise exception_cls('The Eligibility Checklist for an eligible '
-                                'representative has not been completed.')
+        return household_structure.check_eligible_representative_filled(using, exception_cls)
+        # exception_cls = exception_cls or ValidationError
+        # using = using or 'default'
+        # try:
+        #     RepresentativeEligibility.objects.using(using).get(household_structure=household_structure)
+        # except RepresentativeEligibility.DoesNotExist:
+        #     raise exception_cls('The Eligibility Checklist for an eligible '
+        #                         'representative has not been completed.')
 
     def check_head_household(self, household_structure, using=None, exception_cls=None):
         """Raises an exception if the HeadOusehold already exists in this household structure."""
@@ -345,16 +346,16 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         using = using or 'default'
         try:
             current_hoh = HouseholdMember.objects.get(
-                    household_structure=household_structure,
-                    relation='Head')
+                household_structure=household_structure,
+                relation='Head')
             # If i am not a new instance then make sure i am not comparing to myself.
             if self.id and current_hoh and (self.id != current_hoh.id):
                     raise exception_cls('{0} is the head of household already. Only one member '
-                                                'may be the head of household.'.format(current_hoh))
+                                        'may be the head of household.'.format(current_hoh))
             # If i am a new instance then i could not be comparing to myself as i do not exist in the DB yet
             elif not self.id and current_hoh:
                 raise exception_cls('{0} is the head of household already. Only one member '
-                                                'may be the head of household.'.format(current_hoh))
+                                    'may be the head of household.'.format(current_hoh))
         except HouseholdMember.DoesNotExist:
             pass
 
