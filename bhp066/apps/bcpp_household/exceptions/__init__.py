@@ -6,3 +6,11 @@ class ReplacementError(Exception):
 
 class AlreadyReplaced(Exception):
     pass
+
+
+class AlreadyEnumerated(Exception):
+    pass
+
+
+class EligibleRepresentativeError(Exception):
+    pass
