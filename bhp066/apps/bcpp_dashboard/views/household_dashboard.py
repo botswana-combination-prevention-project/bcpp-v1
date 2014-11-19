@@ -6,6 +6,7 @@ from apps.bcpp_dashboard.classes import HouseholdDashboard
 
 @login_required
 def household_dashboard(request, **kwargs):
+    template = 'householdstructure_dashboard.html'
     dashboard = HouseholdDashboard(
         dashboard_type=kwargs.get('dashboard_type'),
         dashboard_id=kwargs.get('dashboard_id'),
@@ -15,6 +16,6 @@ def household_dashboard(request, **kwargs):
         )
     dashboard.set_context()
     return render_to_response(
-        'householdstructure_dashboard.html',
+        template,
         dashboard.context.get(),
         context_instance=RequestContext(request))
