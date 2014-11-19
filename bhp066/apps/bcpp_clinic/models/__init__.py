@@ -15,3 +15,4 @@ from .clinic_vl_result import ClinicVlResult
 from .questionnaire import Questionnaire
 from .signals import *
 from .viral_load_tracking import ViralLoadTracking
+from .daily_log import DailyLog
