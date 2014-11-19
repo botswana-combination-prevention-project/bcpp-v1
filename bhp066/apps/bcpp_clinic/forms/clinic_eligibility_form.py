@@ -15,6 +15,9 @@ class ClinicEligibilityForm(BaseModelForm):
                                             'Eligibility checklist may not be edited')
         except AttributeError:
             pass
+        if cleaned_data.get('has_identity') == 'No' and cleaned_data.get('identity'):
+            raise forms.ValidationError('You indicated the patient did not provide '
+                                        'an identity but identity is provided. Please correct.')
         return cleaned_data
 
     class Meta:
