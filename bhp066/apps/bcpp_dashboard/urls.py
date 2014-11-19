@@ -18,4 +18,4 @@ urlpatterns += patterns('apps.bcpp_dashboard.views',
 regex = {}
 regex['dashboard_type'] = 'clinic'
 regex['dashboard_model'] = 'clinic_eligibility'
-urlpatterns = ClinicDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['clinic_visit', ])
+urlpatterns += ClinicDashboard.get_urlpatterns('apps.bcpp_dashboard.views', regex, visit_field_names=['clinic_visit', ])
