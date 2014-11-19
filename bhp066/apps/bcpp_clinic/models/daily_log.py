@@ -6,6 +6,8 @@ from edc.device.sync.models import BaseSyncUuidModel
 
 
 class DailyLog(BaseSyncUuidModel):
+    """A model completed by the user daily to help measure the daily flow
+    of patients in the clinic."""
 
     report_date = models.DateField(
         default=date.today(),
