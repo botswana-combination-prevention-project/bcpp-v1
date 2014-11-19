@@ -36,4 +36,6 @@ class DailyLogAdmin(BaseModelAdmin):
 
     list_filter = ('report_date', )
 
+    instructions = ['Complete this form once per day.']
+
 admin.site.register(DailyLog, DailyLogAdmin)
