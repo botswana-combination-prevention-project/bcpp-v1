@@ -3,12 +3,20 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import OtherCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
 
 from edc.choices import YES_NO_DWTA
 
 from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_visit import ClinicVisit
+
+REGISTRATION_TYPES = (
+    ('initiation', _('Initiation Visit')),
+    ('masa_vl_scheduled', _('MASA Scheduled Viral Load Visit')),
+    ('ccc_scheduled', _('CCC Enrollment Visit')),
+    ('OTHER', _('Other NON-Viral Load Visit'))
+)
 
 
 class Questionnaire(BaseClinicVisitModel):
@@ -17,14 +25,11 @@ class Questionnaire(BaseClinicVisitModel):
     registration_type = models.CharField(
         verbose_name=_("What type of Clinic Registration is this?"),
         max_length=35,
-        choices=(
-                 ('Initiation Visit', _('Initiation Visit')),
-                 ('MASA Scheduled VL Visit', _('MASA Scheduled Viral Load Visit')),
-                 ('CCC visit', _('CCC Enrollment Visit')),
-                 ('Other NON-VL Visit', _('Other NON-Viral Load Visit'))
-                 ),
+        choices=REGISTRATION_TYPES,
         help_text="",
         )
+
+    registration_type_other = OtherCharField()
 
     on_arv = models.CharField(
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
