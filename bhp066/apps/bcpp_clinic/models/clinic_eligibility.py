@@ -67,8 +67,9 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         verbose_name="Date of birth",
         validators=[
             dob_not_future,
-            MinConsentAge,
-            MaxConsentAge],
+            #MinConsentAge,
+            #MaxConsentAge
+            ],
         null=True,
         blank=True,
         help_text="Format is YYYY-MM-DD.")
