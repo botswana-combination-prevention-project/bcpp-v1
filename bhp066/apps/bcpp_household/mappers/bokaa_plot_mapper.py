@@ -25,18 +25,27 @@ class BokaaPlotMapper(BasePlotMapper):
     radius = 5.5
     location_boundary = ()
 
-    survey_dates = {'bcpp-year-1': SurveyDatesTuple(
-        bhs_start_date=date(2014, 11, 5),
-        bhs_full_enrollment_date=date(2014, 11, 28),
-        bhs_end_date=date(2014, 12, 20),
-        smc_start_date=date(2014, 12, 5))
+    survey_dates = {
+        'bcpp-year-1': SurveyDatesTuple(
+            name='bhs',
+            start_date=date(2014, 11, 5),
+            full_enrollment_date=date(2014, 11, 28),
+            end_date=date(2014, 12, 20),
+            smc_start_date=date(2014, 12, 5)),
+        'bcpp-year-2': SurveyDatesTuple(
+            name='t1',
+            start_date=date(2015, 11, 5),
+            full_enrollment_date=date(2015, 11, 28),
+            end_date=date(2015, 12, 20),
+            smc_start_date=date(2015, 12, 5)),
     }
-    clinic_days = {'bcpp-year-1': {
-        'IDCC': ClinicDaysTuple((WE, ), None),
-        'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((FR, ), survey_dates['bcpp-year-1'].smc_start_date)
-        }
+
+    clinic_days = {
+        'bcpp-year-1': {
+            'IDCC': ClinicDaysTuple((WE, ), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((FR, ), survey_dates['bcpp-year-1'].smc_start_date)},
     }
 
 site_mappers.register(BokaaPlotMapper)

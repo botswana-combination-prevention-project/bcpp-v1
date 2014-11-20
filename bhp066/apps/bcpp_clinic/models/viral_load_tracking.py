@@ -1,6 +1,7 @@
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import InitialsField
 from edc.choices.common import YES_NO
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.lab.lab_requisition.choices import REASON_NOT_DRAWN
@@ -32,6 +33,13 @@ class ViralLoadTracking(BaseClinicVisitModel):
         null=True,
         blank=True,
         help_text='If not drawn, leave blank. Same as date and time of finger prick in case on DBS.',
+        )
+
+    clinician_initials = InitialsField(
+        verbose_name='Clinician\'s initial',
+        null=True,
+        blank=True,
+        default='--',
         )
 
     history = AuditTrail()

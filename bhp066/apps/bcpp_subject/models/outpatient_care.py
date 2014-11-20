@@ -13,7 +13,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class OutpatientCare (BaseScheduledVisitModel):
 
-    """CE001- Resource Utilization sub"""
+    """A model completed by the user to capture information about any
+    outpatient care obtained by the participant."""
 
     govt_health_care = models.CharField(
         verbose_name=_("In the last 3 months, did you seek care at a Government Primary"

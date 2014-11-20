@@ -12,7 +12,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class Sti (BaseScheduledVisitModel):
 
-    """CS002 - Medical Diagnoses - Sti"""
+    """A model completed by the user to record any potentially
+    HIV-related illness in the past 12 months."""
 
 #     sti_date = models.DateField(
 #         verbose_name=("Date of the diagnosis of the STI (Sexually transmitted infection):"),

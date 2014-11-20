@@ -19,6 +19,7 @@ class ClinicEligibilityAdmin(BaseModelAdmin):
         'first_name',
         'initials',
         'dob',
+        'verbal_age',
         'gender',
         'has_identity',
         'identity',
@@ -35,8 +36,7 @@ class ClinicEligibilityAdmin(BaseModelAdmin):
 
     list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', 'is_consented', 'is_refused')
 
-    list_filter = ('household_member', 'gender', 'is_eligible', 'is_consented', 'is_refused', 'report_datetime',
-                   'community')
+    list_filter = ('gender', 'is_eligible', 'is_consented', 'is_refused', 'report_datetime', 'community')
 
     radio_fields = {
         'has_identity': admin.VERTICAL,

@@ -12,13 +12,13 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
     app_label = 'bcpp_clinic'
     panel_model = 'Panel'
     membership_forms = OrderedDict({
-        'consenting': MembershipFormTuple('consenting', ClinicConsent, True),
+        'bcpp_clinic': MembershipFormTuple('bcpp_clinic', ClinicConsent, True),
         })
 
     # schedule groups
     # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
-        'clinic': ScheduleGroupTuple('clinic', 'consenting', None, None),
+        'clinic': ScheduleGroupTuple('clinic', 'bcpp_clinic', None, None),
         })
 
     # visit_schedule
@@ -40,7 +40,7 @@ class BcppClinicVisitSchedule(VisitScheduleConfiguration):
             'requisitions': (
                 RequisitionPanelTuple(10L, u'bcpp_lab', u'clinicrequisition', 'Research Blood Draw', 'TEST', 'WB',
                                       REQUIRED, NOT_ADDITIONAL),
-                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Viral Load', 'TEST', 'WB',
+                RequisitionPanelTuple(20L, u'bcpp_lab', u'clinicrequisition', 'Clinic Viral Load', 'TEST', 'WB',
                                       NOT_REQUIRED, ADDITIONAL),
                 ),
             'entries': (
