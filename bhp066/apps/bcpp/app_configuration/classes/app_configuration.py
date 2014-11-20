@@ -100,11 +100,11 @@ class BcppAppConfiguration(BaseAppConfiguration):
             {'survey_name': 'BCPP Year 1',
              'survey_slug': 'bcpp-year-1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2014, 12, 29, 16, 30, 00)},
+             'datetime_end': datetime(2014, 10, 17, 16, 30, 00)},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
-             'datetime_start': datetime(2014, 12, 30, 07, 00, 00),
+             'datetime_start': datetime(2014, 10, 18, 00, 00, 00),
              'datetime_end': datetime(2015, 10, 29, 16, 30, 00)},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
@@ -324,29 +324,41 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def study_site_setup(self):
         """Returns a dictionary of the the site code and site name.
 
+        Plot checks are bypassed if:
+            * CURRENT_COMMUNITY == 'BHP'
+            * SITE_CODE=='00'
+            * DEVICE_ID in ['99', ]
+
         Confirms:
             * mapper name an code match that in settings.
             * plot identifier community prefix is the same as the site code.
         """
-        map_code = site_mappers.get_current_mapper().map_code
+        try:
+            map_code = site_mappers.get_current_mapper().map_code
+        except AttributeError:
+            map_code = '00'
         if map_code != settings.SITE_CODE:
-            raise ImproperlyConfigured('Community code {} returned by mapper does not equal '
-                                       'settings.SITE_CODE {}.'.format(map_code, settings.SITE_CODE))
-        map_area = site_mappers.get_current_mapper().map_area
+            raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
+                                       'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
+        try:
+            map_area = site_mappers.get_current_mapper().map_area
+        except AttributeError:
+            map_area = 'BHP'
         if map_area != settings.CURRENT_COMMUNITY:
             raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
                                        'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
-        try:
-            if Plot.objects.all()[0].plot_identifier[:2] != map_code:
-                raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
-                                           'in Plot identifier {0}. Got {1} != {2}'.format(
-                                               Plot.objects.all()[0].plot_identifier,
-                                               Plot.objects.all()[0].plot_identifier[:2],
-                                               map_code))
-        except IndexError:
-            pass
-        return {'site_name': site_mappers.get_current_mapper().map_area,
-                'site_code': site_mappers.get_current_mapper().map_code}
+        if str(device) not in ['99', ]:
+            try:
+                if Plot.objects.all()[0].plot_identifier[:2] != map_code:
+                    raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
+                                               'in Plot identifier {0}. Got {1} != {2}'.format(
+                                                   Plot.objects.all()[0].plot_identifier,
+                                                   Plot.objects.all()[0].plot_identifier[:2],
+                                                   map_code))
+            except IndexError:
+                pass
+        return {'site_name': map_area,
+                'site_code': map_code}
 
     def update_or_create_survey(self):
         for survey_values in self.survey_setup.itervalues():
