@@ -9,10 +9,10 @@ from .choices import SECTIONS, SUB_SECTIONS, DIGAWANA_LANDMARKS
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
-class DigawanaPlotMapper(BasePlotMapper):
+class TestPlotMapper(BasePlotMapper):
 
-    map_area = 'digawana'
-    map_code = '12'
+    map_area = 'test_community'
+    map_code = '01'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -48,4 +48,4 @@ class DigawanaPlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].smc_start_date)},
     }
 
-site_mappers.register(DigawanaPlotMapper)
+site_mappers.register(TestPlotMapper)
