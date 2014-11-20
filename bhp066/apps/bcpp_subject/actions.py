@@ -1,9 +1,56 @@
 from datetime import datetime
+
+from django.core.urlresolvers import reverse
+from django.http.response import HttpResponseRedirect
+from django.contrib import messages
+
+from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
+
 from edc.export.classes import ExportAsCsv
 
 from apps.bcpp_subject.choices import REFERRAL_CODES
 
-from .models import SubjectReferral
+from .models import SubjectReferral, CallLog
+from .utils import update_referrals_for_hic
+
+
+def call_participant(modeladmin, request, queryset):
+    for qs in queryset:
+        try:
+            call_log = CallLog.objects.get(household_member=qs.subject_visit.household_member)
+        except CallLog.DoesNotExist:
+            call_log = CallLog.objects.create(household_member=qs.subject_visit.household_member)
+        add_url = '{}?call_log={}'.format(reverse("admin:bcpp_subject_calllogentry_add"), call_log.pk)
+    return HttpResponseRedirect(add_url)
+call_participant.short_description = "Call participant"
+
+
+def update_referrals(modeladmin, request, queryset):
+    for obj in queryset:
+        try:
+            bhs_referral_code = SubjectReferral.objects.get(subject_visit=obj.subject_visit).referral_code
+            obj.bhs_referral_code = bhs_referral_code
+            obj.save(update_fields=['bhs_referral_code'])
+        except SubjectReferral.DoesNotExist:
+            pass
+update_referrals.short_description = "Update selected referrals"
+
+
+def update_referrals_for_hic_action(modeladmin, request, queryset, **kwargs):
+    try:
+        already_running(update_referrals_for_hic)
+        result = update_referrals_for_hic.delay()
+        messages.add_message(request, messages.INFO, (
+            '{0.status}: Updating referrals for hic ({0.id})').format(result))
+    except CeleryTaskAlreadyRunning as celery_task_already_running:
+        messages.add_message(request, messages.WARNING, str(celery_task_already_running))
+    except CeleryNotRunning as not_running:
+        messages.add_message(request, messages.WARNING, str(not_running))
+    except Exception as e:
+        messages.add_message(request, messages.ERROR, (
+            'Unable to run task. Celery got {}.'.format(str(e))))
+update_referrals_for_hic_action.short_description = (
+    'Update ALL referrals for HIC enrollments (runs in background).')
 
 
 def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manual)", fields=None, exclude=None,
