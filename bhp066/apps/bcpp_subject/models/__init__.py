@@ -58,6 +58,7 @@ from .base_household_member_consent import BaseHouseholdMemberConsent
 from .subject_referral import SubjectReferral
 from .participation import Participation
 from .tb_symptoms import TbSymptoms
+from .call_log import CallLog, CallLogEntry
 from .signals import *
 from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult
