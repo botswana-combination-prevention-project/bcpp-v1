@@ -65,10 +65,7 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
 
     dob = models.DateField(
         verbose_name="Date of birth",
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge],
+        validators=[dob_not_future, ],
         null=True,
         blank=True,
         help_text="Format is YYYY-MM-DD.")
