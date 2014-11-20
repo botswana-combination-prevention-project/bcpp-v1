@@ -25,7 +25,7 @@ def check_replacements(request):
         load_producer_db_settings(producer_name)
         if producer_name:
             producer = Producer.objects.get(name=producer_name)
-            getproducerbyaddr(producer)  # is producer online?
+            getproducerbyaddr(producer)  # is producer available in DNS/Hosts file?
             replacement_helper = ReplacementHelper()
             replaceables = list(replacement_helper.replaceable_plots(producer.settings_key))
             replaceables.extend(list(replacement_helper.replaceable_households(producer.settings_key)))

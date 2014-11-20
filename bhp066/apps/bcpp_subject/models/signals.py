@@ -84,7 +84,9 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
                     subject_visit=instance.subject_visit)
                 # calling save will run it through export_history manager. This may be noisy
                 # but it ensures all modifications get exported
-                subject_referral.save(using=using)
+                if not SubjectReferralHelper(subject_referral).missing_data:
+                    #Only resave the referral if there is no missing data.
+                    subject_referral.save(using=using)
         except SubjectReferral.DoesNotExist:
             pass
         except AttributeError as attribute_error:
