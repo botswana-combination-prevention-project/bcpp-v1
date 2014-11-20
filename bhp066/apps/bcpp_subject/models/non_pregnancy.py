@@ -10,7 +10,7 @@ from .base_pregnancy import BasePregnancy
 
 class NonPregnancy (BasePregnancy):
 
-    """CS002"""
+    """A model completed by the user for female participants who are not pregnant."""
 
     more_children = models.CharField(
         verbose_name=_("Do you wish to have a child now or in the future?"),

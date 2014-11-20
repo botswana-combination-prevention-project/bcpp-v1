@@ -31,7 +31,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def prepare(self):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
-        # self.validate_bcpp_settings() (see mapper)
 
     global_configuration = {
         'dashboard':
@@ -63,29 +62,38 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'hostname_prefix': 's030',
         'device_id': device.device_id}
 
-    holidays_setup = {'New Year': date(2014, 1, 01),
-                      'New Year Holiday': date(2014, 1, 02),
-                      'Good Fiday': date(2014, 4, 18),
-                      'Easter Monday': date(2014, 4, 21),
-                      'Labour Day': date(2014, 5, 01),
-                      'Ascension Day': date(2014, 5, 29),
-                      'Sir Seretse Khama Day': date(2014, 7, 01),
-                      'President\'s Day': date(2014, 7, 17),
-                      'President\'s Day Holiday': date(2014, 7, 21),
-                      'Independence Day': date(2014, 9, 30),
-                      'Botswana Day Holiday': date(2014, 10, 01),
-                      'Christmas Day': date(2014, 12, 25),
-                      'Boxing Day': date(2014, 12, 26),
-                      }
+    holidays_setup = {
+        'New Year': date(2014, 1, 01),
+        'New Year Holiday': date(2014, 1, 02),
+        'Good Fiday': date(2014, 4, 18),
+        'Easter Monday': date(2014, 4, 21),
+        'Labour Day': date(2014, 5, 01),
+        'Ascension Day': date(2014, 5, 29),
+        'Sir Seretse Khama Day': date(2014, 7, 01),
+        'President\'s Day': date(2014, 7, 17),
+        'President\'s Day Holiday': date(2014, 7, 21),
+        'Independence Day': date(2014, 9, 30),
+        'Botswana Day Holiday': date(2014, 10, 01),
+        'Christmas Day': date(2014, 12, 25),
+        'Boxing Day': date(2014, 12, 26),
+        }
 
-    consent_catalogue_setup = {
-        'name': 'bcpp-year-1',
-        'content_type_map': 'subjectconsent',
-        'consent_type': 'study',
-        'version': 1,
-        'start_datetime': study_start_datetime,
-        'end_datetime': study_end_datetime,
-        'add_for_app': 'bcpp_subject'}
+    consent_catalogue_list = [
+        {'name': 'bcpp-year-1',
+         'content_type_map': 'subjectconsent',
+         'consent_type': 'study',
+         'version': 1,
+         'start_datetime': study_start_datetime,
+         'end_datetime': study_end_datetime,
+         'add_for_app': 'bcpp_subject'},
+        {'name': 'bcpp-clinic',
+         'content_type_map': 'clinicconsent',
+         'consent_type': 'study',
+         'version': 1,
+         'start_datetime': study_start_datetime,
+         'end_datetime': study_end_datetime,
+         'add_for_app': 'bcpp_clinic'},
+        ]
 
     survey_setup = {
         'bcpp-year-1':
@@ -108,6 +116,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                   PanelTuple('Viral Load', 'TEST', 'WB'),
+                  PanelTuple('Clinic Viral Load', 'TEST', 'WB'),
                   PanelTuple('Microtube', 'STORAGE', 'WB'),
                   PanelTuple('ELISA', 'TEST', 'WB'),
                   PanelTuple('Venous (HIV)', 'TEST', 'WB'),
@@ -121,6 +130,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                                   'Gaborone', '3902671', 'bhhrl@bhp.org.bw')],
                  'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                            PanelTuple('Viral Load', 'TEST', 'WB'),
+                           PanelTuple('Clinic Viral Load', 'TEST', 'WB'),
                            PanelTuple('Microtube', 'STORAGE', 'WB'),
                            PanelTuple('ELISA', 'TEST', 'WB'),
                            PanelTuple('Venous (HIV)', 'TEST', 'WB'),
@@ -128,11 +138,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
                  'aliquot_type': [AliquotTypeTuple('Whole Blood', 'WB', '02'),
                                   AliquotTypeTuple('Plasma', 'PL', '32'),
                                   AliquotTypeTuple('Buffy Coat', 'BC', '16')],
-                 'profile': [ProfileTuple('Microtube', 'WB'), ProfileTuple('Viral Load', 'WB'), ProfileTuple('Genotyping', 'WB'), ProfileTuple('ELISA', 'WB')],
+                 'profile': [ProfileTuple('Microtube', 'WB'),
+                             ProfileTuple('Viral Load', 'WB'),
+                             ProfileTuple('Clinic Viral Load', 'WB'),
+                             ProfileTuple('Genotyping', 'WB'),
+                             ProfileTuple('ELISA', 'WB')],
                  'profile_item': [ProfileItemTuple('Microtube', 'PL', 0.3, 1),
                                   ProfileItemTuple('Microtube', 'BC', 0.2, 1),
                                   ProfileItemTuple('Viral Load', 'PL', 1.0, 3),
                                   ProfileItemTuple('Viral Load', 'BC', 0.5, 1),
+                                  ProfileItemTuple('Clinic Viral Load', 'PL', 1.0, 2),
+                                  ProfileItemTuple('Clinic Viral Load', 'BC', 0.5, 1),
                                   ProfileItemTuple('Genotyping', 'PL', 1.0, 4),
                                   ProfileItemTuple('Genotyping', 'BC', 0.5, 2),
                                   ProfileItemTuple('ELISA', 'PL', 1.0, 1),
@@ -184,8 +200,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                    '^XZ')), False),
                           ]
                       }
-
-    consent_catalogue_list = [consent_catalogue_setup]
 
     export_plan_setup = {
         'bcpp_subject.subjectreferral': {
@@ -310,29 +324,41 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def study_site_setup(self):
         """Returns a dictionary of the the site code and site name.
 
+        Plot checks are bypassed if:
+            * CURRENT_COMMUNITY == 'BHP'
+            * SITE_CODE=='00'
+            * DEVICE_ID in ['99', ]
+
         Confirms:
             * mapper name an code match that in settings.
             * plot identifier community prefix is the same as the site code.
         """
-        map_code = site_mappers.get_current_mapper().map_code
+        try:
+            map_code = site_mappers.get_current_mapper().map_code
+        except AttributeError:
+            map_code = '00'
         if map_code != settings.SITE_CODE:
-            raise ImproperlyConfigured('Community code {} returned by mapper does not equal '
-                                       'settings.SITE_CODE {}.'.format(map_code, settings.SITE_CODE))
-        map_area = site_mappers.get_current_mapper().map_area
+            raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
+                                       'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
+        try:
+            map_area = site_mappers.get_current_mapper().map_area
+        except AttributeError:
+            map_area = 'BHP'
         if map_area != settings.CURRENT_COMMUNITY:
             raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
                                        'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
-        try:
-            if Plot.objects.all()[0].plot_identifier[:2] != map_code:
-                raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
-                                           'in Plot identifier {0}. Got {1} != {2}'.format(
-                                               Plot.objects.all()[0].plot_identifier,
-                                               Plot.objects.all()[0].plot_identifier[:2],
-                                               map_code))
-        except IndexError:
-            pass
-        return {'site_name': site_mappers.get_current_mapper().map_area,
-                'site_code': site_mappers.get_current_mapper().map_code}
+        if str(device) not in ['99', ]:
+            try:
+                if Plot.objects.all()[0].plot_identifier[:2] != map_code:
+                    raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
+                                               'in Plot identifier {0}. Got {1} != {2}'.format(
+                                                   Plot.objects.all()[0].plot_identifier,
+                                                   Plot.objects.all()[0].plot_identifier[:2],
+                                                   map_code))
+            except IndexError:
+                pass
+        return {'site_name': map_area,
+                'site_code': map_code}
 
     def update_or_create_survey(self):
         for survey_values in self.survey_setup.itervalues():

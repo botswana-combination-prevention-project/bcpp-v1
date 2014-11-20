@@ -1,4 +1,5 @@
 import re
+
 from django.db import models
 
 from edc.core.identifier.exceptions import IdentifierError
@@ -31,6 +32,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     def save(self, *args, **kwargs):
         if not self.id:
+            identity=self.identity
             self.registered_subject = RegisteredSubject.objects.get(identity=self.identity)
             self.household_member = HouseholdMember.objects.get(registered_subject=self.registered_subject)
             self.survey = self.household_member.household_structure.survey

@@ -29,6 +29,7 @@ REFERRAL_CLINIC_TYPES = (
 
 
 class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
+    """A model completed by the user to indicate a referral to care."""
 
     subject_referred = models.CharField(
         max_length=10,

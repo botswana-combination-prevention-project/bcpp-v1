@@ -11,7 +11,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class SexualBehaviour (BaseScheduledVisitModel):
 
-    """CS002"""
+    """A model completed by the user on the participant's sexual behaviour."""
 
     ever_sex = models.CharField(
         verbose_name=_("In your lifetime, have you ever had sex with anyone"

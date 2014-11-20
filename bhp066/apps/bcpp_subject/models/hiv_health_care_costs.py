@@ -12,10 +12,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HivHealthCareCosts (BaseScheduledVisitModel):
 
-    """CE001.
-
-    Read to Participant: The next set of questions are
-    about you obtaining medical or clinical care related to HIV."""
+    """A model completed by the user to capture information from the
+    participant about obtaining medical or clinical care related to HIV."""
 
     hiv_medical_care = models.CharField(
         verbose_name=_("Have you ever received HIV related medical/clinical care? "),
