@@ -3,9 +3,8 @@ from django.db import models
 from edc.subject.consent.models import BaseConsentHistory
 
 from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
-
 from apps.bcpp_subject.managers import ConsentHistoryManager
+from apps.bcpp_survey.models import Survey
 
 
 class ClinicConsentHistory(BaseConsentHistory):

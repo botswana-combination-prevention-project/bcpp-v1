@@ -7,7 +7,6 @@ from edc.subject.entry.models import LabEntry, Entry
 from edc.subject.visit_tracking.models import BaseVisitTracking
 
 from apps.bcpp_household_member.models import HouseholdMember
-from apps.clinic.choices import VISIT_UNSCHEDULED_REASON
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
@@ -24,22 +23,27 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         max_length=25,
         blank=True,
         null=True,
-        choices=VISIT_UNSCHEDULED_REASON,
         )
 
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.get_requisition()
-        self.ccc_masa_visit_reason_forms()
+        self.info_source = 'subject'
+        self.reason = 'clinic RBD'
+        self.appointment.appt_type = 'clinic'
+        #self.get_requisition()
+        #self.ccc_masa_visit_reason_forms()
         super(ClinicVisit, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return '{} {} ({}) {}'.format(self.appointment.registered_subject.subject_identifier,
+                                      self.appointment.registered_subject.first_name,
+                                      self.appointment.registered_subject.gender,
+                                      self.appointment.visit_definition.code)
 
     @property
     def registered_subject(self):
         return self.get_registered_subject()
-
-    def __unicode__(self):
-        return unicode(self.appointment)
 
     def get_requisition(self):
         """Confirms the visit code and visit reason before

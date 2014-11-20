@@ -8,7 +8,6 @@ from edc.map.choices import ICONS, OTHER_ICONS
 
 from apps.bcpp_survey.models import Survey
 
-from ..choices import NON_RESIDENTIAL
 from ..models import Plot
 
 
@@ -48,14 +47,21 @@ class BasePlotMapper(Mapper):
     gps_minutes_e_field_attr = 'gps_minutes_e'
 
     def __init__(self):
-        self.intervention_code = 'CPC' if self.intervention else 'ECC'
+        self.active = None
+        if self.intervention is None:
+            self.intervention_code = None
+        else:
+            self.intervention_code = 'CPC' if self.intervention else 'ECC'
+        if settings.CURRENT_COMMUNITY == self.map_area:
+            self.active = True
         self.verify_survey_dates()
 
     def __repr__(self):
         return '{}(\'{}\')'.format(self.__class__.__name__, self.map_area)
 
     def __str__(self):
-        return '{}{} ({})'.format(self.map_area[0].upper(), self.map_area[1:], self.intervention_code)
+        return '{}{} ({}){}'.format(self.map_area[0].upper(), self.map_area[1:], self.intervention_code,
+                                    ' *active' if self.active else '')
 
     @property
     def __dict__(self):
@@ -70,28 +76,36 @@ class BasePlotMapper(Mapper):
             'clinic_days': self.clinic_days}
 
     def verify_survey_dates(self):
-        """Verifies that the dates fall within the survey."""
+        """Verifies that the dates fall within the survey for the current community."""
         for survey_slug, survey_dates in self.survey_dates.iteritems():
             try:
-                bhs_start_datetime = datetime.combine(survey_dates.bhs_start_date, time.min)
-                Survey.objects.current_survey(
-                    report_datetime=bhs_start_datetime,
-                    survey_slug=survey_slug,
-                    datetime_label='bhs_start_datetime')
-                bhs_full_enrollment_datetime = datetime.combine(
-                    survey_dates.bhs_full_enrollment_date, time.min)
-                Survey.objects.current_survey(
-                    report_datetime=bhs_full_enrollment_datetime,
-                    survey_slug=survey_slug,
-                    datetime_label='bhs_full_enrollment_date')
-                bhs_end_datetime = datetime.combine(survey_dates.bhs_end_date, time.min)
-                Survey.objects.current_survey(
-                    report_datetime=bhs_end_datetime,
-                    survey_slug=survey_slug,
-                    datetime_label='bhs_end_datetime')
+                if self.active and survey_slug == settings.CURRENT_SURVEY:
+                    start_datetime = datetime.combine(survey_dates.start_date, time.min)
+                    Survey.objects.current_survey(
+                        report_datetime=start_datetime,
+                        survey_slug=survey_slug,
+                        datetime_label='start_datetime',
+                        community=self.map_area)
+                    full_enrollment_datetime = datetime.combine(
+                        survey_dates.full_enrollment_date, time.min)
+                    Survey.objects.current_survey(
+                        report_datetime=full_enrollment_datetime,
+                        survey_slug=survey_slug,
+                        datetime_label='full_enrollment_date',
+                        community=self.map_area)
+                    end_datetime = datetime.combine(survey_dates.end_date, time.min)
+                    Survey.objects.current_survey(
+                        report_datetime=end_datetime,
+                        survey_slug=survey_slug,
+                        datetime_label='end_datetime',
+                        community=self.map_area)
             except Survey.DoesNotExist:
                 raise ImproperlyConfigured('Date does not fall within defined Survey instance. '
                                            'See mapper and Survey for {}.'.format(survey_slug))
+            except ImproperlyConfigured as err_message:
+                raise ImproperlyConfigured('{}:{} survey {}. {}'.format(self.map_code, self.map_area,
+                                                                        settings.CURRENT_SURVEY,
+                                                                        err_message))
 
     @property
     def test_location(self):
