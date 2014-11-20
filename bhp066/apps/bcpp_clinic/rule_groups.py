@@ -7,7 +7,7 @@ class InitiationRequisitionRuleGroup(RuleGroup):
 
     initiation = RequisitionRule(
         logic=Logic(
-            predicate=(('registration_type', 'equals', 'Initiation Visit'), ('registration_type', 'equals', 'Other NON-VL Visit', 'or')),
+            predicate=(('registration_type', 'equals', 'initiation'), ('registration_type', 'equals', 'OTHER', 'or')),
             consequence='new',
             alternative='not_required'),
         target_model=[('bcpp_lab', 'clinicrequisition')],
@@ -24,7 +24,7 @@ class MasaRuleGroup(RuleGroup):
 
     is_drawn = ScheduledDataRule(
         logic=Logic(
-            predicate=(('registration_type', 'equals', 'MASA Scheduled VL Visit'), ('registration_type', 'equals', 'CCC visit', 'or')),
+            predicate=(('registration_type', 'equals', 'masa_vl_scheduled'), ('registration_type', 'equals', 'ccc_scheduled', 'or')),
             consequence='new',
             alternative='not_required'),
         target_model=['viralloadtracking'])
