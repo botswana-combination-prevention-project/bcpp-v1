@@ -12,7 +12,7 @@ from .subject_consent import SubjectConsent
 
 from ..classes import SubjectReferralHelper
 
-from ..models import SubjectReferral, SubjectVisit
+from ..models import SubjectReferral, SubjectVisit, HicEnrollment, CallLogEntry
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -121,3 +121,13 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
                         # TODO: TimePointStatus form should catch this error instead
                         # of hiding it like this
                         pass
+
+
+@receiver(post_save, weak=False, dispatch_uid='call_log_entry_on_post_save')
+def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        if isinstance(instance, CallLogEntry):
+            call_attempts = CallLogEntry.objects.filter(call_log=instance.call_log).count()
+            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=instance.call_log.household_member)
+            hic_enrollment.call_attempts = call_attempts
+            hic_enrollment.save(update_fields=['call_attempts'])

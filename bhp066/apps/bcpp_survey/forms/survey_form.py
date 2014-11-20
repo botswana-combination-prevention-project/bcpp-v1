@@ -10,3 +10,11 @@ class SurveyForm(forms.Form):
         initial=None,
         help_text="",
         )
+
+    def cleaned_data(self):
+        raise forms.ValidationError('This form cannot be edited. See app_configuration instead.')
+        cleaned_data = self.cleaned_data
+        return cleaned_data
+
+    class Meta:
+        model = Survey
