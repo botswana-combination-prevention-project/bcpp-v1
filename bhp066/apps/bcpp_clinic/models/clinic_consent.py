@@ -4,9 +4,9 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.constants import NOT_APPLICABLE
+from edc.map.classes import site_mappers
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 from edc.subject.consent.mixins.bw import IdentityFieldsMixin
-from edc.map.classes import site_mappers
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .clinic_consent_history import ClinicConsentHistory

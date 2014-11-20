@@ -6,3 +6,5 @@ from .lentsweletau_plot_mapper import LentsweletauPlotMapper
 from .letlhakeng_plot_mapper import LetlhakengPlotMapper
 from .bokaa_plot_mapper import BokaaPlotMapper
 from .oodi_plot_mapper import OodiPlotMapper
+from .central_server_mapper import CentralServerMapper
+from .test_plot_mapper import TestPlotMapper

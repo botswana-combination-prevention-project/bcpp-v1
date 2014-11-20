@@ -15,6 +15,7 @@ from edc.constants import NOT_APPLICABLE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
+from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
 from apps.bcpp_clinic.models.clinic_refusal import ClinicRefusal
@@ -51,8 +52,6 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         verbose_name='First name',
         validators=[RegexValidator("^[A-Z]{1,250}$", "Ensure first name is in CAPS and "
                                    "does not contain any spaces or numbers")],
-        null=True,
-        blank=False,
         help_text="")
 
     initials = models.CharField(
@@ -62,19 +61,20 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
             MinLengthValidator(2),
             MaxLengthValidator(3),
             RegexValidator("^[A-Z]{1,3}$", "Must be Only CAPS and 2 or 3 letters. No spaces or numbers allowed.")],
-        null=True,
-        blank=False,
         help_text="")
 
     dob = models.DateField(
         verbose_name="Date of birth",
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge],
+        validators=[dob_not_future, ],
         null=True,
-        blank=False,
+        blank=True,
         help_text="Format is YYYY-MM-DD.")
+
+    verbal_age = models.IntegerField(
+        verbose_name='Age in years as reported by patient',
+        null=True,
+        blank=True,
+        help_text='Complete if DOB is not provided, otherwise leave BLANK.')
 
     guardian = models.CharField(
         verbose_name=_("If minor, is there a guardian available? "),
@@ -98,23 +98,24 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
     identity = EncryptedOmangField(
         verbose_name=_("Identity number (OMANG, etc)"),
         unique=True,
+        null=True,
+        blank=True,
         help_text=("Use Omang, Passport number, driver's license number or Omang receipt number")
         )
 
-    identity_type = IdentityTypeField()
+    identity_type = IdentityTypeField(
+        null=True)
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
-        max_length=3,
-        choices=YES_NO,
+        max_length=7,
+        choices=YES_NO_UNKNOWN,
         help_text="")
 
     legal_marriage = models.CharField(
         verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
         max_length=3,
         choices=YES_NO_NA,
-        null=True,
-        blank=False,
         default=NOT_APPLICABLE,
         help_text=_("If 'NO' participant is not eligible."))
 
@@ -122,18 +123,14 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
         max_length=3,
         choices=YES_NO_NA,
-        null=True,
-        blank=False,
         default=NOT_APPLICABLE,
         help_text="If 'NO' participant is not eligible.")
 
     part_time_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or"
                        " more nights per month in this community? "),
-        max_length=25,
+        max_length=7,
         choices=YES_NO_UNKNOWN,
-        null=True,
-        blank=False,
         help_text=(
             "If participant has moved into the "
             "community in the past 12 months, then "
@@ -145,8 +142,8 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
     literacy = models.CharField(
         verbose_name=_("Is the participant LITERATE?, or if ILLITERATE, is there a"
                        "  LITERATE witness available "),
-        max_length=10,
-        choices=YES_NO,
+        max_length=7,
+        choices=YES_NO_UNKNOWN,
         help_text=_("If participate is illiterate, confirm there is a literate"
                     "witness available otherwise participant is not eligible."))
 
@@ -162,8 +159,6 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
     hiv_status = models.CharField(
         verbose_name=_("Please tell me your current HIV status?"),
         max_length=30,
-        null=True,
-        blank=True,
         choices=VERBALHIVRESULT_CHOICE,
         help_text='If not HIV(+) participant is not elgiible.'
         )
@@ -198,6 +193,13 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         if update_fields == ['is_consented'] or update_fields == ['is_refused']:
             pass
         else:
+            if not self.id:
+                try:
+                    registered_subject = RegisteredSubject.objects.get(identity=self.identity)
+                    raise ValueError('A subject with this OMANG is alreay registered. See {}. '
+                                     'Perhaps catch this on the form'.format(registered_subject))
+                except RegisteredSubject.DoesNotExist:
+                    pass
             self.age_in_years = relativedelta(self.report_datetime.date(), self.dob).years
             self.household_member = self.clinic_household_member
             self.is_eligible, self.loss_reason = self.passes_enrollment_criteria()
@@ -270,40 +272,66 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         """Creates or updates (or deletes) the enrollment loss based on the
         reason for not passing the enrollment checklist."""
         loss_reason = []
-        if not (self.age_in_years >= 16 and self.age_in_years <= 64):
-            loss_reason.append('Must be aged between >=16 and <=64 years.')
-        if self.has_identity.lower() == 'no':
+        if self.age_in_years < 16:
+            loss_reason.append('Too young (<16).')
+        if self.age_in_years > 64:
+            loss_reason.append('Too old (>64).')
+        if self.has_identity == 'No' or not self.identity:
             loss_reason.append('No valid identity.')
-        if self.part_time_resident.lower() != 'yes':
-            loss_reason.append('Does not spend 3 or more nights per month in the community.')
-        if self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'no':
+        if self.part_time_resident == 'No':
+            loss_reason.append('Not resident.')
+        if self.part_time_resident == 'Unknown':
+            loss_reason.append('Residency unknown.')
+        if self.citizen == 'No' and self.legal_marriage == 'No':
             loss_reason.append('Not a citizen and not married to a citizen.')
         if (self.citizen.lower() == 'no' and self.legal_marriage.lower() == 'yes' and
-                self.marriage_certificate.lower() == 'no'):
+                self.marriage_certificate == 'No'):
             loss_reason.append('Not a citizen, married to a citizen but does not have a marriage certificate.')
-        if self.literacy.lower() == 'no':
+        if self.literacy == 'No':
             loss_reason.append('Illiterate with no literate witness.')
-        if self.household_member.is_minor and self.guardian.lower() != 'yes':
+        if self.literacy == 'Unknown':
+            loss_reason.append('Literacy unknown.')
+        if self.household_member.is_minor and self.guardian != 'Yes':
             loss_reason.append('Minor without guardian available.')
         if self.inability_to_participate != 'N/A':
             loss_reason.append('Mental Incapacity/Deaf/Mute/Too sick.')
-        if self.hiv_status != 'POS':
-            loss_reason.append('HIV status is not Positive.')
+        if self.hiv_status == 'NEG':
+            loss_reason.append('HIV Negative.')
+        if self.hiv_status != 'POS' and self.hiv_status != 'NEG':
+            loss_reason.append('HIV status unknown.')
+        if not self.identity:
+            loss_reason.append('Identity unknown.')
+        if not self.dob:
+            loss_reason.append('DOB unknown.')
+        if not self.citizen:
+            loss_reason.append('Citizenship unknown.')
         return (False if loss_reason else True, loss_reason)
 
     @property
     def reason_ineligible(self):
         reason = []
-        if not (self.age_in_years >= 16 and self.age_in_years <= 64):
-            reason.append('Must be aged between >=16 and <=64 years.')
-        if self.part_time_resident != 'Yes':
-            reason.append('Does not spend 3 or more nights per month in the community.')
+        if self.age_in_years < 16:
+            reason.append('Minor.')
+        if self.age_in_years > 64:
+            reason.append('Too old.')
+        if self.part_time_resident == 'No':
+            reason.append('Not resident.')
+        if self.part_time_resident == 'Unknown':
+            reason.append('Residency unknown.')
         if self.legal_marriage == 'No':
             reason.append('Not a citizen and not married to a citizen.')
         if self.inability_to_participate:
             reason.append('Mental Incapacity/Deaf/Mute/Too sick.')
-        if self.hiv_status != 'POS':
-            reason.append('HIV status is not Positive.')
+        if self.hiv_status == 'NEG':
+            reason.append('HIV Negative.')
+        if self.hiv_status != 'POS' and self.hiv_status != 'NEG':
+            reason.append('HIV status unknown.')
+        if not self.identity:
+            reason.append('Identity unknown.')
+        if not self.dob:
+            reason.append('DOB unknown.')
+        if not self.citizen:
+            reason.append('Citizenship unknown.')
         reason.sort()
         return '; '.join(reason)
 
@@ -335,3 +363,4 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         app_label = "bcpp_clinic"
         verbose_name = "Clinic Eligibility"
         verbose_name_plural = "Clinic Eligibility"
+        unique_together = ['first_name', 'initials']

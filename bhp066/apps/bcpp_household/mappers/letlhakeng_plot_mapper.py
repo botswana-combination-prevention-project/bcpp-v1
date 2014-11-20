@@ -25,18 +25,27 @@ class LetlhakengPlotMapper(BasePlotMapper):
 
     intervention = False
 
-    survey_dates = {'bcpp-year-1': SurveyDatesTuple(
-        bhs_start_date=date(2014, 9, 5),
-        bhs_full_enrollment_date=date(2014, 10, 15),
-        bhs_end_date=date(2014, 10, 21),
-        smc_start_date=date(2014, 10, 29))
+    survey_dates = {
+        'bcpp-year-1': SurveyDatesTuple(
+            name='bhs',
+            start_date=date(2014, 9, 5),
+            full_enrollment_date=date(2014, 10, 15),
+            end_date=date(2014, 10, 21),
+            smc_start_date=date(2014, 10, 29)),
+        'bcpp-year-2': SurveyDatesTuple(
+            name='t1',
+            start_date=date(2015, 9, 5),
+            full_enrollment_date=date(2015, 10, 15),
+            end_date=date(2015, 10, 21),
+            smc_start_date=date(2015, 10, 29)),
     }
-    clinic_days = {'bcpp-year-1': {
-        'IDCC': ClinicDaysTuple((TU, TH), None),
-        'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-        'SMC': ClinicDaysTuple((WE, ), survey_dates['bcpp-year-1'].smc_start_date)
-        }
+
+    clinic_days = {
+        'bcpp-year-1': {
+            'IDCC': ClinicDaysTuple((TU, TH), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((WE, ), survey_dates['bcpp-year-1'].smc_start_date)},
     }
 
 site_mappers.register(LetlhakengPlotMapper)

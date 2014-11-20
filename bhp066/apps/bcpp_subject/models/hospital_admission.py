@@ -12,7 +12,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HospitalAdmission (BaseScheduledVisitModel):
 
-    """CE001- Resource Utilization sub"""
+    """A model completed by the user to capture information about hospital admissions"""
 
     admission_nights = models.IntegerField(
         verbose_name=_("How many total nights did you spend in the hospital in the past 3 months? "),
@@ -72,5 +72,5 @@ class HospitalAdmission (BaseScheduledVisitModel):
 
     class Meta:
         app_label = 'bcpp_subject'
-        verbose_name = "RU: Hospital Admission"
-        verbose_name_plural = "RU: Hospital Admission"
+        verbose_name = "Hospital Admission"
+        verbose_name_plural = "Hospital Admission"
