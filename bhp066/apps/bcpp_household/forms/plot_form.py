@@ -13,9 +13,13 @@ class PlotForm(BaseModelForm):
         if self.instance.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
             raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
                                         'It may not be edited by a user.')
-        self.instance.allow_enrollment('default',
-                                       plot_instance=Plot(**cleaned_data),
-                                       exception_cls=forms.ValidationError)
+        try:
+            self.instance.allow_enrollment('default',
+                                           plot_instance=Plot(**cleaned_data),
+                                           exception_cls=forms.ValidationError)
+        except AttributeError:
+            raise forms.ValidationError('System settings do not allow for this form to be '
+                                        'edited. (e.g. mapper, community, site_code, device)')
         if self.instance.replaced_by:
             raise forms.ValidationError('Plot has been replaced and is not longer a BHS plot. '
                                         '(replaced_by={}'.format(self.instance.replaced_by))
