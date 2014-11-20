@@ -341,11 +341,11 @@ class Plot(BaseDispatchSyncUuidModel):
             if plot_instance.id:
                 if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
-            if not plot_instance.bhs and date.today() > mapper_instance.current_survey_dates.bhs_full_enrollment_date:
+            if not plot_instance.bhs and date.today() > mapper_instance.current_survey_dates.full_enrollment_date:
                 raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
                                     'data related to it, may not be modified. '
                                     'See site_mappers'.format(
-                                        self.community, mapper_instance.current_survey_dates.bhs_full_enrollment_date))
+                                        self.community, mapper_instance.current_survey_dates.full_enrollment_date))
         return True
 
     def safe_delete_households(self, count, instance=None, using=None):
