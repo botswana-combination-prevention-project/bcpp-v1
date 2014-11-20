@@ -28,9 +28,7 @@ class SectionClinicView(BaseSectionForDashboardView):
             daily_log = DailyLog.objects.get(report_date=date.today())
         except DailyLog.DoesNotExist:
             daily_log = None
-        current_survey = None
-        if settings.CURRENT_SURVEY:
-            current_survey = Survey.objects.current_survey()
+        current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
             'current_community': str(site_mappers.get_current_mapper()()),
