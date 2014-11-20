@@ -261,7 +261,6 @@ if str(DEVICE_ID) == '98':
 elif str(DEVICE_ID) == '99':
     PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
-    COMMUNITY = 'BHP'
 elif str(DEVICE_ID) in map(str, range(91, 97)):
     PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
