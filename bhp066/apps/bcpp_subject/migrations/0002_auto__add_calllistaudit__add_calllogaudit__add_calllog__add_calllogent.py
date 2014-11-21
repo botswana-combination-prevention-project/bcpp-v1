@@ -37,8 +37,7 @@ class Migration(SchemaMigration):
             ('call_attempts', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('call_outcome', self.gf('django.db.models.fields.CharField')(max_length=150)),
             ('call_status', self.gf('django.db.models.fields.CharField')(default='NEW', max_length=15)),
-            ('call_again', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('call_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
             ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
             ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
             ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
@@ -178,13 +177,18 @@ class Migration(SchemaMigration):
             ('call_attempts', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('call_outcome', self.gf('django.db.models.fields.CharField')(max_length=150)),
             ('call_status', self.gf('django.db.models.fields.CharField')(default='NEW', max_length=15)),
-            ('call_again', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('call_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('label', self.gf('django.db.models.fields.CharField')(max_length=25, null=True)),
         ))
         db.send_create_signal('bcpp_subject', ['CallList'])
 
+        # Adding unique constraint on 'CallList', fields ['household_member', 'label']
+        db.create_unique(u'bcpp_subject_calllist', ['household_member_id', 'label'])
+
 
     def backwards(self, orm):
+        # Removing unique constraint on 'CallList', fields ['household_member', 'label']
+        db.delete_unique(u'bcpp_subject_calllist', ['household_member_id', 'label'])
+
         # Removing unique constraint on 'CallLogEntry', fields ['call_log', 'call_datetime']
         db.delete_unique(u'bcpp_subject_calllogentry', ['call_log_id', 'call_datetime'])
 
@@ -641,13 +645,11 @@ class Migration(SchemaMigration):
             'whenever_access': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'})
         },
         'bcpp_subject.calllist': {
-            'Meta': {'object_name': 'CallList'},
+            'Meta': {'unique_together': "(['household_member', 'label'],)", 'object_name': 'CallList'},
             'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'bhs': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'call_again': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'call_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'call_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'call_outcome': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'call_status': ('django.db.models.fields.CharField', [], {'default': "'NEW'", 'max_length': '15'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -662,6 +664,7 @@ class Migration(SchemaMigration):
             'household_member': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household_member.HouseholdMember']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'object_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'object_pk': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -681,9 +684,7 @@ class Migration(SchemaMigration):
             'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'bhs': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'call_again': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'call_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'call_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'call_outcome': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'call_status': ('django.db.models.fields.CharField', [], {'default': "'NEW'", 'max_length': '15'}),
             'community': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -698,6 +699,7 @@ class Migration(SchemaMigration):
             'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_calllist'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'label': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'object_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'object_pk': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
