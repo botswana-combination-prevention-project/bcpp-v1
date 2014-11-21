@@ -284,7 +284,7 @@ class Plot(BaseDispatchSyncUuidModel):
         mapper_cls = site_mappers.get_registry(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
-            self.plot_identifier = PlotIdentifier(mapper.get_map_code(), using).get_identifier()
+            self.plot_identifier = PlotIdentifier(mapper.map_code, using).get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
