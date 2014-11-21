@@ -15,12 +15,18 @@ from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.exceptions import SurveyValueError
 
 from .models import SubjectReferral, CallLog, SubjectLocator
-from .utils import update_referrals_for_hic, update_call_list
+from .utils import update_referrals_for_hic, update_call_list, add_to_call_list
 
 
-def update_call_list(modeladmin, request, queryset):
+def update_call_list_action(modeladmin, request, queryset):
     update_call_list()
-update_call_list.short_description = "Update Call List"
+update_call_list_action.short_description = "Update Call List"
+
+
+def add_to_call_list_action(modeladmin, request, queryset):
+    for qs in queryset:
+        add_to_call_list(qs)
+add_to_call_list_action.short_description = "Add to Call List"
 
 
 def call_participant(modeladmin, request, queryset):
