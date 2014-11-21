@@ -4,7 +4,7 @@ from edc.base.modeladmin.admin import BaseModelAdmin
 
 from apps.bcpp_household_member.models import HouseholdMember
 
-from ..actions import call_participant, update_call_list
+from ..actions import call_participant, update_call_list_action
 from ..forms import CallListForm
 from ..models import CallList
 
@@ -57,7 +57,7 @@ class CallListAdmin(BaseModelAdmin):
         "subject_identifier",
         )
 
-    actions = [call_participant, update_call_list]
+    actions = [call_participant, update_call_list_action]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
