@@ -7,7 +7,7 @@ from edc.base.model.fields import OtherCharField
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.base.model.validators import date_is_future
 from edc.choices import YES_NO_UNKNOWN, TIME_OF_DAY, TIME_OF_WEEK, ALIVE_DEAD_UNKNOWN, YES_NO
-from edc.constants import YES
+from edc.constants import YES, NO, DEAD
 from edc.device.sync.models import BaseSyncUuidModel
 
 from apps.bcpp_household_member.models import HouseholdMember
@@ -17,6 +17,7 @@ from ..validators import date_in_survey
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
 
 from .subject_locator import SubjectLocator
+from django.core.validators import RegexValidator
 
 
 class CallLog (BaseSyncUuidModel):
@@ -27,6 +28,11 @@ class CallLog (BaseSyncUuidModel):
 
     locator_information = EncryptedTextField(
         help_text='This information has been imported from the previous locator. You may update as required.')
+
+    contact_notes = EncryptedTextField(
+        null=True,
+        blank=True,
+        help_text='')
 
     label = models.CharField(
         max_length=25,
@@ -40,10 +46,11 @@ class CallLog (BaseSyncUuidModel):
     objects = models.Manager()
 
     def __unicode__(self):
-        return '{} {} {}'.format(
+        return '{} {} {} ({} call)'.format(
             self.household_member.first_name,
             self.household_member.initials,
-            self.household_member.household_structure.survey.survey_name)
+            self.household_member.household_structure.survey.survey_name,
+            self.label)
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
@@ -69,6 +76,17 @@ class CallLogEntry (BaseSyncUuidModel):
 
     call_datetime = models.DateTimeField()
 
+    invalid_numbers = models.CharField(
+        verbose_name='Indicate any invalid numbers dialed from the locator information above?',
+        max_length=50,
+        validators=[RegexValidator(
+            regex=r'^[0-9]{7,8}(,[0-9]{7,8})*$',
+            message='Only enter contact numbers separated by commas. No spaces and no trailing comma.'), ],
+        null=True,
+        blank=True,
+        help_text='Separate by comma (,).'
+    )
+
     contact_type = models.CharField(
         max_length=15,
         choices=CONTACT_TYPE,
@@ -82,7 +100,17 @@ class CallLogEntry (BaseSyncUuidModel):
         help_text=""
         )
 
-    has_moved_community = models.CharField(
+    update_locator = models.CharField(
+        max_length=7,
+        verbose_name='Has the locator information changed',
+        choices=YES_NO_UNKNOWN,
+        null=True,
+        blank=True,
+        help_text=('If YES, please enter the changed information '
+                   'in the box above entitled (2) Locator information')
+        )
+
+    moved_community = models.CharField(
         max_length=7,
         verbose_name='Has the participant moved out of the community',
         choices=YES_NO_UNKNOWN,
@@ -93,24 +121,15 @@ class CallLogEntry (BaseSyncUuidModel):
 
     new_community = models.CharField(
         max_length=50,
-        verbose_name='If the participant has moved, provide the name of the community',
+        verbose_name='If the participant has moved, provide the name of the new community',
         null=True,
         blank=True,
-        help_text=""
+        help_text="If moved out of the community, provide a new community name or \'UNKNOWN\'"
         )
 
-    has_moved_community = models.CharField(
+    moved_household = models.CharField(
         max_length=7,
         verbose_name='Has the participant moved out of the household where last seen',
-        choices=YES_NO_UNKNOWN,
-        null=True,
-        blank=True,
-        help_text=""
-        )
-
-    update_locator = models.CharField(
-        max_length=7,
-        verbose_name='Has the locator information changed',
         choices=YES_NO_UNKNOWN,
         null=True,
         blank=True,
@@ -188,7 +207,7 @@ class CallLogEntry (BaseSyncUuidModel):
         )
 
     call_again = models.CharField(
-        verbose_name='Call the subject again?',
+        verbose_name='Call the participant again?',
         max_length=10,
         choices=YES_NO,
         default=YES,
@@ -202,6 +221,8 @@ class CallLogEntry (BaseSyncUuidModel):
     def save(self, *args, **kwargs):
         if not self.id:
             self.survey = Survey.objects.current_survey(self.call_datetime)
+        if self.survival_status == DEAD:
+            self.call_again = NO
         super(CallLogEntry, self).save(*args, **kwargs)
 
     def __unicode__(self):
