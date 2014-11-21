@@ -126,6 +126,15 @@ class CallList (BaseSyncUuidModel):
 
     history = AuditTrail()
 
+    def __unicode__(self):
+        return '{} {} {} {} ({} call)'.format(
+            self.subject_identifier,
+            self.household_member.first_name,
+            self.household_member.initials,
+            self.household_member.household_structure.survey,
+            self.label,
+            )
+
     def age(self):
         return relativedelta(self.consent_datetime.date(), self.dob).years
     age.allow_tags = True
