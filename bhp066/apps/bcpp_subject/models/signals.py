@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.core.bhp_data_manager.models import TimePointStatus
-from edc.constants import CLOSED
+from edc.constants import CLOSED, OPEN, YES
 
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
@@ -12,7 +12,7 @@ from .subject_consent import SubjectConsent
 
 from ..classes import SubjectReferralHelper
 
-from ..models import SubjectReferral, SubjectVisit, HicEnrollment, CallLogEntry
+from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -126,6 +126,13 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
     if not raw:
         if isinstance(instance, CallLogEntry):
             call_attempts = CallLogEntry.objects.filter(call_log=instance.call_log).count()
-            hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=instance.call_log.household_member)
-            hic_enrollment.call_attempts = call_attempts
-            hic_enrollment.save(update_fields=['call_attempts'])
+            call_list = CallList.objects.get(household_member=instance.call_log.household_member)
+            call_list.call_attempts = call_attempts
+            call_list.save(update_fields=['call_attempts'])
+            call_list = CallList.objects.get(household_member=instance.household_member,
+                                             reason=instance.reason)
+            if instance.call_again == YES:
+                call_list.call_status = OPEN
+            else:
+                call_list.call_status = CLOSED
+            call_list.save(update_fields=['call_status'])
