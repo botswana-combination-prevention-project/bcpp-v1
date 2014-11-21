@@ -34,11 +34,8 @@ def call_participant(modeladmin, request, queryset):
 
     If required, creates enumeration data for the current survey
     """
-    qs = queryset[0]
-    try:
-        source_household_member = qs.subject_visit.household_member
-    except AttributeError:
-        source_household_member = qs.household_member
+    call_list = queryset[0]
+    source_household_member = call_list.household_member
     household = source_household_member.household_structure.household
     source_survey = source_household_member.household_structure.survey
     target_survey = Survey.objects.current_survey()
@@ -60,12 +57,13 @@ def call_participant(modeladmin, request, queryset):
         call_log = CallLog.objects.create(
             household_member=household_member,
             survey=Survey.objects.current_survey(datetime.today()),
+            label=call_list.label,
             locator_information=SubjectLocator.objects.previous(household_member).formatted_locator_information
             )
     change_url = ('{}?household_member={}&next={}').format(
         reverse("admin:bcpp_subject_calllog_change", args=(call_log.pk, )),
         call_log.household_member.pk,
-        "admin:{}_{}_changelist".format(qs._meta.app_label, qs._meta.object_name.lower()))
+        "admin:{}_{}_changelist".format(call_list._meta.app_label, call_list._meta.object_name.lower()))
     return HttpResponseRedirect(change_url)
 call_participant.short_description = "Call participant"
 

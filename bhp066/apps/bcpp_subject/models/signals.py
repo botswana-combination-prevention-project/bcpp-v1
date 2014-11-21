@@ -127,14 +127,13 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
 def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if isinstance(instance, CallLogEntry):
+            call_list = CallList.objects.get(
+                household_member=instance.call_log.household_member,
+                label=instance.call_log.label)
             call_attempts = CallLogEntry.objects.filter(call_log=instance.call_log).count()
-            call_list = CallList.objects.get(household_member=instance.call_log.household_member)
             call_list.call_attempts = call_attempts
-            call_list.save(update_fields=['call_attempts'])
-            call_list = CallList.objects.get(household_member=instance.household_member,
-                                             reason=instance.reason)
             if instance.call_again == YES:
                 call_list.call_status = OPEN
             else:
                 call_list.call_status = CLOSED
-            call_list.save(update_fields=['call_status'])
+            call_list.save(update_fields=['call_status', 'call_attempts'])

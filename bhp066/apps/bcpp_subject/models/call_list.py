@@ -105,7 +105,7 @@ class CallList (BaseSyncUuidModel):
 
     call_outcome = models.TextField(
         max_length=150,
-        # help_text="updated from call log entries"
+        null=True,
         )
 
     call_status = models.CharField(
