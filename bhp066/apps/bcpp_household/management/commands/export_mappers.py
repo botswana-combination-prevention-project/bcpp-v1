@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand
 from edc.map.classes import site_mappers
 
 from edc.base.model.fields.helpers.revision import site_revision
+from django.core.exceptions import ImproperlyConfigured
 
 
 class Command(BaseCommand):
@@ -34,16 +35,19 @@ class Command(BaseCommand):
         Survey = get_model('bcpp_survey', 'Survey')
         site_mappers.sort_by_code()
         for mapper in site_mappers:
-            if mapper.map_code not in ['00', '01']:
+            if mapper.map_code not in ['00', ]:
                 print '\n{}'.format(str(mapper()))
                 print '--------------'
                 for item, values in mapper().survey_dates.iteritems():
                     print '  {}'.format(item)
                     for name in values._fields:
                         print '    {}: {}'.format(name, str(getattr(values, name)))
-        current_survey = Survey.objects.current_survey()
-        print '\nCurrent survey: {} from {} to {}.'.format(
-            current_survey, current_survey.datetime_start, current_survey.datetime_end)
+        try:
+            current_survey = Survey.objects.current_survey()
+            print '\nCurrent survey: {} from {} to {}.'.format(
+                current_survey, current_survey.datetime_start, current_survey.datetime_end)
+        except ImproperlyConfigured as err_message:
+            print 'Survey configuration is invalid. Got {}'.format(err_message.message)
         print 'Current Mapper: {}'.format(str(site_mappers.current_mapper()))
         print('\nBHP066 Edc {} ({})\n'.format(site_revision.tag, site_revision.branch))
 
