@@ -120,12 +120,11 @@ class CallList (BaseSyncUuidModel):
         default=NEW,
         )
 
-    call_again = models.BooleanField(default=True)
-
-    call_name = models.CharField(
+    label = models.CharField(
         max_length=25,
         editable=False,
-        help_text=""
+        null=True,
+        help_text="label to group reasons for contact, e.g. T1 preparation"
         )
 
     history = AuditTrail()
@@ -136,3 +135,4 @@ class CallList (BaseSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_subject'
+        unique_together = ['household_member', 'label']
