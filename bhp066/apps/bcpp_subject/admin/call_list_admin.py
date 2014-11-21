@@ -32,7 +32,7 @@ class CallListAdmin(BaseModelAdmin):
         'gender',
         'age_in_years',
         'community',
-        'label'
+        'label',
         'call_attempts',
         'call_status',
         'call_outcome',
@@ -46,7 +46,7 @@ class CallListAdmin(BaseModelAdmin):
         )
     list_filter = (
         'community',
-        'label'
+        'label',
         'call_attempts',
         'call_status',
         'created',
