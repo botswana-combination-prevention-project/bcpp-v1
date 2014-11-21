@@ -1,17 +1,74 @@
 from django.contrib import admin
 
+from edc.base.modeladmin.admin import BaseModelAdmin, BaseStackedInline
+
 from apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import CallLogForm, CallLogEntryForm
 from ..models import CallLog, CallLogEntry
 
-from edc.base.modeladmin.admin import BaseModelAdmin
+
+class CallLogEntryAdminInline(BaseStackedInline):
+    instructions = [
+        'Please read out to participant. "We hope you have been well since our visit last year. '
+        'As a member of this study, it is time for your annual revisit in which we will ask you '
+        'some questions and perform some tests."',
+        'Please read out to contact other than participant. (Note: You may NOT disclose that the '
+        'participant is a member of the Ya Tsie study). "We would like to contact a participant '
+        '(give participant name) who gave us this number as a means to contact them. Do you know '
+        'how we can contact this person directly? This may be a phone number or a physical address.']
+
+    form = CallLogEntryForm
+    model = CallLogEntry
+    max_num = 3
+    extra = 1
+
+    fields = (
+        'call_datetime',
+        'contact_type',
+        'has_moved_community',
+        'new_community',
+        'update_locator',
+        'available',
+        'time_of_week',
+        'time_of_day',
+        'appt',
+        'appt_date',
+        'appt_grading',
+        'appt_location',
+        'appt_location_other'
+        'call_again',
+        )
+
+    radio_fields = {
+        "contact_type": admin.VERTICAL,
+        "update_locator": admin.VERTICAL,
+        "has_moved_community": admin.VERTICAL,
+        "available": admin.VERTICAL,
+        "time_of_week": admin.VERTICAL,
+        "time_of_day": admin.VERTICAL,
+        "appt": admin.VERTICAL,
+        "appt_grading": admin.VERTICAL,
+        "appt_location": admin.VERTICAL,
+        }
 
 
 class CallLogAdmin(BaseModelAdmin):
 
+    instructions = [
+        '<h5>Please read out to participant:</h5> "We hope you have been well since our visit last year. '
+        'As a member of this study, it is time for your annual revisit in which we will ask you '
+        'some questions and perform some tests."',
+        '<h5>Please read out to contact other than participant:</h5> (<B>IMPORTANT:</B> You may NOT disclose that the '
+        'participant is a member of the Ya Tsie study).<BR>"We would like to contact a participant '
+        '(give participant name) who gave us this number as a means to contact them. Do you know '
+        'how we can contact this person directly? This may be a phone number or a physical address.']
     form = CallLogForm
-    fields = ("household_member", )
+    fields = ("household_member", 'survey', 'locator_information')
+
+    readonly_fields = ('survey', )
+
+    inlines = [CallLogEntryAdminInline, ]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
@@ -23,11 +80,21 @@ admin.site.register(CallLog, CallLogAdmin)
 
 class CallLogEntryAdmin(BaseModelAdmin):
 
+    instructions = [
+        'Please read out to participant. "We hope you have been well since our visit last year. '
+        'As a member of this study, it is time for your annual revisit in which we will ask you '
+        'some questions and perform some tests."',
+        'Please read out to contact other than participant. (Note: You may NOT disclose that the '
+        'participant is a member of the Ya Tsie study). "We would like to contact a participant '
+        '(give participant name) who gave us this number as a means to contact them. Do you know '
+        'how we can contact this person directly? This may be a phone number or a physical address.']
+
     form = CallLogEntryForm
     fields = (
         'call_log',
         'call_datetime',
         'contact_type',
+        'survival_status',
         'has_moved_community',
         'new_community',
         'update_locator',
@@ -43,6 +110,7 @@ class CallLogEntryAdmin(BaseModelAdmin):
 
     radio_fields = {
         "contact_type": admin.VERTICAL,
+        "survival_status": admin.VERTICAL,
         "update_locator": admin.VERTICAL,
         "has_moved_community": admin.VERTICAL,
         "available": admin.VERTICAL,
