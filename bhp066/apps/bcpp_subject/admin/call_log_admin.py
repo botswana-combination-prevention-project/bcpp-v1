@@ -25,11 +25,13 @@ class CallLogEntryAdminInline(BaseStackedInline):
 
     fields = (
         'call_datetime',
+        'invalid_numbers',
         'contact_type',
         'survival_status',
-        'has_moved_community',
-        'new_community',
         'update_locator',
+        'moved_community',
+        'new_community',
+        "moved_household",
         'available',
         'time_of_week',
         'time_of_day',
@@ -45,7 +47,8 @@ class CallLogEntryAdminInline(BaseStackedInline):
         "contact_type": admin.VERTICAL,
         "survival_status": admin.VERTICAL,
         "update_locator": admin.VERTICAL,
-        "has_moved_community": admin.VERTICAL,
+        "moved_community": admin.VERTICAL,
+        "moved_household": admin.VERTICAL,
         "available": admin.VERTICAL,
         "time_of_week": admin.VERTICAL,
         "time_of_day": admin.VERTICAL,
@@ -67,9 +70,9 @@ class CallLogAdmin(BaseModelAdmin):
         '(give participant name) who gave us this number as a means to contact them. Do you know '
         'how we can contact this person directly? This may be a phone number or a physical address.']
     form = CallLogForm
-    fields = ("household_member", 'survey', 'locator_information')
+    fields = ("household_member", 'locator_information', 'contact_notes')
 
-    readonly_fields = ('survey', )
+    # readonly_fields = ('survey', )
 
     inlines = [CallLogEntryAdminInline, ]
 
@@ -96,11 +99,13 @@ class CallLogEntryAdmin(BaseModelAdmin):
     fields = (
         'call_log',
         'call_datetime',
+        'invalid_numbers',
         'contact_type',
         'survival_status',
-        'has_moved_community',
-        'new_community',
         'update_locator',
+        'moved_community',
+        'new_community',
+        "moved_household",
         'available',
         'time_of_week',
         'time_of_day',
@@ -116,7 +121,8 @@ class CallLogEntryAdmin(BaseModelAdmin):
         "contact_type": admin.VERTICAL,
         "survival_status": admin.VERTICAL,
         "update_locator": admin.VERTICAL,
-        "has_moved_community": admin.VERTICAL,
+        "moved_community": admin.VERTICAL,
+        "moved_household": admin.VERTICAL,
         "available": admin.VERTICAL,
         "time_of_week": admin.VERTICAL,
         "time_of_day": admin.VERTICAL,
