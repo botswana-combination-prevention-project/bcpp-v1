@@ -26,6 +26,7 @@ class CallLogEntryAdminInline(BaseStackedInline):
     fields = (
         'call_datetime',
         'contact_type',
+        'survival_status',
         'has_moved_community',
         'new_community',
         'update_locator',
@@ -42,6 +43,7 @@ class CallLogEntryAdminInline(BaseStackedInline):
 
     radio_fields = {
         "contact_type": admin.VERTICAL,
+        "survival_status": admin.VERTICAL,
         "update_locator": admin.VERTICAL,
         "has_moved_community": admin.VERTICAL,
         "available": admin.VERTICAL,

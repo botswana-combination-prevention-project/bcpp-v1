@@ -28,6 +28,13 @@ class CallLog (BaseSyncUuidModel):
     locator_information = EncryptedTextField(
         help_text='This information has been imported from the previous locator. You may update as required.')
 
+    label = models.CharField(
+        max_length=25,
+        null=True,
+        editable=False,
+        help_text="from call list"
+        )
+
     history = AuditTrail()
 
     objects = models.Manager()
@@ -60,7 +67,7 @@ class CallLogEntry (BaseSyncUuidModel):
 
     survey = models.ForeignKey(Survey, editable=False)
 
-    call_datetime = models.DateTimeField(default=datetime.today())
+    call_datetime = models.DateTimeField()
 
     contact_type = models.CharField(
         max_length=15,
