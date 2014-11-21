@@ -203,17 +203,34 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
+    auto_filled = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text=('Was autofilled for follow-up surveys using information from '
+                   'previous survey. See EnumerationHelper')
+        )
+
+    updated_after_auto_filled = models.BooleanField(
+        default=True,
+        editable=False,
+        help_text=('if True, a user updated the values or this was not autofilled')
+        )
+
     objects = HouseholdMemberManager()
 
     history = AuditTrail()
 
     def __unicode__(self):
+        try:
+            is_bhs = '' if self.is_bhs else 'non-BHS'
+        except ValidationError as err_message:
+            is_bhs = '?'
         return '{0} {1} {2}{3} {4}'.format(
             mask_encrypted(self.first_name),
             self.initials,
             self.age_in_years,
             self.gender,
-            '' if self.is_bhs else 'non-BHS')
+            is_bhs)
 
     def save(self, *args, **kwargs):
         selected_member_status = None
@@ -332,13 +349,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
         Without RepresentativeEligibility, a HouseholdMember cannot be added."""
         return household_structure.check_eligible_representative_filled(using, exception_cls)
-        # exception_cls = exception_cls or ValidationError
-        # using = using or 'default'
-        # try:
-        #     RepresentativeEligibility.objects.using(using).get(household_structure=household_structure)
-        # except RepresentativeEligibility.DoesNotExist:
-        #     raise exception_cls('The Eligibility Checklist for an eligible '
-        #                         'representative has not been completed.')
 
     def check_head_household(self, household_structure, using=None, exception_cls=None):
         """Raises an exception if the HeadOusehold already exists in this household structure."""
@@ -737,6 +747,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                         retval = HouseholdMember.objects.get(
                             id=registered_subject.registration_identifier).household_structure
         return retval
+
+    def updated(self):
+        if self.auto_filled:
+            if self.updated_after_auto_filled:
+                return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'
+            else:
+                return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
+        return ' '
+    updated.allow_tags = True
 
     class Meta:
         ordering = ['-created']

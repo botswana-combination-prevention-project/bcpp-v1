@@ -15,6 +15,19 @@ class RepresentativeEligibility(BaseRepresentativeEligibility):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
+    auto_filled = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text=('This form is autofilled for non-BHS surveys using information from a'
+                   'member consented in a previous survey. See HouseholdMemberHelper')
+        )
+
+    auto_fill_member_id = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        help_text='pk of household member used to autofill')
+
     objects = RepresentativeEligibilityManager()
 
     history = AuditTrail()
