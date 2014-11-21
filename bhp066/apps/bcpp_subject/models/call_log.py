@@ -180,8 +180,9 @@ class CallLogEntry (BaseSyncUuidModel):
         help_text=""
         )
 
-    call_again = models.BooleanField(
+    call_again = models.CharField(
         verbose_name='Call the subject again?',
+        max_length=10,
         choices=YES_NO,
         default=YES,
         help_text=''

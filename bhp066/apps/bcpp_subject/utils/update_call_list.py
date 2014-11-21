@@ -30,13 +30,17 @@ def update_call_list(survey_slug, label):
                 may_follow_up='Yes')
             try:
                 hic_enrollment = HicEnrollment.objects.get(
-                    subject_visit__household_member=subject_consent.household_member)
+                    subject_visit__household_member=subject_consent.household_member,
+                    hic_permission='Yes')
                 options.update(
                     hic=True,
                     hic_datetime=hic_enrollment.report_datetime
                     )
             except HicEnrollment.DoesNotExist:
-                pass
+                options.update(
+                    hic=False,
+                    hic_datetime=None,
+                    )
             try:
                 subject_referral = SubjectReferral.objects.get(
                     subject_visit__household_member=subject_consent.household_member)
