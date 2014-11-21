@@ -62,6 +62,7 @@ class CallListAdmin(BaseModelAdmin):
     readonly_fields = (
         "subject_identifier",
         'call_attempts',
+        'household_member',
         )
 
     actions = [call_participant, update_call_list_action]
