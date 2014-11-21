@@ -20,11 +20,29 @@ def get_producer_status(producer=None, check_online=True):
     error_message = None
     outgoing_transactions = None
     hostname = None
+    producer_online = None
     try:
         if check_online:
             hostname, _, _ = getproducerbyaddr(producer)
-            outgoing_transactions = TransactionHelper().outgoing_transactions(
+            try:
+                # Attempt to connect to the mysql port on the using producer's hostname to confirm that its indeed online.
+                s = socket.socket()
+                # time out after 2 seconds if connection is not established
+                s.settimeout(2)
+                # connect to myswl port on producer
+                s.connect((hostname, 3306))
+                producer_online = True
+                # No exception occurred, only now you can search for outgoing transactions in producer.
+                outgoing_transactions = TransactionHelper().outgoing_transactions(
                 hostname, producer.name, raise_exception=True)
+            except socket.timeout:
+                error_message = (
+                'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(hostname, producer.producer_ip))
+            except socket.error:
+                error_message = (
+                'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(hostname, producer.producer_ip, str(socket.error)))
+            finally:
+                s.close()
         else:
             hostname = '?'
             outgoing_transactions = '?'
@@ -39,9 +57,9 @@ def get_producer_status(producer=None, check_online=True):
             raise
     except (socket.gaierror, socket.herror):
         error_message = (
-            'Cannot find producer {} using IP={}. Please confirm both that the '
-            'the IP address in the Producer model and that the '
-            'machine is online and available to the server.'.format(producer.name, producer.producer_ip))
+            'Cannot find producer hostname {} using IP={}. Please confirm both that the '
+            'the IP address and hostname in the Producer model are available '
+            'in DNS or the server\'s hosts file.'.format(producer.name, producer.producer_ip))
     except ConnectionDoesNotExist as connection_does_not_exist:
         error_message = str(connection_does_not_exist)
     except OperationalError as operational_error:
@@ -61,7 +79,7 @@ def get_producer_status(producer=None, check_online=True):
             producer_name=producer.name,
             settings_key=producer.settings_key,
             ip=producer.producer_ip,
-            online=True if hostname else False,
+            online=True if producer_online else False,
             synced=True if not outgoing_transactions else False,
             error=True if error_message else False,
             replaceables_count=replaceables_count,
