@@ -9,7 +9,7 @@ from apps.bcpp_household_member.models import HouseholdMember
 
 
 @app.task
-def update_call_list(survey_slug):
+def update_call_list(survey_slug, label):
     """Adds information from SubjectConsent instances from the specified survey to the
     CallList model for the current survey.
 
@@ -71,9 +71,10 @@ def update_call_list(survey_slug):
                 bhs=True,
                 consent_datetime=subject_consent.consent_datetime,
                 call_status=NEW,
+                label=label,
                 )
             try:
-                CallList.objects.get(household_member=target_household_member)
+                CallList.objects.get(household_member=target_household_member, label=label)
             except CallList.DoesNotExist:
                 CallList.objects.create(**options)
         except SubjectLocator.DoesNotExist:
