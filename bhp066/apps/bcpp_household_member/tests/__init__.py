@@ -7,3 +7,4 @@ from .natural_key_tests import NaturalKeyTests
 # from .household_member_tests import HouseholdMemberTests
 from .test_member_status import TestMemberStatus
 from .test_member_status_choices import TestMemberStatusChoices
+from .enumeration_helper_tests import EnumerationHelperTests

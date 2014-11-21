@@ -93,16 +93,17 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return unicode(self.household)
+        return '{} {}'.format(unicode(self.household), self.survey.survey_name)
 
     def save(self, *args, **kwargs):
-        if ['enumerated'] == kwargs.get('update_fields', []):
+        if ('enumerated' in kwargs.get('update_fields', []) or 'eligible_members' in kwargs.get('update_fields', []) or
+                'refused_enumeration' in kwargs.get('update_fields', [])):
             pass
         else:
             if self.household.replaced_by:
                 raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
-            # test survey vs created date + survey_slug
-            if self.id:
+            # test survey vs created date + survey_slug for the current survey only
+            if self.id and Survey.objects.current_survey().survey_slug == self.survey.survey_slug:
                 Survey.objects.current_survey(report_datetime=datetime.today(), survey_slug=self.survey.survey_slug)
         super(HouseholdStructure, self).save(*args, **kwargs)
 
@@ -175,8 +176,9 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         try:
             RepresentativeEligibility.objects.using(using).get(household_structure=self)
         except RepresentativeEligibility.DoesNotExist:
-            raise exception_cls('The Eligibility Checklist for an eligible '
-                                'representative has not been completed.')
+            verbose_name = RepresentativeEligibility._meta.verbose_name
+            raise exception_cls('\'{}\' for an eligible '
+                                'representative has not been completed.'.format(verbose_name))
 
     @property
     def has_household_log_entry(self):
