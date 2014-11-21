@@ -8,128 +8,204 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'CallListAudit'
+        db.create_table(u'bcpp_subject_calllist_audit', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_calllist', to=orm['bcpp_household_member.HouseholdMember'])),
+            ('community', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('app_label', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('object_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('object_pk', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=78L)),
+            ('initials', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('gender', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('age_in_years', self.gf('django.db.models.fields.IntegerField')(null=True)),
+            ('bhs', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('consent_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('referral_code', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('referral_appt_date', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('hic', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('hic_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('call_attempts', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('call_outcome', self.gf('django.db.models.fields.CharField')(max_length=150)),
+            ('call_status', self.gf('django.db.models.fields.CharField')(default='NEW', max_length=15)),
+            ('call_again', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('call_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
+            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+        ))
+        db.send_create_signal('bcpp_subject', ['CallListAudit'])
 
-        # Changing field 'CallLogEntryAudit.new_community'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'new_community', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
+        # Adding model 'CallLogAudit'
+        db.create_table(u'bcpp_subject_calllog_audit', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_calllog', to=orm['bcpp_household_member.HouseholdMember'])),
+            ('survey', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_calllog', to=orm['bcpp_survey.Survey'])),
+            ('locator_information', self.gf('django.db.models.fields.CharField')(max_length=78L)),
+            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
+            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+        ))
+        db.send_create_signal('bcpp_subject', ['CallLogAudit'])
 
-        # Changing field 'CallLogEntryAudit.has_moved_community'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'has_moved_community', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
+        # Adding model 'CallLog'
+        db.create_table(u'bcpp_subject_calllog', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.HouseholdMember'])),
+            ('survey', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_survey.Survey'])),
+            ('locator_information', self.gf('django.db.models.fields.CharField')(max_length=78L)),
+        ))
+        db.send_create_signal('bcpp_subject', ['CallLog'])
 
-        # Changing field 'CallLogEntryAudit.appt_location'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'appt_location', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
+        # Adding model 'CallLogEntryAudit'
+        db.create_table(u'bcpp_subject_calllogentry_audit', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('_audit_subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('call_log', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_calllogentry', to=orm['bcpp_subject.CallLog'])),
+            ('survey', self.gf('django.db.models.fields.related.ForeignKey')(related_name='_audit_calllogentry', to=orm['bcpp_survey.Survey'])),
+            ('call_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 21, 0, 0))),
+            ('contact_type', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('survival_status', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('new_community', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('has_moved_community', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('update_locator', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('available', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('time_of_week', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('time_of_day', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('appt', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('appt_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('appt_grading', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('appt_location', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('appt_location_other', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('call_again', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('_audit_timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+            ('_audit_change_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36)),
+            ('_audit_id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+        ))
+        db.send_create_signal('bcpp_subject', ['CallLogEntryAudit'])
 
-        # Changing field 'CallLogEntryAudit.appt'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'appt', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
+        # Adding model 'CallLogEntry'
+        db.create_table(u'bcpp_subject_calllogentry', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('call_log', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_subject.CallLog'])),
+            ('survey', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_survey.Survey'])),
+            ('call_datetime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 11, 21, 0, 0))),
+            ('contact_type', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('survival_status', self.gf('django.db.models.fields.CharField')(max_length=10)),
+            ('new_community', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('has_moved_community', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('update_locator', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('available', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('time_of_week', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('time_of_day', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('appt', self.gf('django.db.models.fields.CharField')(max_length=7, null=True, blank=True)),
+            ('appt_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
+            ('appt_grading', self.gf('django.db.models.fields.CharField')(max_length=25, null=True, blank=True)),
+            ('appt_location', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('appt_location_other', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
+            ('call_again', self.gf('django.db.models.fields.BooleanField')(default=True)),
+        ))
+        db.send_create_signal('bcpp_subject', ['CallLogEntry'])
 
-        # Changing field 'CallLogEntryAudit.update_locator'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'update_locator', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
+        # Adding unique constraint on 'CallLogEntry', fields ['call_log', 'call_datetime']
+        db.create_unique(u'bcpp_subject_calllogentry', ['call_log_id', 'call_datetime'])
 
-        # Changing field 'CallLogEntryAudit.available'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'available', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
+        # Adding model 'CallList'
+        db.create_table(u'bcpp_subject_calllist', (
+            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
+            ('user_created', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('user_modified', self.gf('django.db.models.fields.CharField')(default='', max_length=250, db_index=True)),
+            ('hostname_created', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('hostname_modified', self.gf('django.db.models.fields.CharField')(default='mac.local', max_length=50, db_index=True, blank=True)),
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=36, primary_key=True)),
+            ('revision', self.gf('django.db.models.fields.CharField')(max_length=150, null=True, blank=True)),
+            ('household_member', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['bcpp_household_member.HouseholdMember'])),
+            ('community', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('subject_identifier', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('app_label', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('object_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
+            ('object_pk', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=78L)),
+            ('initials', self.gf('django.db.models.fields.CharField')(max_length=3)),
+            ('gender', self.gf('django.db.models.fields.CharField')(max_length=1)),
+            ('age_in_years', self.gf('django.db.models.fields.IntegerField')(null=True)),
+            ('bhs', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('consent_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+            ('referral_code', self.gf('django.db.models.fields.CharField')(max_length=50, null=True)),
+            ('referral_appt_date', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('hic', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('hic_datetime', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+            ('call_attempts', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('call_outcome', self.gf('django.db.models.fields.CharField')(max_length=150)),
+            ('call_status', self.gf('django.db.models.fields.CharField')(default='NEW', max_length=15)),
+            ('call_again', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('call_name', self.gf('django.db.models.fields.CharField')(max_length=25)),
+        ))
+        db.send_create_signal('bcpp_subject', ['CallList'])
 
-        # Changing field 'CallLogEntry.new_community'
-        db.alter_column(u'bcpp_subject_calllogentry', 'new_community', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
-
-        # Changing field 'CallLogEntry.has_moved_community'
-        db.alter_column(u'bcpp_subject_calllogentry', 'has_moved_community', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
-
-        # Changing field 'CallLogEntry.appt_location'
-        db.alter_column(u'bcpp_subject_calllogentry', 'appt_location', self.gf('django.db.models.fields.CharField')(max_length=50, null=True))
-
-        # Changing field 'CallLogEntry.appt'
-        db.alter_column(u'bcpp_subject_calllogentry', 'appt', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
-
-        # Changing field 'CallLogEntry.update_locator'
-        db.alter_column(u'bcpp_subject_calllogentry', 'update_locator', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
-
-        # Changing field 'CallLogEntry.available'
-        db.alter_column(u'bcpp_subject_calllogentry', 'available', self.gf('django.db.models.fields.CharField')(max_length=7, null=True))
 
     def backwards(self, orm):
+        # Removing unique constraint on 'CallLogEntry', fields ['call_log', 'call_datetime']
+        db.delete_unique(u'bcpp_subject_calllogentry', ['call_log_id', 'call_datetime'])
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntryAudit.new_community'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntryAudit.new_community' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntryAudit.new_community'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'new_community', self.gf('django.db.models.fields.CharField')(max_length=50))
+        # Deleting model 'CallListAudit'
+        db.delete_table(u'bcpp_subject_calllist_audit')
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntryAudit.has_moved_community'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntryAudit.has_moved_community' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntryAudit.has_moved_community'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'has_moved_community', self.gf('django.db.models.fields.CharField')(max_length=7))
+        # Deleting model 'CallLogAudit'
+        db.delete_table(u'bcpp_subject_calllog_audit')
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntryAudit.appt_location'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntryAudit.appt_location' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntryAudit.appt_location'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'appt_location', self.gf('django.db.models.fields.CharField')(max_length=50))
+        # Deleting model 'CallLog'
+        db.delete_table(u'bcpp_subject_calllog')
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntryAudit.appt'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntryAudit.appt' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntryAudit.appt'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'appt', self.gf('django.db.models.fields.CharField')(max_length=7))
+        # Deleting model 'CallLogEntryAudit'
+        db.delete_table(u'bcpp_subject_calllogentry_audit')
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntryAudit.update_locator'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntryAudit.update_locator' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntryAudit.update_locator'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'update_locator', self.gf('django.db.models.fields.CharField')(max_length=7))
+        # Deleting model 'CallLogEntry'
+        db.delete_table(u'bcpp_subject_calllogentry')
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntryAudit.available'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntryAudit.available' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntryAudit.available'
-        db.alter_column(u'bcpp_subject_calllogentry_audit', 'available', self.gf('django.db.models.fields.CharField')(max_length=7))
+        # Deleting model 'CallList'
+        db.delete_table(u'bcpp_subject_calllist')
 
-        # User chose to not deal with backwards NULL issues for 'CallLogEntry.new_community'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntry.new_community' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntry.new_community'
-        db.alter_column(u'bcpp_subject_calllogentry', 'new_community', self.gf('django.db.models.fields.CharField')(max_length=50))
-
-        # User chose to not deal with backwards NULL issues for 'CallLogEntry.has_moved_community'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntry.has_moved_community' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntry.has_moved_community'
-        db.alter_column(u'bcpp_subject_calllogentry', 'has_moved_community', self.gf('django.db.models.fields.CharField')(max_length=7))
-
-        # User chose to not deal with backwards NULL issues for 'CallLogEntry.appt_location'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntry.appt_location' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntry.appt_location'
-        db.alter_column(u'bcpp_subject_calllogentry', 'appt_location', self.gf('django.db.models.fields.CharField')(max_length=50))
-
-        # User chose to not deal with backwards NULL issues for 'CallLogEntry.appt'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntry.appt' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntry.appt'
-        db.alter_column(u'bcpp_subject_calllogentry', 'appt', self.gf('django.db.models.fields.CharField')(max_length=7))
-
-        # User chose to not deal with backwards NULL issues for 'CallLogEntry.update_locator'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntry.update_locator' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntry.update_locator'
-        db.alter_column(u'bcpp_subject_calllogentry', 'update_locator', self.gf('django.db.models.fields.CharField')(max_length=7))
-
-        # User chose to not deal with backwards NULL issues for 'CallLogEntry.available'
-        raise RuntimeError("Cannot reverse this migration. 'CallLogEntry.available' and its values cannot be restored.")
-        
-        # The following code is provided here to aid in writing a correct migration
-        # Changing field 'CallLogEntry.available'
-        db.alter_column(u'bcpp_subject_calllogentry', 'available', self.gf('django.db.models.fields.CharField')(max_length=7))
 
     models = {
         'adverse_event.deathcausecategory': {
@@ -313,6 +389,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['-created']", 'unique_together': "(('household_structure', 'first_name', 'initials'), ('registered_subject', 'household_structure'))", 'object_name': 'HouseholdMember', 'index_together': "[['id', 'registered_subject', 'created']]"},
             'absent': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'db_index': 'True'}),
+            'auto_filled': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'eligible_hoh': ('django.db.models.fields.NullBooleanField', [], {'default': 'False', 'null': 'True', 'blank': 'True'}),
             'eligible_htc': ('django.db.models.fields.NullBooleanField', [], {'default': 'False', 'null': 'True', 'blank': 'True'}),
@@ -344,6 +421,7 @@ class Migration(SchemaMigration):
             'study_resident': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
             'target': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'undecided': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'updated_after_auto_filled': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'visit_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'})
@@ -529,7 +607,7 @@ class Migration(SchemaMigration):
             'medical_care_access_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'overall_access': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -555,22 +633,92 @@ class Migration(SchemaMigration):
             'medical_care_access_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'overall_access': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_accesstocare'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'whenever_access': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'})
         },
+        'bcpp_subject.calllist': {
+            'Meta': {'object_name': 'CallList'},
+            'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'bhs': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'call_again': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'call_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'call_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'call_outcome': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
+            'call_status': ('django.db.models.fields.CharField', [], {'default': "'NEW'", 'max_length': '15'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'consent_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gender': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            'hic': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'hic_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'initials': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'object_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'object_pk': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'referral_appt_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'referral_code': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
+        'bcpp_subject.calllistaudit': {
+            'Meta': {'ordering': "['-_audit_timestamp']", 'object_name': 'CallListAudit', 'db_table': "u'bcpp_subject_calllist_audit'"},
+            '_audit_change_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'age_in_years': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'bhs': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'call_again': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'call_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'call_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'call_outcome': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
+            'call_status': ('django.db.models.fields.CharField', [], {'default': "'NEW'", 'max_length': '15'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'consent_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
+            'gender': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            'hic': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'hic_datetime': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_calllist'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
+            'initials': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
+            'object_name': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'object_pk': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'referral_appt_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'referral_code': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
+            'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
+            'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
+        },
         'bcpp_subject.calllog': {
             'Meta': {'object_name': 'CallLog'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'hostname_created': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
-            'household_member': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_household_member.HouseholdMember']", 'unique': 'True'}),
+            'household_member': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_household_member.HouseholdMember']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
+            'locator_information': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_survey.Survey']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
@@ -585,8 +733,10 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'household_member': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_calllog'", 'to': "orm['bcpp_household_member.HouseholdMember']"}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
+            'locator_information': ('django.db.models.fields.CharField', [], {'max_length': '78L'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
+            'survey': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_calllog'", 'to': "orm['bcpp_survey.Survey']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
             'user_modified': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'})
         },
@@ -598,7 +748,8 @@ class Migration(SchemaMigration):
             'appt_location': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'appt_location_other': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'available': ('django.db.models.fields.CharField', [], {'max_length': '7', 'null': 'True', 'blank': 'True'}),
-            'call_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'call_again': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'call_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'call_log': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_subject.CallLog']"}),
             'contact_type': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -610,6 +761,7 @@ class Migration(SchemaMigration):
             'new_community': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'survey': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_survey.Survey']"}),
+            'survival_status': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'time_of_day': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'time_of_week': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'update_locator': ('django.db.models.fields.CharField', [], {'max_length': '7', 'null': 'True', 'blank': 'True'}),
@@ -628,7 +780,8 @@ class Migration(SchemaMigration):
             'appt_location': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'appt_location_other': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'available': ('django.db.models.fields.CharField', [], {'max_length': '7', 'null': 'True', 'blank': 'True'}),
-            'call_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'call_again': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'call_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'call_log': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_calllogentry'", 'to': "orm['bcpp_subject.CallLog']"}),
             'contact_type': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -640,6 +793,7 @@ class Migration(SchemaMigration):
             'new_community': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'survey': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_calllogentry'", 'to': "orm['bcpp_survey.Survey']"}),
+            'survival_status': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'time_of_day': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'time_of_week': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'update_locator': ('django.db.models.fields.CharField', [], {'max_length': '7', 'null': 'True', 'blank': 'True'}),
@@ -655,7 +809,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -674,7 +828,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_cancer'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -690,7 +844,7 @@ class Migration(SchemaMigration):
             'last_cd4_drawn_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'record_available': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -710,7 +864,7 @@ class Migration(SchemaMigration):
             'last_cd4_drawn_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'record_available': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_cd4history'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -778,7 +932,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -802,7 +956,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_circumcised'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -821,7 +975,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -839,7 +993,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_circumcision'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -856,7 +1010,7 @@ class Migration(SchemaMigration):
             'know_hiv_status': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'on_arv': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -877,7 +1031,7 @@ class Migration(SchemaMigration):
             'know_hiv_status': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'on_arv': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_clinicquestionnaire'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -893,7 +1047,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'problems_engagement': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bcpp_list.NeighbourhoodProblems']", 'null': 'True', 'symmetrical': 'False'}),
             'problems_engagement_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'solve_engagement': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -914,7 +1068,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'problems_engagement_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'solve_engagement': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_communityengagement'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -999,7 +1153,7 @@ class Migration(SchemaMigration):
             'num_wives': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True', 'blank': 'True'}),
             'religion': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bcpp_list.Religion']", 'symmetrical': 'False'}),
             'religion_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1021,7 +1175,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'num_wives': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True', 'blank': 'True'}),
             'religion_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_demographics'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1039,7 +1193,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'monthly_income': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'reason_unemployed': ('django.db.models.fields.CharField', [], {'max_length': '65', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1062,7 +1216,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'monthly_income': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'reason_unemployed': ('django.db.models.fields.CharField', [], {'max_length': '65', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_education'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1078,7 +1232,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1097,7 +1251,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_elisahivresult'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1114,7 +1268,7 @@ class Migration(SchemaMigration):
             'labour_market_wages': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_subject.LabourMarketWages']"}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'other_grant': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1135,7 +1289,7 @@ class Migration(SchemaMigration):
             'labour_market_wages': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_grant'", 'to': "orm['bcpp_subject.LabourMarketWages']"}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'other_grant': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_grant'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1151,7 +1305,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1170,7 +1324,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_heartattack'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1178,8 +1332,6 @@ class Migration(SchemaMigration):
         },
         'bcpp_subject.hicenrollment': {
             'Meta': {'object_name': 'HicEnrollment'},
-            'bhs_referral_code': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'call_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'citizen_or_spouse': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'consent_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -1194,7 +1346,7 @@ class Migration(SchemaMigration):
             'locator_information': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'permanent_resident': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1206,8 +1358,6 @@ class Migration(SchemaMigration):
             '_audit_id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             '_audit_subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             '_audit_timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
-            'bhs_referral_code': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'call_attempts': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'citizen_or_spouse': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'consent_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
@@ -1222,7 +1372,7 @@ class Migration(SchemaMigration):
             'locator_information': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'permanent_resident': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hicenrollment'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1251,7 +1401,7 @@ class Migration(SchemaMigration):
             'no_medical_care': ('django.db.models.fields.CharField', [], {'max_length': '70', 'null': 'True', 'blank': 'True'}),
             'no_medical_care_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
             'on_arv': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1286,7 +1436,7 @@ class Migration(SchemaMigration):
             'no_medical_care': ('django.db.models.fields.CharField', [], {'max_length': '70', 'null': 'True', 'blank': 'True'}),
             'no_medical_care_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
             'on_arv': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivcareadherence'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1306,7 +1456,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'place_care_received': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
             'reason_no_care': ('django.db.models.fields.CharField', [], {'max_length': '115', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1328,7 +1478,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'place_care_received': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
             'reason_no_care': ('django.db.models.fields.CharField', [], {'max_length': '115', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivhealthcarecosts'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1344,7 +1494,7 @@ class Migration(SchemaMigration):
             'last_hiv_care_pos': ('django.db.models.fields.DateField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'lowest_cd4': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1364,7 +1514,7 @@ class Migration(SchemaMigration):
             'last_hiv_care_pos': ('django.db.models.fields.DateField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
             'lowest_cd4': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivmedicalcare'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1381,7 +1531,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'insufficient_vol': ('django.db.models.fields.CharField', [], {'default': "'N/A'", 'max_length': '15'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1403,7 +1553,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'insufficient_vol': ('django.db.models.fields.CharField', [], {'default': "'N/A'", 'max_length': '15'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivresult'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1417,7 +1567,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'result_date': ('django.db.models.fields.DateField', [], {}),
             'result_doc_type': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'result_recorded': ('django.db.models.fields.CharField', [], {'default': "'POS'", 'max_length': '30'}),
@@ -1437,7 +1587,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'result_date': ('django.db.models.fields.DateField', [], {}),
             'result_doc_type': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'result_recorded': ('django.db.models.fields.CharField', [], {'default': "'POS'", 'max_length': '30'}),
@@ -1456,7 +1606,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'num_hiv_tests': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1479,7 +1629,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'num_hiv_tests': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivtested'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1498,7 +1648,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'other_record': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1520,7 +1670,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'other_record': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivtestinghistory'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1537,7 +1687,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'recorded_hiv_result': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1556,7 +1706,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'recorded_hiv_result': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivtestreview'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1571,7 +1721,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1591,7 +1741,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hivuntested'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1611,7 +1761,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'nights_hospitalized': ('django.db.models.fields.IntegerField', [], {'max_length': '2'}),
             'reason_hospitalized': ('django.db.models.fields.CharField', [], {'max_length': '95'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'total_expenses': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '5', 'decimal_places': '2', 'blank': 'True'}),
@@ -1636,7 +1786,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'nights_hospitalized': ('django.db.models.fields.IntegerField', [], {'max_length': '2'}),
             'reason_hospitalized': ('django.db.models.fields.CharField', [], {'max_length': '95'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_hospitaladmission'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'total_expenses': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '5', 'decimal_places': '2', 'blank': 'True'}),
@@ -1664,7 +1814,7 @@ class Migration(SchemaMigration):
             'occupation_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
             'other_occupation': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'other_occupation_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'salary_payment': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -1696,7 +1846,7 @@ class Migration(SchemaMigration):
             'occupation_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
             'other_occupation': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'other_occupation_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'salary_payment': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_labourmarketwages'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -1714,7 +1864,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'tb_record': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -1734,7 +1884,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_medicaldiagnoses'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'tb_record': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
@@ -1763,7 +1913,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'partner_hiv_test': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'third_last_sex': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -1796,7 +1946,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'partner_hiv_test': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_monthsrecentpartner'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'third_last_sex': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -1826,7 +1976,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'partner_hiv_test': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'third_last_sex': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -1859,7 +2009,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'partner_hiv_test': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_monthssecondpartner'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'third_last_sex': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -1889,7 +2039,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'partner_hiv_test': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'third_last_sex': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -1922,7 +2072,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'partner_hiv_test': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_monthsthirdpartner'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'third_last_sex': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
@@ -1942,7 +2092,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'more_children': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'preg_arv': ('django.db.models.fields.CharField', [], {'max_length': '95', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1964,7 +2114,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'more_children': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'preg_arv': ('django.db.models.fields.CharField', [], {'max_length': '95', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_nonpregnancy'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -1986,7 +2136,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'outpatient_expense': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'prvt_care': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'specific_clinic': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -2017,7 +2167,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'outpatient_expense': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'prvt_care': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'specific_clinic': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_outpatientcare'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -2037,7 +2187,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'participation_type': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2056,7 +2206,7 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'participation_type': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_participation'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2074,7 +2224,7 @@ class Migration(SchemaMigration):
             'pima_id': ('django.db.models.fields.CharField', [], {'max_length': '9', 'null': 'True', 'blank': 'True'}),
             'pima_today': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'pima_today_other': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2096,7 +2246,7 @@ class Migration(SchemaMigration):
             'pima_id': ('django.db.models.fields.CharField', [], {'max_length': '9', 'null': 'True', 'blank': 'True'}),
             'pima_today': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'pima_today_other': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_pima'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2116,7 +2266,7 @@ class Migration(SchemaMigration):
             'internalize_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'internalized_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2140,7 +2290,7 @@ class Migration(SchemaMigration):
             'internalize_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'internalized_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_positiveparticipant'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2159,7 +2309,7 @@ class Migration(SchemaMigration):
             'lnmp': ('django.db.models.fields.DateField', [], {}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'preg_arv': ('django.db.models.fields.CharField', [], {'max_length': '95', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2182,7 +2332,7 @@ class Migration(SchemaMigration):
             'lnmp': ('django.db.models.fields.DateField', [], {}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'preg_arv': ('django.db.models.fields.CharField', [], {'max_length': '95', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_pregnancy'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2200,7 +2350,7 @@ class Migration(SchemaMigration):
             'mobility': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'pain': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'self_care': ('django.db.models.fields.CharField', [], {'max_length': '65'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -2223,7 +2373,7 @@ class Migration(SchemaMigration):
             'mobility': ('django.db.models.fields.CharField', [], {'max_length': '45'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'pain': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'self_care': ('django.db.models.fields.CharField', [], {'max_length': '65'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_qualityoflife'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -2245,7 +2395,7 @@ class Migration(SchemaMigration):
             'num_wives': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True', 'blank': 'True'}),
             'religion': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bcpp_list.Religion']", 'symmetrical': 'False'}),
             'religion_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2267,7 +2417,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'num_wives': ('django.db.models.fields.IntegerField', [], {'max_length': '2', 'null': 'True', 'blank': 'True'}),
             'religion_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_rbddemographics'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2285,7 +2435,7 @@ class Migration(SchemaMigration):
             'menopause': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'number_children': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2306,7 +2456,7 @@ class Migration(SchemaMigration):
             'menopause': ('django.db.models.fields.CharField', [], {'max_length': '3'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'number_children': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_reproductivehealth'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2325,7 +2475,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'nights_away': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'permanent_resident': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2348,7 +2498,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'nights_away': ('django.db.models.fields.CharField', [], {'max_length': '35'}),
             'permanent_resident': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_residencymobility'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2365,7 +2515,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'money_spent': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'out_patient': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2386,7 +2536,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'money_spent': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'out_patient': ('django.db.models.fields.CharField', [], {'max_length': '17'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_resourceutilization'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2406,7 +2556,7 @@ class Migration(SchemaMigration):
             'lifetime_sex_partners': ('django.db.models.fields.IntegerField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'more_sex': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2430,7 +2580,7 @@ class Migration(SchemaMigration):
             'lifetime_sex_partners': ('django.db.models.fields.IntegerField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'more_sex': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_sexualbehaviour'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -2448,7 +2598,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'pcp_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'pneumonia_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'sti_dx': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['bcpp_list.StiIllnesses']", 'symmetrical': 'False'}),
             'sti_dx_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
@@ -2474,7 +2624,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'pcp_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'pneumonia_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'sti_dx_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_sti'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -2493,7 +2643,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'saliva_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -2515,7 +2665,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'saliva_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_stigma'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -2535,7 +2685,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'respect_community_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -2559,7 +2709,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'respect_community_stigma': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_stigmaopinion'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -2778,7 +2928,7 @@ class Migration(SchemaMigration):
             'contact_physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'contact_rel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'date_signed': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'date_signed': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'export_change_type': ('django.db.models.fields.CharField', [], {'default': "'I'", 'max_length': '1'}),
             'export_uuid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'exported': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -2797,7 +2947,7 @@ class Migration(SchemaMigration):
             'other_alt_contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'registered_subject': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['registration.RegisteredSubject']", 'unique': 'True', 'null': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'subject_cell_alt': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
@@ -2826,7 +2976,7 @@ class Migration(SchemaMigration):
             'contact_physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'contact_rel': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'date_signed': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'date_signed': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'export_change_type': ('django.db.models.fields.CharField', [], {'default': "'I'", 'max_length': '1'}),
             'export_uuid': ('django.db.models.fields.CharField', [], {'max_length': '36', 'blank': 'True'}),
             'exported': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -2845,7 +2995,7 @@ class Migration(SchemaMigration):
             'other_alt_contact_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'physical_address': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'registered_subject': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_subjectlocator'", 'null': 'True', 'to': "orm['registration.RegisteredSubject']"}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_cell': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
             'subject_cell_alt': ('django.db.models.fields.CharField', [], {'max_length': '78L', 'null': 'True', 'blank': 'True'}),
@@ -2934,7 +3084,7 @@ class Migration(SchemaMigration):
             'referral_clinic_other': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             'referral_clinic_type': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'referral_code': ('django.db.models.fields.CharField', [], {'default': "'pending'", 'max_length': '50'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'scheduled_appt_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
@@ -2992,7 +3142,7 @@ class Migration(SchemaMigration):
             'referral_clinic_other': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             'referral_clinic_type': ('django.db.models.fields.CharField', [], {'max_length': '25', 'null': 'True'}),
             'referral_code': ('django.db.models.fields.CharField', [], {'default': "'pending'", 'max_length': '50'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'scheduled_appt_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'subject_identifier': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
@@ -3061,7 +3211,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'smoke': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -3080,7 +3230,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'smoke': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_substanceuse'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
@@ -3099,7 +3249,7 @@ class Migration(SchemaMigration):
             'lymph_nodes': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'night_sweat': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -3122,7 +3272,7 @@ class Migration(SchemaMigration):
             'lymph_nodes': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'night_sweat': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_tbsymptoms'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -3138,7 +3288,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36', 'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -3157,7 +3307,7 @@ class Migration(SchemaMigration):
             'hostname_modified': ('django.db.models.fields.CharField', [], {'default': "'mac.local'", 'max_length': '50', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.CharField', [], {'max_length': '36'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_tubercolosis'", 'to': "orm['bcpp_subject.SubjectVisit']"}),
             'user_created': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'db_index': 'True'}),
@@ -3177,7 +3327,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'reason_circ': ('django.db.models.fields.CharField', [], {'max_length': '65', 'null': 'True'}),
             'reason_circ_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'service_facilities': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
             'subject_visit': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['bcpp_subject.SubjectVisit']", 'unique': 'True'}),
@@ -3201,7 +3351,7 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
             'reason_circ': ('django.db.models.fields.CharField', [], {'max_length': '65', 'null': 'True'}),
             'reason_circ_other': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True', 'blank': 'True'}),
-            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 19, 0, 0)'}),
+            'report_datetime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 11, 21, 0, 0)'}),
             'revision': ('django.db.models.fields.CharField', [], {'max_length': '150', 'null': 'True', 'blank': 'True'}),
             'service_facilities': ('django.db.models.fields.CharField', [], {'max_length': '35', 'null': 'True'}),
             'subject_visit': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'_audit_uncircumcised'", 'to': "orm['bcpp_subject.SubjectVisit']"}),

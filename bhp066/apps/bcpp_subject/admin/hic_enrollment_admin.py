@@ -1,11 +1,10 @@
 from django.contrib import admin
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
-
-from ..actions import update_referrals, call_participant, update_referrals_for_hic_action
-from ..filters import HicEnrollmentFilter, MayContactFilter
-from ..forms import HicEnrollmentForm
 from ..models import HicEnrollment
+from ..filters import HicEnrollmentFilter
+from ..forms import HicEnrollmentForm
+
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class HicEnrollmentAdmin(SubjectVisitModelAdmin):
@@ -26,31 +25,17 @@ class HicEnrollmentAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         'hic_permission': admin.VERTICAL,
         }
-
     list_display = (
         'subject_visit',
         'dob',
-        'age',
-        'may_contact',
-        'call_attempts',
-        'call_outcome',
-        'bhs_referral_code',
-        'hostname_created',
-        'user_created',
+        'hic_permission',
         'intend_residency',
         'permanent_resident',
+        'hiv_status_today',
         'citizen_or_spouse',
         'consent_datetime',
         )
-    list_filter = ('consent_datetime',
-                   HicEnrollmentFilter,
-                   MayContactFilter,
-                   'call_attempts',
-                   'bhs_referral_code',
-                   'hostname_created',
-                   'user_created',
-                   )
-
+    list_filter = ('consent_datetime', HicEnrollmentFilter,)
     readonly_fields = (
         "dob",
         "permanent_resident",
@@ -61,7 +46,4 @@ class HicEnrollmentAdmin(SubjectVisitModelAdmin):
         "locator_information",
         "consent_datetime",
         )
-
-    actions = [update_referrals, call_participant, update_referrals_for_hic_action]
-
 admin.site.register(HicEnrollment, HicEnrollmentAdmin)
