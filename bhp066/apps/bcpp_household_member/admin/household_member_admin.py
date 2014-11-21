@@ -51,6 +51,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
     list_display = ('first_name', 'initials',
                     'household_structure',
+                    'updated',
                     'to_locator',
                     'hiv_history',
                     'relation',
@@ -83,7 +84,10 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                    'enrollment_loss_completed', 'reported',
                    'refused', 'is_consented', 'eligible_htc', 'target', 'hiv_history',
                    'household_structure__household__community',
-                   'modified', 'hostname_created', 'user_created', 'visit_attempts')
+                   'modified', 'hostname_created', 'user_created', 'visit_attempts',
+                   'auto_filled',
+                   'updated_after_auto_filled',
+                   )
 
     list_per_page = 25
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)

@@ -9,6 +9,24 @@ class SurveyManager(models.Manager):
     def get_by_natural_key(self, survey_name):
         return self.get(survey_name=survey_name)
 
+    def previous_survey(self, survey_slug=None):
+        previous_survey = None
+        current_survey_slug = survey_slug or settings.CURRENT_SURVEY
+        try:
+            previous_survey = self.exclude(survey_slug=current_survey_slug).order_by('datetime_start')[0]
+        except IndexError:
+            pass
+        return previous_survey
+
+    def next_survey(self, survey_slug=None):
+        next_survey = None
+        current_survey_slug = survey_slug or settings.CURRENT_SURVEY
+        try:
+            next_survey = self.exclude(survey_slug=current_survey_slug).order_by('-datetime_start')[0]
+        except IndexError:
+            pass
+        return next_survey
+
     def current_survey(self, report_datetime=None, survey_slug=None, datetime_label=None, community=None):
         """Returns a survey instance or None.
 
