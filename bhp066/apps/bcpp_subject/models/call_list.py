@@ -101,13 +101,11 @@ class CallList (BaseSyncUuidModel):
         )
 
     call_attempts = models.IntegerField(
-        default=0,
-        editable=False)
+        default=0)
 
-    call_outcome = models.CharField(
+    call_outcome = models.TextField(
         max_length=150,
-        editable=False,
-        help_text="updated from call log entries"
+        # help_text="updated from call log entries"
         )
 
     call_status = models.CharField(
@@ -122,7 +120,6 @@ class CallList (BaseSyncUuidModel):
 
     label = models.CharField(
         max_length=25,
-        editable=False,
         null=True,
         help_text="label to group reasons for contact, e.g. T1 preparation"
         )

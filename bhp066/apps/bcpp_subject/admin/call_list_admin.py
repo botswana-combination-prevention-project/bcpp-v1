@@ -16,6 +16,8 @@ class CallListAdmin(BaseModelAdmin):
     fields = (
         "household_member",
         "subject_identifier",
+        'call_attempts',
+        'label',
         'call_status',
         'call_outcome',
         )
@@ -27,27 +29,31 @@ class CallListAdmin(BaseModelAdmin):
         "subject_identifier",
         'first_name',
         'initials',
+        'gender',
         'age_in_years',
         'community',
-        'call_status',
-        'created',
-        "bhs",
-        "consent_datetime",
-        'referral_code',
-        "hic",
+        'label'
         'call_attempts',
+        'call_status',
         'call_outcome',
+        'referral_code',
+        "bhs",
+        "hic",
+        'created',
+        "consent_datetime",
         'hostname_created',
         'user_created',
         )
     list_filter = (
+        'community',
+        'label'
+        'call_attempts',
         'call_status',
         'created',
         'bhs',
         'hic',
+        'gender',
         'consent_datetime',
-        'call_attempts',
-        'community',
         'referral_code',
         'hostname_created',
         'user_created',
@@ -55,6 +61,7 @@ class CallListAdmin(BaseModelAdmin):
 
     readonly_fields = (
         "subject_identifier",
+        'call_attempts',
         )
 
     actions = [call_participant, update_call_list_action]
