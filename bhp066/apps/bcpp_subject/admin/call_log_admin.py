@@ -36,7 +36,7 @@ class CallLogEntryAdminInline(BaseStackedInline):
         'appt_date',
         'appt_grading',
         'appt_location',
-        'appt_location_other'
+        'appt_location_other',
         'call_again',
         )
 
@@ -50,6 +50,7 @@ class CallLogEntryAdminInline(BaseStackedInline):
         "appt": admin.VERTICAL,
         "appt_grading": admin.VERTICAL,
         "appt_location": admin.VERTICAL,
+        "call_again": admin.VERTICAL,
         }
 
 
@@ -105,7 +106,8 @@ class CallLogEntryAdmin(BaseModelAdmin):
         'appt_date',
         'appt_grading',
         'appt_location',
-        'appt_location_other'
+        'appt_location_other',
+        'call_again',
         )
 
     radio_fields = {
@@ -119,8 +121,8 @@ class CallLogEntryAdmin(BaseModelAdmin):
         "appt": admin.VERTICAL,
         "appt_grading": admin.VERTICAL,
         "appt_location": admin.VERTICAL,
+        "call_again": admin.VERTICAL,
         }
-    
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "call_log":
