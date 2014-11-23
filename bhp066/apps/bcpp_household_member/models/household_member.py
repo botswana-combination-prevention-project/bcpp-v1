@@ -10,13 +10,13 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
+from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.constants import NOT_APPLICABLE
+from edc.constants import NOT_APPLICABLE, ALIVE
 
 from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
 from apps.bcpp_household.models import Plot
@@ -72,6 +72,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         blank=False,
         help_text=("If age is unknown, enter 0. If member is less "
                    "than one year old, enter 1"),
+        )
+
+    survival_status = models.CharField(
+        verbose_name='Survival status',
+        max_length=10,
+        default=ALIVE,
+        choices=ALIVE_DEAD_UNKNOWN,
+        help_text=""
         )
 
     present_today = models.CharField(
