@@ -15,7 +15,8 @@ class SectionPlotView(BaseSectionView):
     section_display_name = 'Plots'
     section_display_index = 10
     section_template = 'section_bcpp_plot.html'
-    search = [PlotSearchByWord, PlotSearchByGps]
+    search = {'word': PlotSearchByWord, 'gps': PlotSearchByGps}
+    show_most_recent = True
 
     def contribute_to_context(self, context, request, *args, **kwargs):
         current_survey = None
@@ -23,8 +24,8 @@ class SectionPlotView(BaseSectionView):
             current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.get_current_mapper()()),
-            'mapper_name': site_mappers.get_current_mapper().map_area,
+            'current_community': str(site_mappers.current_mapper()),
+            'mapper_name': site_mappers.current_mapper.map_area,
             'use_gps_to_target_verification': settings.VERIFY_GPS
             })
         return context
