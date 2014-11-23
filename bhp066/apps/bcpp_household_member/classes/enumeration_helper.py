@@ -4,6 +4,8 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from edc.constants import UNKNOWN
+
 from apps.bcpp_household.exceptions import AlreadyEnumerated
 
 from ..exceptions import SurveyValueError
@@ -20,9 +22,13 @@ class EnumerationHelper(object):
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         if source_survey.survey_slug == target_survey.survey_slug:
             raise SurveyValueError('Source survey and target survey may not be the same.')
-        self.source_household_structure = HouseholdStructure.objects.get(household=household, survey=source_survey)
+        self.source_household_structure = HouseholdStructure.objects.get(
+            household=household, survey=source_survey, enumerated=True, enrolled=True)
         try:
-            self.target_household_structure = HouseholdStructure.objects.get(household=household, survey=target_survey, enumerated=False)
+            self.target_household_structure = HouseholdStructure.objects.get(
+                household=household, survey=target_survey,
+                enumerated=False,
+                enrolled=True)
         except HouseholdStructure.DoesNotExist:
             raise AlreadyEnumerated(
                 'household structure {} {} is already enumerated.'.format(self.household, self.target_survey))
@@ -34,8 +40,9 @@ class EnumerationHelper(object):
         cannot be enumerated. """
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         created = 0
-        if self.consented_member and not self.target_household_structure.enumerated:
-            for household_member in HouseholdMember.objects.filter(household_structure=self.source_household_structure):
+        if self.consented_member:
+            for household_member in HouseholdMember.objects.filter(
+                    household_structure=self.source_household_structure):
                 try:
                     household_member = HouseholdMember.objects.get(
                         internal_identifier=household_member.internal_identifier,
@@ -43,8 +50,18 @@ class EnumerationHelper(object):
                 except HouseholdMember.DoesNotExist:
                     self.create_member_on_target(household_member)
                     created += 1
-            self.target_household_structure.enumerated = False
-            self.target_household_structure.save(update_fields=['enumerated'])
+
+            try:
+                # once enrolled, the household is considered enrolled for future surveys as well
+                self.target_household_structure.enrolled = self.source_household_structure.enrolled
+                self.target_household_structure.enrolled = self.source_household_structure.enrolled_datetime
+                self.target_household_structure.enrolled_household_member = \
+                    self.source_household_structure.enrolled_household_member
+                self.target_household_structure.enumerated = False
+                self.target_household_structure.save(
+                    update_fields=['enumerated', 'enrolled_household_member', 'enrolled_datetime', 'enrolled'])
+            except AttributeError:
+                pass  # self.xxxxxx_household_structure is None
         total = HouseholdMember.objects.filter(household_structure=self.target_household_structure).count()
         return (created, total)
 
@@ -126,6 +143,7 @@ class EnumerationHelper(object):
             internal_identifier=household_member.internal_identifier,
             auto_filled=True,
             updated_after_auto_filled=False,
+            survival_status=UNKNOWN,
         )
         try:
             household_member = HouseholdMember.objects.create(**options)
