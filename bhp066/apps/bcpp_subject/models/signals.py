@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.core.bhp_data_manager.models import TimePointStatus
-from edc.constants import CLOSED, OPEN, YES
+from edc.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD
 
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
@@ -125,15 +125,41 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
 
 @receiver(post_save, weak=False, dispatch_uid='call_log_entry_on_post_save')
 def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
+    """Updates call list after a call log entry ('call_status', 'call_attempts', 'call_outcome').""" 
     if not raw:
         if isinstance(instance, CallLogEntry):
             call_list = CallList.objects.get(
                 household_member=instance.call_log.household_member,
                 label=instance.call_log.label)
+            outcome = []
+            try:
+                call_log_entry = CallLogEntry.objects.filter(
+                    call_log=instance.call_log,
+                    appt_date__isnull=False,
+                    ).order_by('-call_datetime')[0]
+                HouseholdFollowUp.objects.create_appointment(call_list, call_log_entry)
+            except IndexError:
+                pass
+            try:
+                call_log_entry = CallLogEntry.objects.filter(call_log=instance.call_log).order_by('-call_datetime')[0]
+                if call_log_entry.appt_date:
+                    outcome.append('Appt'.format(call_log_entry.appt_date))
+                else:
+                    if call_log_entry.survival_status in [ALIVE, DEAD]:
+                        outcome.append('Alive' if ALIVE else 'Deceased')
+                    if call_log_entry.moved_community == YES:
+                        outcome.append('Moved')
+                    if call_log_entry.call_again == YES:
+                        outcome.append('Call again')
+                    elif call_log_entry.call_again == NO:
+                        outcome.append('Do not call')
+            except IndexError:
+                pass
+            call_list.call_outcome = '. '.join(outcome)
             call_attempts = CallLogEntry.objects.filter(call_log=instance.call_log).count()
             call_list.call_attempts = call_attempts
             if instance.call_again == YES:
                 call_list.call_status = OPEN
             else:
                 call_list.call_status = CLOSED
-            call_list.save(update_fields=['call_status', 'call_attempts'])
+            call_list.save(update_fields=['call_status', 'call_attempts', 'call_outcome'])
