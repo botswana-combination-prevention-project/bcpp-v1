@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sections
+from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
@@ -12,7 +12,7 @@ from ..search import HouseholdSearchByWord
 site_mappers.autodiscover()
 
 
-class SectionHouseholdView(BaseSectionForDashboardView):
+class SectionHouseholdView(BaseSectionView):
     section_name = 'household'
     section_display_name = 'Households'
     section_display_index = 20
