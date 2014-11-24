@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from edc.dashboard.search.classes import BaseSearchByWord
 
 from ..models import SubjectConsent
@@ -10,8 +12,9 @@ class SubjectSearchByWord(BaseSearchByWord):
     search_model = SubjectConsent
     template = 'subjectconsent_include.html'
 
-    def contribute_to_context(self, context):
-        context = super(BaseSearchByWord, self).contribute_to_context(context)
-#         context.update({
-#             'subject_dashboard_url': 'subject_dashboard_url'})
-        return context
+    @property
+    def qset(self):
+        qset = self.qset_for_consent
+        qset.add(Q(household_member__household_structure__household__household_identifier__icontains=self.search_value), Q.OR)
+        qset.add(Q(household_member__household_structure__household__plot__plot_identifier__icontains=self.search_value), Q.OR)
+        return qset
