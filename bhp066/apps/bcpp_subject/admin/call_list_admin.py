@@ -31,6 +31,7 @@ class CallListAdmin(BaseModelAdmin):
         'initials',
         'gender',
         'age_in_years',
+        'composition',
         'community',
         'label',
         'call_attempts',
@@ -64,6 +65,11 @@ class CallListAdmin(BaseModelAdmin):
         'call_attempts',
         'household_member',
         )
+
+    search_fields = ('subject_identifier',
+                     'first_name',
+                     'initials',
+                     'household_member__household_structure__household__household_identifier')
 
     actions = [call_participant, update_call_list_action]
 
