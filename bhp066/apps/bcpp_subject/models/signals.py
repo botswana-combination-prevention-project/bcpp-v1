@@ -133,14 +133,6 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
                 label=instance.call_log.label)
             outcome = []
             try:
-                call_log_entry = CallLogEntry.objects.filter(
-                    call_log=instance.call_log,
-                    appt_date__isnull=False,
-                    ).order_by('-call_datetime')[0]
-                HouseholdFollowUp.objects.create_appointment(call_list, call_log_entry)
-            except IndexError:
-                pass
-            try:
                 call_log_entry = CallLogEntry.objects.filter(call_log=instance.call_log).order_by('-call_datetime')[0]
                 if call_log_entry.appt_date:
                     outcome.append('Appt'.format(call_log_entry.appt_date))

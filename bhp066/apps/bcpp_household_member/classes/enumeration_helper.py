@@ -3,6 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 from edc.constants import UNKNOWN
 
@@ -26,12 +27,11 @@ class EnumerationHelper(object):
             household=household, survey=source_survey, enumerated=True, enrolled=True)
         try:
             self.target_household_structure = HouseholdStructure.objects.get(
-                household=household, survey=target_survey,
-                enumerated=False,
-                enrolled=True)
+                household=household,
+                survey=target_survey)
         except HouseholdStructure.DoesNotExist:
-            raise AlreadyEnumerated(
-                'household structure {} {} is already enumerated.'.format(self.household, self.target_survey))
+            raise HouseholdStructure.DoesNotExist(
+                'household structure {} {} does not exist.'.format(self.household, self.target_survey))
 
     def add_members_from_survey(self):
         """Import members from a previous household_structure into the current.
@@ -57,9 +57,9 @@ class EnumerationHelper(object):
                 self.target_household_structure.enrolled = self.source_household_structure.enrolled_datetime
                 self.target_household_structure.enrolled_household_member = \
                     self.source_household_structure.enrolled_household_member
-                self.target_household_structure.enumerated = False
+                # self.target_household_structure.enumerated = False
                 self.target_household_structure.save(
-                    update_fields=['enumerated', 'enrolled_household_member', 'enrolled_datetime', 'enrolled'])
+                    update_fields=['enrolled_household_member', 'enrolled_datetime', 'enrolled'])
             except AttributeError:
                 pass  # self.xxxxxx_household_structure is None
         total = HouseholdMember.objects.filter(household_structure=self.target_household_structure).count()
