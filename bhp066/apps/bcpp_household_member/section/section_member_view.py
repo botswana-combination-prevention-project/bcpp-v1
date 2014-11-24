@@ -1,7 +1,10 @@
+from django.conf import settings
+
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 
 from apps.bcpp_household.constants import CONFIRMED
+from apps.bcpp_survey.models import Survey
 
 from ..search import MemberSearchByWord
 
@@ -16,8 +19,15 @@ class SectionMemberView(BaseSectionView):
     search = {'word': MemberSearchByWord}
 
     def contribute_to_context(self, context, request, *args, **kwargs):
-        """Users may override to update the template context with {key, value} pairs."""
-        context.update({'CONFIRMED': CONFIRMED})
+        current_survey = None
+        if settings.CURRENT_SURVEY:
+            current_survey = Survey.objects.current_survey()
+        context.update({
+            'current_survey': current_survey,
+            'current_community': str(site_mappers.current_mapper()),
+            'mapper_name': site_mappers.current_mapper.map_area,
+            'CONFIRMED': CONFIRMED,
+            })
         return context
 
 site_sections.register(SectionMemberView)

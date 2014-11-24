@@ -3,22 +3,30 @@ from django.db.models import Q
 from edc.dashboard.search.classes import BaseSearchByWord
 
 from ..models import Plot
-from .base_search_by_mixin import BaseSearchByMixin
 from apps.bcpp_household.constants import (CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE,
                                            NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE)
 
 
-class PlotSearchByWord(BaseSearchByMixin, BaseSearchByWord):
+class PlotSearchByWord(BaseSearchByWord):
 
     name = 'word'
     search_model = Plot
-    order_by = 'plot_identifier'
+    order_by = ['plot_identifier']
     template = 'search_plot_result_include.html'
 
     def contribute_to_context(self, context):
         context = super(PlotSearchByWord, self).contribute_to_context(context)
         context.update({'CONFIRMED': CONFIRMED})
         return context
+
+    @property
+    def qset(self):
+        qset = (
+            Q(plot_identifier__icontains=self.search_value) |
+            Q(description__icontains=self.search_value) |
+            Q(cso_number__icontains=self.search_value)
+            )
+        return qset
 
     def qset_by_filter_keyword(self):
         """Returns a qset based on matching keyword.
