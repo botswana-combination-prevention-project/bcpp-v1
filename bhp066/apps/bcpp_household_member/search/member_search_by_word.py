@@ -1,5 +1,3 @@
-import re
-
 from django.db.models import Q
 
 from edc.dashboard.search.classes import BaseSearchByWord
@@ -18,19 +16,10 @@ class MemberSearchByWord(BaseSearchByWord):
     @property
     def qset(self):
         qset = self.qset_for_registered_subject
+        qset.add(Q(first_name__icontains=self.search_value), Q.OR)
         qset.add(Q(household_structure__household__household_identifier__icontains=self.search_value), Q.OR)
+        qset.add(Q(household_structure__household__plot__plot_identifier__icontains=self.search_value), Q.OR)
         return qset
-
-    @property
-    def qset_by_search_term_pattern(self):
-        qset_filter = None
-        if re.match('^[0-9]{6}-[0-9]{2}$', self.search_value):
-            qset_filter = Q(household_structure__household__plot__plot_identifier=self.search_value)
-        elif re.match('^[0-9]{7}-[0-9]{2}$', self.search_value):
-            qset_filter = Q(household_structure__household__household_identifier=self.search_value)
-        if qset_filter:
-            return (qset_filter, None)
-        return None
 
     @property
     def keyword_list(self):
