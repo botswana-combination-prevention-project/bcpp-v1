@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
+from django.core.urlresolvers import reverse
 from edc.choices.common import GENDER
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.audit.audit_trail import AuditTrail
@@ -138,6 +138,16 @@ class CallList (BaseSyncUuidModel):
     def age(self):
         return relativedelta(self.consent_datetime.date(), self.dob).years
     age.allow_tags = True
+
+    def composition(self):
+        url = reverse('household_dashboard_url', kwargs={
+            'dashboard_type': 'household',
+            'dashboard_model': 'household',
+            'dashboard_id': self.household_member.household_structure.household.pk
+            })
+        return '<a href="{}">{}</A>'.format(
+            url, self.household_member.household_structure.household.household_identifier)
+    composition.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_subject'

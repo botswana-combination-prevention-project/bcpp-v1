@@ -7,7 +7,7 @@ from apps.bcpp_survey.models import Survey
 
 class Command(BaseCommand):
 
-    args = 'survey_slug label'
+    args = 'source-survey-slug label'
     help = 'Add to the call list info from all subject consents from the specified survey.'
 
     def handle(self, *args, **options):
