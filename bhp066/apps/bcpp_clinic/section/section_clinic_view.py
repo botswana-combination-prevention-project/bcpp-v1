@@ -11,10 +11,10 @@ from ..search import ClinicSearchByWord
 
 from ..models import ClinicEligibility, DailyLog
 
-from edc.dashboard.section.classes import BaseSectionForDashboardView, site_sections
+from edc.dashboard.section.classes import BaseSectionView, site_sections
 
 
-class SectionClinicView(BaseSectionForDashboardView):
+class SectionClinicView(BaseSectionView):
     section_name = 'clinic'
     section_display_name = 'Clinic Subjects'
     section_display_index = 45
@@ -33,6 +33,7 @@ class SectionClinicView(BaseSectionForDashboardView):
             'current_survey': current_survey,
             'current_community': str(site_mappers.get_current_mapper()()),
             'daily_log': daily_log,
+            'subject_dashboard_url': self.dashboard_url_name,
             })
         return context
 
