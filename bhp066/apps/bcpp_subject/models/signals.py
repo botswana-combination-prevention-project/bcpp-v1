@@ -7,6 +7,7 @@ from edc.core.bhp_data_manager.models import TimePointStatus
 from edc.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD
 
 from apps.bcpp_household_member.exceptions import MemberStatusError
+from apps.bcpp_household_member.models import MemberAppointment
 
 from .subject_consent import SubjectConsent
 
@@ -132,10 +133,26 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
                 household_member=instance.call_log.household_member,
                 label=instance.call_log.label)
             outcome = []
+            member_appointment = None
             try:
                 call_log_entry = CallLogEntry.objects.filter(call_log=instance.call_log).order_by('-call_datetime')[0]
                 if call_log_entry.appt_date:
-                    outcome.append('Appt'.format(call_log_entry.appt_date))
+                    outcome.append('Appt')
+                    try:
+                        member_appointment = MemberAppointment.objects.get(
+                            household_member=call_log_entry.call_log.household_member,
+                            appt_date=call_log_entry.appt_date,
+                            )
+                    except MemberAppointment.DoesNotExist:
+                        member_appointment = MemberAppointment.objects.create(
+                            household_member=call_log_entry.call_log.household_member,
+                            appt_date=call_log_entry.appt_date,
+                            survey=call_log_entry.call_log.survey,
+                            label=call_log_entry.call_log.label,
+                            time_of_day=call_log_entry.time_of_day,
+                            time_of_week=call_log_entry.time_of_week,
+                            is_confirmed=True,
+                            )
                 else:
                     if call_log_entry.survival_status in [ALIVE, DEAD]:
                         outcome.append('Alive' if ALIVE else 'Deceased')
@@ -148,10 +165,13 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
             except IndexError:
                 pass
             call_list.call_outcome = '. '.join(outcome)
-            call_attempts = CallLogEntry.objects.filter(call_log=instance.call_log).count()
-            call_list.call_attempts = call_attempts
+            call_list.member_appointment = member_appointment
+            call_list.call_datetime = CallLogEntry.objects.filter(
+                call_log=instance.call_log).order_by('-created')[0].call_datetime
+            call_list.call_attempts = CallLogEntry.objects.filter(
+                call_log=instance.call_log).count()
             if instance.call_again == YES:
                 call_list.call_status = OPEN
             else:
                 call_list.call_status = CLOSED
-            call_list.save(update_fields=['call_status', 'call_attempts', 'call_outcome'])
+            call_list.save(update_fields=['call_status', 'call_attempts', 'call_outcome', 'member_appointment'])
