@@ -1,11 +1,8 @@
-from datetime import datetime
-
-from django.db import models
-
-from apps.bcpp_household.exceptions import AlreadyEnumerated, EligibleRepresentativeError
+from django.db.models import get_model
 
 from ..constants import (BHS, BHS_ELIGIBLE, BHS_SCREEN, REFUSED, NOT_ELIGIBLE,
-                         HTC_ELIGIBLE, REFUSED_HTC, HTC, ABSENT, UNDECIDED, BHS_LOSS)
+                         HTC_ELIGIBLE, REFUSED_HTC, HTC, ABSENT, UNDECIDED, BHS_LOSS,
+                         ANNUAL)
 
 
 class HouseholdMemberHelper(object):
@@ -16,7 +13,13 @@ class HouseholdMemberHelper(object):
     def member_status(self, selected_member_status):
         """Returns the member_status based on the boolean values set in the signals, mostly."""
         if self.household_member.is_consented:
-            member_status = BHS
+            SubjectConsent = get_model('bcpp_subject', 'subjectconsent')
+            subject_consent = SubjectConsent.objects.get(
+                household_member__internal_identifier=self.household_member.internal_identifier)
+            if self.household_member.household_structure.survey.datetime_start > subject_consent.survey.datetime_start:
+                member_status = ANNUAL
+            else:
+                member_status = BHS
         elif self.household_member.eligible_subject and not self.household_member.refused:
             member_status = BHS_ELIGIBLE
         elif ((self.household_member.undecided or self.household_member.absent or
