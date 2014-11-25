@@ -3,11 +3,8 @@ from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
 
 from edc.constants import UNKNOWN
-
-from apps.bcpp_household.exceptions import AlreadyEnumerated
 
 from ..exceptions import SurveyValueError
 
@@ -118,36 +115,49 @@ class EnumerationHelper(object):
                 pass
         return representative_eligibility
 
-    def create_member_on_target(self, household_member):
-        """Creates a household member on the target structure.
+    def create_member_on_target(self, source_household_member):
+        """Creates and returns a new household member on the target household structure
+        using the source_household_member as a template.
+
+        If a new household_member is not created returns None
 
         If 'representative eligibility' does not exist, the household member
         will not be created.
         """
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
+        new_household_member = None
+        subject_consent = None
         try:
-            subject_consent = SubjectConsent.objects.get(household_member=household_member)
+            subject_consent = SubjectConsent.objects.get(household_member=source_household_member)
             age_in_years = relativedelta(date.today(), subject_consent.dob).years
         except SubjectConsent.DoesNotExist:
-            age_in_years = household_member.age_in_years + 1
+            age_in_years = source_household_member.age_in_years + 1
         options = dict(
             household_structure=self.target_household_structure,
-            first_name=household_member.first_name,
-            initials=household_member.initials,
-            age_in_years=age_in_years,
-            gender=household_member.gender,
-            relation=household_member.relation,
-            study_resident=household_member.study_resident,
-            inability_to_participate=household_member.inability_to_participate,
-            internal_identifier=household_member.internal_identifier,
+            registered_subject=source_household_member.registered_subject,
+            first_name=source_household_member.first_name,
+            initials=source_household_member.initials,
+            age_in_years=age_in_years,  # incremented by 1 or based on consent.dob
+            gender=source_household_member.gender,
+            relation=source_household_member.relation,
+            study_resident=source_household_member.study_resident,
+            inability_to_participate=source_household_member.inability_to_participate,
+            internal_identifier=source_household_member.internal_identifier,
             auto_filled=True,
-            updated_after_auto_filled=False,
+            updated_after_auto_filled=False,  # will change once the record is edited via ModelAdmin
             survival_status=UNKNOWN,
-        )
+            hostname_created=source_household_member.hostname_created,  # carried over to help with logistics
+            hostname_modified=source_household_member.hostname_modified,  # carried over to help with logistics
+            user_created=source_household_member.user_created,  # carried over to help with logistics
+            user_modified=source_household_member.user_modified,  # carried over to help with logistics
+            )
         try:
-            household_member = HouseholdMember.objects.create(**options)
+            new_household_member = HouseholdMember.objects.create(**options)
+            if source_household_member.is_consented:
+                new_household_member.is_consented = source_household_member.is_consented  # consent is forever
+                new_household_member.save(update_fields=['is_consented'])
         except ValidationError:
             # 'representative eligibility' for an eligible representative has not been completed.'
             pass
-        return household_member
+        return new_household_member

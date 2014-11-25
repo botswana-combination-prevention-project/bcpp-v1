@@ -7,7 +7,18 @@ from django.http import HttpResponseRedirect
 
 from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
-from .utils import update_increaseplotradius, update_replaceables
+from .utils.update_increaseplotradius import update_increaseplotradius
+from .utils.update_replaceables import update_replaceables
+
+
+def show_plot_on_map(modeladmin, request, queryset, **kwargs):
+    pass
+show_plot_on_map.short_description = "Show plot on map"
+
+
+def update_household_work_list(modeladmin, request, queryset, **kwargs):
+    pass
+update_household_work_list.short_description = "Update Work List"
 
 
 def update_replaceables_action(modeladmin, request, queryset, **kwargs):
@@ -38,7 +49,6 @@ def process_dispatch(modeladmin, request, queryset, **kwargs):
     selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
     content_type = ContentType.objects.get_for_model(queryset.model)
     return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
-    # return HttpResponseRedirect("http://www.google.com")
 
 process_dispatch.short_description = "Dispatch plots to netbook."
 
