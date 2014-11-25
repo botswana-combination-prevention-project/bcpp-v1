@@ -9,6 +9,14 @@ class SurveyManager(models.Manager):
     def get_by_natural_key(self, survey_name):
         return self.get(survey_name=survey_name)
 
+    @property
+    def first_survey(self):
+        return self.all().order_by('datetime_start')[0]
+
+    @property
+    def last_survey(self):
+        return self.all().order_by('-datetime_start')[0]
+
     def previous_survey(self, survey_slug=None):
         previous_survey = None
         current_survey_slug = survey_slug or settings.CURRENT_SURVEY
