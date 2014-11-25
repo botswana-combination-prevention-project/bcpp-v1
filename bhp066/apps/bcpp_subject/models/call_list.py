@@ -10,7 +10,7 @@ from edc.base.model.validators import datetime_not_future, datetime_not_before_s
 from edc.constants import CLOSED, OPEN, NEW
 from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
 
 from ..choices import REFERRAL_CODES
 
@@ -24,6 +24,12 @@ class CallList (BaseSyncUuidModel):
 
     subject_identifier = models.CharField(
         max_length=25)
+
+    call_datetime = models.DateTimeField(
+        null=True,
+        editable=False,
+        help_text='last call datetime updated by call log entry',
+        )
 
     app_label = models.CharField(
         max_length=25,
@@ -124,6 +130,8 @@ class CallList (BaseSyncUuidModel):
         help_text="label to group reasons for contact, e.g. T1 preparation"
         )
 
+    member_appointment = models.ForeignKey(MemberAppointment, null=True, editable=False)
+
     history = AuditTrail()
 
     def __unicode__(self):
@@ -148,6 +156,20 @@ class CallList (BaseSyncUuidModel):
         return '<a href="{}">{}</A>'.format(
             url, self.household_member.household_structure.household.household_identifier)
     composition.allow_tags = True
+
+    def appt(self):
+        if self.member_appointment:
+            url = reverse('admin:bcpp_household_member_memberappointment_changelist')
+            return '<a href="{0}?q={1}">{2}</A>'.format(
+                url, self.household_member.household_structure.pk, unicode(self.member_appointment))
+        return ''
+    appt.allow_tags = True
+
+    def work_list(self):
+        url = reverse('admin:bcpp_household_householdworklist_changelist')
+        return """<a href="{url}?q={q}" />work list</a>""".format(
+            url=url, q=self.household_member.household_structure.pk)
+    work_list.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_subject'
