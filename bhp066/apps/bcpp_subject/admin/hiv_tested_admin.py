@@ -9,26 +9,35 @@ from ..models import HivTested
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-#HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up
+# HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up
 class HivTestedAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
 
     form = HivTestedForm
     supplemental_fields = SupplementalFields(
         ('num_hiv_tests',
-        'why_hiv_test',
-        'hiv_pills',
-        'arvs_hiv_test'), p=0.09, group='HT', grouping_field='subject_visit')
-    fields = (
+         'why_hiv_test',
+         'hiv_pills',
+         'arvs_hiv_test'), p=0.09, group='HT', grouping_field='subject_visit')
+    fields = [
         "subject_visit",
         'num_hiv_tests',
         'where_hiv_test',
         'where_hiv_test_other',
         'why_hiv_test',
         'hiv_pills',
-        'arvs_hiv_test',)
+        'arvs_hiv_test']
     radio_fields = {
         "where_hiv_test": admin.VERTICAL,
         "why_hiv_test": admin.VERTICAL,
         "hiv_pills": admin.VERTICAL,
         "arvs_hiv_test": admin.VERTICAL, }
+
+if HivTestedAdmin.current_survey != HivTestedAdmin.first_survey:
+    HivTestedAdmin.supplemental_fields = None
+    HivTestedAdmin.fields.remove('num_hiv_tests')
+    HivTestedAdmin.fields.remove('hiv_pills')
+    del HivTestedAdmin.radio_fields['hiv_pills']
+    HivTestedAdmin.fields.remove('arvs_hiv_test')
+    del HivTestedAdmin.radio_fields['arvs_hiv_test']
+
 admin.site.register(HivTested, HivTestedAdmin)
