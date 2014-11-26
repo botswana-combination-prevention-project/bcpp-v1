@@ -19,7 +19,7 @@ class SexualBehaviourForm (BaseSubjectModelForm):
                 'casual and once-off partners (prostitutes and truck drivers) as well as long-term '
                 'partners (spouses, boyfriends/girlfriends)[If you can\'t recall the exact number, '
                 'please give a best guess]')
-            self.fields['more_sex '].label = (
+            self.fields['more_sex'].label = (
                 'Since we spoke with you at our last visit, did you have sex with '
                 'somebody living outside of the community? ')
 
