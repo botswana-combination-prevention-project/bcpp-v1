@@ -1,6 +1,8 @@
 from django.contrib import admin
-from ..models import HivResultDocumentation
+
 from ..forms import HivResultDocumentationForm
+from ..models import HivResultDocumentation
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
@@ -19,5 +21,17 @@ class HivResultDocumentationAdmin (SubjectVisitModelAdmin):
                      " most recent HIV test (positive, negative, or "
                      " indeterminate); OR "
                      " b) documentation that supports a previous diagnosis of"
-                     " HIV, if record of positive HIV test is not available. "),]
+                     " HIV, if record of positive HIV test is not available. ")
+                    ]
+
+if HivResultDocumentationAdmin.current_survey != HivResultDocumentationAdmin.first_survey:
+    HivResultDocumentationAdmin.instructions = [
+        ("This section collects information on whether or not the"
+         " participant has either:"
+         " a) documentation of an HIV test result other than the"
+         " most recent HIV test; OR "
+         " b) documentation that supports a previous diagnosis of"
+         " HIV, if record of positive HIV test is not available. ")
+    ]
+
 admin.site.register(HivResultDocumentation, HivResultDocumentationAdmin)
