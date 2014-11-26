@@ -1,12 +1,22 @@
 from django import forms
 
 from apps.bcpp_list.models import Diagnoses
+from apps.bcpp_survey.models import Survey
 
 from ..models import MedicalDiagnoses
 from .base_subject_model_form import BaseSubjectModelForm
 
 
 class MedicalDiagnosesForm (BaseSubjectModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(MedicalDiagnosesForm, self).__init__(*args, **kwargs)
+        # customize for annual surveys
+        if Survey.objects.current_survey().survey_slug != Survey.objects.first_survey.survey_slug:
+            self.fields['diagnoses'].label = (
+                'Since we spoke with you at our last visit, do you recall or is there a record '
+                'of having any of the following serious illnesses?')
+
     def clean(self):
         cleaned_data = super(MedicalDiagnosesForm, self).clean()
         diagnoses_list = []
