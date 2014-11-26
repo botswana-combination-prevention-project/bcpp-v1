@@ -15,12 +15,15 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
         dashboard_models.update({'household_member': HouseholdMember})
         kwargs.update({'dashboard_models': dashboard_models})
         self.household_member = (kwargs.get('dashboard_model'), kwargs.get('dashboard_id'))
-        if not self.form_category:
-            self.form_category = self.survey.survey_slug
+#         if not self.form_category:
+#             self.form_category = self.survey.survey_slug
         kwargs.update({'membership_form_category': self.form_category})
 
         super(BaseSubjectDashboard, self).__init__(*args, **kwargs)
 
+        # be careful here. when running more than one survey with a new hm record per survey
+        # looking at data from the previous survey will try to use the current hm.
+        # see membership_form_extra_url_context in child class
         self.extra_url_context = '&household_member={0}'.format(self.household_member.pk)
 
     def add_to_context(self):

@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 
 from edc.base.form.forms import BaseModelForm
 from edc.map.classes import site_mappers
@@ -44,8 +45,10 @@ class PlotForm(BaseModelForm):
                                                      cleaned_data.get('gps_minutes_s'),
                                                      cleaned_data.get('gps_degrees_e'),
                                                      cleaned_data.get('gps_minutes_e')))
-        mapper_cls = site_mappers.get_registry(self.instance.community)
+        mapper_cls = site_mappers.registry.get(self.instance.community)
         mapper = mapper_cls()
+        self.instance.verify_plot_community_with_current_mapper(
+            self.instance.community, exception_cls=forms.ValidationError)
         gps_lat = mapper.get_gps_lat(cleaned_data.get('gps_degrees_s'), cleaned_data.get('gps_minutes_s'))
         gps_lon = mapper.get_gps_lon(cleaned_data.get('gps_degrees_e'), cleaned_data.get('gps_minutes_e'))
         mapper.verify_gps_location(gps_lat, gps_lon, forms.ValidationError)
