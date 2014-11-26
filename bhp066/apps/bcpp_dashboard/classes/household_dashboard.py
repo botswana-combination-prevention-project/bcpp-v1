@@ -1,3 +1,4 @@
+
 from datetime import datetime, date
 
 from django.db.models import Max
@@ -16,6 +17,7 @@ from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
 from apps.bcpp_survey.models import Survey
 from django.core.exceptions import MultipleObjectsReturned
+from apps.bcpp_household.models.household_work_list import HouseholdWorkList
 
 
 class HouseholdDashboard(Dashboard):
@@ -88,7 +90,16 @@ class HouseholdDashboard(Dashboard):
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
+            work_list=self.work_list,
             )
+
+    @property
+    def work_list(self):
+        try:
+            work_list = HouseholdWorkList.objects.get(household_structure=self.household_structure)
+        except HouseholdWorkList.DoesNotExist:
+            work_list = None
+        return work_list
 
     @property
     def has_household_log_entry(self):

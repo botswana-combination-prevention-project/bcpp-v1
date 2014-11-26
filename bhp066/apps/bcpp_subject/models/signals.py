@@ -11,7 +11,7 @@ from apps.bcpp_household_member.models import MemberAppointment
 
 from .subject_consent import SubjectConsent
 
-from ..classes import SubjectReferralHelper
+from ..classes import SubjectReferralHelper, CallHelper
 
 from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList
 
@@ -126,33 +126,21 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
 
 @receiver(post_save, weak=False, dispatch_uid='call_log_entry_on_post_save')
 def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
-    """Updates call list after a call log entry ('call_status', 'call_attempts', 'call_outcome').""" 
+    """Updates call list after a call log entry ('call_status', 'call_attempts', 'call_outcome')."""
     if not raw:
         if isinstance(instance, CallLogEntry):
             call_list = CallList.objects.get(
                 household_member=instance.call_log.household_member,
                 label=instance.call_log.label)
             outcome = []
-            member_appointment = None
             try:
                 call_log_entry = CallLogEntry.objects.filter(call_log=instance.call_log).order_by('-call_datetime')[0]
+                # create or update member appointment
                 if call_log_entry.appt_date:
                     outcome.append('Appt')
-                    try:
-                        member_appointment = MemberAppointment.objects.get(
-                            household_member=call_log_entry.call_log.household_member,
-                            appt_date=call_log_entry.appt_date,
-                            )
-                    except MemberAppointment.DoesNotExist:
-                        member_appointment = MemberAppointment.objects.create(
-                            household_member=call_log_entry.call_log.household_member,
-                            appt_date=call_log_entry.appt_date,
-                            survey=call_log_entry.call_log.survey,
-                            label=call_log_entry.call_log.label,
-                            time_of_day=call_log_entry.time_of_day,
-                            time_of_week=call_log_entry.time_of_week,
-                            is_confirmed=True,
-                            )
+                    call_helper = CallHelper(call_log_entry=call_log_entry)
+                    call_helper.member_appointment
+                    call_helper.work_list
                 else:
                     if call_log_entry.survival_status in [ALIVE, DEAD]:
                         outcome.append('Alive' if ALIVE else 'Deceased')
@@ -165,7 +153,7 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
             except IndexError:
                 pass
             call_list.call_outcome = '. '.join(outcome)
-            call_list.member_appointment = member_appointment
+            call_list.member_appointment = call_helper.member_appointment
             call_list.call_datetime = CallLogEntry.objects.filter(
                 call_log=instance.call_log).order_by('-created')[0].call_datetime
             call_list.call_attempts = CallLogEntry.objects.filter(

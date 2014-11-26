@@ -60,10 +60,11 @@ def call_participant(modeladmin, request, queryset):
             label=call_list.label,
             locator_information=SubjectLocator.objects.previous(household_member).formatted_locator_information
             )
-    change_url = ('{}?household_member={}&next={}').format(
+    change_url = ('{}?household_member={}&next={}&q={}').format(
         reverse("admin:bcpp_subject_calllog_change", args=(call_log.pk, )),
         call_log.household_member.pk,
-        "admin:{}_{}_changelist".format(call_list._meta.app_label, call_list._meta.object_name.lower()))
+        "admin:{}_{}_changelist".format(call_list._meta.app_label, call_list._meta.object_name.lower()),
+        request.GET.get('q'),)
     return HttpResponseRedirect(change_url)
 call_participant.short_description = "Call participant"
 
