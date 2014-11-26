@@ -3,7 +3,7 @@ from django.contrib import admin
 from edc.base.modeladmin.admin import BaseModelAdmin
 
 
-from ..actions import update_household_work_list, show_plot_on_map
+from ..actions import update_household_work_list_action, show_plot_on_map
 from ..forms import HouseholdWorkListForm
 from ..models import HouseholdWorkList
 
@@ -13,7 +13,7 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
     form = HouseholdWorkListForm
     date_hierarchy = 'visit_date'
     list_per_page = 15
-    actions = [update_household_work_list, show_plot_on_map]
+    actions = [update_household_work_list_action, show_plot_on_map]
 
     fields = (
         'household_structure',
@@ -31,9 +31,9 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
         'status',
         'appt_count',
         'enrolled_type',
-        'call_list',
         'members',
         'bhs',
+        'hic',
         'log_attempts',
         'log_date',
         'log_status',
@@ -50,6 +50,9 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
         'log_attempts',
         'log_date',
         'log_status',
+        'members',
+        'bhs',
+        'hic',
         'user_modified',
         'hostname_modified',
         )
