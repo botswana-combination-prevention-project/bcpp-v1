@@ -62,7 +62,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
         return '{}'.format(self.appt_date.strftime('%Y-%m-%d'))
 
     def natural_key(self):
-        return (self.appt_date, ) + self.household_member.natural_key()
+        return (self.label, ) + self.household_member.natural_key()
     natural_key.dependencies = ['bcpp_household_member.household_member', ]
 
     def get_report_datetime(self):
@@ -94,4 +94,4 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_household_member'
-        unique_together = (('household_member', 'appt_date', 'label'), )
+        unique_together = (('household_member', 'label'), )

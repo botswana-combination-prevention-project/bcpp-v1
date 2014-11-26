@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib import admin
 from django.core.mail import EmailMessage
@@ -9,16 +11,18 @@ from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRu
 
 from .utils.update_increaseplotradius import update_increaseplotradius
 from .utils.update_replaceables import update_replaceables
+from .utils.update_household_work_list import update_household_work_list
 
 
 def show_plot_on_map(modeladmin, request, queryset, **kwargs):
-    pass
+    messages.add_message(request, messages.WARNING, 'Feature not yet implemented')
 show_plot_on_map.short_description = "Show plot on map"
 
 
-def update_household_work_list(modeladmin, request, queryset, **kwargs):
-    pass
-update_household_work_list.short_description = "Update Work List"
+def update_household_work_list_action(modeladmin, request, queryset, **kwargs):
+    for qs in queryset:
+        update_household_work_list(label=qs.label, household_structure=qs.household_structure)
+update_household_work_list_action.short_description = "Update Work List Item(s)"
 
 
 def update_replaceables_action(modeladmin, request, queryset, **kwargs):
