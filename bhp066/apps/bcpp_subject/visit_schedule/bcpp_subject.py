@@ -16,15 +16,13 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
     # membership forms
     # (name, model, visible)
     membership_forms = OrderedDict({
-        'bcpp-year-1': MembershipFormTuple('bcpp-year-1', SubjectConsent, True),
-        'bcpp-year-2': MembershipFormTuple('bcpp-year-2', SubjectConsent, True),
+        'bcpp-survey': MembershipFormTuple('bcpp-survey', SubjectConsent, True),
         })
 
     # schedule groups
     # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
-        'group-1': ScheduleGroupTuple('group-1', 'bcpp-year-1', None, None),
-        'group-2': ScheduleGroupTuple('group-2', 'bcpp-year-2', None, None),
+        'group-1': ScheduleGroupTuple('group-1', 'bcpp-survey', None, None),
         })
 
     # visit_schedule
@@ -109,7 +107,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'window_upper_bound_unit': 'D',
             'grouping': None,
             'visit_tracking_model': SubjectVisit,
-            'schedule_group': 'group-2',
+            'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
                 # (entry_order app_label model_name requisition_panel_name panel_type aliquot_type_alpha_code
