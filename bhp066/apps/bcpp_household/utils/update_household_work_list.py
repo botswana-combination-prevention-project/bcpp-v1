@@ -47,12 +47,11 @@ def update_household_work_list(label=None, household_structure=None):
                 household_log__household_structure=household_structure).count()
             household_log_entry = HouseholdLogEntry.objects.filter(
                 household_log__household_structure=household_structure).order_by('-report_datetime')[0]
-            log_date = household_log_entry.report_datetime.date()
+            log_date = household_log_entry.report_datetime  # TODO: report_datetime is a date, not datetime!
             log_status = household_log_entry.household_status
         except IndexError:
             log_date = None
             log_status = None
-
         member_count = HouseholdMember.objects.filter(household_structure=household_structure).count()
         hic_count = HicEnrollment.objects.filter(
             subject_visit__household_member__household_structure__household=household_structure.household).count()
