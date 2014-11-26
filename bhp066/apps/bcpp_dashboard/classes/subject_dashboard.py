@@ -17,7 +17,7 @@ class SubjectDashboard(BaseSubjectDashboard):
     def __init__(self, *args, **kwargs):
         self.household_dashboard_url = 'household_dashboard_url'
         self.dashboard_type_list = ['subject']
-        self.form_category = None
+        self.form_category = 'bcpp-survey'
         kwargs.update({'dashboard_models': {'subject_consent': SubjectConsent}})
         self._requisition_model = SubjectRequisition
         self.visit_model = SubjectVisit
@@ -25,6 +25,10 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     def add_to_context(self):
         super(SubjectDashboard, self).add_to_context()
+        try:
+            membership_form_extra_url_context='&household_member={0}'.format(self.consent.household_member.pk)
+        except AttributeError:
+            membership_form_extra_url_context='&household_member={0}'.format(self.household_member.pk)
         self.context.add(
             home='bcpp',
             search_name='subject',
@@ -37,6 +41,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             elisa_hiv_result=self.elisa_hiv_result,
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
+            membership_form_extra_url_context=membership_form_extra_url_context,
             )
 
     @property

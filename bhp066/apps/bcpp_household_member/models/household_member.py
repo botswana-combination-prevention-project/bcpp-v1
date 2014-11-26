@@ -1,6 +1,7 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.urlresolvers import reverse
@@ -11,12 +12,13 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
+from edc.constants import NOT_APPLICABLE, ALIVE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.constants import NOT_APPLICABLE, ALIVE
 
 from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
 from apps.bcpp_household.models import Plot
@@ -28,9 +30,6 @@ from ..classes import HouseholdMemberHelper
 from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
-
-from django.conf import settings
-from edc.map.classes.controller import site_mappers
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -233,11 +232,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             is_bhs = '' if self.is_bhs else 'non-BHS'
         except ValidationError as err_message:
             is_bhs = '?'
-        return '{0} {1} {2}{3} {4}'.format(
+        return '{0} {1} {2}{3} {4}{5}'.format(
             mask_encrypted(self.first_name),
             self.initials,
             self.age_in_years,
             self.gender,
+            self.survey.survey_abbrev,
             is_bhs)
 
     def save(self, *args, **kwargs):

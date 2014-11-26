@@ -280,8 +280,10 @@ class Plot(BaseDispatchSyncUuidModel):
             raise ValidationError('Number of households cannot exceed {}. '
                                   'Perhaps catch this in the forms.py. See '
                                   'settings.MAX_HOUSEHOLDS_PER_PLOT'.format(settings.MAX_HOUSEHOLDS_PER_PLOT))
+        # unless overridden, if self.community != to mapper.map_area, raise
+        self.verify_plot_community_with_current_mapper(self.community)
         # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
-        mapper_cls = site_mappers.get_registry(self.community)
+        mapper_cls = site_mappers.registry.get(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
             self.plot_identifier = PlotIdentifier(mapper.map_code, using).get_identifier()
@@ -530,6 +532,25 @@ class Plot(BaseDispatchSyncUuidModel):
         except IndexError:
             pass
         return increase_plot_radius, created
+
+    def verify_plot_community_with_current_mapper(self, community, exception_cls=None):
+        """Returns True if the plot.community = the current mapper.map_area.
+
+        This check can be disabled using the settings attribute VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER.
+        """
+        verify_plot_community_with_current_mapper = True  # default
+        exception_cls = exception_cls or ValidationError
+        try:
+            verify_plot_community_with_current_mapper = settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER
+        except AttributeError:
+            pass
+        if verify_plot_community_with_current_mapper:
+            if community != site_mappers.current_mapper.map_code:
+                raise exception_cls(
+                    'Plot community does not correspond with the current mapper '
+                    'community of \'{}\'. Got \'{}\'. '
+                    'See settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER'.format(
+                        community, site_mappers.current_mapper.map_area))
 
     @property
     def plot_log(self):
