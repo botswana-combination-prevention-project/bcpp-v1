@@ -1,3 +1,4 @@
+from django.core.exceptions import MultipleObjectsReturned
 from django.template.loader import render_to_string
 
 from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
@@ -26,9 +27,9 @@ class SubjectDashboard(BaseSubjectDashboard):
     def add_to_context(self):
         super(SubjectDashboard, self).add_to_context()
         try:
-            membership_form_extra_url_context='&household_member={0}'.format(self.consent.household_member.pk)
+            membership_form_extra_url_context = '&household_member={0}'.format(self.consent.household_member.pk)
         except AttributeError:
-            membership_form_extra_url_context='&household_member={0}'.format(self.household_member.pk)
+            membership_form_extra_url_context = '&household_member={0}'.format(self.household_member.pk)
         self.context.add(
             home='bcpp',
             search_name='subject',
@@ -62,10 +63,13 @@ class SubjectDashboard(BaseSubjectDashboard):
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
                 try:
-                    #when an appointment is available
+                    # TODO: is the appointment really needed??
+                    # when an appointment is available
                     self._appointment = Appointment.objects.get(registered_subject=self.registered_subject)
                 except Appointment.DoesNotExist:
-                    #when an appointment is not available (i.e. subject has not yet consented)
+                    # when an appointment is not available (i.e. subject has not yet consented)
+                    self._appointment = None
+                except MultipleObjectsReturned:
                     self._appointment = None
             else:
                 self._appointment = None
