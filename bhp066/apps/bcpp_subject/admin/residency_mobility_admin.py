@@ -1,22 +1,23 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from ..models import ResidencyMobility
 from ..forms import ResidencyMobilityForm
+from ..models import ResidencyMobility
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
 
     form = ResidencyMobilityForm
-    fields = (
+    fields = [
         "subject_visit",
         'length_residence',
         'permanent_resident',
         'intend_residency',
         'nights_away',
         'cattle_postlands',
-        'cattle_postlands_other')
+        'cattle_postlands_other']
     radio_fields = {
         "length_residence": admin.VERTICAL,
         "permanent_resident": admin.VERTICAL,
@@ -34,4 +35,9 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
                               " honest answer that you can. Please remember that all of "
                               " your answers are confidential. If you do not wish to "
                               " answer, you can skip any question.")]
+
+if ResidencyMobilityAdmin.current_survey != ResidencyMobilityAdmin.first_survey:
+    ResidencyMobilityAdmin.fields.remove('length_residence')
+    del ResidencyMobilityAdmin.radio_fields['length_residence']
+
 admin.site.register(ResidencyMobility, ResidencyMobilityAdmin)
