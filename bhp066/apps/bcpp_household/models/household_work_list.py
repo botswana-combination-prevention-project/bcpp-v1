@@ -7,6 +7,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from apps.bcpp_survey.models import Survey
 
 from ..managers import HouseholdStructureManager
+from ..choices import HOUSEHOLD_STATUS
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -54,7 +55,7 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
             ('hic', 'HIC/BHS'),
             ('bhs', 'BHS Only')
             ),
-        max_length=25,
+        max_length=3,
         editable=False
         )
 
@@ -62,20 +63,30 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
 
     log_date = models.DateField(
         editable=False,
+        null=True,
         help_text='From household_log entries')
 
-    log_status = models.DateField(
-        editable=False,
-        help_text='From household_log entries')
+    log_status = models.CharField(
+        verbose_name='Household Status',
+        max_length=50,
+        choices=HOUSEHOLD_STATUS,
+        null=True,
+        blank=False)
 
     log_attempts = models.IntegerField(default=0)
+
+    members = models.IntegerField(default=0)
+
+    bhs = models.IntegerField(default=0)
+
+    hic = models.IntegerField(default=0)
 
     objects = HouseholdStructureManager()
 
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{}'.format(unicode(self.household))
+        return '{}'.format(unicode(self.household_structure))
 
     def save(self, *args, **kwargs):
         super(HouseholdWorkList, self).save(*args, **kwargs)
@@ -90,20 +101,6 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
     def get_subject_identifier(self):
         return self.household_structure.household.plot.plot_identifier
 
-    @property
-    def members(self):
-        """Returns the number of household members in this household for all surveys."""
-        HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
-        return HouseholdMember.objects.filter(household_structure__pk=self.pk).count()
-
-    @property
-    def bhs(self):
-        """Returns the number of consented (or enrolled) household members
-        in this household for all surveys."""
-        SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
-        return SubjectConsent.objects.filter(
-            household_member__household_structure__pk=self.household_structure.pk).count()
-
     def call_list(self):
         url = reverse('admin:bcpp_subject_calllist_changelist')
         return """<a href="{url}?q={q}" />call list</a>""".format(
@@ -111,17 +108,18 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
     call_list.allow_tags = True
 
     def appt(self):
-        url = reverse('admin:bcpp_househol_member_memberappointment_changelist')
-        return """<a href="{url}?q={q}" />call list</a>""".format(
+        url = reverse('admin:bcpp_household_member_memberappointment_changelist')
+        return """<a href="{url}?q={q}" />appts</a>""".format(
             url=url, q=self.household_structure.pk)
-    call_list.allow_tags = True
+    appt.allow_tags = True
 
     def composition(self):
         url = reverse('household_dashboard_url',
                       kwargs={'dashboard_type': 'household',
                               'dashboard_model': 'household_structure',
                               'dashboard_id': self.household_structure.pk})
-        return """<a href="{url}" />composition</a>""".format(url=url)
+        return """<a href="{url}" />{identifier}</a>""".format(
+            url=url, identifier=self.household_structure.household.household_identifier)
     composition.allow_tags = True
 
     class Meta:
