@@ -12,7 +12,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class Tubercolosis (BaseScheduledVisitModel):
 
     """A model completed by the user to record any diagnosis of
-    Tubercolosis in the past 12 months."""
+    Tuberculosis in the past 12 months."""
 
     date_tb = models.DateField(
         verbose_name=_("Date of the diagnosis of tuberculosis:"),
