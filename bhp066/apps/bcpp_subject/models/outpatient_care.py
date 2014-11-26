@@ -116,5 +116,5 @@ class OutpatientCare (BaseScheduledVisitModel):
 
     class Meta:
         app_label = 'bcpp_subject'
-        verbose_name = "RU: Outpatient care"
-        verbose_name_plural = "RU: Outpatient care"
+        verbose_name = "Outpatient care"
+        verbose_name_plural = "Outpatient care"

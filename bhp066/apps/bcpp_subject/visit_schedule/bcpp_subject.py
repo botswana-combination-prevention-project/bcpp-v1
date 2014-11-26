@@ -151,6 +151,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(370L, u'bcpp_subject', u'sti', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(380L, u'bcpp_subject', u'tubercolosis', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(390L, u'bcpp_subject', u'tbsymptoms', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(391L, u'bcpp_subject', u'stigma', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(392L, u'bcpp_subject', u'stigmaopinion', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(393L, u'bcpp_subject', u'positiveparticipant', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(391L, u'bcpp_subject', u'positiveparticipant', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(400L, u'bcpp_subject', u'qualityoflife', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(410L, u'bcpp_subject', u'resourceutilization', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(420L, u'bcpp_subject', u'outpatientcare', REQUIRED, NOT_ADDITIONAL),
@@ -161,6 +165,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(470L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(480L, u'bcpp_subject', u'pima', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(490L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(500L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]}
          }
     )
