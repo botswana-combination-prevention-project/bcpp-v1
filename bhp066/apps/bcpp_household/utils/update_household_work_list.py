@@ -20,7 +20,7 @@ def update_household_work_list(label=None, household_structure=None):
     if household_structure:
         household_structures = [household_structure]
     else:
-        household_structure = HouseholdStructure.objects.filter(
+        household_structures = HouseholdStructure.objects.filter(
             survey=current_survey, enrolled=True, progress='Not Started')
     for household_structure in household_structures:
         try:
