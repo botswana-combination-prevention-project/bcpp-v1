@@ -1,3 +1,5 @@
+from edc.constants import COMPLETE, INCOMPLETE
+
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
                         REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED,
                         RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED,
@@ -77,8 +79,8 @@ NOT_ENUMERATED_REASONS = (
 )
 
 HOUSEHOLD_COMPLETION_STATUS = (
-    ('complete', 'Complete'),
-    ('incomplete', 'Incomplete'),
+    (COMPLETE, 'Complete'),
+    (INCOMPLETE, 'Incomplete'),
     )
 
 

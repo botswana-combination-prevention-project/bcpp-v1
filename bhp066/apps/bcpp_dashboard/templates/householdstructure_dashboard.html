@@ -53,6 +53,9 @@
             <B>Household Status:</B> {% if household_structure.enrolled %} <b><span style="color:green">Enrolled</span></b> {% else %} (not enrolled) {% endif %}
             <B>{% if replaceable and not household.replaced_by %} Replaceable {% endif %} {% if household.replaced_by %} Replaced {% endif %}</B>
         </div>
+        <div id="household_structure_status_marquee">
+            {% if work_list %}<A href="{%url 'admin:bcpp_household_householdworklist_changelist' %}?q={{household_structure.pk}}">Work List</A> {% endif %}
+        </div>    
 
     {% endblock %}
     {% if has_household_log_entry %}
