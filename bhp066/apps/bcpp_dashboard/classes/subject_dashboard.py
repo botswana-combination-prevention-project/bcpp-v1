@@ -67,6 +67,8 @@ class SubjectDashboard(BaseSubjectDashboard):
                 except Appointment.DoesNotExist:
                     #when an appointment is not available (i.e. subject has not yet consented)
                     self._appointment = None
+                except Appointment.MultipleObjectsReturned:
+                    self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[1]
             else:
                 self._appointment = None
             self._appointment_zero = None
