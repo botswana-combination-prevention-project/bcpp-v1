@@ -37,7 +37,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
         return super(HouseholdMemberAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    fields = ('household_structure',
+    fields = ['household_structure',
               'first_name',
               'initials',
               'gender',
@@ -45,7 +45,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
               'present_today',
               'inability_to_participate',
               'study_resident',
-              'relation')
+              'relation']
 
     radio_fields = {
         "gender": admin.VERTICAL,
@@ -85,7 +85,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
         'relation', 'id']
 
     list_filter = ('household_structure__survey__survey_name', 'present_today', 'study_resident',
-                   'member_status', 'inability_to_participate',
+                   'member_status', 'inability_to_participate', 'survival_status',
                    'eligible_member', 'eligible_subject', 'enrollment_checklist_completed',
                    'enrollment_loss_completed', 'reported',
                    'refused', 'is_consented', 'eligible_htc', 'target', 'hiv_history',
@@ -95,5 +95,8 @@ class HouseholdMemberAdmin(BaseModelAdmin):
                    'updated_after_auto_filled',
                    )
 
-    list_per_page = 25
+    list_per_page = 15
+if HouseholdMemberAdmin.current_survey != HouseholdMemberAdmin.first_survey:
+    HouseholdMemberAdmin.fields.append('survival_status')
+    HouseholdMemberAdmin.radio_fields['survival_status'] = admin.VERTICAL
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)
