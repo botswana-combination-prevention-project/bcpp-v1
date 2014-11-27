@@ -141,6 +141,7 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
                     call_helper = CallHelper(call_log_entry=call_log_entry)
                     call_helper.member_appointment
                     call_helper.work_list
+                    call_list.member_appointment = call_helper.member_appointment
                 else:
                     if call_log_entry.survival_status in [ALIVE, DEAD]:
                         outcome.append('Alive' if ALIVE else 'Deceased')
@@ -153,7 +154,6 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
             except IndexError:
                 pass
             call_list.call_outcome = '. '.join(outcome)
-            call_list.member_appointment = call_helper.member_appointment
             call_list.call_datetime = CallLogEntry.objects.filter(
                 call_log=instance.call_log).order_by('-created')[0].call_datetime
             call_list.call_attempts = CallLogEntry.objects.filter(
