@@ -128,6 +128,8 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 #  order app_label model_name default_entry_status additional
                 #EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(40L, u'bcpp_subject', u'demographics', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(50L, u'bcpp_subject', u'education', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(120L, u'bcpp_subject', u'sexualbehaviour', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(130L, u'bcpp_subject', u'monthsrecentpartner', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(140L, u'bcpp_subject', u'monthssecondpartner', REQUIRED, NOT_ADDITIONAL),
@@ -165,13 +167,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             ]}
          }
     )
-# remove pima if in ECC
+
 if site_mappers.current_mapper().intervention is False:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
-        #if item.model_name == 'pima':
-            #break
-        forms_to_remove = ['pima', 'tbsymptoms']
-        if item.model_name in forms_to_remove:
+        if item.model_name in ['pima', 'tbsymptoms']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
 
 site_visit_schedules.register(BcppSubjectVisitSchedule)

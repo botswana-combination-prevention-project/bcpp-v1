@@ -36,9 +36,12 @@ from .subject_visit_admin import SubjectVisitAdmin
 from .hiv_result_documentation_admin import HivResultDocumentationAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .hic_enrollment_admin import HicEnrollmentAdmin
+from .outpatient_care_admin import OutpatientCareAdmin
 from .participation_admin import ParticipationAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .rbd_demographics_admin import RbdDemographicsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
 from .review import *
 from .correct_consent_admin import CorrectConsentAdmin
+from .quality_of_life_admin import QualityOfLifeAdmin
+from .resource_utilization_admin import ResourceUtilizationAdmin

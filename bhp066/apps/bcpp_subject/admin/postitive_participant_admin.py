@@ -38,7 +38,7 @@ class PositiveParticipantAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdm
         "enacted_talk_stigma": admin.VERTICAL,
         "enacted_respect_stigma": admin.VERTICAL,
         "enacted_jobs_tigma": admin.VERTICAL, }
-    instructions = [("Interviewer Note: The following supplemental questions"
+    instructions = [("<h5>Interviewer Note</h5> The following supplemental questions"
                              " are only asked for respondents with known HIV infection."
                              " SKIP for respondents without known HIV infection. "),
                              _(" Read to Participant: You let us know earlier that you"
