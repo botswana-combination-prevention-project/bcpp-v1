@@ -27,7 +27,7 @@ class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
 
     instructions = [("Do not include documentation of ART/PMTCT/CD4 here; "
                     "only include actual HIV test results"),
-                    _("Read to Participant: Many people have had a test"
+                    _("<H5>Read to Participant<H5> Many people have had a test"
                               " to see if they have HIV. I am going to ask you"
                               " about whether you have been tested for HIV and"
                               " whether you received the results. Please"

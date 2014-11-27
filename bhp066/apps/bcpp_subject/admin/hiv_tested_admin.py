@@ -18,7 +18,7 @@ class HivTestedAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
          'why_hiv_test',
          'hiv_pills',
          'arvs_hiv_test'), p=0.09, group='HT', grouping_field='subject_visit')
-    fields = [
+    baseline_fields = [
         "subject_visit",
         'num_hiv_tests',
         'where_hiv_test',
@@ -26,18 +26,14 @@ class HivTestedAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
         'why_hiv_test',
         'hiv_pills',
         'arvs_hiv_test']
-    radio_fields = {
+    annual_fields = [f for f in baseline_fields if f not in ['num_hiv_tests', 'hiv_pills', 'arvs_hiv_test']]
+    baseline_radio_fields = {
         "where_hiv_test": admin.VERTICAL,
         "why_hiv_test": admin.VERTICAL,
         "hiv_pills": admin.VERTICAL,
         "arvs_hiv_test": admin.VERTICAL, }
-
-if HivTestedAdmin.current_survey != HivTestedAdmin.first_survey:
-    HivTestedAdmin.supplemental_fields = None
-    HivTestedAdmin.fields.remove('num_hiv_tests')
-    HivTestedAdmin.fields.remove('hiv_pills')
-    del HivTestedAdmin.radio_fields['hiv_pills']
-    HivTestedAdmin.fields.remove('arvs_hiv_test')
-    del HivTestedAdmin.radio_fields['arvs_hiv_test']
+    annual_radio_fields = {
+        "where_hiv_test": admin.VERTICAL,
+        "why_hiv_test": admin.VERTICAL}
 
 admin.site.register(HivTested, HivTestedAdmin)
