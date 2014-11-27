@@ -23,7 +23,7 @@ class TestPlotMapper(BasePlotMapper):
     radius = 3.5
     location_boundary = ()
 
-    intervention = True
+    intervention = False
 
     survey_dates = {
         'bcpp-year-1': SurveyDatesTuple(
