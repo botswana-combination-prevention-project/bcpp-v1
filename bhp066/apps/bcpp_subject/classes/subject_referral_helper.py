@@ -30,6 +30,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_code_list = []
         self._subject_referral = {}
         self.instance = subject_referral
+        self.survey = subject_referral.subject_visit.household_member.household_structure.survey
         # this dict is also used in the signal
         self.models.update({
             'subject_locator': SubjectLocator,
@@ -52,7 +53,9 @@ class SubjectReferralHelper(SubjectStatusHelper):
 
         If timepointstatus instance exists with status=CLOSED, the check is skipped."""
         first_model_cls = None
-        if not SubjectLocator.objects.filter(subject_visit=self.instance.subject_visit).exists():
+        internal_identifier = self.instance.subject_visit.household_member.internal_identifier
+        if not SubjectLocator.objects.filter(
+                subject_visit__household_member__internal_identifier=internal_identifier).exists():
             first_model_cls = SubjectLocator  # required no matter what
         else:
             try:
