@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.core.validators import RegexValidator
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
@@ -17,7 +18,6 @@ from ..validators import date_in_survey
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
 
 from .subject_locator import SubjectLocator
-from django.core.validators import RegexValidator
 
 
 class CallLog (BaseSyncUuidModel):
