@@ -263,7 +263,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def enrollment_checklist_instance(self):
         if not self._enrollment_checklist_instance:
             self._enrollment_checklist_instance = EnrollmentChecklist.objects.get(
-                household_member=self.subject_visit.household_member)
+                household_member__internal_identifier=self.subject_visit.household_member.internal_identifier)
         return self._enrollment_checklist_instance
 
     @property
@@ -271,7 +271,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         if not self._subject_consent_instance:
             try:
                 self._subject_consent_instance = self.models.get('subject_consent').objects.get(
-                    household_member=self.household_member)
+                    household_member__internal_identifier=self.household_member.internal_identifier)
             except self.models.get('subject_consent').DoesNotExist:
                 self._subject_consent_instance = None
         return self._subject_consent_instance
