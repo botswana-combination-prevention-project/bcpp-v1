@@ -74,7 +74,7 @@ class CallLogEntryForm (BaseModelForm):
                 if value and item not in [
                         'id', 'call_log', 'call_datetime', 'contact_type', 'survival_status',
                         'invalid_numbers', 'call_again', 'new_community', 'update_locator',
-                        'moved_community', 'appt_date', 'appt_grading', 'time_of_week', 'time_of_day',
+                        'moved_community', 'appt', 'appt_date', 'appt_grading', 'time_of_week', 'time_of_day',
                         'appt_location', 'appt_location_other']:
                     raise forms.ValidationError(
                         'Question {} should be left blank. Got \'{}\' when moved_community=\'Yes\''.format(item, value))
