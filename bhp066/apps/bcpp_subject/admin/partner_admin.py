@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from ..models import RecentPartner, SecondPartner, ThirdPartner
 
 from ..forms import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm

@@ -23,7 +23,7 @@ class SexualBehaviourAdmin(SubjectVisitModelAdmin):
         "more_sex": admin.VERTICAL,
         "condom": admin.VERTICAL,
         "alcohol_sex": admin.VERTICAL}
-    instructions = [_("Read to Participant: In this part of the interview,"
+    instructions = [_("<h5>Read to Participant</h5> In this part of the interview,"
                              " I will be asking you some questions about your"
                              " sexual relationships that you might have had,"
                              " and about sexual practices that you might have"

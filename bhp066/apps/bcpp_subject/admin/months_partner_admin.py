@@ -165,16 +165,18 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         "first_condom_freq": admin.VERTICAL,
         "first_partner_cp": admin.VERTICAL, }
     filter_horizontal = ("first_partner_live",)
-    instructions = [("Interviewer Note: If the respondent has only had "
-                             " two partners, SKIP HIV adherence questions if HIV"
-                             " negative, if HIV positive, proceed. Else go to Reproductive health for women,"
-                             " or circumcision for men. Ask the respondent to"
-                             " answer the following questions about their second"
-                             " most recent sexual partner. It may be helpful for"
-                             " respondent to give initials or nickname, but DO NOT"
-                             " write down or otherwise record this information."),
-                             _("Read to Participant: I am now going to ask you about"
-                             "your second most recent sexual partner in the past"
-                             " 12 months, the one before the person we were just"
-                             "talking about.")]
+    instructions = [(
+        "<H5>Interviewer Note</H5> If the respondent has only had "
+        " two partners, SKIP HIV adherence questions if HIV"
+        " negative, if HIV positive, proceed. Else go to Reproductive health for women,"
+        " or circumcision for men. Ask the respondent to"
+        " answer the following questions about their second"
+        " most recent sexual partner. It may be helpful for"
+        " respondent to give initials or nickname, but DO NOT"
+        " write down or otherwise record this information."
+        ),
+        _("<H5>Read to Participant</H5> I am now going to ask you about"
+          "your second most recent sexual partner in the past"
+          " 12 months, the one before the person we were just"
+          "talking about.")]
 admin.site.register(MonthsThirdPartner, MonthsThirdPartnerAdmin)
