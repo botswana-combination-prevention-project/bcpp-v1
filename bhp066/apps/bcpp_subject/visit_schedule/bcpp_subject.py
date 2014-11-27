@@ -168,8 +168,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
 # remove pima if in ECC
 if site_mappers.current_mapper().intervention is False:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
-        if item.model_name == 'pima':
-            break
-    BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
+        #if item.model_name == 'pima':
+            #break
+        forms_to_remove = ['pima', 'tbsymptoms']
+        if item.model_name in forms_to_remove:
+            BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
 
 site_visit_schedules.register(BcppSubjectVisitSchedule)
