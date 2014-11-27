@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseTabularInline, BaseModelAdmin
+from edc.base.modeladmin.admin import BaseTabularInline
 from edc.export.actions import export_as_csv_action
 
 from apps.bcpp_household.models import HouseholdStructure
@@ -8,13 +8,15 @@ from apps.bcpp_household.models import HouseholdStructure
 from ..forms import HouseholdMemberForm
 from ..models import HouseholdMember
 
+from .base_household_member_admin import BaseHouseholdMemberAdmin
+
 
 class HouseholdMemberInline(BaseTabularInline):
     model = HouseholdMember
     extra = 3
 
 
-class HouseholdMemberAdmin(BaseModelAdmin):
+class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
 
     form = HouseholdMemberForm
     date_hierarchy = 'modified'
@@ -27,7 +29,7 @@ class HouseholdMemberAdmin(BaseModelAdmin):
 
     def save_model(self, request, obj, form, change):
         """Sets updated_after_auto_filled to True as user edits the form."""
-        if self.auto_filled:
+        if obj.auto_filled:
             obj.updated_after_auto_filled = True
         super(HouseholdMemberAdmin, self).save_model(request, obj, form, change)
 
