@@ -10,6 +10,6 @@ class NonPregnancyAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'more_children',
-            )
+        )
     radio_fields = {"more_children": admin.VERTICAL}
 admin.site.register(NonPregnancy, NonPregnancyAdmin)
