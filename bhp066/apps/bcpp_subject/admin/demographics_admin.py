@@ -10,7 +10,7 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
 
     form = DemographicsForm
 
-    fields = [
+    baseline_fields = [
         "subject_visit",
         'religion',
         'religion_other',
@@ -22,7 +22,7 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
         'live_with',
         ]
 
-    annual_fields = [f for f in fields if f not in ['religion', 'religion_other', 'ethnic', 'ethnic_other']]
+    annual_fields = [f for f in baseline_fields if f not in ['religion', 'religion_other', 'ethnic', 'ethnic_other']]
 
     radio_fields = {
         "marital_status": admin.VERTICAL, }
