@@ -105,8 +105,8 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         " write down or otherwise record this information."),
         _("Read to Participant: I am now going to ask you about"
           " your second most recent sexual partner in the past"
-          " talking about.")]
-          " 12 months, the one before the person we were just"
+          " talking about 12 months, the one before the person we"
+          " were just")]
 admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 
 
