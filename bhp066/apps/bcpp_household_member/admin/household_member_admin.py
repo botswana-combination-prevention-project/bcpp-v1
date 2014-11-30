@@ -27,12 +27,6 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
             'eligible_member', 'eligible_subject', 'member_status'],
         extra_fields={'plot_identifier': 'household_structure__household__plot__plot_identifier'})]
 
-    def save_model(self, request, obj, form, change):
-        """Sets updated_after_auto_filled to True as user edits the form."""
-        if obj.auto_filled:
-            obj.updated_after_auto_filled = True
-        super(HouseholdMemberAdmin, self).save_model(request, obj, form, change)
-
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
