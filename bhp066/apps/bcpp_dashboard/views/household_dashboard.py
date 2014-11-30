@@ -14,8 +14,7 @@ def household_dashboard(request, **kwargs):
         registered_subject=kwargs.get('registered_subject'),
         show=kwargs.get('show'),
         )
-    dashboard.set_context()
     return render_to_response(
         template,
-        dashboard.context.get(),
+        dashboard.context,
         context_instance=RequestContext(request))
