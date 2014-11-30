@@ -106,19 +106,12 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         _("Read to Participant: I am now going to ask you about"
           " your second most recent sexual partner in the past"
           " talking about.")]
-          " 12 months, the one before the person we were just"
 admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 
 
 class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
 
     form = MonthsThirdPartnerForm
-# NOTE: this is not a supplemental form, it should be filled in based on the responses in SecondPartner.
-#     supplemental_fields = SupplementalFields(
-#         ('first_haart',
-#         'first_disclose',
-#         'first_condom_freq',
-#         'first_partner_cp'), p=0.09, group='SH', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'first_partner_live',
