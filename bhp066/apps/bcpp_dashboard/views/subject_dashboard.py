@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+
 from apps.bcpp_dashboard.classes import SubjectDashboard
 from apps.bcpp_subject.models import SubjectConsent
 
@@ -17,8 +18,7 @@ def subject_dashboard(request, **kwargs):
         dashboard_models={'subject_consent': SubjectConsent},
         app_label='bcpp_subject',
         )
-    dashboard.set_context()
     return render_to_response(
         'subject_dashboard.html',
-        dashboard.context.get(),
+        dashboard.context,
         context_instance=RequestContext(request))
