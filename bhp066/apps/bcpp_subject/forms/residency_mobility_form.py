@@ -14,10 +14,12 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
     def __init__(self, *args, **kwargs):
         super(ResidencyMobilityForm, self).__init__(*args, **kwargs)
         # customize for annual surveys
-        if Survey.objects.current_survey().survey_slug != Survey.objects.first_survey.survey_slug:
-            self.fields['permanent_resident'].help_text = (
-                'If participant has moved into the community in the past 12 months, then since moving in '
-                'has the participant typically spent more than 14 nights per month in this community.')
+#         if Survey.objects.current_survey().datetime_start > Survey.objects.first_survey.survey_slug:
+#             self.fields['permanent_resident'].help_text = (
+#                 'If participant has moved into the community in the past 12 months, then since moving in '
+#                 'has the participant typically spent more than 14 nights per month in this community.')
+#             self.fields['permanent_resident'].label = (
+#                 'Erik is a monkey')
 
     def clean(self):
         cleaned_data = super(ResidencyMobilityForm, self).clean()
