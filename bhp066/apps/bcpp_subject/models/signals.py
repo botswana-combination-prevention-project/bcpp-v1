@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
 from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
-from edc.core.bhp_data_manager.models import TimePointStatus
+from edc.data_manager.models import TimePointStatus
 from edc.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD
 
 from apps.bcpp_household_member.exceptions import MemberStatusError

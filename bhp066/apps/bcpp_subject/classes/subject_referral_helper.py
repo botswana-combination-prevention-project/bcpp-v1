@@ -3,7 +3,7 @@ from collections import namedtuple
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.map.classes import site_mappers
-from edc.core.bhp_data_manager.models import TimePointStatus
+from edc.data_manager.models import TimePointStatus
 from edc.constants import CLOSED
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
