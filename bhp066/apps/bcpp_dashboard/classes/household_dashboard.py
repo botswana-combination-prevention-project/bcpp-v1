@@ -14,6 +14,7 @@ from apps.bcpp_household.models import (Household, HouseholdStructure, Household
                                         HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models.household_work_list import HouseholdWorkList
+from apps.bcpp_household_member.constants import NOT_ELIGIBLE, REFUSED_HTC
 from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
 from apps.bcpp_survey.models import Survey
