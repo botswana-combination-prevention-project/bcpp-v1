@@ -28,6 +28,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
     annual_instructions = None
 
     def get_fieldsets(self, request, obj=None):
+        """Returns fieldsets based on the survey, baseline or annual."""
         fieldsets = super(SubjectVisitModelAdmin, self).get_fieldsets(request, obj)
         subject_consent = None
         fieldsets[0][1]['fields'] = self.baseline_fields or self.fields
@@ -48,7 +49,8 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     def formfield_for_choice_field(self, db_field, request=None, **kwargs):
         """
-        Get a form Field for a database Field that has declared choices.
+        Returns a form Field based on the survey, baseline or annual, for a database
+        Field that has declared choices.
         """
         if self.fields == self.annual_fields:
             self.radio_fields = self.annual_radio_fields or self.radio_fields
@@ -58,7 +60,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         """
-        Get a form Field for a ForeignKey.
+        Get a form Field for a ForeignKey based on the survey, baseline or annual.
         """
         if self.fields == self.annual_fields:
             self.radio_fields = self.annual_radio_fields or self.radio_fields
@@ -67,6 +69,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         return super(SubjectVisitModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def add_view(self, request, form_url='', extra_context=None):
+        """Set the instructions based on the survey, baseline or annual."""
         if self.fields == self.annual_fields:
             self.instructions = self.annual_instructions or self.instructions
         else:
@@ -74,6 +77,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         return super(SubjectVisitModelAdmin, self).add_view(request, form_url=form_url, extra_context=extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
+        """Set the instructions based on the survey, baseline or annual."""
         if self.fields == self.annual_fields:
             self.instructions = self.annual_instructions or self.instructions
         else:
