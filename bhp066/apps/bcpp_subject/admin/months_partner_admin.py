@@ -104,8 +104,9 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         " respondent to give initials or nickname, but DO NOT"
         " write down or otherwise record this information."),
         _("Read to Participant: I am now going to ask you about"
-          " your second most recent sexual partner in the past"
-          " talking about.")]
+          " your second most recent sexual partner in the past,"
+          "the one before the person we were just talking about.")]
+
 admin.site.register(MonthsSecondPartner, MonthsSecondPartnerAdmin)
 
 
