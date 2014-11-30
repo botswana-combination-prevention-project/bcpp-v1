@@ -10,7 +10,7 @@ import django_databrowse
 
 from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 
-from edc.core.bhp_data_manager.classes import data_manager
+from edc.data_manager.classes import data_manager
 from edc.dashboard.section.classes import site_sections
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.dashboard.subject.views import additional_requisition
