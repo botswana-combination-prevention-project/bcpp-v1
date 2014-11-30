@@ -44,7 +44,7 @@
             {% if household.is_dispatched %}
             	{{ household.household_identifier }}
             {% else %}
-            	<A title="change household description" href="{% url household_meta|admin_urlname:'change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
+            	<A title="change household description" href="{% url 'admin:bcpp_household_household_change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
             {% endif %}
             <b>Members:&nbsp;</b>{{ household_structure.member_count }}
         </div>
@@ -62,15 +62,15 @@
       {% block household_questionnaire %}
         {% if not representative_eligibility %}
         	{% if not household_refusal or not household_assessment %}
-        		<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url representative_eligibility_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Fill Representative Eligibility form to continue</a></p>
+        		<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin"bcpp_household_representativeeligibility_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Fill Representative Eligibility form to continue</a></p>
         	{% endif %}
         {% else %}
             {% if household_info %}
-                <p style="clear:both;font-size:11px;"><a href="{% url household_info_meta|admin_urlname:'change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information for {{household_info.household_member.get_relation_display }} {{household_info.household_member.first_name|encrypted }}</a></p>
+                <p style="clear:both;font-size:11px;"><a href="{% url 'admin:bcpp_household_householdinfo_change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information for {{household_info.household_member.get_relation_display }} {{household_info.household_member.first_name|encrypted }}</a></p>
             {% elif not eligible_hoh %}
-            	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_head_eligibility_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
+            	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_householdheadeligibility_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
             {% elif eligible_hoh %}
-                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url household_info_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information for {{household_head_eligibility.household_member.get_relation_display }} {{household_head_eligibility.household_member.first_name|encrypted }}</a></p>
+                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_householdinfo_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information for {{household_head_eligibility.household_member.get_relation_display }} {{household_head_eligibility.household_member.first_name|encrypted }}</a></p>
             {% endif %}
         {% endif %}
       {% endblock %}
@@ -84,7 +84,7 @@
             <table><tr><td>
                 {% if has_household_log_entry and not household_members %}<span style="background-color:red;">&nbsp;</span>{% endif %}
                 {% if not household_refusal %}
-                	<A href="{% url household_member_meta|admin_urlname:'add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A>
+                	<A href="{% url 'admin:bcpp_household_member_householdmember_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp; Add another household member</A>
             	{% endif %}
             </td></tr></table>
         {% endif %}
