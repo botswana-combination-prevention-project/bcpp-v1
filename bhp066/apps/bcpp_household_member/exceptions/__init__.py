@@ -4,3 +4,7 @@ class MemberStatusError(Exception):
 
 class SurveyValueError(Exception):
     pass
+
+
+class HouseholdStructureNotEnrolled(Exception):
+    pass
