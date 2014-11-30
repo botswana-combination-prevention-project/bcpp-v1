@@ -16,7 +16,7 @@
         &rsaquo; <a href="{% url 'section_url' 'household'%}">Households</a>        
         &rsaquo; <a href="{% url 'section_search_word_url' 'household' 'word' household.household_identifier %}">Household {{household.household_identifier}}</a>        
         {% if survey %}
-            &rsaquo; Household Composition at {{ survey.survey_slug|capfirst }}
+            &rsaquo; Household Composition at {{ household_structure.survey.survey_slug|capfirst }}
         {% endif %}    
     </div>
     
@@ -37,14 +37,14 @@
 
     {% include "household_log_include.html" %}
 
-    <H4>B. Household Composition Dashboard</H4>
+    <H5>Household Composition for {{ household_structure.survey.survey_slug|capfirst }}</H5>
     {% block dashboard_marquee %}
         <div id="dashboard_marquee">
             <b>Household:&nbsp;</b>
             {% if household.is_dispatched %}
             	{{ household.household_identifier }}
             {% else %}
-            	<A title="change household description" href="{% url 'admin:bcpp_household_household_change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household&dashboard_id={{ household.pk }}">{{ household.household_identifier }}</A>
+            	<A title="change household description" href="{% url 'admin:bcpp_household_household_change' household.pk %}?next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">{{ household.household_identifier }}</A>
             {% endif %}
             <b>Members:&nbsp;</b>{{ household_structure.member_count }}
         </div>
@@ -66,11 +66,11 @@
         	{% endif %}
         {% else %}
             {% if household_info %}
-                <p style="clear:both;font-size:11px;"><a href="{% url 'admin:bcpp_household_householdinfo_change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information for {{household_info.household_member.get_relation_display }} {{household_info.household_member.first_name|encrypted }}</a></p>
+                <p style="clear:both;font-size:11px;"><a href="{% url 'admin:bcpp_household_member_householdinfo_change' household_info.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Edit Household Information for {{household_info.household_member.get_relation_display }} {{household_info.household_member.first_name|encrypted }}</a></p>
             {% elif not eligible_hoh %}
-            	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_householdheadeligibility_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
+            	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_member_householdheadeligibility_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
             {% elif eligible_hoh %}
-                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_householdinfo_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information for {{household_head_eligibility.household_member.get_relation_display }} {{household_head_eligibility.household_member.first_name|encrypted }}</a></p>
+                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_member_householdinfo_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information for {{household_head_eligibility.household_member.get_relation_display }} {{household_head_eligibility.household_member.first_name|encrypted }}</a></p>
             {% endif %}
         {% endif %}
       {% endblock %}
@@ -97,7 +97,7 @@
         </table> 
     {% endif %}
     
-    <H4>C. Surveys for this Household</H4>
+    <H5>C. Surveys for this Household</H5>
     {{ rendered_surveys }}    
 </div>
 {% endblock dashboard %}
