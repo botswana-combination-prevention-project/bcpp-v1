@@ -6,7 +6,7 @@ from django.db import models
 
 from edc.constants import UNKNOWN
 
-from ..exceptions import SurveyValueError
+from ..exceptions import SurveyValueError, HouseholdStructureNotEnrolled
 
 
 class EnumerationHelper(object):
@@ -20,8 +20,13 @@ class EnumerationHelper(object):
         HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         if source_survey.survey_slug == target_survey.survey_slug:
             raise SurveyValueError('Source survey and target survey may not be the same.')
-        self.source_household_structure = HouseholdStructure.objects.get(
-            household=household, survey=source_survey, enumerated=True, enrolled=True)
+        try:
+            self.source_household_structure = HouseholdStructure.objects.get(
+                household=household, survey=source_survey, enumerated=True, enrolled=True)
+        except HouseholdStructure.DoesNotExist:
+            raise HouseholdStructureNotEnrolled(
+                'Enrolled and enumerated household structure {} {} does not exist.'.format(
+                    self.household, self.source_survey))
         try:
             self.target_household_structure = HouseholdStructure.objects.get(
                 household=household,

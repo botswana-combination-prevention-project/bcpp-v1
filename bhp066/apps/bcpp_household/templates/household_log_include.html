@@ -5,7 +5,9 @@
 {% load dispatch_tags %}
 
 {% if household_log %}
- <H4>A. Household Log</H4>
+ <H5>Household Log for {{ household_structure.survey.survey_slug|capfirst }}</H5>
+ <p>Add a Household Log entry for each visit to this household</P>
+ 
  {% if household_log_entries %}
  <table border=1 width=100%>
  <thead>
