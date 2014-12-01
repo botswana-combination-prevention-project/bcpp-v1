@@ -1,8 +1,10 @@
-from datetime import datetime, date
+from datetime import datetime
 
-from django.db.models import Max
 from django.conf import settings
+from django.conf.urls import url
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
+from django.db.models import Max
 from django.template.loader import render_to_string
 
 from edc.dashboard.base.classes import Dashboard
@@ -11,21 +13,29 @@ from apps.bcpp_household.exceptions import AlreadyEnumerated
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog,
                                         HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
 from apps.bcpp_household.helpers import ReplacementHelper
-
-from apps.bcpp_household_member.models import EnrollmentLoss
-from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
+from apps.bcpp_household.models.household_work_list import HouseholdWorkList
+from apps.bcpp_household_member.constants import NOT_ELIGIBLE, REFUSED_HTC
+from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
+from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
 from apps.bcpp_survey.models import Survey
-from django.core.exceptions import MultipleObjectsReturned
 
 
 class HouseholdDashboard(Dashboard):
 
-    view = 'household_dashboard'
+    template_name = 'householdstructure_dashboard.html'
     dashboard_name = 'Household Dashboard'
     dashboard_url_name = 'household_dashboard_url'
+    view = 'household_dashboard'
+    urlpattern_view = 'apps.bcpp_dashboard.views'
+    urlpattern_options = dict(
+        Dashboard.urlpattern_options,
+        dashboard_model='household|household_structure',
+        dashboard_type='household')
+
     base_fields = ('id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified')
 
-    def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_models=None, **kwargs):
+    def __init__(self, **kwargs):
+        super(HouseholdDashboard, self).__init__(**kwargs)
         self._plot = None
         self._household = None
         self._household_members = None
@@ -38,34 +48,19 @@ class HouseholdDashboard(Dashboard):
         self._survey = None
         self._surveys = None
         self._mapper_name = None
-        dashboard_type_list = ['household', 'household_structure']
-        dashboard_models = {'household': Household, 'household_structure': HouseholdStructure}
-        super(HouseholdDashboard, self).__init__(dashboard_type, dashboard_id,
-                                                 dashboard_model, dashboard_type_list,
-                                                 dashboard_models)
-        self.first_name = kwargs.get('first_name')
-        self.mapper_name = kwargs.get('mapper_name')
+        self.dashboard_type_list = ['household', 'household_structure']
+        self.dashboard_models = {'household': Household, 'household_structure': HouseholdStructure}
+        self.first_name = None
+        self.mapper_name = None
 
-    def add_to_context(self):
-        super(HouseholdDashboard, self).add_to_context()
-
-        self.context.add(
+    def get_context_data(self, **kwargs):
+        self.context = super(HouseholdDashboard, self).get_context_data(**kwargs)
+        self.context.update(
             home='bcpp_survey',
+            appointment_code='T1',
             title='',  # 'A. Household Composition',
-            household_meta=Household._meta,
-            household_member_meta=HouseholdMember._meta,
-            household_assessment_meta=HouseholdAssessment._meta,
-            enrollment_loss_meta=EnrollmentLoss._meta,
-            household_structure_meta=HouseholdStructure._meta,
-            household_log_entry_meta=HouseholdLogEntry._meta,
-            enrollment_checklist_meta=EnrollmentChecklist._meta,
-            subject_htc_meta=SubjectHtc._meta,
-            household_info_meta=HouseholdInfo._meta,
-            household_refusal_meta=HouseholdRefusal._meta,
             household_refusal=self.household_refusal,
-            household_head_eligibility_meta=HouseholdHeadEligibility._meta,
             household_head_eligibility=self.household_head_eligibility,
-            representative_eligibility_meta=RepresentativeEligibility._meta,
             representative_eligibility=self.representative_eligibility,
             plot=self.household.plot,
             household_assessment=self.household_assessment,
@@ -88,7 +83,17 @@ class HouseholdDashboard(Dashboard):
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
+            work_list=self.work_list,
             )
+        return self.context
+
+    @property
+    def work_list(self):
+        try:
+            work_list = HouseholdWorkList.objects.get(household_structure=self.household_structure)
+        except HouseholdWorkList.DoesNotExist:
+            work_list = None
+        return work_list
 
     @property
     def has_household_log_entry(self):
@@ -240,13 +245,16 @@ class HouseholdDashboard(Dashboard):
                     self.household_structure.household,
                     self.household_structure.previous.survey,
                     self.household_structure.survey)
+                self._household_members = HouseholdMember.objects.filter(
+                    household_structure=self.household_structure,
+                    ).order_by('first_name')
             except AttributeError:
                 pass  # no previous.survey
             except AlreadyEnumerated:
                 pass
-            self._household_members = HouseholdMember.objects.filter(
-                household_structure=self.household_structure,
-                ).order_by('first_name')
+            except HouseholdStructureNotEnrolled:
+                # previous survey is not erolled
+                pass
         return self._household_members
 
     @property

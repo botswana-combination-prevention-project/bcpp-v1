@@ -1,6 +1,8 @@
 from django.contrib import admin
-from ..models import QualityOfLife
+
 from ..forms import QualityOfLifeForm
+from ..models import QualityOfLife
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

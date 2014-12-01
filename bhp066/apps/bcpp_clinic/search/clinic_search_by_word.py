@@ -7,7 +7,7 @@ class ClinicSearchByWord(BaseSearchByWord):
 
     name = 'word'
     search_model = ClinicEligibility
-    order_by = '-created'
+    order_by = ['-created']
     template = 'cliniceligibility_include.html'
 
     def contribute_to_context(self, context):

@@ -7,9 +7,8 @@ from django.core.exceptions import ValidationError
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
-from edc.choices import YES_NO
 
-from ..choices import REFERRAL_CODES
+from apps.bcpp.choices import YES_NO
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -77,64 +76,29 @@ class HicEnrollment (BaseScheduledVisitModel):
                     'necessary contact information collected?'),
         )
 
-    consent_datetime = models.DateTimeField(
-        verbose_name="Consent date and time",
+    consent_datetime = models.DateTimeField("Consent date and time",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
+        # editable=False,
         help_text=_("From Subject Consent.")
-        )
-
-    call_attempts = models.IntegerField(
-        default=0,
-        editable=False)
-
-    call_outcome = models.CharField(
-        max_length=150,
-        editable=False,
-        help_text="updated from call log entries"
-        )
-
-    bhs_referral_code = models.CharField(
-        verbose_name='Referral Code',
-        max_length=50,
-        choices=REFERRAL_CODES,
-        editable=False,
-        help_text="updated from subject referral"
         )
 
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        update_fields = kwargs.get('update_fields')
-        if update_fields == ['call_attempts']:
-            pass
-        elif update_fields == ['bhs_referral_code']:
-            pass
-        else:
-            if self.hic_permission.lower() == 'yes':
-                # Only enforce the criteria if subjectt agrees to enroll in HIC
-                self.permanent_resident = self.is_permanent_resident()
-                self.intend_residency = self.is_intended_residency()
-                self.household_residency = self.is_household_residency()
-                self.locator_information = self.is_locator_information()
-                self.citizen_or_spouse = self.is_citizen_or_spouse()
-                self.hiv_status_today = self.get_hiv_status_today()
-            dob, consent_datetime = self.get_dob_consent_datetime()
-            self.consent_datetime = consent_datetime
-            self.dob = dob
+        if self.hic_permission.lower() == 'yes':
+            # Only enforce the criteria if subjectt agrees to enroll in HIC
+            self.permanent_resident = self.is_permanent_resident()
+            self.intend_residency = self.is_intended_residency()
+            self.household_residency = self.is_household_residency()
+            self.locator_information = self.is_locator_information()
+            self.citizen_or_spouse = self.is_citizen_or_spouse()
+            self.hiv_status_today = self.get_hiv_status_today()
+        dob, consent_datetime = self.get_dob_consent_datetime()
+        self.consent_datetime = consent_datetime
+        self.dob = dob
         super(HicEnrollment, self).save(*args, **kwargs)
-
-    def may_contact(self):
-        if self.hic_permission == 'Yes':
-            return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'
-        else:
-            return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
-    may_contact.allow_tags = True
-
-    def age(self):
-        return relativedelta(self.consent_datetime.date(), self.dob).years
-    age.allow_tags = True
 
     def is_permanent_resident(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -237,6 +201,17 @@ class HicEnrollment (BaseScheduledVisitModel):
                                     'way to contact the participant form before proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
+
+    def may_contact(self):
+        if self.hic_permission == 'Yes':
+            return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'
+        else:
+            return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
+    may_contact.allow_tags = True
+
+    def age(self):
+        return relativedelta(self.consent_datetime.date(), self.dob).years
+    age.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_subject'

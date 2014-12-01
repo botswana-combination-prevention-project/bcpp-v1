@@ -1,7 +1,5 @@
-from django.db.models import get_model
 from edc.core.crypto_fields.utils import mask_encrypted
 from edc.map.classes import site_mappers
-from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household_member.constants import CLINIC_RBD
