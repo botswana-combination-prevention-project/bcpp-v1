@@ -22,6 +22,6 @@ class Command(BaseCommand):
             label = args[1]
         except IndexError:
             raise CommandError('Specify a label')
-        update_call_list(survey_slug, label)
+        update_call_list(survey_slug, label, verbose=True)
         new_count = CallList.objects.all().count()
         print 'Added {} records to the Call List for {}: {}.'.format(new_count - count, survey_slug, label)
