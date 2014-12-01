@@ -6,10 +6,11 @@ from edc.constants import NEW
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 
 
 @app.task
-def update_call_list(survey_slug, label):
+def update_call_list(survey_slug, label, verbose=False):
     """Adds information from SubjectConsent instances from the specified survey to the
     CallList model for the current survey.
 
@@ -23,7 +24,10 @@ def update_call_list(survey_slug, label):
     SubjectLocator = get_model('bcpp_subject', 'SubjectLocator')
     consent_options = dict(household_member__household_structure__survey__survey_slug=survey_slug)
     options = {}
+    n = 0
+    total = SubjectConsent.objects.all().count()
     for subject_consent in SubjectConsent.objects.filter(**consent_options).order_by('subject_identifier'):
+        n += 1
         try:
             SubjectLocator.objects.get(
                 subject_visit__household_member=subject_consent.household_member,
@@ -76,10 +80,22 @@ def update_call_list(survey_slug, label):
                 consent_datetime=subject_consent.consent_datetime,
                 call_status=NEW,
                 label=label,
+                hostname_created=subject_consent.hostname_created,
+                user_created=subject_consent.user_created,
                 )
             try:
-                CallList.objects.get(household_member=target_household_member, label=label)
+                call_list = CallList.objects.get(household_member=target_household_member, label=label)
+                if verbose:
+                    print '{}/{} {} already added to call list'.format(n, total, subject_consent.subject_identifier)
+
             except CallList.DoesNotExist:
-                CallList.objects.create(**options)
+                call_list = CallList.objects.create(**options)
+                if verbose:
+                    print '{}/{} Added {} to call list'.format(n, total, subject_consent.subject_identifier)
+            call_list.hostname_created = subject_consent.hostname_created
+            call_list.user_created = subject_consent.user_created
+            call_list.save()
         except SubjectLocator.DoesNotExist:
             pass
+        except HouseholdStructureNotEnrolled as e:
+            print str(e)
