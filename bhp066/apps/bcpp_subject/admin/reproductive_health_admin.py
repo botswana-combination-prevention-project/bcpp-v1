@@ -22,8 +22,8 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
         "menopause": admin.VERTICAL,
         "currently_pregnant": admin.VERTICAL}
     filter_horizontal = ("family_planning",)
-    instructions = [("Note to Interviewer: This section is to be"
-                             " completed by female participants. SKIP for male participants."),
-                             _("Read to Participant: I am now going to ask you questions"
-                             " about reproductive health and pregnancy.")]
+    instructions = [("<h5>Note to Interviewer</h5> This section is to be"
+                     " completed by female participants. SKIP for male participants."),
+                    _("Read to Participant: I am now going to ask you questions"
+                      " about reproductive health and pregnancy.")]
 admin.site.register(ReproductiveHealth, ReproductiveHealthAdmin)

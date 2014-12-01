@@ -23,7 +23,7 @@ class TestPlotMapper(BasePlotMapper):
     radius = 3.5
     location_boundary = ()
 
-    intervention = True
+    intervention = False
 
     survey_dates = {
         'bcpp-year-1': SurveyDatesTuple(
@@ -34,10 +34,10 @@ class TestPlotMapper(BasePlotMapper):
             smc_start_date=date(2013, 11, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2014, 10, 18),
-            full_enrollment_date=date(2014, 11, 7),
-            end_date=date(2014, 11, 22),
-            smc_start_date=date(2014, 11, 7)),
+            start_date=date(2014, 11, 21),
+            full_enrollment_date=date(2014, 12, 17),
+            end_date=date(2014, 12, 22),
+            smc_start_date=date(2014, 12, 22)),
     }
 
     clinic_days = {
@@ -46,6 +46,11 @@ class TestPlotMapper(BasePlotMapper):
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].smc_start_date)},
+        'bcpp-year-2': {
+            'IDCC': ClinicDaysTuple((MO, WE), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
 site_mappers.register(TestPlotMapper)

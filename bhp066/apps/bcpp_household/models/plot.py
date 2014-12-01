@@ -280,11 +280,13 @@ class Plot(BaseDispatchSyncUuidModel):
             raise ValidationError('Number of households cannot exceed {}. '
                                   'Perhaps catch this in the forms.py. See '
                                   'settings.MAX_HOUSEHOLDS_PER_PLOT'.format(settings.MAX_HOUSEHOLDS_PER_PLOT))
+        # unless overridden, if self.community != to mapper.map_area, raise
+        self.verify_plot_community_with_current_mapper(self.community)
         # if self.community does not get valid mapper, will raise an error that should be caught in forms.pyx
-        mapper_cls = site_mappers.get_registry(self.community)
+        mapper_cls = site_mappers.registry.get(self.community)
         mapper = mapper_cls()
         if not self.plot_identifier:
-            self.plot_identifier = PlotIdentifier(mapper.get_map_code(), using).get_identifier()
+            self.plot_identifier = PlotIdentifier(mapper.map_code, using).get_identifier()
             if not self.plot_identifier:
                 raise IdentifierError('Expected a value for plot_identifier. Got None')
         # if user added/updated gps_degrees_[es] and gps_minutes_[es], update gps_lat, gps_lon
@@ -355,20 +357,17 @@ class Plot(BaseDispatchSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
-        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        # HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         for i in range(count, 0):
             for household in Household.objects.using(using).filter(plot=instance):
                 try:
                     with transaction.atomic():
-                        try:
-                            HouseholdLog.objects.using(using).get(household_structure__household=household).delete()
-                        except HouseholdLog.DoesNotExist:
-                            pass
-                        try:
-                            HouseholdStructure.objects.using(using).get(household=household).delete()
-                        except HouseholdStructure.DoesNotExist:
-                            pass
+                        HouseholdLog.objects.using(using).filter(household_structure__household=household).delete()
+                        # try:
+                        #    HouseholdStructure.objects.using(using).get(household=household).delete()
+                        # except HouseholdStructure.DoesNotExist:
+                        #    pass
                         household.delete()
                         break
                 except ValidationError:
@@ -530,6 +529,25 @@ class Plot(BaseDispatchSyncUuidModel):
         except IndexError:
             pass
         return increase_plot_radius, created
+
+    def verify_plot_community_with_current_mapper(self, community, exception_cls=None):
+        """Returns True if the plot.community = the current mapper.map_area.
+
+        This check can be disabled using the settings attribute VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER.
+        """
+        verify_plot_community_with_current_mapper = True  # default
+        exception_cls = exception_cls or ValidationError
+        try:
+            verify_plot_community_with_current_mapper = settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER
+        except AttributeError:
+            pass
+        if verify_plot_community_with_current_mapper:
+            if community != site_mappers.current_mapper.map_code:
+                raise exception_cls(
+                    'Plot community does not correspond with the current mapper '
+                    'community of \'{}\'. Got \'{}\'. '
+                    'See settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER'.format(
+                        community, site_mappers.current_mapper.map_area))
 
     @property
     def plot_log(self):
