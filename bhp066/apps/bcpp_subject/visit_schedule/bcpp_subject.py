@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from edc.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL, ADDITIONAL
+from edc.map.classes import site_mappers
 from edc.subject.visit_schedule.classes import (VisitScheduleConfiguration, site_visit_schedules,
                                                 EntryTuple, MembershipFormTuple, ScheduleGroupTuple,
                                                 RequisitionPanelTuple)
@@ -16,20 +17,20 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
     # membership forms
     # (name, model, visible)
     membership_forms = OrderedDict({
-        'bcpp-year-1': MembershipFormTuple('bcpp-year-1', SubjectConsent, True),
+        'bcpp-survey': MembershipFormTuple('bcpp-survey', SubjectConsent, True),
         })
 
     # schedule groups
     # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
-        'group-1': ScheduleGroupTuple('group-1', 'bcpp-year-1', None, None),
+        'group-1': ScheduleGroupTuple('group-1', 'bcpp-survey', None, None),
         })
 
     # visit_schedule
     # see edc.subject.visit_schedule.models.visit_defintion
     visit_definitions = OrderedDict(
         {'T0': {
-            'title': 'T0',
+            'title': 'Baseline Household Survey',
             'time_point': 0,
             'base_interval': 0,
             'base_interval_unit': 'D',
@@ -97,7 +98,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(400L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             )},
          'T1': {
-            'title': 'T1',
+            'title': 'T1 Annual Household Survey',
             'time_point': 0,
             'base_interval': 0,
             'base_interval_unit': 'D',
@@ -123,10 +124,12 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB',
                                       NOT_REQUIRED, NOT_ADDITIONAL)
                 ),
-            'entries': (
+            'entries': [
                 #  order app_label model_name default_entry_status additional
-                EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
+                #EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(40L, u'bcpp_subject', u'demographics', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(50L, u'bcpp_subject', u'education', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(120L, u'bcpp_subject', u'sexualbehaviour', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(130L, u'bcpp_subject', u'monthsrecentpartner', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(140L, u'bcpp_subject', u'monthssecondpartner', REQUIRED, NOT_ADDITIONAL),
@@ -158,10 +161,16 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(450L, u'bcpp_subject', u'labourmarketwages', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(460L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(470L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(380L, u'bcpp_subject', u'pima', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(390L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
-            )}
+                EntryTuple(480L, u'bcpp_subject', u'pima', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(490L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(500L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
+            ]}
          }
     )
+
+if site_mappers.current_mapper().intervention is False:
+    for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
+        if item.model_name in ['pima', 'tbsymptoms']:
+            BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
 
 site_visit_schedules.register(BcppSubjectVisitSchedule)

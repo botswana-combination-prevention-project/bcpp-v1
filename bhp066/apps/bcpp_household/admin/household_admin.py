@@ -17,10 +17,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     instructions = []
 
-    # fields = (
-    #    'report_datetime',
-    #    'comment')
-
     list_display = ('household_identifier', 'structure', 'plot', 'community', 'replaceable',
                     'replaced_by', 'created', 'modified')
 
@@ -28,7 +24,8 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     search_fields = ('household_identifier', 'community', 'id', 'plot__id', 'replaced_by')
 
-    readonly_fields = ('household_identifier', )
+    readonly_fields = ('plot', 'household_identifier', )
 
     actions = [update_replaceables, ]
+
 admin.site.register(Household, HouseholdAdmin)

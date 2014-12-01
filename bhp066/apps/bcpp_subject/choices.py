@@ -511,7 +511,7 @@ CHOICES_FROM_BCPPLIST = (
     ('Reduced risk of cancer', _('Reduced risk of cancer')),
     ('heart_disease', _('Heart Disease or Stroke')),
     ('cancer', _('Cancer')),
-    ('tb', _('Tubercolosis')),
+    ('tb', _('Tuberculosis')),
     ('other_serious_infection', _('Other serious infection')),
     ('Radio', _('Radio')),
     ('TV', _('TV')),

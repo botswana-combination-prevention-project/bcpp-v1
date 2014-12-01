@@ -18,7 +18,8 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
 
     date_hierarchy = 'referral_appt_date'
 
-    search_fields = ['subject_visit__appointment__registered_subject__first_name', 'subject_visit__appointment__registered_subject__subject_identifier']
+    search_fields = ['subject_visit__appointment__registered_subject__first_name',
+                     'subject_visit__appointment__registered_subject__subject_identifier']
 
     list_display = [
         'subject_visit',
@@ -57,7 +58,9 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                 delimiter=',',
                 encrypt=False,
                 strip=True,
-                exclude=['exported', 'exported_datetime', self.visit_model_foreign_key, 'revision', 'hostname_created', 'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', 'comment'],
+                exclude=['exported', 'exported_datetime', self.visit_model_foreign_key, 'revision',
+                         'hostname_created', 'hostname_modified', 'created', 'modified',
+                         'user_created', 'user_modified', 'comment'],
                 extra_fields=OrderedDict(
                     {'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
@@ -69,7 +72,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                 ),
             'export_as_csv_action',
             'Export Referrals to CSV')
-        actions['export_referrals_for_cdc_action'] = (  # This is a django SortedDict (function, name, short_description)
+        actions['export_referrals_for_cdc_action'] = (
             export_referrals_for_cdc_action(
                 delimiter='|',
                 encrypt=False,
@@ -89,7 +92,8 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                     'user_created',
                     'user_modified'],
                 extra_fields=OrderedDict(
-                    {'plot_identifier': self.visit_model_foreign_key + '__household_member__household_structure__household__plot__plot_identifier',
+                    {'plot_identifier': self.visit_model_foreign_key + \
+                     '__household_member__household_structure__household__plot__plot_identifier',
                      'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
                      'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
                      'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
