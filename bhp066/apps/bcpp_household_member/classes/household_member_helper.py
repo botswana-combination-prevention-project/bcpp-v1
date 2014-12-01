@@ -1,5 +1,6 @@
 from ..constants import (BHS, BHS_ELIGIBLE, BHS_SCREEN, REFUSED, NOT_ELIGIBLE,
-                         HTC_ELIGIBLE, REFUSED_HTC, HTC, ABSENT, UNDECIDED, BHS_LOSS)
+                         HTC_ELIGIBLE, REFUSED_HTC, HTC, ABSENT, UNDECIDED, BHS_LOSS,
+                         ANNUAL)
 
 
 class HouseholdMemberHelper(object):
@@ -7,10 +8,17 @@ class HouseholdMemberHelper(object):
     def __init__(self, household_member=None):
         self.household_member = household_member
 
+    def annual_member_status(self, selected_member_status):
+        return selected_member_status or self.household_member.member_status
+
     def member_status(self, selected_member_status):
         """Returns the member_status based on the boolean values set in the signals, mostly."""
         if self.household_member.is_consented:
-            member_status = BHS
+            if self.household_member.consented_in_previous_survey:
+
+                member_status = self.annual_member_status(selected_member_status)
+            else:
+                member_status = BHS
         elif self.household_member.eligible_subject and not self.household_member.refused:
             member_status = BHS_ELIGIBLE
         elif ((self.household_member.undecided or self.household_member.absent or
@@ -60,8 +68,10 @@ class HouseholdMemberHelper(object):
             raise TypeError('household_member.member_status cannot be None')
         options = []
         if self.household_member.is_consented:
-            # consent overrides everything
-            options = [BHS]
+            if self.household_member.consented_in_previous_survey:
+                options = [ANNUAL, ABSENT, REFUSED, UNDECIDED, HTC]
+            else:
+                options = [BHS]
         else:
             if not self.household_member.eligible_member:
                     if not self.household_member.eligible_htc:

@@ -122,6 +122,8 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         """Matches values in this consent against the enrollment checklist.
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
+        # enrollment checklist is only filled for the same survey as the consent
+        household_member = subject_consent.household_member
         exception_cls = exception_cls or ValidationError
         if not EnrollmentChecklist.objects.filter(household_member=household_member).exists():
             raise exception_cls('Enrollment Checklist not found. The Enrollment Checklist is required before consent.')

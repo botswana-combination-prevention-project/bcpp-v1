@@ -33,7 +33,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
 
     list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', )
 
-    list_filter = ('household_member', 'gender', 'is_eligible', 'report_datetime',
+    list_filter = ('gender', 'is_eligible', 'report_datetime',
                    'household_member__household_structure__household__community')
 
     radio_fields = {

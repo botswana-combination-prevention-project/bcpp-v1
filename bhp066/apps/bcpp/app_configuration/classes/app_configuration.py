@@ -99,16 +99,19 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'bcpp-year-1':
             {'survey_name': 'BCPP Year 1',
              'survey_slug': 'bcpp-year-1',
+             'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2014, 12, 29, 16, 30, 00)},
+             'datetime_end': datetime(2014, 11, 19, 16, 30, 00)},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
-             'datetime_start': datetime(2014, 12, 30, 07, 00, 00),
+             'survey_abbrev': 'Y2',
+             'datetime_start': datetime(2014, 11, 29, 07, 00, 00),
              'datetime_end': datetime(2015, 10, 29, 16, 30, 00)},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
              'survey_slug': 'bcpp-year-3',
+             'survey_abbrev': 'Y3',
              'datetime_start': datetime(2015, 10, 30, 07, 00, 00),
              'datetime_end': datetime(2016, 10, 29, 16, 30, 00)}
     }
@@ -362,13 +365,14 @@ class BcppAppConfiguration(BaseAppConfiguration):
 
     def update_or_create_survey(self):
         for survey_values in self.survey_setup.itervalues():
-            if not Survey.objects.filter(survey_name=survey_values.get('survey_name')):
-                Survey.objects.create(**survey_values)
-            else:
+            try:
                 survey = Survey.objects.get(survey_name=survey_values.get('survey_name'))
                 survey.survey_slug = survey_values.get('survey_slug')
+                survey.survey_abbrev = survey_values.get('survey_abbrev')
                 survey.datetime_start = survey_values.get('datetime_start')
                 survey.datetime_end = survey_values.get('datetime_end')
                 survey.save()
+            except Survey.DoesNotExist:
+                Survey.objects.create(**survey_values)
 
 bcpp_app_configuration = BcppAppConfiguration()
