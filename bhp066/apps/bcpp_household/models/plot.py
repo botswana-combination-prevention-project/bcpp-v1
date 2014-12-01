@@ -357,20 +357,17 @@ class Plot(BaseDispatchSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         Household = models.get_model('bcpp_household', 'Household')
-        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        # HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
         HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
         for i in range(count, 0):
             for household in Household.objects.using(using).filter(plot=instance):
                 try:
                     with transaction.atomic():
-                        try:
-                            HouseholdLog.objects.using(using).get(household_structure__household=household).delete()
-                        except HouseholdLog.DoesNotExist:
-                            pass
-                        try:
-                            HouseholdStructure.objects.using(using).get(household=household).delete()
-                        except HouseholdStructure.DoesNotExist:
-                            pass
+                        HouseholdLog.objects.using(using).filter(household_structure__household=household).delete()
+                        # try:
+                        #    HouseholdStructure.objects.using(using).get(household=household).delete()
+                        # except HouseholdStructure.DoesNotExist:
+                        #    pass
                         household.delete()
                         break
                 except ValidationError:
