@@ -46,6 +46,11 @@ class BokaaPlotMapper(BasePlotMapper):
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((FR, ), survey_dates['bcpp-year-1'].smc_start_date)},
+        'bcpp-year-2': {
+            'IDCC': ClinicDaysTuple((WE, ), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((FR, ), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
 site_mappers.register(BokaaPlotMapper)

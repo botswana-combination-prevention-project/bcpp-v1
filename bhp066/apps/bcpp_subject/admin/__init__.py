@@ -2,6 +2,7 @@ from .main import *
 
 from .access_to_care_admin import AccessToCareAdmin
 from .call_log_admin import CallLogAdmin, CallLogEntryAdmin
+from .call_list_admin import CallListAdmin
 from .cea_enrollment_checklist_admin import CeaEnrollmentChecklistAdmin
 from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin
 from .community_engagement_admin import CommunityEngagementAdmin
@@ -35,9 +36,12 @@ from .subject_visit_admin import SubjectVisitAdmin
 from .hiv_result_documentation_admin import HivResultDocumentationAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .hic_enrollment_admin import HicEnrollmentAdmin
+from .outpatient_care_admin import OutpatientCareAdmin
 from .participation_admin import ParticipationAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .rbd_demographics_admin import RbdDemographicsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
 from .review import *
 from .correct_consent_admin import CorrectConsentAdmin
+from .quality_of_life_admin import QualityOfLifeAdmin
+from .resource_utilization_admin import ResourceUtilizationAdmin

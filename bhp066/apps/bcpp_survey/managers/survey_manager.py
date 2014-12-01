@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned, ImproperlyConfigured
 from django.conf import settings
@@ -8,6 +8,32 @@ class SurveyManager(models.Manager):
 
     def get_by_natural_key(self, survey_name):
         return self.get(survey_name=survey_name)
+
+    @property
+    def first_survey(self):
+        return self.all().order_by('datetime_start')[0]
+
+    @property
+    def last_survey(self):
+        return self.all().order_by('-datetime_start')[0]
+
+    def previous_survey(self, survey_slug=None):
+        previous_survey = None
+        current_survey_slug = survey_slug or settings.CURRENT_SURVEY
+        try:
+            previous_survey = self.exclude(survey_slug=current_survey_slug).order_by('datetime_start')[0]
+        except IndexError:
+            pass
+        return previous_survey
+
+    def next_survey(self, survey_slug=None):
+        next_survey = None
+        current_survey_slug = survey_slug or settings.CURRENT_SURVEY
+        try:
+            next_survey = self.exclude(survey_slug=current_survey_slug).order_by('-datetime_start')[0]
+        except IndexError:
+            pass
+        return next_survey
 
     def current_survey(self, report_datetime=None, survey_slug=None, datetime_label=None, community=None):
         """Returns a survey instance or None.
@@ -20,9 +46,9 @@ class SurveyManager(models.Manager):
         survey = None
         if settings.CURRENT_SURVEY:
             try:
-                report_date = report_datetime.date() or datetime.today()
+                report_date = report_datetime.date() or date.today()
             except AttributeError:
-                report_date = report_datetime or datetime.today()
+                report_date = report_datetime or date.today()
             survey_slug = survey_slug or settings.CURRENT_SURVEY
             datetime_label = datetime_label or 'report_datetime'
             try:
@@ -43,7 +69,7 @@ class SurveyManager(models.Manager):
                     'Expected survey \'{0}\'. {2} {1} does not fall within '
                     'the start/end dates of Survey \'{0}\' ({3}). See app_configuration or reload urls.'.format(
                         survey_slug,
-                        report_datetime.strftime('%Y-%m-%d'),
+                        report_date.strftime('%Y-%m-%d'),
                         '{}{}'.format(datetime_label[0].upper(), datetime_label[1:]),
                         community,
                         )
