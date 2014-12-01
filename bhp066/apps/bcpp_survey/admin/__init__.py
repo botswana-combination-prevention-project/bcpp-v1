@@ -1,1 +1,1 @@
-from .main import *
+from .survey_admin import SurveyAdmin

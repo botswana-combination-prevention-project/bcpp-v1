@@ -1,5 +1,6 @@
 from .main import *
 from .call_log_form import CallLogForm, CallLogEntryForm
+from .call_list_form import CallListForm
 from .subject_consent_form import SubjectConsentForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_referral_form import SubjectReferralForm

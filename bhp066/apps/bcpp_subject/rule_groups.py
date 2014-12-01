@@ -10,6 +10,18 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                      HivResult, HivResultDocumentation, ElisaHivResult)
 
 
+def func_is_baseline(visit_instance):
+    if visit_instance.appointment.visit_definition.visit_code == 'T0':
+        return True
+    return False
+
+
+def func_is_annual(visit_instance):
+    if visit_instance.appointment.visit_definition.visit_code != 'T0':
+        return True
+    return False
+
+
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
@@ -169,12 +181,21 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    verbal_hiv_result_hiv_care = ScheduledDataRule(
+    verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence'])
+        target_model=['hivcareadherence'],
+        runif=func_is_baseline)
+
+    verbal_hiv_result_hiv_care_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivcareadherence'],
+        runif=func_is_annual)
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
