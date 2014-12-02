@@ -16,6 +16,7 @@ from apps.bcpp_survey.models.survey import Survey
 
 from ..validators import date_in_survey
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
+from ..managers import CallLogEntryManager, CallLogManager
 
 from .subject_locator import SubjectLocator
 
@@ -43,7 +44,7 @@ class CallLog (BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = CallLogManager()
 
     def __unicode__(self):
         return '{} {} {} ({} call)'.format(
@@ -64,8 +65,13 @@ class CallLog (BaseSyncUuidModel):
                 self.locator_information = str(err_message)
         super(CallLog, self).save(*args, **kwargs)
 
+    def natural_key(self):
+        return self.household_member.natural_key() + (self.label, )
+    natural_key.dependencies = ['bcpp_household_member.household_member', ]
+
     class Meta:
         app_label = 'bcpp_subject'
+        unique_together = ['household_member', 'label']
 
 
 class CallLogEntry (BaseSyncUuidModel):
@@ -216,7 +222,7 @@ class CallLogEntry (BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = CallLogEntryManager()
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -231,6 +237,9 @@ class CallLogEntry (BaseSyncUuidModel):
             self.call_log.household_member.initials,
             self.call_log.household_member.age_in_years,
             )
+
+    def natural_key(self):
+        return self.call_log.natural_key() + (self.call_datetime, )
 
     class Meta:
         app_label = 'bcpp_subject'
