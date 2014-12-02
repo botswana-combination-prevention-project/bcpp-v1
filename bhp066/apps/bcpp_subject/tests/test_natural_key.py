@@ -29,8 +29,9 @@ from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory,
-                                               SubjectDeathFactory, SubjectReferralFactory)
+from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory,
+                                               SubjectDeathFactory, SubjectReferralFactory, CallLogEntryFactory,
+                                               CallListFactory)
 from apps.bcpp_survey.models import Survey
 
 
@@ -41,7 +42,8 @@ class TestNaturalKey(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        BcppAppConfiguration()
+        site_mappers.autodiscover()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
@@ -63,11 +65,10 @@ class TestNaturalKey(TestCase):
 
     def test_p3(self):
         print 'get a community name from the mapper classes'
-        community = site_mappers.get_as_list()[0]
-        site_mappers.autodiscover()
-        mapper = site_mappers.get(site_mappers.get_as_list()[0])
+        mapper = site_mappers.get_current_mapper()
+        community = mapper.map_area
         print 'No. of SURVEY = ' + str(Survey.objects.all().count())
-        plot = PlotFactory(community='test_community6', household_count=1, status='residential_habitable')
+        plot = PlotFactory(community=community, household_count=1, status='residential_habitable')
         print 'No. of HOUSEHOLDS = ' + str(Household.objects.all().count())
         household = Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
@@ -90,14 +91,14 @@ class TestNaturalKey(TestCase):
         print 'No. of ENTRIES = ' + str(Entry.objects.all().count())
 #         content_type = ContentType.objects.get(app_label='bcpp_subject', model='subjectvisit')
 #         content_type_map = ContentTypeMap.objects.get(content_type=content_type)
-        self.assertEqual(VisitDefinition.objects.all().count(), 1)
-        visit_definition = VisitDefinition.objects.get(title='T0')
+        self.assertEqual(VisitDefinition.objects.all().count(), 2)
+        visit_definition = VisitDefinition.objects.get(code='T0')
         print 'No. of Appointments = ' + str(Appointment.objects.all().count())
         appointment = Appointment.objects.get(visit_definition=visit_definition)
         # print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_visit = SubjectVisitFactory(appointment=appointment, household_member=household_member)
         # print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
-        subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
+        #subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
         # SubjectDeath : Independent Natural Keys
         subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         # SubjectLocator : Independent Natural Key
@@ -112,11 +113,22 @@ class TestNaturalKey(TestCase):
         requisition2 = SubjectRequisitionFactory(subject_visit=subject_visit, panel=elisa_panel, aliquot_type=aliquot_type, site=site)
         signals.post_save.connect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
         subject_locator = SubjectLocatorFactory(subject_visit=subject_visit, registered_subject=registered_subject)
-        instances.append(subject_referral)
+        year_1_survey = Survey.objects.get(survey_slug='bcpp-year-1')
+        call_list = CallListFactory(household_member=household_member, label='call_label_1')
+        call_log = CallLogFactory(household_member=household_member, survey=year_1_survey, label='call_label_1')
+        call_log2 = CallLogFactory(household_member=household_member, survey=year_1_survey, label='call_label_2')
+        call_log_entry = CallLogEntryFactory(call_log=call_log, survey=year_1_survey, call_datetime=datetime.now())
+        call_log_entry2 = CallLogEntryFactory(call_log=call_log, survey=year_1_survey, call_datetime=datetime.now() + timedelta(minutes=3))
+        #instances.append(subject_referral)
         instances.append(subject_death)
         instances.append(subject_locator)
         instances.append(requisition1)
         instances.append(requisition2)
+        instances.append(call_log)
+        instances.append(call_log2)
+        instances.append(call_log_entry)
+        instances.append(call_log_entry2)
+        instances.append(call_list)
 
         print 'INSTANCE: ' + str(instances)
         for obj in instances:

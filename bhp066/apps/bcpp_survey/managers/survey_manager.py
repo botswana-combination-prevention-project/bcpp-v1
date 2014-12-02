@@ -61,6 +61,9 @@ class SurveyManager(models.Manager):
                         datetime_end__gte=report_date,
                         survey_slug=survey_slug)
             except MultipleObjectsReturned:
+                from ..models import Survey
+                sy = Survey.objects.all()
+                print '++++++++++++++++++'+str(sy)
                 raise ImproperlyConfigured('Date {} falls within more than one Survey. Start and end dates'
                                            'may not overlap between Surveys. ({}). See app configuration.'.format(
                                                report_date, community))
