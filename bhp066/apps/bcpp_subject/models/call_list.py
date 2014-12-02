@@ -13,6 +13,7 @@ from edc.device.sync.models import BaseSyncUuidModel
 from apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
 
 from ..choices import REFERRAL_CODES
+from ..managers import CallListManager
 
 
 class CallList (BaseSyncUuidModel):
@@ -134,6 +135,8 @@ class CallList (BaseSyncUuidModel):
 
     history = AuditTrail()
 
+    objects = CallListManager()
+
     def __unicode__(self):
         return '{} {} {} {} ({} call)'.format(
             self.subject_identifier,
@@ -170,6 +173,10 @@ class CallList (BaseSyncUuidModel):
         return """<a href="{url}?q={q}" />work list</a>""".format(
             url=url, q=self.household_member.household_structure.pk)
     work_list.allow_tags = True
+
+    def natural_key(self):
+        return self.household_member.natural_key() + (self.label, )
+    natural_key.dependencies = ['bcpp_household_member.household_member', ]
 
     class Meta:
         app_label = 'bcpp_subject'
