@@ -175,6 +175,7 @@ CARE_REASON = (
     ('Chronic disease', _('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
     ('Other', _('Other')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
+    ('None', _('None')),
 )
 
 
