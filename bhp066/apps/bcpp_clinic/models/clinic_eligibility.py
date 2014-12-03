@@ -24,6 +24,8 @@ from apps.bcpp_household_member.models import HouseholdMember
 
 from apps.bcpp_subject.models import SubjectConsent
 
+from ..managers import BaseClinicHouseholdMemberManager
+
 from .clinic_consent import ClinicConsent
 from .clinic_enrollment_loss import ClinicEnrollmentLoss
 from .clinic_household_member import ClinicHouseholdMember
@@ -188,6 +190,8 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+    objects = BaseClinicHouseholdMemberManager()
+
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
         if update_fields == ['is_consented'] or update_fields == ['is_refused']:
@@ -209,6 +213,10 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
 
     def __unicode__(self):
         return "{} ({}) {}/{}".format(self.first_name, self.initials, self.gender, self.age_in_years)
+
+    def natural_key(self):
+        return self.household_member.natural_key()
+    natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def get_registered_subject(self):
         return self.household_member.register_subject

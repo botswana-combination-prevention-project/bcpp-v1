@@ -9,24 +9,27 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
 from edc.subject.registration.models import RegisteredSubject
+from edc.map.classes import Mapper, site_mappers
 
-from apps.bcpp_clinic_enrollment.tests.factories import ClinicEligibilityFactory, ClinicEnrollmentLossFactory
+from apps.bcpp_clinic.tests.factories import ClinicEligibilityFactory, ClinicEnrollmentLossFactory
 from apps.bcpp_clinic.tests.factories import (ClinicConsentFactory, ClinicVisitFactory,
                                              ClinicLocatorFactory, ClinicQuestionnaireFactory)
-from apps.bcpp_clinic_enrollment.models import ClinicEnrollmentLoss
-from apps.clinic.bcpp_clinic_configuration.classes import BcppClinicConfiguration
+from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+from apps.bcpp_clinic.models import ClinicEnrollmentLoss
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_clinic.visit_schedule import BcppClinicVisitSchedule
-from apps.bcpp_clinic_lab.lab_profiles import ClinicSubjectProfile
+from apps.bcpp_lab.lab_profiles import ClinicSubjectProfile
 
 
-class NaturalKeyTests(TestCase):
+class TestNaturalKey(TestCase):
 
     def setUp(self):
         try:
             site_lab_profiles.register(ClinicSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        BcppClinicConfiguration()
+        site_mappers.autodiscover()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppClinicVisitSchedule().build()
 
@@ -52,20 +55,24 @@ class NaturalKeyTests(TestCase):
         self.assertEqual(ClinicEnrollmentLoss.objects.all().count(), 0)
         self.assertEqual(RegisteredSubject.objects.all().count(), 0)
         clinic_eligibility = ClinicEligibilityFactory()
-        subjects = RegisteredSubject.objects.all()
+        self.assertEqual(RegisteredSubject.objects.all().count(), 1)
         self.assertTrue(clinic_eligibility.is_eligible)
         clinic_eligibility.legal_marriage = 'No'
+        clinic_eligibility.has_identity = 'No'
         clinic_eligibility.save()
         self.assertFalse(clinic_eligibility.is_eligible)
         self.assertEqual(ClinicEnrollmentLoss.objects.all().count(), 1)
-        clinic_loss = ClinicEnrollmentLoss.objects.all()[0]
-        instances.append(clinic_loss)
+        #clinic_loss = ClinicEnrollmentLoss.objects.all()[0]
+        #instances.append(clinic_loss)
         clinic_eligibility.legal_marriage = 'Yes'
+        clinic_eligibility.has_identity = 'Yes'
         clinic_eligibility.save()
         self.assertTrue(clinic_eligibility.is_eligible)
         instances.append(clinic_eligibility)
-
-        clinic_consent = ClinicConsentFactory(dob=clinic_eligibility.dob,
+        self.assertEqual(RegisteredSubject.objects.all().count(), 1)
+        clinic_consent = ClinicConsentFactory(registered_subject=clinic_eligibility.household_member.registered_subject,
+                                              identity=clinic_eligibility.identity,
+                                              dob=clinic_eligibility.dob,
                                               gender=clinic_eligibility.gender,
                                               first_name=clinic_eligibility.first_name,
                                               initials=clinic_eligibility.initials)
@@ -77,13 +84,16 @@ class NaturalKeyTests(TestCase):
                                               first_name=clinic_eligibility.first_name,
                                               initials=clinic_eligibility.initials)
 
-        appointment = Appointment.objects.get(registered_subject = registered_subject)
-        clinic_visit = ClinicVisitFactory(appointment = appointment)
+        appointment = Appointment.objects.get(registered_subject=registered_subject)
+        clinic_visit = ClinicVisitFactory(appointment=appointment, household_member=clinic_eligibility.household_member)
         instances.append(clinic_visit)
-        clinic_subject_locator = ClinicLocatorFactory(clinic_visit = clinic_visit)
+        clinic_subject_locator = ClinicLocatorFactory(clinic_visit=clinic_visit)
         instances.append(clinic_subject_locator)
-        clinic_questionnaire = ClinicQuestionnaireFactory(clinic_visit = clinic_visit)
+        clinic_questionnaire = ClinicQuestionnaireFactory(clinic_visit=clinic_visit)
         instances.append(clinic_questionnaire)
+#         clinic_eligibility.has_identity = 'No'
+#         clinic_eligibility.save()
+#         self.assertFalse(clinic_eligibility.is_eligible)
 
         print 'INSTANCE: ' + str(instances)
         for obj in instances:
@@ -94,7 +104,7 @@ class NaturalKeyTests(TestCase):
         #pp = pprint.PrettyPrinter(indent=4)
         for obj in instances:
             print 'test serializing/deserializing {0}'.format(obj._meta.object_name)
-            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj)
+            outgoing_transaction = SerializeToTransaction().serialize(obj.__class__, obj, False, True, 'default')
             #print repr(FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx))
             for transaction in serializers.deserialize("json", FieldCryptor('aes', 'local').decrypt(outgoing_transaction.tx)):
                 self.assertEqual(transaction.object.pk, obj.pk)
