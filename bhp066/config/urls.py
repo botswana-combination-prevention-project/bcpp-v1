@@ -22,7 +22,6 @@ from edc.subject.visit_schedule.classes import site_visit_schedules
 from apps.bcpp.app_configuration.classes import bcpp_app_configuration
 
 
-admin.autodiscover()
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
 site_mappers.autodiscover()
@@ -34,6 +33,7 @@ site_lab_tracker.autodiscover()
 data_manager.prepare()
 site_sections.autodiscover()
 site_sections.update_section_lists()
+admin.autodiscover()
 
 for model in get_models():
     try:

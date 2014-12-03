@@ -56,7 +56,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB',
                                       NOT_REQUIRED, NOT_ADDITIONAL)
                 ),
-            'entries': (
+            'entries': [
                 #  order app_label model_name default_entry_status additional
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(20L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),
@@ -96,7 +96,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(380L, u'bcpp_subject', u'pima', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(390L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(400L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
-            )},
+            ]},
          'T1': {
             'title': 'T1 Annual Household Survey',
             'time_point': 0,
@@ -169,6 +169,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
     )
 
 if site_mappers.current_mapper().intervention is False:
+    for item in BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries'):
+        if item.model_name in ['pima', 'tbsymptoms']:
+            BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
+
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['pima', 'tbsymptoms']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
