@@ -2,11 +2,11 @@ import factory
 from datetime import datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
 from .clinic_visit_factory import ClinicVisitFactory
-from ...models import ClinicQuestionnaire
+from ...models import Questionnaire
 
 
 class ClinicQuestionnaireFactory(BaseUuidModelFactory):
-    FACTORY_FOR = ClinicQuestionnaire
+    FACTORY_FOR = Questionnaire
 
     clinic_visit = factory.SubFactory(ClinicVisitFactory)
     report_datetime = datetime.today()
