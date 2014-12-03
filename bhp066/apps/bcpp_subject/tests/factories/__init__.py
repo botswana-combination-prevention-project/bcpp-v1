@@ -49,3 +49,6 @@ from .hiv_health_care_costs_factory import HivHealthCareCostsFactory
 from .cancer_factory import CancerFactory
 from .hiv_test_review_factory import HivTestReviewFactory
 from .tb_symptoms_factory import TbSymptomsFactory
+from .call_list_factory import CallListFactory
+from .call_log_factory import CallLogFactory
+from .call_log_entry_factory import CallLogEntryFactory
