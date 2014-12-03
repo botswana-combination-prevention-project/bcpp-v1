@@ -20,12 +20,12 @@ for pattern in SubjectDashboard.get_urlpatterns():
             name=SubjectDashboard.dashboard_url_name)
         )
 
-# for pattern in ClinicDashboard.get_urlpatterns():
-#     urlpatterns.append(
-#         url(pattern,
-#             login_required(ClinicDashboard.as_view()),
-#             name=ClinicDashboard.dashboard_url_name)
-#         )
+for pattern in ClinicDashboard.get_urlpatterns():
+    urlpatterns.append(
+        url(pattern,
+            login_required(ClinicDashboard.as_view()),
+            name=ClinicDashboard.dashboard_url_name)
+        )
 
 urlpatterns.append(
     url(r'participation/',
