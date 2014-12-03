@@ -63,7 +63,7 @@ def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
     registered_subject = visit_instance.appointment.registered_subject
     baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__visit_code='T0')
-    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment)
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
     return SubjectStatusHelper(baseline_visit_instance).hiv_result == 'POS'
 
 
