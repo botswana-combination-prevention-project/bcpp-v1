@@ -199,22 +199,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=['hivresult'],
         runif=func_is_annual)
 
-    require_microtube_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['microtube'],
-        runif=func_is_annual)
-
-    require_microtube = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_today,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['microtube'],
-        runif=func_is_annual)
-
     verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
@@ -481,6 +465,24 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
+
+    require_microtube_annual = RequisitionRule(
+        logic=Logic(
+            predicate=func_todays_hiv_result_required,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],
+        runif=func_is_annual)
+
+    require_microtube = RequisitionRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_today,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],
+        runif=func_is_annual)
 
     class Meta:
         abstract = True
