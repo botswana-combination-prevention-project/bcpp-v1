@@ -22,10 +22,12 @@ def clinic_eligibility_on_post_save(sender, instance, raw, created, using, **kwa
             clinic_household_member = ClinicHouseholdMember.objects.get(pk=instance.household_member.pk)
             clinic_household_member.registered_subject.identity = instance.identity
             clinic_household_member.registered_subject.identity_type = instance.identity_type
+            clinic_household_member.registered_subject.additional_key = instance.additional_key
             clinic_household_member.registered_subject.save()
             if not instance.is_eligible:
                 try:
-                    clinic_enrollment_loss = ClinicEnrollmentLoss.objects.get(household_member=instance.household_member)
+                    clinic_enrollment_loss = ClinicEnrollmentLoss.objects.get(
+                        household_member=instance.household_member)
                     clinic_enrollment_loss.report_datetime = instance.report_datetime
                     clinic_enrollment_loss.reason = '; '.join(instance.loss_reason or [])
                     clinic_enrollment_loss.user_modified = instance.user_modified
@@ -54,7 +56,8 @@ def clinic_consent_on_post_save(sender, instance, raw, created, using, **kwargs)
         if isinstance(instance, ClinicConsent):
             clinic_eligibility = ClinicEligibility.objects.get(household_member=instance.household_member)
             clinic_eligibility.is_consented = True
-            clinic_eligibility.save(update_fields=['is_consented'])
+            clinic_eligibility.consent_datetime = instance.consent_datetime
+            clinic_eligibility.save(update_fields=['is_consented', 'consent_datetime'])
             ClinicRefusal.objects.filter(household_member=instance.household_member).delete()
 
 

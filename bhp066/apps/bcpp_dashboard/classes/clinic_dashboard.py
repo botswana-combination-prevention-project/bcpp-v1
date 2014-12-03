@@ -1,6 +1,7 @@
 from edc.subject.appointment.models import Appointment
 
 from apps.bcpp_clinic.models import ClinicConsent, ClinicVisit, ClinicSubjectLocator, ClinicEligibility
+from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_lab.models import ClinicRequisition, PackingList
 
 from .base_subject_dashboard import BaseSubjectDashboard
@@ -10,24 +11,30 @@ class ClinicDashboard(BaseSubjectDashboard):
 
     view = 'clinic_dashboard'
     dashboard_url_name = 'clinic_dashboard_url'
-    # dashboard_name = 'Clinic Participant Dashboard'
+    dashboard_name = 'Clinic Participant Dashboard'
+    urlpattern_view = 'apps.bcpp_dashboard.views'
+    template_name = 'clinic_dashboard.html'
+    urlpattern_options = dict(
+        BaseSubjectDashboard.urlpattern_options,
+        dashboard_model='clinic_eligibility',
+        dashboard_type='clinic')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
+        super(ClinicDashboard, self).__init__(**kwargs)
         self.subject_dashboard_url = 'clinic_dashboard_url'
+        self.membership_form_category = ['bcpp_clinic']
         self.dashboard_type_list = ['clinic']
-        kwargs.update({'dashboard_models': {'clinic_eligibility': ClinicEligibility},
-                       'membership_form_category': 'bcpp_clinic',
-                       })
-        self._registered_subject = None
-        self.form_category = 'bcpp_clinic'
-        self._requisition_model = ClinicRequisition
+        self.requisition_model = ClinicRequisition
         self.visit_model = ClinicVisit
         self._locator_model = ClinicSubjectLocator
-        self.extra_url_context = ""
-        super(ClinicDashboard, self).__init__(*args, **kwargs)
+        self.dashboard_models['clinic_eligibility'] = ClinicEligibility
+        self.dashboard_models['clinic_consent'] = ClinicConsent
+        self.dashboard_models['household_member'] = HouseholdMember
+        self.dashboard_models['visit'] = self._visit_model
+        # self.appointment_code = kwargs.get('visit_code')
 
-    def add_to_context(self):
-        super(BaseSubjectDashboard, self).add_to_context()
+    def get_context_data(self, **kwargs):
+        super(BaseSubjectDashboard, self).get_context_data()
         self.context.add(
             home='clinic',
             search_name='clinic',
@@ -46,20 +53,11 @@ class ClinicDashboard(BaseSubjectDashboard):
             self._consent = ClinicConsent.objects.get(subject_identifier=self.subject_identifier)
         return self._consent
 
-    def set_membership_form_category(self):
-        self._membership_form_category = self.membership_form_category
-        self._membership_form_category = 'bcpp_clinic'
-        return self._membership_form_category
-
     def subject_hiv_status(self):
         return 'N/A'
 
     def render_subject_hiv_status(self):
         return ''
-
-    @property
-    def requisition_model(self):
-        return ClinicRequisition
 
     @property
     def packing_list_model(self):
