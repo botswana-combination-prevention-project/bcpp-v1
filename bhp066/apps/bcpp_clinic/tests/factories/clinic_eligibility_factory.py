@@ -10,7 +10,6 @@ from ...models import ClinicEligibility
 class ClinicEligibilityFactory(BaseUuidModelFactory):
     FACTORY_FOR = ClinicEligibility
 
-    registration_datetime = datetime.today()
     report_datetime = datetime.today()
     identity_type = 'Omang'
     identity = factory.Sequence(lambda n: '88441987{0}'.format(n))
