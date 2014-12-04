@@ -1,27 +1,28 @@
 from django import forms
 
-from apps.bcpp_survey.models import Survey
-
 from ..models import SexualBehaviour
 
 from .base_subject_model_form import BaseSubjectModelForm
 
+from ..constants import ANNUAL
+
 
 class SexualBehaviourForm (BaseSubjectModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(SexualBehaviourForm, self).__init__(*args, **kwargs)
-        # customize for annual surveys
-        if Survey.objects.current_survey().survey_slug != Survey.objects.first_survey.survey_slug:
-            self.fields['last_year_partners'].label = (
+    optional_attrs = {ANNUAL: {
+        'label': {
+            'last_year_partners': (
                 'Since we spoke with you at our last visit, how many different people have you had '
                 'sex with? Please remember to include '
                 'casual and once-off partners (prostitutes and truck drivers) as well as long-term '
                 'partners (spouses, boyfriends/girlfriends)[If you can\'t recall the exact number, '
-                'please give a best guess]')
-            self.fields['more_sex'].label = (
+                'please give a best guess]'),
+            'more_sex': (
                 'Since we spoke with you at our last visit, did you have sex with '
-                'somebody living outside of the community? ')
+                'somebody living outside of the community? '),
+            }
+        }
+    }
 
     def clean(self):
         cleaned_data = super(SexualBehaviourForm, self).clean()
