@@ -198,7 +198,8 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
         max_length=36,
         verbose_name='-',
         editable=False,
-        default='0',
+        default=None,
+        null=True,
         help_text=('A uuid to be added to clinic members to bypass the '
                    'unique constraint for firstname, initials, household_structure. '
                    'Always null for non-clinic members.'),
@@ -208,23 +209,22 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
-        if update_fields == ['is_consented'] or update_fields == ['is_refused']:
+        if 'is_consented' in update_fields or 'is_refused' in update_fields:
             pass
         else:
-            self.household_member = self.clinic_household_member
-            self.household_member.first_name = self.first_name
-            self.household_member.initials = self.initials
-            self.household_member.age_in_years = self.age_in_years
-            self.household_member.gender = self.gender
-            self.check_for_consent(self.household_member)
             if not self.identity:
-                self.member_uuid = self.clinic_household_member.member_uuid or uuid4()
+                self.additional_key = uuid4()
             else:
-                self.member_uuid = '0'
-                self.check_for_known_identity(self.identity)
+                self.additional_key = None
+            self.check_for_consent(self.identity)
+            if self.identity:
+                if not self.id:
+                    self.check_for_known_identity(self.identity)
             self.age_in_years = relativedelta(self.report_datetime.date(), self.dob).years
             self.is_eligible, self.loss_reason = self.passes_enrollment_criteria()
             self.community = site_mappers.get_current_mapper().map_area
+            if not self.household_member:
+                self.household_member = self.clinic_household_member
         super(ClinicEligibility, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -254,62 +254,53 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
 
         ClinicHouseholdMember is a proxy model of HouseholdMember."""
         try:
-            pk = self.household_member.pk
-        except AttributeError:
-            pk = None
-        try:
-            clinic_household_member = ClinicHouseholdMember.objects.get(pk=pk)
-        except ClinicHouseholdMember.DoesNotExist:
+            clinic_household_member = ClinicHouseholdMember.objects.get(pk=self.household_member.pk)
+        except (ClinicHouseholdMember.DoesNotExist, AttributeError):
             household_structure = HouseholdStructure.objects.get(
                 household__plot=site_mappers.current_mapper().clinic_plot,
                 survey=Survey.objects.current_survey())
-            try:
-                clinic_household_member = ClinicHouseholdMember.objects.get(
-                    household_structure=household_structure,
-                    first_name=self.first_name,
-                    initials=self.initials,
-                    additional_key=self.additional_key,
-                    )
-            except ClinicHouseholdMember.DoesNotExist:
-                clinic_household_member = ClinicHouseholdMember.objects.create(
-                    household_structure=household_structure,
-                    first_name=self.first_name,
-                    initials=self.initials,
-                    age_in_years=self.age_in_years,
-                    gender=self.gender,
-                    present_today='N/A',
-                    inability_to_participate=self.inability_to_participate,
-                    study_resident=self.part_time_resident,
-                    member_status=CLINIC_RBD,
-                    is_consented=False,
-                    relation='UNKNOWN',
-                    eligible_member=True,
-                    eligible_subject=True,
-                    )
-        self.household_member = clinic_household_member
-        return clinic_household_member
+            clinic_household_member = ClinicHouseholdMember.objects.create(
+                household_structure=household_structure,
+                first_name=self.first_name,
+                initials=self.initials,
+                age_in_years=self.age_in_years,
+                gender=self.gender,
+                present_today='N/A',
+                inability_to_participate=self.inability_to_participate,
+                study_resident=self.part_time_resident,
+                member_status=CLINIC_RBD,
+                is_consented=False,
+                relation='UNKNOWN',
+                eligible_member=True,
+                eligible_subject=True,
+                additional_key=self.additional_key,
+                )
+        if not self.household_member:
+            # only set if self.household_member was None
+            self.household_member = clinic_household_member
+        return self.household_member
 
     @classmethod
-    def check_for_consent(cls, household_member, identity, exception_cls=None):
-        """Confirms subject has not previously consented with this personal identifier."""
+    def check_for_consent(cls, identity, exception_cls=None):
+        """Confirms subject with this identity has not previously consented."""
         exception_cls = exception_cls or ValidationError
         clinic_consent = None
         try:
-            clinic_consent = ClinicConsent.objects.get(household_member=household_member)
-            raise exception_cls('Household member {} was consented as {} on {}. '
+            clinic_consent = ClinicConsent.objects.get(identity=identity)
+            raise exception_cls('Subject was consented as {} on {}. '
                                 'Eligibility checklist may not be edited.'.format(
-                                    household_member,
                                     clinic_consent.subject_identifier,
                                     clinic_consent.consent_datetime))
         except ClinicConsent.DoesNotExist:
             pass
         try:
             subject_consent = SubjectConsent.objects.get(identity=identity)
-            raise exception_cls('A Household member was consented during BHS with study identifier {} on {}. '
-                                'Eligibility checklist may not be completed for personal identifier {}.'.format(
-                                    subject_consent.subject_identifier,
-                                    subject_consent.modified,
-                                    subject_consent.identity))
+            raise exception_cls(
+                'A Household member was consented during BHS with study identifier {} on {}. '
+                'Eligibility checklist may not be completed for personal identifier {}.'.format(
+                    subject_consent.subject_identifier,
+                    subject_consent.modified,
+                    subject_consent.identity))
         except SubjectConsent.DoesNotExist:
             pass
         return None
@@ -337,7 +328,7 @@ class ClinicEligibility (BaseDispatchSyncUuidModel):
             loss_reason.append('Illiterate with no literate witness.')
         if self.literacy == 'Unknown':
             loss_reason.append('Literacy unknown.')
-        if self.household_member.is_minor and self.guardian != 'Yes':
+        if self.age_in_years < 18 and self.guardian != 'Yes':
             loss_reason.append('Minor without guardian available.')
         if self.inability_to_participate != 'N/A':
             loss_reason.append('Mental Incapacity/Deaf/Mute/Too sick.')
