@@ -27,13 +27,14 @@ class HospitalAdmission (BaseScheduledVisitModel):
         null=True,
         blank=False,
         choices=CARE_REASON,
+        default='None',
         help_text=" ",
         )
     facility_hospitalized = models.CharField(
         verbose_name=_("For this most recent hospitalization, where were you hospitalized? "),
         max_length=30,
         null=True,
-        blank=False,
+        blank=True,
         help_text=" ",
         )
     nights_hospitalized = models.IntegerField(
@@ -41,7 +42,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
                        " spend in the hospital? "),
         max_length=2,
         null=True,
-        blank=False,
+        blank=True,
         help_text=" ",
         )
     healthcare_expense = models.DecimalField(
@@ -50,7 +51,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
         max_digits=10,
         decimal_places=2,
         null=True,
-        blank=False,
+        blank=True,
         help_text="Pula",
         )
     travel_hours = models.CharField(
@@ -59,6 +60,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
         choices=TRAVEL_HOURS,
         null=True,
         blank=False,
+        default='None',
         help_text=" ",
         )
     total_expenses = models.DecimalField(
@@ -76,7 +78,7 @@ class HospitalAdmission (BaseScheduledVisitModel):
         max_length=17,
         choices=YES_NO_REFUSED,
         null=True,
-        blank=False,
+        blank=True,
         help_text=" ",
         )
 
