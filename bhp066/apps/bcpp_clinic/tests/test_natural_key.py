@@ -13,7 +13,7 @@ from edc.map.classes import Mapper, site_mappers
 
 from apps.bcpp_clinic.tests.factories import ClinicEligibilityFactory, ClinicEnrollmentLossFactory
 from apps.bcpp_clinic.tests.factories import (ClinicConsentFactory, ClinicVisitFactory,
-                                             ClinicLocatorFactory, ClinicQuestionnaireFactory)
+                                             ClinicLocatorFactory, QuestionnaireFactory)
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from apps.bcpp_clinic.models import ClinicEnrollmentLoss
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
@@ -89,8 +89,8 @@ class TestNaturalKey(TestCase):
         instances.append(clinic_visit)
         clinic_subject_locator = ClinicLocatorFactory(clinic_visit=clinic_visit)
         instances.append(clinic_subject_locator)
-        clinic_questionnaire = ClinicQuestionnaireFactory(clinic_visit=clinic_visit)
-        instances.append(clinic_questionnaire)
+        questionnaire = QuestionnaireFactory(clinic_visit=clinic_visit)
+        instances.append(questionnaire)
 #         clinic_eligibility.has_identity = 'No'
 #         clinic_eligibility.save()
 #         self.assertFalse(clinic_eligibility.is_eligible)

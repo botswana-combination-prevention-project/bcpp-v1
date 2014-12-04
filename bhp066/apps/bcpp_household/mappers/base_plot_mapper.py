@@ -13,6 +13,9 @@ from ..models import Plot
 
 class BasePlotMapper(Mapper):
 
+    map_code = None
+    mape_area = None
+
     item_model = Plot
     item_model_cls = Plot
     item_label = 'Plot'
@@ -54,7 +57,6 @@ class BasePlotMapper(Mapper):
             self.intervention_code = 'CPC' if self.intervention else 'ECC'
         if settings.CURRENT_COMMUNITY == self.map_area:
             self.active = True
-        self.verify_survey_dates()
 
     def __repr__(self):
         return '{}(\'{}\')'.format(self.__class__.__name__, self.map_area)
@@ -139,7 +141,7 @@ class BasePlotMapper(Mapper):
                 status='bcpp_clinic',
                 community=self.map_area,
                 action='confirmed',
-                description='BCPP Community Clinic')
+                description=('{} clinic').format(self.map_area))
         return plot
 
     @property
