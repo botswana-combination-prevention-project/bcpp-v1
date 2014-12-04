@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
 from ..models import (HospitalAdmission, HivHealthCareCosts,
                       HivMedicalCare, HeartAttack, Cancer, Sti,
                       Tubercolosis, SubstanceUse)
