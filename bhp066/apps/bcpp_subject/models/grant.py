@@ -18,11 +18,15 @@ class Grant(BaseScheduledInlineModel):
     grant_number = models.IntegerField(
         verbose_name=_("How many of each type of grant do you receive?"),
         max_length=2,
+        null=True,
+        blank=True,
         )
     grant_type = models.CharField(
         verbose_name=_("Grant name"),
         choices=GRANT_TYPE,
         max_length=50,
+        null=True,
+        blank=True,
         )
     other_grant = OtherCharField()
 
