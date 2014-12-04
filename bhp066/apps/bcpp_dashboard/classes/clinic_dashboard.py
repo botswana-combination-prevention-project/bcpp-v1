@@ -14,10 +14,14 @@ class ClinicDashboard(BaseSubjectDashboard):
     dashboard_name = 'Clinic Participant Dashboard'
     urlpattern_view = 'apps.bcpp_dashboard.views'
     template_name = 'clinic_dashboard.html'
+    urlpatterns = [
+        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'
+        ] + BaseSubjectDashboard.urlpatterns
     urlpattern_options = dict(
         BaseSubjectDashboard.urlpattern_options,
-        dashboard_model='clinic_eligibility',
-        dashboard_type='clinic')
+        dashboard_model=BaseSubjectDashboard.urlpattern_options['dashboard_model'] + '|clinic_eligibility',
+        dashboard_type='clinic',
+        appointment_code='T0|T1|T2|T3|T4')
 
     def __init__(self, **kwargs):
         super(ClinicDashboard, self).__init__(**kwargs)
@@ -34,8 +38,8 @@ class ClinicDashboard(BaseSubjectDashboard):
         # self.appointment_code = kwargs.get('visit_code')
 
     def get_context_data(self, **kwargs):
-        super(BaseSubjectDashboard, self).get_context_data()
-        self.context.add(
+        super(BaseSubjectDashboard, self).get_context_data(**kwargs)
+        self.context.update(
             home='clinic',
             search_name='clinic',
             subject_dashboard_url=self.subject_dashboard_url,
@@ -44,6 +48,7 @@ class ClinicDashboard(BaseSubjectDashboard):
             clinic_consent=self.consent,
             household_member=self.household_member,
             )
+        return self.context
 
     @property
     def consent(self):
@@ -68,19 +73,19 @@ class ClinicDashboard(BaseSubjectDashboard):
 
     @property
     def household_member(self):
-        return self._household_member
-
-    @household_member.setter
-    def household_member(self, (dashboard_model_name, dashboard_id)):
-        try:
-            self._household_member = ClinicEligibility.objects.get(pk=dashboard_id).household_member
-        except ClinicEligibility.DoesNotExist:
+        if not self._household_member:
             try:
-                self._household_member = ClinicVisit.objects.get(pk=dashboard_id).household_member
-            except ClinicVisit.DoesNotExist:
+                self._household_member = ClinicEligibility.objects.get(pk=self.dashboard_id).household_member
+            except ClinicEligibility.DoesNotExist:
                 try:
-                    appointment = Appointment.objects.get(pk=dashboard_id)
-                    self._household_member = ClinicVisit.objects.get(appointment=appointment).household_member
-                except Appointment.DoesNotExist:
-                    raise TypeError('Attribute _household_member may not be None. Using dashboard_model={0}, '
-                                    'dashboard_id={1}'.format(dashboard_model_name, dashboard_id))
+                    self._household_member = HouseholdMember.objects.get(pk=self.dashboard_id)
+                except HouseholdMember.DoesNotExist:
+                    try:
+                        self._household_member = self.visit_model.objects.get(pk=self.dashboard_id).household_member
+                    except self.visit_model.DoesNotExist:
+                        try:
+                            self._household_member = self.visit_model.objects.get(
+                                appointment=self.appointment).household_member
+                        except self.visit_model.DoesNotExist:
+                            pass
+        return self._household_member

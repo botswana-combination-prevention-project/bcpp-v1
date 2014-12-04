@@ -2,6 +2,7 @@ from django import forms
 
 from edc.base.form.forms import BaseModelForm
 
+
 from ..models import ClinicEligibility
 
 
@@ -24,8 +25,9 @@ class ClinicEligibilityForm(BaseModelForm):
         if cleaned_data.get('identity'):
             if not self.instance:
                 self._meta.model.check_for_known_identity(cleaned_data.get('identity'), forms.ValidationError)
-        self._meta.model.check_for_consent(
-            cleaned_data.get('household_member'), cleaned_data.get('identity'), forms.ValidationError)
+
+        self._meta.model.check_for_consent(cleaned_data.get('identity'), forms.ValidationError)
+
         return cleaned_data
 
     class Meta:
