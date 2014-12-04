@@ -12,13 +12,13 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 
 
 def func_is_baseline(visit_instance):
-    if visit_instance.appointment.visit_definition.visit_code == 'T0':
+    if visit_instance.appointment.visit_definition.code == 'T0':
         return True
     return False
 
 
 def func_is_annual(visit_instance):
-    if visit_instance.appointment.visit_definition.visit_code != 'T0':
+    if visit_instance.appointment.visit_definition.code != 'T0':
         return True
     return False
 
@@ -62,7 +62,7 @@ def func_hiv_positive_today(visit_instance):
 def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
     registered_subject = visit_instance.appointment.registered_subject
-    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__visit_code='T0')
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
     baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
     return SubjectStatusHelper(baseline_visit_instance).hiv_result == 'POS'
 
