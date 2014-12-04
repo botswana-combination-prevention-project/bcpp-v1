@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from edc.core.crypto_fields.utils import mask_encrypted
 from edc.map.classes import site_mappers
 
@@ -16,15 +18,19 @@ class ClinicHouseholdMember(HouseholdMember):
         if update_fields == ['member_status', 'enrollment_loss_completed']:
             pass
         else:
+            # add to the constraint of first_name, initials, household_structure
+            # to accept duplicate first_name, initials, household_structure
+            # in the clinic. See unique_together.
             self.eligible_member = self.is_eligible_member
             self.member_status = CLINIC_RBD
             self.absent = False
             self.undecided = False
-            mapper_instance = site_mappers.get_current_mapper()()
-            clinic_plot = mapper_instance.clinic_plot
-            self.household_structure = HouseholdStructure.objects.get(
-                household__plot__plot_identifier=clinic_plot.plot_identifier,
-                survey__survey_slug=mapper_instance.current_survey_slug)
+            #if not self.id:
+            #    mapper_instance = site_mappers.current_mapper()
+            #    clinic_plot = mapper_instance.clinic_plot
+            #    self.household_structure = HouseholdStructure.objects.get(
+            #        household__plot__plot_identifier=clinic_plot.plot_identifier,
+            #        survey__survey_slug=mapper_instance.current_survey_slug)
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -34,13 +40,6 @@ class ClinicHouseholdMember(HouseholdMember):
             self.age_in_years,
             self.gender,
             'non-BHS')
-
-    def natural_key(self):
-        if not self.registered_subject:
-            raise AttributeError("household_member.registered_subject cannot "
-                                 "be None for id='\{0}\'".format(self.id))
-        return self.registered_subject.natural_key()
-    natural_key.dependencies = ['registration.registeredsubject']
 
     class Meta:
         proxy = True
