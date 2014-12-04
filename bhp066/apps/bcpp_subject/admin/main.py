@@ -28,6 +28,9 @@ class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
         "travel_hours": admin.VERTICAL,
         "hospitalization_costs": admin.VERTICAL,
         }
+    instructions = [
+        _("<H5>Read to Participant</H5> Read to Participant: For the next set of questions please "
+          "think about times you were admitted to a hospital in the last 3 months")]
 admin.site.register(HospitalAdmission, HospitalAdmissionAdmin)
 
 

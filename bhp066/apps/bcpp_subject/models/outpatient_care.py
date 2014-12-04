@@ -78,7 +78,7 @@ class OutpatientCare (BaseScheduledVisitModel):
     outpatient_expense = models.DecimalField(
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have to pay"
                        " to the health care provider, including any medicines?"),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
         help_text="Pula",
         )
@@ -93,7 +93,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have"
                        " to pay for transport, food and accommodation? [include cost for fuel if using"
                        " a private car] "),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
         help_text="Pula",
         )
