@@ -1,4 +1,6 @@
 FULL = 'FULL'
 DECLINED = 'Declined'
 NOT_PERFORMED = 'Not performed'
-BASELINE = 'T0'
+BASELINE_CODES = ['T0']
+ANNUAL_CODES = ['T1', 'T2', 'T3']
+ANNUAL = 'annual'
