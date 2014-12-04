@@ -4,6 +4,8 @@ from django.db import models
 
 from edc.device.sync.models import BaseSyncUuidModel
 
+from ..managers import DailyLogManager
+
 
 class DailyLog(BaseSyncUuidModel):
     """A model completed by the user daily to help measure the daily flow
@@ -52,6 +54,11 @@ class DailyLog(BaseSyncUuidModel):
 
     def __unicode__(self):
         return self.report_date.strftime('%Y-%m-%d')
+
+    def natural_key(self):
+        return (self.report_date, )
+
+    objects = DailyLogManager()
 
     class Meta:
         app_label = 'bcpp_clinic'
