@@ -38,3 +38,5 @@ from .tb_symptoms_form import TbSymptomsForm
 from .rbd_demographics_form import RbdDemographicsForm
 from .viral_load_result_form import ViralLoadResultForm
 from .correct_consent_form import CorrectConsentForm
+from .labour_market_wages_form import LabourMarketWagesForm
+from .hospital_admission_form import HospitalAdmissionForm

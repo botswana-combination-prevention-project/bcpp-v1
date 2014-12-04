@@ -14,6 +14,9 @@ def update_call_list(survey_slug, label, verbose=False):
     """Adds information from SubjectConsent instances from the specified survey to the
     CallList model for the current survey.
 
+    If there is no SubjectLocator or subject_locator.may_follow='No', the subject is not added
+    to the call list.
+
     If needed, the household member for the next survey will be created.
     See (HouseholdStructure manager method add_household_members_from_survey).
     """
@@ -96,6 +99,7 @@ def update_call_list(survey_slug, label, verbose=False):
             call_list.user_created = subject_consent.user_created
             call_list.save()
         except SubjectLocator.DoesNotExist:
-            pass
+            print('Not adding {} to call list. No contact information or may not '
+                  'follow (SubjectLocator)'.format(subject_consent))
         except HouseholdStructureNotEnrolled as e:
             print str(e)
