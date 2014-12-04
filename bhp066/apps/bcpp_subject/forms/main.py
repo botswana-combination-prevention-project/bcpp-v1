@@ -1,6 +1,6 @@
 from ..models import (SubjectDeath, QualityOfLife,
                                  ResourceUtilization, OutpatientCare, HospitalAdmission,
-                                 HivHealthCareCosts, LabourMarketWages, Grant,
+                                 HivHealthCareCosts, Grant,
                                  SubstanceUse)
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -39,12 +39,6 @@ class HivHealthCareCostsForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivHealthCareCosts
-
-
-class LabourMarketWagesForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = LabourMarketWages
 
 
 class GrantForm (BaseSubjectModelForm):
