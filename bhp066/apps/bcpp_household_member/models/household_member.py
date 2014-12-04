@@ -227,7 +227,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         max_length=36,
         verbose_name='-',
         editable=False,
-        default='0',
+        default=None,
+        null=True,
         help_text=(
             'A uuid to be added to bypass the '
             'unique constraint for firstname, initials, household_structure. '
@@ -497,7 +498,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                     registration_identifier=self.internal_identifier,
                     registration_datetime=self.created,
                     user_created=self.user_created,
-                    registration_status='member',)
+                    registration_status='member',
+                    additional_key=self.additional_key)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
             self.save(using=using)
