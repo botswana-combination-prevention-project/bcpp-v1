@@ -21,16 +21,16 @@ class ClinicHouseholdMember(HouseholdMember):
             # add to the constraint of first_name, initials, household_structure
             # to accept duplicate first_name, initials, household_structure
             # in the clinic. See unique_together.
-            self.additional_key = uuid4()
             self.eligible_member = self.is_eligible_member
             self.member_status = CLINIC_RBD
             self.absent = False
             self.undecided = False
-            mapper_instance = site_mappers.current_mapper()
-            clinic_plot = mapper_instance.clinic_plot
-            self.household_structure = HouseholdStructure.objects.get(
-                household__plot__plot_identifier=clinic_plot.plot_identifier,
-                survey__survey_slug=mapper_instance.current_survey_slug)
+            #if not self.id:
+            #    mapper_instance = site_mappers.current_mapper()
+            #    clinic_plot = mapper_instance.clinic_plot
+            #    self.household_structure = HouseholdStructure.objects.get(
+            #        household__plot__plot_identifier=clinic_plot.plot_identifier,
+            #        survey__survey_slug=mapper_instance.current_survey_slug)
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def __unicode__(self):

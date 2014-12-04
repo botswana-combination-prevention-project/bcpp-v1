@@ -1,7 +1,9 @@
 import factory
+
 from datetime import datetime, date
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from edc.subject.registration.tests.factories import RegisteredSubjectFactory
+
 from ...models import ClinicEligibility
 
 
@@ -9,7 +11,6 @@ class ClinicEligibilityFactory(BaseUuidModelFactory):
     FACTORY_FOR = ClinicEligibility
 
     registration_datetime = datetime.today()
-    #registered_subject = factory.SubFactory(RegisteredSubjectFactory)
     first_name = factory.Sequence(lambda n: 'name{0}'.format(n))
     dob = date(date.today().year - 20, 1, 1)
     gender = 'M'
