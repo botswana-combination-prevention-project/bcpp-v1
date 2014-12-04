@@ -57,7 +57,6 @@ class BasePlotMapper(Mapper):
             self.intervention_code = 'CPC' if self.intervention else 'ECC'
         if settings.CURRENT_COMMUNITY == self.map_area:
             self.active = True
-        self.verify_survey_dates()
 
     def __repr__(self):
         return '{}(\'{}\')'.format(self.__class__.__name__, self.map_area)

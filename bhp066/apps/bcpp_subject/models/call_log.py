@@ -14,9 +14,9 @@ from edc.device.sync.models import BaseSyncUuidModel
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models.survey import Survey
 
-from ..validators import date_in_survey
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
 from ..managers import CallLogEntryManager, CallLogManager
+from ..validators import date_in_survey
 
 from .subject_locator import SubjectLocator
 
