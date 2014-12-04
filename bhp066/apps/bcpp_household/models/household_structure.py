@@ -93,7 +93,7 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{} {}'.format(unicode(self.household), self.survey.survey_name)
+        return '{} {}'.format(unicode(self.household), self.survey.survey_abbrev)
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
