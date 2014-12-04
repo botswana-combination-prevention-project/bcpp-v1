@@ -133,7 +133,7 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     hospitalized = ScheduledDataRule(
         logic=Logic(
-            predicate=(('hospitalized', 'equals', 0), ('hospitalized', 'equals', None)),
+            predicate=('hospitalized', 'equals', 0),
             consequence='not_required',
             alternative='new'),
         target_model=['hospitaladmission'])
