@@ -10,6 +10,8 @@ from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
 
+from ..managers import ClinicModelManager
+
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 from .clinic_visit import ClinicVisit
 
@@ -83,6 +85,8 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
 
     entry_meta_data_manager = EntryMetaDataManager(ClinicVisit)
 
+    objects = ClinicModelManager()
+
     def save(self, *args, **kwargs):
         if self.clinic_visit:
             if not self.registered_subject:
@@ -90,7 +94,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         super(ClinicSubjectLocator, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return self.subject_visit.natural_key()
+        return self.clinic_visit.natural_key()
 
     def get_visit(self):
         return self.clinic_visit

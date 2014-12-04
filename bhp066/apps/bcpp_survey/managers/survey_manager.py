@@ -2,6 +2,7 @@ from datetime import date
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned, ImproperlyConfigured
 from django.conf import settings
+from django.db.utils import OperationalError
 
 
 class SurveyManager(models.Manager):
@@ -61,9 +62,6 @@ class SurveyManager(models.Manager):
                         datetime_end__gte=report_date,
                         survey_slug=survey_slug)
             except MultipleObjectsReturned:
-                from ..models import Survey
-                sy = Survey.objects.all()
-                print '++++++++++++++++++'+str(sy)
                 raise ImproperlyConfigured('Date {} falls within more than one Survey. Start and end dates'
                                            'may not overlap between Surveys. ({}). See app configuration.'.format(
                                                report_date, community))
@@ -77,4 +75,7 @@ class SurveyManager(models.Manager):
                         community,
                         )
                     )
+            except OperationalError:
+                print 'Call app_configuration first.'
+                raise
         return survey

@@ -8,6 +8,8 @@ from edc.map.classes import site_mappers
 
 from apps.bcpp_household_member.models import HouseholdMember
 
+from ..managers import BaseClinicHouseholdMemberManager
+
 
 class ClinicEnrollmentLoss(BaseDispatchSyncUuidModel):
     """A model completed by the system triggered by an ineligible potential participant.
@@ -33,12 +35,18 @@ class ClinicEnrollmentLoss(BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
+    objects = BaseClinicHouseholdMemberManager()
+
     def save(self, *args, **kwargs):
         self.community = site_mappers.get_current_mapper().map_area
         super(ClinicEnrollmentLoss, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return unicode(self.household_member)
+
+    def natural_key(self):
+        return self.household_member.natural_key()
+    natural_key.dependencies = ['bcpp_household_member.householdmember', ]
 
     def loss_reason(self):
         return '; '.join(self.reason or [])
