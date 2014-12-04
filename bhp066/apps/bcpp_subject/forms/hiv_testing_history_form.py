@@ -2,8 +2,7 @@ from django import forms
 
 from edc.constants import NOT_APPLICABLE
 
-from apps.bcpp_survey.models import Survey
-
+from ..constants import ANNUAL
 from ..models import HivTestingHistory
 
 from .base_subject_model_form import BaseSubjectModelForm
@@ -11,12 +10,13 @@ from .base_subject_model_form import BaseSubjectModelForm
 
 class HivTestingHistoryForm (BaseSubjectModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(HivTestingHistoryForm, self).__init__(*args, **kwargs)
-        # customize for annual surveys
-        if Survey.objects.current_survey().survey_slug != Survey.objects.first_survey.survey_slug:
-            self.fields['has_tested'].label = (
-                'Since we last visited you have you been tested for HIV?')
+    optional_attrs = {ANNUAL: {
+        'label': {
+            'has_tested': (
+                'Since we last visited you have you been tested for HIV?'),
+            }
+        }
+    }
 
     def clean(self):
 
