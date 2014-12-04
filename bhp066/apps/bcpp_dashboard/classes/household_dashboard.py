@@ -150,7 +150,10 @@ class HouseholdDashboard(Dashboard):
     def eligible_hoh(self):
         """Returns an instance of HouseholdHeadEligibility if there
         is a verified eligible Head of Household."""
-        return self.household_head_eligibility
+        if self.survey != 'BCPP Year 2':
+            return False
+        else:
+            return self.household_head_eligibility
 
     @property
     def household_head_eligibility(self):
