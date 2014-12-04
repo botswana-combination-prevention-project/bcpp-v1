@@ -24,37 +24,47 @@ class HospitalAdmission (BaseScheduledVisitModel):
     reason_hospitalized = models.CharField(
         verbose_name=_("What was the primary reason for the most recent hospitalization in the past 3 months?"),
         max_length=95,
+        null=True,
+        blank=False,
         choices=CARE_REASON,
         help_text=" ",
         )
     facility_hospitalized = models.CharField(
         verbose_name=_("For this most recent hospitalization, where were you hospitalized? "),
         max_length=30,
+        null=True,
+        blank=False,
         help_text=" ",
         )
     nights_hospitalized = models.IntegerField(
         verbose_name=_("For this most recent hospitization, how many nights total did you"
                        " spend in the hospital? "),
         max_length=2,
+        null=True,
+        blank=False,
         help_text=" ",
         )
     healthcare_expense = models.DecimalField(
         verbose_name=_("How much did you have to pay to the healthcare provider"
                        " for the entire stay, including any medicines? "),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
+        null=True,
+        blank=False,
         help_text="Pula",
         )
     travel_hours = models.CharField(
         verbose_name=_("For this most recent hospitalization, how long did it take you to get to the hospital? "),
         max_length=20,
         choices=TRAVEL_HOURS,
+        null=True,
+        blank=False,
         help_text=" ",
         )
     total_expenses = models.DecimalField(
         verbose_name=_("For this most recent hospitalization, how much did you have to pay for transport,"
                        " food and accommodation, including fuel if you used your own car? "),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
@@ -65,6 +75,8 @@ class HospitalAdmission (BaseScheduledVisitModel):
                        " anyone else, such as your medical aid or employer? "),
         max_length=17,
         choices=YES_NO_REFUSED,
+        null=True,
+        blank=False,
         help_text=" ",
         )
 
