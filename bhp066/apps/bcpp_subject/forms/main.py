@@ -1,5 +1,5 @@
 from ..models import (SubjectDeath, QualityOfLife,
-                                 ResourceUtilization, OutpatientCare, HospitalAdmission,
+                                 ResourceUtilization, OutpatientCare,
                                  HivHealthCareCosts, Grant,
                                  SubstanceUse)
 from .base_subject_model_form import BaseSubjectModelForm
@@ -27,12 +27,6 @@ class OutpatientCareForm (BaseSubjectModelForm):
 
     class Meta:
         model = OutpatientCare
-
-
-class HospitalAdmissionForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = HospitalAdmission
 
 
 class HivHealthCareCostsForm (BaseSubjectModelForm):
