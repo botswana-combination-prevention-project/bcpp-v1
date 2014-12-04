@@ -16,22 +16,22 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
         self.validate_cleaned_data('hospitalization_costs', cleaned_data)
 
         # if greater than zero
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('reason_hospitalized'):
+        if cleaned_data.get('admission_nights', None) > 0 and not cleaned_data.get('reason_hospitalized', None):
             raise forms.ValidationError(
                 'If admission nights is greater than zero, what was the reason for hospitalization?')
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('facility_hospitalized'):
+        if cleaned_data.get('admission_nights', None) > 0 and not cleaned_data.get('facility_hospitalized', None):
             raise forms.ValidationError(
                 'If admission nights is greater than zero, where was the participant hospitalized?')
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('nights_hospitalized'):
             raise forms.ValidationError(
                 'For how many nights in total was the participant hospitalized?')
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('healthcare_expense'):
+        if cleaned_data.get('admission_nights', None) > 0 and not cleaned_data.get('healthcare_expense', None):
             raise forms.ValidationError(
                 'How much was paid for the entire stay including medicines?')
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('travel_hours'):
+        if cleaned_data.get('admission_nights', None) > 0 and not cleaned_data.get('travel_hours', None):
             raise forms.ValidationError(
                 'How many hours did it take you to get to the hospital?')
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('hospitalization_costs'):
+        if cleaned_data.get('admission_nights', None) > 0 and not cleaned_data.get('hospitalization_costs', None):
             raise forms.ValidationError(
                 'Did anyone else besides you cover the hospitalization costs?')
 
