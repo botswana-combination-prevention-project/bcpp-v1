@@ -41,12 +41,5 @@ class ClinicHouseholdMember(HouseholdMember):
             self.gender,
             'non-BHS')
 
-    def natural_key(self):
-        if not self.registered_subject:
-            raise AttributeError("household_member.registered_subject cannot "
-                                 "be None for id='\{0}\'".format(self.id))
-        return self.registered_subject.natural_key()
-    natural_key.dependencies = ['registration.registeredsubject']
-
     class Meta:
         proxy = True
