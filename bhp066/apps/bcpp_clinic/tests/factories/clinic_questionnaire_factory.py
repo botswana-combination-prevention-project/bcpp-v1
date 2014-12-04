@@ -5,7 +5,7 @@ from .clinic_visit_factory import ClinicVisitFactory
 from ...models import Questionnaire
 
 
-class ClinicQuestionnaireFactory(BaseUuidModelFactory):
+class QuestionnaireFactory(BaseUuidModelFactory):
     FACTORY_FOR = Questionnaire
 
     clinic_visit = factory.SubFactory(ClinicVisitFactory)
