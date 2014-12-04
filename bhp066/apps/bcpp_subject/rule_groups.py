@@ -126,14 +126,14 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     out_patient = ScheduledDataRule(
         logic=Logic(
-            predicate=(('out_patient', 'equals', 'no'), ('out_patient', 'equals', 'REF', 'or')),
+            predicate=(('out_patient', 'equals', 'no'), ('out_patient', 'equals', 'Refuse', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['outpatientcare'])
 
     hospitalized = ScheduledDataRule(
         logic=Logic(
-            predicate=(('hospitalized', 'equals', ''), ('hospitalized', 'equals', 0, 'or')),
+            predicate=(('hospitalized', 'equals', 0), ('hospitalized', 'equals', None)),
             consequence='not_required',
             alternative='new'),
         target_model=['hospitaladmission'])
