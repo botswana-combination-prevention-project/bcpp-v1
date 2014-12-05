@@ -8,9 +8,7 @@ from ..managers import ReplacementHistoryManager
 
 
 class ReplacementHistory(BaseDispatchSyncUuidModel):
-    """A model that records the history of plots and households that have
-    been selected for replacement and replaced by a plot from the pool
-    of available plots (5%)."""
+    """A system model that tracks replaced, and replaced by, plots and households."""
     replacing_item = models.CharField(
         verbose_name='Replaced by',
         max_length=25,

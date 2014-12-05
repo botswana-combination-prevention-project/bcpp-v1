@@ -2,25 +2,3 @@
 {% load admin_urls %}
 {% load url from future %}
 {% load map_tags %}
-
-{% block search_tile %}
-{{ gps_search_form.errors }}
-<div id="gps_search_tile">
-<form class="gps_search_form" action="{% url 'section_search_gps_url' section_name 'gps' %}" method="post">
-    {% csrf_token %}
-    {# Include the hidden fields #}
-    {% for hidden in form.hidden_fields %}
-    {{ hidden }}
-    {% endfor %}
-    {# Include the visible fields #}
-    {% for field in gps_search_form.visible_fields %}
-            {{ field.errors }}
-            {{ field.label_tag }} {{ field }}
-    {% endfor %}
-    <input type="submit" value="Search by GPS">
-</form>
-</div>
-
-    {{ block.super }}
-
-{% endblock %}

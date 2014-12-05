@@ -1,16 +1,23 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+
+from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
 from ...utils import update_replaceables
 
 
 class Command(BaseCommand):
 
-    APP_NAME = 0
-    MODEL_NAME = 1
-    args = ''
     help = 'List the online and replaceable status of a producer'
 
     def handle(self, *args, **options):
-        print('Updating replaceables ...')
-        update_replaceables()
-        print('Done.')
+        try:
+            already_running(update_replaceables)
+            result = update_replaceables.delay()
+            print(('Task has been sent to the queue. Result: {0.result!r} ID: {0.id})'
+                   ).format(result))
+        except CeleryTaskAlreadyRunning as e_message:
+            raise CommandError(str(e_message))
+        except CeleryNotRunning as e_message:
+            raise CommandError(str(e_message))
+        except Exception as e_message:
+            raise CommandError('Unable to run task. Celery got {}.'.format(str(e_message)))

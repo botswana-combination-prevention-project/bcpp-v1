@@ -25,7 +25,8 @@ from .household_member import HouseholdMember
 
 
 class EnrollmentChecklist(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user that captures and confirms BHS enrollment eligibility
+    criteria."""
     household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(
@@ -137,6 +138,12 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         editable=False,
         help_text='(stored for the loss form)')
 
+    auto_filled = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text=('Was autofilled on data conversion')
+        )
+
     objects = EnrollmentChecklistManager()
 
     history = AuditTrail()
@@ -185,7 +192,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         """Compares shared values on household_member form and returns True if all match."""
         error_msg = None
         exception_cls = exception_cls or ValidationError
-        age_in_years = relativedelta(date.today(), enrollment_checklist.dob).years
+        age_in_years = relativedelta(household_member.created.date() or date.today(), enrollment_checklist.dob).years
         if age_in_years != household_member.age_in_years:
             error_msg = ('Enrollment Checklist Age does not match Household Member age. '
                          'Got {0} <> {1}').format(age_in_years, household_member.age_in_years)

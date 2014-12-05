@@ -1,6 +1,12 @@
+from dateutil.relativedelta import MO, TU, WE, TH, FR
+from datetime import date
+
 from edc.map.classes import site_mappers
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, RANAKA_LANDMARKS
+
+from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
 class RanakaPlotMapper(BasePlotMapper):
@@ -18,9 +24,33 @@ class RanakaPlotMapper(BasePlotMapper):
     gps_center_lon = 25.463033
     radius = 4
     location_boundary = ()
-    """([-25.011679818754537, 25.756838464932116], [-25.02619515335593, 25.753326416015625],
-                         [-25.03381661473165, 25.755643844604492], [-25.029801706428938, 25.767637448965274],
-                         [-25.053490239187333, 25.74920654296875], [-25.059243983236804, 25.73573112487793],
-                         [-25.044625834670242, 25.735387802124023], [-25.011679818754537, 25.756838464932116])"""
+
+    survey_dates = {
+        'bcpp-year-1': SurveyDatesTuple(
+            name='bhs',
+            start_date=date(2013, 10, 18),
+            full_enrollment_date=date(2013, 11, 7),
+            end_date=date(2013, 11, 22),
+            smc_start_date=date(2013, 11, 7)),
+        'bcpp-year-2': SurveyDatesTuple(
+            name='t1',
+            start_date=date(2014, 10, 18),
+            full_enrollment_date=date(2014, 11, 7),
+            end_date=date(2014, 11, 22),
+            smc_start_date=date(2014, 11, 7)),
+    }
+
+    clinic_days = {
+        'bcpp-year-1': {
+            'IDCC': ClinicDaysTuple((MO, ), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].smc_start_date)},
+        'bcpp-year-2': {
+            'IDCC': ClinicDaysTuple((MO, ), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
+    }
 
 site_mappers.register(RanakaPlotMapper)

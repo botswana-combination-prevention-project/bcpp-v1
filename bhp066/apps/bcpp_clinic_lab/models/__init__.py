@@ -1,3 +1,0 @@
-from .clinic_requisition import ClinicRequisition
-from .clinic_packing_list import ClinicPackingList
-from .clinic_packing_list_item import ClinicPackingListItem

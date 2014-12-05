@@ -1,1 +1,0 @@
-from .clinic_requisition_model_admin import ClinicRequisitionModelAdmin

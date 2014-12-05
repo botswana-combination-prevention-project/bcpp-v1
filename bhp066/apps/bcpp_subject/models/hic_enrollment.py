@@ -1,3 +1,5 @@
+from dateutil.relativedelta import relativedelta
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -199,6 +201,17 @@ class HicEnrollment (BaseScheduledVisitModel):
                                     'way to contact the participant form before proceeding with this one.')
         else:
             raise exception_cls('Please fill SubjectLocator form before proceeding with this one.')
+
+    def may_contact(self):
+        if self.hic_permission == 'Yes':
+            return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'
+        else:
+            return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
+    may_contact.allow_tags = True
+
+    def age(self):
+        return relativedelta(self.consent_datetime.date(), self.dob).years
+    age.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_subject'

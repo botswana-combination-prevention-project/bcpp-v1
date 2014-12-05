@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 
 from edc.base.form.forms import BaseModelForm
 from edc.map.classes import site_mappers
@@ -10,9 +11,16 @@ class PlotForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        self.instance.allow_enrollment('default',
-                                       plot_instance=Plot(**cleaned_data),
-                                       exception_cls=forms.ValidationError)
+        if self.instance.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
+            raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
+                                        'It may not be edited by a user.')
+        try:
+            self.instance.allow_enrollment('default',
+                                           plot_instance=Plot(**cleaned_data),
+                                           exception_cls=forms.ValidationError)
+        except AttributeError:
+            raise forms.ValidationError('System settings do not allow for this form to be '
+                                        'edited. (e.g. mapper, community, site_code, device)')
         if self.instance.replaced_by:
             raise forms.ValidationError('Plot has been replaced and is not longer a BHS plot. '
                                         '(replaced_by={}'.format(self.instance.replaced_by))
@@ -37,8 +45,10 @@ class PlotForm(BaseModelForm):
                                                      cleaned_data.get('gps_minutes_s'),
                                                      cleaned_data.get('gps_degrees_e'),
                                                      cleaned_data.get('gps_minutes_e')))
-        mapper_cls = site_mappers.get_registry(self.instance.community)
+        mapper_cls = site_mappers.registry.get(self.instance.community)
         mapper = mapper_cls()
+        self.instance.verify_plot_community_with_current_mapper(
+            self.instance.community, exception_cls=forms.ValidationError)
         gps_lat = mapper.get_gps_lat(cleaned_data.get('gps_degrees_s'), cleaned_data.get('gps_minutes_s'))
         gps_lon = mapper.get_gps_lon(cleaned_data.get('gps_degrees_e'), cleaned_data.get('gps_minutes_e'))
         mapper.verify_gps_location(gps_lat, gps_lon, forms.ValidationError)

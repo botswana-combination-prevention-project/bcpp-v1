@@ -1,9 +1,18 @@
 from django import forms
+
 from ..models import Circumcision, Uncircumcised, Circumcised
+
 from .base_subject_model_form import BaseSubjectModelForm
+from apps.bcpp_subject.constants import ANNUAL
 
 
 class CircumcisionForm (BaseSubjectModelForm):
+
+    optional_labels = {
+        ANNUAL: {'circumcised': (
+            'Have you been circumcised since we last spoke with you?'),
+            }
+    }
 
     class Meta:
         model = Circumcision
@@ -19,7 +28,8 @@ class CircumcisedForm (BaseSubjectModelForm):
         if cleaned_data.get('when_circ') and not cleaned_data.get('age_unit_circ'):
             raise forms.ValidationError('If you answered age of circumcision then you must provide time units.')
         if not cleaned_data.get('when_circ') and cleaned_data.get('age_unit_circ'):
-            raise forms.ValidationError('If you did not answer age of circumcision then you must not provide time units.')
+            raise forms.ValidationError(
+                'If you did not answer age of circumcision then you must not provide time units.')
         return cleaned_data
 
     class Meta:

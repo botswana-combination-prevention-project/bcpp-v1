@@ -1,5 +1,7 @@
 from django import forms
+
 from ..models import ElisaHivResult
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -23,7 +25,6 @@ class ElisaHivResultForm (BaseSubjectModelForm):
             raise forms.ValidationError('If test has been performed, what is the test result date time?')
 
         return cleaned_data
-
 
     class Meta:
         model = ElisaHivResult

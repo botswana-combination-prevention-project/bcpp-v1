@@ -4,6 +4,7 @@ from edc.core.identifier.models import BaseIdentifierModel
 
 
 class HouseholdIdentifierHistory(BaseIdentifierModel):
+    """A system model to track allocated household identifiers."""
 
     plot_identifier = models.CharField(max_length=25)
 

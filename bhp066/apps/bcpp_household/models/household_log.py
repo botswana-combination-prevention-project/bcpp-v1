@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
@@ -14,7 +16,7 @@ from .plot import Plot
 
 
 class HouseholdLog(BaseDispatchSyncUuidModel):
-
+    """A system model that links the household log to the household."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
     history = AuditTrail()
@@ -31,6 +33,16 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         return self.household_structure.natural_key()
     natural_key.dependencies = ['bcpp_household.household_structure', ]
 
+    @property
+    def todays_household_log_entries(self):
+        """Confirms there is an househol_log_entry for today."""
+        today = date.today()
+        return HouseholdLogEntry.objects.filter(
+            household_log=self,
+            report_datetime__year=today.year,
+            report_datetime__month=today.month,
+            report_datetime__day=today.day)
+
     def structure(self):
         url = '/admin/{0}/householdstructure/?q={1}'.format(self._meta.app_label, self.household_structure.pk)
         return """<a href="{url}" />structure</a>""".format(url=url)
@@ -41,7 +53,7 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
 
 
 class HouseholdLogEntry(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user each time the household is visited."""
     household_log = models.ForeignKey(HouseholdLog)
 
     report_datetime = models.DateField(

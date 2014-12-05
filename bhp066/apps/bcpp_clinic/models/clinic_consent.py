@@ -1,30 +1,54 @@
-from django.conf import settings
 from django.db import models
-from django.core.exceptions import ValidationError
-import re
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO
-from edc.subject.appointment_helper.models import BaseAppointmentMixin
+from edc.choices.common import YES_NO, YES_NO_NA
+from edc.constants import NOT_APPLICABLE
+from edc.map.classes import site_mappers
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 from edc.subject.consent.mixins.bw import IdentityFieldsMixin
-from edc.subject.consent.models import BaseConsent
-from edc.subject.registration.models import RegisteredSubject
 
+from .base_household_member_consent import BaseHouseholdMemberConsent
+from .clinic_consent_history import ClinicConsentHistory
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
-from apps.bcpp_subject.models import SubjectConsent
-from .clinic_eligibility import ClinicEligibility
-# from apps.clinic.choices import COMMUNITIES
 
+class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
 
-class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
+    citizen = models.CharField(
+        verbose_name="Are you a Botswana citizen? ",
+        max_length=3,
+        choices=YES_NO,
+        help_text="",
+        )
 
-    registered_subject = models.ForeignKey(RegisteredSubject,
-        editable=False,
+    legal_marriage = models.CharField(
+        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
+        max_length=3,
+        choices=YES_NO_NA,
         null=True,
-        help_text='')
+        blank=False,
+        default=NOT_APPLICABLE,
+        help_text="If 'NO' participant will not be enrolled.",
+        )
+
+    marriage_certificate = models.CharField(
+        verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
+        max_length=3,
+        choices=YES_NO_NA,
+        null=True,
+        blank=False,
+        default=NOT_APPLICABLE,
+        help_text="If 'NO' participant will not be enrolled.",
+        )
+
+    marriage_certificate_no = models.CharField(
+        verbose_name=("What is the marriage certificate number?"),
+        max_length=9,
+        null=True,
+        blank=True,
+        help_text="e.g. 000/YYYY",
+        )
 
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
@@ -33,7 +57,8 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
         blank=False,
         default='-',
         choices=YES_NO,
-        help_text='Subject is a minor if aged 16-17. A guardian must be present for consent. HIV status may NOT be revealed in the household.')
+        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
+                   'HIV status may NOT be revealed in the household.'))
 
     consent_signature = models.CharField(
         verbose_name=("The client has signed the consent form?"),
@@ -42,81 +67,25 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseAppointmentMixin, BaseConsent):
         validators=[eligible_if_yes, ],
         null=True,
         blank=False,
-        #default='Yes',
         help_text="If no, INELIGIBLE",
         )
 
-    community = models.CharField(max_length=25, null=True, editable=False)
-
-    have_htc_pims = models.CharField(
-        verbose_name=("Does the participant have one of these identification numbers?"),
-        max_length=30,
-        choices=(
-            ('barcode', 'Barcode Number'),
-            ('Htc identifier', 'Htc identifier'),
-            ('Pims identifier', 'Pims identifier'),
-            ('Htc_Pims', 'Htc and Pims identifier'),
-            ('Barcode_Pims', 'Barcode and Pims identifier'),
-            ('None', 'None'),
-            ),
-        help_text="",
-        )
-
-    htc_pims_id = models.CharField(
-        verbose_name=("Enter the HTC and or PIMS identifiers(comma separated)?"),
-        max_length=50,
-        null=True,
-        blank=True,
-        help_text="htc_identifier, pims_identifier",
-        )
-
-    def get_subject_type(self):
-        return 'clinic'
+    community = models.CharField(max_length=25, editable=False)
 
     def get_site_code(self):
-        return settings.SITE_CODE
+        return site_mappers.get_current_mapper().map_code
 
-#     def get_registered_subject(self):
-#         return self.registered_subject
+    def get_subject_type(self):
+        return 'subject'
 
-    def get_registration_datetime(self):
-        return self.consent_datetime
+    def get_consent_history_model(self):
+        return ClinicConsentHistory
 
-    def post_save_update_clinic_registered_subject(self, **kwargs):
-        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        using = kwargs.get('using', None)
-        if re_pk.match(self.registered_subject.subject_identifier):
-            self.registered_subject.subject_identifier = self.subject_identifier
-        self.registered_subject.registration_status = 'CONSENTED'
-        self.registered_subject.save(using=using)
-        if self.subject_identifier != self.registered_subject.subject_identifier:
-            raise TypeError('Subject identifier expected to be same as registered_subject subject_identifier. Got {0} != {1}'.format(self.subject_identifier, self.registered_subject.subject_identifier))
-
-    def save(self, *args, **kwargs):
-        if ClinicEligibility.objects.filter(dob=self.dob,
-                                            gender=self.gender,
-                                            first_name=self.first_name,
-                                            initials=self.initials).exists():
-            eligibility = ClinicEligibility.objects.get(dob=self.dob,
-                                            gender=self.gender,
-                                            first_name=self.first_name,
-                                            initials=self.initials)
-            eligibility.match_consent_values(eligibility)
-            self.registered_subject = eligibility.registered_subject
-        else:
-            raise ValueError('Could not find a ClinicEligibility. Ensure \'DOB\', \'first_name\', \'gender\' and \'initials\' match those in ClinicEligibility.')
-        self.validate_clinic_consent()
-        super(BaseClinicConsent, self).save(*args, **kwargs)
-
-    def validate_clinic_consent(self, subject_identifier=None):
-        if SubjectConsent.objects.filter(first_name=self.first_name, last_name=self.last_name, identity=self.identity).exists():
-            raise ValidationError('We cannot consent a subject twice! Subject was already consented in BHS.')
+    def get_registered_subject(self):
+        return self.registered_subject
 
     def is_dispatchable_model(self):
         return False
-
-#     def dispatch_container_lookup(self):
-#         return None
 
     class Meta:
         abstract = True
@@ -133,8 +102,36 @@ for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
 
 # declare concrete class
 class ClinicConsent(BaseClinicConsent):
+    """A model completed by the user to capture the ICF."""
+    lab_identifier = models.CharField(
+        verbose_name=("lab allocated identifier"),
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text="if known."
+        )
+
+    htc_identifier = models.CharField(
+        verbose_name=("HTC Identifier"),
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text="if known."
+        )
+
+    pims_identifier = models.CharField(
+        verbose_name=("PIMS identifier"),
+        max_length=50,
+        null=True,
+        blank=True,
+        help_text="if known."
+        )
 
     history = AuditTrail()
+
+    def save(self, *args, **kwargs):
+        self.community = site_mappers.get_current_mapper().map_area
+        super(ClinicConsent, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bcpp_clinic'

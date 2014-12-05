@@ -4,6 +4,7 @@ from .contact_log import ContactLog
 from .enrollment_checklist import EnrollmentChecklist
 from .household_info import HouseholdInfo
 from .household_head_eligibility import HouseholdHeadEligibility
+from .member_appointment import MemberAppointment
 from .subject_htc import SubjectHtc
 from .enrollment_loss import EnrollmentLoss
 from .subject_absentee import SubjectAbsentee
@@ -15,3 +16,4 @@ from .subject_undecided_entry import SubjectUndecidedEntry
 from .subject_refusal_history import SubjectRefusalHistory
 from .subject_htc_history import SubjectHtcHistory
 from .signals import *
+from .subject_death import SubjectDeath

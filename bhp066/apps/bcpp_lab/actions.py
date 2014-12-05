@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.contrib import messages
+from django.core.urlresolvers import reverse
+from django.http.response import HttpResponseRedirect
 
 from lis.labeling.exceptions import LabelPrinterError
 
@@ -13,6 +15,8 @@ def create_order(modeladmin, request, queryset):
     order = Order.objects.create(order_datetime=order_datetime)
     for aliquot in queryset:
         OrderItem.objects.create(order=order, aliquot=aliquot, order_datetime=order_datetime)
+    change_url = reverse("admin:bcpp_lab_order_change", args=(order.pk, ))
+    return HttpResponseRedirect(change_url)
 create_order.short_description = "Create order from selected aliquots"
 
 

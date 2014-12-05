@@ -20,7 +20,8 @@ from .household_member import HouseholdMember
 
 
 class HouseholdInfo(BaseDispatchSyncUuidModel):
-    """Collects information from the Head of Household on household economic status."""
+    """A model completed by the user that captures household economic status
+    from the Head of Household."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
     household_member = models.OneToOneField(HouseholdMember,

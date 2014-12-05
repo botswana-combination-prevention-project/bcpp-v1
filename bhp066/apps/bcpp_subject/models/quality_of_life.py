@@ -11,7 +11,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class QualityOfLife (BaseScheduledVisitModel):
 
-    """CE001"""
+    """A model completed by the user to capture information about QOL"""
 
     mobility = models.CharField(
         verbose_name=_("Mobility"),
