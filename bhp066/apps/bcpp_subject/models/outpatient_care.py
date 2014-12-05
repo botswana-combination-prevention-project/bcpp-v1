@@ -84,6 +84,8 @@ class OutpatientCare (BaseScheduledVisitModel):
                        " to the health care provider, including any medicines?"),
         max_digits=10,
         decimal_places=2,
+        null=True,
+        blank=True,
         help_text="Pula",
         )
     travel_time = models.CharField(
@@ -102,6 +104,8 @@ class OutpatientCare (BaseScheduledVisitModel):
                        " a private car] "),
         max_digits=10,
         decimal_places=2,
+        null=True,
+        blank=True,
         help_text="Pula",
         )
     cost_cover = models.CharField(
