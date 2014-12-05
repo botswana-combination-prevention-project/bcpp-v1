@@ -11,6 +11,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import OtherCharField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc.constants import NOT_APPLICABLE, ALIVE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
@@ -20,7 +21,9 @@ from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
+from .subject_death import SubjectDeath
+
+from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
@@ -30,7 +33,6 @@ from ..classes import HouseholdMemberHelper
 from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
-from apps.bcpp_household_member.constants import ANNUAL
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -103,6 +105,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
         )
+    
+    inability_to_participate_other = OtherCharField(
+        null=True)
 
     study_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or "
@@ -224,6 +229,20 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text=('if True, a user updated the values or this was not autofilled')
         )
 
+    additional_key = models.CharField(
+        max_length=36,
+        verbose_name='-',
+        editable=False,
+        default=None,
+        null=True,
+        help_text=(
+            'A uuid to be added to bypass the '
+            'unique constraint for firstname, initials, household_structure. '
+            'Should remain as the default value for normal enumeration. Is needed '
+            'for Members added to the data from the clinic section where '
+            'household_structure is always the same value.'),
+        )
+
     objects = HouseholdMemberManager()
 
     history = AuditTrail()
@@ -231,7 +250,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def __unicode__(self):
         try:
             is_bhs = '' if self.is_bhs else 'non-BHS'
-        except ValidationError as err_message:
+        except ValidationError:
             is_bhs = '?'
         return '{0} {1} {2}{3} {4}{5}'.format(
             mask_encrypted(self.first_name),
@@ -289,6 +308,17 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         except TypeError:
             pass
         super(HouseholdMember, self).save(*args, **kwargs)
+
+    def natural_key(self):
+        if not self.household_structure:
+            raise AttributeError("household_member.household_structure cannot "
+                                 "be None for id='\{0}\'".format(self.id))
+        if not self.registered_subject:
+            raise AttributeError("household_member.registered_subject cannot "
+                                 "be None for id='\{0}\'".format(self.id))
+        return self.household_structure.natural_key() + self.registered_subject.natural_key()
+    natural_key.dependencies = ['bcpp_household.householdstructure',
+                                'registration.registeredsubject']
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Raises an exception if the household is not enrolled
@@ -421,17 +451,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 'initials': self.initials,
                 'part_time_resident': self.study_resident}
 
-    def natural_key(self):
-        if not self.household_structure:
-            raise AttributeError("household_member.household_structure cannot "
-                                 "be None for id='\{0}\'".format(self.id))
-        if not self.registered_subject:
-            raise AttributeError("household_member.registered_subject cannot "
-                                 "be None for id='\{0}\'".format(self.id))
-        return self.household_structure.natural_key() + self.registered_subject.natural_key()
-    natural_key.dependencies = ['bcpp_household.householdstructure',
-                                'registration.registeredsubject']
-
     @property
     def survey(self):
         return self.household_structure.survey
@@ -485,10 +504,19 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                     registration_identifier=self.internal_identifier,
                     registration_datetime=self.created,
                     user_created=self.user_created,
-                    registration_status='member',)
+                    registration_status='member',
+                    additional_key=self.additional_key)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
             self.save(using=using)
+
+    def delete_subject_death_on_post_save(self):
+        """1. Delete death form if exists when survival status changes from Dead to Alive """
+        if self.survival_status == ALIVE_DEAD_UNKNOWN[0][0]:
+            try:
+                SubjectDeath.objects.get(registered_subject=self.registered_subject).delete()
+            except SubjectDeath.DoesNotExist:
+                pass
 
     def get_registered_subject(self):
         return self.registered_subject
@@ -797,7 +825,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     class Meta:
         ordering = ['-created']
-        unique_together = (("household_structure", "first_name", "initials"),
-                           ('registered_subject', 'household_structure'))
+        unique_together = (
+            ("household_structure", "first_name", "initials", "additional_key"),
+            ('registered_subject', 'household_structure')
+        )
         app_label = 'bcpp_household_member'
         index_together = [['id', 'registered_subject', 'created'], ]

@@ -1,5 +1,3 @@
-import re
-
 from edc.dashboard.subject.classes import RegisteredSubjectDashboard
 from edc.subject.registration.models import RegisteredSubject
 
@@ -11,14 +9,13 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
     def __init__(self, **kwargs):
         super(BaseSubjectDashboard, self).__init__(**kwargs)
         self._household_member = None
-#         self.household_member = (kwargs.get('dashboard_model'), kwargs.get('dashboard_id'))
 
     def get_context_data(self, **kwargs):
         self.context = super(BaseSubjectDashboard, self).get_context_data(**kwargs)
         self.context.update(
             home='bcpp_survey',
             search_name='subject',
-            title='Subject Dashboard',
+            title=self.dashboard_name,
             household_dashboard_url='household_dashboard_url',
             household_member=self.household_member,
             subject_consent=self.consent,
@@ -63,7 +60,8 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
     def registered_subject(self):
         if not self._registered_subject:
             try:
-                self._registered_subject = RegisteredSubject.objects.get(registration_identifier=self.household_member.internal_identifier)
+                self._registered_subject = RegisteredSubject.objects.get(
+                    registration_identifier=self.household_member.internal_identifier)
             except RegisteredSubject.DoesNotExist:
                 try:
                     self._registered_subject = RegisteredSubject.objects.get(pk=self.dashboard_id)
@@ -77,4 +75,5 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
     @property
     def household_members(self):
         return HouseholdMember.objects.filter(
-            household_structure=self.household_member.household_structure).order_by('household_structure', 'first_name')
+            household_structure=self.household_member.household_structure
+            ).order_by('household_structure', 'first_name')
