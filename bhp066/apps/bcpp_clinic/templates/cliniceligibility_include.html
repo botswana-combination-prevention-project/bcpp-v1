@@ -13,7 +13,7 @@
         <th>Last Name</th>        
         <th>Initials</th>
         <th>Gender</th>
-        <th>Dob</th>        
+        <th>Age</th>        
         <th>Consent Date</th>
         <th>User Created</th>  
         <th>Date Created</th>
@@ -32,7 +32,7 @@
                     <td>{{ clinic_eligibility.household_member.member_status }}</td>
                 {% endif %}
                 
-                <td><A href="{% url 'admin:bcpp_clinic_cliniceligibility_change' clinic_eligibility.pk %}?next=section_url&section_name=clinic">edit eligibility</A></td>
+                <td><A href="{% url 'admin:bcpp_clinic_cliniceligibility_change' clinic_eligibility.pk %}?household_member={{clinic_eligibility.household_member.pk }}&next=section_url&section_name=clinic">edit eligibility</A></td>
                 {% if clinic_eligibility.clinic_refusal %}
                     <td><A href="{% url 'admin:bcpp_clinic_clinicrefusal_change' clinic_eligibility.clinic_refusal.pk %}?household_member={{clinic_eligibility.household_member.pk}}&next=section_url&section_name=clinic">edit refusal</A></td>
                 {%else%}
@@ -47,8 +47,8 @@
                 <td>-----</td>            
                 <td>{{clinic_eligibility.initials}}</td>
                 <td>{{clinic_eligibility.gender}}</td>
-                <td>{{clinic_eligibility.dob|date:"Y-m-d"}}</td>
-                <td>-----</td>
+                <td>{{clinic_eligibility.age_in_years}}</td>
+                <td>{{clinic_eligibility.consent_datetime|default:"-----"}}</td>
                 <td>{{clinic_eligibility.user_created}}</td>
                 <td>{{clinic_eligibility.created|date:"d M Y H:i"}}</td>
                 <td>{{clinic_eligibility.hostname_created}}</td>

@@ -7,5 +7,5 @@ THIRD_PARTY_APPS = (
     'storages',
     'dajax',
     'south',
-    'tastypie',
+    #'tastypie',
 )

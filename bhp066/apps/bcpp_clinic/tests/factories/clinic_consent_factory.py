@@ -1,5 +1,7 @@
 import factory
+
 from datetime import datetime
+
 from edc.testing.tests.factories.test_consent_factory import BaseConsentFactory
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
@@ -19,4 +21,3 @@ class ClinicConsentFactory(BaseConsentFactory):
     is_verified = True
     identity = factory.Sequence(lambda n: 'identity{0}'.format(n))
     identity_type = (('OMANG', 'Omang'), ('DRIVERS', "Driver's License"), ('PASSPORT', 'Passport'), ('OMANG_RCPT', 'Omang Receipt'), ('OTHER', 'Other'))[0][0]
-    #is_signed = True

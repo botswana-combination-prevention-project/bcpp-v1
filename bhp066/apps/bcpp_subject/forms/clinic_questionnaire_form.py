@@ -1,5 +1,7 @@
 from django import forms
+
 from ..models import ClinicQuestionnaire
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -14,11 +16,10 @@ class ClinicQuestionnaireForm (BaseSubjectModelForm):
         # if POS, on ARV?
         if cleaned_data.get('current_hiv_status', None) == 'POS' and not cleaned_data.get('on_arv'):
             raise forms.ValidationError('If participant is HIV positive, is participant on ARV therapy?')
-        #if on ARV, is there evidence
+        # if on ARV, is there evidence
         if cleaned_data.get('on_arv', None) == 'Yes' and not cleaned_data.get('arv_evidence'):
             raise forms.ValidationError('If participant is on ARV, is there evidence of being on therapy [OPD card, tablets, masa number]?')
-        
-        #NO
+        # NO
         if cleaned_data.get('know_hiv_status', None) == 'No' and (cleaned_data.get('current_hiv_status') or cleaned_data.get('on_arv') or cleaned_data.get('arv_evidence')):
             raise forms.ValidationError('If participant does not know their HIV status, do not provide any other details')
 

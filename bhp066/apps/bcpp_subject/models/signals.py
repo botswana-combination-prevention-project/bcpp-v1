@@ -1,8 +1,11 @@
 from django.db.models.signals import post_save
+from django.db import DatabaseError
+
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
 from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
+from edc.subject.appointment.models import Appointment
 from edc.data_manager.models import TimePointStatus
 from edc.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD
 
@@ -13,7 +16,9 @@ from .subject_consent import SubjectConsent
 
 from ..classes import SubjectReferralHelper, CallHelper
 
-from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList
+from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList, HivCareAdherence
+
+from apps.bcpp.choices import YES_NO_DWTA
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -123,6 +128,51 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
                         # of hiding it like this
                         pass
 
+@receiver(post_save, weak=False, dispatch_uid='hivcareadherence_post_save')
+def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
+    """Attempt to prepoluate hivcareadherence for T1"""
+    if not raw:
+        if isinstance(instance, (SubjectVisit, )):
+            try:
+                if not HivCareAdherence.objects.filter(subject_visit=instance):
+                    registered_subject = instance.appointment.registered_subject
+                    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')[0]
+                    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment)
+                    hivcareadherence = HivCareAdherence.objects.get(subject_visit=baseline_visit_instance)
+                    hivcareadherence_dict = {}
+                    if hivcareadherence:
+                        hivcareadherence_dict = hivcareadherence.__dict__
+                        for field in hivcareadherence_dict:
+                            if field in ['medical_care','ever_recommended_arv', 'ever_taken_arv','on_arv', 'arv_evidence']:
+                                if not hivcareadherence_dict[field] == YES_NO_DWTA[0][0]:
+                                    hivcareadherence_dict[field] = 'None'
+                        hivcareadherence_dict['subject_visit_id'] = instance.id
+                        #remove unnecessary fields data from T0
+                        del hivcareadherence_dict['user_created']
+                        del hivcareadherence_dict['user_modified']
+                        del hivcareadherence_dict['hostname_modified']
+                        del hivcareadherence_dict['hostname_created']
+                        del hivcareadherence_dict['using']
+                        del hivcareadherence_dict['report_datetime']
+                        del hivcareadherence_dict['next_appointment_date']
+                        del hivcareadherence_dict['modified']
+                        del hivcareadherence_dict['created']
+                        del hivcareadherence_dict['id']
+                        del hivcareadherence_dict['_state']
+                        del hivcareadherence_dict['_user_container_instance']
+                        print hivcareadherence_dict
+                        #create hivcareadherence
+                        hiv_hivcare_adherence = HivCareAdherence.objects.create(**hivcareadherence_dict)
+                        
+            except SubjectVisit.DoesNotExist:
+                print "SubjectVisit.DoesNotExist"
+                pass
+            except HivCareAdherence.DoesNotExist:
+                print "HivCareAdherence.DoesNotExist"
+                pass
+            except DatabaseError as error:
+                print error
+            
 
 @receiver(post_save, weak=False, dispatch_uid='call_log_entry_on_post_save')
 def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
