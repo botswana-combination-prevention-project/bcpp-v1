@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -124,6 +125,12 @@ class LabourMarketWages (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def __unicode__(self):
+        return "%s" % (self.subject_visit)
+
+    def get_absolute_url(self):
+        return reverse('admin:bcpp_subject_labourmarketwages_change', args=(self.id,))
 
     class Meta:
         app_label = 'bcpp_subject'
