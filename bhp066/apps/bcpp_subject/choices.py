@@ -211,6 +211,7 @@ NO_MEDICALCARE_REASON = (
 
 
 HEALTH_CARE_PLACE = (
+    ('None', _('None')),
     ('Government dispensary', _('Government dispensary')),
     ('Government health center', _('Government health center')),
     ('Government hospital', _('Government hospital')),
