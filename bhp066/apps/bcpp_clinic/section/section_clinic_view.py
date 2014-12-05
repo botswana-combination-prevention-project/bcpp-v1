@@ -1,7 +1,5 @@
 from datetime import date
 
-from django.conf import settings
-
 from edc.device.device.classes import device
 from edc.map.classes import site_mappers
 
@@ -22,6 +20,7 @@ class SectionClinicView(BaseSectionView):
     dashboard_url_name = 'subject_dashboard_url'
     add_model = ClinicEligibility
     search = {'word': ClinicSearchByWord}
+    show_most_recent = True
 
     def contribute_to_context(self, context, request, *args, **kwargs):
         try:

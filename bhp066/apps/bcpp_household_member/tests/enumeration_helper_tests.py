@@ -20,6 +20,7 @@ from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
+from apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
 from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -29,7 +30,6 @@ from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 from edc.map.classes import site_mappers
 
 from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED
-from apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
 
 class EnumerationHelperTests(TestCase):

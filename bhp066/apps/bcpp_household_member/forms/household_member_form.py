@@ -9,6 +9,7 @@ from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
 class HouseholdMemberForm(BaseHouseholdMemberForm):
     def clean(self):
         cleaned_data = super(HouseholdMemberForm, self).clean()
+        #if cleaned_data.get('household_structure') 
         self.instance.check_eligible_representative_filled(
             cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
         if cleaned_data.get('relation') == 'Head' and not cleaned_data.get('age_in_years') >= 18:

@@ -184,8 +184,8 @@ class Household(BaseDispatchSyncUuidModel):
         return self.community
 
     def __unicode__(self):
-        if site_mappers.get_current_mapper()().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
-            return 'BCPP-CLINIC'
+        if site_mappers.current_mapper().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
+            return self.plot.description
         return self.household_identifier
 
     def natural_key(self):
