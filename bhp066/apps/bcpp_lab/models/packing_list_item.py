@@ -23,23 +23,28 @@ class PackingListItem(BasePackingListItem):
     objects = PackingListItemManager()
 
     def save(self, *args, **kwargs):
-        if self.item_reference:
-            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
-            requisition = SubjectRequisition.objects.get(
-                requisition_identifier=aliquot.receive.requisition_identifier
-                )
-            self.panel = requisition.panel
+        try:
+            self.panel = self.subject_requisition.panel
+            self.item_datetime = self.subject_requisition.drawn_datetime
+        except AttributeError:
+            pass
         super(PackingListItem, self).save(*args, **kwargs)
 
-    def drawn_datetime(self):
-        retval = "n/a"
-        if self.item_reference:
+    @property
+    def subject_requisition(self):
+        """Returns the SubjectRequisition either directly or via the
+        Aliquot."""
+        try:
+            return SubjectRequisition.objects.get(pk=self.requisition)
+        except SubjectRequisition.DoesNotExist:
             aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
-            requisition = SubjectRequisition.objects.get(
-                requisition_identifier=aliquot.receive.requisition_identifier
-                )
-            retval = requisition.drawn_datetime
-        return retval
+            return SubjectRequisition.objects.get(
+                requisition_identifier=aliquot.receive.requisition_identifier)
+
+    @property
+    def drawn_datetime(self):
+        """Returns the sample datetime drawn from the SubjectRequisition."""
+        return self.subject_requisition.drawn_datetime
 
     def clinician(self):
         retval = "n/a"

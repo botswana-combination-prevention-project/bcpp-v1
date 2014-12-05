@@ -10,14 +10,15 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class ResourceUtilization (BaseScheduledVisitModel):
 
-    """CE001"""
+    """A model completed by the user to capture information about participants
+    use of resources to obtain medical care."""
 
     out_patient = models.CharField(
         verbose_name=_("In the last 3 months, have you sought outpatient medical care for yourself?"
                        " Not including any visits for which you were hospitalized. "),
         max_length=17,
         choices=YES_NO_REFUSED,
-        help_text="if 'NO or Don't want to answer' go to question Q15. ",
+        help_text="if 'NO or Don't want to answer' STOP and SAVE form. ",
         )
     hospitalized = models.IntegerField(
         verbose_name=_("In the last 3 months, how many times were you admitted to hospital or"
@@ -32,8 +33,10 @@ class ResourceUtilization (BaseScheduledVisitModel):
     money_spent = models.DecimalField(
         verbose_name=_("In the last 3 months, how much money in total have you spent on "
                        "medicines for yourself?"),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
+        null=True,
+        blank=True,
         help_text="",
         )
     medical_cover = models.CharField(
@@ -41,6 +44,8 @@ class ResourceUtilization (BaseScheduledVisitModel):
                        " by anyone else, such as your medical aid or employer? "),
         max_length=17,
         choices=YES_NO_REFUSED,
+        null=True,
+        blank=True,
         help_text="",
         )
 

@@ -6,8 +6,9 @@ from ..managers import CommunityManager
 
 
 class Community(BaseModel):
-
+    """Not used. See Mappers"""
     name = models.CharField("Name", max_length=25)
+
     is_current = models.BooleanField(default=False)
 
     objects = CommunityManager()

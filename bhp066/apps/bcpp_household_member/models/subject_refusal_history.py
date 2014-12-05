@@ -16,6 +16,7 @@ from .household_member import HouseholdMember
 
 
 class SubjectRefusalHistory(BaseUuidModel):
+    """A system model that tracks the history of deleted refusal instances."""
 
     transaction = UUIDField()
 

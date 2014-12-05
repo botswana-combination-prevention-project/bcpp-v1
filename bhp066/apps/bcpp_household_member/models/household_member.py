@@ -1,6 +1,7 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.urlresolvers import reverse
@@ -10,31 +11,32 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA
+from edc.base.model.fields import OtherCharField
+from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
+from edc.constants import NOT_APPLICABLE, ALIVE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.constants import NOT_APPLICABLE
 
-from apps.bcpp_household.models import HouseholdStructure, RepresentativeEligibility
+from .subject_death import SubjectDeath
+
+from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, HTC_ELIGIBLE
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC
 from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
-from django.conf import settings
-from edc.map.classes.controller import site_mappers
-
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user to represent an enumerated household member."""
     household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)
@@ -74,6 +76,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                    "than one year old, enter 1"),
         )
 
+    survival_status = models.CharField(
+        verbose_name='Survival status',
+        max_length=10,
+        default=ALIVE,
+        choices=ALIVE_DEAD_UNKNOWN,
+        help_text=""
+        )
+
     present_today = models.CharField(
         verbose_name=_('Is the member present today?'),
         max_length=3,
@@ -95,6 +105,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
         )
+    
+    inability_to_participate_other = OtherCharField(
+        null=True)
 
     study_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or "
@@ -203,16 +216,49 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         editable=False,
         )
 
+    auto_filled = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text=('Was autofilled for follow-up surveys using information from '
+                   'previous survey. See EnumerationHelper')
+        )
+
+    updated_after_auto_filled = models.BooleanField(
+        default=True,
+        editable=False,
+        help_text=('if True, a user updated the values or this was not autofilled')
+        )
+
+    additional_key = models.CharField(
+        max_length=36,
+        verbose_name='-',
+        editable=False,
+        default=None,
+        null=True,
+        help_text=(
+            'A uuid to be added to bypass the '
+            'unique constraint for firstname, initials, household_structure. '
+            'Should remain as the default value for normal enumeration. Is needed '
+            'for Members added to the data from the clinic section where '
+            'household_structure is always the same value.'),
+        )
+
     objects = HouseholdMemberManager()
 
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0} {1} {2}{3}'.format(
+        try:
+            is_bhs = '' if self.is_bhs else 'non-BHS'
+        except ValidationError:
+            is_bhs = '?'
+        return '{0} {1} {2}{3} {4}{5}'.format(
             mask_encrypted(self.first_name),
             self.initials,
             self.age_in_years,
-            self.gender)
+            self.gender,
+            self.survey.survey_abbrev,
+            is_bhs)
 
     def save(self, *args, **kwargs):
         selected_member_status = None
@@ -252,6 +298,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.eligible_htc = self.evaluate_htc_eligibility
         household_member_helper = HouseholdMemberHelper(self)
         self.member_status = household_member_helper.member_status(selected_member_status)
+        if self.auto_filled:
+            self.updated_after_auto_filled = True
         try:
             update_fields = kwargs.get('update_fields') + [
                 'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc',
@@ -260,6 +308,17 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         except TypeError:
             pass
         super(HouseholdMember, self).save(*args, **kwargs)
+
+    def natural_key(self):
+        if not self.household_structure:
+            raise AttributeError("household_member.household_structure cannot "
+                                 "be None for id='\{0}\'".format(self.id))
+        if not self.registered_subject:
+            raise AttributeError("household_member.registered_subject cannot "
+                                 "be None for id='\{0}\'".format(self.id))
+        return self.household_structure.natural_key() + self.registered_subject.natural_key()
+    natural_key.dependencies = ['bcpp_household.householdstructure',
+                                'registration.registeredsubject']
 
     def allow_enrollment(self, using, exception_cls=None, instance=None):
         """Raises an exception if the household is not enrolled
@@ -330,13 +389,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Raises an exception if the RepresentativeEligibility form has not been completed.
 
         Without RepresentativeEligibility, a HouseholdMember cannot be added."""
-        exception_cls = exception_cls or ValidationError
-        using = using or 'default'
-        try:
-            RepresentativeEligibility.objects.using(using).get(household_structure=household_structure)
-        except RepresentativeEligibility.DoesNotExist:
-            raise exception_cls('The Eligibility Checklist for an eligible '
-                                'representative has not been completed.')
+        return household_structure.check_eligible_representative_filled(using, exception_cls)
 
     def check_head_household(self, household_structure, using=None, exception_cls=None):
         """Raises an exception if the HeadOusehold already exists in this household structure."""
@@ -344,16 +397,16 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         using = using or 'default'
         try:
             current_hoh = HouseholdMember.objects.get(
-                    household_structure=household_structure,
-                    relation='Head')
+                household_structure=household_structure,
+                relation='Head')
             # If i am not a new instance then make sure i am not comparing to myself.
             if self.id and current_hoh and (self.id != current_hoh.id):
                     raise exception_cls('{0} is the head of household already. Only one member '
-                                                'may be the head of household.'.format(current_hoh))
+                                        'may be the head of household.'.format(current_hoh))
             # If i am a new instance then i could not be comparing to myself as i do not exist in the DB yet
             elif not self.id and current_hoh:
                 raise exception_cls('{0} is the head of household already. Only one member '
-                                                'may be the head of household.'.format(current_hoh))
+                                    'may be the head of household.'.format(current_hoh))
         except HouseholdMember.DoesNotExist:
             pass
 
@@ -398,17 +451,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 'initials': self.initials,
                 'part_time_resident': self.study_resident}
 
-    def natural_key(self):
-        if not self.household_structure:
-            raise AttributeError("household_member.household_structure cannot "
-                                 "be None for id='\{0}\'".format(self.id))
-        if not self.registered_subject:
-            raise AttributeError("household_member.registered_subject cannot "
-                                 "be None for id='\{0}\'".format(self.id))
-        return self.household_structure.natural_key() + self.registered_subject.natural_key()
-    natural_key.dependencies = ['bcpp_household.householdstructure',
-                                'registration.registeredsubject']
-
     @property
     def survey(self):
         return self.household_structure.survey
@@ -446,11 +488,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         if not self.internal_identifier:
             self.internal_identifier = self.id
             # decide now, either access an existing registered_subject or create a new one
-            if RegisteredSubject.objects.using(using).filter(
-                    registration_identifier=self.internal_identifier).exists():
+            try:
                 registered_subject = RegisteredSubject.objects.using(using).get(
                     registration_identifier=self.internal_identifier)
-            else:
+            except RegisteredSubject.DoesNotExist:
                 # define registered_subject now as the audit trail requires access
                 # to the registered_subject object even if no subject_identifier
                 # exists. That is, it is going to call get_subject_identifier().
@@ -463,10 +504,19 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                     registration_identifier=self.internal_identifier,
                     registration_datetime=self.created,
                     user_created=self.user_created,
-                    registration_status='member',)
+                    registration_status='member',
+                    additional_key=self.additional_key)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
             self.save(using=using)
+
+    def delete_subject_death_on_post_save(self):
+        """1. Delete death form if exists when survival status changes from Dead to Alive """
+        if self.survival_status == ALIVE_DEAD_UNKNOWN[0][0]:
+            try:
+                SubjectDeath.objects.get(registered_subject=self.registered_subject).delete()
+            except SubjectDeath.DoesNotExist:
+                pass
 
     def get_registered_subject(self):
         return self.registered_subject
@@ -481,7 +531,41 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def member_status_choices(self):
-        return HouseholdMemberHelper(self).member_status_choices
+        try:
+            return HouseholdMemberHelper(self).member_status_choices
+        except TypeError:
+            return None
+
+    @property
+    def is_consented_bhs(self):
+        """Returns True if the subject consent is directly related to THIS
+        household_member and False if related to a previous household_member."""
+        if self.is_consented and not self.consented_in_previous_survey:
+            return True
+        return False
+
+    @property
+    def consented_in_previous_survey(self):
+        """Returns True if the member was consented in a previous survey."""
+        consented_in_previous_survey = False
+        try:
+            if self.household_structure.survey.datetime_start > self.consent.survey.datetime_start:
+                consented_in_previous_survey = True
+        except AttributeError:
+            pass
+        return consented_in_previous_survey
+
+    @property
+    def show_participation_form(self):
+        """Returns True for the member status participation on the
+        Household Dashboard to show as a form OR False where it shows as text."""
+        show = False
+        if self.consented_in_previous_survey:
+            show = True
+        elif (not self.is_consented and not self.member_status == NOT_ELIGIBLE and
+                not self.member_status == REFUSED_HTC):
+            show = True
+        return show
 
     def _get_form_url(self, model, model_pk=None, add_url=None):
         # SubjectAbsentee would be called with model_pk=None
@@ -687,24 +771,23 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                     self.registered_subject.subject_type)
         return hiv_history
 
+    @property
     def consent(self):
+        """ Returns the subject_consent instance or None."""
+        SubjectConsent = models.get_model('bcpp_subject', 'subjectconsent')
+        subject_consent = None
+        try:
+            subject_consent = SubjectConsent.objects.get(
+                household_member__internal_identifier=self.internal_identifier)
+        except SubjectConsent.DoesNotExist:
+            pass
+        return subject_consent
 
-        """ Gets the consent model instance else return None."""
-        # determine related consent models
-        related_object_names = [related_object.name
-                                for related_object in self._meta.get_all_related_objects()
-                                if 'consent' in related_object.name and
-                                'audit' not in related_object.name]
-        consent_models = [models.get_model(related_object_name.split(':')[0],
-                                           related_object_name.split(':')[1])
-                          for related_object_name in related_object_names]
-        # search models
-        consent_instance = None
-        for consent_model in consent_models:
-            if consent_model.objects.filter(household_member=self):
-                consent_instance = consent_model.objects.get(household_member=self.id)
-                break
-        return consent_instance
+    @property
+    def is_bhs(self):
+        """Returns True if the member was survey as part of the BHS."""
+        return self.household_structure.household.plot.plot_identifier != \
+            site_mappers.get_current_mapper()().clinic_plot.plot_identifier
 
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found,
@@ -731,9 +814,20 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                             id=registered_subject.registration_identifier).household_structure
         return retval
 
+    def updated(self):
+        if self.auto_filled:
+            if self.updated_after_auto_filled:
+                return '<img src="/static/admin/img/icon-yes.gif" alt="True" />'
+            else:
+                return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
+        return ' '
+    updated.allow_tags = True
+
     class Meta:
         ordering = ['-created']
-        unique_together = (("household_structure", "first_name", "initials"),
-                           ('registered_subject', 'household_structure'))
+        unique_together = (
+            ("household_structure", "first_name", "initials", "additional_key"),
+            ('registered_subject', 'household_structure')
+        )
         app_label = 'bcpp_household_member'
         index_together = [['id', 'registered_subject', 'created'], ]

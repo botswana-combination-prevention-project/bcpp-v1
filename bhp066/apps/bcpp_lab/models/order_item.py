@@ -8,6 +8,7 @@ from edc.device.sync.models import BaseSyncUuidModel
 from .aliquot import Aliquot
 from .order import Order
 from .panel import Panel
+
 from ..managers import OrderItemManager
 
 

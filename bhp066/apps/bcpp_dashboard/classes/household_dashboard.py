@@ -1,30 +1,41 @@
-from datetime import datetime, date
+from datetime import datetime
 
-from django.db.models import Max
 from django.conf import settings
+from django.conf.urls import url
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.urlresolvers import reverse
+from django.db.models import Max
 from django.template.loader import render_to_string
 
 from edc.dashboard.base.classes import Dashboard
 
+from apps.bcpp_household.exceptions import AlreadyEnumerated
 from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog,
                                         HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
 from apps.bcpp_household.helpers import ReplacementHelper
-
-from apps.bcpp_household_member.models import EnrollmentLoss
-from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, EnrollmentChecklist, HouseholdInfo, SubjectHtc
+from apps.bcpp_household.models.household_work_list import HouseholdWorkList
+from apps.bcpp_household_member.constants import NOT_ELIGIBLE, REFUSED_HTC
+from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
+from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
 from apps.bcpp_survey.models import Survey
-from django.core.exceptions import MultipleObjectsReturned
 
 
 class HouseholdDashboard(Dashboard):
 
-    view = 'household_dashboard'
+    template_name = 'householdstructure_dashboard.html'
     dashboard_name = 'Household Dashboard'
     dashboard_url_name = 'household_dashboard_url'
+    view = 'household_dashboard'
+    urlpattern_view = 'apps.bcpp_dashboard.views'
+    urlpattern_options = dict(
+        Dashboard.urlpattern_options,
+        dashboard_model='household|household_structure',
+        dashboard_type='household')
+
     base_fields = ('id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified')
 
-    def __init__(self, dashboard_type, dashboard_id, dashboard_model, dashboard_models=None, **kwargs):
+    def __init__(self, **kwargs):
+        super(HouseholdDashboard, self).__init__(**kwargs)
         self._plot = None
         self._household = None
         self._household_members = None
@@ -37,34 +48,19 @@ class HouseholdDashboard(Dashboard):
         self._survey = None
         self._surveys = None
         self._mapper_name = None
-        dashboard_type_list = ['household', 'household_structure']
-        dashboard_models = {'household': Household, 'household_structure': HouseholdStructure}
-        super(HouseholdDashboard, self).__init__(dashboard_type, dashboard_id,
-                                                 dashboard_model, dashboard_type_list,
-                                                 dashboard_models)
-        self.first_name = kwargs.get('first_name')
-        self.mapper_name = kwargs.get('mapper_name')
+        self.dashboard_type_list = ['household', 'household_structure']
+        self.dashboard_models = {'household': Household, 'household_structure': HouseholdStructure}
+        self.first_name = None
+        self.mapper_name = None
 
-    def add_to_context(self):
-        super(HouseholdDashboard, self).add_to_context()
-
-        self.context.add(
+    def get_context_data(self, **kwargs):
+        self.context = super(HouseholdDashboard, self).get_context_data(**kwargs)
+        self.context.update(
             home='bcpp_survey',
+            appointment_code='T1',
             title='',  # 'A. Household Composition',
-            household_meta=Household._meta,
-            household_member_meta=HouseholdMember._meta,
-            household_assessment_meta=HouseholdAssessment._meta,
-            enrollment_loss_meta=EnrollmentLoss._meta,
-            household_structure_meta=HouseholdStructure._meta,
-            household_log_entry_meta=HouseholdLogEntry._meta,
-            enrollment_checklist_meta=EnrollmentChecklist._meta,
-            subject_htc_meta=SubjectHtc._meta,
-            household_info_meta=HouseholdInfo._meta,
-            household_refusal_meta=HouseholdRefusal._meta,
             household_refusal=self.household_refusal,
-            household_head_eligibility_meta=HouseholdHeadEligibility._meta,
             household_head_eligibility=self.household_head_eligibility,
-            representative_eligibility_meta=RepresentativeEligibility._meta,
             representative_eligibility=self.representative_eligibility,
             plot=self.household.plot,
             household_assessment=self.household_assessment,
@@ -78,7 +74,6 @@ class HouseholdDashboard(Dashboard):
             current_member_count=self.current_member_count,
             survey=self.survey,
             rendered_surveys=self.render_surveys(),
-            allow_edit_members=self.allow_edit_members,
             has_household_log_entry=self.has_household_log_entry,
             lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
             replaceable=ReplacementHelper(household_structure=self.household_structure).replaceable_household,
@@ -87,20 +82,27 @@ class HouseholdDashboard(Dashboard):
             mapper_name=self.mapper_name,
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
+            work_list=self.work_list,
             )
+        return self.context
+
+    @property
+    def work_list(self):
+        try:
+            work_list = HouseholdWorkList.objects.get(household_structure=self.household_structure)
+        except HouseholdWorkList.DoesNotExist:
+            work_list = None
+        return work_list
 
     @property
     def has_household_log_entry(self):
-        """Confirms there is an househol_log_entry for today."""
-        today = date.today()
+        """Confirms there is an household_log_entry for today."""
         has_household_log_entry = False
-        if self.household_log:
-            if HouseholdLogEntry.objects.filter(
-                    household_log=self.household_log,
-                    report_datetime__year=today.year,
-                    report_datetime__month=today.month,
-                    report_datetime__day=today.day).exists():
+        try:
+            if self.household_log.todays_household_log_entries:
                 has_household_log_entry = True
+        except AttributeError:
+            pass
         return has_household_log_entry
 
     @property
@@ -147,7 +149,10 @@ class HouseholdDashboard(Dashboard):
     def eligible_hoh(self):
         """Returns an instance of HouseholdHeadEligibility if there
         is a verified eligible Head of Household."""
-        return self.household_head_eligibility
+        if self.survey != 'BCPP Year 2':
+            return False
+        else:
+            return self.household_head_eligibility
 
     @property
     def household_head_eligibility(self):
@@ -181,24 +186,7 @@ class HouseholdDashboard(Dashboard):
     @property
     def current_survey(self):
         """Sets to the current survey using today's date."""
-        current_survey = None
-        try:
-            current_survey = Survey.objects.get(datetime_start__lte=datetime.today(),
-                                                datetime_end__gte=datetime.today())
-        except Survey.DoesNotExist:
-            raise Survey.DoesNotExist('Unable to set attribute _survey given survey=None and today\'s '
-                                      'date. No survey exists to include the given datetime (today). '
-                                      'Either create a new survey or update an existing survey\'s '
-                                      'start and end date to include today.')
-        except MultipleObjectsReturned:
-            raise MultipleObjectsReturned('Unable to determine the current survey given survey=None and '
-                                          'today\'s date. More than one survey exists for the given '
-                                          'datetime (today). Either specify a survey or given a '
-                                          'different date. Got {0}.'.format(
-                                              Survey.objects.filter(datetime_start__lte=datetime.today(),
-                                                                    datetime_end__gte=datetime.today()))
-                                          )
-        return current_survey
+        return Survey.objects.current_survey()
 
     @property
     def first_survey(self):
@@ -229,11 +217,17 @@ class HouseholdDashboard(Dashboard):
     def household_structure(self):
         """Sets the household_structure instance."""
         if not self._household_structure:
-            if issubclass(self.dashboard_model, HouseholdStructure):
+            if isinstance(self.dashboard_model_instance, HouseholdStructure):
                 self._household_structure = self.dashboard_model_instance
-            elif issubclass(self.dashboard_model, Household):
-                self._household_structure = HouseholdStructure.objects.get(
-                    household__pk=self.household.pk, survey=self.survey)
+            else:
+                try:
+                    self._household_structure = HouseholdStructure.objects.get(pk=self.dashboard_id)
+                except HouseholdStructure.DoesNotExist:
+                    try:
+                        self._household_structure = HouseholdStructure.objects.get(
+                            household__pk=self.household.pk, survey=self.survey)
+                    except (HouseholdStructure.DoesNotExist, AttributeError):
+                        pass
         return self._household_structure
 
     @property
@@ -242,16 +236,33 @@ class HouseholdDashboard(Dashboard):
         if not self._household:
             if isinstance(self.dashboard_model_instance, Household):
                 self._household = self.dashboard_model_instance
-            elif isinstance(self.dashboard_model_instance, HouseholdStructure):
-                self._household = self.dashboard_model_instance.household
+            else:
+                try:
+                    self._household = self.dashboard_model_instance.household
+                except AttributeError:
+                    pass
         return self._household
 
     @property
     def household_members(self):
-        """Returns a queryset of household members for this household structure (and therefore survey)."""
+        """Returns a queryset of household members for this household structure
+        (and therefore survey).
+
+        For follow up surveys, will create new members based on the previous
+        survey relative to the current household structure."""
         if not self._household_members:
-            # TODO: this method needs to be verified for future surveys
-            # self.create_household_members_for_new_survey()
+            try:
+                HouseholdStructure.objects.add_household_members_from_survey(
+                    self.household_structure.household,
+                    self.household_structure.previous.survey,
+                    self.household_structure.survey)
+            except AttributeError:
+                pass  # no previous.survey
+            except AlreadyEnumerated:
+                pass
+            except HouseholdStructureNotEnrolled:
+                # previous survey is not erolled
+                pass
             self._household_members = HouseholdMember.objects.filter(
                 household_structure=self.household_structure,
                 ).order_by('first_name')
@@ -276,60 +287,9 @@ class HouseholdDashboard(Dashboard):
             return 0
 
     @property
-    def allow_edit_members(self):
-        allow_edit_members = False
-        if not RepresentativeEligibility.objects.filter(
-                household_structure=self.household_structure).exists():
-            allow_edit_members = False
-        elif hasattr(settings, 'ALLOW_CHANGES_OTHER_SURVEYS') and settings.ALLOW_CHANGES_OTHER_SURVEYS:
-            allow_edit_members = True
-        else:
-            if self.survey:
-                if self.survey.datetime_start <= datetime.today() and datetime.today() <= self.survey.datetime_end:
-                    allow_edit_members = True
-        return allow_edit_members
-
-#     def check_members_have_registered_subject(self):
-#         """Checks that a corresponding RegisteredSubject exists for each member in this household."""
-#         for household_member in self.household_members:
-#             if not RegisteredSubject.objects.filter(registration_identifier=household_member.internal_identifier):
-#                 raise ValueError('{0} expects all household_members to have '
-#                                  'an entry in RegisterSubject. Got None for {1}.'.format(self, household_member,))
-
-    @property
     def household_log_entries(self):
         return HouseholdLogEntry.objects.filter(
             household_log__household_structure=self.household_structure)
-
-    def create_household_members_for_new_survey(self):
-        """ Prepares a householdstructure for a new survey by fetching a list of the
-        householdstructure members for a given householdstructure from the FIRST
-        survey and adds them to the new survey.
-
-        ..todo:: This can be improved to check if someone has moved or died and
-                 if there are members identified in interim surveys.
-        """
-        if self.first_survey:
-            # add members from most recent first survey to current survey
-            household_structure = HouseholdStructure.objects.get(
-                household=self.household_structure.household, survey=self.first_survey)
-            for hm in HouseholdMember.objects.filter(household_structure__household=household_structure.household):
-                if not HouseholdMember.objects.filter(
-                        household_structure=self.household_structure,
-                        registered_subject=hm.registered_subject):
-                    options = {}
-                    [options.update({key: value}) for key, value in hm.__dict__.iteritems()
-                     if not key.startswith('_') and key not in self.base_fields]
-                    options.update({
-                        'household_structure_id': self.household_structure.pk,
-                        'registered_subject_id': hm.registered_subject.pk,
-                        'survey_id': self.survey.pk,
-                        'age_in_years': None,  # TODO: can this be incremented or at least accurate for consented subjects?
-                        'nights_out': None,
-                        'present': '-',
-                        'lives_in_household': '-',
-                        'member_status': None})
-                    HouseholdMember.objects.create(**options)
 
     def render_surveys(self):
         """Renders to string the surveys."""

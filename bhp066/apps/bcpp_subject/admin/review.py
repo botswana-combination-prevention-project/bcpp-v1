@@ -2,41 +2,27 @@ from django.contrib import admin
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
-from ..models import (SubjectReferralReview, SubjectOffStudyReview, SubjectVisitReview, HicEnrollmentReview, SubjectConsentHistoryReview, SubjectConsentReview, SubjectLocatorReview, SubjectDeathReview, QualityOfLifeReview, ResourceUtilizationReview, OutpatientCareReview, HospitalAdmissionReview, HivHealthCareCostsReview, LabourMarketWagesReview, GrantReview, CeaEnrollmentChecklistReview, ResidencyMobilityReview, DemographicsReview, CommunityEngagementReview, EducationReview, HivTestingHistoryReview, HivTestReviewReview, HivTestedReview, HivUntestedReview, SexualBehaviourReview, MonthsRecentPartnerReview, MonthsSecondPartnerReview, MonthsThirdPartnerReview, HivCareAdherenceReview, HivMedicalCareReview, CircumcisionReview, CircumcisedReview, UncircumcisedReview, ReproductiveHealthReview, MedicalDiagnosesReview, HeartAttackReview, CancerReview, TubercolosisReview, StiReview, SubstanceUseReview, StigmaReview, StigmaOpinionReview, PositiveParticipantReview, AccessToCareReview, HivResultReview, PregnancyReview, NonPregnancyReview, HivResultDocumentationReview, PimaReview, Cd4HistoryReview, ClinicQuestionnaireReview, TbSymptomsReview, ParticipationReview, RbdDemographicsReview)
+from ..models import (SubjectReferralReview, HicEnrollmentReview, SubjectLocatorReview, QualityOfLifeReview,
+                      ResourceUtilizationReview, OutpatientCareReview, HospitalAdmissionReview,
+                      HivHealthCareCostsReview, LabourMarketWagesReview, GrantReview,
+                      ResidencyMobilityReview, DemographicsReview, CommunityEngagementReview,
+                      EducationReview, HivTestingHistoryReview, HivTestReviewReview, HivTestedReview,
+                      HivUntestedReview, SexualBehaviourReview, MonthsRecentPartnerReview,
+                      MonthsSecondPartnerReview, MonthsThirdPartnerReview, HivCareAdherenceReview,
+                      HivMedicalCareReview, CircumcisionReview, CircumcisedReview, UncircumcisedReview,
+                      ReproductiveHealthReview, MedicalDiagnosesReview, HeartAttackReview,
+                      CancerReview, TubercolosisReview, StiReview, SubstanceUseReview, StigmaReview,
+                      StigmaOpinionReview, PositiveParticipantReview, AccessToCareReview,
+                      HivResultReview, PregnancyReview, NonPregnancyReview, HivResultDocumentationReview,
+                      PimaReview, Cd4HistoryReview, ClinicQuestionnaireReview, TbSymptomsReview,
+                      ParticipationReview, RbdDemographicsReview)
 
 
 class SubjectReferralReviewAdmin(SubjectVisitModelAdmin):
     def __init__(self, *args, **kwargs):
         super(SubjectReferralReviewAdmin, self).__init__(*args, **kwargs)
         self.readonly_fields = [field.name for field in SubjectReferralReview._meta.fields]
-    #date_hierarchy = 'report_datetime'
-    #list_display = ('subject_visit', 'referral_code', 'referral_clinic', 'referral_appt_date')
-    #list_filter = ('referral_clinic', 'arv_clinic', 'referral_code')
-    #search_fields = ('subject_visit__appointment__registered_subject__subject_identifier', 'referral_code')
 admin.site.register(SubjectReferralReview, SubjectReferralReviewAdmin)
-
-# class DemographicsReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(DemographicsReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in DemographicsReview._meta.fields]
-# 
-# admin.site.register(DemographicsReview, DemographicsReviewAdmin)
-
-
-# class SubjectOffStudyReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(SubjectOffStudyReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in SubjectOffStudyReview._meta.fields]
-# 
-# admin.site.register(SubjectOffStudyReview, SubjectOffStudyReviewAdmin)
-
-
-# class SubjectVisitReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(SubjectVisitReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in SubjectVisitReview._meta.fields]
-# 
-# admin.site.register(SubjectVisitReview, SubjectVisitReviewAdmin)
 
 
 class HicEnrollmentReviewAdmin(SubjectVisitModelAdmin):
@@ -47,37 +33,12 @@ class HicEnrollmentReviewAdmin(SubjectVisitModelAdmin):
 admin.site.register(HicEnrollmentReview, HicEnrollmentReviewAdmin)
 
 
-# class SubjectConsentHistoryReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(SubjectConsentHistoryReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in SubjectConsentHistoryReview._meta.fields]
-#     date_hierarchy = 'created'
-# 
-# admin.site.register(SubjectConsentHistoryReview, SubjectConsentHistoryReviewAdmin)
-
-
-# class SubjectConsentReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(SubjectConsentReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in SubjectConsentReview._meta.fields]
-# 
-# admin.site.register(SubjectConsentReview, SubjectConsentReviewAdmin)
-
-
 class SubjectLocatorReviewAdmin(SubjectVisitModelAdmin):
     def __init__(self, *args, **kwargs):
         super(SubjectLocatorReviewAdmin, self).__init__(*args, **kwargs)
         self.readonly_fields = [field.name for field in SubjectLocatorReview._meta.fields]
 
 admin.site.register(SubjectLocatorReview, SubjectLocatorReviewAdmin)
-
-
-# class SubjectDeathReviewAdmin(SubjectVisitModelAdmin):
-#     def __init__(self, *args, **kwargs):
-#         super(SubjectDeathReviewAdmin, self).__init__(*args, **kwargs)
-#         self.readonly_fields = [field.name for field in SubjectDeathReview._meta.fields]
-# 
-# admin.site.register(SubjectDeathReview, SubjectDeathReviewAdmin)
 
 
 class QualityOfLifeReviewAdmin(SubjectVisitModelAdmin):
@@ -446,4 +407,3 @@ class RbdDemographicsReviewAdmin(SubjectVisitModelAdmin):
         self.readonly_fields = [field.name for field in RbdDemographicsReview._meta.fields]
 
 admin.site.register(RbdDemographicsReview, RbdDemographicsReviewAdmin)
-

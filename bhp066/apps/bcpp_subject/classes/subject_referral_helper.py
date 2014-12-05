@@ -3,7 +3,7 @@ from collections import namedtuple
 from edc.constants import NOT_REQUIRED, KEYED
 from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.map.classes import site_mappers
-from edc.core.bhp_data_manager.models import TimePointStatus
+from edc.data_manager.models import TimePointStatus
 from edc.constants import CLOSED
 
 from apps.bcpp_household_member.models import EnrollmentChecklist
@@ -30,6 +30,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self._referral_code_list = []
         self._subject_referral = {}
         self.instance = subject_referral
+        self.survey = subject_referral.subject_visit.household_member.household_structure.survey
         # this dict is also used in the signal
         self.models.update({
             'subject_locator': SubjectLocator,
@@ -52,7 +53,9 @@ class SubjectReferralHelper(SubjectStatusHelper):
 
         If timepointstatus instance exists with status=CLOSED, the check is skipped."""
         first_model_cls = None
-        if not SubjectLocator.objects.filter(subject_visit=self.instance.subject_visit).exists():
+        internal_identifier = self.instance.subject_visit.household_member.internal_identifier
+        if not SubjectLocator.objects.filter(
+                subject_visit__household_member__internal_identifier=internal_identifier).exists():
             first_model_cls = SubjectLocator  # required no matter what
         else:
             try:
@@ -260,7 +263,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def enrollment_checklist_instance(self):
         if not self._enrollment_checklist_instance:
             self._enrollment_checklist_instance = EnrollmentChecklist.objects.get(
-                household_member=self.subject_visit.household_member)
+                household_member__internal_identifier=self.subject_visit.household_member.internal_identifier)
         return self._enrollment_checklist_instance
 
     @property
@@ -268,7 +271,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
         if not self._subject_consent_instance:
             try:
                 self._subject_consent_instance = self.models.get('subject_consent').objects.get(
-                    household_member=self.household_member)
+                    household_member__internal_identifier=self.household_member.internal_identifier)
             except self.models.get('subject_consent').DoesNotExist:
                 self._subject_consent_instance = None
         return self._subject_consent_instance

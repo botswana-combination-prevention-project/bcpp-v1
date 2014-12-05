@@ -1,8 +1,10 @@
 from django.contrib import admin
-from ..models import  HicEnrollment
-from ..forms import HicEnrollmentForm
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+
+from ..models import HicEnrollment
 from ..filters import HicEnrollmentFilter
+from ..forms import HicEnrollmentForm
+
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class HicEnrollmentAdmin(SubjectVisitModelAdmin):
@@ -22,11 +24,6 @@ class HicEnrollmentAdmin(SubjectVisitModelAdmin):
         )
     radio_fields = {
         'hic_permission': admin.VERTICAL,
-        #'permanent_resident': admin.VERTICAL,
-        #'intend_residency': admin.VERTICAL,
-        #'household_residency': admin.VERTICAL,
-        #'citizen_or_spouse': admin.VERTICAL,
-        #'locator_information': admin.VERTICAL,
         }
     list_display = (
         'subject_visit',

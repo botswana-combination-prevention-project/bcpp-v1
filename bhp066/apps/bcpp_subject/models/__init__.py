@@ -3,7 +3,6 @@ from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
 from .subject_locator import SubjectLocator
-from .subject_death import SubjectDeath
 # from .recent_partner import RecentPartner
 # from .second_partner import SecondPartner
 # from .third_partner import ThirdPartner
@@ -58,6 +57,8 @@ from .base_household_member_consent import BaseHouseholdMemberConsent
 from .subject_referral import SubjectReferral
 from .participation import Participation
 from .tb_symptoms import TbSymptoms
+from .call_log import CallLog, CallLogEntry
+from .call_list import CallList
 from .signals import *
 from .rbd_demographics import RbdDemographics
 from .viral_load_result import ViralLoadResult

@@ -3,8 +3,8 @@ from django.db.models import Manager
 
 class PackingListManager(Manager):
 
-    def get_by_natural_key(self, list_datetime):
-        return self.get(list_datetime=list_datetime)
+    def get_by_natural_key(self, timestamp):
+        return self.get(timestamp=timestamp)
 
 
 class PackingListItemManager(Manager):

@@ -32,6 +32,8 @@ class SubjectHtcHistoryAdmin(BaseRegisteredSubjectModelAdmin):
 
     list_filter = ('household_member__household_structure__household__community', 'report_datetime', 'offered', 'accepted', 'referred', 'referral_clinic')
 
+    instructions = []
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
             kwargs["queryset"] = HouseholdMember.objects.filter(id__exact=request.GET.get('household_member', 0))

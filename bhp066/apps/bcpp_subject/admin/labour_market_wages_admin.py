@@ -1,7 +1,10 @@
 from django.contrib import admin
+
 from edc.base.modeladmin.admin import BaseTabularInline
-from ..models import  LabourMarketWages, Grant
+
 from ..forms import LabourMarketWagesForm
+from ..models import LabourMarketWages, Grant
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

@@ -7,12 +7,15 @@ from apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import SubjectConsentForm
 from ..models import SubjectConsent
+from ..actions import add_to_call_list_action
 
 
 class SubjectConsentAdmin(BaseConsentModelAdmin):
 
     dashboard_type = 'subject'
     form = SubjectConsentForm
+
+    actions = [add_to_call_list_action, ]
 
     def __init__(self, *args, **kwargs):
         super(SubjectConsentAdmin, self).__init__(*args, **kwargs)

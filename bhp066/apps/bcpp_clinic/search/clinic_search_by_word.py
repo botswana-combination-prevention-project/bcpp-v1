@@ -1,17 +1,18 @@
-from edc.dashboard.search.classes import BaseSearchByWord
+from ..models import ClinicEligibility
 
-from ..models import ClinicConsent
+from edc.dashboard.search.classes import BaseSearchByWord
 
 
 class ClinicSearchByWord(BaseSearchByWord):
 
     name = 'word'
-    search_model = ClinicConsent
-    order_by = '-created'
-    template = 'clinicconsent_include.html'
+    search_model = ClinicEligibility
+    order_by = ['-created']
+    template = 'cliniceligibility_include.html'
 
     def contribute_to_context(self, context):
         context = super(BaseSearchByWord, self).contribute_to_context(context)
         context.update({
-            'subject_dashboard_url': 'subject_dashboard_url'})
+            'subject_dashboard_url': 'subject_dashboard_url'},
+             clinic_eligibility_meta=ClinicEligibility._meta,)
         return context
