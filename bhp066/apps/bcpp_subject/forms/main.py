@@ -1,26 +1,12 @@
-from ..models import (SubjectDeath, QualityOfLife,
-                                 ResourceUtilization, OutpatientCare,
-                                 HivHealthCareCosts, Grant,
-                                 SubstanceUse)
+from ..models import QualityOfLife, OutpatientCare, HivHealthCareCosts, Grant, SubstanceUse
+
 from .base_subject_model_form import BaseSubjectModelForm
-
-
-class SubjectDeathForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = SubjectDeath
 
 
 class QualityOfLifeForm (BaseSubjectModelForm):
 
     class Meta:
         model = QualityOfLife
-
-
-class ResourceUtilizationForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = ResourceUtilization
 
 
 class OutpatientCareForm (BaseSubjectModelForm):

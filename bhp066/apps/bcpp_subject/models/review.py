@@ -1,5 +1,5 @@
 from . import (SubjectOffStudy, SubjectVisit, HicEnrollment, SubjectConsentHistory, SubjectConsent, SubjectLocator,
-               SubjectDeath, QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission,
+               QualityOfLife, ResourceUtilization, OutpatientCare, HospitalAdmission,
                HivHealthCareCosts, LabourMarketWages, Grant, CeaEnrollmentChecklist, ResidencyMobility,
                Demographics, CommunityEngagement, Education, HivTestingHistory, HivTestReview,
                HivTested, HivUntested, SexualBehaviour, MonthsRecentPartner, MonthsSecondPartner,
@@ -61,16 +61,6 @@ class SubjectConsentReview(SubjectConsent):
 
 
 class SubjectLocatorReview(SubjectLocator):
-
-    def save(self, *args, **kwargs):
-        pass
-
-    class Meta:
-        app_label = 'bcpp_subject_review'
-        proxy = True
-
-
-class SubjectDeathReview(SubjectDeath):
 
     def save(self, *args, **kwargs):
         pass

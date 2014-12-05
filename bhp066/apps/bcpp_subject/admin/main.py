@@ -141,4 +141,3 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
     instructions = [("Read to Participant: I would like to now ask you "
                              "questions about drinking alcohol and smoking.")]
 admin.site.register(SubstanceUse, SubstanceUseAdmin)
-
