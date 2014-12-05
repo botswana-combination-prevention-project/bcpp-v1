@@ -1,5 +1,7 @@
 from django import forms
+
 from ..models import Education
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -15,10 +17,10 @@ class EducationForm (BaseSubjectModelForm):
         # give reason for unemployment
         if cleaned_data.get('working', None) == 'No' and not cleaned_data.get('reason_unemployed', None):
             raise forms.ValidationError('If participant is not working, provide reason for unemployment')
-        #retirement
+        # retirement
         if cleaned_data.get('reason_unemployed', None) == 'retired' and not cleaned_data.get('monthly_income', None):
             raise forms.ValidationError('If participant is retired, how much of the retirement benefit is received monthly?')
-        #student/apprentice/volunteer
+        # student/apprentice/volunteer
         if cleaned_data.get('reason_unemployed', None) == 'student' and not cleaned_data.get('monthly_income', None):
             raise forms.ValidationError('If participant is student/apprentice/volunteer, how much payment is received monthly?')
         # validating for those employed

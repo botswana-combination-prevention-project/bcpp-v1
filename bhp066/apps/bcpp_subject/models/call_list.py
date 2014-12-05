@@ -1,13 +1,14 @@
 from dateutil.relativedelta import relativedelta
 
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
-from edc.choices.common import GENDER
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
+
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
+from edc.choices.common import GENDER
 from edc.constants import CLOSED, OPEN, NEW
+from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 
 from apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
