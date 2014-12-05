@@ -21,6 +21,8 @@ from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
+from .subject_death import SubjectDeath
+
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
@@ -507,6 +509,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
             self.save(using=using)
+
+    def delete_subject_death_on_post_save(self):
+        """1. Delete death form if exists when survival status changes from Dead to Alive """
+        if self.survival_status == ALIVE_DEAD_UNKNOWN[0][0]:
+            try:
+                SubjectDeath.objects.get(registered_subject=self.registered_subject).delete()
+            except SubjectDeath.DoesNotExist:
+                pass
 
     def get_registered_subject(self):
         return self.registered_subject
