@@ -21,6 +21,8 @@ from .subject_undecided_entry import SubjectUndecidedEntry
 
 from ..constants import NOT_ELIGIBLE
 
+from edc.choices.common import ALIVE_DEAD_UNKNOWN
+
 
 @receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
 def subject_refusal_on_post_delete(sender, instance, using, **kwargs):
@@ -57,7 +59,19 @@ def subject_htc_on_post_delete(sender, instance, using, **kwargs):
                    'referral_clinic': instance.referral_clinic,
                    'comment': instance.comment}
         SubjectHtcHistory.objects.using(using).create(**options)
-
+        
+        
+@receiver(post_save, weak=False, dispatch_uid="household_member_on_post_save")
+def household_member_on_post_save(sender, instance, using, **kwargs):
+    """1. Delete death form if exists when survival status changes from Dead to Alive """
+    if isinstance(instance, HouseholdMember):
+        # update the history model
+        pass
+#         if instance.survival_status == ALIVE_DEAD_UNKNOWN[0][0]:
+#             try:
+#                 SubjectDeath.objects.get(household_member=instance).delete()
+#             except SubjectDeath.DoesNotExist:
+#                 pass
 
 @receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
 def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):

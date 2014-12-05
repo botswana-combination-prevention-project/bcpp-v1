@@ -11,6 +11,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import OtherCharField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc.constants import NOT_APPLICABLE, ALIVE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
@@ -102,6 +103,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
         )
+    
+    inability_to_participate_other = OtherCharField(
+        null=True)
 
     study_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 3 or "
