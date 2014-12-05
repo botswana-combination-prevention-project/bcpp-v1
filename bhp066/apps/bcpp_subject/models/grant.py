@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -36,6 +37,12 @@ class Grant(BaseScheduledInlineModel):
 
     def get_visit(self):
         return  self.labour_market_wages.subject_visit
+
+    def __unicode__(self):
+        return  unicode(self.labour_market_wages.subject_visit)
+
+    def get_absolute_url(self):
+        return reverse('admin:bcpp_subject_labourmarketwages_change', args=(self.id,))
 
     @property
     def inline_parent(self):
