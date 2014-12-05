@@ -133,7 +133,6 @@ def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
     """Attempt to prepoluate hivcareadherence for T1"""
     if not raw:
         if isinstance(instance, (SubjectVisit, )):
-            print instance
             try:
                 if not HivCareAdherence.objects.filter(subject_visit=instance):
                     registered_subject = instance.appointment.registered_subject
@@ -161,8 +160,10 @@ def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
                         del hivcareadherence_dict['id']
                         del hivcareadherence_dict['_state']
                         del hivcareadherence_dict['_user_container_instance']
+                        print hivcareadherence_dict
                         #create hivcareadherence
-                        HivCareAdherence.objects.create(**hivcareadherence_dict)
+                        hiv_hivcare_adherence = HivCareAdherence.objects.create(**hivcareadherence_dict)
+                        
             except SubjectVisit.DoesNotExist:
                 print "SubjectVisit.DoesNotExist"
                 pass
