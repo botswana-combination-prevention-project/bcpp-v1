@@ -74,7 +74,6 @@ class HouseholdDashboard(Dashboard):
             current_member_count=self.current_member_count,
             survey=self.survey,
             rendered_surveys=self.render_surveys(),
-            allow_edit_members=self.allow_edit_members,
             has_household_log_entry=self.has_household_log_entry,
             lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
             replaceable=ReplacementHelper(household_structure=self.household_structure).replaceable_household,
@@ -97,7 +96,7 @@ class HouseholdDashboard(Dashboard):
 
     @property
     def has_household_log_entry(self):
-        """Confirms there is an househol_log_entry for today."""
+        """Confirms there is an household_log_entry for today."""
         has_household_log_entry = False
         try:
             if self.household_log.todays_household_log_entries:
@@ -218,11 +217,17 @@ class HouseholdDashboard(Dashboard):
     def household_structure(self):
         """Sets the household_structure instance."""
         if not self._household_structure:
-            if issubclass(self.dashboard_model, HouseholdStructure):
+            if isinstance(self.dashboard_model_instance, HouseholdStructure):
                 self._household_structure = self.dashboard_model_instance
-            elif issubclass(self.dashboard_model, Household):
-                self._household_structure = HouseholdStructure.objects.get(
-                    household__pk=self.household.pk, survey=self.survey)
+            else:
+                try:
+                    self._household_structure = HouseholdStructure.objects.get(pk=self.dashboard_id)
+                except HouseholdStructure.DoesNotExist:
+                    try:
+                        self._household_structure = HouseholdStructure.objects.get(
+                            household__pk=self.household.pk, survey=self.survey)
+                    except (HouseholdStructure.DoesNotExist, AttributeError):
+                        pass
         return self._household_structure
 
     @property
@@ -231,8 +236,11 @@ class HouseholdDashboard(Dashboard):
         if not self._household:
             if isinstance(self.dashboard_model_instance, Household):
                 self._household = self.dashboard_model_instance
-            elif isinstance(self.dashboard_model_instance, HouseholdStructure):
-                self._household = self.dashboard_model_instance.household
+            else:
+                try:
+                    self._household = self.dashboard_model_instance.household
+                except AttributeError:
+                    pass
         return self._household
 
     @property
@@ -248,9 +256,6 @@ class HouseholdDashboard(Dashboard):
                     self.household_structure.household,
                     self.household_structure.previous.survey,
                     self.household_structure.survey)
-                self._household_members = HouseholdMember.objects.filter(
-                    household_structure=self.household_structure,
-                    ).order_by('first_name')
             except AttributeError:
                 pass  # no previous.survey
             except AlreadyEnumerated:
@@ -258,6 +263,9 @@ class HouseholdDashboard(Dashboard):
             except HouseholdStructureNotEnrolled:
                 # previous survey is not erolled
                 pass
+            self._household_members = HouseholdMember.objects.filter(
+                household_structure=self.household_structure,
+                ).order_by('first_name')
         return self._household_members
 
     @property
@@ -277,20 +285,6 @@ class HouseholdDashboard(Dashboard):
             return self.household_members.count()
         except AttributeError:
             return 0
-
-    @property
-    def allow_edit_members(self):
-        allow_edit_members = False
-        if not RepresentativeEligibility.objects.filter(
-                household_structure=self.household_structure).exists():
-            allow_edit_members = False
-        elif hasattr(settings, 'ALLOW_CHANGES_OTHER_SURVEYS') and settings.ALLOW_CHANGES_OTHER_SURVEYS:
-            allow_edit_members = True
-        else:
-            if self.survey:
-                if self.survey.datetime_start <= datetime.today() and datetime.today() <= self.survey.datetime_end:
-                    allow_edit_members = True
-        return allow_edit_members
 
     @property
     def household_log_entries(self):
