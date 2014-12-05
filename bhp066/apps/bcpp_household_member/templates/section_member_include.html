@@ -1,10 +1,11 @@
 {% load dispatch_tags %}
 {% load crypto_tags %}
-
+{% load survey_tags %}
 <div class="results">
       <table cellspacing="0" id="result_list">
         <thead><tr>
         <th>First Name</th>
+        <th>Survey</th>
         <th>Participation</th>
         <th>Age</th>
         <th>Composition</th>
@@ -20,7 +21,7 @@
       {% for hm in search_result.object_list %}
         <tr class="{% cycle 'row2' 'row1' %}">
         <td>{{hm.first_name|encrypted}} ({{hm.initials|encrypted}})</td>
-        
+        <td>{{hm.survey.survey_slug|format_survey|safe}}</td>
         <td>
         {% if hm.is_consented%}
             {{ hm.member_status }}

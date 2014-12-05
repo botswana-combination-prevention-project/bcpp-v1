@@ -11,7 +11,7 @@ from .base_pregnancy import BasePregnancy
 
 class Pregnancy (BasePregnancy):
 
-    """CS002 - Meant for women who are currently pregnant"""
+    """A model completed by the user for pregnant participants."""
 
     anc_reg = models.CharField(
         verbose_name=_("Have you registered for antenatal care?"),

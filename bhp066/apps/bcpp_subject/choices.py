@@ -1,5 +1,25 @@
 from django.utils.translation import ugettext as _
 
+APPT_LOCATIONS = (
+    ('home', 'At home'),
+    ('work', 'At work'),
+    ('clinic', 'At clinic'),
+    ('OTHER', 'Other location'),
+)
+
+
+APPT_GRADING = (
+    ('firm', 'Firm appointment'),
+    ('weak', 'Possible appointment'),
+    ('guess', 'Estimated by RA'),
+)
+
+CONTACT_TYPE = (
+    ('direct', 'Direct contact with participant'),
+    ('indirect', 'Contact with person other than participant'),
+    ('no_contact', 'No contact made'),
+)
+
 REFERRAL_APPT_COMMENTS = (
     ("N/A", "not applicable"),
     ("conflict", "have another commitment"),
@@ -8,6 +28,7 @@ REFERRAL_APPT_COMMENTS = (
     ("undecided_thinking", "have to think about it"),
     ("undecided_accepting_status", "need time to accept my HIV status"),
     ("have_other_anc_appt", "have already registered with ANC and have another appointment"),
+    ("personal_reasons", "personal reasons"),
 )
 
 REFERRAL_CODES = (
@@ -154,10 +175,12 @@ CARE_REASON = (
     ('Chronic disease', _('Chronic disease related care, including high blood pressure, diabetes, cancer, mental illness')),
     ('Other', _('Other')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
+    ('None', _('None')),
 )
 
 
 TRAVEL_HOURS = (
+    ('None', _('None')),
     ('Under 0.5 hour', _('Under 0.5 hour')),
     ('0.5 to under 1 hour', _('0.5 to under 1 hour')),
     ('1 to under 2 hours', _('1 to under 2 hours')),
@@ -334,6 +357,7 @@ HOUSEHOLD_INCOME = (
 )
 
 OTHER_OCCUPATION = (
+    ('None', _('None')),
     ('Studying', _('Studying')),
     ('Doing housework', _('Doing housework')),
     ('Looking for work', _('Looking for work')),
@@ -490,7 +514,7 @@ CHOICES_FROM_BCPPLIST = (
     ('Reduced risk of cancer', _('Reduced risk of cancer')),
     ('heart_disease', _('Heart Disease or Stroke')),
     ('cancer', _('Cancer')),
-    ('tb', _('Tubercolosis')),
+    ('tb', _('Tuberculosis')),
     ('other_serious_infection', _('Other serious infection')),
     ('Radio', _('Radio')),
     ('TV', _('TV')),

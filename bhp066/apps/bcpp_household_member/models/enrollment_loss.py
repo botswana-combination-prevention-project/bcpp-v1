@@ -13,7 +13,8 @@ from ..managers import EnrollmentLossManager
 
 
 class EnrollmentLoss(BaseDispatchSyncUuidModel):
-
+    """A system model auto created that captures the reason for a present BHS eligible member
+    who passes BHS eligibility but is not participating in the BHS."""
     household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(

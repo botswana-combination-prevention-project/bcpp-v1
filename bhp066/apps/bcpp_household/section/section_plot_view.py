@@ -5,7 +5,8 @@ from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
 
-from ..search import PlotSearchByWord, PlotSearchByGps
+from ..forms import GpsSearchForm
+from ..search import PlotSearchByWord
 
 site_mappers.autodiscover()
 
@@ -15,14 +16,18 @@ class SectionPlotView(BaseSectionView):
     section_display_name = 'Plots'
     section_display_index = 10
     section_template = 'section_bcpp_plot.html'
-    search = [PlotSearchByWord, PlotSearchByGps]
+    search = {'word': PlotSearchByWord}
+    show_most_recent = False
 
     def contribute_to_context(self, context, request, *args, **kwargs):
-        current_community = site_mappers.get_current_mapper().map_area
+        current_survey = None
+        if settings.CURRENT_SURVEY:
+            current_survey = Survey.objects.current_survey()
         context.update({
-            'current_survey': Survey.objects.current_survey(),
-            'current_community': self.get_current_community(),
-            'mapper_name': current_community,
+            'current_survey': current_survey,
+            'current_community': str(site_mappers.current_mapper()),
+            'mapper_name': site_mappers.current_mapper.map_area,
+            'gps_search_form': GpsSearchForm(initial={'radius': 100}),
             'use_gps_to_target_verification': settings.VERIFY_GPS
             })
         return context

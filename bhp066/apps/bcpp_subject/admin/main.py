@@ -1,87 +1,13 @@
 from django.contrib import admin
-from ..models import (QualityOfLife, ResourceUtilization, OutpatientCare,
-                      HospitalAdmission, HivHealthCareCosts,
+from django.utils.translation import ugettext as _
+from ..models import (HospitalAdmission, HivHealthCareCosts,
                       HivMedicalCare, HeartAttack, Cancer, Sti,
                       Tubercolosis, SubstanceUse)
-from ..forms import (QualityOfLifeForm, ResourceUtilizationForm, OutpatientCareForm,
-                     HospitalAdmissionForm, HivHealthCareCostsForm,
+from ..forms import (HospitalAdmissionForm, HivHealthCareCostsForm,
                      HivMedicalCareForm,
                      HeartAttackForm, CancerForm, StiForm,
                      TubercolosisForm, SubstanceUseForm)
 from .subject_visit_model_admin import SubjectVisitModelAdmin
-
-
-class QualityOfLifeAdmin(SubjectVisitModelAdmin):
-
-    form = QualityOfLifeForm
-    fields = (
-        "subject_visit",
-        "mobility",
-        "self_care",
-        "activities",
-        "pain",
-        "anxiety",
-        "health_today",
-        )
-    radio_fields = {
-        "mobility": admin.VERTICAL,
-        "self_care": admin.VERTICAL,
-        "activities": admin.VERTICAL,
-        "pain": admin.VERTICAL,
-        "anxiety": admin.VERTICAL,
-        }
-admin.site.register(QualityOfLife, QualityOfLifeAdmin)
-
-
-class ResourceUtilizationAdmin(SubjectVisitModelAdmin):
-
-    form = ResourceUtilizationForm
-    fields = (
-        "subject_visit",
-        "out_patient",
-        "hospitalized",
-        "money_spent",
-        "medical_cover",
-        )
-    radio_fields = {
-        "out_patient": admin.VERTICAL,
-        "medical_cover": admin.VERTICAL,
-        }
-admin.site.register(ResourceUtilization, ResourceUtilizationAdmin)
-
-
-class OutpatientCareAdmin(SubjectVisitModelAdmin):
-
-    form = OutpatientCareForm
-    fields = (
-        "subject_visit",
-        "govt_health_care",
-        "dept_care",
-        "prvt_care",
-        "trad_care",
-        "care_visits",
-        "facility_visited",
-        "specific_clinic",
-        "care_reason",
-        "care_reason_other",
-        "outpatient_expense",
-        "travel_time",
-        "transport_expense",
-        "cost_cover",
-        "waiting_hours",
-        )
-    radio_fields = {
-        "govt_health_care": admin.VERTICAL,
-        "dept_care": admin.VERTICAL,
-        "prvt_care": admin.VERTICAL,
-        "trad_care": admin.VERTICAL,
-        "facility_visited": admin.VERTICAL,
-        "care_reason": admin.VERTICAL,
-        "travel_time": admin.VERTICAL,
-        "cost_cover": admin.VERTICAL,
-        "waiting_hours": admin.VERTICAL,
-        }
-admin.site.register(OutpatientCare, OutpatientCareAdmin)
 
 
 class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
@@ -103,6 +29,9 @@ class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
         "travel_hours": admin.VERTICAL,
         "hospitalization_costs": admin.VERTICAL,
         }
+    instructions = [
+        _("<H5>Read to Participant</H5> Read to Participant: For the next set of questions please "
+          "think about times you were admitted to a hospital in the last 3 months")]
 admin.site.register(HospitalAdmission, HospitalAdmissionAdmin)
 
 
@@ -212,22 +141,3 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
     instructions = [("Read to Participant: I would like to now ask you "
                              "questions about drinking alcohol and smoking.")]
 admin.site.register(SubstanceUse, SubstanceUseAdmin)
-
-
-# class RespondentInlineAdmin(BaseTabularInline):
-#     model = Respondent
-# 
-# 
-# class HouseholdCompositionAdmin (SubjectVisitModelAdmin):
-# 
-#     form = HouseholdCompositionForm
-#     inlines = [RespondentInlineAdmin, ]
-#     fields = (
-#         'housecode',
-#         'physical_add',
-#         'coordinates',
-#         'contact',
-#         'phone_number',)
-#     radio_fields = {
-#         "contact": admin.VERTICAL, }
-# admin.site.register(HouseholdComposition, HouseholdCompositionAdmin)

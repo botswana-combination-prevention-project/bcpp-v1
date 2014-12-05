@@ -11,7 +11,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class MedicalDiagnoses (BaseScheduledVisitModel):
 
-    """CS002"""
+    """A model completed by the user to record any major illnesses in the past 12 months."""
 
     diagnoses = models.ManyToManyField(Diagnoses,
         verbose_name=_("Do you recall or is there a record of having any of the"

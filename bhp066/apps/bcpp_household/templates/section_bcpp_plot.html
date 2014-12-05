@@ -1,10 +1,26 @@
 {% extends 'section_household.html' %}
-    {% block selection_tile%}
+{% block selection_tile%}
 
-     <div style="clear:left;">
+ <div style="clear:left;">
 
-    {{ current_community }}: {{ current_survey }}
-     {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
-    </div>
+{{ current_community }}: {{ current_survey }}
+ {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
+</div>
 
-    {% endblock%}
+{% endblock%}
+
+{% block search_tile %}
+    {% if not current_survey %}
+        Survey not selected
+    {%else%}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block search_result %}
+    {% if not current_survey %}
+        Survey not selected
+    {%else%}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}

@@ -1,15 +1,22 @@
 from django.contrib import admin
+
 from edc.subject.appointment.admin import BaseAppointmentModelAdmin
-from apps.bcpp_clinic_lab.models import ClinicRequisition
-from ..models import ClinicVisit
+
+from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_lab.models import ClinicRequisition
+
 from ..forms import ClinicVisitForm
+from ..models import ClinicVisit, ClinicEligibility
 
 
 class ClinicVisitAdmin(BaseAppointmentModelAdmin):
 
     form = ClinicVisitForm
+
     visit_model_instance_field = 'clinic_visit'
+
     requisition_model = ClinicRequisition
+
     dashboard_type = 'clinic'
 
     list_display = (
@@ -24,6 +31,7 @@ class ClinicVisitAdmin(BaseAppointmentModelAdmin):
     list_filter = (
         'report_datetime',
         'reason',
+        'household_member__household_structure__household__community',
         'appointment__appt_status',
         'appointment__visit_definition__code',
         )
@@ -36,13 +44,24 @@ class ClinicVisitAdmin(BaseAppointmentModelAdmin):
         )
 
     fields = (
+        'household_member',
         "appointment",
         "report_datetime",
-        'reason',
-#         'reason_unscheduled',
         "comments"
         )
 
-#     radio_fields = {
-#         "reason_unscheduled": admin.VERTICAL}
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "household_member":
+            try:
+                HouseholdMember.objects.get(id=request.GET.get('household_member'))
+                household_members = HouseholdMember.objects.filter(id=request.GET.get('household_member'))
+            except HouseholdMember.DoesNotExist:
+                try:
+                    household_member = ClinicEligibility.objects.get(id=request.GET.get('dashboard_id')).household_member
+                    household_members = HouseholdMember.objects.filter(id=household_member.pk)
+                except (HouseholdMember.DoesNotExist, ClinicEligibility.DoesNotExist):
+                    household_members = HouseholdMember.objects.none()
+            kwargs["queryset"] = household_members
+        return super(ClinicVisitAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 admin.site.register(ClinicVisit, ClinicVisitAdmin)

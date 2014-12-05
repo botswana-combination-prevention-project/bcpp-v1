@@ -16,18 +16,20 @@ class ConsentHistoryManager(BaseConsentHistoryManager):
         return self.get(consent_datetime__range=(consent_datetime - margin, consent_datetime + margin), survey=survey, registered_subject=registered_subject)
 
     def update_consent_history(self, consent_inst, created, using):
-        updated_values = {'consent_datetime': consent_inst.consent_datetime,
-                          'survey': consent_inst.survey,
-                          'household_member': consent_inst.household_member}
-        inst, created = super(ConsentHistoryManager, self).using(using).get_or_create(
-            registered_subject=consent_inst.registered_subject,
-            consent_app_label=consent_inst._meta.app_label,
-            consent_model_name=consent_inst._meta.object_name,
-            consent_pk=consent_inst.pk,
-            defaults=updated_values
-            )
-        if not created:
+        try:
+            inst = self.get(
+                registered_subject=consent_inst.registered_subject,
+                consent_app_label=consent_inst._meta.app_label,
+                consent_model_name=consent_inst._meta.object_name,
+                consent_pk=consent_inst.pk)
             inst.consent_datetime = consent_inst.consent_datetime
-#             inst.consent_datetime = consent_inst.survey
-#             inst.consent_datetime = consent_inst.household_member
             inst.save(using=using)
+        except self.model.DoesNotExist:
+            self.create(
+                registered_subject=consent_inst.registered_subject,
+                consent_app_label=consent_inst._meta.app_label,
+                consent_model_name=consent_inst._meta.object_name,
+                consent_pk=consent_inst.pk,
+                survey=consent_inst.survey,
+                household_member=consent_inst.household_member,
+                consent_datetime=consent_inst.consent_datetime)

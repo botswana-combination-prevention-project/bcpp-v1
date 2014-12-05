@@ -14,7 +14,7 @@ from .household_member import HouseholdMember
 
 
 class SubjectHtcHistory(BaseUuidModel):
-
+    """A system model that tracks the history of deleted subject HTC instances."""
     transaction = UUIDField()
 
     household_member = models.ForeignKey(HouseholdMember)

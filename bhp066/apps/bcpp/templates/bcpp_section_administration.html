@@ -3,13 +3,34 @@
 {% load url from future %}
 
 {% block admin_sections %}
+    <ul><li><A href="/admin/">All sections</A></ul>
+    <H5>BHS</H5>
     <ul>
-    <li><A href="/admin/">All sections</A>
-    <li><A href="{% url plot_meta|admin_urlname:'changelist' %}">Plots</A>
-    <li><A href="{% url household_meta|admin_urlname:'changelist' %}">Households</A>
-    <li><A href="{% url replaceable_meta|admin_urlname:'changelist' %}">Replaceables</A>
-    <li><A href="{% url subjectconsent_meta|admin_urlname:'changelist' %}">Subject Consents</A>
+    <li><A href="{% url 'admin:bcpp_household_plot_changelist' %}">Plots</A>
+    <li><A href="{% url 'admin:bcpp_household_household_changelist' %}">Households</A>
+    <li><A href="{% url 'admin:bcpp_household_householdstructure_changelist' %}">Household Structures</A>
+    <li><A href="{% url 'admin:bcpp_household_member_householdmember_changelist' %}">Household Members</A>
+    <li><A href="{% url 'admin:bcpp_household_replaceable_changelist' %}">Replaceables</A>
+    <li><A href="{% url 'admin:bcpp_subject_subjectconsent_changelist' %}">Subject Consents</A>
+    <li><A href="{% url 'admin:bcpp_subject_subjectreferral_changelist' %}">Subject Referrals</A>
     <li><A href="{% url 'admin:bcpp_household_increaseplotradius_changelist' %}">Plot allowed to increase target radius</A>
+    </ul>
+    <H5>Annual Followup</H5>
+    <ul>
+        <li><A href="{% url 'admin:bcpp_subject_calllist_changelist' %}">Call List</A>
+        <li><A href="{% url 'admin:bcpp_subject_calllog_changelist' %}">Call Log</A>
+        <li><A href="{% url 'admin:bcpp_subject_calllogentry_changelist' %}">Call Log Entries</A>
+        <li><A href="{% url 'admin:bcpp_household_member_memberappointment_changelist' %}">Member Appointments</A>
+        <li><A href="{% url 'admin:bcpp_household_householdworklist_changelist' %}">Work List</A>
+        <li><A href="{% url 'admin:bcpp_subject_subjectconsent_changelist' %}">Subject Consent</A>  
+        <li><A href="{% url 'admin:bcpp_subject_hicenrollment_changelist' %}">HIC Enrollment</A>
+    </ul>
+    <H5>Clinic</H5>
+    <ul>
+    <li><A href="{% url 'admin:bcpp_clinic_cliniceligibility_changelist' %}">Clinic Eligibility</A>
+    <li><A href="{% url 'admin:bcpp_clinic_clinicconsent_changelist' %}">Clinic Consents</A>
+    <li><A href="{% url 'admin:bcpp_clinic_clinicrefusal_changelist' %}">Clinic Refusals</A>
+    <li><A href="{% url 'admin:bcpp_clinic_clinicenrollmentloss_changelist' %}">Clinic Enrollment Loss</A>
     </ul>
 
 {% endblock admin_sections %}

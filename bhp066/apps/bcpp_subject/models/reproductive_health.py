@@ -12,7 +12,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class ReproductiveHealth (BaseScheduledVisitModel):
 
-    """CS002"""
+    """A model completed by the user on the participant's reproductive health."""
 
     number_children = models.IntegerField(
         verbose_name=_("How many children have you given birth to? Please include any"

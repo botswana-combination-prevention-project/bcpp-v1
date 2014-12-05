@@ -1,10 +1,10 @@
 from django.utils.translation import ugettext as _
 
 from .constants import (ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE,
-                        NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS)
+                        NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS, ANNUAL)
 
 options = list(set([ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE,
-                    NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS]))
+                    NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS, ANNUAL]))
 
 HOUSEHOLD_MEMBER_PARTICIPATION = [(item, item) for item in options]
 

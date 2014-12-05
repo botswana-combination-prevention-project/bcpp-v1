@@ -1,5 +1,4 @@
 import os
-import platform
 import sys
 import socket
 
@@ -9,13 +8,20 @@ from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, L
 from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
                             PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
-from .device import CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS
+from .device import (CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
+                     VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
+from .lab import LAB_IMPORT_DMIS_DATA_SOURCE
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
+from .middleman import MIDDLE_MAN_LIST
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-ADMINS = (('erikvw', 'ew@2789@gmail.com'),)
+ADMINS = (('erikvw', 'ew@2789@gmail.com'),
+          ('mkewagamang', 'mkewagamang@bhp.org.bw'),
+          ('opharatlhatlhe', 'opharatlhatlhe@bhp.org.bw'),
+          ('ckgathi', 'ckgathi@bhp.org.bw'),)
+
 APP_NAME = APP_NAME
 
 # PATHS
@@ -43,14 +49,14 @@ if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+elif socket.gethostname() == 'One-2.local':
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+elif socket.gethostname() == 'silverapple':
+    KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 else:
-    KEY_PATH = '/Volumes/keys'  # community servers
-    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Volumes/keys'
     # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
     # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
@@ -68,12 +74,12 @@ if 'test' in sys.argv:
 else:
     DATABASES = PRODUCTION_MYSQL
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', 'bhpserver']
@@ -209,12 +215,14 @@ DAJAXICE_MEDIA_PREFIX = "dajaxice"
 
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
-SUBJECT_TYPES = ['subject']
-MAX_SUBJECTS = {'subject': 9999}
+SUBJECT_TYPES = ['subject', 'clinic']
+MAX_SUBJECTS = {'subject': 9999,
+                'clinic': 9999}
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
-                       'bcpp_lab', 'bcpp_survey']
+                       'bcpp_lab', 'bcpp_survey'
+                       'bcpp_clinic']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
@@ -238,12 +246,9 @@ LAB_LOCK_NAME = 'BHP066'
 LABDB = 'bhplab'
 REFERENCE_RANGE_LIST = 'BHPLAB_NORMAL_RANGES_201005'
 GRADING_LIST = 'DAIDS_2004'
-if platform.system() == 'Darwin':
-    LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER=/usr/local/lib/libtdsodbc.so;SERVER=192.168.1.141;'
-                                   'PORT=1433;UID=sa;PWD=cc3721b;DATABASE=BHPLAB')
-else:
-    LAB_IMPORT_DMIS_DATA_SOURCE = ('DRIVER={FreeTDS};SERVER=192.168.1.141;UID=sa;PWD=cc3721b;'
-                                   'DATABASE=BHPLAB')
+
+LAB_IMPORT_DMIS_DATA_SOURCE = LAB_IMPORT_DMIS_DATA_SOURCE
+
 # edc.subject.consent
 # set to False so that the constraint can be expanded to subject_identifier + survey
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False
@@ -257,16 +262,17 @@ if str(DEVICE_ID) == '98':
 elif str(DEVICE_ID) == '99':
     PROJECT_TITLE = 'SERVER: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
-    COMMUNITY = 'BHP'
 elif str(DEVICE_ID) in map(str, range(91, 97)):
     PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
 else:
     PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
+VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER = VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER
+VERIFY_GPS_LOCATION = VERIFY_GPS_LOCATION
 
 # edc.device.inspector (middleman)
-MIDDLE_MAN_LIST = ['resourcemac-bhp066']
+MIDDLE_MAN_LIST = MIDDLE_MAN_LIST
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True

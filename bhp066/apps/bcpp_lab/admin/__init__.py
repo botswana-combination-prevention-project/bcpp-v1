@@ -7,3 +7,4 @@ from .packing_list_admin import PackingListAdmin, PackingListItemAdmin
 from .panel_admin import PanelAdmin
 from .receive_admin import ReceiveAdmin
 from .subject_requisition_admin import SubjectRequisitionAdmin
+from .clinic_requisition_admin import ClinicRequisitionAdmin
