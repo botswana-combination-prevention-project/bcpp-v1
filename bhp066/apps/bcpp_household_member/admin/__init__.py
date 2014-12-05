@@ -11,3 +11,4 @@ from .subject_undecided_admin import SubjectUndecided
 from .subject_refusal_history_admin import SubjectRefusalHistory
 from .subject_htc_history_admin import SubjectHtcHistoryAdmin
 from .subject_htc_admin import SubjectHtcAdmin
+from .subject_death_admin import SubjectDeathAdmin
