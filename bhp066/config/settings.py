@@ -49,14 +49,14 @@ if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+elif socket.gethostname() == 'One-2.local':
+    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+elif socket.gethostname() == 'silverapple':
+    KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 else:
-    #KEY_PATH = '/Volumes/keys'  # community servers
-    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    # KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-    # KEY_PATH = '/Volumes/keys'
     # KEY_PATH = '/Volumes/bhp066/keys'  # DONT DELETE ME!!, just comment out
     # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
+    KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
     # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS

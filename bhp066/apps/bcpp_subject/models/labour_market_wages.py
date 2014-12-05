@@ -52,6 +52,7 @@ class LabourMarketWages (BaseScheduledVisitModel):
         verbose_name=_("In the past month, what was your income? "),
         max_length=25,
         choices=MONTHLY_INCOME,
+        default='None',
         null=True,
         blank=True,
         help_text="",
@@ -67,6 +68,9 @@ class LabourMarketWages (BaseScheduledVisitModel):
     household_income = models.CharField(
         verbose_name=_("In the past month, what was the income of your household? "),
         max_length=25,
+        null=True,
+        blank=False,
+        default='None',
         choices=HOUSEHOLD_INCOME,
         help_text="",
         )
@@ -74,6 +78,9 @@ class LabourMarketWages (BaseScheduledVisitModel):
         verbose_name=_("If you are not currently doing anything to earn money, then are you: "),
         max_length=45,
         choices=OTHER_OCCUPATION,
+        null=True,
+        blank=False,
+        default='None',
         help_text="",
         )
     other_occupation_other = OtherCharField()

@@ -36,7 +36,7 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
         "cattle_postlands": admin.VERTICAL}
 
     instructions = [
-        _("<H5>Read to Participant</H5> To start, I will be asking"
+        _("<H5>Read to Participant</H5> <p>To start, I will be asking"
           " you some questions about yourself, your living"
           " situation, and about the people that you live with."
           " Your answers are very important to our research and"
@@ -46,6 +46,6 @@ class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
           " however, it is really important that you give the most"
           " honest answer that you can. Please remember that all of "
           " your answers are confidential. If you do not wish to "
-          " answer, you can skip any question.")]
+          " answer, you can skip any question.</p>")]
 
 admin.site.register(ResidencyMobility, ResidencyMobilityAdmin)

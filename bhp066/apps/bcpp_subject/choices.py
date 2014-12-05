@@ -180,6 +180,7 @@ CARE_REASON = (
 
 
 TRAVEL_HOURS = (
+    ('None', _('None')),
     ('Under 0.5 hour', _('Under 0.5 hour')),
     ('0.5 to under 1 hour', _('0.5 to under 1 hour')),
     ('1 to under 2 hours', _('1 to under 2 hours')),
@@ -356,6 +357,7 @@ HOUSEHOLD_INCOME = (
 )
 
 OTHER_OCCUPATION = (
+    ('None', _('None')),
     ('Studying', _('Studying')),
     ('Doing housework', _('Doing housework')),
     ('Looking for work', _('Looking for work')),
