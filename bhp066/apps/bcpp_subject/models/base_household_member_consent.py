@@ -37,20 +37,20 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
             self.registered_subject = self.household_member.registered_subject
         super(BaseHouseholdMemberConsent, self).save(*args, **kwargs)
 
-    def get_visit_definitions_from_instance(self):
-        """Returns a subset of visit definitions for appointment helper to only create
-        one appointment per household_member.
- 
-        This consent only triggers creation of first appointment, T0.
- 
-        See class SubjectDasboard for the method that creates subsequent appointments.
- 
-        This is used by the edc.subject.appointment.AppointmentHelper on a post-save signal.
-        """
-        model_name = self._meta.object_name.lower()
-        schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model=model_name)
-        visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group, code__in=BASELINE_CODES)
-        return visit_definitions
+#     def get_visit_definitions_from_instance(self):
+#         """Returns a subset of visit definitions for appointment helper to only create
+#         one appointment per household_member.
+#  
+#         This consent only triggers creation of first appointment, T0.
+#  
+#         See class SubjectDasboard for the method that creates subsequent appointments.
+#  
+#         This is used by the edc.subject.appointment.AppointmentHelper on a post-save signal.
+#         """
+#         model_name = self._meta.object_name.lower()
+#         schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model=model_name)
+#         visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group, code__in=BASELINE_CODES)
+#         return visit_definitions
 
     def _check_if_duplicate_subject_identifier(self, using):
         """Checks if the subject identifier is in use, for new and existing instances.
