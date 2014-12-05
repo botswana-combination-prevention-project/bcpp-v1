@@ -14,10 +14,10 @@ class CommunityEngagementAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMix
     form = CommunityEngagementForm
     supplemental_fields = SupplementalFields(
         ('community_engagement',
-        'vote_engagement',
-        'problems_engagement',
-        'problems_engagement_other',
-        'solve_engagement',), p=0.09, group='CE', grouping_field='subject_visit')
+         'vote_engagement',
+         'problems_engagement',
+         'problems_engagement_other',
+         'solve_engagement',), p=0.09, group='CE', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'community_engagement',

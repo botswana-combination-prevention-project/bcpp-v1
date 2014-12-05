@@ -13,13 +13,15 @@ from edc.subject.locator.models import BaseLocator
 
 from apps.bcpp_household.models import Plot
 
-from ..managers import ScheduledModelManager
+from ..managers import ScheduledModelManager, SubjectLocatorManager
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
+    """A model completed by the user to that captures participant locator information
+    and permission to contact."""
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
@@ -88,7 +90,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     history = AuditTrail()
 
-    objects = ScheduledModelManager()
+    objects = SubjectLocatorManager()
 
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
@@ -137,6 +139,48 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
         except SubjectReferral.DoesNotExist:
             pass
         return False
+
+    @property
+    def formatted_locator_information(self):
+        """Returns a formatted string that summarizes contact and locator info."""
+        info = 'May not follow-up.'
+        if self.may_follow_up == 'Yes':
+            info = (
+                '{may_sms_follow_up}\n'
+                'Cell: {subject_cell} {alt_subject_cell}\n'
+                'Phone: {subject_phone} {alt_subject_phone}\n'
+                '').format(
+                    may_sms_follow_up='SMS permitted' if self.may_sms_follow_up == 'Yes' else 'NO SMS!',
+                    subject_cell='{} (primary)'.format(self.subject_cell) if self.subject_cell else '(none)',
+                    alt_subject_cell=self.subject_cell_alt,
+                    subject_phone=self.subject_phone or '(none)', alt_subject_phone=self.subject_phone_alt
+                    )
+            if self.may_call_work == 'Yes':
+                info = (
+                    '{info}\n Work Contacts:\n'
+                    '{subject_work_place}\n'
+                    'Work Phone: {subject_work_phone}\n'
+                    '').format(
+                        info=info,
+                        subject_work_place=self.subject_work_place or '(work place not known)',
+                        subject_work_phone=self.subject_work_phone)
+            if self.may_contact_someone == 'Yes':
+                info = (
+                    '{info}\n Contacts of someone else:\n'
+                    '{contact_name} - {contact_rel}\n'
+                    '{contact_cell} (cell), {contact_phone} (phone)\n'
+                    '').format(
+                        info=info,
+                        contact_name=self.contact_name or '(name?)',
+                        contact_rel=self.contact_rel or '(relation?)',
+                        contact_cell=self.contact_cell or '(----)',
+                        contact_phone=self.contact_phone or '(----)'
+                        )
+            if info:
+                info = ('{info}'
+                        'Physical Address:\n{physical_address}').format(
+                            info=info, physical_address=self.physical_address)
+        return info
 
     def __unicode__(self):
         return unicode(self.subject_visit)

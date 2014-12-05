@@ -25,12 +25,24 @@ class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
         "verbal_hiv_result": admin.VERTICAL,
         'other_record': admin.VERTICAL}
 
-    instructions = [("Do not include documentation of ART/PMTCT/CD4 here; "
-                    "only include actual HIV test results"),
-                    _("Read to Participant: Many people have had a test"
-                              " to see if they have HIV. I am going to ask you"
-                              " about whether you have been tested for HIV and"
-                              " whether you received the results. Please"
-                              " remember that all of your answers are"
-                              " confidential.")]
+    instructions = [(
+        "Do not include documentation of ART/PMTCT/CD4 here; "
+        "only include actual HIV test results"),
+        _("<H5>Read to Participant</H5> Many people have had a test"
+          " to see if they have HIV. I am going to ask you"
+          " about whether you have been tested for HIV and"
+          " whether you received the results. Please"
+          " remember that all of your answers are"
+          " confidential.")]
+
+    annual_verbose_name = {
+        "has_tested": (
+            "Since we last visited you have you been tested for HIV? "
+            "If yes, go on with form, if not, SKIP"),
+        "when_hiv_test": (
+            "If yes,  you have tested since we last visited you, "
+            "when was this test you had since we last visited you?"),
+    }
+
+
 admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)

@@ -18,6 +18,14 @@ class Survey (BaseUuidModel):
         unique=True,
         )
 
+    survey_abbrev = models.CharField(
+        verbose_name="Survey name abbreviation",
+        max_length=3,
+        unique=True,
+        null=True,
+        blank=True,
+        )
+
     survey_description = models.CharField(
         verbose_name="Description",
         max_length=15,

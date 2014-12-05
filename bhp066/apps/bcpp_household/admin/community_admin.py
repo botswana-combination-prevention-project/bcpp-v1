@@ -4,6 +4,6 @@ from apps.bcpp_household.models import Community
 
 
 class CommunityAdmin(BaseModelAdmin):
-    pass
+    instructions = []
 
 admin.site.register(Community, CommunityAdmin)

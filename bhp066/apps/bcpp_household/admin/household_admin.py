@@ -15,9 +15,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
     list_per_page = 30
     list_max_show_all = 1000
 
-    fields = (
-        'report_datetime',
-        'comment')
+    instructions = []
 
     list_display = ('household_identifier', 'structure', 'plot', 'community', 'replaceable',
                     'replaced_by', 'created', 'modified')
@@ -26,7 +24,8 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     search_fields = ('household_identifier', 'community', 'id', 'plot__id', 'replaced_by')
 
-    readonly_fields = ('household_identifier', )
+    readonly_fields = ('plot', 'household_identifier', )
 
     actions = [update_replaceables, ]
+
 admin.site.register(Household, HouseholdAdmin)

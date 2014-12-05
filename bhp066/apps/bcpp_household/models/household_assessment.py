@@ -15,7 +15,8 @@ from .plot import Plot
 
 
 class HouseholdAssessment(BaseDispatchSyncUuidModel):
-
+    """A model completed by the user to assess a household that could not
+    be enumerated."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
     residency = models.CharField(

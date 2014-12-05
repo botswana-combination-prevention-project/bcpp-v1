@@ -3,16 +3,15 @@ from django.db.models import Q
 from edc.dashboard.search.classes import BaseSearchByWord
 
 from ..models import Plot
-from .base_search_by_mixin import BaseSearchByMixin
 from apps.bcpp_household.constants import (CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE,
                                            NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE)
 
 
-class PlotSearchByWord(BaseSearchByMixin, BaseSearchByWord):
+class PlotSearchByWord(BaseSearchByWord):
 
     name = 'word'
     search_model = Plot
-    order_by = 'plot_identifier'
+    order_by = ['plot_identifier']
     template = 'search_plot_result_include.html'
 
     def contribute_to_context(self, context):
@@ -20,23 +19,32 @@ class PlotSearchByWord(BaseSearchByMixin, BaseSearchByWord):
         context.update({'CONFIRMED': CONFIRMED})
         return context
 
-    def get_qset_by_filter_keyword(self):
+    @property
+    def qset(self):
+        qset = (
+            Q(plot_identifier__icontains=self.search_value) |
+            Q(description__icontains=self.search_value) |
+            Q(cso_number__icontains=self.search_value)
+            )
+        return qset
+
+    def qset_by_filter_keyword(self):
         """Returns a qset based on matching keyword.
 
         If you predefine keywords, the search term will be intercepted and used to select a query instead."""
-        qset_filter = Q()
-        qset_exclude = Q()
-        if self.get_search_term() in [CONFIRMED, '-{}'.format(CONFIRMED), UNCONFIRMED]:
-            if self.get_search_term()[0] == '-':
-                qset_exclude = Q(action=self.get_search_term()[1:])
+        qset_filter = None
+        qset_exclude = None
+        if self.search_value in [CONFIRMED, '-{}'.format(CONFIRMED), UNCONFIRMED]:
+            if self.search_value[0] == '-':
+                qset_exclude = Q(action=self.search_value[1:])
             else:
-                qset_filter = Q(action=self.get_search_term())
-        if self.get_search_term() in [RESIDENTIAL_HABITABLE, '-'.format(RESIDENTIAL_HABITABLE), 
-                                      RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
-            if self.get_search_term()[0] == '-':
-                qset_exclude = Q(status=self.get_search_term()[1:])
+                qset_filter = Q(action=self.search_value)
+        if self.search_value in [RESIDENTIAL_HABITABLE, '-'.format(RESIDENTIAL_HABITABLE),
+                                 RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
+            if self.search_value[0] == '-':
+                qset_exclude = Q(status=self.search_value[1:])
             else:
-                qset_filter = Q(status=self.get_search_term())
+                qset_filter = Q(status=self.search_value)
         if qset_filter or qset_exclude:
             return (qset_filter, qset_exclude)
         return None

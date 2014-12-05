@@ -17,7 +17,7 @@ EDC_APPS = (
     'edc.core.bhp_templatetags',
     'edc.core.bhp_common',
     'edc.core.bhp_content_type_map',
-    'edc.core.bhp_data_manager',
+    'edc.data_manager',
     'edc.core.bhp_variables',
     'edc.core.bhp_site_edc',
     'edc.core.bhp_context',
@@ -74,4 +74,6 @@ EDC_APPS = (
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
     'edc.lab.lab_profile',
+
+    'edc.audit',
 )
