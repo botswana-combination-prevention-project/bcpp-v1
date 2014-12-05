@@ -56,6 +56,7 @@ class OutpatientCare (BaseScheduledVisitModel):
                        " type of facility did you visit? "),
         max_length=65,
         choices=CARE_FACILITIES,
+        default='No visit in past 3 months',
         help_text="if 'NOT Government Primary Health Clinic/Post' go to question Q9. ",
         )
 
@@ -71,6 +72,9 @@ class OutpatientCare (BaseScheduledVisitModel):
         verbose_name=_("For this most recent medical care visit, what was the primary reason you sought care? "),
         max_length=95,
         choices=CARE_REASON,
+        null=True,
+        blank=False,
+        default='None',
         help_text="",
         )
     care_reason_other = OtherCharField()
@@ -78,8 +82,10 @@ class OutpatientCare (BaseScheduledVisitModel):
     outpatient_expense = models.DecimalField(
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have to pay"
                        " to the health care provider, including any medicines?"),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
+        null=True,
+        blank=True,
         help_text="Pula",
         )
     travel_time = models.CharField(
@@ -87,14 +93,19 @@ class OutpatientCare (BaseScheduledVisitModel):
                        " to the clinic? "),
         max_length=25,
         choices=TRAVEL_HOURS,
+        null=True,
+        blank=False,
+        default='None',
         help_text="",
         )
     transport_expense = models.DecimalField(
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have"
                        " to pay for transport, food and accommodation? [include cost for fuel if using"
                        " a private car] "),
-        max_digits=5,
+        max_digits=10,
         decimal_places=2,
+        null=True,
+        blank=True,
         help_text="Pula",
         )
     cost_cover = models.CharField(
@@ -102,6 +113,8 @@ class OutpatientCare (BaseScheduledVisitModel):
                        " by covered by anyone else, such as your medical aid or employer? "),
         max_length=17,
         choices=YES_NO_REFUSED,
+        null=True,
+        blank=True,
         help_text="",
         )
     waiting_hours = models.CharField(
@@ -109,6 +122,9 @@ class OutpatientCare (BaseScheduledVisitModel):
                        " to wait before you were seen, from when you arrived at the facility? "),
         max_length=25,
         choices=TRAVEL_HOURS,
+        null=True,
+        blank=False,
+        default='None',
         help_text="",
         )
 

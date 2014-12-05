@@ -11,3 +11,4 @@ from .subject_htc_form import SubjectHtcForm
 from .subject_moved_form import SubjectMovedForm
 from .subject_refusal_form import SubjectRefusalForm
 from .subject_undecided_form import SubjectUndecidedEntryForm, SubjectUndecidedForm
+from .subject_death_form import SubjectDeathForm

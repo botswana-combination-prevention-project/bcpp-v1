@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
 from ..models import (HospitalAdmission, HivHealthCareCosts,
                       HivMedicalCare, HeartAttack, Cancer, Sti,
                       Tubercolosis, SubstanceUse)
@@ -28,6 +29,9 @@ class HospitalAdmissionAdmin(SubjectVisitModelAdmin):
         "travel_hours": admin.VERTICAL,
         "hospitalization_costs": admin.VERTICAL,
         }
+    instructions = [
+        _("<H5>Read to Participant</H5> Read to Participant: For the next set of questions please "
+          "think about times you were admitted to a hospital in the last 3 months")]
 admin.site.register(HospitalAdmission, HospitalAdmissionAdmin)
 
 
@@ -137,4 +141,3 @@ class SubstanceUseAdmin(SubjectVisitModelAdmin):
     instructions = [("Read to Participant: I would like to now ask you "
                              "questions about drinking alcohol and smoking.")]
 admin.site.register(SubstanceUse, SubstanceUseAdmin)
-

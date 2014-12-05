@@ -29,7 +29,6 @@ from .sexual_behaviour_admin import SexualBehaviourAdmin
 from .stigma_admin import StigmaAdmin
 from .stigma_opinion_admin import StigmaOpinionAdmin
 from .subject_consent_admin import SubjectConsentAdmin
-from .subject_death_admin import SubjectDeathAdmin
 from .subject_locator_admin import SubjectLocatorAdmin
 from .subject_referral_admin import SubjectReferralAdmin
 from .subject_visit_admin import SubjectVisitAdmin
