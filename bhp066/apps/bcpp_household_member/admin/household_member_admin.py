@@ -23,8 +23,8 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
     actions = [export_as_csv_action(
         "Export as csv",
         fields=[
-            'initials', 'gender', 'age_in_years', 'present_today', 'study_resident', 'relation',
-            'eligible_member', 'eligible_subject', 'member_status'],
+            'initials', 'gender', 'age_in_years', 'member_status', 'present_today', 'study_resident', 'relation',
+            'eligible_member', 'eligible_subject'],
         extra_fields={'plot_identifier': 'household_structure__household__plot__plot_identifier'})]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
