@@ -374,5 +374,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.save()
             except Survey.DoesNotExist:
                 Survey.objects.create(**survey_values)
+                
 
 bcpp_app_configuration = BcppAppConfiguration()
