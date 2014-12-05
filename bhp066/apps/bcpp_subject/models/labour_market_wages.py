@@ -78,6 +78,9 @@ class LabourMarketWages (BaseScheduledVisitModel):
         verbose_name=_("If you are not currently doing anything to earn money, then are you: "),
         max_length=45,
         choices=OTHER_OCCUPATION,
+        null=True,
+        blank=False,
+        default='None',
         help_text="",
         )
     other_occupation_other = OtherCharField()

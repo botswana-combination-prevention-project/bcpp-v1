@@ -357,6 +357,7 @@ HOUSEHOLD_INCOME = (
 )
 
 OTHER_OCCUPATION = (
+    ('None', _('None')),
     ('Studying', _('Studying')),
     ('Doing housework', _('Doing housework')),
     ('Looking for work', _('Looking for work')),
