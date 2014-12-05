@@ -34,4 +34,15 @@ class HivTestingHistoryAdmin(SubjectVisitModelAdmin):
           " whether you received the results. Please"
           " remember that all of your answers are"
           " confidential.")]
+
+    annual_verbose_name = {
+        "has_tested": (
+            "Since we last visited you have you been tested for HIV? "
+            "If yes, go on with form, if not, SKIP"),
+        "when_hiv_test": (
+            "If yes,  you have tested since we last visited you, "
+            "when was this test you had since we last visited you?"),
+    }
+
+
 admin.site.register(HivTestingHistory, HivTestingHistoryAdmin)

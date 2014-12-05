@@ -16,7 +16,7 @@ class HicEnrollmentForm (BaseSubjectModelForm):
         if not self.cleaned_data.get('hic_permission', None):
             raise forms.ValidationError('Provide an answer for whether participant gave permission for HIC.')
         if self.cleaned_data.get('hic_permission', None).lower() == 'yes':
-            #Only enforce this criteria is subject enrols in HIC
+            # Only enforce this criteria is subject enrols in HIC
             instance.is_permanent_resident(exception_cls=forms.ValidationError)
             instance.is_intended_residency(exception_cls=forms.ValidationError)
             instance.get_hiv_status_today(exception_cls=forms.ValidationError)

@@ -3,7 +3,6 @@ from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
 from .subject_locator import SubjectLocator
-from .subject_death import SubjectDeath
 # from .recent_partner import RecentPartner
 # from .second_partner import SecondPartner
 # from .third_partner import ThirdPartner

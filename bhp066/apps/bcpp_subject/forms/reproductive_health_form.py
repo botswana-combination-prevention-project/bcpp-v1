@@ -1,7 +1,6 @@
 from django import forms
 
-from apps.bcpp_survey.models import Survey
-
+from ..constants import ANNUAL
 from ..models import ReproductiveHealth
 
 from .base_subject_model_form import BaseSubjectModelForm
@@ -9,12 +8,12 @@ from .base_subject_model_form import BaseSubjectModelForm
 
 class ReproductiveHealthForm (BaseSubjectModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(ReproductiveHealthForm, self).__init__(*args, **kwargs)
-        # customize for annual surveys
-        if Survey.objects.current_survey().survey_slug != Survey.objects.first_survey.survey_slug:
-            self.fields['family_planning'].label = (
-                'Since we spoke with you at our last visit, have you used any methods to prevent pregnancy?')
+    optional_attrs = {ANNUAL: {
+        'label': {'family_planning': (
+            'Since we spoke with you at our last visit, have you used any methods to prevent pregnancy?'),
+            }
+        }
+    }
 
     def clean(self):
         cleaned_data = super(ReproductiveHealthForm, self).clean()
