@@ -8,7 +8,7 @@ from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectAbsentee(BaseMemberStatusModel):
-
+    """A system model that links the absentee information with the household member."""
     history = AuditTrail()
 
     def save(self, *args, **kwargs):

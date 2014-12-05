@@ -1,4 +1,6 @@
 from .main import *
+from .call_log_form import CallLogForm, CallLogEntryForm
+from .call_list_form import CallListForm
 from .subject_consent_form import SubjectConsentForm
 from .subject_locator_form import SubjectLocatorForm
 from .subject_referral_form import SubjectReferralForm
@@ -36,3 +38,6 @@ from .tb_symptoms_form import TbSymptomsForm
 from .rbd_demographics_form import RbdDemographicsForm
 from .viral_load_result_form import ViralLoadResultForm
 from .correct_consent_form import CorrectConsentForm
+from .labour_market_wages_form import LabourMarketWagesForm
+from .hospital_admission_form import HospitalAdmissionForm
+from .resource_utilization_form import ResourceUtilizationForm

@@ -11,7 +11,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class Cancer (BaseScheduledVisitModel):
 
-    """CS002 - Medical Diagnoses - Cancer"""
+    """A model completed by the user to record any diagnosis of cancer in the past 12 months."""
 
     date_cancer = models.DateField(
         verbose_name=_("Date of the diagnosis of cancer:"),

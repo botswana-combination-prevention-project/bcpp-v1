@@ -13,7 +13,8 @@ from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectRefusal (BaseMemberStatusModel):
-
+    """A model completed by the user that captures reasons for a
+    potentially eligible household member refusing participating in BHS."""
     refusal_date = models.DateField(
         verbose_name=_("Date subject refused participation"),
         validators=[date_not_before_study_start, date_not_future],

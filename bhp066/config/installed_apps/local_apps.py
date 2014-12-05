@@ -12,8 +12,6 @@ LOCAL_APPS = (
     'apps.bcpp_inspector',
     'apps.bcpp_dispatch',
     'apps.bcpp_analytics',
-    #'apps.bcpp_clinic',
-    #'apps.bcpp_clinic_lab',
-    'tastypie',
-    'edc.audit',
+    'apps.bcpp_clinic',
+    'apps.bcpp_clinic_sync',
 )

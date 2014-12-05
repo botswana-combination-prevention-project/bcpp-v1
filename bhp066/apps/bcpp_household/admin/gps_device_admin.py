@@ -4,6 +4,6 @@ from apps.bcpp_household.models import GpsDevice
 
 
 class GpsDeviceAdmin(BaseModelAdmin):
-    pass
+    instructions = []
 
 admin.site.register(GpsDevice, GpsDeviceAdmin)

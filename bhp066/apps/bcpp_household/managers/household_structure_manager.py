@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household_member.classes.enumeration_helper import EnumerationHelper
 
 
 class HouseholdStructureManager(models.Manager):
@@ -11,14 +12,8 @@ class HouseholdStructureManager(models.Manager):
         household = Household.objects.get_by_natural_key(household_identifier)
         return self.get(household=household, survey=survey)
 
-    def fetch_household_members(self, household_structure):
-        """Gets (or creates) members for the given household structure.
-
-        .. note:: this calls for the members from the household dashboard. (which is stupid)"""
-        from apps.bcpp_dashboard.classes import HouseholdDashboard
-        dashboard_type = 'household'
-        dashboard_model = 'household_structure'
-        dashboard_id = household_structure.pk
-        household_dashboard = HouseholdDashboard(
-            dashboard_type, dashboard_id, dashboard_model, survey=household_structure.survey.pk)
-        return household_dashboard.household_members
+    def add_household_members_from_survey(self, household, source_survey, target_survey):
+        """Adds household members from a previous survey to an
+        unenumerated household structure of a new survey."""
+        enumeration_helper = EnumerationHelper(household, source_survey, target_survey)
+        return enumeration_helper.add_members_from_survey()

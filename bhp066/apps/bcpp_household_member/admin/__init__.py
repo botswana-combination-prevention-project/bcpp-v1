@@ -3,6 +3,7 @@ from .enrollment_checklist_admin import EnrollmentChecklistAdmin
 from .household_info_admin import HouseholdInfoAdmin
 from .head_household_eligibilty_admin import HouseholdHeadEligibilityAdmin
 from .enrollment_loss_admin import EnrollmentLossAdmin
+from .member_appointment_admin import MemberAppointmentAdmin
 from .subject_absentee_admin import SubjectAbsenteeAdmin, SubjectAbsenteeEntryAdmin
 from .subject_moved_admin import SubjectMoved
 from .subject_refusal_admin import SubjectRefusal
@@ -10,3 +11,4 @@ from .subject_undecided_admin import SubjectUndecided
 from .subject_refusal_history_admin import SubjectRefusalHistory
 from .subject_htc_history_admin import SubjectHtcHistoryAdmin
 from .subject_htc_admin import SubjectHtcAdmin
+from .subject_death_admin import SubjectDeathAdmin

@@ -12,7 +12,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 class HeartAttack (BaseScheduledVisitModel):
 
-    """CS002 - Medical Diagonoses - Sub"""
+    """A model completed by the user to record any heart conditions in the past 12 months."""
 
     date_heart_attack = models.DateField(
         verbose_name=_("Date of the heart disease or stroke diagnosis:"),

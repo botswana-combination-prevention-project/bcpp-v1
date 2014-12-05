@@ -1,4 +1,2 @@
-from household_dashboard import household_dashboard
-from subject_dashboard import subject_dashboard
-# from htc_subject_dashboard import htc_subject_dashboard
-from participation import participation
+# from .clinic_dashboard import clinic_dashboard
+from .participation_view import ParticipationView

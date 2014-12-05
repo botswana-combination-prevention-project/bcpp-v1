@@ -10,9 +10,23 @@ from .household_structure import HouseholdStructure
 
 
 class RepresentativeEligibility(BaseRepresentativeEligibility):
-    """Determines if the household member is eligible representative of the household."""
+    """A model completed by the user that checks the eligibility of household member
+    to be the household representative."""
 
     household_structure = models.OneToOneField(HouseholdStructure)
+
+    auto_filled = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text=('This form is autofilled for non-BHS surveys using information from a'
+                   'member consented in a previous survey. See HouseholdMemberHelper')
+        )
+
+    auto_fill_member_id = models.CharField(
+        max_length=50,
+        null=True,
+        editable=False,
+        help_text='pk of household member used to autofill')
 
     objects = RepresentativeEligibilityManager()
 

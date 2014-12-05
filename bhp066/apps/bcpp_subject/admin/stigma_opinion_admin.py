@@ -14,12 +14,12 @@ class StigmaOpinionAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
     form = StigmaOpinionForm
     supplemental_fields = SupplementalFields(
         ('test_community_stigma',
-        'gossip_community_stigma',
-        'respect_community_stigma',
-        'enacted_verbal_stigma',
-        'enacted_phyical_stigma',
-        'enacted_family_stigma',
-        'fear_stigma'), p=0.09, group='ST', grouping_field='subject_visit')
+         'gossip_community_stigma',
+         'respect_community_stigma',
+         'enacted_verbal_stigma',
+         'enacted_phyical_stigma',
+         'enacted_family_stigma',
+         'fear_stigma'), p=0.09, group='ST', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'test_community_stigma',
@@ -37,8 +37,9 @@ class StigmaOpinionAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
         "enacted_phyical_stigma": admin.VERTICAL,
         "enacted_family_stigma": admin.VERTICAL,
         "fear_stigma": admin.VERTICAL, }
-    instructions = [("Read to Participant: Using your own opinions and"
-                             " thinking about this community, please tell me how"
-                             " strongly you agree or disagree with the following"
-                             " statements.")]
+    instructions = [
+        ("<h5>Read to Participant</h5>Using your own opinions and"
+         " thinking about this community, please tell me how"
+         " strongly you agree or disagree with the following"
+         " statements.")]
 admin.site.register(StigmaOpinion, StigmaOpinionAdmin)
