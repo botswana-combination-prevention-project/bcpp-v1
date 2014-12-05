@@ -61,18 +61,6 @@ def subject_htc_on_post_delete(sender, instance, using, **kwargs):
         SubjectHtcHistory.objects.using(using).create(**options)
         
         
-@receiver(post_save, weak=False, dispatch_uid="household_member_on_post_save")
-def household_member_on_post_save(sender, instance, using, **kwargs):
-    """1. Delete death form if exists when survival status changes from Dead to Alive """
-    if isinstance(instance, HouseholdMember):
-        # update the history model
-        pass
-#         if instance.survival_status == ALIVE_DEAD_UNKNOWN[0][0]:
-#             try:
-#                 SubjectDeath.objects.get(household_member=instance).delete()
-#             except SubjectDeath.DoesNotExist:
-#                 pass
-
 @receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
 def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
     """Resets household member values to before the enrollment checklist was entered.
@@ -179,6 +167,9 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
             except AttributeError:
                 # expect a household_structure pk exception if coming from bcpp_clinic
                 pass
+
+            """1. Delete death form if exists when survival status changes from Dead to Alive """
+            instance.delete_subject_death_on_post_save()
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_member_status_form_on_post_save')
