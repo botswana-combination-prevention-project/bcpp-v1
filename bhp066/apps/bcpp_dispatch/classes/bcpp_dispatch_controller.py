@@ -95,6 +95,11 @@ class BcppDispatchController(DispatchController):
         HouseholdLogEntry = get_model('bcpp_household', 'householdlogentry')
         HouseholdStructure = get_model('bcpp_household', 'householdstructure')
         HouseholdMember = get_model('bcpp_household_member', 'householdmember')
+        CallList = get_model('bcpp_subject', 'calllist')
+        CallLog = get_model('bcpp_subject', 'calllog')
+        HouseholdWorkList = get_model('bcpp_household', 'householdworklist')
+        RepresentativeEligibility = get_model('bcpp_household', 'representativeEligibility')
+        HouseholdRefusal = get_model('bcpp_household', 'basehouseholdrefusal')
         self.dispatch_list_models('bcpp_household')
         self.dispatch_list_models('bcpp_subject')
 #         self.dispatch_crypt()
@@ -119,9 +124,18 @@ class BcppDispatchController(DispatchController):
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
+                            work_list = HouseholdWorkList.objects.filter(household_stucture__in=household_structure)
+                            representative_eligibility = RepresentativeEligibility.objects.filter(household_stucture__in=household_structure)
+                            household_refusal = HouseholdRefusal.objects.filter(household_stucture__in=household_structure)
                             self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
                             if household_log_entries:
                                 self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
+                            if work_list:
+                                self.dispatch_user_items_as_json(work_list, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
+                            if representative_eligibility:
+                                self.dispatch_user_items_as_json(representative_eligibility, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
+                            if household_refusal:
+                                self.dispatch_user_items_as_json(household_refusal, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
                         household_members = HouseholdMember.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                         if household_members:
                             missing_rs = [hsm for hsm in household_members if not hsm.registered_subject]
@@ -175,6 +189,10 @@ class BcppDispatchController(DispatchController):
                                     plot,
                                     ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
                                     )
+                            call_list = CallList.objects.filter(household_member__in=household_members)
+                            self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
+                            call_log = CallLog.objects.filter(household_member__in=household_members)
+                            self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
 
     def dispatch_member_status_instances(self, app_label, registered_subject, user_container, **kwargs):
         """Dispatches all member status for this subject, e.g SubjectAbsentee, SubjectUndecided, ...."""
