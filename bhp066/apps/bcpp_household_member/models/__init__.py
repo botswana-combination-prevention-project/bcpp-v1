@@ -16,3 +16,4 @@ from .subject_undecided_entry import SubjectUndecidedEntry
 from .subject_refusal_history import SubjectRefusalHistory
 from .subject_htc_history import SubjectHtcHistory
 from .signals import *
+from .subject_death import SubjectDeath
