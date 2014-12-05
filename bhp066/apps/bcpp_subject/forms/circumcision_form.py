@@ -1,20 +1,18 @@
 from django import forms
 
-from apps.bcpp_survey.models import Survey
-
 from ..models import Circumcision, Uncircumcised, Circumcised
 
 from .base_subject_model_form import BaseSubjectModelForm
+from apps.bcpp_subject.constants import ANNUAL
 
 
 class CircumcisionForm (BaseSubjectModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(CircumcisionForm, self).__init__(*args, **kwargs)
-        # customize for annual surveys
-        if Survey.objects.current_survey().survey_slug != Survey.objects.first_survey.survey_slug:
-            self.fields['circumcised'].label = (
-                'Have you been circumcised since we last spoke with you?')
+    optional_labels = {
+        ANNUAL: {'circumcised': (
+            'Have you been circumcised since we last spoke with you?'),
+            }
+    }
 
     class Meta:
         model = Circumcision

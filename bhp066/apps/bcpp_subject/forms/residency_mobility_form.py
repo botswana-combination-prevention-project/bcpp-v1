@@ -2,24 +2,21 @@ from django import forms
 
 from edc.constants import NOT_APPLICABLE
 
-from apps.bcpp_survey.models import Survey
-
 from ..models import ResidencyMobility
 
 from .base_subject_model_form import BaseSubjectModelForm
+from apps.bcpp_subject.constants import ANNUAL
 
 
 class ResidencyMobilityForm (BaseSubjectModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(ResidencyMobilityForm, self).__init__(*args, **kwargs)
-        # customize for annual surveys
-#         if Survey.objects.current_survey().datetime_start > Survey.objects.first_survey.survey_slug:
-#             self.fields['permanent_resident'].help_text = (
-#                 'If participant has moved into the community in the past 12 months, then since moving in '
-#                 'has the participant typically spent more than 14 nights per month in this community.')
-#             self.fields['permanent_resident'].label = (
-#                 'Erik is a monkey')
+    optional_attrs = {ANNUAL: {
+        'help_text': {'permanent_resident': (
+            'If participant has moved into the community in the past 12 months, then since moving in '
+            'has the participant typically spent more than 14 nights per month in this community.'),
+            }
+        }
+    }
 
     def clean(self):
         cleaned_data = super(ResidencyMobilityForm, self).clean()

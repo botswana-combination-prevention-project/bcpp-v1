@@ -9,7 +9,7 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
         cleaned_data = super(LabourMarketWagesForm, self).clean()
         grant = self.cleaned_data.get('grant')
         # if yes, answer next question
-        if cleaned_data.get('govt_grant', None) == 'Yes':
+        if cleaned_data.get('govt_grant') == 'Yes':
             if not grant:
                 raise forms.ValidationError('You are to answer questions about Grant')
         return cleaned_data
