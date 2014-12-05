@@ -1,6 +1,7 @@
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
                                              Logic, RequisitionRule)
+from edc.subject.appointment.models import Appointment
 
 from .classes import SubjectStatusHelper
 
@@ -10,19 +11,33 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                      HivResult, HivResultDocumentation, ElisaHivResult)
 
 
+def func_is_baseline(visit_instance):
+    if visit_instance.appointment.visit_definition.code == 'T0':
+        return True
+    return False
+
+
+def func_is_annual(visit_instance):
+    if visit_instance.appointment.visit_definition.code != 'T0':
+        return True
+    return False
+
+
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
-    be confirmed to be on art"""
+    be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance)
     return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
 
 
 def func_known_pos(visit_instance):
+    """Returns True if participant is NOT a newly diagnosed POS as determined
+    by the SubjectStatusHelper.new_pos method."""
     return SubjectStatusHelper(visit_instance).new_pos is False
 
 
 def func_todays_hiv_result_required(visit_instance):
-    """Returns True if the an HIV test is required"""
+    """Returns True if the an HIV test is required."""
     subject_status_helper = SubjectStatusHelper(visit_instance)
     if subject_status_helper.todays_hiv_result:
         return True
@@ -40,30 +55,40 @@ def func_hiv_indeterminate_today(visit_instance):
 
 
 def func_hiv_positive_today(visit_instance):
-    """Returns True if the participant has been determinied
-    to be either known or newly diagnosed HIV positive."""
+    """Returns True if the participant is known or newly diagnosed HIV positive."""
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
 
 
+def func_baseline_hiv_positive_today(visit_instance):
+    """Returns the baseline visit instance."""
+    registered_subject = visit_instance.appointment.registered_subject
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
+    return SubjectStatusHelper(baseline_visit_instance).hiv_result == 'POS'
+
+
 def func_not_required(visit_instance):
+    """Returns True (always)."""
     return True
 
 
 def func_no_verbal_hiv_result(visit_instance):
-    """(('verbal_hiv_result', 'equals', 'IND'), ('verbal_hiv_result', 'equals', 'UNK', 'or'),
-    ('verbal_hiv_result', 'equals', 'not_answering', 'or'))"""
+    """Returns True if verbal_hiv_positive response is not POS or NEG."""
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
 
 
 def is_gender_female(visit_instance):
+    """Returns True if gender from RegisteredSubject is Female."""
     return visit_instance.appointment.registered_subject.gender.lower() == 'f'
 
 
 def is_gender_male(visit_instance):
+    """Returns True if gender from RegisteredSubject is Male."""
     return visit_instance.appointment.registered_subject.gender.lower() == 'm'
 
 
 def evaluate_ever_had_sex_for_female(visit_instance):
+    """Returns True if sexual_behaviour.ever_sex is Yes and this is a female."""
     sexual_behaviour = SexualBehaviour.objects.get(subject_visit=visit_instance)
     if visit_instance.appointment.registered_subject.gender.lower() == 'm':
         return False
@@ -101,14 +126,14 @@ class ResourceUtilizationRuleGroup(RuleGroup):
 
     out_patient = ScheduledDataRule(
         logic=Logic(
-            predicate=(('out_patient', 'equals', 'no'), ('out_patient', 'equals', 'REF', 'or')),
+            predicate=(('out_patient', 'equals', 'no'), ('out_patient', 'equals', 'Refuse', 'or')),
             consequence='not_required',
             alternative='new'),
         target_model=['outpatientcare'])
 
     hospitalized = ScheduledDataRule(
         logic=Logic(
-            predicate=(('hospitalized', 'equals', ''), ('hospitalized', 'equals', 0, 'or')),
+            predicate=('hospitalized', 'equals', 0),
             consequence='not_required',
             alternative='new'),
         target_model=['hospitaladmission'])
@@ -163,14 +188,32 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=func_todays_hiv_result_required,
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult'])
+        target_model=['hivresult'],
+        runif=func_is_baseline)
 
-    verbal_hiv_result_hiv_care = ScheduledDataRule(
+    require_todays_hiv_result_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_today,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivresult'],
+        runif=func_is_annual)
+
+    verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence'])
+        target_model=['hivcareadherence'],
+        runif=func_is_baseline)
+
+    verbal_hiv_result_hiv_care_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=('verbal_hiv_result', 'equals', 'POS'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivcareadherence'],
+        runif=func_is_annual)
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -422,6 +465,24 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
+
+    require_microtube_annual = RequisitionRule(
+        logic=Logic(
+            predicate=func_todays_hiv_result_required,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],
+        runif=func_is_annual)
+
+    require_microtube = RequisitionRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_today,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],
+        runif=func_is_annual)
 
     class Meta:
         abstract = True

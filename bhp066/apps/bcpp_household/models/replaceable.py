@@ -4,7 +4,7 @@ from edc.base.model.models import BaseUuidModel
 
 
 class Replaceable(BaseUuidModel):
-
+    """A system model used to track and manage replaceable plots and households."""
     replaced = models.BooleanField(default=False)
 
     replaced_reason = models.CharField(max_length=25, null=True)

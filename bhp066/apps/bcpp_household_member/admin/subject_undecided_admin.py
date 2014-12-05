@@ -76,6 +76,7 @@ class SubjectUndecidedAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member',
         'survey',
         'report_datetime',)
+    instructions = []
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

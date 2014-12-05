@@ -1,128 +1,131 @@
 import csv
+import os
+import pprint
 
-from django.db.models import Min, Max
+from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.bcpp_survey.models import Survey
 
 from apps.bcpp_household.choices import (NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
-                                         ELIGIBLE_REPRESENTATIVE_PRESENT, RESIDENTIAL_HABITABLE)
-from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
-from apps.bcpp_household.models import Plot, Household, HouseholdStructure, HouseholdLogEntry
+                                         RESIDENTIAL_HABITABLE)
+from apps.bcpp_household.helpers.replacement_helper import ReplacementHelper
+from apps.bcpp_household.models import Plot, HouseholdStructure, HouseholdLogEntry
 
 from ...choices import INACCESSIBLE
-from apps.bcpp_household.helpers.replacement_helper import ReplacementHelper
 
 
 class Command(BaseCommand):
 
     APP_NAME = 0
     MODEL_NAME = 1
-    args = '<community name e.g otse>'
-    help = 'Creates a  two csv files of plot lists, 25 percent and 75 percent. List that goes to CDC.'
+    args = '<community name e.g otse> <survey_slug e.g bcpp_year_one>'
+    help = 'Creates a csv file of plots from the 25% (selected=1/2) to be added to the HTC campaign (CDC).'
 
     def handle(self, *args, **options):
-        if not args or len(args) < 1:
-            raise CommandError('Missing \'using\' parameters.')
-        community_name = args[0]
-        cdc_plots = []
-        first_survey_start_datetime = Survey.objects.all(
-            ).aggregate(datetime_start=Min('datetime_start')).get('datetime_start')
-        survey = Survey.objects.get(datetime_start=first_survey_start_datetime)
-        enrolled = []
-        household_reason = []
-        erolled_plot = 0
-        not_enrolled = 0
-        confirmed = 0
-        unconfirmed = 0
-        plots = Plot.objects.filter(community=community_name, selected__isnull=False)
-        cdc_plots.append(
-            ['plot_identifier', 'action', 'status', 'household_count', 'gps_target_lat', 'gps_target_lon',
-             'enrolled', 'comment'])
-        for plot in plots:
-            if plot.status in [INACCESSIBLE, None]:
-                cdc_plots.append(
-                    [plot.plot_identifier, plot.action, plot.status, plot.household_count,
-                     plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
-                unconfirmed += 1
-                not_enrolled += 1
-            elif plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
-                cdc_plots.append(
-                    [plot.plot_identifier, plot.action, plot.status, plot.household_count,
-                     plot.gps_target_lat, plot.gps_target_lon, 'No', plot.status])
-                if plot.action == UNCONFIRMED:
-                    unconfirmed += 1
-                elif plot.action == CONFIRMED:
-                    confirmed += 1
-                not_enrolled += 1
-            if plot.household_count > 0 and plot.action == CONFIRMED and plot.status == RESIDENTIAL_HABITABLE:
-                confirmed += 1
-                households = Household.objects.filter(plot=plot)
-                household_structures = HouseholdStructure.objects.filter(household__in=households, survey=survey)
-                household_reason = []
-                enrolled = []
-                for household_structure in household_structures:
-                    enrolled.append(household_structure.enrolled)
-                    try:
-                        report_datetime = HouseholdLogEntry.objects.filter(
-                            household_log__household_structure=household_structure).aggregate(
-                                Max('report_datetime')).get('report_datetime__max')
-                        lastest_household_log_entry = HouseholdLogEntry.objects.get(
-                            household_log__household_structure=household_structure, report_datetime=report_datetime)
-                        if lastest_household_log_entry.household_status == ELIGIBLE_REPRESENTATIVE_PRESENT:
-                            replacement_helper = ReplacementHelper(household_structure=household_structure)
-                            if replacement_helper.all_eligible_members_refused:
-                                household_reason.append("all members refused")
-                            elif replacement_helper.all_eligible_members_absent:
-                                household_reason.append("all members absent")
-                            else:
-                                household_reason.append("all members refused")
-                        else:
-                            household_reason.append(lastest_household_log_entry.household_status)
-                    except HouseholdLogEntry.DoesNotExist:
-                        household_reason.append('not visited')
-                enrolled = list(set(enrolled))
-                if True in enrolled:
-                    erolled_plot += 1
-#                     if not plot.htc:
-#                         plot.htc = True
-#                         plot.save()
-                    cdc_plots.append(
-                        [plot.plot_identifier, plot.action, plot.status, plot.household_count,
-                         plot.gps_target_lat, plot.gps_target_lon, 'Yes', ''])
-                elif not enrolled[0]:
-                    cdc_plots.append(
-                        [plot.plot_identifier, plot.action, plot.status, plot.household_count,
-                         plot.gps_target_lat, plot.gps_target_lon, 'No', '; '.join(household_reason)])
-                    not_enrolled += 1
+        """Writes to csv plot information for export to CDC.
+
+        The exported data is a selection of plots from the original 25% that
+        are to be added to the HTC campaign."""
+        try:
+            community_name = args[0]
+            survey = Survey.objects.get(survey_slug=args[1])
+        except IndexError:
+            args = args or ['None']
+            raise CommandError('Expected two arguments. Got {}'.format(' '.join(args)))
+        except Survey.DoesNotExist:
+            raise CommandError('Unknown survey slug. Expected one of {}. Got {}'.format(
+                ', '.join([x.survey_slug for x in Survey.objects.all()]), args[1]))
+
+        plots = Plot.objects.filter(community=community_name).exclude(Q(bhs=True) | Q(htc=True))
+        if not plots.count() == Plot.objects.filter(
+                community=community_name, selected__isnull=False).exclude(Q(bhs=True) | Q(htc=True)).count():
+            raise CommandError((
+                'Expected all plots not flagged as BHS or HTC to be from the pool of 25%. Got {} != {}'
+                ).format(
+                    plots.count(),
+                    Plot.objects.filter(
+                        community=community_name, selected__isnull=False).exclude(Q(bhs=True) | Q(htc=True)).count()))
+        print 'HTC: {} ({}, {}, {})'.format(
+            Plot.objects.filter(community=community_name, htc=True).count(),
+            Plot.objects.filter(community=community_name, htc=True, selected__isnull=True).count(),
+            Plot.objects.filter(community=community_name, htc=True, selected=1).count(),
+            Plot.objects.filter(community=community_name, htc=True, selected=2).count())
+        print 'BHS: {} ({}, {}, {})'.format(
+            Plot.objects.filter(community=community_name, bhs=True).count(),
+            Plot.objects.filter(community=community_name, bhs=True, selected__isnull=True).count(),
+            Plot.objects.filter(community=community_name, bhs=True, selected=1).count(),
+            Plot.objects.filter(community=community_name, bhs=True, selected=2).count())
+
+        print 'Unallocated from 25%: {}'.format(plots.count())
+        header_row = ['plot_identifier', 'action', 'status', 'household_count',
+                      'gps_target_lat', 'gps_target_lon', 'enrolled', 'comment']
+        target_path = '~/plot_list_{}_25_pct_update.csv'.format(community_name)
+        cnt = 0
+        status_options = {}
+        with open(os.path.expanduser(target_path), 'w') as f:
+            writer = csv.writer(f, delimiter='|')
+            writer.writerow(header_row)
+            # determine a status comment on each plot
+            for plot in Plot.objects.filter(
+                    community=community_name, selected__isnull=False).exclude(bhs=True).order_by('selected', 'plot_identifier'):
+                status = []
+                if plot.bhs:
+                    # enrolled in bhs
+                    status = ['bhs'.format(plot.selected)]
+                elif plot.htc:
+                    # flagged by BHS to hand over to htc on replacement
+                    if plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+                        status = ['--- {}'.format(plot.status, plot.selected or '0')]
+                    else:
+                        status = ['htc'.format(plot.selected or '0')]
                 else:
-                    raise TypeError()
-#        for plot_values in cdc_plots:
-#            if not plot_values[0] == 'plot_identifier' and plot_values[6] == 'No':
-#                plot_instance = Plot.objects.get(plot_identifier=plot_values[0])
-#                 plot_instance.htc = True
-#                 plot_instance.save()
-        filename_25_pct = str(community_name) + '_25_pct.csv'
-        filename_75_pct = str(community_name) + '_75_pct.csv'
-        cdc_file = open(filename_25_pct, 'wb')
-        writer = csv.writer(cdc_file, delimiter=',')
-        writer.writerows(cdc_plots)
-        plots_75_pct = Plot.objects.filter(community=community_name, selected__isnull=True)
-        cdc_plots_75_pct = []
-        cdc_plots_75_pct.append(
-            ['Plot identifier', 'Plot confirmation status', 'Plot status',
-             'Original latitude coordinate', 'Original longitude coordinate'])
-        for plot in plots_75_pct:
-            cdc_plots_75_pct.append(
-                [plot.plot_identifier, plot.action, plot.status, plot.gps_target_lat, plot.gps_target_lon])
-        cdc_file_75_pct = open(filename_75_pct, 'wb')
-        writer_75_pct = csv.writer(cdc_file_75_pct, delimiter=',')
-        writer_75_pct.writerows(cdc_plots_75_pct)
-        # Report of the statistics
-        print "Total plots in the Database: ", Plot.objects.filter(community=community_name).count()
-        print "Total number of plots in the 75 percent: ", plots_75_pct.count()
-        print "Total number of plots in the 25 percent: ", plots.count()
-        print "Total number of confirmed plots in the 25 percent:", confirmed
-        print "Total number of unconfirmed plots in the 25 percent:", unconfirmed
-        print "total number of enrolled plots in the 25 percent: ", erolled_plot
-        print "Total number of plots not enrolled in the 25 percent: ", not_enrolled
+                    if plot.status is None:
+                        # plot never confirmed or replaced, give to htc
+                        status.append('htc {}'.format(plot.action, plot.selected))
+                    elif plot.status in [INACCESSIBLE, NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
+                        # not a plot
+                        status.append('--- {}'.format(plot.status, plot.selected))
+                    elif plot.status == RESIDENTIAL_HABITABLE:
+                        if plot.household_count == 0:
+                            raise TypeError('Unexpected plot status, household_count==0')
+                        else:
+                            for household_structure in HouseholdStructure.objects.filter(
+                                    survey=survey, household__plot=plot).exclude(enrolled=True):
+                                if HouseholdLogEntry.objects.filter(
+                                        household_log__household_structure=household_structure):
+                                    household_structure.household.replaced_by = None
+                                    replacement_helper = ReplacementHelper(household_structure=household_structure)
+                                    if not replacement_helper.replacement_reason:
+                                        replacement_reason = ''.join(
+                                            [log.household_status for log in HouseholdLogEntry.objects.filter(
+                                                household_log__household_structure=household_structure
+                                                ).order_by('created')][-1:]
+                                            ) or '-'
+                                        if replacement_reason == 'eligible_representative_present':
+                                            replacement_reason = 'eligible_representative_present-no_bhs_eligibles'
+                                    status.append(
+                                        'htc {}'.format(
+                                            (replacement_helper.replacement_reason or replacement_reason
+                                             ).replace(' ', '_'))
+                                        )
+                    else:
+                        raise TypeError('Unexpected plot status')
+                if status:
+                    status = '{}'.format(', '.join(status))
+                else:
+                    status = 'htc not visited'
+                print status
+                cnt += 1
+                writer.writerow([plot.plot_identifier, plot.action, plot.status, plot.household_count,
+                                 plot.gps_target_lat, plot.gps_target_lon, 'Yes' if plot.bhs else 'No',
+                                 status])
+                for s in status.split(','):
+                    try:
+                        status_options[s] += 1
+                    except KeyError:
+                        status_options.update({s: 1})
+        print 'exported {} records of {}.'.format(cnt, Plot.objects.filter(
+            community=community_name, selected__isnull=False).order_by('selected', 'plot_identifier').count())
+        print os.path.expanduser(target_path)
+        pprint.pprint(status_options, indent=2)

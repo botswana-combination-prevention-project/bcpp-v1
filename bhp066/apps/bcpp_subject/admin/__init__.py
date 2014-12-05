@@ -1,7 +1,8 @@
 from .main import *
 
 from .access_to_care_admin import AccessToCareAdmin
-# from .cd4_history_admin import Cd4HistoryAdmin
+from .call_log_admin import CallLogAdmin, CallLogEntryAdmin
+from .call_list_admin import CallListAdmin
 from .cea_enrollment_checklist_admin import CeaEnrollmentChecklistAdmin
 from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin
 from .community_engagement_admin import CommunityEngagementAdmin
@@ -28,16 +29,18 @@ from .sexual_behaviour_admin import SexualBehaviourAdmin
 from .stigma_admin import StigmaAdmin
 from .stigma_opinion_admin import StigmaOpinionAdmin
 from .subject_consent_admin import SubjectConsentAdmin
-from .subject_death_admin import SubjectDeathAdmin
 from .subject_locator_admin import SubjectLocatorAdmin
 from .subject_referral_admin import SubjectReferralAdmin
 from .subject_visit_admin import SubjectVisitAdmin
 from .hiv_result_documentation_admin import HivResultDocumentationAdmin
 from .clinic_questionnaire_admin import ClinicQuestionnaireAdmin
 from .hic_enrollment_admin import HicEnrollmentAdmin
+from .outpatient_care_admin import OutpatientCareAdmin
 from .participation_admin import ParticipationAdmin
 from .tb_symptoms_admin import TbSymptomsAdmin
 from .rbd_demographics_admin import RbdDemographicsAdmin
 from .viral_load_result_admin import ViralLoadResultAdmin
 from .review import *
 from .correct_consent_admin import CorrectConsentAdmin
+from .quality_of_life_admin import QualityOfLifeAdmin
+from .resource_utilization_admin import ResourceUtilizationAdmin

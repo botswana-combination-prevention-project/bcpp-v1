@@ -4,3 +4,4 @@ from .subject_locator_is_referred_list_filter import SubjectLocatorIsReferredLis
 from .hiv_result_filter import HivResultFilter
 from .hic_enrollment_filter import HicEnrollmentFilter
 from .cd4_threshold import Cd4ThreshHoldFilter
+from .may_contact_filter import MayContactFilter

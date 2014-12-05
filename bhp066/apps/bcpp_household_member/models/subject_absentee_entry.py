@@ -12,7 +12,8 @@ from .subject_absentee import SubjectAbsentee
 
 
 class SubjectAbsenteeEntry(BaseSubjectEntry):
-
+    """A model completed by the user that indicates the reason a household member
+    is absent for each time the RA visits."""
     subject_absentee = models.ForeignKey(SubjectAbsentee)
 
     reason = models.CharField(

@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -15,7 +18,9 @@ from .plot import Plot
 
 class HouseholdStructure(BaseDispatchSyncUuidModel):
 
-    """ Each year/survey a new household_structure is created for the household """
+    """A system model that links a household to its household members
+    for a given survey year and helps track the enrollment status, enumeration
+    status, enumeration attempts and other system values. """
 
     household = models.ForeignKey(Household)
 
@@ -88,12 +93,21 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
     history = AuditTrail()
 
     def __unicode__(self):
-        return unicode(self.household)
+        return '{} {}'.format(unicode(self.household), self.survey.survey_abbrev)
 
     def save(self, *args, **kwargs):
-        if self.household.replaced_by:
-            raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
-
+        update_fields = kwargs.get('update_fields', [])
+        if update_fields:
+            pass
+#         if ('enumerated' in kwargs.get('update_fields', []) or 'eligible_members' in kwargs.get('update_fields', []) or
+#                 'refused_enumeration' in kwargs.get('update_fields', [])):
+#             pass
+        else:
+            if self.household.replaced_by:
+                raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))
+            # test survey vs created date + survey_slug for the current survey only
+            if self.id and Survey.objects.current_survey().survey_slug == self.survey.survey_slug:
+                Survey.objects.current_survey(report_datetime=datetime.today(), survey_slug=self.survey.survey_slug)
         super(HouseholdStructure, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -126,6 +140,59 @@ class HouseholdStructure(BaseDispatchSyncUuidModel):
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__pk=self.pk,
                                               is_consented=True).count()
+
+    @property
+    def previous(self):
+        """Returns the previous household_structure (ordered by survey) relative to self
+        and returns None if there is no previous survey."""
+        household_structure = None
+        try:
+            household_structure = self.__class__.objects.filter(
+                household=self.household,
+                survey__datetime_start__lt=self.survey.datetime_start).exclude(
+                    id=self.id).order_by('-survey__datetime_start')[0]
+        except IndexError:
+            pass
+        return household_structure
+
+    @property
+    def first(self):
+        """Returns the first household_structure (ordered by survey) using self
+        and returns self if self is the first household_structure."""
+        household_structure = None
+        try:
+            household_structure = self.__class__.objects.filter(
+                household=self.household,
+                survey__datetime_start__lt=self.survey.datetime_start).exclude(
+                    id=self.id).order_by('survey__datetime_start')[0]
+        except IndexError:
+            household_structure = self
+        return household_structure
+
+    def check_eligible_representative_filled(self, using=None, exception_cls=None):
+        """Raises an exception if the RepresentativeEligibility form has not been completed.
+
+        Without RepresentativeEligibility, a HouseholdMember cannot be added."""
+        exception_cls = exception_cls or ValidationError
+        using = using or 'default'
+        RepresentativeEligibility = models.get_model('bcpp_household', 'RepresentativeEligibility')
+        try:
+            RepresentativeEligibility.objects.using(using).get(household_structure=self)
+        except RepresentativeEligibility.DoesNotExist:
+            verbose_name = RepresentativeEligibility._meta.verbose_name
+            raise exception_cls('\'{}\' for an eligible '
+                                'representative has not been completed.'.format(verbose_name))
+
+    @property
+    def has_household_log_entry(self):
+        """Confirms there is an househol_log_entry for today."""
+        has_household_log_entry = False
+        try:
+            if self.household_log.todays_household_log_entries:
+                has_household_log_entry = True
+        except AttributeError:
+            pass
+        return has_household_log_entry
 
     def plot(self):
         url = reverse('admin:{app_label}_{model_name}_changelist'.format(
