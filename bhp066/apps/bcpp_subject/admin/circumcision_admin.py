@@ -32,6 +32,7 @@ admin.site.register(Circumcision, CircumcisionAdmin)
 class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
+    #figure out the baseline and annual fields here. Ensure that when_circ and age_unit_circ are not in this form
     supplemental_fields = SupplementalFields(
         ("circumcised",
         "health_benefits_smc",
@@ -39,20 +40,26 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         'where_circ_other',
         'why_circ',
         'why_circ_other'), p=0.18, group='MC', grouping_field='subject_visit')
-    fields = (
+    baseline_fields = [
         "subject_visit",
         "circumcised",
         "health_benefits_smc",
+        'circ_date',
         'when_circ',
         'age_unit_circ',
         'where_circ',
         'where_circ_other',
         'why_circ',
-        'why_circ_other',)
-    radio_fields = {
+        'why_circ_other']
+    annual_fields = [f for f in baseline_fields if f not in ['when_circ', 'age_unit_circ']]
+    baseline_radio_fields = {
         "circumcised": admin.VERTICAL,
         "where_circ": admin.VERTICAL,
         "age_unit_circ": admin.VERTICAL,
+        "why_circ": admin.VERTICAL, }
+    annual_radio_fields = {
+        "circumcised": admin.VERTICAL,
+        "where_circ": admin.VERTICAL,
         "why_circ": admin.VERTICAL, }
     filter_horizontal = ("health_benefits_smc",)
 
