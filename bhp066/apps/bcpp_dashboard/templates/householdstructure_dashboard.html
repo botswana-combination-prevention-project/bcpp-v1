@@ -70,7 +70,11 @@
             {% elif not eligible_hoh %}
             	<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_member_householdheadeligibility_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
             {% elif eligible_hoh %}
-                <p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_member_householdinfo_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information for {{household_head_eligibility.household_member.get_relation_display }} {{household_head_eligibility.household_member.first_name|encrypted }}</a></p>
+            	{% if survey.survey_abbrev == 'Y1' %}
+					<p style="clear:both;font-size:11px;"><span style="background-color:red;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_member_householdinfo_add' %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Add Household Information for {{household_head_eligibility.household_member.get_relation_display }} {{household_head_eligibility.household_member.first_name|encrypted }}</a></p>            	
+            	{% elif survey.survey_abbrev == 'Y2' %}
+            		<p style="clear:both;font-size:11px;">&nbsp;</span>&nbsp;<a href="{% url 'admin:bcpp_household_member_householdheadeligibility_change' eligible_hoh.pk %}?household_structure={{ household_structure.pk }}&next={{ household_dashboard_url }}&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}">Head of Household Eligibility Checklist</a></p>
+            	{% endif %}                
             {% endif %}
         {% endif %}
       {% endblock %}
