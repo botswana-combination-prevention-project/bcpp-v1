@@ -117,11 +117,12 @@ class HouseholdDashboard(Dashboard):
     @property
     def household_info(self):
         try:
-            household_info = HouseholdInfo.objects.get(
-                household_structure=self.household_structure)
+            if not self.current_survey:
+                household_info = HouseholdInfo.objects.get(
+                    household_structure=self.household_structure)
+                return household_info
         except HouseholdInfo.DoesNotExist:
-            household_info = None
-        return household_info
+            return None
 
     @property
     def household_refusal(self):
@@ -149,10 +150,7 @@ class HouseholdDashboard(Dashboard):
     def eligible_hoh(self):
         """Returns an instance of HouseholdHeadEligibility if there
         is a verified eligible Head of Household."""
-        if self.survey != 'BCPP Year 2':
-            return False
-        else:
-            return self.household_head_eligibility
+        return self.household_head_eligibility
 
     @property
     def household_head_eligibility(self):
