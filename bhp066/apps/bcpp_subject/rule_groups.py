@@ -8,7 +8,7 @@ from .classes import SubjectStatusHelper
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                      SexualBehaviour, HivCareAdherence, Circumcision,
                      HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                     HivResult, HivResultDocumentation, ElisaHivResult)
+                     HivResult, HivResultDocumentation, ElisaHivResult, HicEnrollment)
 
 
 def func_is_baseline(visit_instance):
@@ -57,6 +57,16 @@ def func_hiv_indeterminate_today(visit_instance):
 def func_hiv_positive_today(visit_instance):
     """Returns True if the participant is known or newly diagnosed HIV positive."""
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
+
+
+def func_hic_keyed(visit_instance):
+    registered_subject = visit_instance.appointment.registered_subject
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
+    try:
+        return True if HicEnrollment.objects.get(subject_visit=baseline_visit_instance) else False
+    except HicEnrollment.DoesNotExist:
+        return False
 
 
 def func_baseline_hiv_positive_today(visit_instance):
@@ -499,6 +509,15 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
+
+    #if hicenrollment filled at T0, dont require it again at T1
+    hic = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hic_keyed,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hicenrollment'],
+        runif=func_is_annual)
 
     require_microtube_annual = RequisitionRule(
         logic=Logic(
