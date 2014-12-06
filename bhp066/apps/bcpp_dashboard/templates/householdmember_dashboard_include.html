@@ -76,7 +76,8 @@
     </td>
  
     {% comment%} dashboard {% endcomment %}
-    <td>    
+    <td>
+    {% if eligible_hoh %}    
             {% comment %}DEBUG, remove{% endcomment %}
 
             {% if household_member.member_status == 'BHS_SCREEN' %}
@@ -177,7 +178,8 @@
                {%endif%}
             {% else %}
                     ----
-            {% endif %}                
+            {% endif %}
+        	{% endif %}             
 	   </td>
   {% endfor %}
 {% endif %}
