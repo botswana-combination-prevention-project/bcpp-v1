@@ -1,15 +1,33 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseTabularInline
+from edc.base.modeladmin.admin import BaseTabularInline, BaseModelAdmin
 
-from ..forms import LabourMarketWagesForm
+from ..forms import LabourMarketWagesForm, GrantForm
 from ..models import LabourMarketWages, Grant
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
+class GrantAdmin(BaseModelAdmin):
+    form = GrantForm
+    fields = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant')
+    list_display = ('labour_market_wages', 'grant_number', 'grant_type', 'other_grant')
+    search_fields = ('labour_market_wages__subject_visit__appointment__registered_subject__subject_identifier')
+
+#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+#         if db_field.name == "labour_market_wages":
+#             if request.GET.get('labour_market_wages'):
+#                 kwargs["queryset"] = LabourMarketWages.objects.filter(id=request.GET.get('labour_market_wages'))
+#
+#         return super(GrantAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+admin.site.register(Grant, GrantAdmin)
+
+
 class GrantInlineAdmin(BaseTabularInline):
     model = Grant
+    form = GrantForm
+    extra = 1
 
 
 class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
