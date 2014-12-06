@@ -8,6 +8,11 @@ from .base_circumcision import BaseCircumcision
 
 
 class Circumcised (BaseCircumcision):
+    #new field on T1
+    circ_date = models.DateField(
+        verbose_name=_('When were you circumcised?'),
+        null=True,
+        blank=True,)
 
     when_circ = models.IntegerField(
         verbose_name=_("At what age were you circumcised?"),
