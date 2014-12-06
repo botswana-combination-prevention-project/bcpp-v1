@@ -25,8 +25,6 @@ class ResourceUtilization (BaseScheduledVisitModel):
                        " other types of inpatient care and stayed one or more nights? This could be"
                        " a government, private, or church/mission hospital. "),
         max_length=2,
-        null=True,
-        blank=True,
         help_text=_("if 'Not admitted to hospital' go to next question. "
                     "If participant does not want to answer, leave blank"),
         )
