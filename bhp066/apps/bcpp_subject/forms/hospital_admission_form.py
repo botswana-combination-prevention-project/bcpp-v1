@@ -25,15 +25,15 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('nights_hospitalized'):
             raise forms.ValidationError(
                 'For how many nights in total was the participant hospitalized?')
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('healthcare_expense'):
-            raise forms.ValidationError(
-                'How much was paid for the entire stay including medicines?')
+#         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('healthcare_expense'):
+#             raise forms.ValidationError(
+#                 'How much was paid for the entire stay including medicines?')
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('travel_hours'):
             raise forms.ValidationError(
                 'How many hours did it take you to get to the hospital?')
-        if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('hospitalization_costs'):
-            raise forms.ValidationError(
-                'Did anyone else besides you cover the hospitalization costs?')
+#         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('hospitalization_costs'):
+#             raise forms.ValidationError(
+#                 'Did anyone else besides you cover the hospitalization costs?')
 
         def validate_greater_than_zero_admission_nights(self, field, cleaned_data):
             msg = 'DO NOT provide any hospital details IF hospitalization nights is NOT GREATER than ZERO'
