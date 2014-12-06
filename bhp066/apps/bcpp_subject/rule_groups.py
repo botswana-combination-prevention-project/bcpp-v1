@@ -67,6 +67,31 @@ def func_baseline_hiv_positive_today(visit_instance):
     return SubjectStatusHelper(baseline_visit_instance).hiv_result == 'POS'
 
 
+def func_baseline_hiv_positive_and_documentation_pos(visit_instance):
+    """Returns the baseline visit instance."""
+    registered_subject = visit_instance.appointment.registered_subject
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
+    subject_helper = SubjectStatusHelper(baseline_visit_instance)
+    return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation or not subject_helper.direct_hiv_pos_documentation
+
+
+def func_baseline_vl_drawn(visit_instance):
+    """Returns the baseline visit instance."""
+    registered_subject = visit_instance.appointment.registered_subject
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
+    return SubjectStatusHelper(baseline_visit_instance).vl_sample_drawn
+
+
+def func_baseline_rbd_drawn(visit_instance):
+    """Returns the baseline visit instance."""
+    registered_subject = visit_instance.appointment.registered_subject
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
+    return SubjectStatusHelper(baseline_visit_instance).rbd_sample_drawn
+
+
 def func_not_required(visit_instance):
     """Returns True (always)."""
     return True
@@ -197,6 +222,15 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['hivresult'],
+        runif=func_is_annual)
+
+    #should be required only for KNOWN HIV positive with or without doc
+    require_hiv_health_care_costs_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_and_documentation_pos,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivhealthcarecosts'],
         runif=func_is_annual)
 
     verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
@@ -482,6 +516,26 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='new'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'],
+        runif=func_is_annual)
+
+    #dont do vl if already drawn on T0
+    require_vl_samples_annual = RequisitionRule(
+        logic=Logic(
+            predicate=func_baseline_vl_drawn,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'],
+        runif=func_is_annual)
+
+    #dont do rbd if already drawn on T0
+    require_rbd_samples_annual = RequisitionRule(
+        logic=Logic(
+            predicate=func_baseline_rbd_drawn,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw'],
         runif=func_is_annual)
 
     class Meta:
