@@ -17,3 +17,4 @@ ACCESSIBLE = 'accessible'
 CONFIRMED = 'confirmed'
 UNCONFIRMED = 'unconfirmed'
 VISIT_ATTEMPTS = 3
+DECEASED = 'deceased'
