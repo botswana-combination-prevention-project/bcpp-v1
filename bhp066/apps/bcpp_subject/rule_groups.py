@@ -86,6 +86,15 @@ def func_baseline_hiv_positive_and_documentation_pos(visit_instance):
     return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation or not subject_helper.direct_hiv_pos_documentation
 
 
+def func_baseline_pos_and_testreview_documentation_pos(visit_instance):
+    """Returns the baseline visit instance."""
+    registered_subject = visit_instance.appointment.registered_subject
+    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
+    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
+    subject_helper = SubjectStatusHelper(baseline_visit_instance)
+    return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation
+
+
 def func_baseline_vl_drawn(visit_instance):
     """Returns the baseline visit instance."""
     registered_subject = visit_instance.appointment.registered_subject
@@ -511,12 +520,32 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=['hicenrollment'])
 
     #if hicenrollment filled at T0, dont require it again at T1
-    hic = ScheduledDataRule(
+    hic_annual_enrol = ScheduledDataRule(
         logic=Logic(
             predicate=func_hic_keyed,
             consequence='not_required',
             alternative='new'),
         target_model=['hicenrollment'],
+        runif=func_is_annual)
+
+    #known +VE at T0 (hivresult, hivtestreview) should not require several forms
+    hic_annual_doc = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_pos_and_testreview_documentation_pos,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivresult', 'hivtestinghistory', 'hivtestreview', 'hivresultdocumentation',
+                      'hivtested'],
+        runif=func_is_annual)
+
+    #known +VE at T0 (hivresult, hivtestreview) should not require microtube
+    hic_annual_req = RequisitionRule(
+        logic=Logic(
+            predicate=func_baseline_pos_and_testreview_documentation_pos,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['bcpp_lab', 'subject_requisition'],
+        target_requisition_panels=['Microtube'],
         runif=func_is_annual)
 
     require_microtube_annual = RequisitionRule(
