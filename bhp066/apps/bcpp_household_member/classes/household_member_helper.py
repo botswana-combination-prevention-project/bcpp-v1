@@ -1,3 +1,7 @@
+from edc.map.classes import site_mappers
+
+from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+
 from ..constants import (BHS, BHS_ELIGIBLE, BHS_SCREEN, REFUSED, NOT_ELIGIBLE,
                          HTC_ELIGIBLE, REFUSED_HTC, HTC, ABSENT, UNDECIDED, BHS_LOSS,
                          ANNUAL)
@@ -20,7 +24,11 @@ class HouseholdMemberHelper(object):
             else:
                 member_status = BHS
         elif self.household_member.eligible_subject and not self.household_member.refused:
-            member_status = BHS_ELIGIBLE
+            if (self.household_member.household_structure.survey.survey_slug != BASELINE_SURVEY_SLUG and
+                    not site_mappers.current_mapper().intervention):
+                member_status = HTC_ELIGIBLE
+            else:
+                member_status = BHS_ELIGIBLE
         elif ((self.household_member.undecided or self.household_member.absent or
                self.household_member.refused)
               and selected_member_status == BHS_SCREEN):
