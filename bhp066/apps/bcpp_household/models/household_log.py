@@ -17,7 +17,7 @@ from .plot import Plot
 
 class HouseholdLog(BaseDispatchSyncUuidModel):
     """A system model that links the household log to the household."""
-    household_structure = models.OneToOneField(HouseholdStructure)
+    household_structure = models.ForeignKey(HouseholdStructure)
 
     history = AuditTrail()
 
