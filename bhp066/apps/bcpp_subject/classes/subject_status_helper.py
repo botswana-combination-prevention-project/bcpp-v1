@@ -20,6 +20,7 @@ class SubjectStatusHelper(object):
 
     def __init__(self, visit_instance):
         self._defaulter = None
+        self._rbd_requisition_instance = None
         self._documented_verbal_hiv_result = None
         self._documented_verbal_hiv_result_date = None
         self._hiv_care_adherence_instance = None
