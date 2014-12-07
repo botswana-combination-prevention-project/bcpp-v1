@@ -3,10 +3,11 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from edc.map.classes import site_mappers
 
+from ..constants import BASELINE_SURVEY_SLUG
+from ..utils import ClinicDaysTuple, SurveyDatesTuple
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, LETLHAKENG_LANDMARKS
-
-from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
 class LetlhakengPlotMapper(BasePlotMapper):
@@ -26,7 +27,7 @@ class LetlhakengPlotMapper(BasePlotMapper):
     intervention = False
 
     survey_dates = {
-        'bcpp-year-1': SurveyDatesTuple(
+        BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2014, 9, 5),
             full_enrollment_date=date(2014, 10, 15),
@@ -41,11 +42,11 @@ class LetlhakengPlotMapper(BasePlotMapper):
     }
 
     clinic_days = {
-        'bcpp-year-1': {
+        BASELINE_SURVEY_SLUG: {
             'IDCC': ClinicDaysTuple((TU, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-            'SMC': ClinicDaysTuple((WE, ), survey_dates['bcpp-year-1'].smc_start_date)},
+            'SMC': ClinicDaysTuple((WE, ), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
             'IDCC': ClinicDaysTuple((TU, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
