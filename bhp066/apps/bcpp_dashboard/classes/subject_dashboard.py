@@ -81,7 +81,8 @@ class SubjectDashboard(BaseSubjectDashboard):
                 if subject_visit.household_member == self.household_member:
                     appointments.append(appointment)
             except SubjectVisit.DoesNotExist:
-                # try to create
+                if appointment.subject_visit_id is None:
+                    appointments.append(appointment)
                 pass
         self._appointments = appointments
         return self._appointments
@@ -182,6 +183,8 @@ class SubjectDashboard(BaseSubjectDashboard):
             hiv_result = HivResult.objects.get(subject_visit__household_member=self.household_member)
         except HivResult.DoesNotExist:
             hiv_result = None
+        except HivResult.MultipleObjectsReturned:
+            hiv_result = HivResult.objects.filter(subject_visit__household_member=self.household_member)[1]
         return hiv_result
 
     @property
