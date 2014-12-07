@@ -1,5 +1,7 @@
 from edc.map.classes import site_mappers
 
+from ..constants import BASELINE_SURVEY_SLUG
+
 from .base_plot_mapper import BasePlotMapper
 
 

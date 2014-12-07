@@ -527,7 +527,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=['hicenrollment'],
         runif=func_is_annual)
 
-    #known +VE at T0 (hivresult, hivtestreview) should not require several forms
+    # known +VE at T0 (hivresult, hivtestreview) should not require several forms
     hic_annual_doc = ScheduledDataRule(
         logic=Logic(
             predicate=func_baseline_pos_and_testreview_documentation_pos,
@@ -537,7 +537,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
                       'hivtested'],
         runif=func_is_annual)
 
-    #known +VE at T0 (hivresult, hivtestreview) should not require microtube
+    # known +VE at T0 (hivresult, hivtestreview) should not require microtube
     hic_annual_req = RequisitionRule(
         logic=Logic(
             predicate=func_baseline_pos_and_testreview_documentation_pos,
