@@ -28,15 +28,15 @@ class OodiPlotMapper(BasePlotMapper):
     survey_dates = {
         'bcpp-year-1': SurveyDatesTuple(
             name='bhs',
-            start_date=date(2014, 11, 5),
-            full_enrollment_date=date(2014, 11, 28),
-            end_date=date(2014, 12, 20),
+            start_date=date(2014, 11, 21),
+            full_enrollment_date=date(2014, 12, 19),
+            end_date=date(2014, 12, 19),
             smc_start_date=date(2014, 12, 1)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 5),
-            full_enrollment_date=date(2015, 11, 28),
-            end_date=date(2015, 12, 20),
+            start_date=date(2014, 12, 21),
+            full_enrollment_date=date(2014, 12, 17),
+            end_date=date(2014, 12, 22),
             smc_start_date=date(2015, 12, 1)),
     }
 
