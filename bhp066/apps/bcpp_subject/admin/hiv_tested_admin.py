@@ -26,7 +26,7 @@ class HivTestedAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
         'why_hiv_test',
         'hiv_pills',
         'arvs_hiv_test']
-    annual_fields = [f for f in baseline_fields if f not in ['num_hiv_tests', 'hiv_pills', 'arvs_hiv_test']]
+    annual_fields = [f for f in baseline_fields if f not in ['num_hiv_tests', 'hiv_pills', 'arvs_hiv_test', 'why_hiv_test']]
     baseline_radio_fields = {
         "where_hiv_test": admin.VERTICAL,
         "why_hiv_test": admin.VERTICAL,
