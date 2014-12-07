@@ -1,9 +1,11 @@
 from django.contrib import admin
 
-from ..models import HivCareAdherence
+from ..models import HivCareAdherence #, SubjectVisit
 from ..forms import HivCareAdherenceForm
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
+
+#from ..classes import HivCareAdherenceHelper
 
 
 class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
@@ -29,7 +31,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'adherence_4_day',
         'adherence_4_wk']
 
-    annual_fields = [f for f in baseline_fields if f not in ["first_positive"]]
+    annual_fields = [f for f in baseline_fields if f not in ["first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv", "why_no_arv", "on_arv"]]
 
     form = HivCareAdherenceForm
 
@@ -45,7 +47,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         "adherence_4_wk": admin.VERTICAL,
         "arv_evidence": admin.VERTICAL}
 
-    annual_radio_fields = baseline_fields
+    annual_radio_fields = baseline_radio_fields
 
     instructions = [("Note to Interviewer: This section is only to be"
                      " completed by HIV-positive participants who knew"
@@ -67,5 +69,14 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'arv_evidence',
         'ever_taken_arv',
         )
+
+#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+#         if db_field.name == "subject_visit":
+#             if request.GET.get('subject_visit'):
+#                 kwargs["queryset"] = SubjectVisit.objects.filter(id=request.GET.get('subject_visit'))
+                #visit_instance = SubjectVisit.objects.get(id=request.GET.get('subject_visit'))
+                #hiv_care_adherence_helper = HivCareAdherenceHelper(visit_instance)
+                #self.annual_fields = hiv_care_adherence_helper.annual_fields_pos_and_art if hiv_care_adherence_helper.annual_fields_pos_and_art else self.annual_fields
+                #self.annual_radio_fields = hiv_care_adherence_helper.annual_radio_fields if hiv_care_adherence_helper.annual_fields_pos_and_art else self.annual_radio_fields
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
