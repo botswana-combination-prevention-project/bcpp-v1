@@ -1,4 +1,7 @@
 from django import forms
+from django.forms.util import ErrorList
+
+from edc.constants import DEAD, NO, UNKNOWN, YES
 
 from ..models import HouseholdMember, EnrollmentChecklist
 
@@ -23,6 +26,17 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
                 raise forms.ValidationError(
                     'Member is Male but you selected a female relation. Got {0}.'.format(
                         [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
+
+        if cleaned_data.get('survival_status') == DEAD:
+            #if not cleaned_data.get('relation') == UNKNOWN:
+            #    self._errors["info_status"] = ErrorList([u"Please, select unknown."])
+
+            if not cleaned_data.get('present_today') == NO:
+                self._errors["present_today"] = ErrorList([u"Please, select No."])
+
+            if  cleaned_data.get('study_resident') == NO or cleaned_data.get('study_resident') == YES:
+                self._errors["study_resident"] = ErrorList([u"Please, select don't want to answer "])
+
         if cleaned_data.get('gender') == 'F':
             if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in MALE_RELATIONS]:
                 raise forms.ValidationError(

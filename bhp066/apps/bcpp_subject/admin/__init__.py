@@ -8,7 +8,7 @@ from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, Circumcis
 from .community_engagement_admin import CommunityEngagementAdmin
 from .demographics_admin import DemographicsAdmin
 from .education_admin import EducationAdmin
-from .grant_admin import GrantAdmin
+#from .grant_admin import GrantAdmin
 from .hiv_care_adherence_admin import HivCareAdherenceAdmin
 from .hiv_result_admin import HivResultAdmin
 from .elisa_hiv_result_admin import ElisaHivResult
@@ -16,7 +16,7 @@ from .hiv_test_review_admin import HivTestReviewAdmin
 from .hiv_tested_admin import HivTestedAdmin
 from .hiv_testing_history_admin import HivTestingHistoryAdmin
 from .hiv_untested_admin import HivUntestedAdmin
-from .labour_market_wages_admin import LabourMarketWagesAdmin, GrantInlineAdmin
+from .labour_market_wages_admin import *
 from .medical_diagnoses_admin import MedicalDiagnosesAdmin
 from .months_partner_admin import *
 from .non_pregnancy_admin import NonPregnancyAdmin
