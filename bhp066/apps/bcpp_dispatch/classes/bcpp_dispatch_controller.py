@@ -81,7 +81,13 @@ class BcppDispatchController(DispatchController):
         """
         survey = kwargs.get('survey', None)
         if survey:
-            surveys = [survey]
+            if survey.survey_abbrev == 'Y1':
+                surveys = [survey]
+            elif survey.survey_abbrev == 'Y2':
+                y1_survey = Survey.objects.get(survey_abbrev='Y1')
+                surveys = [y1_survey, survey]
+            elif survey.survey_abbrev == 'Y3':
+                surveys = Survey.objects.all()
         else:
             # if surveys are not dispatched then they must be on the producer already.
             surveys = self.get_surveys(self.get_using_destination())
@@ -102,7 +108,6 @@ class BcppDispatchController(DispatchController):
         HouseholdRefusal = get_model('bcpp_household', 'householdrefusal')
         self.dispatch_list_models('bcpp_household')
         self.dispatch_list_models('bcpp_subject')
-#         self.dispatch_crypt()
 #         self.dispatch_registered_subjects()
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
@@ -117,7 +122,6 @@ class BcppDispatchController(DispatchController):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])
                 # for survey in surveys:
                 #    self.dispatch_user_items_as_json(survey, plot)
-                surveys = Survey.objects.all()
                 for survey in surveys:
                     household_structure = HouseholdStructure.objects.filter(household=household, survey_id=survey.id)
                     if household_structure:
@@ -191,9 +195,11 @@ class BcppDispatchController(DispatchController):
                                     ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
                                     )
                             call_list = CallList.objects.filter(household_member__in=household_members)
-                            self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
+                            if call_list:
+                                self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
                             call_log = CallLog.objects.filter(household_member__in=household_members)
-                            self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
+                            if call_log:
+                                self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
 
     def dispatch_member_status_instances(self, app_label, registered_subject, user_container, **kwargs):
         """Dispatches all member status for this subject, e.g SubjectAbsentee, SubjectUndecided, ...."""
