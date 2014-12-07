@@ -45,6 +45,7 @@ CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
+# developers should set by catching their hostname instead of setting explicitly
 if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
@@ -54,10 +55,8 @@ elif socket.gethostname() == 'One-2.local':
 elif socket.gethostname() == 'silverapple':
     KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 else:
+    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
-    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    #KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
-    # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 
@@ -221,8 +220,7 @@ MAX_SUBJECTS = {'subject': 9999,
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
-                       'bcpp_lab', 'bcpp_survey'
-                       'bcpp_clinic']
+                       'bcpp_lab', 'bcpp_survey', 'bcpp_clinic']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
