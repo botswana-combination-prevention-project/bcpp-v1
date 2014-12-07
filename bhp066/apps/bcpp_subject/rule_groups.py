@@ -518,7 +518,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hicenrollment'])
 
-    #if hicenrollment filled at T0, dont require it again at T1
+    # if hicenrollment filled at T0, dont require it again at T1
     hic_annual_enrol = ScheduledDataRule(
         logic=Logic(
             predicate=func_hic_keyed,
@@ -565,7 +565,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_requisition_panels=['Microtube'],
         runif=func_is_annual)
 
-    #dont do vl if already drawn on T0
+    # dont do vl if already drawn on T0
     require_vl_samples_annual = RequisitionRule(
         logic=Logic(
             predicate=func_baseline_vl_drawn,
@@ -575,7 +575,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_requisition_panels=['Viral Load'],
         runif=func_is_annual)
 
-    #dont do rbd if already drawn on T0
+    # dont do rbd if already drawn on T0
     require_rbd_samples_annual = RequisitionRule(
         logic=Logic(
             predicate=func_baseline_rbd_drawn,
