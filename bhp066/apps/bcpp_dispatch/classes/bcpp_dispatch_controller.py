@@ -99,7 +99,7 @@ class BcppDispatchController(DispatchController):
         CallLog = get_model('bcpp_subject', 'calllog')
         HouseholdWorkList = get_model('bcpp_household', 'householdworklist')
         RepresentativeEligibility = get_model('bcpp_household', 'representativeEligibility')
-        HouseholdRefusal = get_model('bcpp_household', 'basehouseholdrefusal')
+        HouseholdRefusal = get_model('bcpp_household', 'householdrefusal')
         self.dispatch_list_models('bcpp_household')
         self.dispatch_list_models('bcpp_subject')
 #         self.dispatch_crypt()
@@ -117,6 +117,7 @@ class BcppDispatchController(DispatchController):
                 self.dispatch_user_items_as_json(household, plot, ['plot_id'])
                 # for survey in surveys:
                 #    self.dispatch_user_items_as_json(survey, plot)
+                surveys = Survey.objects.all()
                 for survey in surveys:
                     household_structure = HouseholdStructure.objects.filter(household=household, survey_id=survey.id)
                     if household_structure:
@@ -124,9 +125,9 @@ class BcppDispatchController(DispatchController):
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
-                            work_list = HouseholdWorkList.objects.filter(household_stucture__in=household_structure)
-                            representative_eligibility = RepresentativeEligibility.objects.filter(household_stucture__in=household_structure)
-                            household_refusal = HouseholdRefusal.objects.filter(household_stucture__in=household_structure)
+                            work_list = HouseholdWorkList.objects.filter(household_structure__in=household_structure)
+                            representative_eligibility = RepresentativeEligibility.objects.filter(household_structure__in=household_structure)
+                            household_refusal = HouseholdRefusal.objects.filter(household_structure__in=household_structure)
                             self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
                             if household_log_entries:
                                 self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
