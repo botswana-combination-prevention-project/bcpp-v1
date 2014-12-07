@@ -73,19 +73,17 @@ class SubjectDashboard(BaseSubjectDashboard):
     @property
     def appointments(self):
         """Returns a queryset on one appointment relative to the subject consent household member"""
-        self._appointments = None
-        if self.show == 'forms':
-            self._appointments = [self.appointment]
-        else:
-            # or filter appointments for the current membership categories
-            # schedule_group__membership_form
-            codes = []
-            for category in self.membership_form_category:
-                codes.extend(MembershipForm.objects.codes_for_category(membership_form_category=category))
-                self._appointments = Appointment.objects.filter(
-                    registered_subject=self.registered_subject,
-                    visit_definition__code__in=codes).order_by(
-                    'visit_definition__code', 'visit_instance', 'appt_datetime')
+        self._appointments = super(BaseSubjectDashboard, self).appointments
+        appointments = []
+        for appointment in self._appointments:
+            try:
+                subject_visit = SubjectVisit.objects.get(appointment=appointment)
+                if subject_visit.household_member == self.household_member:
+                    appointments.append(appointment)
+            except SubjectVisit.DoesNotExist:
+                # try to create
+                pass
+        self._appointments = appointments
         return self._appointments
 
     @property
