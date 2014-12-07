@@ -519,7 +519,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hicenrollment'])
 
-    #if hicenrollment filled at T0, dont require it again at T1
+    # if hicenrollment filled at T0, dont require it again at T1
     hic_annual_enrol = ScheduledDataRule(
         logic=Logic(
             predicate=func_hic_keyed,
@@ -528,7 +528,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=['hicenrollment'],
         runif=func_is_annual)
 
-    #known +VE at T0 (hivresult, hivtestreview) should not require several forms
+    # known +VE at T0 (hivresult, hivtestreview) should not require several forms
     hic_annual_doc = ScheduledDataRule(
         logic=Logic(
             predicate=func_baseline_pos_and_testreview_documentation_pos,
@@ -538,13 +538,13 @@ class BaseRequisitionRuleGroup(RuleGroup):
                       'hivtested'],
         runif=func_is_annual)
 
-    #known +VE at T0 (hivresult, hivtestreview) should not require microtube
+    # known +VE at T0 (hivresult, hivtestreview) should not require microtube
     hic_annual_req = RequisitionRule(
         logic=Logic(
             predicate=func_baseline_pos_and_testreview_documentation_pos,
             consequence='not_required',
             alternative='new'),
-        target_model=['bcpp_lab', 'subject_requisition'],
+        target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'],
         runif=func_is_annual)
 
