@@ -184,6 +184,8 @@ class SubjectDashboard(BaseSubjectDashboard):
             hiv_result = HivResult.objects.get(subject_visit__household_member=self.household_member)
         except HivResult.DoesNotExist:
             hiv_result = None
+        except HivResult.MultipleObjectsReturned:
+            hiv_result = HivResult.objects.filter(subject_visit__household_member=self.household_member)[1]
         return hiv_result
 
     @property
