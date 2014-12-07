@@ -392,6 +392,21 @@ class SubjectStatusHelper(object):
                 pass
         return self._vl_requisition_instance
 
+    @property
+    def rbd_sample_drawn(self):
+        """Returns True if the RBD was drawn."""
+        return True if self.rbd_requisition_instance else False
+
+    @property
+    def rbd_requisition_instance(self):
+        """Returns a model instance of the SubjectRequisition for panel RBD or None."""
+        if not self._rbd_requisition_instance:
+            try:
+                self._rbd_requisition_instance = self.models.get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Research Blood Draw', is_drawn='Yes')
+            except self.models.get('subject_requisition').DoesNotExist:
+                pass
+        return self._rbd_requisition_instance
+
     def convert_to_nullboolean(self, yes_no_dwta):
         """Converts 'yes' to True, 'no' to False or returns None."""
         if str(yes_no_dwta) in ['True', 'False', 'None']:
