@@ -107,6 +107,16 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
             url=url, q=self.household_structure.pk)
     call_list.allow_tags = True
 
+    def plot(self):
+        search_term = self.household_structure.household.plot.plot_identifier
+        url = reverse('section_search_word_url', kwargs={
+            'section_name': 'plot',
+            'search_name': 'word',
+            'search_term': search_term})
+        return """<a href="{url}" />{q}</a>""".format(
+            url=url, q=search_term)
+    plot.allow_tags = True
+
     def appt(self):
         url = reverse('admin:bcpp_household_member_memberappointment_changelist')
         return """<a href="{url}?q={q}" />appts</a>""".format(
