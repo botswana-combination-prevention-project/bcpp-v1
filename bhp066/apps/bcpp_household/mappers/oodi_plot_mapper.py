@@ -3,10 +3,11 @@ from datetime import date
 
 from edc.map.classes import site_mappers
 
+from ..constants import BASELINE_SURVEY_SLUG
+from ..utils import ClinicDaysTuple, SurveyDatesTuple
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, OODI_LANDMARKS
-
-from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
 class OodiPlotMapper(BasePlotMapper):
@@ -26,7 +27,7 @@ class OodiPlotMapper(BasePlotMapper):
     location_boundary = ()
 
     survey_dates = {
-        'bcpp-year-1': SurveyDatesTuple(
+        BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2014, 11, 5),
             full_enrollment_date=date(2014, 11, 28),
@@ -41,11 +42,11 @@ class OodiPlotMapper(BasePlotMapper):
     }
 
     clinic_days = {
-        'bcpp-year-1': {
+        BASELINE_SURVEY_SLUG: {
             'IDCC': ClinicDaysTuple((MO, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].smc_start_date)},
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
             'IDCC': ClinicDaysTuple((MO, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
