@@ -19,6 +19,10 @@ from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
 from apps.bcpp_survey.models import Survey
 
+from collections import namedtuple
+
+SurveyTuple = namedtuple('SurveyTuple', 'survey url')
+
 
 class HouseholdDashboard(Dashboard):
 
@@ -178,8 +182,8 @@ class HouseholdDashboard(Dashboard):
 
     @property
     def survey(self):
-        """Returns the current survey."""
-        return self.current_survey
+        """Returns the survey for the current household_structure."""
+        return self.household_structure.survey
 
     @property
     def current_survey(self):
@@ -200,15 +204,15 @@ class HouseholdDashboard(Dashboard):
     def surveys(self):
         """Returns a list of surveys order by date excluding the current."""
         if not self._surveys:
-            self._surveys = [(self.survey, '')]
-            for survey in Survey.objects.all().exclude(pk=self.survey.pk).order_by('datetime_start'):
+            self._surveys = []
+            for survey in Survey.objects.all().order_by('datetime_start'):
                 household_structure = HouseholdStructure.objects.get(
                     household=self.household, survey=survey)
                 url = reverse(self.dashboard_url_name,
                               kwargs={'dashboard_type': self.dashboard_type,
                                       'dashboard_model': 'household_structure',
                                       'dashboard_id': household_structure.pk})
-                self._surveys.append((survey, url))
+                self._surveys.append(SurveyTuple(survey=survey, url=url))
         return self._surveys
 
     @property
