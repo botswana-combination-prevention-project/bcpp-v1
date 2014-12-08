@@ -26,6 +26,14 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
             raise forms.ValidationError(
                 'If hospitalization is ZERO then response to hospitalization costs should be NONE?')
 
+        # expenses > 0
+        if cleaned_data.get('healthcare_expense') > 0 and not cleaned_data.get('hospitalization_costs'):
+            raise forms.ValidationError(
+                'If health care expenses are greater than zero, answer hospitalization costs')
+        if cleaned_data.get('total_expenses') > 0 and not cleaned_data.get('hospitalization_costs'):
+            raise forms.ValidationError(
+                'If total expenses are greater than zero, answer hospitalization costs')
+
         # if greater than zero
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('reason_hospitalized'):
             raise forms.ValidationError(
