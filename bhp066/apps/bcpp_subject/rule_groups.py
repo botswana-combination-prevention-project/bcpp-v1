@@ -242,7 +242,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=['hivresult'],
         runif=func_is_annual)
 
-    #should be required only for KNOWN HIV positive with or without doc
+    # should be required only for KNOWN HIV positive with or without doc
     require_hiv_health_care_costs_annual = ScheduledDataRule(
         logic=Logic(
             predicate=func_baseline_hiv_positive_and_documentation_pos,
@@ -259,11 +259,12 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=['hivcareadherence'],
         runif=func_is_baseline)
 
-    verbal_hiv_result_hiv_care_annual = ScheduledDataRule(
+    # should be available for all positives with or without doc
+    hiv_care_adherence_for_all_pos = ScheduledDataRule(
         logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'POS'),
-            consequence='not_required',
-            alternative='new'),
+            predicate=func_baseline_hiv_positive_and_documentation_pos,
+            consequence='new',
+            alternative='not_required'),
         target_model=['hivcareadherence'],
         runif=func_is_annual)
 
