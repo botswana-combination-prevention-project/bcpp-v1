@@ -99,7 +99,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             ]},
          'T1': {
             'title': 'T1 Annual Household Survey',
-            'time_point': 0,
+            'time_point': 1,
             'base_interval': 0,
             'base_interval_unit': 'D',
             'window_lower_bound': 0,
