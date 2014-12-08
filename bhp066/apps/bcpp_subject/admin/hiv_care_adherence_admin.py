@@ -1,9 +1,13 @@
 from django.contrib import admin
 
-from ..models import HivCareAdherence #, SubjectVisit
+from ..classes import SubjectStatusHelper
 from ..forms import HivCareAdherenceForm
+from ..models import HivCareAdherence, SubjectVisit
+
+from edc.constants import POS
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
+from bhp066.apps.bcpp_subject.constants import ANNUAL_CODES, BASELINE_CODES
 
 #from ..classes import HivCareAdherenceHelper
 
@@ -70,13 +74,27 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'ever_taken_arv',
         )
 
-#     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-#         if db_field.name == "subject_visit":
-#             if request.GET.get('subject_visit'):
-#                 kwargs["queryset"] = SubjectVisit.objects.filter(id=request.GET.get('subject_visit'))
-                #visit_instance = SubjectVisit.objects.get(id=request.GET.get('subject_visit'))
-                #hiv_care_adherence_helper = HivCareAdherenceHelper(visit_instance)
-                #self.annual_fields = hiv_care_adherence_helper.annual_fields_pos_and_art if hiv_care_adherence_helper.annual_fields_pos_and_art else self.annual_fields
-                #self.annual_radio_fields = hiv_care_adherence_helper.annual_radio_fields if hiv_care_adherence_helper.annual_fields_pos_and_art else self.annual_radio_fields
+    @property
+    def annual_fields(self):
+        """Returns a subset of annual_fields if subject is POS and not on ART."""
+        annual_fields = [f for f in self.baseline_fields if f not in [
+             "first_positive", "medical_care", "no_medical_care", "no_medical_care_other",
+             "ever_recommended_arv", "ever_taken_arv", "why_no_arv", "why_no_arv_other", "on_arv"]]
+        if self.hiv_result_on_pos_and_subject_not_on_art:
+            annual_fields = self.baseline_fields
+            annual_fields.remove('first_positive')
+        return annual_fields
+
+    @property
+    def hiv_result_on_pos_and_subject_not_on_art(self):
+        try:
+            baseline_subject_visit = SubjectVisit.objects.get(
+                household_member__registered_subject=self.subject_visit.appointment.registered_subject,
+                appointment__visit_definition__code=BASELINE_CODES)
+        except SubjectVisit.DoesNotExist:
+            baseline_subject_visit = None
+        subject_helper = SubjectStatusHelper(baseline_subject_visit)
+        return (subject_helper.hiv_result == POS and not subject_helper.on_art)
+
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
