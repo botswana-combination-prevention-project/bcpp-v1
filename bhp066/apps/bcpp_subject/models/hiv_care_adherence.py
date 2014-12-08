@@ -31,6 +31,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
                        " registration, additional clinic-based counseling?"),
         max_length=25,
         choices=YES_NO_DWTA,
+        null=True,
+        blank=False,
         help_text="if 'YES', answer HIV medical care section",
         )
 
@@ -66,6 +68,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
                        "your baby from HIV]"),
         max_length=25,
         choices=YES_NO_DWTA,
+        null=True,
+        blank=False,
         help_text="",  # Q7
         )
 
@@ -95,6 +99,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
         verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
         max_length=25,
         choices=YES_NO_DWTA,
+        null=True,
+        blank=False,
         help_text="If yes, need to answer next two questions.",   # Q11 all
         )
 
