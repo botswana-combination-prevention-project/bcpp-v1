@@ -167,10 +167,18 @@ class BcppDispatchController(DispatchController):
                                     fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'],
                                     )
                                 # dispatch scheduled instances. This will dispatch appointments first
+                                visit_app = None
+                                visit_model = None
+                                if self.get_visit_model_data(household_member):
+                                    visit_app, visit_model = self.get_visit_model_data(household_member)
+                                appointmnet_instance = self.get_visit_instance(survey)
                                 self.dispatch_scheduled_instances(
                                     'bcpp_subject',
+                                    appointmnet_instance,
                                     household_member.registered_subject,
                                     plot,
+                                    visit_app,
+                                    visit_model,
                                     survey.datetime_start,
                                     survey.datetime_end,
                                     fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
@@ -242,3 +250,18 @@ class BcppDispatchController(DispatchController):
                                         self.dispatch_user_items_as_json(instances, user_container, fk_to_skip)
                             except ObjectDoesNotExist:
                                 pass
+
+    def get_visit_model_data(self, household_member):
+        #SubjectVisit instance and ClinicVisit instance are mutually exclusive for a household member
+        if get_model('bcpp_subject', 'subjectvisit').objects.filter(household_member=household_member).exists():
+            return ('bcpp_subject', 'subjectvisit')
+        elif get_model('bcpp_clinic', 'clinicvisit').objects.filter(household_member=household_member).exists():
+            return ('bcpp_clinic', 'clinicvisit')
+
+    def get_visit_instance(self, survey):
+        if survey.survey_name == 'BCPP Year 1':
+            return 0
+        if survey.survey_name == 'BCPP Year 2':
+            return 1
+        if survey.survey_name == 'BCPP Year 3':
+            return 2
