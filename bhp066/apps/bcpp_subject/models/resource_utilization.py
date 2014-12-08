@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
@@ -35,6 +36,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
         decimal_places=2,
         null=True,
         blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(1000000000)],
         help_text="",
         )
     medical_cover = models.CharField(
