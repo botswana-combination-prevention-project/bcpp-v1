@@ -128,6 +128,7 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
                         # of hiding it like this
                         pass
 
+
 @receiver(post_save, weak=False, dispatch_uid='hivcareadherence_post_save')
 def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
     """Attempt to prepoluate hivcareadherence for T1"""
@@ -143,9 +144,11 @@ def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
                     if hivcareadherence:
                         hivcareadherence_dict = hivcareadherence.__dict__
                         for field in hivcareadherence_dict:
-                            if field in ['medical_care','ever_recommended_arv', 'ever_taken_arv','on_arv', 'arv_evidence']:
+                            if field in ['medical_care', 'ever_recommended_arv', 'ever_taken_arv', 'on_arv', 'arv_evidence']:
                                 if not hivcareadherence_dict[field] == YES_NO_DWTA[0][0]:
                                     hivcareadherence_dict[field] = 'None'
+                                    if field == 'arv_evidence':
+                                        hivcareadherence_dict[field] = ''
                         hivcareadherence_dict['subject_visit_id'] = instance.id
                         #remove unnecessary fields data from T0
                         del hivcareadherence_dict['user_created']
@@ -162,8 +165,8 @@ def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
                         del hivcareadherence_dict['_user_container_instance']
                         print hivcareadherence_dict
                         #create hivcareadherence
-                        hiv_hivcare_adherence = HivCareAdherence.objects.create(**hivcareadherence_dict)
-                        
+                        HivCareAdherence.objects.create(**hivcareadherence_dict)
+
             except SubjectVisit.DoesNotExist:
                 print "SubjectVisit.DoesNotExist"
                 pass
@@ -172,7 +175,7 @@ def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
                 pass
             except DatabaseError as error:
                 print error
-            
+
 
 @receiver(post_save, weak=False, dispatch_uid='call_log_entry_on_post_save')
 def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs):
