@@ -5,6 +5,7 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.appointment_helper.classes import AppointmentHelper
 from edc.subject.visit_schedule.models import ScheduleGroup, VisitDefinition, MembershipForm
 from edc.subject.appointment_helper.classes import AppointmentHelper
+from edc.subject.appointment_helper.exceptions import AppointmentCreateError
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
@@ -86,15 +87,15 @@ class SubjectDashboard(BaseSubjectDashboard):
         """
         appointments = super(BaseSubjectDashboard, self).appointments
         # appointments are ordered by in time_point 0, 1, 2, ...
-        appointment_to_show = None
+        appointment_to_show = []
         for appointment in appointments:
             try:
                 subject_visit = SubjectVisit.objects.get(appointment=appointment)
                 if subject_visit.household_member == self.household_member:
-                    appointment_to_show = appointment
+                    appointment_to_show.append(appointment)
                     break
             except SubjectVisit.DoesNotExist:
-                appointment_to_show = appointment
+                appointment_to_show.append(appointment)
                 break
         if not appointment_to_show:
             appointment_helper = AppointmentHelper()
@@ -106,9 +107,12 @@ class SubjectDashboard(BaseSubjectDashboard):
                 'source': 'BaseAppointmentMixin',
                 'visit_definitions': None,
                 'verbose': False}
-            appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
-            appointment_to_show = appointment[0]
-        return [appointment_to_show]
+            try:
+                appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
+                appointment_to_show.append(appointment[0])
+            except AppointmentCreateError:
+                pass
+        return appointment_to_show
 
     @property
     def appointment(self):
