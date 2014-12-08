@@ -4,7 +4,7 @@ from ..classes import SubjectStatusHelper
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence, SubjectVisit
 
-from edc.constants import POS
+# from edc.constants import POS
 from edc.subject.appointment.models import Appointment
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
@@ -109,7 +109,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         except SubjectVisit.DoesNotExist:
             baseline_subject_visit = None
         subject_helper = SubjectStatusHelper(baseline_subject_visit)
-        return (subject_helper.hiv_result == POS and not subject_helper.on_art)
+        return (subject_helper.hiv_result == 'POS' and not subject_helper.on_art)
 
     @property
     def hiv_result_on_pos_and_subject_on_art(self):
@@ -122,7 +122,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         except SubjectVisit.DoesNotExist:
             baseline_subject_visit = None
         subject_helper = SubjectStatusHelper(baseline_subject_visit)
-        return (subject_helper.hiv_result == POS and subject_helper.on_art)
+        return (subject_helper.hiv_result == 'POS' and subject_helper.on_art)
 
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
