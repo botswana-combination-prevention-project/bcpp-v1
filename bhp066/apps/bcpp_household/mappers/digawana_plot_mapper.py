@@ -10,8 +10,6 @@ from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, DIGAWANA_LANDMARKS
 
 
-
-
 class DigawanaPlotMapper(BasePlotMapper):
 
     map_area = 'digawana'
@@ -37,10 +35,10 @@ class DigawanaPlotMapper(BasePlotMapper):
             smc_start_date=date(2013, 11, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2014, 11, 30),
+            start_date=date(2014, 12, 8),
             full_enrollment_date=date(2015, 1, 18),
             end_date=date(2015, 1, 30),
-            smc_start_date=date(2015, 1, 19)),
+            smc_start_date=date(2015, 1, 7)),
     }
 
     clinic_days = {
@@ -50,7 +48,7 @@ class DigawanaPlotMapper(BasePlotMapper):
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
-            'IDCC': ClinicDaysTuple((MO, WE), None),
+            'IDCC': ClinicDaysTuple((WE, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
