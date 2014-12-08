@@ -8,12 +8,23 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
     def clean(self):
         cleaned_data = super(HospitalAdmissionForm, self).clean()
         # if zero, don't answer next questions
-        self.validate_cleaned_data('reason_hospitalized', cleaned_data)
+        #self.validate_cleaned_data('reason_hospitalized', cleaned_data)
         self.validate_cleaned_data('facility_hospitalized', cleaned_data)
         self.validate_cleaned_data('nights_hospitalized', cleaned_data)
         self.validate_cleaned_data('healthcare_expense', cleaned_data)
-        self.validate_cleaned_data('travel_hours', cleaned_data)
-        self.validate_cleaned_data('hospitalization_costs', cleaned_data)
+        #self.validate_cleaned_data('travel_hours', cleaned_data)
+        #self.validate_cleaned_data('hospitalization_costs', cleaned_data)
+
+        #if zero nights and not NONE
+        if cleaned_data.get('admission_nights') == 0 and cleaned_data.get('reason_hospitalized') != 'None':
+            raise forms.ValidationError(
+                'If hospitalization is ZERO then response to reason hospitalized should be NONE?')
+        if cleaned_data.get('admission_nights') == 0 and cleaned_data.get('travel_hours') != 'None':
+            raise forms.ValidationError(
+                'If hospitalization is ZERO then response to traveling hours should be NONE?')
+        if cleaned_data.get('admission_nights') == 0 and cleaned_data.get('hospitalization_costs') != 'None':
+            raise forms.ValidationError(
+                'If hospitalization is ZERO then response to hospitalization costs should be NONE?')
 
         # if greater than zero
         if cleaned_data.get('admission_nights') > 0 and not cleaned_data.get('reason_hospitalized'):
