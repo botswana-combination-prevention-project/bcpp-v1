@@ -15,7 +15,7 @@ from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 from .middleman import MIDDLE_MAN_LIST
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),
           ('mkewagamang', 'mkewagamang@bhp.org.bw'),
