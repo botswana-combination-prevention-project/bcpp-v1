@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from edc.subject.appointment.models import Appointment
 from edc.subject.appointment_helper.classes import AppointmentHelper
 from edc.subject.visit_schedule.models import ScheduleGroup, VisitDefinition, MembershipForm
+from edc.subject.appointment_helper.classes import AppointmentHelper
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
@@ -72,18 +73,42 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     @property
     def appointments(self):
-        """Returns a queryset on one appointment relative to the subject consent household member"""
-        self._appointments = super(BaseSubjectDashboard, self).appointments
-        appointments = []
-        for appointment in self._appointments:
+        """Returns a single apppointment as a list.
+
+        * subject_dashboard should only display one appointment
+        * select an appointment that has a subject_visit associated with THIS household_member,
+        * skip an appointment that has a subject_visit associated with any other household_member,
+          even if for the same registered_subject
+        * select an appointment that does not have a subject_visit IF not other
+          is available
+        * select only one appointment
+        * if no appointment is selected, try to create additional appointments
+        """
+        appointments = super(BaseSubjectDashboard, self).appointments
+        # appointments are ordered by in time_point 0, 1, 2, ...
+        appointment_to_show = None
+        for appointment in appointments:
             try:
                 subject_visit = SubjectVisit.objects.get(appointment=appointment)
                 if subject_visit.household_member == self.household_member:
-                    appointments.append(appointment)
+                    appointment_to_show = appointment
+                    break
             except SubjectVisit.DoesNotExist:
-                appointments.append(appointment)
-        self._appointments = appointments
-        return self._appointments
+                appointment_to_show = appointment
+                break
+        if not appointment_to_show:
+            appointment_helper = AppointmentHelper()
+            options = {
+                'model_name': 'subjectconsent',
+                'using': 'default',
+                'base_appt_datetime': None,
+                'dashboard_type': 'subject',
+                'source': 'BaseAppointmentMixin',
+                'visit_definitions': None,
+                'verbose': False}
+            appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
+            appointment_to_show = appointment[0]
+        return [appointment_to_show]
 
     @property
     def appointment(self):
