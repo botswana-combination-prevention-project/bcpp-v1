@@ -10,24 +10,29 @@ from apps.bcpp_household_member.models import HouseholdMember
 
 class Command(BaseCommand):
 
-    args = 'community'
-    help = 'Export subject_identifier, community, ... as a csv file in your home folder'
+    args = 'community,community,... or all'
+    help = 'Export columns subject_identifier, community to a csv file in your home folder'
 
     def handle(self, *args, **options):
         SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
         try:
-            community = args[0]
+            communities = args[0].split(',')
         except IndexError:
             raise CommandError('Expected at least one parameter for community')
+        print 'Preparing list of subject_identifiers for communities {}'.format(', '.join(communities))
         n = 0
         filename = os.path.expanduser('~/subject_identifier_{}.csv')
-        with open(filename.format(community), 'w') as f:
+        if args[0] == 'all':
+            filename = filename.format('all')
+        else:
+            filename = filename.format('_'.join(communities))
+        with open(filename, 'w') as f:
             writer = csv.writer(f)
             writer.writerow(['subject_identifier', 'community', 'subject_identifier_aka', 'dm_reference'])
             for hm in HouseholdMember.objects.filter(
                     household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG,
                     registered_subject__subject_identifier__startswith='066',
-                    household_structure__household__plot__community=community,
+                    household_structure__household__plot__community__in=communities,
                     ).order_by('registered_subject__subject_identifier'):
                 n += 1
                 try:
