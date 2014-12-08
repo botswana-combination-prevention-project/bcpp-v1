@@ -81,9 +81,7 @@ class SubjectDashboard(BaseSubjectDashboard):
                 if subject_visit.household_member == self.household_member:
                     appointments.append(appointment)
             except SubjectVisit.DoesNotExist:
-                if appointment.subject_visit_id is None:
-                    appointments.append(appointment)
-                pass
+                appointments.append(appointment)
         self._appointments = appointments
         return self._appointments
 
