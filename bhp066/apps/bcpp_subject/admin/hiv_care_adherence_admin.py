@@ -5,11 +5,12 @@ from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence, SubjectVisit
 
 from edc.constants import POS
+from edc.subject.appointment.models import Appointment
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
-from bhp066.apps.bcpp_subject.constants import ANNUAL_CODES, BASELINE_CODES
+# from bhp066.apps.bcpp_subject.constants import ANNUAL_CODES, BASELINE_CODES
 
-#from ..classes import HivCareAdherenceHelper
+# from ..classes import HivCareAdherenceHelper
 
 
 class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
@@ -35,7 +36,9 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'adherence_4_day',
         'adherence_4_wk']
 
-    annual_fields = [f for f in baseline_fields if f not in ["first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv", "why_no_arv", "on_arv"]]
+    annual_fields = [f for f in baseline_fields if f not in [
+        "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
+        "why_no_arv", "on_arv"]]
 
     form = HivCareAdherenceForm
 
@@ -76,25 +79,50 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
 
     @property
     def annual_fields(self):
-        """Returns a subset of annual_fields if subject is POS and not on ART."""
+        """Returns a subset of annual_fields if subject is POS and on ART."""
         annual_fields = [f for f in self.baseline_fields if f not in [
              "first_positive", "medical_care", "no_medical_care", "no_medical_care_other",
              "ever_recommended_arv", "ever_taken_arv", "why_no_arv", "why_no_arv_other", "on_arv"]]
         if self.hiv_result_on_pos_and_subject_not_on_art:
+            try:
+                annual_fields = self.baseline_fields
+                annual_fields.remove('first_positive')
+            except ValueError:
+                pass
+        elif self.hiv_result_on_pos_and_subject_on_art:
+            annual_fields = [f for f in self.baseline_fields if f not in [
+        "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
+        "why_no_arv", "on_arv"]]
+        else:
             annual_fields = self.baseline_fields
-            annual_fields.remove('first_positive')
+
         return annual_fields
 
     @property
     def hiv_result_on_pos_and_subject_not_on_art(self):
         try:
+            registered_subject = self.subject_visit.appointment.registered_subject
+            baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')[0]
             baseline_subject_visit = SubjectVisit.objects.get(
                 household_member__registered_subject=self.subject_visit.appointment.registered_subject,
-                appointment__visit_definition__code=BASELINE_CODES)
+                appointment=baseline_appointment)
         except SubjectVisit.DoesNotExist:
             baseline_subject_visit = None
         subject_helper = SubjectStatusHelper(baseline_subject_visit)
         return (subject_helper.hiv_result == POS and not subject_helper.on_art)
+
+    @property
+    def hiv_result_on_pos_and_subject_on_art(self):
+        try:
+            registered_subject = self.subject_visit.appointment.registered_subject
+            baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')[0]
+            baseline_subject_visit = SubjectVisit.objects.get(
+                household_member__registered_subject=self.subject_visit.appointment.registered_subject,
+                appointment=baseline_appointment)
+        except SubjectVisit.DoesNotExist:
+            baseline_subject_visit = None
+        subject_helper = SubjectStatusHelper(baseline_subject_visit)
+        return (subject_helper.hiv_result == POS and subject_helper.on_art)
 
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
