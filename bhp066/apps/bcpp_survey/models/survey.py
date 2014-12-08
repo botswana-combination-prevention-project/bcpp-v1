@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.validators import RegexValidator
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -61,6 +63,10 @@ class Survey (BaseUuidModel):
         if not self.id:
             self.survey_slug = slugify(self.survey_name)
         super(Survey, self).save(*args, **kwargs)
+
+    @property
+    def not_started(self):
+        return self.datetime_start > datetime.today()
 
     def is_dispatchable_model(self):
         return True
