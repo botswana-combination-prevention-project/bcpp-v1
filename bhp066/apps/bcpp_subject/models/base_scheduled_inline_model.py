@@ -9,9 +9,10 @@ from edc.subject.consent.models import BaseConsentedUuidModel
 from apps.bcpp_household.models import Plot
 
 from .subject_visit import SubjectVisit
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class BaseScheduledInlineModel(BaseConsentedUuidModel):
+class BaseScheduledInlineModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     """ Base model for all scheduled inline models (adds key to :class:`SubjectVisit`). """
 
