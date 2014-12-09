@@ -33,6 +33,7 @@ class CallHelper(object):
                 self._member_appointment.appt_status = 'new'
                 self._member_appointment.time_of_day = self.call_log_entry.time_of_day
                 self._member_appointment.time_of_week = self.call_log_entry.time_of_week
+                self._member_appointment.user_modified = self.call_log_entry.user_modified,
                 self._member_appointment.save()
             except MemberAppointment.DoesNotExist:
                 self._member_appointment = MemberAppointment.objects.create(
@@ -43,6 +44,8 @@ class CallHelper(object):
                     time_of_day=self.call_log_entry.time_of_day,
                     time_of_week=self.call_log_entry.time_of_week,
                     is_confirmed=True,
+                    user_created=self.call_log_entry.user_created,
+                    user_modified=self.call_log_entry.user_modified,
                     )
         return self._member_appointment
 
