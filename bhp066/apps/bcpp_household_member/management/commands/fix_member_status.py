@@ -10,12 +10,14 @@ class Command(BaseCommand):
     help = 'Update member status for ANNUAL members who consented in the baseline survey'
 
     def handle(self, *args, **options):
-        dry_run = False
+        dry_run = True
         try:
             if args[0] == 'run':
-                dry_run = True
+                dry_run = False
         except IndexError:
             pass
+        if dry_run:
+            print 'dry-run'
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         # if consented at baseline, set YEAR 2, etc member to ANNUAL
         member_count = HouseholdMember.objects.exclude(household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG).count()
