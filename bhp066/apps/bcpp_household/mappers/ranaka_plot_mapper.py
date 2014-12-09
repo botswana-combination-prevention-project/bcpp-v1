@@ -29,13 +29,13 @@ class RanakaPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2013, 10, 1),
+            start_date=date(2013, 10, 18),
             full_enrollment_date=date(2013, 11, 7),
             end_date=date(2013, 11, 22),
             smc_start_date=date(2013, 11, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2014, 11, 1),  # date we start calling
+            start_date=date(2014, 11, 21),  # date we start calling
             full_enrollment_date=date(2015, 1, 18),
             end_date=date(2015, 1, 30),
             # non SMC referrals in ECC? see SubjectReferralHelper
