@@ -1,5 +1,5 @@
 from django import forms
-from ..models import QualityOfLife, OutpatientCare, HivHealthCareCosts, Grant, SubstanceUse
+from ..models import QualityOfLife, OutpatientCare, HivHealthCareCosts, SubstanceUse
 
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -76,12 +76,6 @@ class HivHealthCareCostsForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivHealthCareCosts
-
-
-class GrantForm (BaseSubjectModelForm):
-
-    class Meta:
-        model = Grant
 
 
 class SubstanceUseForm (BaseSubjectModelForm):
