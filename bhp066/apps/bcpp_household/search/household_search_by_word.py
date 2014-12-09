@@ -10,7 +10,7 @@ class HouseholdSearchByWord(BaseSearchByWord):
 
     name = 'word'
     search_model = HouseholdStructure
-    order_by = ['household_identifier']
+    order_by = ['household__household_identifier']
     template = 'search_household_result_include.html'
 
     @property
