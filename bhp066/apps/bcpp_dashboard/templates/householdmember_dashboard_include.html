@@ -21,7 +21,7 @@
 </thead>
 <tbody>
 
-{% if not has_household_log_entry %}
+{% if not has_household_log_entry or survey.survey_slug != current_survey %}
   {% for household_member in household_members %}
     <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
     <td>{{ forloop.counter }}.&nbsp;{{ household_member.first_name|encrypted }}</td>
