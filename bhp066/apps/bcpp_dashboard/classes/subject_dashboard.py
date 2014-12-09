@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.exceptions import MultipleObjectsReturned
 from django.template.loader import render_to_string
 
@@ -56,6 +58,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             subject_consent=self.consent,
             correct_consent=self.correct_consent,
             subject_referral=self.subject_referral,
+            last_subject_referral=self.last_subject_referral,
             elisa_hiv_result=self.elisa_hiv_result,
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
@@ -200,6 +203,22 @@ class SubjectDashboard(BaseSubjectDashboard):
         try:
             subject_referral = SubjectReferral.objects.get(subject_visit__household_member=self.household_member)
         except SubjectReferral.DoesNotExist:
+            subject_referral = None
+        return subject_referral
+
+    @property
+    def last_subject_referral(self):
+        """Returns this household members subject_referral instance or None."""
+        try:
+            subject_referrals = SubjectReferral.objects.filter(
+                referral_appt_date__lt=datetime.today()
+                ).exclude(subject_visit__household_member=self.household_member).order_by('-referral_appt_date')
+            subject_referral = subject_referrals[0]
+        except SubjectReferral.DoesNotExist:
+            subject_referral = None
+        except IndexError:
+            subject_referral = None
+        except AttributeError:
             subject_referral = None
         return subject_referral
 
