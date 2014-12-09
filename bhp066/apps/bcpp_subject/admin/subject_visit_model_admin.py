@@ -27,13 +27,17 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
     baseline_instructions = None
     annual_instructions = None
 
+    def __init__(self, *args, **kwargs):
+        self.subject_visit = None
+        super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
+
     def get_form_post(self, form, request, obj, **kwargs):
         NAME = 0
         WIDGET = 1
         form = super(SubjectVisitModelAdmin, self).get_form_post(form, request, obj, **kwargs)
         if form.optional_attrs:
-            subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-            if subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
+            if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
                 for fld in form.base_fields.iteritems():
                     try:
                         fld[WIDGET].label = form.optional_attrs[ANNUAL]['label'][fld[NAME]]
@@ -41,6 +45,10 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
                         pass
                     try:
                         fld[WIDGET].help_text = form.optional_attrs[ANNUAL]['help_text'][fld[NAME]]
+                    except KeyError:
+                        pass
+                    try:
+                        fld[WIDGET].required = form.optional_attrs[ANNUAL]['required'][fld[NAME]]
                     except KeyError:
                         pass
         return form
@@ -70,8 +78,12 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     def add_view(self, request, form_url='', extra_context=None):
         """Set the instructions based on the visit_code, baseline or annual."""
-        subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-        if subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+        try:
+            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
+        except SubjectVisit.DoesNotExist:
+            pass
+#             subject_visit = SubjectVisit.objects.all()[0]
+        if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
             self.fields = self.annual_fields
             self.instructions = self.annual_instructions or self.instructions
         else:
@@ -81,8 +93,13 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         """Set the instructions based on the visit_code, baseline or annual."""
-        subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-        if subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+        try:
+            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
+        except SubjectVisit.DoesNotExist:
+            pass
+#             subject_visit = SubjectVisit.objects.all()[0]
+
+        if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
             self.fields = self.annual_fields
             self.instructions = self.annual_instructions or self.instructions
         else:

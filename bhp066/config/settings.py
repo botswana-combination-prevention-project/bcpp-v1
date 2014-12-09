@@ -15,7 +15,7 @@ from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 from .middleman import MIDDLE_MAN_LIST
 
-DEBUG = True
+DEBUG = True  # Note: should be False for collectstatic
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),
           ('mkewagamang', 'mkewagamang@bhp.org.bw'),
@@ -45,6 +45,7 @@ CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
+# developers should set by catching their hostname instead of setting explicitly
 if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
@@ -54,10 +55,8 @@ elif socket.gethostname() == 'One-2.local':
 elif socket.gethostname() == 'silverapple':
     KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
 else:
+    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
-    # KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
-    #KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
-    # KEY_PATH = '/Users/django/source/bhp066_project/bhp066/keys'
 
 MANAGERS = ADMINS
 
@@ -221,8 +220,7 @@ MAX_SUBJECTS = {'subject': 9999,
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
-                       'bcpp_lab', 'bcpp_survey'
-                       'bcpp_clinic']
+                       'bcpp_lab', 'bcpp_survey', 'bcpp_clinic']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
@@ -233,7 +231,7 @@ FIELD_MAX_LENGTH = 'migration'
 SITE_CODE = SITE_CODE
 CURRENT_COMMUNITY = CURRENT_COMMUNITY
 CURRENT_SURVEY = CURRENT_SURVEY
-CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
+CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
@@ -253,6 +251,11 @@ LAB_IMPORT_DMIS_DATA_SOURCE = LAB_IMPORT_DMIS_DATA_SOURCE
 # set to False so that the constraint can be expanded to subject_identifier + survey
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False
 
+# search behavior attribute see: base_searcher. Set to TRUE if you are deploying  a DB
+# with multiple plots but you want default filter(?) to show current community instances.
+# Central Server in BHP must always be set to FALSE.
+FILTERED_DEFAULT_SEARCH = True
+
 #  edc.device.device
 DEVICE_ID = DEVICE_ID
 SERVER_DEVICE_ID_LIST = [91, 92, 93, 94, 95, 96, 97, 99]
@@ -266,7 +269,7 @@ elif str(DEVICE_ID) in map(str, range(91, 97)):
     PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
 else:
-    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'FIELD' + str(DEVICE_ID) + ': Botswana Combination Prevention Project'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER = VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER
 VERIFY_GPS_LOCATION = VERIFY_GPS_LOCATION
