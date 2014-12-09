@@ -54,7 +54,7 @@
         <A href="{% url 'admin:bcpp_household_member_householdmember_change' household_member.pk %}?next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}&household_structure={{household_structure.pk}}">{{ household_member.first_name|encrypted }}</A>
     {% endif %} 
 
-    {% if household_member.auto_filled and not household_member.updated_after_autofill %}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
+    {% if household_member.auto_filled and not household_member.updated_after_auto_filled %}<span style="color:red;font-size:9px;vertical-align:super">Update!</span>{% endif %}            
 
     </td>
         
