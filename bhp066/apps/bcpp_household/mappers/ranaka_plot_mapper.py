@@ -35,10 +35,10 @@ class RanakaPlotMapper(BasePlotMapper):
             smc_start_date=date(2013, 11, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2014, 12, 8),
+            start_date=date(2014, 11, 21),  # date we start calling
             full_enrollment_date=date(2015, 1, 18),
             end_date=date(2015, 1, 30),
-            # We are not to have any SMC referrals for ECC?
+            # non SMC referrals in ECC? see SubjectReferralHelper
             smc_start_date=date(2015, 1, 7)),
     }
 

@@ -9,5 +9,5 @@ PROJECT_IDENTIFIER_PREFIX = '066'
 PROJECT_IDENTIFIER_MODULUS = 7
 PROTOCOL_REVISION = 'V1.0 24 September 2013'
 INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
-CURRENT_SURVEY = 'bcpp-year-1'
+CURRENT_SURVEY = 'bcpp-year-2'
 MAX_HOUSEHOLDS_PER_PLOT = 9  # see plot models
