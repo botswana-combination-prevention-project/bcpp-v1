@@ -230,7 +230,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('has_tested', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresultdocumentation', 'hivtested'],
+        target_model=['hivresultdocumentation', 'hivtestreview', 'hivtested'],
         runif=func_is_annual)
 
     other_record = ScheduledDataRule(
