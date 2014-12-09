@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.conf import settings
 
 from edc.dashboard.search.classes import BaseSearchByWord
 
@@ -48,3 +49,6 @@ class PlotSearchByWord(BaseSearchByWord):
         if qset_filter or qset_exclude:
             return (qset_filter, qset_exclude)
         return None
+
+    def filtered_default_values(self):
+        return {'community': settings.CURRENT_COMMUNITY}
