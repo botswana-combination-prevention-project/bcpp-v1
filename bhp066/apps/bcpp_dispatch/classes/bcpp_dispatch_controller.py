@@ -81,7 +81,13 @@ class BcppDispatchController(DispatchController):
         """
         survey = kwargs.get('survey', None)
         if survey:
-            surveys = [survey]
+            if survey.survey_abbrev == 'Y1':
+                surveys = [survey]
+            elif survey.survey_abbrev == 'Y2':
+                y1_survey = Survey.objects.get(survey_abbrev='Y1')
+                surveys = [y1_survey, survey]
+            elif survey.survey_abbrev == 'Y3':
+                surveys = Survey.objects.all()
         else:
             # if surveys are not dispatched then they must be on the producer already.
             surveys = self.get_surveys(self.get_using_destination())
@@ -99,10 +105,9 @@ class BcppDispatchController(DispatchController):
         CallLog = get_model('bcpp_subject', 'calllog')
         HouseholdWorkList = get_model('bcpp_household', 'householdworklist')
         RepresentativeEligibility = get_model('bcpp_household', 'representativeEligibility')
-        HouseholdRefusal = get_model('bcpp_household', 'basehouseholdrefusal')
+        HouseholdRefusal = get_model('bcpp_household', 'householdrefusal')
         self.dispatch_list_models('bcpp_household')
         self.dispatch_list_models('bcpp_subject')
-#         self.dispatch_crypt()
 #         self.dispatch_registered_subjects()
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
@@ -124,9 +129,9 @@ class BcppDispatchController(DispatchController):
                         if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
                             household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
                             household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
-                            work_list = HouseholdWorkList.objects.filter(household_stucture__in=household_structure)
-                            representative_eligibility = RepresentativeEligibility.objects.filter(household_stucture__in=household_structure)
-                            household_refusal = HouseholdRefusal.objects.filter(household_stucture__in=household_structure)
+                            work_list = HouseholdWorkList.objects.filter(household_structure__in=household_structure)
+                            representative_eligibility = RepresentativeEligibility.objects.filter(household_structure__in=household_structure)
+                            household_refusal = HouseholdRefusal.objects.filter(household_structure__in=household_structure)
                             self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
                             if household_log_entries:
                                 self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
@@ -162,10 +167,18 @@ class BcppDispatchController(DispatchController):
                                     fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'],
                                     )
                                 # dispatch scheduled instances. This will dispatch appointments first
+                                visit_app = None
+                                visit_model = None
+                                if self.get_visit_model_data(household_member):
+                                    visit_app, visit_model = self.get_visit_model_data(household_member)
+                                appointmnet_instance = self.get_visit_instance(survey)
                                 self.dispatch_scheduled_instances(
                                     'bcpp_subject',
+                                    appointmnet_instance,
                                     household_member.registered_subject,
                                     plot,
+                                    visit_app,
+                                    visit_model,
                                     survey.datetime_start,
                                     survey.datetime_end,
                                     fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
@@ -190,9 +203,11 @@ class BcppDispatchController(DispatchController):
                                     ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
                                     )
                             call_list = CallList.objects.filter(household_member__in=household_members)
-                            self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
+                            if call_list:
+                                self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
                             call_log = CallLog.objects.filter(household_member__in=household_members)
-                            self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
+                            if call_log:
+                                self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
 
     def dispatch_member_status_instances(self, app_label, registered_subject, user_container, **kwargs):
         """Dispatches all member status for this subject, e.g SubjectAbsentee, SubjectUndecided, ...."""
@@ -235,3 +250,18 @@ class BcppDispatchController(DispatchController):
                                         self.dispatch_user_items_as_json(instances, user_container, fk_to_skip)
                             except ObjectDoesNotExist:
                                 pass
+
+    def get_visit_model_data(self, household_member):
+        #SubjectVisit instance and ClinicVisit instance are mutually exclusive for a household member
+        if get_model('bcpp_subject', 'subjectvisit').objects.filter(household_member=household_member).exists():
+            return ('bcpp_subject', 'subjectvisit')
+        elif get_model('bcpp_clinic', 'clinicvisit').objects.filter(household_member=household_member).exists():
+            return ('bcpp_clinic', 'clinicvisit')
+
+    def get_visit_instance(self, survey):
+        if survey.survey_name == 'BCPP Year 1':
+            return 0
+        if survey.survey_name == 'BCPP Year 2':
+            return 1
+        if survey.survey_name == 'BCPP Year 3':
+            return 2
