@@ -22,6 +22,7 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
 
     list_display = (
         'household_structure',
+        'plot',
         'survey',
         'label',
         'composition',
