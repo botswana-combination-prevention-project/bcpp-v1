@@ -392,19 +392,12 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    require_hiv_medical_care = ScheduledDataRule(
+    require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
         logic=Logic(
             predicate=func_baseline_hiv_positive_and_not_on_art,
             consequence='new',
             alternative='not_required'),
-        target_model=['hivmedicalcare'])
-
-    require_hiv_health_care_costs = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_not_on_art,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivhealthcarecosts'])
+        target_model=['hivmedicalcare', 'hivhealthcarecosts'])
 
     class Meta:
         app_label = 'bcpp_subject'
