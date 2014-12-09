@@ -10,6 +10,8 @@ class MemberAppointmentAdmin(BaseModelAdmin):
 
     form = MemberAppointmentForm
 
+    date_hierarchy = 'appt_date'
+
     list_display = (
         'household_member',
         'survey',
@@ -18,14 +20,20 @@ class MemberAppointmentAdmin(BaseModelAdmin):
         'call_list',
         'work_list',
         'appt_date',
-        'appt_status'
+        'appt_status',
+        'user_created',
+        'user_modified',
         )
 
     list_filter = (
         'survey',
         'label',
         'appt_date',
-        'appt_status'
+        'appt_status',
+        'user_created',
+        'user_modified',
+        'hostname_created',
+        'hostname_modified',
         )
 
     readonly_fields = ("household_member", 'survey')
