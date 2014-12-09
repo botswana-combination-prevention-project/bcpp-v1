@@ -111,7 +111,7 @@ class SubjectDashboard(BaseSubjectDashboard):
                 'verbose': False}
             try:
                 appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
-                appointment_to_show.append(appointment[0])
+                appointment_to_show.append(appointments[0])
             except AppointmentCreateError:
                 pass
         return appointment_to_show
