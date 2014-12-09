@@ -158,7 +158,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     @property
     def referral_code(self):
         """Returns a string of referral codes as a join of the list of referral codes delimited by ","."""
-        return ','.join(self.referral_code_list)
+        referral_code = ','.join(self.referral_code_list)
+        return referral_code
 
     @property
     def valid_referral_codes(self):

@@ -12,6 +12,8 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
 
     form = EnrollmentChecklistForm
 
+    date_hierarchy = 'report_datetime'
+
     instructions = ['This form is a tool to assist the Interviewer to confirm the '
                     'Eligibility status of the subject. After entering the required items, click SAVE.']
 
@@ -47,6 +49,8 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "literacy": admin.VERTICAL,
         "guardian": admin.VERTICAL,
         }
+
+    search_fields = ('household_member__first_name', 'household_member__pk')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
