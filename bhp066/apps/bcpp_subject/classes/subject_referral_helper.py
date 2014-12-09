@@ -33,14 +33,20 @@ class SubjectReferralHelper(SubjectStatusHelper):
         self.instance = subject_referral
         self.survey = subject_referral.subject_visit.household_member.household_structure.survey
         # this dict is also used in the signal
-        self.models.update({
+        self.models[self.timepoint_key].update({
             'subject_locator': SubjectLocator,
             'circumcision': Circumcision,
             'reproductive_health': ReproductiveHealth,
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
             })
-        # self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[self.timepoint_key].update({
+            'subject_locator': SubjectLocator,
+            'circumcision': Circumcision,
+            'reproductive_health': ReproductiveHealth,
+            'residency_mobility': ResidencyMobility,
+            'subject_consent': SubjectConsent,
+            })
 
         self.gender = self.instance.subject_visit.appointment.registered_subject.gender
         self.household_member = self.instance.subject_visit.household_member
@@ -49,10 +55,10 @@ class SubjectReferralHelper(SubjectStatusHelper):
 
     @property
     def missing_data(self):
-        """Returns the model name of the first model used in the referral algorithm that's 
-        meta data is NOT set to KEYED or NOT_REQUIRED.
+        """Returns the model name of the first model used in the referral algorithm
+        with meta data that is NOT set to KEYED or NOT_REQUIRED.
 
-        If timepointstatus instance exists with status=CLOSED, the check is skipped."""
+        If time-point status instance exists with status=CLOSED, the check is skipped."""
         first_model_cls = None
         internal_identifier = self.instance.subject_visit.household_member.internal_identifier
         if not SubjectLocator.objects.filter(
@@ -62,7 +68,7 @@ class SubjectReferralHelper(SubjectStatusHelper):
             try:
                 TimePointStatus.objects.get(appointment=self.instance.subject_visit.appointment, status=CLOSED)
             except TimePointStatus.DoesNotExist:
-                for model_cls in self.models.values():
+                for model_cls in self.models[self.timepoint_key].values():
                     try:
                         scheduled_entry_meta_data = ScheduledEntryMetaData.objects.get(
                             appointment=self.instance.subject_visit.appointment,
@@ -159,22 +165,21 @@ class SubjectReferralHelper(SubjectStatusHelper):
     @property
     def referral_code(self):
         """Returns a string of referral codes as a join of the list of referral codes delimited by ","."""
+        self.remove_smc_in_annual_ecc()
         referral_code = ','.join(self.referral_code_list)
-        referral_code = self.remove_smc_in_annual_ecc(referral_code)
         return referral_code
 
-    def remove_smc_in_annual_ecc(self, referral_code):
+    def remove_smc_in_annual_ecc(self):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
         if (not site_mappers.current_mapper().intervention and
                 self.instance.subject_visit.household_member.household_structure.survey.survey_slug != \
                 BASELINE_SURVEY_SLUG):
             try:
-                referral_code.remove('SMC-NEG')
-                referral_code.remove('SMC?NEG')
-                referral_code.remove('SMC-UNK')
+                self.referral_code_list.remove('SMC-NEG')
+                self.referral_code_list.remove('SMC?NEG')
+                self.referral_code_list.remove('SMC-UNK')
             except ValueError:
                 pass
-        return referral_code
 
     @property
     def valid_referral_codes(self):
@@ -193,9 +198,9 @@ class SubjectReferralHelper(SubjectStatusHelper):
         """Returns None if female otherwise True if circumcised or False if not."""
         if self.gender == 'M':
             try:
-                circumcision_instance = self.models.get('circumcision').objects.get(subject_visit=self.subject_visit)
+                circumcision_instance = self.models[self.timepoint_key].get('circumcision').objects.get(subject_visit=self.subject_visit)
                 self._circumcised = self.convert_to_nullboolean(circumcision_instance.circumcised)
-            except self.models.get('circumcision').DoesNotExist:
+            except self.models[self.timepoint_key].get('circumcision').DoesNotExist:
                 self._circumcised = None
         return self._circumcised
 
@@ -241,10 +246,10 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def permanent_resident(self):
         """Returns True if permanent resident as stated on ResidencyMobility."""
         try:
-            residency_mobility_instance = self.models.get('residency_mobility').objects.get(
+            residency_mobility_instance = self.models[self.timepoint_key].get('residency_mobility').objects.get(
                 subject_visit=self.subject_visit)
             permanent_resident = self.convert_to_nullboolean(residency_mobility_instance.permanent_resident)
-        except self.models.get('residency_mobility').DoesNotExist:
+        except self.models[self.timepoint_key].get('residency_mobility').DoesNotExist:
             permanent_resident = None
         return permanent_resident
 
@@ -254,10 +259,10 @@ class SubjectReferralHelper(SubjectStatusHelper):
         if self.gender == 'F':
             if not self._pregnant:
                 try:
-                    reproductive_health = self.models.get('reproductive_health').objects.get(
+                    reproductive_health = self.models[self.timepoint_key].get('reproductive_health').objects.get(
                         subject_visit=self.subject_visit)
                     self._pregnant = self.convert_to_nullboolean(reproductive_health.currently_pregnant)
-                except self.models.get('reproductive_health').DoesNotExist:
+                except self.models[self.timepoint_key].get('reproductive_health').DoesNotExist:
                     self._pregnant = None
         return self._pregnant
 
@@ -286,9 +291,9 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def subject_consent_instance(self):
         if not self._subject_consent_instance:
             try:
-                self._subject_consent_instance = self.models.get('subject_consent').objects.get(
+                self._subject_consent_instance = self.models[self.timepoint_key].get('subject_consent').objects.get(
                     household_member__internal_identifier=self.household_member.internal_identifier)
-            except self.models.get('subject_consent').DoesNotExist:
+            except self.models[self.timepoint_key].get('subject_consent').DoesNotExist:
                 self._subject_consent_instance = None
         return self._subject_consent_instance
 
