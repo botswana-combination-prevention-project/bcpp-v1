@@ -30,7 +30,7 @@ from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligi
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory,
-                                               SubjectDeathFactory, SubjectReferralFactory, CallLogEntryFactory,
+                                               SubjectReferralFactory, CallLogEntryFactory,
                                                CallListFactory)
 from apps.bcpp_survey.models import Survey
 
@@ -100,7 +100,6 @@ class TestNaturalKey(TestCase):
         # print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         #subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
         # SubjectDeath : Independent Natural Keys
-        subject_death = SubjectDeathFactory(registered_subject=registered_subject)
         # SubjectLocator : Independent Natural Key
         signals.post_save.disconnect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
 
@@ -120,7 +119,6 @@ class TestNaturalKey(TestCase):
         call_log_entry = CallLogEntryFactory(call_log=call_log, survey=year_1_survey, call_datetime=datetime.now())
         call_log_entry2 = CallLogEntryFactory(call_log=call_log, survey=year_1_survey, call_datetime=datetime.now() + timedelta(minutes=3))
         #instances.append(subject_referral)
-        instances.append(subject_death)
         instances.append(subject_locator)
         instances.append(requisition1)
         instances.append(requisition2)

@@ -17,7 +17,6 @@ from .cea_enrollment_checklist_factory import CeaEnrollmentChecklistFactory
 from .circumcised_factory import CircumcisedFactory
 from .months_second_partner_factory import MonthsSecondPartnerFactory
 from .reproductive_health_factory import ReproductiveHealthFactory
-from .subject_death_factory import SubjectDeathFactory
 from .months_third_partner_factory import MonthsThirdPartnerFactory
 from .months_recent_partner_factory import MonthsRecentPartnerFactory
 from .labour_market_wages_factory import LabourMarketWagesFactory
