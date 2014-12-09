@@ -143,60 +143,6 @@ class SubjectDashboard(BaseSubjectDashboard):
             self._appointment_continuation_count = None
         return self._appointment
 
-#     def create_next_appointment(self):
-#         """Creates the next appointment subsequent to BASELINE (T0) or the last.
-# 
-#         BASELINE appointment is created by the consent."""
-#         if self.next_visit_defintion:
-#             AppointmentHelper().create_all(
-#                 self.registered_subject,
-#                 self.__class__.__name__.lower(),
-#                 using='default',
-#                 source='BaseAppointmentMixin',
-#                 visit_definitions=[self.next_visit_definition])
-# 
-#     @property
-#     def next_visit_definition(self):
-#         """Returns the next visit_definiton instance following the time_point of the last appointment."""
-#         if not self._next_visit_definition:
-#             try:
-#                 if not self.household_member == self.consent.household_member:
-#                     try:
-#                         Appointment.objects.get(
-#                             registered_subject=self.registered_subject,
-#                             visit_definition__code__in=BASELINE_CODES)
-#                     except Appointment.DoesNotExist:
-#                         raise ValueError('Expected baseline (T0) appointment to exist for consented subject. Got None.')
-#                     if self.household_member in self.consent.household_member.next_members:
-#                         schedule_group = ScheduleGroup.objects.get(
-#                             membership_form__content_type_map__model=self.consent._meta.object_name.lower())
-#                         try:
-#                             last_annual_appointment = Appointment.objects.filter(
-#                                 registered_subject=self.registered_subject,
-#                                 visit_definition__time_point__gt=0,
-#                                 schedule_group=schedule_group
-#                                 ).order_by('-visit_definition__time_point')[0]
-#                             # get next timepoint for this schedule group
-#                             for visit_definition in VisitDefinition.objects.filter(
-#                                     schedule_group=schedule_group,
-#                                     time_point__gt=last_annual_appointment.visit_definition.time_point,
-#                                     ).order_by('time_point'):
-#                                 self._next_visit_definition = visit_definition
-#                                 break
-#                         except IndexError:
-#                             self._next_visit_definition = VisitDefinition.objects.get(schedule_group=schedule_group, time_point=0)
-#             except AttributeError:
-#                 # no consent
-#                 pass
-#         return self._next_visit_definition
-# 
-#     def next_members(self):
-#         for household_member in HouseholdMember.objects.filter(
-#             registered_subject=self.registered_subject,
-#             household_structure__survey__datetime_start__gt=).order_by('household_structure__survey__datetime_start'):
-#             next_members.append(household_member)
-#         return next_members
-
     @property
     def subject_referral(self):
         """Returns this household members subject_referral instance or None."""
