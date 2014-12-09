@@ -45,10 +45,10 @@ class Command(BaseCommand):
                         appointment__visit_definition__time_point=0)
                     residency_and_mobility = ResidencyMobility.objects.get(
                         subject_visit=subject_visit)
-                    if residency_and_mobility.modified.year == 2013:
-                        # this question has flipped after pair 1
-                        residency_and_mobility.intend_residency = YES if residency_and_mobility.intend_residency == NO else NO
-                        residency_and_mobility.save()
+                    # if residency_and_mobility.modified.year == 2013:
+                    #    # this question has flipped after pair 1
+                    #    residency_and_mobility.intend_residency = YES if residency_and_mobility.intend_residency == NO else NO
+                    #    residency_and_mobility.save()
                     subject_locator = SubjectLocator.objects.get(
                         subject_visit=subject_visit)
                     if (SubjectStatusHelper(subject_visit).hiv_result == NEG and
