@@ -86,7 +86,6 @@ class SubjectDashboard(BaseSubjectDashboard):
         * if no appointment is selected, try to create additional appointments
         """
         appointments = super(BaseSubjectDashboard, self).appointments
-        # appointments are ordered by in time_point 0, 1, 2, ...
         appointment_to_show = []
         for appointment in appointments:
             try:
