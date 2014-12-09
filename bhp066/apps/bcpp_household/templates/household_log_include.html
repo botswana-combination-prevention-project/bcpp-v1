@@ -33,8 +33,8 @@
  </tbody>
  </table>    
  {% endif %}
- {{ household_log.household_status }}
- <p>&nbsp;{% if not has_household_log_entry %}<span style="background-color:red;">&nbsp;</span>{% endif %}&nbsp;<A href="{% url 'admin:bcpp_household_householdlogentry_add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>
+ {{ household_log.household_status}}
+ <p>&nbsp;{% if not has_household_log_entry and survey.survey_slug == current_survey %}<span style="background-color:red;">&nbsp;</span>{% endif %}{% if survey.survey_slug == current_survey %}&nbsp;<A href="{% url 'admin:bcpp_household_householdlogentry_add' %}?household_log={{household_log.pk}}&household={{household_log.household.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add a household log entry</A></p>{% endif %}
  {% if household_structure.failed_enumeration_attempts >= 3 and not household_assessment and not household_structure.enumerated %}
   <p><A href="{% url 'admin:bcpp_household_householdassessment_add' %}?household_structure={{household_structure.pk}}&next=household_dashboard_url&dashboard_type=household&dashboard_model=household_structure&dashboard_id={{ household_structure.pk }}"><img src="/static/admin/img/icon_addlink.gif" width="10" height="10">&nbsp;Add Assessing of Household residency status form</A></p>
  {% endif %}
