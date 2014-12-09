@@ -33,7 +33,7 @@ class HouseholdDashboard(Dashboard):
     urlpattern_view = 'apps.bcpp_dashboard.views'
     urlpattern_options = dict(
         Dashboard.urlpattern_options,
-        dashboard_model='household|household_structure',
+        dashboard_model='household_structure',
         dashboard_type='household')
 
     base_fields = ('id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified')
@@ -225,11 +225,12 @@ class HouseholdDashboard(Dashboard):
                 try:
                     self._household_structure = HouseholdStructure.objects.get(pk=self.dashboard_id)
                 except HouseholdStructure.DoesNotExist:
-                    try:
-                        self._household_structure = HouseholdStructure.objects.get(
-                            household__pk=self.household.pk, survey=self.survey)
-                    except (HouseholdStructure.DoesNotExist, AttributeError):
-                        pass
+                    pass
+#                     try:
+#                         self._household_structure = HouseholdStructure.objects.get(
+#                             household__pk=self.household.pk, survey=self.survey)
+#                     except (HouseholdStructure.DoesNotExist, AttributeError):
+#                         pass
         return self._household_structure
 
     @property
