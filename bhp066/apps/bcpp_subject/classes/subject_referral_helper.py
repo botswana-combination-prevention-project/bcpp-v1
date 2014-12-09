@@ -13,6 +13,7 @@ from ..models import (SubjectConsent, ResidencyMobility, Circumcision, Reproduct
 
 from .subject_status_helper import SubjectStatusHelper
 from .subject_referral_appt_helper import SubjectReferralApptHelper
+from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 
 class SubjectReferralHelper(SubjectStatusHelper):
@@ -159,6 +160,19 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def referral_code(self):
         """Returns a string of referral codes as a join of the list of referral codes delimited by ","."""
         referral_code = ','.join(self.referral_code_list)
+        referral_code = self.remove_smc_in_annual_ecc(referral_code)
+        return referral_code
+
+    def remove_smc_in_annual_ecc(self, referral_code):
+        """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
+        if (not site_mappers.current_mapper().intervention and
+                self.instance.household_member.household_structure.survey.survey_slug != BASELINE_SURVEY_SLUG):
+            try:
+                referral_code.remove('SMC-NEG')
+                referral_code.remove('SMC?NEG')
+                referral_code.remove('SMC-UNK')
+            except ValueError:
+                pass
         return referral_code
 
     @property
