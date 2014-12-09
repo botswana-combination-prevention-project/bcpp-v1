@@ -77,6 +77,7 @@ class HouseholdDashboard(Dashboard):
             first_name=self.first_name,
             current_member_count=self.current_member_count,
             survey=self.survey,
+            current_survey=settings.CURRENT_SURVEY,
             rendered_surveys=self.render_surveys(),
             has_household_log_entry=self.has_household_log_entry,
             lastest_household_log_entry_household_status=self.lastest_household_log_entry_household_status,
