@@ -4,25 +4,25 @@ from datetime import date
 from edc.map.classes import site_mappers
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, MMANKGODI_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, LERALA_LANDMARKS
 
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
-class MmankgodiPlotMapper(BasePlotMapper):
+class LeralaPlotMapper(BasePlotMapper):
 
-    map_area = 'mmankgodi'
-    map_code = '19'
+    map_area = 'lerala'
+    map_code = '21'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = MMANKGODI_LANDMARKS
+    landmarks = LERALA_LANDMARKS
 
     intervention = False
 
-    gps_center_lat = -24.729571
-    gps_center_lon = 25.649351
-    radius = 5.5
+    gps_center_lat = -22.781839
+    gps_center_lon = 27.759340
+    radius = 6.5
     location_boundary = ()
 
     survey_dates = {

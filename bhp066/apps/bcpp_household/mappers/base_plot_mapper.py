@@ -49,6 +49,20 @@ class BasePlotMapper(Mapper):
     gps_minutes_s_field_attr = 'gps_minutes_s'
     gps_minutes_e_field_attr = 'gps_minutes_e'
 
+    map_area = None
+    map_code = None
+    regions = None
+    sections = None
+
+    landmarks = None
+
+    intervention = None
+
+    gps_center_lat = None
+    gps_center_lon = None
+    radius = None
+    location_boundary = None
+
     def __init__(self):
         self.active = None
         if self.intervention is None:

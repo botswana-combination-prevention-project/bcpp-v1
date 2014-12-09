@@ -4,24 +4,24 @@ from datetime import date
 from edc.map.classes import site_mappers
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, MMANKGODI_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, SEFOPHE_LANDMARKS
 
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
-class MmankgodiPlotMapper(BasePlotMapper):
+class SefophePlotMapper(BasePlotMapper):
 
-    map_area = 'mmankgodi'
-    map_code = '19'
+    map_area = 'sefophe'
+    map_code = '22'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = MMANKGODI_LANDMARKS
+    landmarks = SEFOPHE_LANDMARKS
 
     intervention = False
 
-    gps_center_lat = -24.729571
-    gps_center_lon = 25.649351
+    gps_center_lat = -22.190544
+    gps_center_lon = 27.963424
     radius = 5.5
     location_boundary = ()
 
