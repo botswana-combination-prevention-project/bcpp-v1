@@ -231,7 +231,7 @@ FIELD_MAX_LENGTH = 'migration'
 SITE_CODE = SITE_CODE
 CURRENT_COMMUNITY = CURRENT_COMMUNITY
 CURRENT_SURVEY = CURRENT_SURVEY
-CURRENT_COMMUNITY_CHECK = True  # turn this to true on the netbooks to make a community check is run on netbooks
+CURRENT_COMMUNITY_CHECK = False  # turn this to true on the netbooks to make a community check is run on netbooks
 CURRENT_MAPPER = CURRENT_COMMUNITY
 GPS_FILE_NAME = '/Volumes/GARMIN/GPX/temp.gpx'
 GPS_DEVICE = '/Volumes/GARMIN/'
@@ -251,6 +251,11 @@ LAB_IMPORT_DMIS_DATA_SOURCE = LAB_IMPORT_DMIS_DATA_SOURCE
 # set to False so that the constraint can be expanded to subject_identifier + survey
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False
 
+# search behavior attribute see: base_searcher. Set to TRUE if you are deploying  a DB
+# with multiple plots but you want default filter(?) to show current community instances.
+# Central Server in BHP must always be set to FALSE.
+FILTERED_DEFAULT_SEARCH = True
+
 #  edc.device.device
 DEVICE_ID = DEVICE_ID
 SERVER_DEVICE_ID_LIST = [91, 92, 93, 94, 95, 96, 97, 99]
@@ -264,7 +269,7 @@ elif str(DEVICE_ID) in map(str, range(91, 97)):
     PROJECT_TITLE = 'COMMUNITY: Botswana Combination Prevention Project'
     BYPASS_HOUSEHOLD_LOG = True
 else:
-    PROJECT_TITLE = 'FIELD' + DEVICE_ID + ': Botswana Combination Prevention Project'
+    PROJECT_TITLE = 'FIELD' + str(DEVICE_ID) + ': Botswana Combination Prevention Project'
 PROJECT_TITLE = PROJECT_TITLE + ' | ' + SITE_CODE + ' | ' + CURRENT_COMMUNITY
 VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER = VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER
 VERIFY_GPS_LOCATION = VERIFY_GPS_LOCATION
