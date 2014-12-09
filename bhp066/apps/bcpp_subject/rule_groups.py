@@ -224,7 +224,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivuntested'])
 
-    # if has tested is no, NOT REQUIRE documentation, HIV tested forms
+    # if has tested is no, NOT REQUIRE documentation, HIV tested forms, what about hivuntested?
     has_tested_annual = ScheduledDataRule(
         logic=Logic(
             predicate=('has_tested', 'equals', 'No'),
