@@ -166,7 +166,8 @@ class SubjectReferralHelper(SubjectStatusHelper):
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
         if (not site_mappers.current_mapper().intervention and
-                self.instance.household_member.household_structure.survey.survey_slug != BASELINE_SURVEY_SLUG):
+                self.instance.subject_visit.household_member.household_structure.survey.survey_slug != \
+                BASELINE_SURVEY_SLUG):
             try:
                 referral_code.remove('SMC-NEG')
                 referral_code.remove('SMC?NEG')
