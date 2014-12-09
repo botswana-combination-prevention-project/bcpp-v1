@@ -19,6 +19,10 @@ from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
 from apps.bcpp_survey.models import Survey
 
+from collections import namedtuple
+
+SurveyTuple = namedtuple('SurveyTuple', 'survey url')
+
 
 class HouseholdDashboard(Dashboard):
 
@@ -29,7 +33,7 @@ class HouseholdDashboard(Dashboard):
     urlpattern_view = 'apps.bcpp_dashboard.views'
     urlpattern_options = dict(
         Dashboard.urlpattern_options,
-        dashboard_model='household|household_structure',
+        dashboard_model='household_structure',
         dashboard_type='household')
 
     base_fields = ('id', 'created', 'modified', 'user_created', 'user_modified', 'hostname_created', 'hostname_modified')
@@ -117,11 +121,12 @@ class HouseholdDashboard(Dashboard):
     @property
     def household_info(self):
         try:
-            household_info = HouseholdInfo.objects.get(
-                household_structure=self.household_structure)
+            if not self.current_survey:
+                household_info = HouseholdInfo.objects.get(
+                    household_structure=self.household_structure)
+                return household_info
         except HouseholdInfo.DoesNotExist:
-            household_info = None
-        return household_info
+            return None
 
     @property
     def household_refusal(self):
@@ -149,10 +154,7 @@ class HouseholdDashboard(Dashboard):
     def eligible_hoh(self):
         """Returns an instance of HouseholdHeadEligibility if there
         is a verified eligible Head of Household."""
-        if self.survey != 'BCPP Year 2':
-            return False
-        else:
-            return self.household_head_eligibility
+        return self.household_head_eligibility
 
     @property
     def household_head_eligibility(self):
@@ -180,8 +182,8 @@ class HouseholdDashboard(Dashboard):
 
     @property
     def survey(self):
-        """Returns the current survey."""
-        return self.current_survey
+        """Returns the survey for the current household_structure."""
+        return self.household_structure.survey
 
     @property
     def current_survey(self):
@@ -202,15 +204,15 @@ class HouseholdDashboard(Dashboard):
     def surveys(self):
         """Returns a list of surveys order by date excluding the current."""
         if not self._surveys:
-            self._surveys = [(self.survey, '')]
-            for survey in Survey.objects.all().exclude(pk=self.survey.pk).order_by('datetime_start'):
+            self._surveys = []
+            for survey in Survey.objects.all().order_by('datetime_start'):
                 household_structure = HouseholdStructure.objects.get(
                     household=self.household, survey=survey)
                 url = reverse(self.dashboard_url_name,
                               kwargs={'dashboard_type': self.dashboard_type,
                                       'dashboard_model': 'household_structure',
                                       'dashboard_id': household_structure.pk})
-                self._surveys.append((survey, url))
+                self._surveys.append(SurveyTuple(survey=survey, url=url))
         return self._surveys
 
     @property
@@ -223,11 +225,12 @@ class HouseholdDashboard(Dashboard):
                 try:
                     self._household_structure = HouseholdStructure.objects.get(pk=self.dashboard_id)
                 except HouseholdStructure.DoesNotExist:
-                    try:
-                        self._household_structure = HouseholdStructure.objects.get(
-                            household__pk=self.household.pk, survey=self.survey)
-                    except (HouseholdStructure.DoesNotExist, AttributeError):
-                        pass
+                    pass
+#                     try:
+#                         self._household_structure = HouseholdStructure.objects.get(
+#                             household__pk=self.household.pk, survey=self.survey)
+#                     except (HouseholdStructure.DoesNotExist, AttributeError):
+#                         pass
         return self._household_structure
 
     @property

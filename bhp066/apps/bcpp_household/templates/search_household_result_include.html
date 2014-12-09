@@ -16,35 +16,35 @@
     <th>Modified</th>               
 	<th>Host</th>	    	    		    	    	    	
 	</thead>	
-    {% for household in search_result.object_list %}
+    {% for household_structure in search_result.object_list %}
         <!-- obj is a Household object -->
 
         <tr class="{% cycle 'row1' 'row2' %}">
-        <td>{{household.household_identifier}}</td>
+        <td>{{household_structure.household.household_identifier}}-{{ household_structure.survey.survey_abbrev}}</td>
 
         <td>
             <form method="POST" action="{% url 'section_search_word_url' 'plot' 'word'  %}">
             {% csrf_token %}
-            <input type="submit" value="Plot {{ household.plot.plot_identifier }}">
-            <input type="hidden" name="search_term" value="{{ household.plot.plot_identifier }}">         
+            <input type="submit" value="Plot {{ household_structure.household.plot.plot_identifier }}">
+            <input type="hidden" name="search_term" value="{{ household_structure.household.plot.plot_identifier }}">         
             </form>        
         </td>
 
         <td>
-          {% if household.is_dispatched %}
-            <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=household.pk %}">
+          {% if household_structure.household.is_dispatched %}
+            <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household_structure' dashboard_id=household_structure.pk %}">
                 {% csrf_token %}
-                <input type="submit" value="Locked-{{ household.plot.action }}">
+                <input type="submit" value="Locked-{{ household_structure.household.plot.action }}">
             </form>
           {% else %}
-          {% if not household.replaced_by %}
-	          {% if household.plot.action == CONFIRMED%}         
-	               <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=household.pk %}">
+          {% if not household_structure.household.replaced_by %}
+	          {% if household_structure.household.plot.action == CONFIRMED%}         
+	               <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household_structure' dashboard_id=household_structure.pk %}">
 	               {% csrf_token %}
 	               <input type="submit" value="Composition">
 	               </form>
 	          {% else %}
-	              {{ household.plot.action }}
+	              {{ household_structure.household.plot.action }}
 	          {% endif %}
             {% else %}
             	<p>Household replaced</p>
@@ -52,24 +52,24 @@
           {% endif %}
         </td>
         <td>
-            {% if household.member_count and 'member' in sections_names%}
+            {% if household_structure.household.member_count and 'member' in sections_names%}
 	            <form method="POST" action="{% url 'section_search_word_url' 'member' 'word'  %}">
 	            {% csrf_token %}
 	            <input type="submit" value="Members">
-	            <input type="hidden" name="search_term" value="{{ household.household_identifier }}">         
+	            <input type="hidden" name="search_term" value="{{ household_structure.household.household_identifier }}">         
 	            </form>
 	        {% else %}
 	        	<form method="POST" action="">
 	            {% csrf_token %}
 	            <input type="submit" value="Members" disabled>
-	            <input type="hidden" name="search_term" value="{{ household.household_identifier }}">         
+	            <input type="hidden" name="search_term" value="{{ household_structure.household.household_identifier }}">         
 	            </form>        
             {% endif %}
         </td>
-     	<td>{{ household.community|encrypted}}</td>
-        <td>{{ household.user_created }}{% if household.user_modified%} / {% endif%}{{ household.user_modified }}</td> 
-        <td>{{ household.created|date:"Y-m-d" }}{% if household.modified%} / {% endif%}{{ household.modified|date:"Y-m-d" }}</td> 
-        <td>{{ household.hostname_created }}{% if household.hostname_modified%} / {% endif%}{{ household.hostname_modified }}</td> 
+     	<td>{{ household_structure.household.community|encrypted}}</td>
+        <td>{{ household_structure.household.user_created }}{% if household_structure.household.user_modified%} / {% endif%}{{ household_structure.household.user_modified }}</td> 
+        <td>{{ household_structure.household.created|date:"Y-m-d" }}{% if household_structure.household.modified%} / {% endif%}{{ household_structure.household.modified|date:"Y-m-d" }}</td> 
+        <td>{{ household_structure.household.hostname_created }}{% if household_structure.household.hostname_modified%} / {% endif%}{{ household_structure.household.hostname_modified }}</td> 
         </tr>
 	{% endfor %}
 </table>
