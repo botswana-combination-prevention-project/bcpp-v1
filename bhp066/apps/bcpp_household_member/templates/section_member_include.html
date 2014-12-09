@@ -37,7 +37,7 @@
             <div class="warning">Locked</div>{{ hm.household_structure.household.plot.action }}
           {% else %}
             {% if hm.household_structure.household.plot.action == CONFIRMED%}            
-                <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household' dashboard_id=hm.household_structure.household.pk %}">
+                <form method="POST" action="{% url 'household_dashboard_url' dashboard_type='household' dashboard_model='household_structure' dashboard_id=hm.household_structure.pk %}">
                 {% csrf_token %}
                 <input type="submit" value="Composition">
                 </form>        
