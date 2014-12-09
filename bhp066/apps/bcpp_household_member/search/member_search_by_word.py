@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.conf import settings
 
 from edc.dashboard.search.classes import BaseSearchByWord
 
@@ -29,3 +30,6 @@ class MemberSearchByWord(BaseSearchByWord):
     @property
     def display_keyword_list(self):
         return [item[1] for item in HOUSEHOLD_MEMBER_PARTICIPATION]
+
+    def filtered_default_values(self):
+        return {'household_structure__household__plot__community': settings.CURRENT_COMMUNITY}
