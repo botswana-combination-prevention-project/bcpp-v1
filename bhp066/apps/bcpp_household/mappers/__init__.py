@@ -8,3 +8,5 @@ from .bokaa_plot_mapper import BokaaPlotMapper
 from .oodi_plot_mapper import OodiPlotMapper
 from .central_server_mapper import CentralServerMapper
 from .test_plot_mapper import TestPlotMapper
+from .mmathethe_plot_mapper import MmathethePlotMapper
+from .mmankgodi_plot_mapper import MmankgodiPlotMapper
