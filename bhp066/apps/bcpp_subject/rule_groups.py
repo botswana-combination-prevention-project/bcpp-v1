@@ -76,6 +76,12 @@ def func_hic_keyed(visit_instance):
         return False
 
 
+def func_hiv_result_neg_T0(visit_instance):
+    baseline_visit = func_baseline_visit_instance(visit_instance)
+    subject_status_helper = SubjectStatusHelper(baseline_visit)
+    return True if subject_status_helper.hiv_result == 'NEG' else False
+
+
 def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
     registered_subject = visit_instance.appointment.registered_subject
@@ -531,16 +537,26 @@ class BaseRequisitionRuleGroup(RuleGroup):
             predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
-        target_model=['hicenrollment'])
+        target_model=['hicenrollment'],
+        runif=func_is_baseline)
+
+    hic_annual_enrol_neg = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_result_neg_T0,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hicenrollment'],
+        runif=func_is_annual,)
 
     # if hicenrollment filled at T0, dont require it again at T1
-    hic_annual_enrol = ScheduledDataRule(
+    hic_annual_enrol_pos = ScheduledDataRule(
         logic=Logic(
             predicate=func_hic_keyed,
             consequence='not_required',
             alternative='new'),
         target_model=['hicenrollment'],
-        runif=func_is_annual)
+        runif=func_is_annual,
+        )
 
     # known +VE at T0 (hivresult, hivtestreview) should not require several forms
     hic_annual_doc = ScheduledDataRule(
