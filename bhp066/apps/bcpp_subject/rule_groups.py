@@ -110,6 +110,11 @@ def func_baseline_rbd_drawn(visit_instance):
     return SubjectStatusHelper(baseline_visit_instance).rbd_sample_drawn
 
 
+def func_baseline_pima_keyed(visit_instance):
+    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
+    return SubjectStatusHelper(baseline_visit_instance).pima_instance
+
+
 def func_not_required(visit_instance):
     """Returns True (always)."""
     return True
@@ -218,6 +223,15 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivuntested'])
+
+    # if has tested is no, NOT REQUIRE documentation, HIV tested forms
+    has_tested_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=('has_tested', 'equals', 'No'),
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivresultdocumentation', 'hivtested'],
+        runif=func_is_annual)
 
     other_record = ScheduledDataRule(
         logic=Logic(
@@ -584,6 +598,15 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='new'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw'],
+        runif=func_is_annual)
+
+    # if CD4 (pima) done at T0 don't require it at T1
+    cd4_pima_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_pima_keyed,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['pima'],
         runif=func_is_annual)
 
     class Meta:
