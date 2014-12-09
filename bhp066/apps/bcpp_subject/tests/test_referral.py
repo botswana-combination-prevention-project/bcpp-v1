@@ -18,6 +18,7 @@ from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryM
 from edc.constants import NOT_REQUIRED, REQUIRED
 from edc.entry_meta_data.models.requisition_meta_data import RequisitionMetaData
 from edc.export.models.export_transaction import ExportTransaction
+from apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
 
 
 class TestPlotMapper(Mapper):
@@ -38,6 +39,11 @@ class TestReferral(BaseScheduledModelTestCase):
 
     community = 'test_community8'
     site_code = '11'
+
+    def startup(self):
+        super(TestReferral, self).startup()
+        SubjectLocatorFactory(subject_visit=self.subject_visit_male)
+        SubjectLocatorFactory(subject_visit=self.subject_visit_female)
 
     def tests_referred_hiv(self):
         """if IND refer for HIV testing"""
@@ -495,7 +501,12 @@ class TestReferral(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertEqual('POS', subject_referral.hiv_result)
-        self.assertEqual(hiv_care_adherence.first_arv, subject_referral.hiv_result_datetime.date())
+        print 'subject_referral.hiv_result_datetime = {}'.format(subject_referral.hiv_result_datetime)
+        try:
+            hiv_result_date = subject_referral.hiv_result_datetime.date()
+        except AttributeError:
+            hiv_result_date = None
+        self.assertEqual(hiv_care_adherence.first_arv, hiv_result_date)
 
     def tests_hiv_result4(self):
         """Other record confirms a verbal positive as evidence of HIV infection."""
