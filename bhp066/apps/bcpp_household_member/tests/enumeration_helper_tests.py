@@ -33,6 +33,7 @@ from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT
 
 
 class EnumerationHelperTests(TestCase):
+
     def __init__(self, *args, **kwargs):
         self.household_member = None
         self.subject_consent = None

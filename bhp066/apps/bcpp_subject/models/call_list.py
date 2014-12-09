@@ -154,8 +154,8 @@ class CallList (BaseSyncUuidModel):
     def composition(self):
         url = reverse('household_dashboard_url', kwargs={
             'dashboard_type': 'household',
-            'dashboard_model': 'household',
-            'dashboard_id': self.household_member.household_structure.household.pk
+            'dashboard_model': 'household_structure',
+            'dashboard_id': self.household_member.household_structure.pk
             })
         return '<a href="{}">{}</A>'.format(
             url, self.household_member.household_structure.household.household_identifier)
