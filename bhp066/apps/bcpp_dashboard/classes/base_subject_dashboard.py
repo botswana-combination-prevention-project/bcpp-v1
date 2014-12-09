@@ -50,7 +50,7 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
 
     @property
     def household(self):
-        return self.household_structure.household
+        return self.household_member.household_structure.household
 
     @property
     def household_structure(self):
