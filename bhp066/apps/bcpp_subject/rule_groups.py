@@ -8,7 +8,7 @@ from edc.subject.appointment.models import Appointment
 from .classes import SubjectStatusHelper
 
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
-                     SexualBehaviour, HivCareAdherence, Circumcision,
+                     SexualBehaviour, HivCareAdherence, Circumcision, Circumcised,
                      HivTestReview, ReproductiveHealth, MedicalDiagnoses,
                      HivResult, HivResultDocumentation, ElisaHivResult, HicEnrollment)
 from apps.bcpp_subject.constants import BASELINE_CODES
@@ -16,10 +16,15 @@ from apps.bcpp_subject.constants import BASELINE_CODES
 
 def func_baseline_visit_instance(visit_instance):
     """ Returns subject_visit for baseline """
-    registered_subject = visit_instance.appointment.registered_subject
-    baseline_appointment = Appointment.objects.get(
-        registered_subject=registered_subject, visit_definition__time_point=0)
-    return SubjectVisit.objects.get(appointment=baseline_appointment)
+    try:
+        registered_subject = visit_instance.appointment.registered_subject
+        baseline_appointment = Appointment.objects.get(
+            registered_subject=registered_subject, visit_definition__time_point=0)
+        return SubjectVisit.objects.get(appointment=baseline_appointment)
+    except Appointment.DoesNotExist:
+        return SubjectVisit.objects.none()
+    except SubjectVisit.DoesNotExist:
+        return SubjectVisit.objects.none()
 
 
 def func_is_baseline(visit_instance):
@@ -54,6 +59,14 @@ def func_known_pos(visit_instance):
         subject_status_helper = SubjectStatusHelper(visit_instance)
         known_pos = subject_status_helper.new_pos is False
     return known_pos
+
+
+def func_circumcision(visit_instance):
+    try:
+        Circumcised.objects.get(subject_visit=func_baseline_visit_instance(visit_instance))
+    except Circumcised.DoesNotExist:
+        return False
+    return True
 
 
 def func_todays_hiv_result_required(visit_instance):
@@ -101,10 +114,10 @@ def func_hic_keyed(visit_instance):
     return True
 
 
-def func_hiv_result_neg_T0(visit_instance):
-    baseline_visit = func_baseline_visit_instance(visit_instance)
-    subject_status_helper = SubjectStatusHelper(baseline_visit)
-    return True if subject_status_helper.hiv_result == 'NEG' else False
+def func_hiv_result_neg_baseline(visit_instance):
+    """ Returns HIV negative result """
+    subject_status_helper = SubjectStatusHelper(func_baseline_visit_instance(visit_instance))
+    return True if subject_status_helper.hiv_result == NEG else False
 
 
 def func_baseline_hiv_positive_today(visit_instance):
@@ -254,7 +267,8 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('has_tested', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivuntested'])
+        target_model=['hivuntested'],
+        runif=func_is_baseline)
 
     # if has tested is no, NOT REQUIRE documentation, HIV tested forms, what about hivuntested?
     has_tested_annual = ScheduledDataRule(
@@ -292,9 +306,9 @@ class HivTestingHistoryRuleGroup(RuleGroup):
     require_hiv_health_care_costs_annual = ScheduledDataRule(
         logic=Logic(
             predicate=func_baseline_hiv_positive_and_documentation_pos,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivhealthcarecosts'],
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivhealthcarecosts', 'hivcareadherence'],
         runif=func_is_annual)
 
     verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
@@ -306,13 +320,13 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         runif=func_is_baseline)
 
     # should be available for all positives with or without doc
-    hiv_care_adherence_for_all_pos = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_documentation_pos,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivcareadherence'],
-        runif=func_is_annual)
+#     hiv_care_adherence_for_all_pos = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_baseline_hiv_positive_and_documentation_pos,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['hivcareadherence'],
+#         runif=func_is_annual)
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -478,6 +492,15 @@ class CircumcisionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['uncircumcised'])
 
+    # if circumcised do not require circumcision forms again
+    circumcised_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_circumcision,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['circumcised', 'uncircumcised'],
+        runif=func_is_annual)
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -575,7 +598,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     hic_annual_enrol_neg = ScheduledDataRule(
         logic=Logic(
-            predicate=func_hiv_result_neg_T0,
+            predicate=func_hiv_result_neg_baseline,
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'],
@@ -588,6 +611,25 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['hicenrollment'],
+        runif=func_is_annual,
+        )
+
+    hic_enrolled_at_baseline = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hic_keyed,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivresult'],
+        runif=func_is_annual,
+        )
+
+    hic_enrolled_at_baseline_microtube = RequisitionRule(
+        logic=Logic(
+            predicate=func_hic_keyed,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'],
         runif=func_is_annual,
         )
 
