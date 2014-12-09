@@ -10,10 +10,9 @@ class Command(BaseCommand):
     help = 'Update member status for ANNUAL members who consented in the baseline survey'
 
     def handle(self, *args, **options):
+        dry_run = False
         try:
             if args[0] == 'run':
-                dry_run = False
-            else:
                 dry_run = True
         except IndexError:
             pass
@@ -28,9 +27,9 @@ class Command(BaseCommand):
                                                household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG).member_status == BHS:
                     household_member.member_status = ANNUAL
                     if not dry_run:
-                        household_member.save_base(updated_fields=['member_status'])
+                        household_member.save_base(update_fields=['member_status'])
                     n += 1
-                    print '    updated {}/{}'.format(n, member_count)
+                    print '    updated {} {}/{}'.format(household_member, n, member_count)
             except HouseholdMember.DoesNotExist:
-                print 'Error with {}. No previous member!'.format(household_member)
+                print 'Not enumerated in baseline survey. {}'.format(household_member)
         print 'Done'
