@@ -14,7 +14,7 @@ from edc.base.model.validators import dob_not_future
 from edc.choices.common import YES_NO_UNKNOWN, GENDER, YES_NO_NA, YES_NO
 from edc.constants import NOT_APPLICABLE
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
 
@@ -33,7 +33,7 @@ from .clinic_enrollment_loss import ClinicEnrollmentLoss
 from .clinic_household_member import ClinicHouseholdMember
 
 
-class ClinicEligibility (BaseDispatchSyncUuidModel):
+class ClinicEligibility (BaseSyncUuidModel):
     """A model completed by the user that confirms and saves eligibility
     information for potential participant."""
 
