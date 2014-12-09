@@ -76,6 +76,12 @@ def func_hic_keyed(visit_instance):
         return False
 
 
+def func_hiv_result_neg_T0(visit_instance):
+    baseline_visit = func_baseline_visit_instance(visit_instance)
+    subject_status_helper = SubjectStatusHelper(baseline_visit)
+    return True if subject_status_helper.hiv_result == 'NEG' else False
+
+
 def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
     registered_subject = visit_instance.appointment.registered_subject
@@ -89,6 +95,13 @@ def func_baseline_hiv_positive_and_documentation_pos(visit_instance):
     baseline_visit_instance = func_baseline_visit_instance(visit_instance)
     subject_helper = SubjectStatusHelper(baseline_visit_instance)
     return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation or not subject_helper.direct_hiv_pos_documentation
+
+
+def func_baseline_hiv_positive_and_not_on_art(visit_instance):
+    """Returns the baseline visit instance."""
+    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
+    subject_helper = SubjectStatusHelper(baseline_visit_instance)
+    return subject_helper.hiv_result == 'POS' and not subject_helper.on_art
 
 
 def func_baseline_pos_and_testreview_documentation_pos(visit_instance):
@@ -379,6 +392,13 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
+    require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_and_not_on_art,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivmedicalcare', 'hivhealthcarecosts'])
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -531,16 +551,26 @@ class BaseRequisitionRuleGroup(RuleGroup):
             predicate=func_hiv_negative_today,
             consequence='new',
             alternative='not_required'),
-        target_model=['hicenrollment'])
+        target_model=['hicenrollment'],
+        runif=func_is_baseline)
+
+    hic_annual_enrol_neg = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_result_neg_T0,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hicenrollment'],
+        runif=func_is_annual,)
 
     # if hicenrollment filled at T0, dont require it again at T1
-    hic_annual_enrol = ScheduledDataRule(
+    hic_annual_enrol_pos = ScheduledDataRule(
         logic=Logic(
             predicate=func_hic_keyed,
             consequence='not_required',
             alternative='new'),
         target_model=['hicenrollment'],
-        runif=func_is_annual)
+        runif=func_is_annual,
+        )
 
     # known +VE at T0 (hivresult, hivtestreview) should not require several forms
     hic_annual_doc = ScheduledDataRule(
