@@ -27,7 +27,6 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
-from edc.map.classes import site_mappers
 
 from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED
 

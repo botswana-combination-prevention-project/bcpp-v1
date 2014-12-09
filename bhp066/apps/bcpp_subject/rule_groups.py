@@ -1,3 +1,5 @@
+from edc.constants import POS, NEG, IND
+
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
                                              Logic, RequisitionRule)
@@ -9,23 +11,25 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                      SexualBehaviour, HivCareAdherence, Circumcision,
                      HivTestReview, ReproductiveHealth, MedicalDiagnoses,
                      HivResult, HivResultDocumentation, ElisaHivResult, HicEnrollment)
+from apps.bcpp_subject.constants import BASELINE_CODES
 
 
 def func_baseline_visit_instance(visit_instance):
-    """ Returns subject_visit for T0 """
+    """ Returns subject_visit for baseline """
     registered_subject = visit_instance.appointment.registered_subject
-    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')[0]
-    return SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment)
+    baseline_appointment = Appointment.objects.get(
+        registered_subject=registered_subject, visit_definition__time_point=0)
+    return SubjectVisit.objects.get(appointment=baseline_appointment)
 
 
 def func_is_baseline(visit_instance):
-    if visit_instance.appointment.visit_definition.code == 'T0':
+    if visit_instance.appointment.visit_definition.code in BASELINE_CODES:
         return True
     return False
 
 
 def func_is_annual(visit_instance):
-    if visit_instance.appointment.visit_definition.code != 'T0':
+    if visit_instance.appointment.visit_definition.code not in BASELINE_CODES:
         return True
     return False
 
@@ -33,47 +37,68 @@ def func_is_annual(visit_instance):
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
-    subject_status_helper = SubjectStatusHelper(visit_instance)
-    return not subject_status_helper.on_art and subject_status_helper.hiv_result == 'POS'
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    if art_naive:
+        subject_status_helper = SubjectStatusHelper(visit_instance)
+        art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    return art_naive
 
 
 def func_known_pos(visit_instance):
     """Returns True if participant is NOT a newly diagnosed POS as determined
     by the SubjectStatusHelper.new_pos method."""
-    return SubjectStatusHelper(visit_instance).new_pos is False
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    known_pos = subject_status_helper.new_pos is False
+    if not known_pos:
+        subject_status_helper = SubjectStatusHelper(visit_instance)
+        known_pos = subject_status_helper.new_pos is False
+    return known_pos
 
 
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required."""
-    subject_status_helper = SubjectStatusHelper(visit_instance)
-    if subject_status_helper.todays_hiv_result:
-        return True
-    return False if (subject_status_helper.new_pos is False) else True
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    test_required = subject_status_helper.hiv_result == NEG
+    if test_required:
+        subject_status_helper = SubjectStatusHelper(visit_instance)
+        if subject_status_helper.todays_hiv_result:
+            test_required = True
+        else:
+            test_required = subject_status_helper.new_pos
+    return test_required
 
 
 def func_hiv_negative_today(visit_instance):
     """Returns True if the participant tests negative today."""
-    return SubjectStatusHelper(visit_instance).hiv_result == 'NEG'
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    negative_today = subject_status_helper.hiv_result == NEG
+    if negative_today:
+        negative_today = SubjectStatusHelper(visit_instance).hiv_result == 'NEG'
+    return negative_today
 
 
 def func_hiv_indeterminate_today(visit_instance):
     """Returns True if the participant tests indeterminate today."""
-    return SubjectStatusHelper(visit_instance).hiv_result == 'IND'
+    return SubjectStatusHelper(visit_instance).hiv_result == IND
 
 
 def func_hiv_positive_today(visit_instance):
     """Returns True if the participant is known or newly diagnosed HIV positive."""
     return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    positive_today = subject_status_helper.hiv_result == POS
+    if not positive_today:
+        positive_today = SubjectStatusHelper(visit_instance).hiv_result == POS
+    return positive_today
 
 
 def func_hic_keyed(visit_instance):
-    registered_subject = visit_instance.appointment.registered_subject
-    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
-    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
     try:
-        return True if HicEnrollment.objects.get(subject_visit=baseline_visit_instance) else False
+        HicEnrollment.objects.get(subject_visit=func_baseline_visit_instance(visit_instance))
     except HicEnrollment.DoesNotExist:
         return False
+    return True
 
 
 def func_hiv_result_neg_T0(visit_instance):
@@ -84,17 +109,15 @@ def func_hiv_result_neg_T0(visit_instance):
 
 def func_baseline_hiv_positive_today(visit_instance):
     """Returns the baseline visit instance."""
-    registered_subject = visit_instance.appointment.registered_subject
-    baseline_appointment = Appointment.objects.filter(registered_subject=registered_subject, visit_definition__code='T0')
-    baseline_visit_instance = SubjectVisit.objects.get(household_member__registered_subject=registered_subject, appointment=baseline_appointment[0])
-    return SubjectStatusHelper(baseline_visit_instance).hiv_result == 'POS'
+    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result == POS
 
 
 def func_baseline_hiv_positive_and_documentation_pos(visit_instance):
     """Returns the baseline visit instance."""
-    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
-    subject_helper = SubjectStatusHelper(baseline_visit_instance)
-    return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation or not subject_helper.direct_hiv_pos_documentation
+    subject_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    return (subject_helper.hiv_result == POS and
+            subject_helper.direct_hiv_pos_documentation or
+            not subject_helper.direct_hiv_pos_documentation)
 
 
 def func_baseline_hiv_positive_and_not_on_art(visit_instance):
@@ -106,26 +129,22 @@ def func_baseline_hiv_positive_and_not_on_art(visit_instance):
 
 def func_baseline_pos_and_testreview_documentation_pos(visit_instance):
     """Returns the baseline visit instance."""
-    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
-    subject_helper = SubjectStatusHelper(baseline_visit_instance)
-    return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation
+    subject_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    return subject_helper.hiv_result == POS and subject_helper.direct_hiv_pos_documentation
 
 
 def func_baseline_vl_drawn(visit_instance):
     """Returns the baseline visit instance."""
-    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
-    return SubjectStatusHelper(baseline_visit_instance).vl_sample_drawn
+    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).vl_sample_drawn
 
 
 def func_baseline_rbd_drawn(visit_instance):
     """Returns the baseline visit instance."""
-    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
-    return SubjectStatusHelper(baseline_visit_instance).rbd_sample_drawn
+    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).rbd_sample_drawn
 
 
 def func_baseline_pima_keyed(visit_instance):
-    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
-    return SubjectStatusHelper(baseline_visit_instance).pima_instance
+    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).pima_instance
 
 
 def func_not_required(visit_instance):
@@ -263,7 +282,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     require_todays_hiv_result_annual = ScheduledDataRule(
         logic=Logic(
-            predicate=func_baseline_hiv_positive_today,
+            predicate=func_hiv_positive_today,
             consequence='not_required',
             alternative='new'),
         target_model=['hivresult'],
@@ -603,7 +622,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     require_microtube = RequisitionRule(
         logic=Logic(
-            predicate=func_baseline_hiv_positive_today,
+            predicate=func_hiv_positive_today,
             consequence='not_required',
             alternative='new'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
