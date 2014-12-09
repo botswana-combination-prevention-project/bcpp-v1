@@ -157,7 +157,8 @@ class SubjectDashboard(BaseSubjectDashboard):
         """Returns this household members subject_referral instance or None."""
         try:
             subject_referrals = SubjectReferral.objects.filter(
-                referral_appt_date__lt=datetime.today()
+                referral_appt_date__lt=datetime.today(),
+                subject_visit__household_member__internal_identifier=self.household_member.internal_identifier
                 ).exclude(subject_visit__household_member=self.household_member).order_by('-referral_appt_date')
             subject_referral = subject_referrals[0]
         except SubjectReferral.DoesNotExist:
