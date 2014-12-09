@@ -159,22 +159,21 @@ class SubjectReferralHelper(SubjectStatusHelper):
     @property
     def referral_code(self):
         """Returns a string of referral codes as a join of the list of referral codes delimited by ","."""
+        self.remove_smc_in_annual_ecc()
         referral_code = ','.join(self.referral_code_list)
-        referral_code = self.remove_smc_in_annual_ecc(referral_code)
         return referral_code
 
-    def remove_smc_in_annual_ecc(self, referral_code):
+    def remove_smc_in_annual_ecc(self):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
         if (not site_mappers.current_mapper().intervention and
                 self.instance.subject_visit.household_member.household_structure.survey.survey_slug != \
                 BASELINE_SURVEY_SLUG):
             try:
-                referral_code.remove('SMC-NEG')
-                referral_code.remove('SMC?NEG')
-                referral_code.remove('SMC-UNK')
+                self.referral_code_list.remove('SMC-NEG')
+                self.referral_code_list.remove('SMC?NEG')
+                self.referral_code_list.remove('SMC-UNK')
             except ValueError:
                 pass
-        return referral_code
 
     @property
     def valid_referral_codes(self):
