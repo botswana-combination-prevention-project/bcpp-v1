@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.util import ErrorList
-from ..models import LabourMarketWages
+from ..models import LabourMarketWages, Grant
 from .base_subject_model_form import BaseSubjectModelForm
 
 from ..choices import MONTHLY_INCOME, HOUSEHOLD_INCOME
@@ -10,12 +10,12 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(LabourMarketWagesForm, self).clean()
-        grant = self.cleaned_data.get('grant')
-        # if yes, answer next question
-        if cleaned_data.get('govt_grant') == 'Yes':
-            if not grant:
-                raise forms.ValidationError('You are to answer questions about Grant')
-        return cleaned_data
+#         grant = self.cleaned_data.get('grant')
+# #         # if yes, answer next question
+#         if cleaned_data.get('govt_grant') == 'Yes':
+#             if not grant:
+#                 raise forms.ValidationError('You are to answer questions about Grant')
+#         #return cleaned_data
 
         employed = ['government sector', 'private sector', 'self-employed working on my own',
                     'self-employed with own employees']
@@ -41,5 +41,22 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
             raise forms.ValidationError(
                     'Amount in household cannot be less than monthly income')
 
+        return cleaned_data
+
     class Meta:
         model = LabourMarketWages
+
+
+class GrantForm (BaseSubjectModelForm):
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        # grant information required only when participant says YES to receiving grant(s) at some point
+        labour_market_wages = cleaned_data.get('labour_market_wages')
+        if labour_market_wages.govt_grant == 'No':
+            raise forms.ValidationError('Don\'t fill out the Grant information')
+
+        return super(GrantForm, self).clean()
+
+    class Meta:
+        model = Grant
