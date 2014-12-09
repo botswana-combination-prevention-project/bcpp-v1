@@ -69,10 +69,10 @@ class CallLogAdmin(BaseModelAdmin):
         'participant is a member of the Ya Tsie study).<BR>"We would like to contact a participant '
         '(give participant name) who gave us this number as a means to contact them. Do you know '
         'how we can contact this person directly? This may be a phone number or a physical address.']
-    form = CallLogForm
-    fields = ("household_member", 'locator_information', 'contact_notes')
 
-    # readonly_fields = ('survey', )
+    form = CallLogForm
+
+    fields = ("household_member", 'locator_information', 'contact_notes')
 
     inlines = [CallLogEntryAdminInline, ]
 
