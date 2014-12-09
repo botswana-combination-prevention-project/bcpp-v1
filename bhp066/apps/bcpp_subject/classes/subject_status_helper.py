@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django.db.models import get_model
 
+from ..constants import BASELINE_CODES
+
 from ..models import (HivResult, Pima, HivTestReview, HivCareAdherence, HivTestingHistory, HivResultDocumentation,
                       ElisaHivResult)
 
@@ -9,16 +11,30 @@ from ..models import (HivResult, Pima, HivTestReview, HivCareAdherence, HivTesti
 class SubjectStatusHelper(object):
     """A helper class to consistently and conveniently return the HIV status of a subject."""
     # class attribute is accessed by the signal to ensure any modifications are caught in the post_save signal
-    models = {'hiv_care_adherence': HivCareAdherence,
-              'hiv_result': HivResult,
-              'elisa_hiv_result': ElisaHivResult,
-              'hiv_result_documentation': HivResultDocumentation,
-              'hiv_test_review': HivTestReview,
-              'hiv_testing_history': HivTestingHistory,
-              'pima': Pima,
-              }
 
-    def __init__(self, visit_instance):
+    BASELINE = 'baseline'
+    ANNUAL = 'annual'
+
+    models = {
+        BASELINE: {
+            'hiv_care_adherence': HivCareAdherence,
+            'hiv_result': HivResult,
+            'elisa_hiv_result': ElisaHivResult,
+            'hiv_result_documentation': HivResultDocumentation,
+            'hiv_test_review': HivTestReview,
+            'hiv_testing_history': HivTestingHistory,
+            'pima': Pima},
+        ANNUAL: {
+            'hiv_care_adherence': HivCareAdherence,
+            'hiv_result': HivResult,
+            'elisa_hiv_result': ElisaHivResult,
+            'hiv_result_documentation': HivResultDocumentation,
+            'hiv_test_review': HivTestReview,
+            'hiv_testing_history': HivTestingHistory,
+            'pima': Pima},
+        }
+
+    def __init__(self, visit_instance=None, use_baseline_visit=False):
         self._defaulter = None
         self._rbd_requisition_instance = None
         self._documented_verbal_hiv_result = None
@@ -47,15 +63,48 @@ class SubjectStatusHelper(object):
         self._verbal_hiv_result = None
         self._vl_requisition_instance = None
         self._vl_sample_drawn_datetime = None
+        self._subject_visit = None
+        self.use_baseline_visit = use_baseline_visit
         self.subject_visit = visit_instance
-
-        self.models.update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.visit_code = self.subject_visit.appointment.visit_definition.code
+        self.models[self.BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[self.ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
 
     def __repr__(self):
         return 'SubjectStatusHelper({0.instance!r})'.format(self)
 
     def __str__(self):
         return '({0.instance!r})'.format(self)
+
+    @property
+    def timepoint_key(self):
+        """Returns a dictionary key of either baseline or annual base in the visit code."""
+        if self.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
+            return self.BASELINE
+        return self.ANNUAL
+
+    @property
+    def subject_visit(self):
+        """Returns the visit instance."""
+        return self._subject_visit
+
+    @subject_visit.setter
+    def subject_visit(self, visit_instance):
+        """Sets the visit_instance to the given visit_instance
+        or the baseline visit instance if using_baseline=True."""
+        Appointment = get_model('appointment', 'Appointment')
+        SubjectVisit = get_model('bcpp_subject', 'SubjectVisit')
+        self._subject_visit = visit_instance
+        if self.use_baseline_visit:
+            try:
+                registered_subject = visit_instance.appointment.registered_subject
+                baseline_appointment = Appointment.objects.filter(
+                    registered_subject=registered_subject, visit_definition__code__in=BASELINE_CODES)[0]
+                self._subject_visit = SubjectVisit.objects.get(
+                    household_member__registered_subject=visit_instance.appointment.registered_subject,
+                    appointment=baseline_appointment)
+            except (SubjectVisit.DoesNotExist, IndexError):
+                self._subject_visit = None
 
     @property
     def hiv_result(self):
@@ -319,8 +368,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of HivCareAdherence or None."""
         if not self._hiv_care_adherence_instance:
             try:
-                self._hiv_care_adherence_instance = self.models.get('hiv_care_adherence').objects.get(subject_visit=self.subject_visit)
-            except self.models.get('hiv_care_adherence').DoesNotExist:
+                self._hiv_care_adherence_instance = self.models[self.timepoint_key].get('hiv_care_adherence').objects.get(subject_visit=self.subject_visit)
+            except self.models[self.timepoint_key].get('hiv_care_adherence').DoesNotExist:
                 self._hiv_care_adherence_instance = None
         return self._hiv_care_adherence_instance
 
@@ -329,8 +378,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of HivResult or None."""
         if not self._hiv_result_instance:
             try:
-                self._hiv_result_instance = self.models.get('hiv_result').objects.get(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND'])
-            except self.models.get('hiv_result').DoesNotExist:
+                self._hiv_result_instance = self.models[self.timepoint_key].get('hiv_result').objects.get(subject_visit=self.subject_visit, hiv_result__in=['POS', 'NEG', 'IND'])
+            except self.models[self.timepoint_key].get('hiv_result').DoesNotExist:
                 self._hiv_result_instance = None
         return self._hiv_result_instance
 
@@ -338,8 +387,8 @@ class SubjectStatusHelper(object):
     def elisa_result_instance(self):
         if not self._elisa_result_instance:
             try:
-                self._elisa_result_instance = self.models.get('elisa_hiv_result').objects.get(subject_visit=self.subject_visit)
-            except self.models.get('elisa_hiv_result').DoesNotExist:
+                self._elisa_result_instance = self.models[self.timepoint_key].get('elisa_hiv_result').objects.get(subject_visit=self.subject_visit)
+            except self.models[self.timepoint_key].get('elisa_hiv_result').DoesNotExist:
                 self._elisa_result_instance = None
         return self._elisa_result_instance
 
@@ -348,8 +397,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of HivTestingHistory or None."""
         if not self._hiv_testing_history_instance:
             try:
-                self._hiv_testing_history_instance = self.models.get('hiv_testing_history').objects.get(subject_visit=self.subject_visit)
-            except self.models.get('hiv_testing_history').DoesNotExist:
+                self._hiv_testing_history_instance = self.models[self.timepoint_key].get('hiv_testing_history').objects.get(subject_visit=self.subject_visit)
+            except self.models[self.timepoint_key].get('hiv_testing_history').DoesNotExist:
                 self._hiv_testing_history_instance = None
         return self._hiv_testing_history_instance
 
@@ -358,8 +407,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of HivResultDocumentation or None."""
         if not self._hiv_result_documentation_instance:
             try:
-                self._hiv_result_documentation_instance = self.models.get('hiv_result_documentation').objects.get(subject_visit=self.subject_visit, result_recorded__in=['POS', 'NEG', 'IND'])
-            except self.models.get('hiv_result_documentation').DoesNotExist:
+                self._hiv_result_documentation_instance = self.models[self.timepoint_key].get('hiv_result_documentation').objects.get(subject_visit=self.subject_visit, result_recorded__in=['POS', 'NEG', 'IND'])
+            except self.models[self.timepoint_key].get('hiv_result_documentation').DoesNotExist:
                 self._hiv_result_documentation_instance = None
         return self._hiv_result_documentation_instance
 
@@ -368,8 +417,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of HivTestReview or None."""
         if not self._hiv_test_review_instance:
             try:
-                self._hiv_test_review_instance = self.models.get('hiv_test_review').objects.get(subject_visit=self.subject_visit, recorded_hiv_result__in=['POS', 'NEG', 'IND'])
-            except self.models.get('hiv_test_review').DoesNotExist:
+                self._hiv_test_review_instance = self.models[self.timepoint_key].get('hiv_test_review').objects.get(subject_visit=self.subject_visit, recorded_hiv_result__in=['POS', 'NEG', 'IND'])
+            except self.models[self.timepoint_key].get('hiv_test_review').DoesNotExist:
                 self._hiv_test_review_instance = None
         return self._hiv_test_review_instance
 
@@ -378,8 +427,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of Pima or None."""
         if not self._pima_instance:
             try:
-                self._pima_instance = self.models.get('pima').objects.get(subject_visit=self.subject_visit, cd4_value__isnull=False)
-            except self.models.get('pima').DoesNotExist:
+                self._pima_instance = self.models[self.timepoint_key].get('pima').objects.get(subject_visit=self.subject_visit, cd4_value__isnull=False)
+            except self.models[self.timepoint_key].get('pima').DoesNotExist:
                 self._pima_instance = None
         return self._pima_instance
 
@@ -388,8 +437,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of the SubjectRequisition for panel VL or None."""
         if not self._vl_requisition_instance:
             try:
-                self._vl_requisition_instance = self.models.get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Viral Load', is_drawn='Yes')
-            except self.models.get('subject_requisition').DoesNotExist:
+                self._vl_requisition_instance = self.models[self.timepoint_key].get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Viral Load', is_drawn='Yes')
+            except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
                 pass
         return self._vl_requisition_instance
 
@@ -403,8 +452,8 @@ class SubjectStatusHelper(object):
         """Returns a model instance of the SubjectRequisition for panel RBD or None."""
         if not self._rbd_requisition_instance:
             try:
-                self._rbd_requisition_instance = self.models.get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Research Blood Draw', is_drawn='Yes')
-            except self.models.get('subject_requisition').DoesNotExist:
+                self._rbd_requisition_instance = self.models[self.timepoint_key].get('subject_requisition').objects.get(subject_visit=self.subject_visit, panel__name='Research Blood Draw', is_drawn='Yes')
+            except self.models[self.timepoint_key].get('subject_requisition').DoesNotExist:
                 pass
         return self._rbd_requisition_instance
 

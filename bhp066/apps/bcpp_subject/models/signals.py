@@ -19,6 +19,7 @@ from ..classes import SubjectReferralHelper, CallHelper
 from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList, HivCareAdherence
 
 from apps.bcpp.choices import YES_NO_DWTA
+from apps.bcpp_subject.constants import BASELINE_CODES
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -85,7 +86,11 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
     The sender classes are listed in the SubjectReferralHelper."""
     if not raw:
         try:
-            if sender in SubjectReferralHelper.models.values():
+            if instance.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
+                timepoint_key = SubjectReferralHelper.BASELINE
+            else:
+                timepoint_key = SubjectReferralHelper.ANNUAL
+            if sender in SubjectReferralHelper.models[timepoint_key].values():
                 subject_referral = SubjectReferral.objects.using(using).get(
                     subject_visit=instance.subject_visit)
                 # calling save will run it through export_history manager. This may be noisy
@@ -93,6 +98,8 @@ def update_subject_referral_on_post_save(sender, instance, raw, created, using, 
                 if not SubjectReferralHelper(subject_referral).missing_data:
                     # Only resave the referral if there is no missing data.
                     subject_referral.save(using=using)
+        except AttributeError:
+            pass
         except SubjectReferral.DoesNotExist:
             pass
         except AttributeError as attribute_error:
@@ -168,10 +175,8 @@ def hivcareadherence_post_save(sender, instance, raw, created, using, **kwargs):
                         HivCareAdherence.objects.create(**hivcareadherence_dict)
 
             except SubjectVisit.DoesNotExist:
-                print "SubjectVisit.DoesNotExist"
                 pass
             except HivCareAdherence.DoesNotExist:
-                print "HivCareAdherence.DoesNotExist"
                 pass
             except DatabaseError as error:
                 print error
