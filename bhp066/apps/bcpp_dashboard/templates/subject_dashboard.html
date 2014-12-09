@@ -31,7 +31,12 @@
 {% else %}    
     <td></td>  
 {% endif %}
-  {% if hiv_result %}
+{% if last_subject_referral %}
+    <td><B>Past Referral:</B> {{ last_subject_referral.referral_code }}{% if last_subject_referral.referral_appt_date %} on {{ last_subject_referral.referral_appt_date }}{% endif %}</td>    
+{% else %}    
+    <td></td>  
+{% endif %}
+{% if hiv_result %}
     <td><B>Result: </B>{{ hiv_result.hiv_result|mask_hiv_result }} {{ elisa_hiv_result.hiv_result}}</td>
     <td><B>Blood Draw Type: </B>{{ hiv_result.blood_draw_type  }}</td>            
 {% endif %}
