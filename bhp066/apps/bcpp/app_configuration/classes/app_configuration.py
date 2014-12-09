@@ -23,8 +23,8 @@ from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from apps.bcpp_household.models import Plot
 from apps.bcpp_survey.models import Survey
 
-study_start_datetime = datetime(2013, 10, 18, 10, 30, 00)
-study_end_datetime = datetime(2016, 10, 17, 16, 30, 00)
+study_start_datetime = datetime(2013, 10, 18, 0, 0, 0)
+study_end_datetime = datetime(2016, 10, 17, 23, 0, 0)
 
 
 class BcppAppConfiguration(BaseAppConfiguration):
@@ -102,13 +102,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2014, 12, 19, 16, 30, 00)},
+             'datetime_end': datetime(2014, 12, 19, 23, 59, 00)},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2015, 11, 20, 07, 00, 00),
-             'datetime_end': datetime(2015, 10, 29, 16, 30, 00)},
+             'datetime_start': datetime(2015, 11, 20, 00, 00, 00),
+             'datetime_end': datetime(2015, 10, 29, 23, 59, 00)},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
              'survey_slug': 'bcpp-year-3',
