@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from django.core.exceptions import MultipleObjectsReturned
 from django.template.loader import render_to_string
 
 from edc.subject.appointment.models import Appointment
 from edc.subject.appointment_helper.classes import AppointmentHelper
 from edc.subject.visit_schedule.models import ScheduleGroup, VisitDefinition, MembershipForm
+from edc.subject.appointment_helper.classes import AppointmentHelper
+from edc.subject.appointment_helper.exceptions import AppointmentCreateError
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
@@ -54,6 +58,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             subject_consent=self.consent,
             correct_consent=self.correct_consent,
             subject_referral=self.subject_referral,
+            last_subject_referral=self.last_subject_referral,
             elisa_hiv_result=self.elisa_hiv_result,
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
@@ -72,21 +77,45 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     @property
     def appointments(self):
-        """Returns a queryset on one appointment relative to the subject consent household member"""
-        self._appointments = None
-        if self.show == 'forms':
-            self._appointments = [self.appointment]
-        else:
-            # or filter appointments for the current membership categories
-            # schedule_group__membership_form
-            codes = []
-            for category in self.membership_form_category:
-                codes.extend(MembershipForm.objects.codes_for_category(membership_form_category=category))
-                self._appointments = Appointment.objects.filter(
-                    registered_subject=self.registered_subject,
-                    visit_definition__code__in=codes).order_by(
-                    'visit_definition__code', 'visit_instance', 'appt_datetime')
-        return self._appointments
+        """Returns a single apppointment as a list.
+
+        * subject_dashboard should only display one appointment
+        * select an appointment that has a subject_visit associated with THIS household_member,
+        * skip an appointment that has a subject_visit associated with any other household_member,
+          even if for the same registered_subject
+        * select an appointment that does not have a subject_visit IF not other
+          is available
+        * select only one appointment
+        * if no appointment is selected, try to create additional appointments
+        """
+        appointments = super(BaseSubjectDashboard, self).appointments
+        # appointments are ordered by in time_point 0, 1, 2, ...
+        appointment_to_show = []
+        for appointment in appointments:
+            try:
+                subject_visit = SubjectVisit.objects.get(appointment=appointment)
+                if subject_visit.household_member == self.household_member:
+                    appointment_to_show.append(appointment)
+                    break
+            except SubjectVisit.DoesNotExist:
+                appointment_to_show.append(appointment)
+                break
+        if not appointment_to_show:
+            appointment_helper = AppointmentHelper()
+            options = {
+                'model_name': 'subjectconsent',
+                'using': 'default',
+                'base_appt_datetime': None,
+                'dashboard_type': 'subject',
+                'source': 'BaseAppointmentMixin',
+                'visit_definitions': None,
+                'verbose': False}
+            try:
+                appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
+                appointment_to_show.append(appointments[0])
+            except AppointmentCreateError:
+                pass
+        return appointment_to_show
 
     @property
     def appointment(self):
@@ -114,60 +143,6 @@ class SubjectDashboard(BaseSubjectDashboard):
             self._appointment_continuation_count = None
         return self._appointment
 
-#     def create_next_appointment(self):
-#         """Creates the next appointment subsequent to BASELINE (T0) or the last.
-# 
-#         BASELINE appointment is created by the consent."""
-#         if self.next_visit_defintion:
-#             AppointmentHelper().create_all(
-#                 self.registered_subject,
-#                 self.__class__.__name__.lower(),
-#                 using='default',
-#                 source='BaseAppointmentMixin',
-#                 visit_definitions=[self.next_visit_definition])
-# 
-#     @property
-#     def next_visit_definition(self):
-#         """Returns the next visit_definiton instance following the time_point of the last appointment."""
-#         if not self._next_visit_definition:
-#             try:
-#                 if not self.household_member == self.consent.household_member:
-#                     try:
-#                         Appointment.objects.get(
-#                             registered_subject=self.registered_subject,
-#                             visit_definition__code__in=BASELINE_CODES)
-#                     except Appointment.DoesNotExist:
-#                         raise ValueError('Expected baseline (T0) appointment to exist for consented subject. Got None.')
-#                     if self.household_member in self.consent.household_member.next_members:
-#                         schedule_group = ScheduleGroup.objects.get(
-#                             membership_form__content_type_map__model=self.consent._meta.object_name.lower())
-#                         try:
-#                             last_annual_appointment = Appointment.objects.filter(
-#                                 registered_subject=self.registered_subject,
-#                                 visit_definition__time_point__gt=0,
-#                                 schedule_group=schedule_group
-#                                 ).order_by('-visit_definition__time_point')[0]
-#                             # get next timepoint for this schedule group
-#                             for visit_definition in VisitDefinition.objects.filter(
-#                                     schedule_group=schedule_group,
-#                                     time_point__gt=last_annual_appointment.visit_definition.time_point,
-#                                     ).order_by('time_point'):
-#                                 self._next_visit_definition = visit_definition
-#                                 break
-#                         except IndexError:
-#                             self._next_visit_definition = VisitDefinition.objects.get(schedule_group=schedule_group, time_point=0)
-#             except AttributeError:
-#                 # no consent
-#                 pass
-#         return self._next_visit_definition
-# 
-#     def next_members(self):
-#         for household_member in HouseholdMember.objects.filter(
-#             registered_subject=self.registered_subject,
-#             household_structure__survey__datetime_start__gt=).order_by('household_structure__survey__datetime_start'):
-#             next_members.append(household_member)
-#         return next_members
-
     @property
     def subject_referral(self):
         """Returns this household members subject_referral instance or None."""
@@ -178,12 +153,30 @@ class SubjectDashboard(BaseSubjectDashboard):
         return subject_referral
 
     @property
+    def last_subject_referral(self):
+        """Returns this household members subject_referral instance or None."""
+        try:
+            subject_referrals = SubjectReferral.objects.filter(
+                referral_appt_date__lt=datetime.today()
+                ).exclude(subject_visit__household_member=self.household_member).order_by('-referral_appt_date')
+            subject_referral = subject_referrals[0]
+        except SubjectReferral.DoesNotExist:
+            subject_referral = None
+        except IndexError:
+            subject_referral = None
+        except AttributeError:
+            subject_referral = None
+        return subject_referral
+
+    @property
     def hiv_result(self):
         """Returns this household members hiv_result instance or None."""
         try:
             hiv_result = HivResult.objects.get(subject_visit__household_member=self.household_member)
         except HivResult.DoesNotExist:
             hiv_result = None
+        except HivResult.MultipleObjectsReturned:
+            hiv_result = HivResult.objects.filter(subject_visit__household_member=self.household_member)[1]
         return hiv_result
 
     @property
