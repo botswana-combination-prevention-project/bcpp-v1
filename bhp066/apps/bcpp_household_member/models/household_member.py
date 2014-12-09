@@ -13,7 +13,7 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
-from edc.constants import NOT_APPLICABLE, ALIVE
+from edc.constants import NOT_APPLICABLE, ALIVE, DEAD
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.core.crypto_fields.utils import mask_encrypted
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -105,7 +105,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
         )
-    
+
     inability_to_participate_other = OtherCharField(
         null=True)
 
@@ -382,6 +382,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def is_eligible_member(self):
+        if self.survival_status == DEAD:
+            return False
         return (self.age_in_years >= 16 and self.age_in_years <= 64 and self.study_resident == 'Yes'
                 and self.inability_to_participate == NOT_APPLICABLE)
 

@@ -19,6 +19,7 @@ from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTupl
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 
+from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from apps.bcpp_household.models import Plot
 from apps.bcpp_survey.models import Survey
 
@@ -79,7 +80,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         }
 
     consent_catalogue_list = [
-        {'name': 'bcpp-year-1',
+        {'name': BASELINE_SURVEY_SLUG,
          'content_type_map': 'subjectconsent',
          'consent_type': 'study',
          'version': 1,
@@ -96,9 +97,9 @@ class BcppAppConfiguration(BaseAppConfiguration):
         ]
 
     survey_setup = {
-        'bcpp-year-1':
+        BASELINE_SURVEY_SLUG:
             {'survey_name': 'BCPP Year 1',
-             'survey_slug': 'bcpp-year-1',
+             'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
              'datetime_end': datetime(2014, 11, 19, 16, 30, 00)},
@@ -350,7 +351,11 @@ class BcppAppConfiguration(BaseAppConfiguration):
         if map_area != settings.CURRENT_COMMUNITY:
             raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
                                        'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
-        if str(device) not in ['99', ]:
+        try:
+            community_check = settings.CURRENT_COMMUNITY_CHECK
+        except AttributeError:
+            community_check = True
+        if str(device) not in ['99', ] and community_check:
             try:
                 if Plot.objects.all()[0].plot_identifier[:2] != map_code:
                     raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '

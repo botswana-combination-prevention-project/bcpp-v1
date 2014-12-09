@@ -1,7 +1,11 @@
+<ol>
 {% for srvy in surveys %}
-    {% if srvy.0 == survey %}
-        <p><b>{{ forloop.counter }}.&nbsp;{{srvy.0.survey_name}}&nbsp;{{ srvy.0.datetime_start}}&nbsp;-&nbsp;{{ srvy.0.datetime_end}}&nbsp;<span style="color:green">(selected)</span></b></p>
+    {% if srvy.survey == survey %}
+        <li><b>{{srvy.survey.survey_name}}&nbsp;{{ srvy.survey.datetime_start|date:'Y-m-d'}}&nbsp;-&nbsp;{{ srvy.survey.datetime_end|date:'Y-m-d'}}&nbsp;<span style="color:green">(showing)</span></b></li>
+    {% elif srvy.survey.not_started %}
+        <li>{{srvy.survey.survey_name}}&nbsp;{{ srvy.survey.datetime_start|date:'Y-m-d'}}&nbsp;-&nbsp;{{ srvy.survey.datetime_end|date:'Y-m-d'}}</li>
     {% else %}
-        <tr><td>{{ forloop.counter }}.&nbsp;<A href="{{srvy.1}}">{{srvy.0.survey_name}}</A>&nbsp;{{ srvy.0.datetime_start}}&nbsp;-&nbsp;{{ srvy.0.datetime_end}}</td></tr>                             
+        <li><A href="{{srvy.url}}">{{srvy.survey.survey_name}}</A>&nbsp;{{ srvy.survey.datetime_start|date:'Y-m-d'}}&nbsp;-&nbsp;{{ srvy.survey.datetime_end|date:'Y-m-d'}}</li>                             
     {% endif %}
 {% endfor %}
+</ol>

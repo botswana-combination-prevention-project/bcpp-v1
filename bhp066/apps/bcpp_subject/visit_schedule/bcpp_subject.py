@@ -99,7 +99,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             ]},
          'T1': {
             'title': 'T1 Annual Household Survey',
-            'time_point': 0,
+            'time_point': 1,
             'base_interval': 0,
             'base_interval_unit': 'D',
             'window_lower_bound': 0,
@@ -174,7 +174,12 @@ if site_mappers.current_mapper().intervention is False:
             BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
 
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
-        if item.model_name in ['pima', 'tbsymptoms']:
+        if item.model_name in ['pima', 'tbsymptoms', 'hivuntested']:
+            BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
+
+if site_mappers.current_mapper().intervention is True:
+    for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
+        if item.model_name in ['hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
 
 site_visit_schedules.register(BcppSubjectVisitSchedule)
