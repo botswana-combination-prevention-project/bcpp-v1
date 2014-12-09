@@ -176,3 +176,12 @@ LETLHAKENG_LANDMARKS = (
     ('Sebeso Kgotlana-lt', -24.097894, 25.02004199),
     ('Show Grounds-letlhakeng', -24.11086902, 25.027149),
 )
+
+MMATHETHE_LANDMARKS = (
+                       )
+
+MMANKGODI_LANDMARKS = ()
+
+SEFOPHE_LANDMARKS = ()
+
+LERALA_LANDMARKS = ()
