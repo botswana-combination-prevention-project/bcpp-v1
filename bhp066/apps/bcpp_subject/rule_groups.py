@@ -97,6 +97,13 @@ def func_baseline_hiv_positive_and_documentation_pos(visit_instance):
     return subject_helper.hiv_result == 'POS' and subject_helper.direct_hiv_pos_documentation or not subject_helper.direct_hiv_pos_documentation
 
 
+def func_baseline_hiv_positive_and_not_on_art(visit_instance):
+    """Returns the baseline visit instance."""
+    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
+    subject_helper = SubjectStatusHelper(baseline_visit_instance)
+    return subject_helper.hiv_result == 'POS' and not subject_helper.on_art
+
+
 def func_baseline_pos_and_testreview_documentation_pos(visit_instance):
     """Returns the baseline visit instance."""
     baseline_visit_instance = func_baseline_visit_instance(visit_instance)
@@ -384,6 +391,20 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
+
+    require_hiv_medical_care = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_and_not_on_art,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivmedicalcare'])
+
+    require_hiv_health_care_costs = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_and_not_on_art,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivhealthcarecosts'])
 
     class Meta:
         app_label = 'bcpp_subject'
