@@ -351,7 +351,11 @@ class BcppAppConfiguration(BaseAppConfiguration):
         if map_area != settings.CURRENT_COMMUNITY:
             raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
                                        'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
-        if str(device) not in ['99', ]:
+        try:
+            community_check = settings.CURRENT_COMMUNITY_CHECK
+        except AttributeError:
+            community_check = True
+        if str(device) not in ['99', ] and community_check:
             try:
                 if Plot.objects.all()[0].plot_identifier[:2] != map_code:
                     raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
