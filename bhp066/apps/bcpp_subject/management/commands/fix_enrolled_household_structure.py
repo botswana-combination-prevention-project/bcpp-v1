@@ -15,7 +15,7 @@ from apps.bcpp_household_member.models.enrollment_checklist import EnrollmentChe
 class Command(BaseCommand):
 
     args = ''
-    help = 'Resave all consents to set household_structure enrolled and add Representative Eligibility'
+    help = 'For Pair 1 data. Create EnrollmentChecklists and set household_structure enrolled and add Representative Eligibility'
 
     option_list = BaseCommand.option_list + (
         make_option('--representative-eligibility',
@@ -25,24 +25,20 @@ class Command(BaseCommand):
             help=('Auto-create missing RepresentativeEligibility.')),
          )
     option_list += (
-        make_option('--resave-consent',
+        make_option('--enrollment-checklist',
             action='store_true',
-            dest='resave-consents',
+            dest='enrollment-checklist',
             default=False,
-            help=('Resave consents.')),
+            help=('Auto-create missing Enrollment Checklist.')),
         )
 
     def handle(self, *args, **options):
-        SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
-        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
-        total = SubjectConsent.objects.all().count()
-
         if options['representative-eligibility']:
             self.create_representative_eligibility()
-        elif options['resave-consents']:
-            self.resave_consent()
+        elif options['enrollment-checklist']:
+            self.create_enrollment_checklist()
         else:
-            raise CommandError('Valid options are --representative_eligibility and --resave_consent.')
+            raise CommandError('Valid options are --representative-eligibility OR --enrollment-checklist.')
 
     def household_member(self, subject_consent):
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
@@ -60,11 +56,15 @@ class Command(BaseCommand):
 
     def create_representative_eligibility(self):
         SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
-        total = SubjectConsent.objects.all().count()
         n = 0
         print 'auto-creating RepresentativeEligibility'
-        for subject_consent in SubjectConsent.objects.all().order_by('subject_identifier'):
-            n += 1
+        subject_consents = SubjectConsent.objects.filter(
+            household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']
+            ).order_by('subject_identifier')
+        consent_count = subject_consents.count()
+        print 'Found {} consents from ranaka, digawana'.format(consent_count)
+        print 'Updating'
+        for subject_consent in subject_consents:
             household_member = self.household_member(subject_consent)
             options = dict(
                 household_structure=subject_consent.household_member.household_structure,
@@ -77,21 +77,36 @@ class Command(BaseCommand):
                 RepresentativeEligibility.objects.get(household_structure=subject_consent.household_member.household_structure)
             except RepresentativeEligibility.DoesNotExist:
                 RepresentativeEligibility.objects.create(**options)
-            print '{}/{} {}'.format(n, total, subject_consent.subject_identifier)
+                n += 1
+        print 'Done. Created {} RepresentativeEligibility'.format(n)
 
-    def resave_consent(self):
+    def create_enrollment_checklist(self):
         SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
-        total = SubjectConsent.objects.all().count()
+        print 'Auto create enrollment checklist if required and save consent to flag household_structure as enrolled'
+        subject_consents = SubjectConsent.objects.filter(
+            household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']
+            ).order_by('subject_identifier')
+        consent_count = subject_consents.count()
+        consents, enrollments = 0, 0
+        print 'Found {} consents from ranaka, digawana'.format(consent_count)
+        print 'Updating'
         n = 0
-        print 're-saving updating consent and create enrollment checklist if required'
-        for subject_consent in SubjectConsent.objects.all().order_by('subject_identifier'):
+        for subject_consent in subject_consents:
             n += 1
-            if subject_consent.modified < datetime(2014, 11, 30):
-                subject_consent.household_member.member_status = BHS_SCREEN
-                subject_consent.household_member.household_structure.household.plot.status = 'residential_habitable'
+            print '  {}/{}'.format(n, consent_count)
+            subject_consent.household_member.member_status = BHS_SCREEN
+            subject_consent.household_member.household_structure.household.plot.status = 'residential_habitable'
+            subject_consent.citizen = 'Yes' if subject_consent.citizen == '2' else subject_consent.citizen
+            subject_consent.household_member.eligible_member = True
+            try:
+                enrollment_checklist = EnrollmentChecklist.objects.get(household_member=subject_consent.household_member)
+                subject_consent.household_member.eligible_subject = True
+                if enrollment_checklist.citizen == '2':
+                    enrollment_checklist.citizen = 'Yes'
+                    enrollment_checklist.save_base('citizen')
+                subject_consent.household_member.save_base(update_fields=['eligible_member', 'eligible_subject'])
+            except EnrollmentChecklist.DoesNotExist:
                 try:
-                    EnrollmentChecklist.objects.get(household_member=subject_consent.household_member)
-                except EnrollmentChecklist.DoesNotExist:
                     options = dict(
                         household_member=subject_consent.household_member,
                         report_datetime=subject_consent.created,
@@ -109,10 +124,14 @@ class Command(BaseCommand):
                         is_eligible=True,
                         auto_filled=True)
                     EnrollmentChecklist.objects.create(**options)
-                subject_consent.household_member.member_status = BHS
-                # subject_consent.household_member.save()
-                try:
-                    subject_consent.save()
+                    enrollments += 1
                 except ValidationError as e:
-                    print '{} {}'.format(subject_consent.subject_identifier, str(e))
-                print '{}/{} {}'.format(n, total, subject_consent.subject_identifier)
+                    print '    Failed to create EnrollmentChecklist for {}. Got {}'.format(subject_consent, str(e))
+            subject_consent.household_member.member_status = BHS
+            # subject_consent.household_member.save()
+            try:
+                subject_consent.save()
+                consents += 1
+            except ValidationError as e:
+                print '    ValidationError on SubjectConsent:   {} {}'.format(subject_consent.subject_identifier, str(e))
+        print 'Done. Updated {} SubjectConsents, create {} EnrollmentChecklists'.format(consents, enrollments)
