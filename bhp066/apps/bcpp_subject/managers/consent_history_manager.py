@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import get_model
 
 from edc.subject.consent.managers import BaseConsentHistoryManager
@@ -22,6 +23,15 @@ class ConsentHistoryManager(BaseConsentHistoryManager):
                 consent_app_label=consent_inst._meta.app_label,
                 consent_model_name=consent_inst._meta.object_name,
                 consent_pk=consent_inst.pk)
+            inst.consent_datetime = consent_inst.consent_datetime
+            inst.save(using=using)
+        except MultipleObjectsReturned:
+            # not sure why this is happening????
+            inst = self.filter(
+                registered_subject=consent_inst.registered_subject,
+                consent_app_label=consent_inst._meta.app_label,
+                consent_model_name=consent_inst._meta.object_name,
+                consent_pk=consent_inst.pk).order_by('-created')[0]
             inst.consent_datetime = consent_inst.consent_datetime
             inst.save(using=using)
         except self.model.DoesNotExist:
