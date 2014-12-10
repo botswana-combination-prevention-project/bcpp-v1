@@ -1,6 +1,6 @@
+from django.core.exceptions import MultipleObjectsReturned
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
-from django.core.exceptions import MultipleObjectsReturned
 
 
 class Command(BaseCommand):
@@ -32,8 +32,8 @@ class Command(BaseCommand):
                         survey)
                     for household_structure in HouseholdStructure.objects.filter(household__pk=household.pk, survey=survey):
                         try:
-                            HouseholdLog.objects.get(household_structure)
+                            HouseholdLog.objects.get(household_structure=household_structure)
                         except HouseholdLog.DoesNotExist:
-                            household_structure.delete()
                             print '   deleted for pk={}'.format(household_structure.pk)
+                            household_structure.delete()
         print 'Done. Created {} HouseholdStructures.'.format(n)

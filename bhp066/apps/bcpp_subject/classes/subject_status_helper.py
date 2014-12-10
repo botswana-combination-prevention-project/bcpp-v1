@@ -66,7 +66,7 @@ class SubjectStatusHelper(object):
         self._subject_visit = None
         self.use_baseline_visit = use_baseline_visit
         self.subject_visit = visit_instance
-        self.visit_code = self.subject_visit.appointment.visit_definition.code
+        self.visit_code = visit_instance.appointment.visit_definition.code
         self.models[self.BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
         self.models[self.ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
 
