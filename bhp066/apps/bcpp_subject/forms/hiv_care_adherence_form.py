@@ -1,5 +1,5 @@
 from django import forms
-from datetime import date, datetime
+import datetime
 from ..models import HivCareAdherence
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -74,10 +74,10 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
                 raise forms.ValidationError('If patient is NOT ARV, DO NOT provide any adherance information.')
 
         if cleaned_data.get('next_appointment_date'):
-            if not cleaned_data.get('next_appointment_date') >= datetime.datetime.now():
+            if not cleaned_data.get('next_appointment_date') >= datetime.datetime.now().date():
                 raise forms.ValidationError('The next appointment date must be on or '
                                             'after the report datetime. You entered '
-                                            '{0}'.format(cleaned_data.get('next_appt_datetime').strftime('%Y-%m-%d')))
+                                            '{0}'.format(cleaned_data.get('next_appointment_date').strftime('%Y-%m-%d')))
 
         return cleaned_data
 
