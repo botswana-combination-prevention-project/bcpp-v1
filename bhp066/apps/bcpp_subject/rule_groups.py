@@ -654,8 +654,7 @@ class AnnualRequisitionRuleGroup(RuleGroup):
             predicate=func_baseline_pos_and_testreview_documentation_pos,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivresult', 'hivtestinghistory', 'hivtestreview', 'hivresultdocumentation',
-                      'hivtested'],
+        target_model=['hivresult', 'hivtestinghistory'],
         runif=func_is_annual)
 
     # known +VE at T0 should not require Microtube
