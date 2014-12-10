@@ -162,17 +162,21 @@ class HicEnrollment (BaseScheduledVisitModel):
     def is_citizen_or_spouse(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
-        subject_consent = SubjectConsent.objects.filter(household_member=self.subject_visit.household_member)
-        if subject_consent.exists():
-            if ((subject_consent[0].citizen.lower() == 'yes') or (
-                    subject_consent[0].legal_marriage.lower() == 'yes' and
-                    subject_consent[0].marriage_certificate.lower() == 'yes')):
+        try:
+            subject_consent = SubjectConsent.objects.get(household_member=self.subject_visit.household_member)
+            if ((subject_consent.citizen.lower() == 'yes') or (
+                    subject_consent.legal_marriage.lower() == 'yes' and
+                    subject_consent.marriage_certificate.lower() == 'yes')):
                 return True
             else:
                 raise exception_cls('Please review \'citizen\', \'legal_marriage\' and '
-                                    '\'marriage_certificate\' in SubjectConsent form before '
-                                    'proceeding with this one.')
-        else:
+                                    '\'marriage_certificate\' in SubjectConsent for {}. Got {}, {}, {}'.format(
+                                        subject_consent,
+                                        subject_consent.citizen.lower(),
+                                        subject_consent.legal_marriage.lower(),
+                                        subject_consent.marriage_certificate.lower()
+                                        ))
+        except SubjectConsent.DoesNotExist:
             raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 
     def is_locator_information(self, exception_cls=None):

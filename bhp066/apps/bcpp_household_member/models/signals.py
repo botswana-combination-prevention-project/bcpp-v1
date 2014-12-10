@@ -59,8 +59,8 @@ def subject_htc_on_post_delete(sender, instance, using, **kwargs):
                    'referral_clinic': instance.referral_clinic,
                    'comment': instance.comment}
         SubjectHtcHistory.objects.using(using).create(**options)
-        
-        
+
+
 @receiver(post_delete, weak=False, dispatch_uid="enrollment_checklist_on_post_delete")
 def enrollment_checklist_on_post_delete(sender, instance, using, **kwargs):
     """Resets household member values to before the enrollment checklist was entered.
@@ -250,9 +250,22 @@ def subject_htc_on_post_save(sender, instance, raw, created, using, **kwargs):
                 update_fields=['htc', 'refused_htc'])
 
 
+@receiver(pre_save, weak=False, dispatch_uid='household_head_eligibility_on_pre_save')
+def household_head_eligibility_on_pre_save(sender, instance, raw, using, **kwargs):
+    if not raw:
+        if isinstance(instance, HouseholdHeadEligibility):
+            previous_head = HouseholdMember.objects.filter(household_structure=instance.household_member.household_structure,
+                                                                relation='Head').exclude(id=instance.household_member.id)
+            if previous_head.exists():
+                previous_head = previous_head[0]
+                previous_head.eligible_hoh = False
+                previous_head.relation = 'UNKNOWN'
+                previous_head.save(using=using, update_fields=['relation', 'eligible_hoh'])
+
+
 @receiver(post_save, weak=False, dispatch_uid='household_head_eligibility_on_post_save')
 def household_head_eligibility_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         if isinstance(instance, HouseholdHeadEligibility):
             instance.household_member.eligible_hoh = True
-            instance.household_member.save(using=using, update_fields=['eligible_hoh'])
+            instance.household_member.save(using=using, update_fields=['relation', 'eligible_hoh'])
