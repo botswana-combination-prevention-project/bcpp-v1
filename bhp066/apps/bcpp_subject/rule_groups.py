@@ -72,38 +72,27 @@ def func_circumcision(visit_instance):
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
-    test_required = subject_status_helper.hiv_result == NEG
-    if test_required:
-        subject_status_helper = SubjectStatusHelper(visit_instance)
-        if subject_status_helper.todays_hiv_result:
-            test_required = True
-        else:
-            test_required = subject_status_helper.new_pos
-    return test_required
+    if subject_status_helper.todays_hiv_result:
+        return True
+    return False if (subject_status_helper.new_pos is False) else True
 
 
 def func_hiv_negative_today(visit_instance):
     """Returns True if the participant tests negative today."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
-    negative_today = subject_status_helper.hiv_result == NEG
-    if negative_today:
-        negative_today = SubjectStatusHelper(visit_instance).hiv_result == NEG
-    return negative_today
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result
+    return hiv_result == NEG
 
 
 def func_hiv_indeterminate_today(visit_instance):
     """Returns True if the participant tests indeterminate today."""
-    return SubjectStatusHelper(visit_instance).hiv_result == IND
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result
+    return hiv_result == IND
 
 
 def func_hiv_positive_today(visit_instance):
     """Returns True if the participant is known or newly diagnosed HIV positive."""
-    return SubjectStatusHelper(visit_instance).hiv_result == POS
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
-    positive_today = subject_status_helper.hiv_result == POS
-    if not positive_today:
-        positive_today = SubjectStatusHelper(visit_instance).hiv_result == POS
-    return positive_today
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result
+    return hiv_result == POS
 
 
 def func_hic_keyed(visit_instance):
@@ -175,6 +164,15 @@ def is_gender_female(visit_instance):
     return visit_instance.appointment.registered_subject.gender.lower() == 'f'
 
 
+def circumsised_in_past(visit_instance):
+    past_visit = func_baseline_visit_instance(visit_instance)
+    return Circumcised.objects.filter(subject_visit=past_visit).exists()
+
+
+def func_should_not_show_circumsition(visit_instance):
+    return is_gender_female(visit_instance) or circumsised_in_past(visit_instance)
+
+
 def is_gender_male(visit_instance):
     """Returns True if gender from RegisteredSubject is Male."""
     return visit_instance.appointment.registered_subject.gender.lower() == 'm'
@@ -195,7 +193,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
 
     gender_circumsion = ScheduledDataRule(
         logic=Logic(
-            predicate=is_gender_female,
+            predicate=func_should_not_show_circumsition,
             consequence='not_required',
             alternative='new'),
         target_model=['circumcision', 'circumcised', 'uncircumcised'])
@@ -718,7 +716,7 @@ class AnnualRequisitionRuleGroup(RuleGroup):
         abstract = True
 
 
-class RequisitionRuleGroup1(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
+class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 
     """Ensures an ELISA blood draw requisition if HIV result is IND."""
     elisa_for_ind = RequisitionRule(
@@ -726,7 +724,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup
             predicate=func_hiv_indeterminate_today,
             consequence='new',
             alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition'), 'elisahivresult'],
+        target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['ELISA', ], )
 
     """Ensures a venous blood draw requisition is required if insufficient
@@ -753,7 +751,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup
 site_rule_groups.register(RequisitionRuleGroup1)
 
 
-class RequisitionRuleGroup2(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
+class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -762,7 +760,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup
 site_rule_groups.register(RequisitionRuleGroup2)
 
 
-class RequisitionRuleGroup3(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
+class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -771,7 +769,7 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup
 site_rule_groups.register(RequisitionRuleGroup3)
 
 
-class RequisitionRuleGroup4(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
+class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -780,7 +778,7 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup
 site_rule_groups.register(RequisitionRuleGroup4)
 
 
-class RequisitionRuleGroup5(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
+class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
