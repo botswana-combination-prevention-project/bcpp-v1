@@ -28,7 +28,8 @@ from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
-from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED
+from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED, ANNUAL
+from ..exceptions import HouseholdStructureNotEnrolled
 
 
 class EnumerationHelperTests(TestCase):
@@ -39,6 +40,7 @@ class EnumerationHelperTests(TestCase):
         self.enrollment_checklist = None
         self.registered_subject = None
         self.study_site = None
+        self.subject_consent = None
         super(EnumerationHelperTests, self).__init__(*args, **kwargs)
 
     def setUp(self):
@@ -113,7 +115,7 @@ class EnumerationHelperTests(TestCase):
             guardian='No',
             initials=household_member.initials,
             part_time_resident='Yes')
-        subject_consent = SubjectConsentFactory(
+        self.subject_consent = SubjectConsentFactory(
             household_member=enrollment_checklist.household_member,
             first_name="ERIK",
             last_name='WERIK',
@@ -122,24 +124,42 @@ class EnumerationHelperTests(TestCase):
             initials=household_member.initials,
             study_site=self.study_site,
             )
-        self.assertEqual(subject_consent.household_member.member_status, BHS)
-        self.assertTrue(subject_consent.household_member.household_structure.enrolled)
+        self.assertEqual(self.subject_consent.household_member.member_status, BHS)
+        self.assertTrue(self.subject_consent.household_member.household_structure.enrolled)
         return household_member
 
     def test_add_members_not_enrolled(self):
-        """Assert members are not added if household is not enrolled."""
+        """Assert members are NOT added if household is not enrolled."""
         # household_member = self.enroll_household()
-        household_structure = HouseholdStructure.objects.add_household_members_from_survey(
+        self.assertRaises(
+            HouseholdStructureNotEnrolled,
+            HouseholdStructure.objects.add_household_members_from_survey,
             self.household, self.survey1, self.survey2)
-        self.assertRaises(ValidationError)
-        self.assertEqual(HouseholdMember.objects.filter(household_structure=household_structure).count(), 0)
 
     def test_add_members_enrolled(self):
-        """Assert members are added if household is not enrolled."""
+        """Assert members are added if household is enrolled."""
         self.enroll_household()
         household_structure = HouseholdStructure.objects.add_household_members_from_survey(
             self.household, self.survey1, self.survey2)
         self.assertEqual(HouseholdMember.objects.filter(household_structure=household_structure).count(), 0)
+
+    def test_add_members_enrolled_as_annual(self):
+        """Assert members are added if household is not enrolled."""
+        self.enroll_household()  # one member is consented
+        HouseholdStructure.objects.add_household_members_from_survey(
+            self.household, self.survey1, self.survey2)
+        household_structure = HouseholdStructure.objects.get(
+            household=self.household,
+            survey=self.survey2)
+        self.assertEquals(HouseholdMember.objects.filter(
+            internal_identifier=self.subject_consent.household_member.internal_identifier,
+            household_structure__survey=self.survey2).count(), 1)
+        member = HouseholdMember.objects.get(
+            internal_identifier=self.subject_consent.household_member.internal_identifier,
+            household_structure__survey=self.survey2)
+        self.assertEqual(HouseholdMember.objects.filter(
+            household_structure=household_structure,
+            member_status=ANNUAL).count(), 1)
 
     def test_add_members_count(self):
         """Assert members are added if household is not enrolled."""
