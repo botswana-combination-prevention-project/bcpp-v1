@@ -33,8 +33,8 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'adherence_4_wk']
 
     annual_fields = [f for f in baseline_fields if f not in [
-        "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
-        "why_no_arv", "on_arv"]]
+        "first_positive", "medical_care", "no_medical_care", "no_medical_care_other", "ever_recommended_arv", "ever_taken_arv",
+        "why_no_arv", "first_arv"]]
 
     form = HivCareAdherenceForm
 
@@ -76,9 +76,6 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
     @property
     def annual_fields(self):
         """Returns a subset of annual_fields if subject is POS and on ART."""
-        annual_fields = [f for f in self.baseline_fields if f not in [
-            "first_positive", "medical_care", "no_medical_care", "no_medical_care_other",
-            "ever_recommended_arv", "ever_taken_arv", "why_no_arv", "why_no_arv_other", "on_arv"]]
         if self.hiv_result_on_pos_and_subject_not_on_art:
             try:
                 annual_fields = self.baseline_fields
@@ -88,7 +85,7 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         elif self.hiv_result_on_pos_and_subject_on_art:
             annual_fields = [f for f in self.baseline_fields if f not in [
                 "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
-                "why_no_arv", "on_arv"]]
+                "why_no_arv", "first_arv", "no_medical_care_other", "why_no_arv_other"]]
         else:
             annual_fields = self.baseline_fields
 
