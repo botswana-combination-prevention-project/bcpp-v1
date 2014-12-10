@@ -87,7 +87,7 @@ def func_hiv_negative_today(visit_instance):
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
     negative_today = subject_status_helper.hiv_result == NEG
     if negative_today:
-        negative_today = SubjectStatusHelper(visit_instance).hiv_result == 'NEG'
+        negative_today = SubjectStatusHelper(visit_instance).hiv_result == NEG
     return negative_today
 
 
@@ -98,7 +98,7 @@ def func_hiv_indeterminate_today(visit_instance):
 
 def func_hiv_positive_today(visit_instance):
     """Returns True if the participant is known or newly diagnosed HIV positive."""
-    return SubjectStatusHelper(visit_instance).hiv_result == 'POS'
+    return SubjectStatusHelper(visit_instance).hiv_result == POS
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
     positive_today = subject_status_helper.hiv_result == POS
     if not positive_today:
@@ -137,7 +137,7 @@ def func_baseline_hiv_positive_and_not_on_art(visit_instance):
     """Returns the baseline visit instance."""
     baseline_visit_instance = func_baseline_visit_instance(visit_instance)
     subject_helper = SubjectStatusHelper(baseline_visit_instance)
-    return subject_helper.hiv_result == 'POS' and not subject_helper.on_art
+    return subject_helper.hiv_result == POS and not subject_helper.on_art
 
 
 def func_baseline_pos_and_testreview_documentation_pos(visit_instance):
