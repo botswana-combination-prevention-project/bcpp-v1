@@ -12,3 +12,4 @@ INSTITUTION = 'Botswana-Harvard AIDS Institute Partnership'
 CURRENT_SURVEY = 'bcpp-year-2'
 MAX_HOUSEHOLDS_PER_PLOT = 9  # see plot models
 LIMIT_EDIT_TO_CURRENT_SURVEY = True
+FILTERED_DEFAULT_SEARCH = True
