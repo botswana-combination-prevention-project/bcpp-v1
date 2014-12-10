@@ -30,6 +30,30 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
     def __init__(self, *args, **kwargs):
         self.subject_visit = None
         super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
+        if not self.date_hierarchy:
+            self.date_hierarchy = 'created'
+        try:
+            self.list_filter = list(self.list_filter)
+            self.list_filter.remove('subject_visit')
+        except ValueError:
+            pass
+        self.search_fields = list(self.search_fields)
+        try:
+            self.search_fields.index('subject_visit__appointment__registered_subject__identity')
+        except ValueError:
+            self.search_fields.insert(0, 'subject_visit__appointment__registered_subject__identity')
+        try:
+            self.search_fields.index('subject_visit__appointment__registered_subject__first_name')
+        except ValueError:
+            self.search_fields.insert(0, 'subject_visit__appointment__registered_subject__first_name')
+        try:
+            self.search_fields.index('id')
+        except ValueError:
+            self.search_fields.insert(0, 'id')
+        try:
+            self.search_fields.index('subject_visit__subject_identifier')
+        except ValueError:
+            self.search_fields.insert(0, 'subject_visit__subject_identifier')
 
     def get_form_post(self, form, request, obj, **kwargs):
         NAME = 0
@@ -83,7 +107,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         except SubjectVisit.DoesNotExist:
             pass
 #             subject_visit = SubjectVisit.objects.all()[0]
-        if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+        if self.subject_visit and self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
             self.fields = self.annual_fields
             self.instructions = self.annual_instructions or self.instructions
         else:
@@ -99,7 +123,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
             pass
 #             subject_visit = SubjectVisit.objects.all()[0]
 
-        if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+        if self.subject_visit and self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
             self.fields = self.annual_fields
             self.instructions = self.annual_instructions or self.instructions
         else:
