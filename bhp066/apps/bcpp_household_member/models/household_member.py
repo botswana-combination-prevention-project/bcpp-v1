@@ -292,6 +292,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             else:
                 self.undecided = True if selected_member_status == UNDECIDED else False
                 self.absent = True if selected_member_status == ABSENT else False
+        if self.eligible_hoh:
+            self.relation = 'Head'
         if self.intervention and self.plot_enrolled:
             self.eligible_htc = self.evaluate_htc_eligibility
         elif not self.intervention:
