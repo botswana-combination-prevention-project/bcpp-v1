@@ -8,6 +8,8 @@ from edc.constants import UNKNOWN
 
 from ..exceptions import SurveyValueError, HouseholdStructureNotEnrolled
 
+from ..constants import ANNUAL, BHS
+
 
 class EnumerationHelper(object):
 
@@ -165,4 +167,7 @@ class EnumerationHelper(object):
         except ValidationError:
             # 'representative eligibility' for an eligible representative has not been completed.'
             pass
+        if source_household_member.member_status == BHS:
+            new_household_member.member_status = ANNUAL
+            new_household_member.save_base(update_fields=['member_status'])
         return new_household_member
