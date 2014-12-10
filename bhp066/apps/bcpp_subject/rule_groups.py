@@ -154,6 +154,11 @@ def func_not_required(visit_instance):
     return True
 
 
+def func_know_pos_in_yr_1(visit_instance):
+    past_visit = func_baseline_visit_instance(visit_instance)
+    return func_hiv_positive_today(past_visit)
+
+
 def func_no_verbal_hiv_result(visit_instance):
     """Returns True if verbal_hiv_positive response is not POS or NEG."""
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
@@ -204,6 +209,21 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
+
+    known_pos_in_y1 = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_know_pos_in_yr_1,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult'])
+
+    require_microtube = RequisitionRule(
+        logic=Logic(
+            predicate=func_know_pos_in_yr_1,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -430,21 +450,21 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
-class AnnualHivCareAdherenceRuleGroup(RuleGroup):
-
-    require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_not_on_art,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivmedicalcare', 'hivhealthcarecosts'],
-        runif=func_is_annual)
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivCareAdherence
-site_rule_groups.register(AnnualHivCareAdherenceRuleGroup)
+# class AnnualHivCareAdherenceRuleGroup(RuleGroup):
+# 
+#     require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_baseline_hiv_positive_and_not_on_art,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['hivmedicalcare', 'hivhealthcarecosts'],
+#         runif=func_is_annual)
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         source_fk = (SubjectVisit, 'subject_visit')
+#         source_model = HivCareAdherence
+# site_rule_groups.register(AnnualHivCareAdherenceRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
