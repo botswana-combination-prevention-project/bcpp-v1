@@ -907,7 +907,7 @@ class TestRuleGroup(TestCase):
              report_datetime=datetime.today(),
              insufficient_vol='No'
             )
-        #self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **elisa_hiv_result_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **elisa_hiv_result_options).count(), 1)
 
         elisa_panel = Panel.objects.get(name='ELISA')
         elisa = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=elisa_panel, aliquot_type=aliquot_type, site=site)
