@@ -270,15 +270,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=['hivuntested'],
         runif=func_is_baseline)
 
-    # if has tested is no, NOT REQUIRE documentation, HIV tested forms, what about hivuntested?
-    has_tested_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=('has_tested', 'equals', 'No'),
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivresultdocumentation', 'hivtestreview', 'hivtested'],
-        runif=func_is_annual)
-
     other_record = ScheduledDataRule(
         logic=Logic(
             predicate=('other_record', 'equals', 'Yes'),
@@ -294,23 +285,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         target_model=['hivresult'],
         runif=func_is_baseline)
 
-    require_todays_hiv_result_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hiv_positive_today,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivresult'],
-        runif=func_is_annual)
-
-    # should be required only for KNOWN HIV positive with or without doc
-    require_hiv_health_care_costs_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_documentation_pos,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivhealthcarecosts', 'hivcareadherence'],
-        runif=func_is_annual)
-
     verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
@@ -318,15 +292,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivcareadherence'],
         runif=func_is_baseline)
-
-    # should be available for all positives with or without doc
-#     hiv_care_adherence_for_all_pos = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_baseline_hiv_positive_and_documentation_pos,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['hivcareadherence'],
-#         runif=func_is_annual)
 
     verbal_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -364,6 +329,41 @@ class HivTestingHistoryRuleGroup(RuleGroup):
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivTestingHistory
 site_rule_groups.register(HivTestingHistoryRuleGroup)
+
+
+class AnnualHivTestingHistory(RuleGroup):
+
+    # if has tested is no, NOT REQUIRE documentation, HIV tested forms
+    has_tested_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=('has_tested', 'equals', 'No'),
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivtestreview', 'hivresultdocumentation', 'hivtested'],
+        runif=func_is_annual)
+
+    require_todays_hiv_result_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_positive_today,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivresult'],
+        runif=func_is_annual)
+
+    # should be required only for KNOWN HIV positive with or without doc
+    require_hiv_health_care_costs_annual = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_and_documentation_pos,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivhealthcarecosts', 'hivcareadherence'],
+        runif=func_is_annual)
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivTestingHistory
+site_rule_groups.register(AnnualHivTestingHistory)
 
 
 class ReviewPositiveRuleGroup(RuleGroup):
@@ -425,18 +425,28 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hivresult'])
 
-    require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_not_on_art,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivmedicalcare', 'hivhealthcarecosts'])
-
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
 site_rule_groups.register(HivCareAdherenceRuleGroup)
+
+
+class AnnualHivCareAdherenceRuleGroup(RuleGroup):
+
+    require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_baseline_hiv_positive_and_not_on_art,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['hivmedicalcare', 'hivhealthcarecosts'],
+        runif=func_is_annual)
+
+    class Meta:
+        app_label = 'bcpp_subject'
+        source_fk = (SubjectVisit, 'subject_visit')
+        source_model = HivCareAdherence
+site_rule_groups.register(AnnualHivCareAdherenceRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
@@ -596,12 +606,18 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=['hicenrollment'],
         runif=func_is_baseline)
 
+    class Meta:
+        abstract = True
+
+
+class AnnualRequisitionRuleGroup(RuleGroup):
+
     hic_annual_enrol_neg = ScheduledDataRule(
         logic=Logic(
             predicate=func_hiv_result_neg_baseline,
             consequence='new',
             alternative='not_required'),
-        target_model=['hicenrollment'],
+        target_model=['hicenrollment', 'hivresult'],
         runif=func_is_annual,)
 
     # if hicenrollment filled at T0, dont require it again at T1
@@ -614,18 +630,9 @@ class BaseRequisitionRuleGroup(RuleGroup):
         runif=func_is_annual,
         )
 
-    hic_enrolled_at_baseline = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hic_keyed,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivresult'],
-        runif=func_is_annual,
-        )
-
     hic_enrolled_at_baseline_microtube = RequisitionRule(
         logic=Logic(
-            predicate=func_hic_keyed,
+            predicate=func_hiv_result_neg_baseline,
             consequence='new',
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
@@ -633,7 +640,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         runif=func_is_annual,
         )
 
-    # known +VE at T0 (hivresult, hivtestreview) should not require several forms
+    # known +VE at T0 should not require several forms
     hic_annual_doc = ScheduledDataRule(
         logic=Logic(
             predicate=func_baseline_pos_and_testreview_documentation_pos,
@@ -643,7 +650,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
                       'hivtested'],
         runif=func_is_annual)
 
-    # known +VE at T0 (hivresult, hivtestreview) should not require microtube
+    # known +VE at T0 should not require Microtube
     hic_annual_req = RequisitionRule(
         logic=Logic(
             predicate=func_baseline_pos_and_testreview_documentation_pos,
@@ -704,7 +711,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         abstract = True
 
 
-class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
+class RequisitionRuleGroup1(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
 
     """Ensures an ELISA blood draw requisition if HIV result is IND."""
     elisa_for_ind = RequisitionRule(
@@ -739,7 +746,7 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
 site_rule_groups.register(RequisitionRuleGroup1)
 
 
-class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
+class RequisitionRuleGroup2(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -748,7 +755,7 @@ class RequisitionRuleGroup2(BaseRequisitionRuleGroup):
 site_rule_groups.register(RequisitionRuleGroup2)
 
 
-class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
+class RequisitionRuleGroup3(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -757,7 +764,7 @@ class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 site_rule_groups.register(RequisitionRuleGroup3)
 
 
-class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
+class RequisitionRuleGroup4(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -766,7 +773,7 @@ class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
 site_rule_groups.register(RequisitionRuleGroup4)
 
 
-class RequisitionRuleGroup5(BaseRequisitionRuleGroup):
+class RequisitionRuleGroup5(BaseRequisitionRuleGroup, AnnualRequisitionRuleGroup):
 
     class Meta:
         app_label = 'bcpp_subject'
