@@ -7,7 +7,7 @@ from unipath import Path
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
                             PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
-                            LIMIT_EDIT_TO_CURRENT_SURVEY)
+                            LIMIT_EDIT_TO_CURRENT_SURVEY, FILTERED_DEFAULT_SEARCH)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .device import (CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
                      VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
@@ -252,11 +252,6 @@ LAB_IMPORT_DMIS_DATA_SOURCE = LAB_IMPORT_DMIS_DATA_SOURCE
 # set to False so that the constraint can be expanded to subject_identifier + survey
 SUBJECT_IDENTIFIER_UNIQUE_ON_CONSENT = False
 
-# search behavior attribute see: base_searcher. Set to TRUE if you are deploying  a DB
-# with multiple plots but you want default filter(?) to show current community instances.
-# Central Server in BHP must always be set to FALSE.
-FILTERED_DEFAULT_SEARCH = True
-
 #  edc.device.device
 DEVICE_ID = DEVICE_ID
 SERVER_DEVICE_ID_LIST = [91, 92, 93, 94, 95, 96, 97, 99]
@@ -284,4 +279,12 @@ ALLOW_MODEL_SERIALIZATION = True
 # bcpp_settings
 MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
 LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']
+
+# block editing of forms if not related to household_structure of current survey
+# set in bcpp_settings
 LIMIT_EDIT_TO_CURRENT_SURVEY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_CURRENT_SURVEY
+
+# search behavior attribute see: base_searcher. Set to TRUE if you are deploying  a DB
+# with multiple plots but you want default filter(?) to show current community instances.
+# Central Server in BHP must always be set to FALSE.
+FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
