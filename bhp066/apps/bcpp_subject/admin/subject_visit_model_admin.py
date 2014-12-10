@@ -107,7 +107,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         except SubjectVisit.DoesNotExist:
             pass
 #             subject_visit = SubjectVisit.objects.all()[0]
-        if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+        if self.subject_visit and self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
             self.fields = self.annual_fields
             self.instructions = self.annual_instructions or self.instructions
         else:
@@ -123,7 +123,7 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
             pass
 #             subject_visit = SubjectVisit.objects.all()[0]
 
-        if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+        if self.subject_visit and self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
             self.fields = self.annual_fields
             self.instructions = self.annual_instructions or self.instructions
         else:
