@@ -1,9 +1,10 @@
 from datetime import datetime
 from optparse import make_option
 
-from django.core.management.base import BaseCommand, CommandError
-from django.db.models import get_model
 from django.core.exceptions import MultipleObjectsReturned, ValidationError
+from django.core.management.base import BaseCommand, CommandError
+from django.db import IntegrityError
+from django.db.models import get_model
 
 from edc.constants import YES
 
@@ -132,6 +133,6 @@ class Command(BaseCommand):
             try:
                 subject_consent.save()
                 consents += 1
-            except ValidationError as e:
-                print '    ValidationError on SubjectConsent:   {} {}'.format(subject_consent.subject_identifier, str(e))
+            except (ValidationError, IntegrityError) as e:
+                print '    Error saving SubjectConsent:   {} {}'.format(subject_consent.subject_identifier, str(e))
         print 'Done. Updated {} SubjectConsents, create {} EnrollmentChecklists'.format(consents, enrollments)
