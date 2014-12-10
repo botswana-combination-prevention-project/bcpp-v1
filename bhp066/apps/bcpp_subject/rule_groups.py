@@ -620,6 +620,14 @@ class AnnualRequisitionRuleGroup(RuleGroup):
         target_model=['hicenrollment', 'hivresult'],
         runif=func_is_annual,)
 
+    hiv_neg = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_result_neg_baseline,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivhealthcarecosts', 'hivcareadherence'],
+        runif=func_is_annual,)
+
     # if hicenrollment filled at T0, dont require it again at T1
     hic_annual_enrol_pos = ScheduledDataRule(
         logic=Logic(
@@ -646,8 +654,7 @@ class AnnualRequisitionRuleGroup(RuleGroup):
             predicate=func_baseline_pos_and_testreview_documentation_pos,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivresult', 'hivtestinghistory', 'hivtestreview', 'hivresultdocumentation',
-                      'hivtested'],
+        target_model=['hivresult', 'hivtestinghistory'],
         runif=func_is_annual)
 
     # known +VE at T0 should not require Microtube
