@@ -84,14 +84,13 @@ class SubjectConsentForm(BaseBcppConsentForm):
         household_member = cleaned_data.get("household_member")
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_SURVEY:
-                current_survey = Survey.objects.current_survey
-                if household_member.household_structure.survey == current_survey:
+                current_survey = Survey.objects.current_survey()
+                if household_member.household_structure.survey != current_survey:
                     raise forms.ValidationError('Form may not be saved. Only data from {} '
                                                 'may be added/changed. (LIMIT_EDIT_TO_CURRENT_SURVEY)'
                                                 ).format(current_survey)
         except AttributeError:
             pass
-
 
     class Meta:
         model = SubjectConsent
