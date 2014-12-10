@@ -1,5 +1,5 @@
 from django import forms
-from datetime import date
+import datetime
 from ..models import HivCareAdherence
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -66,10 +66,18 @@ class HivCareAdherenceForm (BaseSubjectModelForm):
         if cleaned_data.get('on_arv', None) == 'No':
             if cleaned_data.get('clinic_receiving_from', None) or cleaned_data.get('next_appointment_date', None):
                 raise forms.ValidationError('If patient is NOT ARV, DO NOT provide the clinic facility and next scheduled appointment.')
-            if cleaned_data.get('ever_taken_arv', None) == 'No' and (cleaned_data.get('arv_stop_date', None) or cleaned_data.get('arv_stop_other', None) or cleaned_data.get('arv_stop', None)):
+
+            if cleaned_data.get('ever_taken_arv', None) == 'No' and (cleaned_data.get('arv_stop_date', None) or
+                  cleaned_data.get('arv_stop_other', None) or cleaned_data.get('arv_stop', None)):
                 raise forms.ValidationError('If patient is was NEVER ON ARV, DO NOT provide the stop date and reason for stopping.')
             if cleaned_data.get('adherence_4_wk', None) or cleaned_data.get('adherence_4_day', None):
                 raise forms.ValidationError('If patient is NOT ARV, DO NOT provide any adherance information.')
+
+        if cleaned_data.get('next_appointment_date'):
+            if not cleaned_data.get('next_appointment_date') >= datetime.datetime.now().date():
+                raise forms.ValidationError('The next appointment date must be on or '
+                                            'after the report datetime. You entered '
+                                            '{0}'.format(cleaned_data.get('next_appointment_date').strftime('%Y-%m-%d')))
 
         return cleaned_data
 
