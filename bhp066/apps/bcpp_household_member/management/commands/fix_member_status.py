@@ -20,13 +20,16 @@ class Command(BaseCommand):
             print 'dry-run'
         HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
         # if consented at baseline, set YEAR 2, etc member to ANNUAL
-        member_count = HouseholdMember.objects.exclude(household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG).count()
+        member_count = HouseholdMember.objects.exclude(
+            household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG).count()
         print 'Found {} ANNUAL household members to update'.format(member_count)
         n = 0
-        for household_member in HouseholdMember.objects.exclude(household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG):
+        for household_member in HouseholdMember.objects.exclude(
+                household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG):
             try:
-                if HouseholdMember.objects.get(internal_identifier=household_member.internal_identifier,
-                                               household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG).member_status == BHS:
+                if HouseholdMember.objects.get(
+                        internal_identifier=household_member.internal_identifier,
+                        household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG).member_status == BHS:
                     household_member.member_status = ANNUAL
                     if not dry_run:
                         household_member.save_base(update_fields=['member_status'])
