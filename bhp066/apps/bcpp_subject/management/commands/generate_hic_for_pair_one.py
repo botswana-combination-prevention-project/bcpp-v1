@@ -19,7 +19,9 @@ class Command(BaseCommand):
         ResidencyMobility = get_model('bcpp_subject', 'ResidencyMobility')
         HicEnrollment = get_model('bcpp_subject', 'HicEnrollment')
 
-        if HicEnrollment.objects.filter(subject_visit__household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']).count() <> 0:
+        if HicEnrollment.objects.filter(
+                subject_visit__household_member__household_structure__household__plot__community__in=[
+                    'ranaka', 'digawana']).count() != 0:
             raise CommandError('This command has already been run and cannot be run twice.')
         try:
             verbose = args[0]
@@ -45,10 +47,10 @@ class Command(BaseCommand):
                         appointment__visit_definition__time_point=0)
                     residency_and_mobility = ResidencyMobility.objects.get(
                         subject_visit=subject_visit)
-                    # if residency_and_mobility.modified.year == 2013:
-                    #    # this question has flipped after pair 1
-                    #    residency_and_mobility.intend_residency = YES if residency_and_mobility.intend_residency == NO else NO
-                    #    residency_and_mobility.save()
+                    if residency_and_mobility.modified.year == 2013:
+                        # this question has flipped after pair 1
+                        residency_and_mobility.intend_residency = YES if residency_and_mobility.intend_residency == NO else NO
+                        residency_and_mobility.save()
                     subject_locator = SubjectLocator.objects.get(
                         subject_visit=subject_visit)
                     if (SubjectStatusHelper(subject_visit).hiv_result == NEG and
