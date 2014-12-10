@@ -620,6 +620,14 @@ class AnnualRequisitionRuleGroup(RuleGroup):
         target_model=['hicenrollment', 'hivresult'],
         runif=func_is_annual,)
 
+    hiv_neg = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_result_neg_baseline,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivhealthcarecosts', 'hivcareadherence'],
+        runif=func_is_annual,)
+
     # if hicenrollment filled at T0, dont require it again at T1
     hic_annual_enrol_pos = ScheduledDataRule(
         logic=Logic(
