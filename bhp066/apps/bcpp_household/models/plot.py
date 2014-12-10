@@ -542,12 +542,12 @@ class Plot(BaseDispatchSyncUuidModel):
         except AttributeError:
             pass
         if verify_plot_community_with_current_mapper:
-            if community != site_mappers.current_mapper.map_code:
+            if community != site_mappers.current_mapper.map_area:
                 raise exception_cls(
                     'Plot community does not correspond with the current mapper '
                     'community of \'{}\'. Got \'{}\'. '
                     'See settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER'.format(
-                        community, site_mappers.current_mapper.map_area))
+                        site_mappers.current_mapper.map_area, community))
 
     @property
     def plot_log(self):
