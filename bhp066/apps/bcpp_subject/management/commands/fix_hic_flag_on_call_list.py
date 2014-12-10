@@ -4,7 +4,6 @@ from django.db.models import get_model
 from edc.constants import YES
 
 
-
 class Command(BaseCommand):
 
     args = 'label (from call list e.g. t1-prep)'
@@ -28,7 +27,8 @@ class Command(BaseCommand):
         for hic_enrollment in hic_enrollments:
             try:
                 call_list = CallList.objects.get(
-                    household_member=hic_enrollment.subject_visit.household_member, label=label)
+                    household_member__internal_identifier=hic_enrollment.subject_visit.household_member.internal_identifier,
+                    label=label)
                 call_list.hic = True
                 call_list.hic_datetime = hic_enrollment.report_datetime
                 call_list.save_base(update_fields=['hic', 'hic_datetime'])
