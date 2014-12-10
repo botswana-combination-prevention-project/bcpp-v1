@@ -29,15 +29,15 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            if HouseholdMember.objects.filter(household_structure__exact=request.
-                                              GET.get('household_structure', 0),
-                                              relation='Head').exists():
-                kwargs["queryset"] = HouseholdMember.objects.filter(household_structure__exact=request.
-                                              GET.get('household_structure', 0),
-                                              relation='Head')
-            else:
-                kwargs["queryset"] = HouseholdMember.objects.filter(
-                    household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=False)
+#             if HouseholdMember.objects.filter(household_structure__exact=request.
+#                                               GET.get('household_structure', 0),
+#                                               relation='Head').exists():
+            kwargs["queryset"] = HouseholdMember.objects.filter(household_structure__exact=request.
+                                          GET.get('household_structure', 0),
+                                          is_consented=True)
+#             else:
+#                 kwargs["queryset"] = HouseholdMember.objects.filter(
+#                     household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=False)
         if db_field.name == "household_structure":
             kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
         return super(HouseholdHeadEligibilityAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
