@@ -18,7 +18,7 @@ class Command(BaseCommand):
         print 'Found {} households'.format(household_count)
         n = 0
         print 'Updating ...'
-        for household in Household.objects.all():
+        for household in Household.objects.filter(plot__community__in=['ranaka', 'digawana']):
             for survey in Survey.objects.all():
                 try:
                     HouseholdStructure.objects.get(household__pk=household.pk, survey=survey)
