@@ -19,13 +19,14 @@ class ResourceUtilization (BaseScheduledVisitModel):
                        " Not including any visits for which you were hospitalized. "),
         max_length=17,
         choices=YES_NO_REFUSED,
-        help_text="if 'NO or Don't want to answer' STOP and SAVE form. ",
         )
     hospitalized = models.IntegerField(
         verbose_name=_("In the last 3 months, how many times were you admitted to hospital or"
                        " other types of inpatient care and stayed one or more nights? This could be"
                        " a government, private, or church/mission hospital. "),
         max_length=2,
+        null=True,
+        blank=True,
         help_text=_("if 'Not admitted to hospital' go to next question. "
                     "If participant does not want to answer, leave blank"),
         )
