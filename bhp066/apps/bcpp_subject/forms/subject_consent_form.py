@@ -2,17 +2,17 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from django import forms
+from django.conf import settings
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 
-from edc.core.bhp_common.utils import check_initials_field
 from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.core.bhp_variables.models import StudySpecific
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
-from apps.bcpp_household_member.models import EnrollmentChecklist
+from apps.bcpp_survey.models import Survey
 
-from ..models import SubjectConsent, HicEnrollment
+from ..models import SubjectConsent
 
 
 class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN METHOD IN BASE!!
@@ -38,7 +38,7 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
             if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).count() > 1:
                 raise forms.ValidationError("More than one subject is using this identity number. Cannot continue.")
 
-        #check subject consent values against household member values
+        # check subject consent values against household member values
         initials = cleaned_data.get("initials")
         first_name = cleaned_data.get("first_name")
         last_name = cleaned_data.get("last_name")
@@ -72,12 +72,25 @@ class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
         cleaned_data = super(SubjectConsentForm, self).clean()
+        self.limit_edit_to_current_survey(cleaned_data)
         options = cleaned_data
         if 'consent_datetime' not in cleaned_data:
             options.update({'consent_datetime': self.instance.consent_datetime})
         self.instance.matches_enrollment_checklist(SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
         self.instance.matches_hic_enrollment(SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
         return cleaned_data
+
+    def limit_edit_to_current_survey(self, cleaned_data):
+        household_member = cleaned_data.get("household_member")
+        try:
+            if settings.LIMIT_EDIT_TO_CURRENT_SURVEY:
+                current_survey = Survey.objects.current_survey()
+                if household_member.household_structure.survey != current_survey:
+                    raise forms.ValidationError('Form may not be saved. Only data from {} '
+                                                'may be added/changed. (LIMIT_EDIT_TO_CURRENT_SURVEY)'
+                                                ).format(current_survey)
+        except AttributeError:
+            pass
 
     class Meta:
         model = SubjectConsent
