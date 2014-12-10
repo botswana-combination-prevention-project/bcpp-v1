@@ -31,7 +31,7 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
-                      Circumcision, Circumcised)
+                      Circumcision, Circumcised, HicEnrollment)
 from .factories import SubjectConsentFactory, SubjectVisitFactory, HivCareAdherenceFactory, MedicalDiagnosesFactory
 
 
@@ -1022,3 +1022,36 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **microtube_options).count(), 1)
 
+    def test_hic_filled_in_y1(self):
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        hic_enrollment_options = {}
+        hic_enrollment_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hicenrollment',
+            appointment=self.subject_visit_male.appointment)
+
+        HicEnrollment.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            report_datetime=datetime.today(),
+            hic_permission='Yes',
+            permanent_resident=True,
+            intend_residency=True,
+            hiv_status_today='NEG',
+            dob=datetime(1990,01,01),
+            household_residency=True,
+            citizen_or_spouse=True,
+            locator_information=True,
+            consent_datetime=datetime.today()
+           )
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male,
+             hiv_result='NEG',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
