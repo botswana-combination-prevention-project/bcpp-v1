@@ -17,9 +17,6 @@ class ResourceUtilizationForm (BaseSubjectModelForm):
 #         if cleaned_data.get('out_patient') == 'Yes' and not cleaned_data.get('money_spent'):
 #             raise forms.ValidationError('How much money was spent?')
 
-        if not cleaned_data.get('hospitalized'):
-            raise forms.ValidationError('Specify home many time the participant was hospitalized?')
-
         if cleaned_data.get('money_spent') > 0 and not cleaned_data.get('medical_cover'):
             raise forms.ValidationError('If money was spent on medicines, were all of these '
                                         'covered by anyone else e.g. medical aid?')
