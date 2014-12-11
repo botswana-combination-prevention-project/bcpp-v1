@@ -142,7 +142,7 @@ class HicEnrollment (BaseScheduledVisitModel):
     def get_dob_consent_datetime(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
-        subject_consent = SubjectConsent.objects.filter(household_member=self.subject_visit.household_member)
+        subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_visit.appointment.registered_subject.subject_identifier)
         if subject_consent.exists():
             if subject_consent[0].dob and subject_consent[0].consent_datetime:
                 return (subject_consent[0].dob, subject_consent[0].consent_datetime)
