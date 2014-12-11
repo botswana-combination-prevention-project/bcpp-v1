@@ -10,10 +10,10 @@ from .enrollment_loss import EnrollmentLoss
 from .subject_absentee import SubjectAbsentee
 from .subject_absentee_entry import SubjectAbsenteeEntry
 from .subject_refusal import SubjectRefusal
+from .subject_death import SubjectDeath
 from .subject_moved import SubjectMoved
 from .subject_undecided import SubjectUndecided
 from .subject_undecided_entry import SubjectUndecidedEntry
 from .subject_refusal_history import SubjectRefusalHistory
 from .subject_htc_history import SubjectHtcHistory
 from .signals import *
-from .subject_death import SubjectDeath
