@@ -86,6 +86,7 @@ admin.site.register(CallLog, CallLogAdmin)
 
 class CallLogEntryAdmin(BaseModelAdmin):
 
+    date_hierarchy = 'appt_date'
     instructions = [
         'Please read out to participant. "We hope you have been well since our visit last year. '
         'As a member of this study, it is time for your annual revisit in which we will ask you '
@@ -131,6 +132,27 @@ class CallLogEntryAdmin(BaseModelAdmin):
         "appt_location": admin.VERTICAL,
         "call_again": admin.VERTICAL,
         }
+
+    list_display = (
+        'call_log',
+        'call_datetime',
+        'appt',
+        'appt_date',
+        'call_again',
+    )
+
+    list_filter = (
+        'call_datetime',
+        'appt',
+        'appt_date',
+        'call_again',
+        'created',
+        'modified',
+        'hostname_created',
+        'hostname_modified',
+    )
+
+    search_fields = ('call_log__household_member__registered_subject__subject_identifier', 'call_log__household_member__first_name', 'id')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "call_log":

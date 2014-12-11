@@ -21,8 +21,6 @@ from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
-from .subject_death import SubjectDeath
-
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
@@ -31,7 +29,6 @@ from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
 from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC
-from ..exceptions import MemberStatusError
 from ..managers import HouseholdMemberManager
 
 
@@ -515,8 +512,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.save(using=using)
 
     def delete_subject_death_on_post_save(self):
-        """1. Delete death form if exists when survival status changes from Dead to Alive """
-        if self.survival_status == ALIVE_DEAD_UNKNOWN[0][0]:
+        """Deletes the death form if it exists when survival status
+        changes from Dead to Alive """
+        if self.survival_status == ALIVE:
+            SubjectDeath = models.get_model('bcpp_household_member', 'SubjectDeath')
             try:
                 SubjectDeath.objects.get(registered_subject=self.registered_subject).delete()
             except SubjectDeath.DoesNotExist:

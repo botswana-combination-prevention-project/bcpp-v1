@@ -1,5 +1,3 @@
-from django.db import models
-
 from edc.audit.audit_trail import AuditTrail
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
@@ -9,6 +7,7 @@ from .base_member_status_model import BaseMemberStatusModel
 
 class SubjectAbsentee(BaseMemberStatusModel):
     """A system model that links the absentee information with the household member."""
+
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
