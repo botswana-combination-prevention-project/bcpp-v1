@@ -1,3 +1,4 @@
+from .base_member_status_manager import BaseMemberStatusManager
 from .contact_log_manager import ContactLogManager, ContactLogItemManager
 from .enrollment_checklist_manager import EnrollmentChecklistManager
 from .enrollment_loss_manager import EnrollmentLossManager

@@ -5,8 +5,9 @@ from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 
-from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.core.bhp_variables.models import StudySpecific
+from edc.map.classes import site_mappers
+from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
@@ -72,6 +73,7 @@ class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
         cleaned_data = super(SubjectConsentForm, self).clean()
+        self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
         options = cleaned_data
         if 'consent_datetime' not in cleaned_data:
@@ -91,6 +93,22 @@ class SubjectConsentForm(BaseBcppConsentForm):
                                                 ).format(current_survey)
         except AttributeError:
             pass
+        return cleaned_data
+
+    def limit_edit_to_current_community(self, cleaned_data):
+        household_member = cleaned_data.get("household_member")
+        try:
+            if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
+                configured_community = site_mappers.current_mapper().map_area
+                community = household_member.household_structure.household.plot.community
+                if community != configured_community:
+                    raise forms.ValidationError(
+                        'Form may not be saved. Only data from \'{}\' may be added/changed on '
+                        'this device. Got {}. (LIMIT_EDIT_TO_CURRENT_COMMUNITY)'.format(
+                            configured_community, community))
+        except AttributeError:
+            pass
+        return cleaned_data
 
     class Meta:
         model = SubjectConsent
