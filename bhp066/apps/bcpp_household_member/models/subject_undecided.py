@@ -6,7 +6,7 @@ from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectUndecided (BaseMemberStatusModel):
-    """A system model that links "undecided" information to a household member."""  
+    """A system model that links "undecided" information to a household member."""
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
