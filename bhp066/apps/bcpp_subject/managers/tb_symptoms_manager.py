@@ -19,6 +19,5 @@ class TbSymptomsManager(ScheduledModelManager):
                 symptoms.append('weight_loss')
             symptoms.sort()
         except self.model.DoesNotExist:
-#         except DoesNotExist:
             pass
         return ', '.join(symptoms)
