@@ -1,5 +1,4 @@
 from .subject_consent import BaseSubjectConsent, SubjectConsent
-from .base_scheduled_inline_model import BaseScheduledInlineModel
 from .subject_off_study import SubjectOffStudy
 from .subject_visit import SubjectVisit
 from .subject_locator import SubjectLocator

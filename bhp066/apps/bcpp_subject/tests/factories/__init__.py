@@ -1,5 +1,4 @@
 from .base_scheduled_model_factory import BaseScheduledModelFactory
-from .base_scheduled_inline_factory import BaseScheduledInlineModelFactory
 from .residency_mobility_factory import ResidencyMobilityFactory
 from .subject_referral_factory import SubjectReferralFactory
 from .stigma_factory import StigmaFactory
