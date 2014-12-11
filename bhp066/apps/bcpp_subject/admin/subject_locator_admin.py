@@ -5,7 +5,7 @@ from django.contrib import admin
 from ..actions import export_locator_for_cdc_action
 from ..filters import SubjectLocatorIsReferredListFilter, SubjectCommunityListFilter
 from ..forms import SubjectLocatorForm
-from ..models import SubjectLocator
+from ..models import SubjectLocator, SubjectVisit
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
@@ -86,5 +86,10 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
             'export_locator_for_cdc_action',
             "Export Locator in CDC format (Manual)")
         return actions
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "subject_visit":
+            kwargs["queryset"] = SubjectVisit.objects.filter(id__exact=request.GET.get('subject_visit', 0))
+        return super(SubjectLocatorAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(SubjectLocator, SubjectLocatorAdmin)
