@@ -1,19 +1,19 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin
-
 from ..forms import ViralLoadResultForm
 from ..models import ViralLoadResult
 
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
-class ViralLoadResultAdmin(BaseModelAdmin):
+
+class ViralLoadResultAdmin(SubjectVisitModelAdmin):
 
     form = ViralLoadResultForm
-    list_display = ('registered_subject', 'sample_id', 'clinician_initials',
+    list_display = ('subject_visit', 'sample_id', 'clinician_initials',
                     'collection_datetime', 'result_value', 'clinic', 'assay_performed_by', 'validated_by')
     list_filter = ('clinician_initials', 'collection_datetime', 'report_datetime',
                    'result_value', 'clinic__site_name', )
-    search_fields = ('registered_subject', 'sample_id', 'clinician_initials',
+    search_fields = ('subject_visit', 'sample_id', 'clinician_initials',
                      'collection_datetime', 'result_value', 'clinic', )
 
 admin.site.register(ViralLoadResult, ViralLoadResultAdmin)

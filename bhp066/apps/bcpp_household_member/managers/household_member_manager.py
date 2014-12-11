@@ -1,5 +1,8 @@
+from django.conf import settings
 from django.db import models
 from django.db.models import get_model
+
+from edc.map.classes import site_mappers
 
 
 class HouseholdMemberManager(models.Manager):
@@ -10,3 +13,10 @@ class HouseholdMemberManager(models.Manager):
         household_structure = HouseholdStructure.objects.get_by_natural_key(household_identifier, survey_name)
         registered_subject = RegisteredSubject.objects.get_by_natural_key(subject_identifier_as_pk)
         return self.get(household_structure=household_structure, registered_subject=registered_subject)
+
+    def get_queryset(self):
+        if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
+            community = site_mappers.current_mapper.map_area
+            return super(HouseholdMemberManager, self).get_queryset().filter(
+                household_structure__household__plot__community=community)
+        return super(HouseholdMemberManager, self).get_queryset()
