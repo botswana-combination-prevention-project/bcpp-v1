@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
-from edc.apps.admin_supplemental_fields.classes import SupplementalFields
+#from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
+#from edc.apps.admin_supplemental_fields.classes import SupplementalFields
 
 from ..forms import StigmaForm
 from ..models import Stigma
@@ -14,15 +14,15 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
     9% on ST1-ST12 for reported negative; 18% on ST1-ST19 for reported positive."""
 
 
-class StigmaAdmin(SupplementalModelAdminMixin, SubjectVisitModelAdmin):
+class StigmaAdmin(SubjectVisitModelAdmin):
 
     form = StigmaForm
-    supplemental_fields = SupplementalFields(
-        ('anticipate_stigma',
-         'enacted_shame_stigma',
-         'saliva_stigma',
-         'teacher_stigma',
-         'children_stigma'), p=0.09, group='ST', grouping_field='subject_visit')
+#     supplemental_fields = SupplementalFields(
+#         ('anticipate_stigma',
+#          'enacted_shame_stigma',
+#          'saliva_stigma',
+#          'teacher_stigma',
+#          'children_stigma'), p=0.09, group='ST', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'anticipate_stigma',
