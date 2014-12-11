@@ -1055,3 +1055,39 @@ class TestRuleGroup(TestCase):
             )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
+
+    def test_hiv_pos_requisitions_y2(self):
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        rbd_options = {}
+        rbd_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='NEG',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
