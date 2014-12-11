@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from apps.bcpp_household.models import HouseholdStructure
 
-from .base_registered_household_member_model import BaseRegisteredHouseholdMemberModel
+from .base_member_status_model import BaseMemberStatusModel
 from .enrollment_checklist import EnrollmentChecklist
 from .enrollment_loss import EnrollmentLoss
 from .household_head_eligibility import HouseholdHeadEligibility
@@ -20,8 +20,6 @@ from .subject_undecided import SubjectUndecided
 from .subject_undecided_entry import SubjectUndecidedEntry
 
 from ..constants import NOT_ELIGIBLE
-
-from edc.choices.common import ALIVE_DEAD_UNKNOWN
 
 
 @receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
@@ -230,7 +228,7 @@ def base_household_member_consent_on_post_save(sender, instance, raw, created, u
     """Confirms registered subject info for all child models
     of this base class."""
     if not raw:
-        if isinstance(instance, BaseRegisteredHouseholdMemberModel):
+        if isinstance(instance, BaseMemberStatusModel):
             instance.confirm_registered_subject_pk_on_post_save(using)
 
 
@@ -254,8 +252,9 @@ def subject_htc_on_post_save(sender, instance, raw, created, using, **kwargs):
 def household_head_eligibility_on_pre_save(sender, instance, raw, using, **kwargs):
     if not raw:
         if isinstance(instance, HouseholdHeadEligibility):
-            previous_head = HouseholdMember.objects.filter(household_structure=instance.household_member.household_structure,
-                                                                relation='Head').exclude(id=instance.household_member.id)
+            previous_head = HouseholdMember.objects.filter(
+                household_structure=instance.household_member.household_structure,
+                relation='Head').exclude(id=instance.household_member.id)
             if previous_head.exists():
                 previous_head = previous_head[0]
                 previous_head.eligible_hoh = False

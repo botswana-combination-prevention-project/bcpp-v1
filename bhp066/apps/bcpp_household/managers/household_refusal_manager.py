@@ -1,8 +1,6 @@
-from django.db import models
+from .base_household_structure_manager import BaseHouseholdStructureManager
 
 
-class HouseholdRefusalManager(models.Manager):
+class HouseholdRefusalManager(BaseHouseholdStructureManager):
 
-    def natural_key(self):
-        return self.household.natural_key() + self.survey.natural_key()
-    natural_key.dependencies = ['bcpp_household.household']
+    pass
