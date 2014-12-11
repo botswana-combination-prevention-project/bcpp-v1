@@ -32,11 +32,13 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
         if not self.date_hierarchy:
             self.date_hierarchy = 'created'
+        self.list_filter = list(self.list_filter)
         try:
-            self.list_filter = list(self.list_filter)
             self.list_filter.remove('subject_visit')
         except ValueError:
             pass
+        self.list_filter.extend(['created', 'modified', 'hostname_created', 'hostname_modified'])
+        self.list_filter = list(set(self.list_filter))
         self.search_fields = list(self.search_fields)
         try:
             self.search_fields.index('subject_visit__appointment__registered_subject__identity')

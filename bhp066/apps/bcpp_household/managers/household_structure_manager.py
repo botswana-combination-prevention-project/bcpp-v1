@@ -1,4 +1,7 @@
 from django.db import models
+from django.conf import settings
+
+from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household_member.classes.enumeration_helper import EnumerationHelper
@@ -17,3 +20,10 @@ class HouseholdStructureManager(models.Manager):
         unenumerated household structure of a new survey."""
         enumeration_helper = EnumerationHelper(household, source_survey, target_survey)
         return enumeration_helper.add_members_from_survey()
+
+    def get_queryset(self):
+        if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
+            community = site_mappers.current_mapper.map_area
+            return super(HouseholdStructureManager, self).get_queryset().filter(
+                household__plot__community=community)
+        return super(HouseholdStructureManager, self).get_queryset()
