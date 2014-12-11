@@ -32,7 +32,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
-        blank=False,
+        blank=True,
         help_text="if 'YES', answer HIV medical care section",
         )
 
