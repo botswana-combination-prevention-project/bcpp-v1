@@ -33,8 +33,8 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
 #             if HouseholdMember.objects.filter(household_structure__exact=request.
 #                                               GET.get('household_structure', 0),
 #                                               relation='Head').exists():
-            kwargs["queryset"] = HouseholdMember.objects.filter(household_structure__exact=request.
-                                          GET.get('household_structure', 0),
+            kwargs["queryset"] = HouseholdMember.objects.filter(Q(household_structure__exact=request.
+                                          GET.get('household_structure', 0)),
                                           Q(is_consented=True) | Q(relation='Head'))
 #             else:
 #                 kwargs["queryset"] = HouseholdMember.objects.filter(
