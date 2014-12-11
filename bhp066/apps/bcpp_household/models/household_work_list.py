@@ -6,8 +6,8 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
-from ..managers import HouseholdStructureManager
 from ..choices import HOUSEHOLD_STATUS
+from ..managers import HouseholdWorkListManager
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -81,7 +81,7 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
 
     hic = models.IntegerField(default=0)
 
-    objects = HouseholdStructureManager()
+    objects = HouseholdWorkListManager()
 
     history = AuditTrail()
 

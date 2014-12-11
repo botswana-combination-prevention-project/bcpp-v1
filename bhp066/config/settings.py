@@ -7,7 +7,8 @@ from unipath import Path
 from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
 from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
                             PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
-                            LIMIT_EDIT_TO_CURRENT_SURVEY, FILTERED_DEFAULT_SEARCH)
+                            LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
+                            FILTERED_DEFAULT_SEARCH)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .device import (CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
                      VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
@@ -281,8 +282,9 @@ MAX_HOUSEHOLDS_PER_PLOT = MAX_HOUSEHOLDS_PER_PLOT
 LABEL_PRINTER_MAKE_AND_MODEL = ['Zebra ZPL Label Printer']
 
 # block editing of forms if not related to household_structure of current survey
-# set in bcpp_settings
+# and community. set in bcpp_settings
 LIMIT_EDIT_TO_CURRENT_SURVEY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_CURRENT_SURVEY
+LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_CURRENT_COMMUNITY
 
 # search behavior attribute see: base_searcher. Set to TRUE if you are deploying  a DB
 # with multiple plots but you want default filter(?) to show current community instances.
