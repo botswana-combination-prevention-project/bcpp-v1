@@ -26,9 +26,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
                        " a government, private, or church/mission hospital. "),
         max_length=2,
         null=True,
-        blank=True,
-        help_text=_("if 'Not admitted to hospital' go to next question. "
-                    "If participant does not want to answer, leave blank"),
+        help_text="",
         )
     money_spent = models.DecimalField(
         verbose_name=_("In the last 3 months, how much money in total have you spent on "

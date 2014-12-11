@@ -1,4 +1,3 @@
-from .base_registered_household_member_model_manager import BaseRegisteredHouseholdMemberModelManager
 from .scheduled_model_manager import ScheduledModelManager
 from .grant_manager import GrantManager
 from .consent_history_manager import ConsentHistoryManager
@@ -7,4 +6,4 @@ from .viral_load_result_manager import ViralLoadResultManager
 from .correct_consent_manager import CorrectConsentManager
 from .subject_locator_manager import SubjectLocatorManager
 from .call_log_manager import CallLogManager, CallLogEntryManager
-from .call_list_manager import  CallListManager
+from .call_list_manager import CallListManager
