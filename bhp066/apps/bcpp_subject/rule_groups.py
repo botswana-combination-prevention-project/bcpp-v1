@@ -94,19 +94,19 @@ def func_todays_hiv_result_required(visit_instance):
 
 def func_hiv_negative_today(visit_instance):
     """Returns True if the participant tests negative today."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
     return hiv_result == NEG
 
 
 def func_hiv_indeterminate_today(visit_instance):
     """Returns True if the participant tests indeterminate today."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
     return hiv_result == IND
 
 
 def func_hiv_positive_today(visit_instance):
     """Returns True if the participant is known or newly diagnosed HIV positive."""
-    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_result
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
     return hiv_result == POS
 
 
@@ -323,15 +323,8 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence'],
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'],
         runif=func_is_baseline)
-
-    verbal_hiv_result = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_known_pos,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivmedicalcare', 'positiveparticipant'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -340,12 +333,12 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-    verbal_result_response = ScheduledDataRule(
-        logic=Logic(
-            predicate=('verbal_hiv_result', 'equals', 'NEG'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['positiveparticipant', 'hivmedicalcare'])
+#     verbal_result_response = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('verbal_hiv_result', 'equals', 'POS'),
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     other_response = ScheduledDataRule(
         logic=Logic(
@@ -428,23 +421,6 @@ class HivCareAdherenceRuleGroup(RuleGroup):
         source_fk = (SubjectVisit, 'subject_visit')
         source_model = HivCareAdherence
 site_rule_groups.register(HivCareAdherenceRuleGroup)
-
-
-# class AnnualHivCareAdherenceRuleGroup(RuleGroup):
-# 
-#     require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_baseline_hiv_positive_and_not_on_art,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['hivmedicalcare', 'hivhealthcarecosts'],
-#         runif=func_is_annual)
-# 
-#     class Meta:
-#         app_label = 'bcpp_subject'
-#         source_fk = (SubjectVisit, 'subject_visit')
-#         source_model = HivCareAdherence
-# site_rule_groups.register(AnnualHivCareAdherenceRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
@@ -601,8 +577,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
             predicate=func_show_hic_enrollment,
             consequence='new',
             alternative='not_required'),
-        target_model=['hicenrollment'],
-        runif=func_is_baseline)
+        target_model=['hicenrollment'])
 
     class Meta:
         abstract = True

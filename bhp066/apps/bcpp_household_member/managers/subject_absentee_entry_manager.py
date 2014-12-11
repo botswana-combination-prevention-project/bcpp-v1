@@ -1,5 +1,8 @@
 from datetime import timedelta
 from django.db import models
+from django.conf import settings
+
+from edc.map.classes import site_mappers
 
 
 class SubjectAbsenteeEntryManager(models.Manager):
@@ -10,3 +13,10 @@ class SubjectAbsenteeEntryManager(models.Manager):
             household_identifier, survey_name, subject_identifier_as_pk)
         return self.get(report_datetime__range=(report_datetime - margin, report_datetime + margin),
                         subject_absentee=subject_absentee)
+
+    def get_queryset(self):
+        if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
+            community = site_mappers.current_mapper.map_area
+            return super(SubjectAbsenteeEntryManager, self).get_queryset().filter(
+                subject_absentee__household_member__household_structure__household__plot__community=community)
+        return super(SubjectAbsenteeEntryManager, self).get_queryset()
