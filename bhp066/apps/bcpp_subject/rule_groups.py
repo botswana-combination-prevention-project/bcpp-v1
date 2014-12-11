@@ -50,6 +50,11 @@ def func_art_naive(visit_instance):
     return art_naive
 
 
+def func_require_pima_hiv_care_ad(visit_instance):
+    past_visit = func_baseline_visit_instance(visit_instance)
+    return func_art_naive(visit_instance) and not func_know_pos_in_yr_1(past_visit)
+
+
 def func_known_pos(visit_instance):
     """Returns True if participant is NOT a newly diagnosed POS as determined
     by the SubjectStatusHelper.new_pos method."""
@@ -69,12 +74,22 @@ def func_circumcision(visit_instance):
     return True
 
 
+def func_show_hic_enrollment(visit_instance):
+    past_visit = func_baseline_visit_instance(visit_instance)
+    if func_hiv_negative_today(visit_instance) and not func_hic_keyed(past_visit):
+        return True
+    else:
+        return False
+
+
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
-    if subject_status_helper.todays_hiv_result:
+    if subject_status_helper.todays_hiv_result and not func_know_pos_in_yr_1(visit_instance):
         return True
-    return False if (subject_status_helper.new_pos is False) else True
+    if not func_hiv_positive_today(visit_instance) and not func_know_pos_in_yr_1(visit_instance):
+        return True
+    return False
 
 
 def func_hiv_negative_today(visit_instance):
@@ -97,7 +112,7 @@ def func_hiv_positive_today(visit_instance):
 
 def func_hic_keyed(visit_instance):
     try:
-        HicEnrollment.objects.get(subject_visit=func_baseline_visit_instance(visit_instance))
+        HicEnrollment.objects.get(subject_visit=visit_instance)
     except HicEnrollment.DoesNotExist:
         return False
     return True
@@ -154,6 +169,11 @@ def func_not_required(visit_instance):
     return True
 
 
+def func_know_pos_in_yr_1(visit_instance):
+    past_visit = func_baseline_visit_instance(visit_instance)
+    return func_hiv_positive_today(past_visit) or func_known_pos(past_visit)
+
+
 def func_no_verbal_hiv_result(visit_instance):
     """Returns True if verbal_hiv_positive response is not POS or NEG."""
     return SubjectStatusHelper(visit_instance).verbal_hiv_result not in ['POS', 'NEG']
@@ -204,6 +224,21 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             consequence='not_required',
             alternative='new'),
         target_model=['reproductivehealth', 'pregnancy', 'nonpregnancy'])
+
+    known_pos_in_y1 = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_know_pos_in_yr_1,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'pima'])
+
+    require_microtube = RequisitionRule(
+        logic=Logic(
+            predicate=func_know_pos_in_yr_1,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Microtube'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -329,41 +364,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 site_rule_groups.register(HivTestingHistoryRuleGroup)
 
 
-class AnnualHivTestingHistory(RuleGroup):
-
-    # if has tested is no, NOT REQUIRE documentation, HIV tested forms
-    has_tested_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=('has_tested', 'equals', 'No'),
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivtestreview', 'hivresultdocumentation', 'hivtested'],
-        runif=func_is_annual)
-
-    require_todays_hiv_result_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hiv_positive_today,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivresult'],
-        runif=func_is_annual)
-
-    # should be required only for KNOWN HIV positive with or without doc
-    require_hiv_health_care_costs_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_documentation_pos,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivhealthcarecosts', 'hivcareadherence'],
-        runif=func_is_annual)
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivTestingHistory
-site_rule_groups.register(AnnualHivTestingHistory)
-
-
 class ReviewPositiveRuleGroup(RuleGroup):
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
@@ -411,7 +411,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_art_naive,
+            predicate=func_require_pima_hiv_care_ad,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -430,21 +430,21 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 site_rule_groups.register(HivCareAdherenceRuleGroup)
 
 
-class AnnualHivCareAdherenceRuleGroup(RuleGroup):
-
-    require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_hiv_positive_and_not_on_art,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hivmedicalcare', 'hivhealthcarecosts'],
-        runif=func_is_annual)
-
-    class Meta:
-        app_label = 'bcpp_subject'
-        source_fk = (SubjectVisit, 'subject_visit')
-        source_model = HivCareAdherence
-site_rule_groups.register(AnnualHivCareAdherenceRuleGroup)
+# class AnnualHivCareAdherenceRuleGroup(RuleGroup):
+# 
+#     require_hiv_medical_care_hiv_health_care_costs = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_baseline_hiv_positive_and_not_on_art,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['hivmedicalcare', 'hivhealthcarecosts'],
+#         runif=func_is_annual)
+# 
+#     class Meta:
+#         app_label = 'bcpp_subject'
+#         source_fk = (SubjectVisit, 'subject_visit')
+#         source_model = HivCareAdherence
+# site_rule_groups.register(AnnualHivCareAdherenceRuleGroup)
 
 
 class SexualBehaviourRuleGroup(RuleGroup):
@@ -598,119 +598,11 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     hic = ScheduledDataRule(
         logic=Logic(
-            predicate=func_hiv_negative_today,
+            predicate=func_show_hic_enrollment,
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'],
         runif=func_is_baseline)
-
-    class Meta:
-        abstract = True
-
-
-class AnnualRequisitionRuleGroup(RuleGroup):
-
-    hic_annual_enrol_neg = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hiv_result_neg_baseline,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['hicenrollment', 'hivresult'],
-        runif=func_is_annual,)
-
-    hiv_neg = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hiv_result_neg_baseline,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivhealthcarecosts', 'hivcareadherence'],
-        runif=func_is_annual,)
-
-    # if hicenrollment filled at T0, dont require it again at T1
-    hic_annual_enrol_pos = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_hic_keyed,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hicenrollment'],
-        runif=func_is_annual,
-        )
-
-    hic_enrolled_at_baseline_microtube = RequisitionRule(
-        logic=Logic(
-            predicate=func_hiv_result_neg_baseline,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],
-        runif=func_is_annual,
-        )
-
-    # known +VE at T0 should not require several forms
-    hic_annual_doc = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_pos_and_testreview_documentation_pos,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['hivresult', 'hivtestinghistory'],
-        runif=func_is_annual)
-
-    # known +VE at T0 should not require Microtube
-    hic_annual_req = RequisitionRule(
-        logic=Logic(
-            predicate=func_baseline_pos_and_testreview_documentation_pos,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],
-        runif=func_is_annual)
-
-    require_microtube_annual = RequisitionRule(
-        logic=Logic(
-            predicate=func_todays_hiv_result_required,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],
-        runif=func_is_annual)
-
-    require_microtube = RequisitionRule(
-        logic=Logic(
-            predicate=func_hiv_positive_today,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Microtube'],
-        runif=func_is_annual)
-
-    # dont do vl if already drawn on T0
-    require_vl_samples_annual = RequisitionRule(
-        logic=Logic(
-            predicate=func_baseline_vl_drawn,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Viral Load'],
-        runif=func_is_annual)
-
-    # dont do rbd if already drawn on T0
-    require_rbd_samples_annual = RequisitionRule(
-        logic=Logic(
-            predicate=func_baseline_rbd_drawn,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw'],
-        runif=func_is_annual)
-
-    # if CD4 (pima) done at T0 don't require it at T1
-    cd4_pima_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_baseline_pima_keyed,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['pima'],
-        runif=func_is_annual)
 
     class Meta:
         abstract = True
@@ -743,6 +635,13 @@ class RequisitionRuleGroup1(BaseRequisitionRuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['sti'])
+
+    elisa_result = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_hiv_indeterminate_today,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['elisahivresult'])
 
     class Meta:
         app_label = 'bcpp_subject'
