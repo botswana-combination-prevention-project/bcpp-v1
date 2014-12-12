@@ -85,7 +85,7 @@ def func_circumcision(visit_instance):
 
 def func_show_hic_enrollment(visit_instance):
     past_visit = func_previous_visit_instance(visit_instance)
-    if func_hiv_negative_today(visit_instance) and not func_hic_keyed(past_visit):
+    if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(past_visit):
         return True
     else:
         return False
@@ -94,9 +94,9 @@ def func_show_hic_enrollment(visit_instance):
 def func_show_microtube(visit_instance):
     show_micro = False
     past_visit = func_previous_visit_instance(visit_instance)
-    if func_hic_keyed(past_visit) and func_hiv_positive_today(visit_instance):
+    if func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
         show_micro = True
-    elif not func_hic_keyed(past_visit) and func_hiv_positive_today(visit_instance):
+    elif not func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
         show_micro = False
     elif func_know_pos_in_prev_year(visit_instance):
         show_micro = False
@@ -135,9 +135,9 @@ def func_hiv_positive_today(visit_instance):
     return hiv_result == POS
 
 
-def func_hic_keyed(visit_instance):
+def func_hic_enrolled(visit_instance):
     try:
-        HicEnrollment.objects.get(subject_visit=visit_instance)
+        HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='Yes')
     except HicEnrollment.DoesNotExist:
         return False
     return True
