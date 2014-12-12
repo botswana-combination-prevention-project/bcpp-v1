@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.base.model.fields import OtherCharField
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.subject.consent.classes import ConsentHelper
 
 from apps.bcpp_household.models import Plot
 
@@ -16,9 +17,10 @@ from ..managers import GrantManager
 from ..choices import GRANT_TYPE
 
 from .labour_market_wages import LabourMarketWages
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class Grant(BaseDispatchSyncUuidModel):
+class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel):
 
     """Inline for labour_market_wages."""
 
@@ -57,11 +59,6 @@ class Grant(BaseDispatchSyncUuidModel):
     def __unicode__(self):
         return unicode(self.labour_market_wages.subject_visit)
 
-    @property
-    def inline_parent(self):
-        """Used??"""
-        return self.labour_market_wages
-
     def get_visit(self):
         return self.labour_market_wages.subject_visit
 
@@ -70,6 +67,16 @@ class Grant(BaseDispatchSyncUuidModel):
 
     def get_report_datetime(self):
         return self.report_datetime
+
+    def get_consent_helper_cls(self):
+        """Returns an instance of the default ConsentHelper."""
+        return ConsentHelper
+
+    def get_versioned_field_names(self, version_number):
+        """Returns a list of field names under version control by version number.
+
+        Users should override at the model class to return a list of field names for a given version_number."""
+        return []
 
     def get_subject_identifier(self):
         return self.labour_market_wages.subject_visit.get_subject_identifier()
