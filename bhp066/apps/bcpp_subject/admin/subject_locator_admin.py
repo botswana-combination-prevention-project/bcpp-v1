@@ -2,6 +2,8 @@ from collections import OrderedDict
 
 from django.contrib import admin
 
+from edc.subject.registration.models import RegisteredSubject
+
 from ..actions import export_locator_for_cdc_action
 from ..filters import SubjectLocatorIsReferredListFilter, SubjectCommunityListFilter
 from ..forms import SubjectLocatorForm
@@ -90,6 +92,8 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "subject_visit":
             kwargs["queryset"] = SubjectVisit.objects.filter(id__exact=request.GET.get('subject_visit', 0))
+        if db_field.name == "registered_subject":
+            kwargs["queryset"] = RegisteredSubject.objects.filter(id__exact=request.GET.get('registered_subject', 0))
         return super(SubjectLocatorAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(SubjectLocator, SubjectLocatorAdmin)
