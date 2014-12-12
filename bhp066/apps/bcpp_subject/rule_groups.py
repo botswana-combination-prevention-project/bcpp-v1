@@ -96,6 +96,8 @@ def func_show_microtube(visit_instance):
     past_visit = func_previous_visit_instance(visit_instance)
     if func_hic_keyed(past_visit) and func_hiv_positive_today(visit_instance):
         show_micro = True
+    elif not func_hic_keyed(past_visit) and func_hiv_positive_today(visit_instance):
+        show_micro = False
     elif func_know_pos_in_prev_year(visit_instance):
         show_micro = False
     elif func_hiv_positive_today(visit_instance) and not past_visit:
@@ -324,8 +326,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('has_tested', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivuntested'],
-        runif=func_is_baseline)
+        target_model=['hivuntested'])
 
     other_record = ScheduledDataRule(
         logic=Logic(
@@ -336,19 +337,17 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult'],
-        runif=func_is_baseline)
+        target_model=['hivresult'])
 
     verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'],
-        runif=func_is_baseline)
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -405,7 +404,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
@@ -435,7 +434,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
@@ -506,8 +505,7 @@ class CircumcisionRuleGroup(RuleGroup):
             predicate=func_circumcision,
             consequence='not_required',
             alternative='new'),
-        target_model=['circumcised', 'uncircumcised'],
-        runif=func_is_annual)
+        target_model=['circumcised', 'uncircumcised'])
 
     class Meta:
         app_label = 'bcpp_subject'
