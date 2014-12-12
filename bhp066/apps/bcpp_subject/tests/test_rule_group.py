@@ -52,7 +52,7 @@ site_mappers.register(TestPlotMapper)
 class TestRuleGroup(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'test_community9'
+    community = 'digawana'
 
     def setUp(self):
         try:
@@ -1073,7 +1073,6 @@ class TestRuleGroup(TestCase):
             entry__model_name='hivresult',
             appointment=self.subject_visit_male.appointment)
 
-        print 'CREATING T0 HIC'
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
@@ -1089,7 +1088,6 @@ class TestRuleGroup(TestCase):
            )
 
         self.subject_visit_male.delete()
-        print 'CREATING T1 VISIT'
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **microtube_options).count(), 1)
@@ -1104,7 +1102,7 @@ class TestRuleGroup(TestCase):
             verbal_hiv_result='POS',
             other_record='No'
             )
-        print 'TURNING KNOWN POS TODAY'
+
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male,
             hiv_test_date=datetime.today() - timedelta(days=50),
@@ -1157,7 +1155,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
 
-    def test_Known_hiv_pos_require_no_testing(self):
+    def test_Known_hiv_pos_y2_not_hic_require_no_testing(self):
         self.subject_visit_male_T0.delete()
         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
@@ -1186,6 +1184,34 @@ class TestRuleGroup(TestCase):
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male,
+            hiv_test_date=datetime.today() - timedelta(days=50),
+            recorded_hiv_result='POS',
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+
+    def test_Known_hiv_pos_y1_require_no_testing(self):
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        hiv_result_options = {}
+        hiv_result_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresult',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            has_tested='Yes',
+            when_hiv_test='1 to 5 months ago',
+            has_record='Yes',
+            verbal_hiv_result='POS',
+            other_record='No'
+            )
+
+        HivTestReview.objects.create(
+            subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
             recorded_hiv_result='POS',
             )
