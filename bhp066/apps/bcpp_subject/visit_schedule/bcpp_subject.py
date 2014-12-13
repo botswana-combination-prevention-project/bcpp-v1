@@ -1,12 +1,15 @@
 from collections import OrderedDict
 
+from django.db.models import get_model
+
 from edc.constants import REQUIRED, NOT_REQUIRED, NOT_ADDITIONAL, ADDITIONAL
 from edc.map.classes import site_mappers
 from edc.subject.visit_schedule.classes import (VisitScheduleConfiguration, site_visit_schedules,
                                                 EntryTuple, MembershipFormTuple, ScheduleGroupTuple,
                                                 RequisitionPanelTuple)
 
-from ..models import SubjectVisit, SubjectConsent
+from ..models import SubjectConsent
+from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 
 class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
@@ -39,7 +42,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'window_upper_bound': 0,
             'window_upper_bound_unit': 'D',
             'grouping': None,
-            'visit_tracking_model': SubjectVisit,
+            'visit_tracking_model': get_model('bcpp_subject', 'SubjectVisit'),
             'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
@@ -107,7 +110,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             'window_upper_bound': 0,
             'window_upper_bound_unit': 'D',
             'grouping': None,
-            'visit_tracking_model': SubjectVisit,
+            'visit_tracking_model': get_model('bcpp_subject', 'SubjectVisit'),
             'schedule_group': 'group-1',
             'instructions': None,
             'requisitions': (
@@ -169,9 +172,10 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
     )
 
 if site_mappers.current_mapper().intervention is False:
-    for item in BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries'):
-        if item.model_name in ['pima', 'tbsymptoms']:
-            BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
+    if site_mappers.current_mapper().current_survey_in_settings != BASELINE_SURVEY_SLUG:
+        for item in BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries'):
+            if item.model_name in ['pima', 'tbsymptoms']:
+                BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
 
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['pima', 'tbsymptoms', 'hivuntested']:
