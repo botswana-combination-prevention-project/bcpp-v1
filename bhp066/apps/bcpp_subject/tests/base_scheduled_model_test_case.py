@@ -32,9 +32,11 @@ class BaseScheduledModelTestCase(TestCase):
     community = None
     site_code = None
     study_site = None
+    subject_visit_female = None
+    subject_visit_male = None
 
     def startup(self):
-        
+
         site_mappers.autodiscover()
 
         try:
@@ -98,8 +100,13 @@ class BaseScheduledModelTestCase(TestCase):
         self.site_code = self.study_site
         self.intervention = site_mappers.get_current_mapper().intervention
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        self.survey2 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
+        self.create_baseline(household)
+        self.create_annual(household)
+
+    def create_baseline(self, household):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
@@ -142,6 +149,7 @@ class BaseScheduledModelTestCase(TestCase):
         # print self.household_member_male.member_status
 
         subject_consent_female = SubjectConsentFactory(
+            consent_datetime=datetime.today() + relativedelta(years=-1),
             household_member=self.household_member_female,
             gender='F',
             dob=enrollment_female.dob,
@@ -151,6 +159,7 @@ class BaseScheduledModelTestCase(TestCase):
             initials=enrollment_female.initials,
             study_site=self.study_site)
         subject_consent_male = SubjectConsentFactory(
+            consent_datetime=datetime.today() + relativedelta(years=-1),
             household_member=self.household_member_male,
             gender='M',
             dob=enrollment_male.dob,
@@ -164,6 +173,38 @@ class BaseScheduledModelTestCase(TestCase):
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
         appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__time_point=0)
-        self.subject_visit_female = SubjectVisitFactory(appointment=appointment_female, household_member=self.household_member_female)
+        self.subject_visit_female = SubjectVisitFactory(
+            report_datetime=datetime.today() + relativedelta(years=-1),
+            appointment=appointment_female, household_member=self.household_member_female)
         appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__time_point=0)
-        self.subject_visit_male = SubjectVisitFactory(appointment=appointment_male, household_member=self.household_member_male)
+        self.subject_visit_male = SubjectVisitFactory(
+            report_datetime=datetime.today() + relativedelta(years=-1),
+            appointment=appointment_male, household_member=self.household_member_male)
+
+    def create_annual(self, household):
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey2)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+
+        HouseholdStructure.objects.add_household_members_from_survey(household, self.survey1, self.survey2)
+
+        HouseholdMember = get_model('bcpp_household_member', 'HouseholdMember')
+        self.household_member_female_annual = HouseholdMember.objects.get(
+            internal_identifier=self.household_member_female.internal_identifier,
+            household_structure=household_structure)
+        self.household_member_male_annual = HouseholdMember.objects.get(
+            internal_identifier=self.household_member_male.internal_identifier,
+            household_structure=household_structure)
+
+        self.registered_subject_female_annual = self.household_member_female_annual.registered_subject
+        self.registered_subject_male_annual = self.household_member_male_annual.registered_subject
+        appointment_female_annual = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__time_point=1)
+        self.subject_visit_female_annual = SubjectVisitFactory(
+            report_datetime=datetime.today(),
+            appointment=appointment_female_annual,
+            household_member=self.household_member_female_annual)
+        appointment_male_annual = Appointment.objects.get(registered_subject=self.registered_subject_male_annual, visit_definition__time_point=1)
+        self.subject_visit_male_annual = SubjectVisitFactory(
+            report_datetime=datetime.today(),
+            appointment=appointment_male_annual,
+            household_member=self.household_member_male_annual)
+
