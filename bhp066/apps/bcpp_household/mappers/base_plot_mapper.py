@@ -63,6 +63,8 @@ class BasePlotMapper(Mapper):
     radius = None
     location_boundary = None
 
+    current_survey_in_settings = settings.CURRENT_SURVEY
+
     def __init__(self):
         self.active = None
         if self.intervention is None:
