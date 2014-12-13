@@ -329,6 +329,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                                   subject_referral_helper.missing_data._meta.verbose_name))
         for field, value in subject_referral_helper.subject_referral_dict.iteritems():
             setattr(self, field, value)
+        self.referral_code = subject_referral_helper.referral_code
         self.referral_appt_date = subject_referral_helper.referral_appt_datetime
         self.referral_clinic_type = subject_referral_helper.referral_clinic_type
         self.referral_clinic = subject_referral_helper.referral_clinic
