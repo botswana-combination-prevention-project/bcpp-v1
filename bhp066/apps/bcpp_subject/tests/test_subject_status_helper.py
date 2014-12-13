@@ -9,7 +9,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 
 from apps.bcpp_lab.models import AliquotType, Panel
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-
+from edc.core.bhp_variables.models import StudySite
 from ..classes import SubjectStatusHelper
 
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
@@ -39,28 +39,48 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
 
     def tests_hiv_result(self):
         """"""
+        self.startup()
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        self.assertIsNone(subject_status_helper.hiv_result)
+        self.assertIsNone(subject_status_helper.new_pos)
+
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
 
     def tests_hiv_result1(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
  
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male_annual, verbal_hiv_result='POS', has_record='No', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertIsNone(subject_status_helper.hiv_result)
+        self.assertIsNone(subject_status_helper.new_pos)
+
     def tests_hiv_result2(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
         self.assertIsNone(subject_status_helper.new_pos)
  
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male_annual, verbal_hiv_result='POS', has_record='Yes', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertIsNone(subject_status_helper.hiv_result)
+        self.assertIsNone(subject_status_helper.new_pos)
+
     def tests_hiv_result2a(self):
         """"""
+        self.startup()
         today_date = date.today()
         last_year_date = today_date - timedelta(days=365)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
@@ -69,40 +89,122 @@ class TestSubjectStatusHelper(BaseScheduledModelTestCase):
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, 'POS')
         self.assertFalse(subject_status_helper.new_pos)
- 
+
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertEquals(subject_status_helper.hiv_result, 'POS')
+        self.assertFalse(subject_status_helper.new_pos)
+
     def tests_hiv_result3(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='Yes')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, 'POS')
- 
+
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertEquals(subject_status_helper.hiv_result, 'POS')
+
     def tests_hiv_result4a(self):
         """"""
+        self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male,
+                                  panel=panel,
+                                  aliquot_type=AliquotType.objects.get(alpha_code='WB'),
+                                  site=self.study_site)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='Yes', arv_evidence='No')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=report_datetime)
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, 'POS')
- 
+
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertEquals(subject_status_helper.hiv_result, 'POS')
+
+    def tests_hiv_result4a1(self):
+        """Asserts that hiv_result, result_datetime are carried over from baseline if
+        HIV result is POS and at annual, new_pos is False."""
+        self.startup()
+        report_datetime_baseline = self.subject_visit_male.report_datetime
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male,
+                                  panel=panel,
+                                  aliquot_type=AliquotType.objects.get(alpha_code='WB'),
+                                  site=self.study_site)
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result=None, has_record='No', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=report_datetime_baseline)
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        self.assertEquals(subject_status_helper.hiv_result, 'POS')
+        self.assertEquals(subject_status_helper.hiv_result_datetime.date(), report_datetime_baseline.date())
+        self.assertEquals(subject_status_helper.new_pos, True)
+
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertEquals(subject_status_helper.hiv_result, 'POS')
+        self.assertEquals(subject_status_helper.hiv_result_datetime.date(), report_datetime_baseline.date())
+        self.assertEquals(subject_status_helper.new_pos, False)
+
+    def tests_hiv_result4a2(self):
+        """"""
+        self.startup()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male,
+                                  panel=panel,
+                                  aliquot_type=AliquotType.objects.get(alpha_code='WB'),
+                                  site=self.study_site)
+
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result=None, has_record='No', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='No')
+        HivResultFactory(
+            subject_visit=self.subject_visit_male,
+            hiv_result='NEG',
+            hiv_result_datetime=self.subject_visit_male.report_datetime)
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
+        self.assertEquals(subject_status_helper.hiv_result, 'NEG')
+        self.assertEquals(subject_status_helper.hiv_result_datetime, self.subject_visit_male.report_datetime)
+        self.assertEquals(subject_status_helper.new_pos, None)
+
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male_annual,
+                                  panel=panel,
+                                  aliquot_type=AliquotType.objects.get(alpha_code='WB'),
+                                  site=self.study_site)
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male_annual, verbal_hiv_result=None, has_record='No', other_record='No')
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_male_annual, on_arv='Yes', arv_evidence='No')
+        HivResultFactory(
+            subject_visit=self.subject_visit_male_annual,
+            hiv_result='POS',
+            hiv_result_datetime=self.subject_visit_male_annual.report_datetime)
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertEquals(subject_status_helper.hiv_result, 'POS')
+        self.assertEquals(subject_status_helper.hiv_result_datetime, self.subject_visit_male_annual.report_datetime)
+        self.assertEquals(subject_status_helper.new_pos, True)
+
     def tests_hiv_result5(self):
         """"""
-        result_date = datetime(2014,2,9)
+        self.startup()
+        result_date = datetime(2014, 2, 9)
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='No')
         HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result='NEG', hiv_test_date=result_date)
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertIsNone(subject_status_helper.hiv_result)
- 
+
+        subject_status_helper = SubjectStatusHelper(self.subject_visit_male_annual)
+        self.assertIsNone(subject_status_helper.hiv_result)
+
     def tests_hiv_result4(self):
         """"""
+        self.startup()
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='No', other_record='No')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No', arv_evidence='Yes')
         subject_status_helper = SubjectStatusHelper(self.subject_visit_male)
         self.assertEquals(subject_status_helper.hiv_result, 'POS')
- 
+
     def tests_on_arv1(self):
         """"""
         with transaction.atomic():
