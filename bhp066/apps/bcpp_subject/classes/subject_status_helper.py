@@ -476,7 +476,7 @@ class SubjectStatusHelper(object):
         """Returns True if the VL was drawn."""
         if self._vl_sample_drawn is None:
             vl_sample_drawn = self.previous_value(
-                attr_if_pos=('vl_sample_drawn'),
+                attr_if_pos=('vl_sample_drawn', ),
                 value_if_not_pos=None)
             if not vl_sample_drawn:
                 vl_sample_drawn = True if self.vl_requisition_instance else False
@@ -488,7 +488,7 @@ class SubjectStatusHelper(object):
         """Returns the viral load draw datetime from the SubjectRequisition for VL or None."""
         if not self._vl_sample_drawn_datetime:
             vl_sample_drawn_datetime = self.previous_value(
-                attr_if_pos=('vl_sample_drawn_datetime'),
+                attr_if_pos=('vl_sample_drawn_datetime', ),
                 value_if_not_pos=None)
             if not vl_sample_drawn_datetime:
                 try:
@@ -594,7 +594,7 @@ class SubjectStatusHelper(object):
         """Returns True if the VL was drawn."""
         if not self._rbd_sample_drawn:
             rbd_sample_drawn = self.previous_value(
-                attr_if_pos=('rbd_sample_drawn'),
+                attr_if_pos=('rbd_sample_drawn', ),
                 value_if_not_pos=None)
             if not rbd_sample_drawn:
                 rbd_sample_drawn = True if self.vl_requisition_instance else False
