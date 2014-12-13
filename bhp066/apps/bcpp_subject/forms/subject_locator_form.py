@@ -92,5 +92,8 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         if not permitted and cleaned_data.get(sub_field, None):
             raise forms.ValidationError(msg)
 
+    def limit_edit_to_current_survey(self, cleaned_data):
+        return cleaned_data
+
     class Meta:
         model = SubjectLocator
