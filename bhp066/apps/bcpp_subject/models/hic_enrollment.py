@@ -163,7 +163,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
         try:
-            subject_consent = SubjectConsent.objects.get(household_member=self.subject_visit.household_member)
+            subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_visit.appointment.registered_subject.subject_identifier)
             if ((subject_consent.citizen.lower() == 'yes') or (
                     subject_consent.legal_marriage.lower() == 'yes' and
                     subject_consent.marriage_certificate.lower() == 'yes')):
@@ -182,7 +182,7 @@ class HicEnrollment (BaseScheduledVisitModel):
     def is_locator_information(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectLocator
-        subject_locator = SubjectLocator.objects.filter(subject_visit=self.subject_visit)
+        subject_locator = SubjectLocator.objects.filter(registered_subject=self.subject_visit.appointment.registered_subject)
         # At least some information to contact the person should be available
         if subject_locator.exists():
             if (subject_locator[0].subject_cell or
