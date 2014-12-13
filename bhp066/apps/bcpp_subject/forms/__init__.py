@@ -41,3 +41,5 @@ from .correct_consent_form import CorrectConsentForm
 from .labour_market_wages_form import LabourMarketWagesForm, GrantForm
 from .hospital_admission_form import HospitalAdmissionForm
 from .resource_utilization_form import ResourceUtilizationForm
+from .outpatient_care_form import OutpatientCareForm
+from .hiv_health_care_costs_form import HivHealthCareCostsForm
