@@ -796,7 +796,7 @@ class TestReferral(BaseScheduledModelTestCase):
             'verbal_hiv_result': None,
             'vl_sample_drawn': True,
             'vl_sample_drawn_datetime': self.subject_visit_female.report_datetime}
-        if site_mappers.current_mapper().current_survey_slug == BASELINE_SURVEY_SLUG:
+        if site_mappers.current_mapper().current_survey_slug != BASELINE_SURVEY_SLUG:
             del expected['cd4_result']
             del expected['cd4_result_datetime']
             del expected['tb_symptoms']
