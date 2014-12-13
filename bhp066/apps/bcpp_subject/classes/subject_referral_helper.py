@@ -255,7 +255,7 @@ class SubjectReferralHelper(object):
     def referral_code(self):
         """Returns a string of referral codes as a join of the
         list of referral codes delimited by ","."""
-        if not self._referral_code:
+        if self._referral_code is None:
             self._referral_code = ','.join(self.referral_code_list)
             self._referral_code = self.remove_smc_in_annual_ecc(self._referral_code)
         return self._referral_code
@@ -265,7 +265,7 @@ class SubjectReferralHelper(object):
         if (not site_mappers.current_mapper().intervention and
                 self.subject_visit.household_member.household_structure.survey.survey_slug != \
                 BASELINE_SURVEY_SLUG):
-            referral_code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '')
+            referral_code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
         return referral_code
 
     @property
@@ -283,7 +283,7 @@ class SubjectReferralHelper(object):
     @property
     def circumcised(self):
         """Returns None if female otherwise True if circumcised or False if not."""
-        if not self._circumcised:
+        if self._circumcised is None:
             if self.gender == 'M':
                 circumcised = None
                 if self.previous_subject_referrals:
@@ -293,11 +293,11 @@ class SubjectReferralHelper(object):
                     for subject_referral in previous_subject_referrals:
                         # check for CIRCUMCISED result from previous data
                         self.subject_referral = subject_referral
-                        if self.circumcised:
-                            circumcised = True
-                            break  # got one!
+                        circumcised = self.circumcised
+                        if circumcised is not None:
+                            break
                     self.subject_referral = current_subject_referral
-                if not circumcised:
+                if circumcised is None:
                     try:
                         circumcision_instance = self.models[self.timepoint_key].get(
                             'circumcision').objects.get(subject_visit=self.subject_visit)
