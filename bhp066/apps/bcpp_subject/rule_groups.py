@@ -14,17 +14,20 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
 from apps.bcpp_subject.constants import BASELINE_CODES
 
 
-def func_baseline_visit_instance(visit_instance):
-    """ Returns subject_visit for baseline """
+def func_previous_visit_instance(visit_instance):
+    """ Returns subject_visit 1 year from the current """
     try:
         registered_subject = visit_instance.appointment.registered_subject
-        baseline_appointment = Appointment.objects.get(
-            registered_subject=registered_subject, visit_definition__time_point=0)
-        return SubjectVisit.objects.get(appointment=baseline_appointment)
+        previous_time_point = visit_instance.appointment.visit_definition.time_point - 1
+        previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
+                                                       visit_definition__time_point=previous_time_point)
+        return SubjectVisit.objects.get(appointment=previous_appointment)
     except Appointment.DoesNotExist:
-        return SubjectVisit.objects.none()
+        return None
     except SubjectVisit.DoesNotExist:
-        return SubjectVisit.objects.none()
+        return None
+    except AttributeError:
+        return None
 
 
 def func_is_baseline(visit_instance):
@@ -42,52 +45,74 @@ def func_is_annual(visit_instance):
 def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
     art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
-    if art_naive:
-        subject_status_helper = SubjectStatusHelper(visit_instance)
-        art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+#     if art_naive:
+#         subject_status_helper = SubjectStatusHelper(visit_instance)
+#         art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
     return art_naive
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
-    past_visit = func_baseline_visit_instance(visit_instance)
-    return func_art_naive(visit_instance) and not func_know_pos_in_yr_1(past_visit)
+    past_visit = func_previous_visit_instance(visit_instance)
+    if func_know_pos_in_prev_year(past_visit):
+        do_pima = False
+    elif func_art_naive(visit_instance):
+        do_pima = True
+    else:
+        do_pima = False
+    return do_pima
 
 
 def func_known_pos(visit_instance):
     """Returns True if participant is NOT a newly diagnosed POS as determined
     by the SubjectStatusHelper.new_pos method."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
     known_pos = subject_status_helper.new_pos is False
-    if not known_pos:
-        subject_status_helper = SubjectStatusHelper(visit_instance)
-        known_pos = subject_status_helper.new_pos is False
+#     if not known_pos:
+#         subject_status_helper = SubjectStatusHelper(visit_instance)
+#         known_pos = subject_status_helper.new_pos is False
     return known_pos
 
 
 def func_circumcision(visit_instance):
     try:
-        Circumcised.objects.get(subject_visit=func_baseline_visit_instance(visit_instance))
+        Circumcised.objects.get(subject_visit=func_previous_visit_instance(visit_instance))
     except Circumcised.DoesNotExist:
         return False
     return True
 
 
 def func_show_hic_enrollment(visit_instance):
-    past_visit = func_baseline_visit_instance(visit_instance)
-    if func_hiv_negative_today(visit_instance) and not func_hic_keyed(past_visit):
+    past_visit = func_previous_visit_instance(visit_instance)
+    if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(past_visit):
         return True
     else:
         return False
 
 
+def func_show_microtube(visit_instance):
+    show_micro = False
+    past_visit = func_previous_visit_instance(visit_instance)
+    if func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
+        show_micro = True
+    elif not func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
+        show_micro = False
+    elif func_know_pos_in_prev_year(visit_instance):
+        show_micro = False
+    elif func_hiv_positive_today(visit_instance) and not past_visit:
+        show_micro = False
+    else:
+        show_micro = True
+    return show_micro
+
+
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=True)
-    if subject_status_helper.todays_hiv_result and not func_know_pos_in_yr_1(visit_instance):
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    if subject_status_helper.todays_hiv_result and not func_know_pos_in_prev_year(visit_instance):
         return True
-    if not func_hiv_positive_today(visit_instance) and not func_know_pos_in_yr_1(visit_instance):
+    if not func_hiv_positive_today(visit_instance) and not func_know_pos_in_prev_year(visit_instance):
         return True
     return False
 
@@ -110,9 +135,9 @@ def func_hiv_positive_today(visit_instance):
     return hiv_result == POS
 
 
-def func_hic_keyed(visit_instance):
+def func_hic_enrolled(visit_instance):
     try:
-        HicEnrollment.objects.get(subject_visit=visit_instance)
+        HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='Yes')
     except HicEnrollment.DoesNotExist:
         return False
     return True
@@ -120,7 +145,7 @@ def func_hic_keyed(visit_instance):
 
 def func_hiv_result_neg_baseline(visit_instance):
     """ Returns HIV negative result """
-    subject_status_helper = SubjectStatusHelper(func_baseline_visit_instance(visit_instance))
+    subject_status_helper = SubjectStatusHelper(func_previous_visit_instance(visit_instance))
     return True if subject_status_helper.hiv_result == NEG else False
 
 
@@ -139,7 +164,7 @@ def func_baseline_hiv_positive_and_documentation_pos(visit_instance):
 
 def func_baseline_hiv_positive_and_not_on_art(visit_instance):
     """Returns the baseline visit instance."""
-    baseline_visit_instance = func_baseline_visit_instance(visit_instance)
+    baseline_visit_instance = func_previous_visit_instance(visit_instance)
     subject_helper = SubjectStatusHelper(baseline_visit_instance)
     return subject_helper.hiv_result == POS and not subject_helper.on_art
 
@@ -169,9 +194,10 @@ def func_not_required(visit_instance):
     return True
 
 
-def func_know_pos_in_yr_1(visit_instance):
-    past_visit = func_baseline_visit_instance(visit_instance)
-    return func_hiv_positive_today(past_visit) or func_known_pos(past_visit)
+def func_know_pos_in_prev_year(visit_instance):
+    past_visit = func_previous_visit_instance(visit_instance)
+    pos_in_yr1 = func_hiv_positive_today(past_visit) or func_known_pos(past_visit)
+    return pos_in_yr1
 
 
 def func_no_verbal_hiv_result(visit_instance):
@@ -185,7 +211,7 @@ def is_gender_female(visit_instance):
 
 
 def circumsised_in_past(visit_instance):
-    past_visit = func_baseline_visit_instance(visit_instance)
+    past_visit = func_previous_visit_instance(visit_instance)
     return Circumcised.objects.filter(subject_visit=past_visit).exists()
 
 
@@ -227,16 +253,16 @@ class RegisteredSubjectRuleGroup(RuleGroup):
 
     known_pos_in_y1 = ScheduledDataRule(
         logic=Logic(
-            predicate=func_know_pos_in_yr_1,
+            predicate=func_know_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
         target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'pima'])
 
     require_microtube = RequisitionRule(
         logic=Logic(
-            predicate=func_know_pos_in_yr_1,
-            consequence='not_required',
-            alternative='new'),
+            predicate=func_show_microtube,
+            consequence='new',
+            alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'])
 
@@ -300,8 +326,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             predicate=('has_tested', 'equals', 'No'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivuntested'],
-        runif=func_is_baseline)
+        target_model=['hivuntested'])
 
     other_record = ScheduledDataRule(
         logic=Logic(
@@ -312,19 +337,17 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
-        target_model=['hivresult'],
-        runif=func_is_baseline)
+        target_model=['hivresult'])
 
     verbal_hiv_result_hiv_care_baseline = ScheduledDataRule(
         logic=Logic(
             predicate=('verbal_hiv_result', 'equals', 'POS'),
             consequence='new',
             alternative='not_required'),
-        target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'],
-        runif=func_is_baseline)
+        target_model=['hivcareadherence', 'positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
 
     verbal_response = ScheduledDataRule(
         logic=Logic(
@@ -381,7 +404,7 @@ class ReviewPositiveRuleGroup(RuleGroup):
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
@@ -411,7 +434,7 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
-            predicate=func_todays_hiv_result_required,
+            predicate=func_show_microtube,
             consequence='new',
             alternative='not_required'),
         target_model=['hivresult'])
@@ -482,8 +505,7 @@ class CircumcisionRuleGroup(RuleGroup):
             predicate=func_circumcision,
             consequence='not_required',
             alternative='new'),
-        target_model=['circumcised', 'uncircumcised'],
-        runif=func_is_annual)
+        target_model=['circumcised', 'uncircumcised'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -559,9 +581,9 @@ class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures a Microtube is not required for POS."""
     microtube_for_neg = RequisitionRule(
         logic=Logic(
-            predicate=func_hiv_positive_today,
-            consequence='not_required',
-            alternative='new'),
+            predicate=func_show_microtube,
+            consequence='new',
+            alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'], )
 
