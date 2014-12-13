@@ -218,7 +218,7 @@ class SubjectStatusHelper(object):
     @property
     def new_pos(self):
         """Returns True if combination of documents and test history show POS."""
-        if not self._new_pos:
+        if self._new_pos is None:
             new_pos = self.previous_value(value_if_pos=True, value_if_not_pos=None)
             if new_pos is None:
                 new_pos = False
@@ -358,8 +358,7 @@ class SubjectStatusHelper(object):
 
     @property
     def on_art(self):
-        self._on_art = None
-        if not self._on_art:
+        if self._on_art is None:
             try:
                 if self.hiv_care_adherence_instance.on_arv == 'Yes':
                     self._on_art = True
@@ -475,7 +474,7 @@ class SubjectStatusHelper(object):
     @property
     def vl_sample_drawn(self):
         """Returns True if the VL was drawn."""
-        if not self._vl_sample_drawn:
+        if self._vl_sample_drawn is None:
             vl_sample_drawn = self.previous_value(
                 attr_if_pos=('vl_sample_drawn'),
                 value_if_not_pos=None)
