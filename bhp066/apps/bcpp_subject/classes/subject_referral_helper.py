@@ -214,8 +214,8 @@ class SubjectReferralHelper(object):
                         self._referral_code_list.append('SMC?NEG')
                 elif self.hiv_result == POS:
                     if self.gender == 'F' and self.pregnant and self.on_art:
-                        self._referral_code_list.append(
-                            'POS!-AN') if self.new_pos else self._referral_code_list.append('POS#-AN')
+                        self._referral_code_list.append('POS#-AN')
+                        # self._referral_code_list.append('POS!-AN') if self.new_pos else self._referral_code_list.append('POS#-AN')
                     elif self.gender == 'F' and self.pregnant and not self.on_art:
                         self._referral_code_list.append(
                             'POS!-PR') if self.new_pos else self._referral_code_list.append('POS#-PR')

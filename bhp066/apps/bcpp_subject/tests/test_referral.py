@@ -210,7 +210,7 @@ class TestReferral(BaseScheduledModelTestCase):
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
-        #HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        # HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Unsure')
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
