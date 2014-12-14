@@ -25,6 +25,8 @@ class BaseSubjectModelForm(BaseConsentedModelForm):
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):
+        """Raises an exception if the instance does not refer to the
+        current survey OR does nothing,"""
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_SURVEY:
                 current_survey = Survey.objects.current_survey()
@@ -38,6 +40,8 @@ class BaseSubjectModelForm(BaseConsentedModelForm):
         return cleaned_data
 
     def limit_edit_to_current_community(self, cleaned_data):
+        """Raises an exception if the instance does not refer to the
+        current community OR does nothing,"""
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
                 configured_community = site_mappers.current_mapper().map_area
