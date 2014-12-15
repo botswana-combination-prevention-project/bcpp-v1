@@ -1,8 +1,9 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 
-from lis.specimen.lab_aliquot.managers import AliquotManager
 from lis.specimen.lab_aliquot.models import BaseAliquot
+
+from ..managers import AliquotManager
 
 from .aliquot_condition import AliquotCondition
 from .aliquot_type import AliquotType
@@ -23,10 +24,13 @@ class Aliquot(BaseAliquot):
         null=True,
         blank=True)
 
+    # community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+
     objects = AliquotManager()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.receive.registered_subject.subject_identifier
+        # self.community = site_mappers.current_mapper().map_area
         super(Aliquot, self).save(*args, **kwargs)
 
     @property
@@ -50,4 +54,4 @@ class Aliquot(BaseAliquot):
     class Meta:
         app_label = 'bcpp_lab'
         unique_together = (('receive', 'count'), )
-        ordering = ('receive', 'count')
+        ordering = ('-created', 'count')
