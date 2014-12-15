@@ -18,10 +18,13 @@ from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from apps.bcpp_household_member.models import EnrollmentChecklist
 from apps.bcpp_household_member.exceptions import MemberStatusError
 
+from ..managers import SubjectConsentManager
+
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
+
 
 
 # Note below: Mixin fields are added after the abstract class, BaseSubjectConsent, and before
@@ -207,6 +210,8 @@ class SubjectConsent(BaseSubjectConsent):
 
     history = AuditTrail()
 
+    objects = SubjectConsentManager()
+
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
                 'household_member__household_structure__household__plot__plot_identifier')
@@ -214,3 +219,4 @@ class SubjectConsent(BaseSubjectConsent):
     class Meta:
         app_label = 'bcpp_subject'
         unique_together = (('subject_identifier', 'survey'), ('first_name', 'dob', 'initials'))
+        ordering = ('-created', )
