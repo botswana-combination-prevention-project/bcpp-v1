@@ -7,3 +7,4 @@ from .receive_manager import ReceiveManager
 from .order_manager import OrderItemManager, OrderManager
 from .packing_list_manager import PackingListItemManager, PackingListManager
 from .clinic_requisition_manager import ClinicRequisitionManager
+from .aliquot_manager import AliquotManager
