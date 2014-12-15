@@ -43,7 +43,7 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
         return '{0} {1}'.format(unicode(self.panel), self.requisition_identifier)
 
     def get_site_code(self):
-        return site_mappers.get_current_mapper().map_code
+        return site_mappers.get(self.community).map_code
 
     def get_visit(self):
         return self.subject_visit
@@ -62,3 +62,4 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
         app_label = 'bcpp_lab'
         verbose_name = 'Subject Requisition'
         unique_together = ('subject_visit', 'panel', 'is_drawn')
+        ordering = ('-created', )
