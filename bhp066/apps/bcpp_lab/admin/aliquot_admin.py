@@ -14,7 +14,10 @@ class AliquotAdmin(BaseModelAdmin):
     date_hierarchy = 'created'
 
     actions = [print_aliquot_label, create_order,
-               export_as_csv_action("Export as csv", fields=[], delimiter=',', exclude=['id', 'revision', 'hostname_created', 'hostname_modified', 'user_created', 'user_modified'],)]
+               export_as_csv_action(
+                   "Export as csv", fields=[], delimiter=',',
+                   exclude=['id', 'revision', 'hostname_created',
+                            'hostname_modified', 'user_created', 'user_modified'],)]
 
     list_display = ("aliquot_identifier", 'subject_identifier', 'processing', 'related',
                     'to_receive', 'drawn', "aliquot_type", 'aliquot_condition', 'is_packed', 'created',
