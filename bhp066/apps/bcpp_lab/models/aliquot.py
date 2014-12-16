@@ -3,11 +3,14 @@ from django.core.urlresolvers import reverse
 
 from lis.specimen.lab_aliquot.models import BaseAliquot
 
+from apps.bcpp_subject.models import SubjectVisit
+
 from ..managers import AliquotManager
 
 from .aliquot_condition import AliquotCondition
 from .aliquot_type import AliquotType
 from .receive import Receive
+from .subject_requisition import SubjectRequisition
 
 
 class Aliquot(BaseAliquot):
@@ -38,8 +41,41 @@ class Aliquot(BaseAliquot):
         return self.aliquot_identifier[:-4]
 
     def get_visit_model(self):
-        from apps.bcpp_subject.models import SubjectVisit
+        # from apps.bcpp_subject.models import SubjectVisit
         return SubjectVisit
+
+    @property
+    def registered_subject(self):
+        return self.receive.registered_subject
+
+    @property
+    def visit_code(self):
+        return self.receive.visit
+
+    @property
+    def subject_visit(self):
+        try:
+            return SubjectVisit.objects.get(
+                appointment__visit_definition__code=self.visit_code,
+                appointment__registered_subject=self.registered_subject)
+        except SubjectVisit.DoesNotExist:
+            return None
+
+    @property
+    def subject_requisition(self):
+        try:
+            return SubjectRequisition.objects.get(
+                subject_visit=self.subject_visit)
+        except SubjectRequisition.DoesNotExist:
+            return None
+
+    @property
+    def optional_description(self):
+        """See PackingListHelper."""
+        try:
+            return self.subject_requisition.optional_description
+        except AttributeError:
+            return None
 
     def processing(self):
         url = reverse('admin:bcpp_lab_aliquotprocessing_add')
