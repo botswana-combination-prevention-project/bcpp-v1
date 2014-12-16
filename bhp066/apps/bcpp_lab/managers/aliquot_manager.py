@@ -2,10 +2,10 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
-from lis.specimen.lab_aliquot.managers import AliquotManager
+from lis.specimen.lab_aliquot.managers import AliquotManager as BaseAliquotManager
 
 
-class AliquotManager(AliquotManager):
+class AliquotManager(BaseAliquotManager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
