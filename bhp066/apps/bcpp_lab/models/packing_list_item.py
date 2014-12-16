@@ -1,12 +1,13 @@
 from django.db import models
 
-from edc.subject.registration.models import RegisteredSubject
+from edc.constants import YES, NO
 from edc.lab.lab_packing.models import BasePackingListItem
 
 from .aliquot import Aliquot
 from .packing_list import PackingList
 from .panel import Panel
 from .subject_requisition import SubjectRequisition
+from .receive import Receive
 
 from ..managers import PackingListItemManager
 
@@ -35,41 +36,39 @@ class PackingListItem(BasePackingListItem):
         """Returns the SubjectRequisition either directly or via the
         Aliquot."""
         try:
-            return SubjectRequisition.objects.get(pk=self.requisition)
+            return SubjectRequisition.objects.get(specimen_identifier=self.item_reference)
         except SubjectRequisition.DoesNotExist:
             aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
             return SubjectRequisition.objects.get(
                 requisition_identifier=aliquot.receive.requisition_identifier)
 
     @property
+    def receive(self):
+        """Returns an instance of Receive using the requisition_identifier or None."""
+        try:
+            return Receive.objects.get(requisition_identifier=self.subject_requisition.requisition_identifier)
+        except Receive.DoesNotExist:
+            return None
+
+    @property
     def drawn_datetime(self):
         """Returns the sample datetime drawn from the SubjectRequisition."""
-        return self.subject_requisition.drawn_datetime
+        try:
+            return self.subject_requisition.drawn_datetime
+        except AttributeError:
+            return '?'
 
     def clinician(self):
-        retval = "n/a"
-        if self.item_reference:
-            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
-            requisition = SubjectRequisition.objects.get(
-                requisition_identifier=aliquot.receive.requisition_identifier
-                )
-            retval = requisition.user_created
-        return retval
+        try:
+            return self.subject_requisition.user_created
+        except AttributeError:
+            return '?'
 
     def gender(self):
-        retval = "n/a"
-        if self.item_reference:
-            aliquot = Aliquot.objects.get(aliquot_identifier=self.item_reference)
-            requisition = SubjectRequisition.objects.get(
-                requisition_identifier=aliquot.receive.requisition_identifier
-                )
-            subject_identifier = requisition.subject()
-            if subject_identifier:
-                registered_subject = RegisteredSubject.objects.get(
-                    subject_identifier=subject_identifier
-                    )
-                retval = registered_subject.gender
-        return retval
+        try:
+            return self.subject_requisition.registered_subject.gender
+        except AttributeError:
+            return '?'
 
     def natural_key(self):
         return (self.item_reference, )
@@ -77,3 +76,4 @@ class PackingListItem(BasePackingListItem):
     class Meta:
         app_label = "bcpp_lab"
         verbose_name = 'Packing List Item'
+        ordering = ('-created', )
