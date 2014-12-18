@@ -315,7 +315,7 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
     history = AuditTrail()
 
     def __unicode__(self):
-        return '{0}: {1} {2} {3}'.format(self.get_subject_identifier(),
+        return '{0}: {1} {2} {3}'.format(self.subject_visit,
                                          self.referral_code,
                                          self.referral_appt_date,
                                          self.referral_clinic)
@@ -327,8 +327,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
             raise ValidationError(('Some data is missing for the referral. '
                                    'Complete \'{0}\' first and try again.').format(
                                   subject_referral_helper.missing_data._meta.verbose_name))
-        for field, value in subject_referral_helper.subject_referral.iteritems():
+        for field, value in subject_referral_helper.subject_referral_dict.iteritems():
             setattr(self, field, value)
+        self.referral_code = subject_referral_helper.referral_code
         self.referral_appt_date = subject_referral_helper.referral_appt_datetime
         self.referral_clinic_type = subject_referral_helper.referral_clinic_type
         self.referral_clinic = subject_referral_helper.referral_clinic
