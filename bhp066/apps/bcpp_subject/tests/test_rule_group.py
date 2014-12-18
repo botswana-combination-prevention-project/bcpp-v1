@@ -31,7 +31,7 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
-                      Circumcision, Circumcised, HicEnrollment)
+                      Circumcision, Circumcised, HicEnrollment, Pima)
 from .factories import SubjectConsentFactory, SubjectVisitFactory, HivCareAdherenceFactory, MedicalDiagnosesFactory
 
 
@@ -248,6 +248,50 @@ class TestRuleGroup(TestCase):
             on_arv='Yes',
             arv_evidence='No',
             )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+
+    def test_pos_in_yr0_hiv_car_adherence_and_no_pima_yr1(self):
+        """If POS, from year 0 and pima was filled, then Pima not required in yr1.
+        """
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        hiv_result = HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        Pima.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            pima_today='Yes',
+            cd4_value=400
+            )
+
+        care_adhereance = HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='Yes',
+            arv_evidence='No',
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+
+        care_adhereance.on_arv = 'No'
+        care_adhereance.save()
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
@@ -950,6 +994,48 @@ class TestRuleGroup(TestCase):
         self.subject_visit_male.delete()
         # Create circumsided dude's year 1 visit
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+
+    def test_circumsition_for_known_pos(self):
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        circumsition_options = {}
+        circumsition_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='circumcision',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        circumcised_options = {}
+        circumcised_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='circumcised',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        uncircumcised_options = {}
+        uncircumcised_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='uncircumcised',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            has_tested='Yes',
+            when_hiv_test='1 to 5 months ago',
+            has_record='Yes',
+            verbal_hiv_result='POS',
+            other_record='No'
+            )
+
+        HivTestReview.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            hiv_test_date=datetime.today() - timedelta(days=50),
+            recorded_hiv_result='POS',
+            )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
