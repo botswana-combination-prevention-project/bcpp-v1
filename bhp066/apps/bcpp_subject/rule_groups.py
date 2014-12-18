@@ -54,8 +54,8 @@ def func_art_naive(visit_instance):
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
-    past_visit = func_previous_visit_instance(visit_instance)
-    if func_know_pos_in_prev_year(past_visit):
+    #past_visit = func_previous_visit_instance(visit_instance)
+    if func_known_pos_in_prev_year(visit_instance):
         do_pima = False
     elif func_art_naive(visit_instance):
         do_pima = True
@@ -98,7 +98,7 @@ def func_show_microtube(visit_instance):
         show_micro = True
     elif not func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
         show_micro = False
-    elif func_know_pos_in_prev_year(visit_instance):
+    elif func_known_pos_in_prev_year(visit_instance):
         show_micro = False
     elif func_hiv_positive_today(visit_instance) and not past_visit:
         show_micro = False
@@ -110,9 +110,9 @@ def func_show_microtube(visit_instance):
 def func_todays_hiv_result_required(visit_instance):
     """Returns True if the an HIV test is required."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    if subject_status_helper.todays_hiv_result and not func_know_pos_in_prev_year(visit_instance):
+    if subject_status_helper.todays_hiv_result and not func_known_pos_in_prev_year(visit_instance):
         return True
-    if not func_hiv_positive_today(visit_instance) and not func_know_pos_in_prev_year(visit_instance):
+    if not func_hiv_positive_today(visit_instance) and not func_known_pos_in_prev_year(visit_instance):
         return True
     return False
 
@@ -194,7 +194,7 @@ def func_not_required(visit_instance):
     return True
 
 
-def func_know_pos_in_prev_year(visit_instance):
+def func_known_pos_in_prev_year(visit_instance):
     past_visit = func_previous_visit_instance(visit_instance)
     pos_in_yr1 = func_hiv_positive_today(past_visit) or func_known_pos(past_visit)
     return pos_in_yr1
@@ -216,7 +216,9 @@ def circumsised_in_past(visit_instance):
 
 
 def func_should_not_show_circumsition(visit_instance):
-    return is_gender_female(visit_instance) or circumsised_in_past(visit_instance)
+    show_cicumsition = (is_gender_female(visit_instance) or circumsised_in_past(visit_instance) 
+                        or (func_known_pos(visit_instance) or func_known_pos(func_previous_visit_instance(visit_instance))))
+    return show_cicumsition
 
 
 def is_gender_male(visit_instance):
@@ -253,7 +255,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
 
     known_pos_in_y1 = ScheduledDataRule(
         logic=Logic(
-            predicate=func_know_pos_in_prev_year,
+            predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
         target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'pima'])
@@ -600,6 +602,13 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
+
+    known_pos_circumcised = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_should_not_show_circumsition,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['circumcised', 'uncircumcised', 'circumcision'])
 
     class Meta:
         abstract = True
