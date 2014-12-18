@@ -45,6 +45,9 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
     def registered_subject(self):
         return self.get_registered_subject()
 
+    def dispatch_container_lookup(self):
+        return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
+
     def get_requisition(self):
         """Confirms the visit code and visit reason before
         updating the VL requisition metadata status to NEW."""

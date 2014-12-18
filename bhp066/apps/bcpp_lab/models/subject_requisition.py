@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
+from edc.constants import YES, NO
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
@@ -13,7 +14,7 @@ from apps.bcpp_subject.models import SubjectVisit
 from ..managers import SubjectRequisitionManager
 
 from .aliquot_type import AliquotType
-from .packing_list import PackingList
+# from .packing_list import PackingList
 from .panel import Panel
 
 
@@ -21,7 +22,7 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
-    packing_list = models.ForeignKey(PackingList, null=True, blank=True)
+    # packing_list = models.ForeignKey(PackingList, null=True, blank=True)
 
     aliquot_type = models.ForeignKey(AliquotType)
 
@@ -43,10 +44,30 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
         return '{0} {1}'.format(unicode(self.panel), self.requisition_identifier)
 
     def get_site_code(self):
-        return site_mappers.get_current_mapper().map_code
+        return site_mappers.get(self.community).map_code
 
     def get_visit(self):
         return self.subject_visit
+
+    @property
+    def registered_subject(self):
+        return self.subject_visit.appointment.registered_subject
+
+    @property
+    def visit_code(self):
+        return self.subject_visit.appointment.visit_definition.code
+
+    @property
+    def optional_description(self):
+        """Returns additional text for the packing list item description. See PackingListHelper."""
+        try:
+            SubjectReferral = models.get_model('bcpp_subject', 'SubjectReferral')
+            subject_referral = SubjectReferral.objects.get(subject_visit=self.subject_visit)
+            return 'HIV:{} CD4:{} ART:{}'.format(
+                subject_referral.hiv_result, subject_referral.cd4_result,
+                YES if subject_referral.on_art else NO)
+        except AttributeError as e:
+            return ''
 
     def dispatch_container_lookup(self, using=None):
         return (('bcpp_household', 'Plot'),
@@ -62,3 +83,4 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
         app_label = 'bcpp_lab'
         verbose_name = 'Subject Requisition'
         unique_together = ('subject_visit', 'panel', 'is_drawn')
+        ordering = ('-created', )

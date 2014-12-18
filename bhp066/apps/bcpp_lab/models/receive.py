@@ -39,3 +39,4 @@ class Receive(BaseReceive):
 
     class Meta:
         app_label = 'bcpp_lab'
+        ordering = ('-created', )

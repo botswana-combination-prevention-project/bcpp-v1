@@ -22,7 +22,7 @@ class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
 
     form = SubjectRequisitionForm
     label_template_name = 'requisition_label'
-    actions = [print_requisition_label, 
+    actions = [print_requisition_label,
                export_as_csv_action("Export as csv", fields=[], delimiter=',', exclude=['id', 'revision',
                                                                                         'hostname_created',
                                                                                         'hostname_modified',
