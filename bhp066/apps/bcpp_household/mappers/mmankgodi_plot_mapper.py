@@ -29,10 +29,10 @@ class MmankgodiPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2014, 10, 18),
-            full_enrollment_date=date(2014, 12, 19),
-            end_date=date(2014, 12, 19),
-            smc_start_date=date(2015, 11, 7)),
+            start_date=date(2015, 1, 16),
+            full_enrollment_date=date(2015, 2, 6),
+            end_date=date(2015, 2, 13),
+            smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
