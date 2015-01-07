@@ -122,10 +122,9 @@ class HouseholdDashboard(Dashboard):
     @property
     def household_info(self):
         try:
-            if not self.current_survey:
-                household_info = HouseholdInfo.objects.get(
-                    household_structure=self.household_structure)
-                return household_info
+            household_info = HouseholdInfo.objects.get(
+                household_structure=self.household_structure)
+            return household_info
         except HouseholdInfo.DoesNotExist:
             return None
 
