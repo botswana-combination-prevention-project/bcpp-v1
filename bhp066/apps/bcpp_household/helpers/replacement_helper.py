@@ -106,7 +106,7 @@ class ReplacementHelper(object):
         return Survey.objects.using('default').get(datetime_start=first_survey_start_datetime)
 
     @property
-    def replacement_reason(self):
+    def household_replacement_reason(self):
         replacement_reason = None
         if self.plot.status == RESIDENTIAL_HABITABLE:
             if self.household_structure.refused_enumeration:
@@ -123,6 +123,10 @@ class ReplacementHelper(object):
         return replacement_reason
 
     @property
+    def plot_replacement_reason(self):
+        return 'replaced. NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE 5% plot'
+
+    @property
     def replaceable_household(self):
         """Returns True if a household meets the criteria to be replaced by a plot.
 
@@ -133,7 +137,7 @@ class ReplacementHelper(object):
         # self.replacement_reason = None
         if self.household.replaced_by or self.household.enrolled:
             return False
-        if self.replacement_reason:
+        if self.household_replacement_reason:
             replaceable = True
 #         try:
 #             if self.plot.status == RESIDENTIAL_HABITABLE:
@@ -165,11 +169,9 @@ class ReplacementHelper(object):
         Also, a plot, that is added as a replacement, itself can be replaced if not yet enrolled
         and residential habitable."""
         replaceable = False
-        self.replacement_reason = None
         if not self.plot.replaced_by and not self.plot.bhs and self.plot.selected == FIVE_PERCENT:
             if self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE]:
                 replaceable = True
-                self.replacement_reason = 'replaced. NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE 5% plot'
         return replaceable
 
     def replaceable_households(self, using_producer=None):
@@ -279,7 +281,7 @@ class ReplacementHelper(object):
                                 replacing_item=plot.plot_identifier,
                                 replaced_item=replaceable_household.household_identifier,
                                 replacement_datetime=datetime.now(),
-                                replacement_reason=self.replacement_reason)
+                                replacement_reason=self.household_replacement_reason)
                         new_bhs_plots.append(plot)
                         self.recently_replaced['households'].append(replaceable_household)
                     except Household.DoesNotExist:
@@ -328,7 +330,7 @@ class ReplacementHelper(object):
                                 replacing_item=available_plot.plot_identifier,
                                 replaced_item=replaceable_plot.plot_identifier,
                                 replacement_datetime=datetime.now(),
-                                replacement_reason=self.replacement_reason)
+                                replacement_reason=self.plot_replacement_reason)
                         new_bhs_plots.append(available_plot)
                         self.recently_replaced['plots'].append(replaceable_plot)
                     except Plot.DoesNotExist:
