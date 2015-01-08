@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
+from edc.base.model.fields import OtherCharField
 
 from apps.bcpp.choices import DXCANCER_CHOICE
 
@@ -23,6 +24,8 @@ class Cancer (BaseScheduledVisitModel):
         max_length=45,
         choices=DXCANCER_CHOICE,
         help_text="")
+
+    reason_other = OtherCharField()
 
     history = AuditTrail()
 
