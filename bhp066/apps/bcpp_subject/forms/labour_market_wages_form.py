@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.util import ErrorList
-from ..models import LabourMarketWages, Grant
+from ..models import LabourMarketWages, Grant, SubjectLocator
 from .base_subject_model_form import BaseSubjectModelForm
 
 from ..choices import MONTHLY_INCOME, HOUSEHOLD_INCOME
@@ -16,7 +16,14 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
 #             if not grant:
 #                 raise forms.ValidationError('You are to answer questions about Grant')
 #         #return cleaned_data
-
+        try:
+            subject_locator = SubjectLocator.objects.get(subject_visit=cleaned_data.get('employed'))
+            if subject_locator.may_call_work == 'Yes' and cleaned_data.get('employed') == 'not working':
+                raise forms.ValidationError(
+                    'Participant gave permission to be contacted at WORK in the subject locator, \
+                    but now reports to be \'Not Working\'. Either correct this form or change answer in the Locator')
+        except SubjectLocator.DoesNotExist:
+            pass
         employed = ['government sector', 'private sector', 'self-employed working on my own',
                     'self-employed with own employees']
         employed_none = ['occupation', 'monthly_income', 'salary_payment']
