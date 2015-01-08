@@ -1,6 +1,6 @@
 from django import forms
 
-from ..models import Education
+from ..models import Education, SubjectLocator
 
 from .base_subject_model_form import BaseSubjectModelForm
 
@@ -10,6 +10,14 @@ class EducationForm (BaseSubjectModelForm):
     def clean(self):
         cleaned_data = super(EducationForm, self).clean()
         # validating not working
+        try:
+            subject_locator = SubjectLocator.objects.get(subject_visit=cleaned_data.get('employed'))
+            if subject_locator.may_call_work == 'Yes' and cleaned_data.get('working') == 'No':
+                raise forms.ValidationError(
+                    'Participant gave permission to be contacted at WORK in the subject locator, \
+                    but now reports to be \'Not Working\'. Either correct this form or change answer in the Locator')
+        except SubjectLocator.DoesNotExist:
+            pass
         if cleaned_data.get('working', None) == 'No' and cleaned_data.get('job_type', None):
             raise forms.ValidationError('If participant is not working, do not give job type')
         if cleaned_data.get('working', None) == 'No' and cleaned_data.get('job_description', None):
