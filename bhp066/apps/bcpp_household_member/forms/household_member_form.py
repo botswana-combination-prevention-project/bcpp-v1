@@ -3,7 +3,7 @@ from django.forms.util import ErrorList
 
 from edc.constants import DEAD, NO, UNKNOWN, YES
 
-from ..models import HouseholdMember, EnrollmentChecklist
+from ..models import HouseholdMember, EnrollmentChecklist, HouseholdInfo
 
 from .base_household_member_form import BaseHouseholdMemberForm
 from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
