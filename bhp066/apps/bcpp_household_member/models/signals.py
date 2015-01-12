@@ -128,6 +128,8 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
         if isinstance(instance, HouseholdMember):
             # update registered subject
             instance.update_registered_subject_on_post_save(using, **kwargs)
+            members = HouseholdMember.objects.filter(household_structure__household__plot=instance.household_structure.household.plot).count()
+            instance.update_plot_on_post_save(instance, members)
 
             try:
                 household_structure = HouseholdStructure.objects.using(using).get(
