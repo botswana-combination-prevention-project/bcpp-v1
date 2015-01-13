@@ -19,7 +19,7 @@ class MmathethePlotMapper(BasePlotMapper):
 
     landmarks = MMATHETHE_LANDMARKS
 
-    intervention = True
+    intervention = False
 
     gps_center_lat = -25.320035
     gps_center_lon = 25.266402
