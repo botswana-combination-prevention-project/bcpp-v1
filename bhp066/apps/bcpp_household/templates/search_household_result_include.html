@@ -18,7 +18,8 @@
 	</thead>	
     {% for household_structure in search_result.object_list %}
         <!-- obj is a Household object -->
-
+		
+		{% if household_structure.survey.survey_name == current_survey.survey_name %}
         <tr class="{% cycle 'row1' 'row2' %}">
         <td>{{household_structure.household.household_identifier}}-{{ household_structure.survey.survey_abbrev}}</td>
 
@@ -71,6 +72,7 @@
         <td>{{ household_structure.household.created|date:"Y-m-d" }}{% if household_structure.household.modified%} / {% endif%}{{ household_structure.household.modified|date:"Y-m-d" }}</td> 
         <td>{{ household_structure.household.hostname_created }}{% if household_structure.household.hostname_modified%} / {% endif%}{{ household_structure.household.hostname_modified }}</td> 
         </tr>
+       {% endif %}
 	{% endfor %}
 </table>
 </div>
