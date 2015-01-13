@@ -19,7 +19,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
 
     landmarks = MMANKGODI_LANDMARKS
 
-    intervention = False
+    intervention = True
 
     gps_center_lat = -24.729571
     gps_center_lon = 25.649351
