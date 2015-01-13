@@ -62,21 +62,24 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
         WIDGET = 1
         form = super(SubjectVisitModelAdmin, self).get_form_post(form, request, obj, **kwargs)
         if form.optional_attrs:
-            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-            if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
-                for fld in form.base_fields.iteritems():
-                    try:
-                        fld[WIDGET].label = form.optional_attrs[ANNUAL]['label'][fld[NAME]]
-                    except KeyError:
-                        pass
-                    try:
-                        fld[WIDGET].help_text = form.optional_attrs[ANNUAL]['help_text'][fld[NAME]]
-                    except KeyError:
-                        pass
-                    try:
-                        fld[WIDGET].required = form.optional_attrs[ANNUAL]['required'][fld[NAME]]
-                    except KeyError:
-                        pass
+            try:
+                self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
+                if self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
+                    for fld in form.base_fields.iteritems():
+                        try:
+                            fld[WIDGET].label = form.optional_attrs[ANNUAL]['label'][fld[NAME]]
+                        except KeyError:
+                            pass
+                        try:
+                            fld[WIDGET].help_text = form.optional_attrs[ANNUAL]['help_text'][fld[NAME]]
+                        except KeyError:
+                            pass
+                        try:
+                            fld[WIDGET].required = form.optional_attrs[ANNUAL]['required'][fld[NAME]]
+                        except KeyError:
+                            pass
+            except SubjectVisit.DoesNotExist:
+                pass
         return form
 
     def formfield_for_choice_field(self, db_field, request=None, **kwargs):
