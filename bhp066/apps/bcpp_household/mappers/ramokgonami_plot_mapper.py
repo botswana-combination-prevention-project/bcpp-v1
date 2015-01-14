@@ -7,17 +7,17 @@ from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, MMANKGODI_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, RAMOKGONAMI_LANDMARKS
 
 
-class MmankgodiPlotMapper(BasePlotMapper):
+class RamokgonamiPlotMapper(BasePlotMapper):
 
-    map_area = 'mmankgodi'
-    map_code = '19'
+    map_area = 'ramokgonami'
+    map_code = '24'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = MMANKGODI_LANDMARKS
+    landmarks = RAMOKGONAMI_LANDMARKS
 
     intervention = True
 
@@ -29,7 +29,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 1),
+            start_date=date(2015, 1, 16),
             full_enrollment_date=date(2015, 2, 6),
             end_date=date(2015, 2, 13),
             smc_start_date=date(2015, 2, 13)),
@@ -43,7 +43,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((TH, ), None),
+            'IDCC': ClinicDaysTuple((MO, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
@@ -54,4 +54,4 @@ class MmankgodiPlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(MmankgodiPlotMapper)
+site_mappers.register(RamokgonamiPlotMapper)
