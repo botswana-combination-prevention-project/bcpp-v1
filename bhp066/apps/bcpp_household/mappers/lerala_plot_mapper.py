@@ -53,4 +53,4 @@ class LeralaPlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(MmankgodiPlotMapper)
+site_mappers.register(LeralaPlotMapper)
