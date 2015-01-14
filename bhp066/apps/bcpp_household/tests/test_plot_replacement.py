@@ -137,7 +137,10 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default',
                                                using_destination=producer.name,
                                                dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
+#         bcpp_dispatch.dispatch()
+        lis = replacement_helper.replaceable_plots()
+        for l in list(lis):
+            print l
         self.assertEquals(replacement_helper.replaceable_plots(), [plot])
         self.teardown(producer.name)
 
