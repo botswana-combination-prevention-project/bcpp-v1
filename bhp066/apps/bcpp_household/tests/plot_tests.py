@@ -1,22 +1,22 @@
 from datetime import datetime
-
+ 
 from django import forms
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-
+ 
 from edc.map.classes import site_mappers, Mapper
 from edc.map.exceptions import MapperError
-
+ 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_survey.tests.factories import SurveyFactory
-
+ 
 from ..forms import PlotForm
 from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
-
+ 
 from .factories import PlotFactory, PlotLogEntryFactory
-
-
+ 
+ 
 class TestPlotMapper(Mapper):
     map_area = 'test_community'
     map_code = '999'
@@ -27,26 +27,26 @@ class TestPlotMapper(Mapper):
     gps_center_lon = 25.741111
     radius = 5.5
     location_boundary = ()
-
+ 
 site_mappers.register(TestPlotMapper)
-
-
+ 
+ 
 class PlotTests(TestCase):
-
+ 
     def setUp(self):
         SurveyFactory()
-
+ 
     def test_plot_creates_household1(self):
         """if you create a plot as residential_habitable, should create one household."""
-
+ 
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
-
+ 
     def test_plot_creates_household2(self):
         """if you create a plot with two households should create two households."""
         plot = PlotFactory(community='test_community', household_count=2, status='residential_habitable')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
-
+ 
     def test_plot_creates_household3(self):
         """if you change a plot by adding a second households should create another household."""
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
@@ -54,12 +54,12 @@ class PlotTests(TestCase):
         plot.household_count = 2
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
-
+ 
     def test_plot_creates_household4(self):
         """if you create a plot as None, should create one household."""
         plot = PlotFactory(community='test_community', household_count=0, status=None)
         self.assertEqual(Household.objects.filter(plot=plot).count(), 0)
-
+ 
     def test_plot_deletes_household1(self):
         """if you change a plot by subtracting a household should delete last created household."""
         plot = PlotFactory(community='test_community', household_count=2, status='residential_habitable')
@@ -67,7 +67,7 @@ class PlotTests(TestCase):
         plot.household_count = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
-
+ 
     def test_plot_deletes_household2(self):
         """if you change a plot by subtracting a household should delete last created household."""
         plot = PlotFactory(community='test_community', household_count=2, status='residential_habitable')
@@ -81,7 +81,7 @@ class PlotTests(TestCase):
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
         self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
-
+ 
     def test_plot_deletes_household3(self):
         """if you create 3 plots, add log entries for two and change the plot by subtracting two households, should delete one."""
         #create a plot with 3 households
@@ -107,7 +107,7 @@ class PlotTests(TestCase):
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
         self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
-
+ 
     def test_plot_deletes_household4(self):
         """if you create 3 plots, add members for two and change the plot by subtracting two households, should delete one."""
         #create a plot with 3 households
@@ -132,7 +132,7 @@ class PlotTests(TestCase):
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
         self.assertEqual(HouseholdStructure.objects.filter(household__plot=plot).count(), 2)
         self.assertEqual(HouseholdLog.objects.filter(household_structure__household__plot=plot).count(), 2)
-
+ 
     def test_plot_add_households(self):
         """if you add and delete and add back, household identifier should still be unique."""
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
@@ -172,12 +172,12 @@ class PlotTests(TestCase):
         print [hh.household_identifier for hh in Household.objects.filter(plot=plot)]
         plot.household_count = 10
         self.assertRaises(ValidationError, plot.save)
-
+ 
     def test_only_residential_habitable_have_households(self):
         self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=1, status='non-residential')
         self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=1, status='residential_not_habitable')
         self.assertRaises(ValidationError, PlotFactory, community='test_community', household_count=0, status='residential_habitable')
-
+ 
     def test_plot_confirms_plot_and_household(self):
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable', gps_target_lat=-25.011111, gps_target_lon=25.741111)
         self.assertEqual(Household.objects.get(plot=plot).action, 'unconfirmed')
@@ -187,7 +187,7 @@ class PlotTests(TestCase):
         plot.gps_minutes_e = .741111 * 60
         plot.save()
         self.assertEqual(Plot.objects.get(pk=plot.pk).action, 'confirmed')
-
+ 
     def test_plot_verifies_gps1(self):
         """accepts gps within community boundary."""
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
@@ -197,7 +197,7 @@ class PlotTests(TestCase):
         plot.gps_minutes_s = .01000 * 60
         plot.gps_minutes_e = .74000 * 60
         self.assertIsNone(plot.save())
-
+ 
     def test_plot_verifies_gps2(self):
         """rejects gps not within community boundary."""
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
@@ -207,7 +207,7 @@ class PlotTests(TestCase):
         plot.gps_minutes_e = 22
         plot.gps_minutes_s = 22
         self.assertRaisesRegexp(MapperError, 'does not fall within this community', plot.save)
-
+ 
     def test_plot_form_verifies_gps1(self):
         """plot_form catches error if gps not within community boundary."""
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
@@ -219,19 +219,19 @@ class PlotTests(TestCase):
         plot_form.instance = plot
         plot_form.cleaned_data = {}
         self.assertRaisesRegexp(forms.ValidationError, 'does not fall within this community', plot_form.clean)
-
+ 
     def test_plot_gets_community1(self):
         """Plot DOES NOT get community from settings if None"""
         self.assertRaisesRegexp(ValidationError, 'Attribute \'community\' may not be None for model', PlotFactory, household_count=1, status='residential_habitable')
-
+ 
     def test_plot_community1(self):
         """Plot does not save if community is None"""
         self.assertRaisesRegexp(ValidationError, 'Attribute \'community\' may not be None for model', PlotFactory, household_count=1, status='residential_habitable', community=None)
-
+ 
     def test_plot_community2(self):
         """Plot does not save if community is not valid community from mapper classes."""
         self.assertRaisesRegexp(MapperError, 'invalid_community_name is not a valid mapper ', PlotFactory, household_count=1, status='residential_habitable', community='invalid_community_name')
-
+ 
     def test_plot_save_on_change(self):
         """Allows change of residential_habitable plot even though no log entry or members have been added yet."""
         plot = PlotFactory(status=None, community='test_community')
@@ -239,7 +239,7 @@ class PlotTests(TestCase):
         plot.household_count = 1
         self.assertIsNone(plot.save())
         self.assertIsNone(plot.save())
-
+ 
     def test_plot_save_on_change2(self):
         """Allows change of residential_habitable plot even though no log entry or members have been added yet."""
         plot = PlotFactory(status=None, community='test_community')
@@ -250,7 +250,7 @@ class PlotTests(TestCase):
         HouseholdStructure.objects.filter(household=household).delete()
         household.delete()
         self.assertIsNone(plot.save())
-
+ 
     def test_plot_visit_attempts(self):
         from ..models import PlotLog
         plot = PlotFactory(status=None, community='test_community')

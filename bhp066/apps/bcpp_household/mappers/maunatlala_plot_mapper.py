@@ -7,29 +7,29 @@ from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, SEFOPHE_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, MAUNATLALA_LANDMARKS
 
 
-class SefophePlotMapper(BasePlotMapper):
+class MaunatlalaPlotMapper(BasePlotMapper):
 
-    map_area = 'sefophe'
-    map_code = '22'
+    map_area = 'maunatlala'
+    map_code = '23'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = SEFOPHE_LANDMARKS
+    landmarks = MAUNATLALA_LANDMARKS
 
-    intervention = False
+    intervention = True
 
-    gps_center_lat = -25.320035
-    gps_center_lon = 25.266402
+    gps_center_lat = -24.729571
+    gps_center_lon = 25.649351
     radius = 5.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 19),
+            start_date=date(2015, 1, 16),
             full_enrollment_date=date(2015, 2, 6),
             end_date=date(2015, 2, 13),
             smc_start_date=date(2015, 2, 13)),
@@ -43,7 +43,7 @@ class SefophePlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((TU, TH), None),
+            'IDCC': ClinicDaysTuple((MO, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
@@ -54,4 +54,4 @@ class SefophePlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(SefophePlotMapper)
+site_mappers.register(MaunatlalaPlotMapper)
