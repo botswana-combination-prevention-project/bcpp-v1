@@ -61,7 +61,11 @@ class Command(BaseCommand):
                 try:
                     DispatchItemRegister.objects.get(item_model_name='plot', item_pk=plt.id)
                 except DispatchItemRegister.DoesNotExist:
-                    print 'Plot identifier={}, in 5% which Replaces \'{}\' is NOT DISPATCHED'.format(plt.plot_identifier,
-                                                                                                     plt.replaces)
+                    replaced = DispatchItemRegister.objects.get(item_identifier=plt.replaces)
+                    print 'Plot identifier={}, in 5% which Replaces \'{}\' is NOT DISPATCHED. {} is in producer {}'.format(
+                                                                                                     plt.plot_identifier,
+                                                                                                     plt.replaces,
+                                                                                                     plt.plot_identifier,
+                                                                                                     replaced.producer.name)
         print 'DONE'
         print '================================='
