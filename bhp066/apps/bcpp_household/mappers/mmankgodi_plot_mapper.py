@@ -29,7 +29,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 16),
+            start_date=date(2015, 1, 1),
             full_enrollment_date=date(2015, 2, 6),
             end_date=date(2015, 2, 13),
             smc_start_date=date(2015, 2, 13)),
@@ -43,7 +43,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((TH, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
