@@ -603,12 +603,12 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['hicenrollment'])
 
-    known_pos_circumcised = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_should_not_show_circumsition,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['circumcised', 'uncircumcised', 'circumcision'])
+#     known_pos_circumcised = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_should_not_show_circumsition,
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['circumcised', 'uncircumcised', 'circumcision'])
 
     class Meta:
         abstract = True
@@ -667,6 +667,13 @@ site_rule_groups.register(RequisitionRuleGroup2)
 
 class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
+    known_pos_circumcised_2 = ScheduledDataRule(
+    logic=Logic(
+        predicate=func_should_not_show_circumsition,
+        consequence='not_required',
+        alternative='new'),
+    target_model=['circumcised', 'uncircumcised', 'circumcision'])
+
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -675,6 +682,13 @@ site_rule_groups.register(RequisitionRuleGroup3)
 
 
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
+
+    known_pos_circumcised_3 = ScheduledDataRule(
+    logic=Logic(
+        predicate=func_should_not_show_circumsition,
+        consequence='not_required',
+        alternative='new'),
+    target_model=['circumcised', 'uncircumcised', 'circumcision'])
 
     class Meta:
         app_label = 'bcpp_subject'
