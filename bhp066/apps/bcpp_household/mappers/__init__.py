@@ -12,3 +12,5 @@ from .mmathethe_plot_mapper import MmathethePlotMapper
 from .mmankgodi_plot_mapper import MmankgodiPlotMapper
 from .maunatlala_plot_mapper import MaunatlalaPlotMapper
 from .ramokgonami_plot_mapper import RamokgonamiPlotMapper
+from .lerala_plot_mapper import LeralaPlotMapper
+from .sefophe_plot_mapper import SefophePlotMapper
