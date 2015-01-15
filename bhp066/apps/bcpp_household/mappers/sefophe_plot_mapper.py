@@ -3,10 +3,11 @@ from datetime import date
 
 from edc.map.classes import site_mappers
 
+from ..constants import BASELINE_SURVEY_SLUG
+from ..utils import ClinicDaysTuple, SurveyDatesTuple
+
 from .base_plot_mapper import BasePlotMapper
 from .choices import SECTIONS, SUB_SECTIONS, SEFOPHE_LANDMARKS
-
-from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 
 class SefophePlotMapper(BasePlotMapper):
@@ -20,18 +21,18 @@ class SefophePlotMapper(BasePlotMapper):
 
     intervention = False
 
-    gps_center_lat = -22.190544
-    gps_center_lon = 27.963424
+    gps_center_lat = -25.320035
+    gps_center_lon = 25.266402
     radius = 5.5
     location_boundary = ()
 
     survey_dates = {
-        'bcpp-year-1': SurveyDatesTuple(
+        BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2014, 10, 18),
-            full_enrollment_date=date(2014, 12, 19),
-            end_date=date(2014, 12, 19),
-            smc_start_date=date(2015, 11, 7)),
+            start_date=date(2015, 1, 19),
+            full_enrollment_date=date(2015, 2, 6),
+            end_date=date(2015, 2, 13),
+            smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
@@ -41,11 +42,11 @@ class SefophePlotMapper(BasePlotMapper):
     }
 
     clinic_days = {
-        'bcpp-year-1': {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+        BASELINE_SURVEY_SLUG: {
+            'IDCC': ClinicDaysTuple((TU, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
-            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-1'].smc_start_date)},
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
             'IDCC': ClinicDaysTuple((MO, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
