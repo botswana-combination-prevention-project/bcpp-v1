@@ -1062,47 +1062,47 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
 
-    def test_circumsition_for_known_pos(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
-
-        circumsition_options = {}
-        circumsition_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcision',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        circumcised_options = {}
-        circumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcised',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        uncircumcised_options = {}
-        uncircumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='uncircumcised',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        HivTestingHistory.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
-            when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
-
-        HivTestReview.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+#     def test_circumsition_for_known_pos(self):
+#         self.subject_visit_male_T0.delete()
+#         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+#         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+# 
+#         circumsition_options = {}
+#         circumsition_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='circumcision',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         circumcised_options = {}
+#         circumcised_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='circumcised',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         uncircumcised_options = {}
+#         uncircumcised_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='uncircumcised',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         HivTestingHistory.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             has_tested='Yes',
+#             when_hiv_test='1 to 5 months ago',
+#             has_record='Yes',
+#             verbal_hiv_result='POS',
+#             other_record='No'
+#             )
+# 
+#         HivTestReview.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             hiv_test_date=datetime.today() - timedelta(days=50),
+#             recorded_hiv_result='POS',
+#             )
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
 
     def test_pos_in_y1_no_hiv_forms(self):
         self.subject_visit_male_T0.delete()
