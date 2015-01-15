@@ -501,13 +501,20 @@ class CircumcisionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['uncircumcised'])
 
+#     not_sure_circumcised = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=('circumcised', 'equals', 'Not Sure'),
+#             consequence='not_required',
+#             alternative='none'),
+#         target_model=['uncircumcised', 'circumcised'])
+
     # if circumcised do not require circumcision forms again
-    circumcised_annual = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_circumcision,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['circumcised', 'uncircumcised'])
+#     circumcised_annual = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_circumcision,
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=['circumcised', 'uncircumcised'])
 
     class Meta:
         app_label = 'bcpp_subject'
