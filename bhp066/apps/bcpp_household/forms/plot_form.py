@@ -4,7 +4,7 @@ from django.conf import settings
 from edc.base.form.forms import BaseModelForm
 from edc.map.classes import site_mappers
 
-from ..models import Plot
+from ..models import Plot, PlotLog, PlotLogEntry
 
 
 class PlotForm(BaseModelForm):
@@ -55,6 +55,17 @@ class PlotForm(BaseModelForm):
         mapper.verify_gps_to_target(gps_lat, gps_lon, self.instance.gps_target_lat,
                                     self.instance.gps_target_lon, self.instance.target_radius,
                                     forms.ValidationError)
+
+        # Check for plot log entry completion before allowing plot confirmation
+        if (cleaned_data.get('gps_degrees_s') and 
+                cleaned_data.get('gps_minutes_s') and
+                    cleaned_data.get('gps_degrees_e') and
+                        cleaned_data.get('gps_minutes_e')):
+            try:
+                PlotLog.objects.get(plot=self.instance)
+            except PlotLog.DoesNotExist:
+                raise forms.ValidationError(
+                    'Please add a plot log entry before saving')
 
         if not cleaned_data.get('household_count') and cleaned_data.get('status') in ['residential_habitable']:
             raise forms.ValidationError('Invalid number of households for plot that is {0}. '
