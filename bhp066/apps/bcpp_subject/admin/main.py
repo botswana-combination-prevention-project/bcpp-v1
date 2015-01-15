@@ -102,7 +102,8 @@ class TubercolosisAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
        "date_tb",
-       'dx_tb',)
+       'dx_tb',
+       'dx_tb_other',)
     radio_fields = {
         "dx_tb": admin.VERTICAL, }
     instructions = [("Note to Interviewer: This form is to be filled for all participants"
