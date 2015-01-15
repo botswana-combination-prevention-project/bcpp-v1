@@ -216,8 +216,8 @@ def circumsised_in_past(visit_instance):
 
 
 def func_should_not_show_circumsition(visit_instance):
-    show_cicumsition = (is_gender_female(visit_instance) or circumsised_in_past(visit_instance) 
-                        or (func_known_pos(visit_instance) or func_known_pos(func_previous_visit_instance(visit_instance))))
+    show_cicumsition = is_gender_female(visit_instance) or circumsised_in_past(visit_instance) 
+#                         or (func_known_pos(visit_instance) or func_known_pos(func_previous_visit_instance(visit_instance))))
     return show_cicumsition
 
 
