@@ -1,10 +1,11 @@
-import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+from datetime import datetime
+
 from ...models import Circumcision
 
+from ..factories import BaseScheduledModelFactory
 
-class CircumcisionFactory(BaseUuidModelFactory):
+
+class CircumcisionFactory(BaseScheduledModelFactory):
     FACTORY_FOR = Circumcision
 
     report_datetime = datetime.today()
