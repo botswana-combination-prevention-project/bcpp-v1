@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.template.loader import render_to_string
 
@@ -124,17 +125,21 @@ class SubjectDashboard(BaseSubjectDashboard):
             elif self.dashboard_model_name == 'visit':
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
-                try:
-                    # TODO: is the appointment really needed??
-                    # when an appointment is available
-                    self._appointment = Appointment.objects.get(registered_subject=self.registered_subject)
-                except Appointment.DoesNotExist:
-                    # when an appointment is not available (i.e. subject has not yet consented)
-                    self._appointment = None
-                except MultipleObjectsReturned:
-                    self._appointment = None
-                except Appointment.MultipleObjectsReturned:
+#                 try:
+#                     # TODO: is the appointment really needed??
+#                     # when an appointment is available
+#                     self._appointment = Appointment.objects.get(registered_subject=self.registered_subject)
+#                 except Appointment.DoesNotExist:
+#                     # when an appointment is not available (i.e. subject has not yet consented)
+#                     self._appointment = None
+#                 except Appointment.MultipleObjectsReturned:
+#                     self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[1]
+                if settings.CURRENT_SURVEY == 'bcpp-year-1':
+                    self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[0]
+                elif settings.CURRENT_SURVEY == 'bcpp-year-2':
                     self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[1]
+                else:
+                    self._appointment = None
             else:
                 self._appointment = None
             self._appointment_zero = None
