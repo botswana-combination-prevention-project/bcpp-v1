@@ -59,8 +59,8 @@ class PlotForm(BaseModelForm):
         # Check for plot log entry completion before allowing plot confirmation
         if (cleaned_data.get('gps_degrees_s') and 
                 cleaned_data.get('gps_minutes_s') and
-                    cleaned_data.get('gps_degrees_e') and
-                        cleaned_data.get('gps_minutes_e')):
+                cleaned_data.get('gps_degrees_e') and
+                cleaned_data.get('gps_minutes_e')):
             try:
                 PlotLog.objects.get(plot=self.instance)
             except PlotLog.DoesNotExist:
