@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from edc.device.dispatch.models import DispatchItemRegister
 
-from apps.bcpp_household.models import Plot
+from apps.bcpp_household.models import Plot, Household
 
 
 class Command(BaseCommand):
@@ -44,28 +44,38 @@ class Command(BaseCommand):
 
     def all_20pcnt_dispatched(self):
         twenty_pcnt = Plot.objects.filter(selected=1)
+        count = 0
         print '================================='
         for plt in twenty_pcnt:
             try:
                 DispatchItemRegister.objects.get(item_model_name='plot', item_pk=plt.id)
             except DispatchItemRegister.DoesNotExist:
+                count += 1
                 print 'Plot identifier={}, in 20% is NOT DISPATCHED'.format(plt.plot_identifier)
+        print 'Total in 20%={}, Total Not Dispatched={}'.format(twenty_pcnt.count(), count)
         print 'DONE'
         print '================================='
 
     def all_replacing_dispatched(self):
         five_pcnt = Plot.objects.filter(selected=2)
+        count = 0
         print '================================='
         for plt in five_pcnt:
             if plt.replaces:
                 try:
                     DispatchItemRegister.objects.get(item_model_name='plot', item_pk=plt.id)
                 except DispatchItemRegister.DoesNotExist:
-                    replaced = DispatchItemRegister.objects.get(item_identifier=plt.replaces)
+                    count += 1
+                    try:
+                        replaced = Plot.objects.get(plot_identifier=plt.replaces)
+                    except Plot.DoesNotExist:
+                        replaced = Household.objects.get(household_identifier=plt.replaces)
+                    replaced_item = DispatchItemRegister.objects.get(item_pk=replaced.id)
                     print 'Plot identifier={}, in 5% which Replaces \'{}\' is NOT DISPATCHED. {} is in producer {}'.format(
                                                                                                      plt.plot_identifier,
                                                                                                      plt.replaces,
                                                                                                      plt.plot_identifier,
-                                                                                                     replaced.producer.name)
+                                                                                                     replaced_item.producer.name)
+        print 'Total in 5%={}, Total Replacing Not Dispatched={}'.format(five_pcnt.count(), count)
         print 'DONE'
         print '================================='
