@@ -12,7 +12,6 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
-from edc.subject.visit_schedule.classes import site_visit_schedules
 from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp_household.models import HouseholdStructure
@@ -21,10 +20,8 @@ from apps.bcpp_subject.tests.factories import HivTestingHistoryFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_household_member.classes  import EnumerationHelper
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_survey.tests.factories import SurveyFactory
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from apps.bcpp_lab.models import Panel, AliquotType
-from apps.bcpp_list.models import Diagnoses
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -32,27 +29,27 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, Pima)
-from .factories import SubjectConsentFactory, SubjectVisitFactory, HivCareAdherenceFactory, MedicalDiagnosesFactory
+from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory)
 
 
-class TestPlotMapper(Mapper):
-    map_area = 'test_community9'
-    map_code = '097'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.033162
-    gps_center_lon = 25.747149
-    radius = 5.5
-    location_boundary = ()
-
-site_mappers.register(TestPlotMapper)
+# class TestPlotMapper(Mapper):
+#     map_area = 'test_community9'
+#     map_code = '097'
+#     regions = []
+#     sections = []
+#     landmarks = []
+#     gps_center_lat = -25.033162
+#     gps_center_lon = 25.747149
+#     radius = 5.5
+#     location_boundary = ()
+# 
+# site_mappers.register(TestPlotMapper)
 
 
 class TestRuleGroup(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'digawana'
+    community = 'mmankgodi'
 
     def setUp(self):
         try:
@@ -69,7 +66,7 @@ class TestRuleGroup(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        study_site = StudySite.objects.get(site_code='12')
+        study_site = StudySite.objects.get(site_code='19')
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
@@ -957,6 +954,72 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
+    def test_normal_circumsition_in_y1(self):
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        circumsition_options = {}
+        circumsition_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='circumcision',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        circumcised_options = {}
+        circumcised_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='circumcised',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        uncircumcised_options = {}
+        uncircumcised_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='uncircumcised',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumsition_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **uncircumcised_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
+
+        circumcition = CircumcisionFactory(subject_visit=self.subject_visit_male_T0,
+                                            circumcised='Yes'
+                                            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='NEG',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        #Enforce that entering an HivResult does not affect Circumcition Meta Data.
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
+
+        circumcition.circumcised = 'No'
+        circumcition.save()
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **uncircumcised_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
+
+        circumcition.circumcised = 'Not Sure'
+        circumcition.save()
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
+
     def test_no_circumsition_in_y2(self):
         self.subject_visit_male_T0.delete()
         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
@@ -999,47 +1062,47 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
 
-    def test_circumsition_for_known_pos(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
-
-        circumsition_options = {}
-        circumsition_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcision',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        circumcised_options = {}
-        circumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='circumcised',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        uncircumcised_options = {}
-        uncircumcised_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='uncircumcised',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        HivTestingHistory.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
-            when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
-
-        HivTestReview.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+#     def test_circumsition_for_known_pos(self):
+#         self.subject_visit_male_T0.delete()
+#         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+#         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+# 
+#         circumsition_options = {}
+#         circumsition_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='circumcision',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         circumcised_options = {}
+#         circumcised_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='circumcised',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         uncircumcised_options = {}
+#         uncircumcised_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='uncircumcised',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         HivTestingHistory.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             has_tested='Yes',
+#             when_hiv_test='1 to 5 months ago',
+#             has_record='Yes',
+#             verbal_hiv_result='POS',
+#             other_record='No'
+#             )
+# 
+#         HivTestReview.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             hiv_test_date=datetime.today() - timedelta(days=50),
+#             recorded_hiv_result='POS',
+#             )
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
 
     def test_pos_in_y1_no_hiv_forms(self):
         self.subject_visit_male_T0.delete()
@@ -1251,6 +1314,11 @@ class TestRuleGroup(TestCase):
             entry__app_label='bcpp_subject',
             entry__model_name='hivresult',
             appointment=self.subject_visit_male.appointment)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
 
         HivResult.objects.create(
              subject_visit=self.subject_visit_male_T0,

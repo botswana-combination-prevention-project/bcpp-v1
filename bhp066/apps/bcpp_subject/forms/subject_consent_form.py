@@ -12,6 +12,7 @@ from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp.choices import GENDER_UNDETERMINED
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household_member.models import HouseholdInfo
 
 from ..models import SubjectConsent
 
@@ -75,6 +76,7 @@ class SubjectConsentForm(BaseBcppConsentForm):
         cleaned_data = super(SubjectConsentForm, self).clean()
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
+        self.household_info(cleaned_data)
         options = cleaned_data
         if 'consent_datetime' not in cleaned_data:
             options.update({'consent_datetime': self.instance.consent_datetime})
@@ -108,6 +110,14 @@ class SubjectConsentForm(BaseBcppConsentForm):
                             configured_community, community))
         except AttributeError:
             pass
+
+    def household_info(self, cleaned_data):
+        try:
+            household_member = cleaned_data.get("household_member")
+            if household_member.relation == 'Head':
+                HouseholdInfo.objects.get(household_member=household_member)
+        except HouseholdInfo.DoesNotExist:
+            raise forms.ValidationError('Complete householdinfo before consenting head of household')
         return cleaned_data
 
     class Meta:

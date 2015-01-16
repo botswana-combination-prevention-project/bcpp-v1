@@ -178,10 +178,53 @@ LETLHAKENG_LANDMARKS = (
 )
 
 MMATHETHE_LANDMARKS = (
-                       )
+    ('Goora Lekgowa Kgotla', -25.327868, 25.273316),
+    ('Goora Mabote Kgotla', -25.325118, 25.273269),
+    ('Goora Morolong Kgotla', -25.328352, 25.266613),
+    ('Goora Siele Kgotla', -25.322832, 25.272935),
+    ('"Goora Tebogo Kgotla', -25.323392, 25.264065),
+    ('High Hill General Dealer & Bar', -25.322399, 25.259474),
+    ('Lutheran Church', -25.322463, 25.275182),
+    ('Mathiba Cemetery', -25.330901, 25.275987),
+    ('Mathiba Ko Boseja Kgotla', -25.313624, 25.273245),
+    ('Mmathethe Clinic', -25.321681, 25.272247),
+    ('Mmathethe JSS', -25.307547, 25.258736),
+    ('Mmathethe Kgotla', -25.323348, 25.271569),
+    ('Mmathethe Primary School', -25.321733, 25.26939),
+    ('Mmathethe Sign (From Goodhope),', -25.336868, 25.269821),
+    ('New RaTebogo Cemetery', -25.334475, 25.257589),
+    ('Old RaTebogo Cemetery', -25.331019, 25.261615),
+    ('Seokomedi Kgotla', -25.323725, 25.268771),
+    ('Tebogo II Kgotla', -25.308592, 25.26407),
+    ('The Shebeen Bar', -25.325569, 25.268062),
+    ('"Tla Seding Day Care', -25.328239, 25.266173)
+)
 
-MMANKGODI_LANDMARKS = ()
+MMANKGODI_LANDMARKS = (
+    ('Black Forest Football Field', -24.734714, 25.638835),
+    ('Bud Enterprises', -24.740159, 25.645822),
+    ('Cemetery 2', -24.729994, 25.655027),
+    ('Chicken Run', -24.73744, 25.657637),
+    ('Horizon Deep', -24.728117, 25.640123),
+    ('Letlole Primary School', -24.722244, 25.651375),
+    ('Mmankgodi Agriculture Demonstr', -24.736538, 25.646306),
+    ('Mmankgodi Clinic', -24.720615, 25.638001),
+    ('Mmankgodi Main Kgotla', -24.722135, 25.644107),
+    ('Mmankgodi Post Office', -24.726449, 25.648647),
+    ('Mmonye Primary School', -24.724899, 25.646344),
+    ('Mofago Investments Shop', -24.730955, 25.65398),
+    ('Moshawa Bar', -24.729396, 25.640817),
+    ('Roman Catholic Church', -24.729274, 25.65127),
+    ('Sunrise Store', -24.726521, 25.657157),
+    ('Unit One Supermarket', -24.729647, 25.64543),
+    ('Water Tank', -24.717696, 25.65977),
+    ('ZCC Church', -24.735205, 25.657261)
+)
 
 SEFOPHE_LANDMARKS = ()
 
 LERALA_LANDMARKS = ()
+
+MAUNATLALA_LANDMARKS = ()
+
+RAMOKGONAMI_LANDMARKS = ()

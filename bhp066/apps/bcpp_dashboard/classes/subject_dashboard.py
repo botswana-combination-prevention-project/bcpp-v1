@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.template.loader import render_to_string
 
@@ -89,7 +90,6 @@ class SubjectDashboard(BaseSubjectDashboard):
         * if no appointment is selected, try to create additional appointments
         """
         appointments = super(BaseSubjectDashboard, self).appointments
-        # appointments are ordered by in time_point 0, 1, 2, ...
         appointment_to_show = []
         for appointment in appointments:
             try:
@@ -125,17 +125,18 @@ class SubjectDashboard(BaseSubjectDashboard):
             elif self.dashboard_model_name == 'visit':
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
-                try:
-                    # TODO: is the appointment really needed??
-                    # when an appointment is available
-                    self._appointment = Appointment.objects.get(registered_subject=self.registered_subject)
-                except Appointment.DoesNotExist:
-                    # when an appointment is not available (i.e. subject has not yet consented)
+                if settings.CURRENT_SURVEY == 'bcpp-year-1':
+                    try:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
+                    except Appointment.DoesNotExist:
+                        self._appointment = None
+                elif settings.CURRENT_SURVEY == 'bcpp-year-2':
+                    try:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
+                    except Appointment.DoesNotExist:
+                        self._appointment = None
+                else:
                     self._appointment = None
-                except MultipleObjectsReturned:
-                    self._appointment = None
-                except Appointment.MultipleObjectsReturned:
-                    self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[1]
             else:
                 self._appointment = None
             self._appointment_zero = None
