@@ -56,6 +56,8 @@ elif socket.gethostname() == 'One-2.local':
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 elif socket.gethostname() == 'silverapple':
     KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+elif socket.gethostname() == 'bcpp-tsetsiba':
+    KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
 else:
     # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
