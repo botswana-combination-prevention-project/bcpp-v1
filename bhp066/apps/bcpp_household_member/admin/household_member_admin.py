@@ -40,6 +40,7 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
               'age_in_years',
               'present_today',
               'inability_to_participate',
+              'inability_to_participate_other',
               'study_resident',
               'relation']
 
