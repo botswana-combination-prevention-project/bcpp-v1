@@ -14,6 +14,7 @@ from edc.map.classes import site_mappers, Mapper
 from edc.device.sync.utils import load_producer_db_settings, update_producer_from_settings
 from edc.device.sync.tests.factories import ProducerFactory
 from edc.device.sync.helpers import TransactionHelper
+from edc.device.dispatch.models.dispatch_item_register import DispatchItemRegister
 
 from apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from apps.bcpp_dispatch.classes import BcppDispatchController
@@ -115,7 +116,7 @@ class TestPlotReplacement(TestCase):
         self.startup()
         plot = PlotFactory(
             community='test_community',
-            household_count=1,
+            household_count=0,
             status=NON_RESIDENTIAL,
             eligible_members=3,
             description="A blue house with yellow screen wall",
@@ -137,17 +138,25 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default',
                                                using_destination=producer.name,
                                                dispatch_container_instance=plot)
-#         bcpp_dispatch.dispatch()
-        lis = replacement_helper.replaceable_plots()
-        for l in list(lis):
-            print l
-        self.assertEquals(replacement_helper.replaceable_plots(), [plot])
+        bcpp_dispatch.dispatch()
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_plots()), [(plot, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_replacement_plot2(self):
         """Assert helper returns an empty list if plot is not replaceable
         because it is just a plot in the 5 percent and is NON_RESIDENTIAL."""
         self.startup()
+        producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
+        # print producer.name
+        if not load_producer_db_settings():
+            raise TypeError('no producers')
+        self.create_survey_on_producer(producer.name)
         for i in range(0, 10):
             plot = PlotFactory(
                 community='test_community',
@@ -162,14 +171,8 @@ class TestPlotReplacement(TestCase):
                 gps_degrees_e=25,
                 gps_minutes_e=44.366660 + float('0.000000{}'.format(i)),
                 selected=FIVE_PERCENT,)
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
+            bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
+            bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
         self.teardown(producer.name)
@@ -178,6 +181,12 @@ class TestPlotReplacement(TestCase):
         """Assert helper returns an empty list if plot is not replaceable
         replaces is not None even though RESIDENTIAL_HABITABLE."""
         self.startup()
+        producer = ProducerFactory()
+        producer = update_producer_from_settings(producer)
+        # print producer.name
+        if not load_producer_db_settings():
+            raise TypeError('no producers')
+        self.create_survey_on_producer(producer.name)
         for i in range(0, 10):
             plot = PlotFactory(
                 community='test_community',
@@ -193,62 +202,13 @@ class TestPlotReplacement(TestCase):
                 gps_minutes_e=44.366660 + float('0.000000{}'.format(i)),
                 selected=FIVE_PERCENT,
                 replaces='H1234{}'.format(i))
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
+            bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
+            bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
         self.teardown(producer.name)
 
     def test_refusal_household1(self):
-        """Asserts that an enumerated household where ALL members refuse is replaceable."""
-        self.startup()
-        plot = PlotFactory(
-            community='test_community',
-            household_count=3,
-            status=RESIDENTIAL_HABITABLE,
-            eligible_members=3,
-            description="A blue house with yellow screen wall",
-            time_of_week='Weekdays',
-            time_of_day='Morning',
-            gps_degrees_s=25,
-            gps_minutes_s=0.5666599,
-            gps_degrees_e=25,
-            gps_minutes_e=44.366660,
-            selected=1)
-        producer = ProducerFactory()
-        update_producer_from_settings()
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-        household, _, _ = Household.objects.filter(plot=plot)
-        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        RepresentativeEligibilityFactory(household_structure=household_structure)
-        household_member = HouseholdMember(
-            household_structure=household_structure,
-            first_name='COOL',
-            initials='CC',
-            gender='M',
-            member_status=REFUSED,
-            age_in_years=50,
-            present_today='Yes',
-            study_resident='Yes')
-        household_member.save()
-        hm = HouseholdMember.objects.get(first_name='COOL')
-        SubjectRefusalFactory(household_member=hm, reason='I don\'t have time', refusal_date=datetime.now())
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
-        replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
-        self.teardown(producer.name)
-
-    def test_refusal_household1a(self):
         """Asserts that a household of refused members is replaceable but if deleted is not replaceable."""
         self.startup()
         plot = PlotFactory(
@@ -282,7 +242,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_refusal_household2(self):
@@ -331,7 +296,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_refusal_household3(self):
@@ -392,7 +362,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_refusal_household4(self):
@@ -459,7 +434,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
         self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household1])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household1, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_refusal_household5(self):
@@ -544,7 +524,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household1])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household1, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_refusal_household7(self):
@@ -590,7 +575,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household1])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household1, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles1(self):
@@ -627,7 +617,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles2(self):
@@ -676,7 +671,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles3(self):
@@ -801,7 +801,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles6(self):
@@ -909,7 +914,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles9(self):
@@ -1074,7 +1084,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles14(self):
@@ -1173,7 +1188,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_absentees_ineligibles17(self):
@@ -1243,292 +1263,12 @@ class TestPlotReplacement(TestCase):
         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
         bcpp_dispatch.dispatch()
         replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
-        self.teardown(producer.name)
-
-    def test_household_replacement1(self):
-        """assert if an enumerated household with all members absent is replaced by a plot."""
-        self.startup()
-        plot = PlotFactory(
-            community='test_community',
-            household_count=1,
-            status=RESIDENTIAL_HABITABLE,
-            eligible_members=3,
-            description="A blue house with yellow screen wall",
-            time_of_week='Weekdays',
-            time_of_day='Morning',
-            gps_degrees_s=25,
-            gps_minutes_s=0.786540,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            selected=1)
-        plot1 = PlotFactory(
-            community='test_community',
-            selected=FIVE_PERCENT)
-        household = Household.objects.get(plot=plot)
-        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        RepresentativeEligibilityFactory(household_structure=household_structure)
-        self.household_member_absent_factory(
-            household_structure=household_structure,
-            gender='F',
-            age_in_years=51,
-            present_today='No',
-            study_resident='Yes')
-        self.household_member_absent_factory(
-            household_structure=household_structure,
-            gender='F',
-            age_in_years=34,
-            present_today='No',
-            study_resident='Yes')
-        self.household_member_absent_factory(
-            household_structure=household_structure,
-            gender='F',
-            age_in_years=23,
-            present_today='No',
-            study_resident='Yes')
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-        bcpp_dispatch = BcppDispatchController(using_source='default',
-                                               using_destination=producer.name,
-                                               dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
-        plot = Plot.objects.get(pk=plot.pk)
-        household = Household.objects.get(pk=household.pk)
-        self.assertEquals(household.plot.dispatched_to, producer.name)
-        self.assertEquals(plot.dispatched_to, producer.name)
-        TransactionHelper().outgoing_transactions(socket.gethostname(),
-                                                  producer.name).delete()
-        replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [household])
-        self.assertEquals(replacement_helper.replace_household(producer.name), [plot1])
-        self.teardown(producer.name)
-
-    def test_household_replacement2(self):
-        """assert if a household is replaced by a plot."""
-        self.startup()
-        plot = PlotFactory(
-                community='test_community',
-                household_count=3,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
-        plot1 = PlotFactory(
-                community='test_community',
-                selected=FIVE_PERCENT)
-        plot2 = PlotFactory(
-                community='test_community',
-                selected=FIVE_PERCENT)
-        plot3 = PlotFactory(
-                community='test_community',
-                selected=FIVE_PERCENT)
-        household1, household2, household3 = Household.objects.filter(plot=plot)
-        household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
-        household_structure2 = HouseholdStructure.objects.get(household=household2, survey=self.survey1)
-        household_structure3 = HouseholdStructure.objects.get(household=household3, survey=self.survey1)
-        RepresentativeEligibilityFactory(household_structure=household_structure1)
-        RepresentativeEligibilityFactory(household_structure=household_structure2)
-        RepresentativeEligibilityFactory(household_structure=household_structure3)
-        self.household_member_absent_factory(
-            household_structure=household_structure1,
-            gender='F',
-            age_in_years=51,
-            present_today='No',
-            study_resident='Yes')
-        self.household_member_absent_factory(
-            household_structure=household_structure1,
-            gender='F',
-            age_in_years=34,
-            present_today='No',
-            study_resident='Yes')
-        self.household_member_absent_factory(
-            household_structure=household_structure1,
-            gender='F',
-            age_in_years=23,
-            present_today='No',
-            study_resident='Yes')
-        self.household_member_absent_factory(
-            household_structure=household_structure2,
-            gender='F',
-            age_in_years=24,
-            present_today='No',
-            study_resident='Yes')
-        self.household_member_absent_factory(
-            household_structure=household_structure3,
-            gender='F',
-            age_in_years=45,
-            present_today='No',
-            study_resident='Yes')
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
-        replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)).sort(), ([household1, household2, household3]).sort())
-        self.assertEquals(list(replacement_helper.replace_household(producer.name)).sort(), ([plot1, plot2, plot3]).sort())
-        self.teardown(producer.name)
-
-    def test_household_replacement3(self):
-        """assert if a household is replaced by a plot."""
-        self.startup()
-        plot = PlotFactory(
-            community='test_community',
-            household_count=2,
-            status=RESIDENTIAL_HABITABLE,
-            eligible_members=3,
-            description="A blue house with yellow screen wall",
-            time_of_week='Weekdays',
-            time_of_day='Morning',
-            gps_degrees_s=25,
-            gps_minutes_s=0.786540,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            selected=1)
-        plot1 = PlotFactory(
-            community='test_community',
-            selected=FIVE_PERCENT)
-        household1, household2 = Household.objects.filter(plot=plot)
-        household_structure1 = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
-        RepresentativeEligibilityFactory(household_structure=household_structure1)
-        household_structure2 = HouseholdStructure.objects.get(household=household2, survey=self.survey1)
-        RepresentativeEligibilityFactory(household_structure=household_structure2)
-        household_log1 = HouseholdLog.objects.get(household_structure=household_structure1)
-        household_log2 = HouseholdLog.objects.get(household_structure=household_structure1)
-        HouseholdLogEntryFactory(household_log=household_log2, household_status=ELIGIBLE_REPRESENTATIVE_PRESENT, report_datetime=datetime.today() - timedelta(days=4))
-        HouseholdLogEntryFactory(household_log=household_log1, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=3))
-        HouseholdLogEntryFactory(household_log=household_log1, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=2))
-        HouseholdLogEntryFactory(household_log=household_log1, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=1))
-        HouseholdMemberFactory(
-            household_structure=household_structure2,
-            gender='F',
-            age_in_years=70,
-            present_today='Yes',
-            study_resident='Yes')
-        HouseholdMemberFactory(
-            household_structure=household_structure2,
-            gender='F',
-            age_in_years=24,
-            present_today='Yes',
-            study_resident='Yes')
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
-        replacement_helper = ReplacementHelper()
-        # replaceable_household = replacement_helper.replaceable_households(producer)
-        self.assertEquals(replacement_helper.replaceable_households(producer), [household1])
-        self.assertEquals(replacement_helper.replace_household(producer.name), [plot1])
-        self.teardown(producer.name)
-
-    def test_plot_replacement1(self):
-        """Assert that a plot that is invalid with a plot status of non residential with another plot"""
-        self.startup()
-        plot = PlotFactory(
-            community='test_community',
-            status=NON_RESIDENTIAL,
-            gps_degrees_s=25,
-            gps_minutes_s=0.786540,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            replaces='H140993-02',
-            selected=FIVE_PERCENT)
-        plot1 = PlotFactory(
-            community='test_community',
-            selected=FIVE_PERCENT)
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
-        replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [plot])
-        self.assertEquals(replacement_helper.replace_plot(producer.name), [plot1])
-        self.teardown(producer.name)
-
-    def test_plot_replacement2(self):
-        """Assert that a plot that is invalid with a plot status of residential not habitable with another plot"""
-        self.startup()
-        plot = PlotFactory(
-            community='test_community',
-            status=RESIDENTIAL_NOT_HABITABLE,
-            gps_degrees_s=25,
-            gps_minutes_s=0.786540,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            replaces='H140993-02',
-            replaced_by=None,
-            htc=None,
-            selected=FIVE_PERCENT)
-        plot1 = PlotFactory(
-            community='test_community',
-            selected=FIVE_PERCENT)
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-
-        bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot1)
-        bcpp_dispatch.dispatch()
-        replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [plot])
-        self.assertEquals(replacement_helper.replace_plot(producer.name), [plot1])
-        self.teardown(producer.name)
-
-    def test_plot_replacement3(self):
-        """Assert that a plot that is not invalid is not replaceable"""
-        self.startup()
-        plot = PlotFactory(
-            community='test_community',
-            status=RESIDENTIAL_HABITABLE,
-            gps_degrees_s=25,
-            gps_minutes_s=0.786540,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            replaces='H140993-02',
-            replaced_by=None,
-            htc=None,
-            selected=FIVE_PERCENT)
-        PlotFactory(community='test_community', selected=FIVE_PERCENT)
-        producer = ProducerFactory()
-        producer = update_producer_from_settings(producer)
-        # print producer.name
-        if not load_producer_db_settings():
-            raise TypeError('no producers')
-        self.create_survey_on_producer(producer.name)
-
-        bcpp_dispatch = BcppDispatchController(using_source='default',
-                                               using_destination=producer.name,
-                                               dispatch_container_instance=plot)
-        bcpp_dispatch.dispatch()
-        replacement_helper = ReplacementHelper()
-        self.assertEquals(list(replacement_helper.replaceable_plots(producer.name)), [])
-        self.assertEquals(replacement_helper.replace_plot(producer.name), [])
+        options = dict(is_dispatched=True,
+                       item_app_label='bcpp_household',
+                       item_model_name='Plot',
+                       item_identifier=plot.pk)
+        dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+        self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
         self.teardown(producer.name)
 
     def test_plot_replaces1(self):
@@ -1543,6 +1283,7 @@ class TestPlotReplacement(TestCase):
             gps_minutes_e=44.8981199,
             replaces='H140993-02',
             replaced_by=None,
+            replaces="None",
             selected=FIVE_PERCENT)
         plot2 = PlotFactory(
             community='test_community',
