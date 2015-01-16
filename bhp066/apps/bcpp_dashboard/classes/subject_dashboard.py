@@ -126,9 +126,15 @@ class SubjectDashboard(BaseSubjectDashboard):
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
                 if settings.CURRENT_SURVEY == 'bcpp-year-1':
-                    self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[0]
+                    try:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
+                    except Appointment.DoesNotExist:
+                        self._appointment = None
                 elif settings.CURRENT_SURVEY == 'bcpp-year-2':
-                    self._appointment = Appointment.objects.filter(registered_subject=self.registered_subject)[1]
+                    try:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
+                    except Appointment.DoesNotExist:
+                        self._appointment = None
                 else:
                     self._appointment = None
             else:
