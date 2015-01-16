@@ -301,7 +301,7 @@ class Plot(BaseDispatchSyncUuidModel):
                 self.target_radius) * 1000
         self.action = self.get_action()
         try:
-            update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier']
+            update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier', 'user_modified']
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass

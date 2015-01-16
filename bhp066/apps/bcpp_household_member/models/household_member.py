@@ -476,6 +476,15 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """Updates from lab_tracker."""
         self.hiv_history = self.get_hiv_history()
 
+    def update_plot_on_post_save(self, household_member, members):
+        """Updates from householdmember."""
+        try:
+            plot = household_member.household_structure.household.plot
+            plot.eligible_members = members
+            plot.save()
+        except Plot.DoesNotExist:
+            pass
+
     def update_household_member_count_on_post_save(self, sender, using=None):
         """Updates the member count on the household_structure model."""
         household_members = sender.objects.using(using).filter(
