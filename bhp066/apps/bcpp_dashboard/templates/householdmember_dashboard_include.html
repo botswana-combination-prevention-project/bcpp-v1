@@ -12,7 +12,9 @@
 <th>Initials</th>
 <th>Sex</th>
 <th>Age</th>
-<th>Survival Status</th>
+{% if not household_structure.survey.survey_abbrev == 'Y1' %}
+    <th>Survival Status<></th>
+{% endif %}
 <th>Relation</th>
 <th>Resident</th>
 <th>Attempts</th>    
@@ -28,7 +30,9 @@
     <td>{{ household_member.initials }}</td>
     <td>{{ household_member.get_gender_display }}</td>
     <td>{{ household_member.age_in_years }}</td>
-    <td>{{ household_member.survival_status }}</td>
+    {% if not household_structure.survey.survey_abbrev == 'Y1' %}
+        <td>{{ household_member.survival_status }}</td>
+    {% endif %}
     <td>{{ household_member.get_relation_display }}</td>
     <td>{{ household_member.get_study_resident_display }}</td>
     <td>{{ household_member.visit_attempts }}</td>

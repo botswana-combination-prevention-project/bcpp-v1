@@ -32,7 +32,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
             start_date=date(2015, 1, 1),
             full_enrollment_date=date(2015, 2, 6),
             end_date=date(2015, 2, 13),
-            smc_start_date=date(2015, 2, 13)),
+            smc_start_date=date(2015, 2, 11)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
