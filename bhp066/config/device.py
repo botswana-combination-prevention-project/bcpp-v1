@@ -1,4 +1,4 @@
-DEVICE_ID = 16
+DEVICE_ID = 99
 SITE_CODE = '19'
 CURRENT_COMMUNITY = 'mmankgodi'
 VERIFY_GPS = False if DEVICE_ID == 99 else True
