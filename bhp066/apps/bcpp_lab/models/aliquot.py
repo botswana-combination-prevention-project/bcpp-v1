@@ -63,10 +63,12 @@ class Aliquot(BaseAliquot):
 
     @property
     def subject_requisition(self):
+        model = self.receive.requisition_model_name
+        RequisitionModel = models.get_model('bcpp_lab', model)
         try:
-            return SubjectRequisition.objects.get(
-                subject_visit=self.subject_visit)
-        except SubjectRequisition.DoesNotExist:
+            return RequisitionModel.objects.get(
+                requisition_identifier=self.receive.requisition_identifier)
+        except RequisitionModel.DoesNotExist:
             return None
 
     @property
