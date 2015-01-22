@@ -149,20 +149,17 @@ class BasePlotMapper(Mapper):
     def clinic_plot(self):
         """Returns and, if needed, creates a non-residential plot to represent the CLINIC."""
         #We can only do this on community servers, not on netbooks or central server.
-        if device.is_community_server:
-            try:
-                plot = Plot.objects.get(plot_identifier=self.clinic_plot_identifier)
-            except Plot.DoesNotExist:
-                plot = Plot.objects.create(
-                    plot_identifier=self.clinic_plot_identifier,
-                    household_count=1,
-                    status='bcpp_clinic',
-                    community=self.map_area,
-                    action='confirmed',
-                    description=('{} clinic').format(self.map_area))
-            return plot
-        else:
-            return None
+        try:
+            plot = Plot.objects.get(plot_identifier=self.clinic_plot_identifier)
+        except Plot.DoesNotExist:
+            plot = Plot.objects.create(
+                plot_identifier=self.clinic_plot_identifier,
+                household_count=1,
+                status='bcpp_clinic',
+                community=self.map_area,
+                action='confirmed',
+                description=('{} clinic').format(self.map_area))
+        return plot
 
     @property
     def clinic_plot_identifier(self):
