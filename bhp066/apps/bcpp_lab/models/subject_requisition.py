@@ -66,6 +66,8 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
             return 'HIV:{} CD4:{} ART:{}'.format(
                 subject_referral.hiv_result, subject_referral.cd4_result,
                 YES if subject_referral.on_art else NO)
+        except SubjectReferral.DoesNotExist:
+            return ''
         except AttributeError as e:
             return ''
 
