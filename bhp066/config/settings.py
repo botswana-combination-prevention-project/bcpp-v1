@@ -55,7 +55,7 @@ elif socket.gethostname() == 'ckgathi':
 elif socket.gethostname() == 'One-2.local':
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 elif socket.gethostname() == 'silverapple':
-    KEY_PATH = '/Users/melissa/Documents/git/bhp066/bhp066/keys'
+    KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
 elif socket.gethostname() == 'bcpp-tsetsiba':
     KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
 else:
@@ -224,7 +224,7 @@ MAX_SUBJECTS = {'subject': 9999,
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
-                       'bcpp_lab', 'bcpp_survey', 'bcpp_clinic']
+                       'bcpp_lab', 'bcpp_survey']
 
 # edc.crypto_fields
 IS_SECURE_DEVICE = False
