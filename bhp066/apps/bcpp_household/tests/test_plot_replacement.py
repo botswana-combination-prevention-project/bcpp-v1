@@ -1283,7 +1283,6 @@ class TestPlotReplacement(TestCase):
             gps_minutes_e=44.8981199,
             replaces='H140993-02',
             replaced_by=None,
-            replaces="None",
             selected=FIVE_PERCENT)
         plot2 = PlotFactory(
             community='test_community',
@@ -1329,33 +1328,11 @@ class TestPlotReplacement(TestCase):
         replacement_helper = ReplacementHelper()
         available_plots = [obj.plot_identifier for obj in replacement_helper.available_plots]
         available_plots.sort()
-        expected = [obj.plot_identifier for obj in [plot2, plot5]]
+        expected = [obj.plot_identifier for obj in [plot2, plot3, plot4, plot5]]
         expected.sort()
         # pprint.pprint(plot5.__dict__)
         self.assertEquals(available_plots, expected)
         self.teardown(producer.name)
-
-    def test_modify_plot(self):
-        """Asserts that a plot cannot be modified if htc == True unless
-        specified in update fields."""
-        plot3 = PlotFactory(
-            community='test_community',
-            status=RESIDENTIAL_NOT_HABITABLE,
-            gps_degrees_s=25,
-            gps_minutes_s=0.786543,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            replaces=None,
-            replaced_by=None,
-            htc=None,
-            bhs=None,
-            selected=FIVE_PERCENT)
-        plot3.htc = True
-        self.assertRaises(ValidationError, plot3.save)
-        try:
-            plot3.save(update_fields=['htc'])
-        except ValidationError:
-            raise self.failureException('Did not expect ValidationError when changing plot.htc using update_fields.')
 
     def test_set_household_structure(self):
         self.startup()
@@ -1382,10 +1359,10 @@ class TestPlotReplacement(TestCase):
             raise TypeError('no producers')
         self.create_survey_on_producer(producer.name)
         replacement_helper = ReplacementHelper(household_structure=household_structure1)
-        replacement_helper.household_structure = household_structure2
-        self.assertEqual(replacement_helper.plot, household_structure1.plot)
+        self.assertEqual(replacement_helper.plot, household_structure1.household.plot)
         self.assertEqual(replacement_helper.household, household_structure1.household)
+        replacement_helper.household_structure = household_structure2
         self.assertRaises(TypeError, setattr(replacement_helper, 'plot', plot))
-        self.assertEqual(replacement_helper.plot, household_structure2.plot)
+        self.assertEqual(replacement_helper.plot, household_structure2.household.plot)
         self.assertEqual(replacement_helper.household, household_structure2.household)
         self.teardown(producer.name)
