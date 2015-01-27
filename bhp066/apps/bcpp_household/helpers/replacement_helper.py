@@ -268,6 +268,7 @@ class ReplacementHelper(object):
                         Household.objects.using(using_producer).get(
                             household_identifier=replaceable_household.household_identifier)
                         plot = available_plots.next()
+                        self.household_structure = HouseholdStructure.objects.get(household=replaceable_household, survey=self.survey)
                         replaceable_household.replaced_by = plot.plot_identifier
                         plot.replaces = replaceable_household.household_identifier
                         with transaction.atomic():
@@ -316,6 +317,7 @@ class ReplacementHelper(object):
                         Plot.objects.using(using_producer).get(
                             plot_identifier=replaceable_plot.plot_identifier)
                         available_plot = available_plots.next()
+                        self.plot = replaceable_plot
                         replaceable_plot.replaced_by = available_plot.plot_identifier
                         replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
                         available_plot.replaces = replaceable_plot.plot_identifier
