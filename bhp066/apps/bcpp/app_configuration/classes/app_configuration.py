@@ -1,27 +1,24 @@
+from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from apps.bcpp_household.models import Plot
+from apps.bcpp_survey.models import Survey
 from collections import OrderedDict
 from datetime import datetime, date
-
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-
-try:
-    from config.labels import aliquot_label
-except ImportError:
-    aliquot_label = None
-
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.device.device.classes import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
-
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from apps.bcpp_household.models import Plot
-from apps.bcpp_survey.models import Survey
+
+try:
+    from config.labels import aliquot_label
+except ImportError:
+    aliquot_label = None
 
 study_start_datetime = datetime(2013, 10, 18, 0, 0, 0)
 study_end_datetime = datetime(2016, 10, 17, 23, 0, 0)
@@ -32,6 +29,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
     def prepare(self):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
+        self.search_limit_setup()
 
     global_configuration = {
         'dashboard':
@@ -102,12 +100,12 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2015, 11, 19, 23, 59, 0)},
+             'datetime_end': datetime(2015, 01, 19, 23, 59, 0)},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2015, 11, 20, 0, 0, 0),
+             'datetime_start': datetime(2015, 01, 20, 0, 0, 0),
              'datetime_end': datetime(2016, 11, 19, 23, 59, 0)},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
@@ -380,5 +378,16 @@ class BcppAppConfiguration(BaseAppConfiguration):
             except Survey.DoesNotExist:
                 Survey.objects.create(**survey_values)
 
+    def search_limit_setup(self):
+        if not str(device) == '99':
+            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and settings.FILTERED_DEFAULT_SEARCH):
+                raise ImproperlyConfigured('LIMIT_EDIT_TO_CURRENT_SURVEY,  LIMIT_EDIT_TO_CURRENT_COMMUNITY and FILTERED_DEFAULT_SEARCH'
+                ' should be set to true in a notebook. Update in bcpp_settings.py.'
+                )
+        elif str(device) == '99':
+            if (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and settings.FILTERED_DEFAULT_SEARCH):
+                raise ImproperlyConfigured('LIMIT_EDIT_TO_CURRENT_SURVEY,  LIMIT_EDIT_TO_CURRENT_COMMUNITY and FILTERED_DEFAULT_SEARCH'
+                ' should be set to false in a central server. Update in bcpp_settings.py.'
+                )
 
 bcpp_app_configuration = BcppAppConfiguration()
