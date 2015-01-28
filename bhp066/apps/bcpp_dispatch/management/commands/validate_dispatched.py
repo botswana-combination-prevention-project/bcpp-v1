@@ -70,6 +70,10 @@ class Command(BaseCommand):
                         replaced = Plot.objects.get(plot_identifier=plt.replaces)
                     except Plot.DoesNotExist:
                         replaced = Household.objects.get(household_identifier=plt.replaces)
+                    if replaced._meta.module_name == 'household':
+                        replaced = replaced.plot
+                    else:
+                        replaced = replaced
                     replaced_item = DispatchItemRegister.objects.get(item_pk=replaced.id)
                     print 'Plot identifier={}, in 5% which Replaces \'{}\' is NOT DISPATCHED. {} is in producer {}'.format(
                                                                                                      plt.plot_identifier,
