@@ -1283,7 +1283,6 @@ class TestPlotReplacement(TestCase):
             gps_minutes_e=44.8981199,
             replaces='H140993-02',
             replaced_by=None,
-            replaces="None",
             selected=FIVE_PERCENT)
         plot2 = PlotFactory(
             community='test_community',
@@ -1329,33 +1328,11 @@ class TestPlotReplacement(TestCase):
         replacement_helper = ReplacementHelper()
         available_plots = [obj.plot_identifier for obj in replacement_helper.available_plots]
         available_plots.sort()
-        expected = [obj.plot_identifier for obj in [plot2, plot5]]
+        expected = [obj.plot_identifier for obj in [plot2, plot3, plot4, plot5]]
         expected.sort()
         # pprint.pprint(plot5.__dict__)
         self.assertEquals(available_plots, expected)
         self.teardown(producer.name)
-
-    def test_modify_plot(self):
-        """Asserts that a plot cannot be modified if htc == True unless
-        specified in update fields."""
-        plot3 = PlotFactory(
-            community='test_community',
-            status=RESIDENTIAL_NOT_HABITABLE,
-            gps_degrees_s=25,
-            gps_minutes_s=0.786543,
-            gps_degrees_e=25,
-            gps_minutes_e=44.8981199,
-            replaces=None,
-            replaced_by=None,
-            htc=None,
-            bhs=None,
-            selected=FIVE_PERCENT)
-        plot3.htc = True
-        self.assertRaises(ValidationError, plot3.save)
-        try:
-            plot3.save(update_fields=['htc'])
-        except ValidationError:
-            raise self.failureException('Did not expect ValidationError when changing plot.htc using update_fields.')
 
     def test_set_household_structure(self):
         self.startup()
@@ -1382,10 +1359,176 @@ class TestPlotReplacement(TestCase):
             raise TypeError('no producers')
         self.create_survey_on_producer(producer.name)
         replacement_helper = ReplacementHelper(household_structure=household_structure1)
-        replacement_helper.household_structure = household_structure2
-        self.assertEqual(replacement_helper.plot, household_structure1.plot)
+        self.assertEqual(replacement_helper.plot, household_structure1.household.plot)
         self.assertEqual(replacement_helper.household, household_structure1.household)
+        replacement_helper.household_structure = household_structure2
         self.assertRaises(TypeError, setattr(replacement_helper, 'plot', plot))
-        self.assertEqual(replacement_helper.plot, household_structure2.plot)
+        self.assertEqual(replacement_helper.plot, household_structure2.household.plot)
         self.assertEqual(replacement_helper.household, household_structure2.household)
         self.teardown(producer.name)
+
+    def test_household_replacement_reason1(self):
+        """Assert replacement reason for refused members"""
+        self.startup()
+        plot = PlotFactory(
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599,
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660,
+            selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_refused_factory(
+            household_structure=household_structure,
+            gender='M',
+            age_in_years=50,
+            present_today='Yes',
+            study_resident='Yes')
+        self.household_member_refused_factory(
+            household_structure=household_structure,
+            gender='M',
+            age_in_years=34,
+            present_today='Yes',
+            study_resident='Yes')
+        self.household_member_refused_factory(
+            household_structure=household_structure,
+            gender='F',
+            age_in_years=30,
+            present_today='Yes',
+            study_resident='Yes')
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        reason = replacement_helper.household_replacement_reason
+        self.assertEqual(reason, 'household all_eligible_members_refused')
+        
+    def test_household_replacement_reason2(self):
+        """Asserts replacement reason for a household with a HOH who has refused."""
+        self.startup()
+        plot = PlotFactory(
+            community='test_community',
+            household_count=2,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599,
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660,
+            selected=1)
+        households = Household.objects.filter(plot=plot)
+        household1 = households[0]
+        households[1]
+        household_structure = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
+        HouseholdRefusalFactory(household_structure=household_structure, report_datetime=datetime.now(), reason='not_interested')
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
+        reason = replacement_helper.household_replacement_reason
+        self.assertEqual(reason, 'household refused_enumeration')
+        
+    def test_household_replacement_reason3(self):
+        """Asserts a replacement reason for household with 3 enumeration attempts with no eligible representative present, that is replaceable"""
+        self.startup()
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status=RESIDENTIAL_HABITABLE,
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status=ELIGIBLE_REPRESENTATIVE_ABSENT, report_datetime=datetime.today() - timedelta(days=1))
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        reason = replacement_helper.household_replacement_reason
+        self.assertEqual(reason, 'household eligible_representative_absent')
+        
+    def test_household_replacement_reason4(self):
+        """Asserts replacement reason for a household multiple members that are absent that its replaceable."""
+        self.startup()
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status=RESIDENTIAL_HABITABLE,
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
+        self.household_member_absent_factory(
+            household_structure=household_structure,
+            gender='F',
+            age_in_years=51,
+            present_today='No',
+            study_resident='Yes')
+        self.household_member_absent_factory(
+            household_structure=household_structure,
+            gender='F',
+            age_in_years=34,
+            present_today='No',
+            study_resident='Yes')
+        self.household_member_absent_factory(
+            household_structure=household_structure,
+            gender='F',
+            age_in_years=23,
+            present_today='No',
+            study_resident='Yes')
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        reason = replacement_helper.household_replacement_reason
+        self.assertEqual(reason, 'household all_eligible_members_absent')
+        
+    def test_household_replacement_reason5(self):
+        """Asserts replacement reason for a household without an informant after 3 enumeration attempt is not replaceable if last_seen_home is unknown"""
+        self.startup()
+        plot = PlotFactory(
+                community='test_community',
+                household_count=1,
+                status=RESIDENTIAL_HABITABLE,
+                eligible_members=3,
+                description="A blue house with yellow screen wall",
+                time_of_week='Weekdays',
+                time_of_day='Morning',
+                gps_degrees_s=25,
+                gps_minutes_s=0.786540,
+                gps_degrees_e=25,
+                gps_minutes_e=44.8981199,
+                selected=1)
+        household = Household.objects.get(plot=plot)
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        household_log = HouseholdLog.objects.get(household_structure=household_structure)
+        HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=3))
+        HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
+        HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
+        household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=UNKNOWN_OCCUPIED)  # Status value becomes None
+        replacement_helper = ReplacementHelper()
+        replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        reason = replacement_helper.household_replacement_reason
+        self.assertEqual(reason, 'household failed_enumeration no_informant')
