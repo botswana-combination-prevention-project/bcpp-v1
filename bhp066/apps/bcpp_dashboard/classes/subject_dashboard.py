@@ -91,15 +91,22 @@ class SubjectDashboard(BaseSubjectDashboard):
         """
         appointments = super(BaseSubjectDashboard, self).appointments
         appointment_to_show = []
-        for appointment in appointments:
-            try:
-                subject_visit = SubjectVisit.objects.get(appointment=appointment)
-                if subject_visit.household_member == self.household_member:
+        if self.household_structure.survey.survey_name == 'BCPP Year 1':
+            for appointment in appointments:
+                if appointment.visit_definition.code == 'T0':
                     appointment_to_show.append(appointment)
                     break
-            except SubjectVisit.DoesNotExist:
-                appointment_to_show.append(appointment)
-                break
+        elif self.household_structure.survey.survey_name == 'BCPP Year 2':
+            for appointment in appointments:
+                if appointment.visit_definition.code == 'T1':
+                    appointment_to_show.append(appointment)
+                    break
+        else:
+            for appointment in appointments:
+                if appointment.visit_definition.code == 'T2':
+                    appointment_to_show.append(appointment)
+                    break
+
         if not appointment_to_show:
             appointment_helper = AppointmentHelper()
             options = {
