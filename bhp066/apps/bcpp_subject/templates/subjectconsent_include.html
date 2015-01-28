@@ -24,7 +24,7 @@
         <tbody>
       {% for subjectconsent in search_result.object_list %}
             <tr class="{% cycle 'row2' 'row1' %}">
-            <td><A href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=subjectconsent.household_member.pk show='appointments' %}">{{ subjectconsent.subject_identifier }}</A></td>            
+            <td><A href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=subjectconsent.household_member.pk show='appointments' %}">{{ subjectconsent.subject_identifier }}</A></td>
             <td>{{subjectconsent.survey.survey_slug|format_survey|safe}}</td>
             <td>{{subjectconsent.first_name|encrypted}}</td>
             <td>{{subjectconsent.last_name|encrypted}}</td>            
@@ -34,8 +34,8 @@
             <td>{{subjectconsent.household_member.age_in_years}}</td>            
             <td>{{subjectconsent.consent_datetime|date:"d M Y H:i"}}</td>
             <td>{{ subjectconsent.get_hiv_status|default:'unk' }}</td>
-            <td>{{subjectconsent.user_created}}</td>
-            <td>{{subjectconsent.created|date:"d M Y H:i"}}</td>
+            <td>{{subjectconsent.household_member.user_created}}</td>
+            <td>{{subjectconsent.household_member.created|date:"d M Y H:i"}}</td>
             <td>{{subjectconsent.hostname_created}}</td>
             </tr>
 
