@@ -10,6 +10,7 @@ from edc.device.dispatch.models.dispatch_item_register import DispatchItemRegist
 from edc.device.sync.helpers import TransactionHelper
 from edc.device.sync.models import Producer
 from edc.device.sync.utils import load_producer_db_settings
+from edc.device.sync.exceptions import PendingTransactionError
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
@@ -262,39 +263,42 @@ class ReplacementHelper(object):
             load_producer_db_settings()
             if not TransactionHelper().outgoing_transactions(
                     socket.gethostname(), using_producer, raise_exception=True):
-                available_plots = self.available_plots
-                for replaceable_household, _ in self.replaceable_households(using_producer):
-                    try:
-                        Household.objects.using(using_producer).get(
-                            household_identifier=replaceable_household.household_identifier)
-                        plot = available_plots.next()
-                        self.household_structure = HouseholdStructure.objects.get(household=replaceable_household, survey=self.survey)
-                        replaceable_household.replaced_by = plot.plot_identifier
-                        plot.replaces = replaceable_household.household_identifier
-                        with transaction.atomic():
-                            replaceable_household.save(update_fields=['replaced_by'], using='default')
-                            plot.save(update_fields=['replaces'], using='default')
-                            with transaction.atomic(using_producer):
-                                replaceable_household.save(update_fields=['replaced_by'], using=using_producer)
-                                TransactionHelper().outgoing_transactions(
-                                    hostname=socket.gethostname(), using=using_producer).delete()
-                            ReplacementHistory.objects.using('default').create(
-                                replacing_item=plot.plot_identifier,
-                                replaced_item=replaceable_household.household_identifier,
-                                replacement_datetime=datetime.now(),
-                                replacement_reason=self.household_replacement_reason)
-                        new_bhs_plots.append(plot)
-                        self.recently_replaced['households'].append(replaceable_household)
-                    except Household.DoesNotExist:
-                        pass  # household is not dispatched to this producer!
-                    except StopIteration:
-                        break  # ran out of available plots
-                    except ConnectionDoesNotExist as connection_does_not_exist:
-                        raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
-                                               'Got {}'.format(using_producer, str(connection_does_not_exist)))
-                    except OperationalError as operational_error:
-                        raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
-                                               'Got {}'.format(using_producer, str(operational_error)))
+                if not TransactionHelper().has_incoming_for_producer(using_producer, 'default'):
+                    available_plots = self.available_plots
+                    for replaceable_household, _ in self.replaceable_households(using_producer):
+                        try:
+                            Household.objects.using(using_producer).get(
+                                household_identifier=replaceable_household.household_identifier)
+                            plot = available_plots.next()
+                            self.household_structure = HouseholdStructure.objects.get(household=replaceable_household, survey=self.survey)
+                            replaceable_household.replaced_by = plot.plot_identifier
+                            plot.replaces = replaceable_household.household_identifier
+                            with transaction.atomic():
+                                replaceable_household.save(update_fields=['replaced_by'], using='default')
+                                plot.save(update_fields=['replaces'], using='default')
+                                with transaction.atomic(using_producer):
+                                    replaceable_household.save(update_fields=['replaced_by'], using=using_producer)
+                                    TransactionHelper().outgoing_transactions(
+                                        hostname=socket.gethostname(), using=using_producer).delete()
+                                ReplacementHistory.objects.using('default').create(
+                                    replacing_item=plot.plot_identifier,
+                                    replaced_item=replaceable_household.household_identifier,
+                                    replacement_datetime=datetime.now(),
+                                    replacement_reason=self.household_replacement_reason)
+                            new_bhs_plots.append(plot)
+                            self.recently_replaced['households'].append(replaceable_household)
+                        except Household.DoesNotExist:
+                            pass  # household is not dispatched to this producer!
+                        except StopIteration:
+                            break  # ran out of available plots
+                        except ConnectionDoesNotExist as connection_does_not_exist:
+                            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
+                                                   'Got {}'.format(using_producer, str(connection_does_not_exist)))
+                        except OperationalError as operational_error:
+                            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
+                                                   'Got {}'.format(using_producer, str(operational_error)))
+                else:
+                    raise PendingTransactionError('Pending incoming transactions. Consume transactions first')
         except Producer.DoesNotExist as does_not_exist:
             raise ReplacementError('Unable to find to producer with settings key \'{}\'. '
                                    'Got {}'.format(using_producer, str(does_not_exist)))
@@ -311,40 +315,43 @@ class ReplacementHelper(object):
             load_producer_db_settings()
             if not TransactionHelper().outgoing_transactions(
                     socket.gethostname(), using_producer, raise_exception=True):
-                available_plots = self.available_plots
-                for replaceable_plot, _ in self.replaceable_plots(using_producer):
-                    try:
-                        Plot.objects.using(using_producer).get(
-                            plot_identifier=replaceable_plot.plot_identifier)
-                        available_plot = available_plots.next()
-                        self.plot = replaceable_plot
-                        replaceable_plot.replaced_by = available_plot.plot_identifier
-                        replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
-                        available_plot.replaces = replaceable_plot.plot_identifier
-                        with transaction.atomic():
-                            replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
-                            available_plot.save(update_fields=['replaces'], using='default')
-                            with transaction.atomic(using=using_producer):
-                                replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=using_producer)
-                                TransactionHelper().outgoing_transactions(
-                                    hostname=socket.gethostname(), using=using_producer).delete()
-                            ReplacementHistory.objects.using('default').create(
-                                replacing_item=available_plot.plot_identifier,
-                                replaced_item=replaceable_plot.plot_identifier,
-                                replacement_datetime=datetime.now(),
-                                replacement_reason=self.plot_replacement_reason)
-                        new_bhs_plots.append(available_plot)
-                        self.recently_replaced['plots'].append(replaceable_plot)
-                    except Plot.DoesNotExist:
-                        pass  # replaceable_plot is not dispatched to this producer!
-                    except StopIteration:
-                        break  # ran out of available plots
-                    except ConnectionDoesNotExist as connection_does_not_exist:
-                        raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
-                                               'Got {}'.format(using_producer, str(connection_does_not_exist)))
-                    except OperationalError as operational_error:
-                        raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
-                                               'Got {}'.format(using_producer, str(operational_error)))
+                if not TransactionHelper().has_incoming_for_producer(using_producer, 'default'):
+                    available_plots = self.available_plots
+                    for replaceable_plot, _ in self.replaceable_plots(using_producer):
+                        try:
+                            Plot.objects.using(using_producer).get(
+                                plot_identifier=replaceable_plot.plot_identifier)
+                            available_plot = available_plots.next()
+                            self.plot = replaceable_plot
+                            replaceable_plot.replaced_by = available_plot.plot_identifier
+                            replaceable_plot.htc = True  # If a plot is replaced it goes to CDC
+                            available_plot.replaces = replaceable_plot.plot_identifier
+                            with transaction.atomic():
+                                replaceable_plot.save(update_fields=['replaced_by', 'htc'], using='default')
+                                available_plot.save(update_fields=['replaces'], using='default')
+                                with transaction.atomic(using=using_producer):
+                                    replaceable_plot.save(update_fields=['replaced_by', 'htc'], using=using_producer)
+                                    TransactionHelper().outgoing_transactions(
+                                        hostname=socket.gethostname(), using=using_producer).delete()
+                                ReplacementHistory.objects.using('default').create(
+                                    replacing_item=available_plot.plot_identifier,
+                                    replaced_item=replaceable_plot.plot_identifier,
+                                    replacement_datetime=datetime.now(),
+                                    replacement_reason=self.plot_replacement_reason)
+                            new_bhs_plots.append(available_plot)
+                            self.recently_replaced['plots'].append(replaceable_plot)
+                        except Plot.DoesNotExist:
+                            pass  # replaceable_plot is not dispatched to this producer!
+                        except StopIteration:
+                            break  # ran out of available plots
+                        except ConnectionDoesNotExist as connection_does_not_exist:
+                            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
+                                                   'Got {}'.format(using_producer, str(connection_does_not_exist)))
+                        except OperationalError as operational_error:
+                            raise ReplacementError('Unable to connect to producer with settings key \'{}\'. '
+                                                   'Got {}'.format(using_producer, str(operational_error)))
+                else:
+                    raise PendingTransactionError('Pending incoming transactions. Consume transactions first')
         except Producer.DoesNotExist as does_not_exist:
             raise ReplacementError('Unable to find to producer with settings key \'{}\'. '
                                    'Got {}'.format(using_producer, str(does_not_exist)))
