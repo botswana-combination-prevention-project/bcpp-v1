@@ -86,7 +86,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         decimal_places=2,
         null=True,
         blank=True,
-        help_text="Pula",
+        help_text="If participant has not paid anything for outpatient medical care, please enter 0.00",
         )
     travel_time = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, how long did it take you to get"
@@ -106,7 +106,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         decimal_places=2,
         null=True,
         blank=True,
-        help_text="Pula",
+        help_text="If participant has not paid anything for outpatient medical care, please enter 0.00",
         )
     cost_cover = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, were any of these costs"
