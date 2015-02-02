@@ -21,8 +21,8 @@ class SefophePlotMapper(BasePlotMapper):
 
     intervention = False
 
-    gps_center_lat = -25.320035
-    gps_center_lon = 25.266402
+    gps_center_lat = -22.1918153
+    gps_center_lon = 27.9624366
     radius = 5.5
     location_boundary = ()
 
