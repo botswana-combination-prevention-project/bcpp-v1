@@ -29,9 +29,9 @@ class SefophePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 19),
-            full_enrollment_date=date(2015, 2, 6),
-            end_date=date(2015, 2, 13),
+            start_date=date(2015, 2, 11),
+            full_enrollment_date=date(2015, 3, 6),
+            end_date=date(2015, 3, 27),
             smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
