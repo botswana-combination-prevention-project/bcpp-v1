@@ -21,17 +21,17 @@ class SefophePlotMapper(BasePlotMapper):
 
     intervention = False
 
-    gps_center_lat = -25.320035
-    gps_center_lon = 25.266402
+    gps_center_lat = -22.1918153
+    gps_center_lon = 27.9624366
     radius = 5.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 19),
-            full_enrollment_date=date(2015, 2, 6),
-            end_date=date(2015, 2, 13),
+            start_date=date(2015, 2, 11),
+            full_enrollment_date=date(2015, 3, 6),
+            end_date=date(2015, 3, 27),
             smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
