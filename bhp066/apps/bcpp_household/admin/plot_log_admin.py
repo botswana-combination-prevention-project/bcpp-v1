@@ -13,6 +13,7 @@ class PlotLogEntryAdmin(BaseModelAdmin):
     list_per_page = 15
     list_display = ('plot_log', 'log_status', 'report_datetime')
     list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community')
+    search_fields = ('log_status', 'plot_log__plot__community', 'plot_log__plot__plot_identifier')
     radio_fields = {
         }
 
