@@ -45,7 +45,7 @@ class Command(BaseCommand):
         if not args or len(args) < 2:
             raise CommandError('Missing \'using\' parameters.')
         community_name = args[0]
-        file_path = str(args[1]) + str(community_name.title())
+        file_path = str(args[1]) + str(community_name)
         file_75_list = file_path + '_75pct.csv'
         file_20_list = file_path + '_20pct.csv'
         file_5_list = file_path + '_backup.csv'
