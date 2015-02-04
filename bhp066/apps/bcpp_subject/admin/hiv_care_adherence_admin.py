@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.conf import settings
 from edc.constants import POS
 
 from ..classes import SubjectStatusHelper
@@ -7,6 +7,8 @@ from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
+
+from apps.bcpp_survey.models import Survey
 
 
 class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
@@ -76,18 +78,21 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
     @property
     def annual_fields(self):
         """Returns a subset of annual_fields if subject is POS and on ART."""
-        if self.hiv_result_on_pos_and_subject_not_on_art:
-            try:
+        if not Survey.objects.first_survey.survey_slug == settings.CURRENT_SURVEY:
+            if self.hiv_result_on_pos_and_subject_not_on_art:
+                try:
+                    annual_fields = self.baseline_fields
+                    annual_fields.remove('first_positive')
+                except ValueError:
+                    pass
+            elif self.hiv_result_on_pos_and_subject_on_art:
+                annual_fields = [f for f in self.baseline_fields if f not in [
+                    "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
+                    "why_no_arv", "first_arv", "no_medical_care_other", "why_no_arv_other"]]
+            else:
                 annual_fields = self.baseline_fields
-                annual_fields.remove('first_positive')
-            except ValueError:
-                pass
-        elif self.hiv_result_on_pos_and_subject_on_art:
-            annual_fields = [f for f in self.baseline_fields if f not in [
-                "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
-                "why_no_arv", "first_arv", "no_medical_care_other", "why_no_arv_other"]]
         else:
-            annual_fields = self.baseline_fields
+            return self.baseline_fields
 
         return annual_fields
 
