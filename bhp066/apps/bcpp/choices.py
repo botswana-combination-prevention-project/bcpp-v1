@@ -571,6 +571,7 @@ WHYNOARV_CHOICE = (
     ('Traditional healer advised against taking', _('Traditional healer advised against taking')),
     ('Religious beliefs', _('Religious beliefs')),
     ('Cultural beliefs', _('Cultural beliefs')),
+    ('High CD4', _('High CD4')),
     ('Other', _('Other, specify:')),
     ('not_sure', _('I am not sure')),
     ('not_answering', _('Don\'t want to answer')),
