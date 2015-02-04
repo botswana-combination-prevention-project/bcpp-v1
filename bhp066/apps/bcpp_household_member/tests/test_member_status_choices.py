@@ -17,7 +17,6 @@ from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
@@ -83,6 +82,7 @@ class TestMemberStatusChoices(TestCase):
             guardian='No',
             initials=household_member.initials,
             part_time_resident='Yes')
+        from apps.bcpp_subject.tests.factories import SubjectConsentFactory
         subject_consent = SubjectConsentFactory(
             household_member=enrollment_checklist.household_member,
             first_name="ERIK",

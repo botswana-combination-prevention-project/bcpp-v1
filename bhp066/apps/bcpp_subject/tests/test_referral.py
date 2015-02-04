@@ -22,24 +22,24 @@ from apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLoc
 from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 
-class TestPlotMapper(Mapper):
-    map_area = 'test_community8'
-    map_code = '11'  # has to be a code in the clinic days dictionary
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.033192
-    gps_center_lon = 25.747139
-    radius = 5.5
-    location_boundary = ()
-
-site_mappers.register(TestPlotMapper)
+# class TestPlotMapper(Mapper):
+#     map_area = 'mmankgodi'
+#     map_code = '19'  # has to be a code in the clinic days dictionary
+#     regions = []
+#     sections = []
+#     landmarks = []
+#     gps_center_lat = -25.033192
+#     gps_center_lon = 25.747139
+#     radius = 5.5
+#     location_boundary = ()
+#  
+# site_mappers.register(TestPlotMapper)
 
 
 class TestReferral(BaseScheduledModelTestCase):
 
-    community = 'test_community8'
-    site_code = '11'
+    community = 'mmankgodi'
+    site_code = '19'
 
     def startup(self):
         super(TestReferral, self).startup()
@@ -145,7 +145,7 @@ class TestReferral(BaseScheduledModelTestCase):
         self.startup()
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.stxudy_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
         subject_referral = SubjectReferralFactory(
@@ -606,7 +606,7 @@ class TestReferral(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertEqual('POS', subject_referral.hiv_result)
-        print 'subject_referral.hiv_result_datetime = {}'.format(subject_referral.hiv_result_datetime)
+#         print 'subject_referral.hiv_result_datetime = {}'.format(subject_referral.hiv_result_datetime)
         try:
             hiv_result_date = subject_referral.hiv_result_datetime.date()
         except AttributeError:
@@ -656,7 +656,7 @@ class TestReferral(BaseScheduledModelTestCase):
         self.assertTrue(ScheduledEntryMetaData.objects.filter(
             appointment=self.subject_visit_male.appointment,
             entry__model_name='hivresult',
-            entry_status=REQUIRED).count() == 1)
+            entry_status=NOT_REQUIRED).count() == 1)
         self.assertTrue(ScheduledEntryMetaData.objects.filter(
             appointment=self.subject_visit_male.appointment,
             entry__model_name='pima',
@@ -950,7 +950,7 @@ class TestReferral(BaseScheduledModelTestCase):
             'hiv_result': 'POS',
             'hiv_result_datetime': None,
             'indirect_hiv_documentation': True,
-            'last_hiv_result': None,
+            'last_hiv_result': 'POS',
             'new_pos': False,
             'next_arv_clinic_appointment_date': None,
             'on_art': True,
