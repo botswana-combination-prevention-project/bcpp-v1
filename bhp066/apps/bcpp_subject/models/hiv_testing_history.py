@@ -58,6 +58,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         null=True,
         blank=False,
         choices=YES_NO_NA,
+        default=YES_NO_NA[2][0],
         help_text="This documentation refers to: PMTCT prescription, ART, CD4 count record, lab result for.. etc",
         )
 
