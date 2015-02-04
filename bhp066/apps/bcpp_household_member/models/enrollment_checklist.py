@@ -61,6 +61,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         verbose_name=_("If minor, is there a guardian available? "),
         max_length=10,
         choices=YES_NO_NA,
+        default=YES_NO_NA[2][0],
         help_text=_("If a minor age 16 and 17, ensure a guardian is available otherwise"
                     " participant will not be enrolled."))
 
@@ -174,6 +175,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
                 raise MemberStatusError(('Expected member status to be {0}. Got {1}').format(
                     BHS_SCREEN, self.household_member.member_status))
         else:
+            pass
             if not kwargs.get('update_fields'):
                 if self.household_member.member_status not in [BHS_ELIGIBLE, NOT_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE]:
                     raise MemberStatusError('Expected member status to be {0}. Got {1}'.format(
