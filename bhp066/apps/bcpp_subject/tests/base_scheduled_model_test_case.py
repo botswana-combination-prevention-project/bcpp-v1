@@ -9,12 +9,13 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 from edc.constants import NOT_APPLICABLE
-from edc.subject.visit_schedule.classes import site_visit_schedules
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
 
+from apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 # from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
@@ -23,7 +24,6 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
-from apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
 
 class BaseScheduledModelTestCase(TestCase):
@@ -43,44 +43,12 @@ class BaseScheduledModelTestCase(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        mapper = site_mappers._registry_by_code.get('01')
-        mapper.survey_dates = {
-            'bcpp-year-1': SurveyDatesTuple(
-                name='bhs',
-                start_date=date.today() + relativedelta(years=-1) + relativedelta(days=-89),
-                full_enrollment_date=date.today() + relativedelta(years=-1) + relativedelta(days=60),
-                end_date=date.today() + relativedelta(years=-1) + relativedelta(days=89),
-                smc_start_date=date.today() + relativedelta(years=-1) + relativedelta(days=89)),
-            'bcpp-year-2': SurveyDatesTuple(
-                name='t1',
-                start_date=date.today() + relativedelta(years=0) + relativedelta(days=-89),
-                full_enrollment_date=date.today() + relativedelta(years=0) + relativedelta(days=60),
-                end_date=date.today() + relativedelta(years=0) + relativedelta(days=89),
-                smc_start_date=date.today() + relativedelta(years=0) + relativedelta(days=89)),
-        }
-
-        bcpp_app_configuration.survey_setup = {
-            'bcpp-year-1':
-                {'survey_name': 'BCPP Year 1',
-                 'survey_slug': 'bcpp-year-1',
-                 'datetime_start': datetime.today() + relativedelta(years=-1) + relativedelta(days=-30),
-                 'datetime_end': datetime.today() + relativedelta(years=-1) + relativedelta(days=30)},
-            'bcpp-year-2':
-                {'survey_name': 'BCPP Year 2',
-                 'survey_slug': 'bcpp-year-2',
-                 'datetime_start': datetime.today() + relativedelta(days=-90),
-                 'datetime_end': datetime.today() + relativedelta(days=90)},
-            'bcpp-year-3':
-                {'survey_name': 'BCPP Year 3',
-                 'survey_slug': 'bcpp-year-3',
-                 'datetime_start': datetime.today() + relativedelta(years=1) + relativedelta(days=-30),
-                 'datetime_end': datetime.today() + relativedelta(years=1) + relativedelta(days=30)},
-        }
-
         bcpp_app_configuration.prepare()
         site_lab_tracker.autodiscover()
-        site_visit_schedules.autodiscover()
-        site_visit_schedules.build_all()
+        BcppSubjectVisitSchedule().build()
+        site_rule_groups.autodiscover()
+#         site_visit_schedules.autodiscover()
+#         site_visit_schedules.build_all()
 
         self.household_structure = None
         self.registered_subject = None
