@@ -4,8 +4,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 
 from edc.audit.audit_trail import AuditTrail
+from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_future
-from edc.choices.common import YES_NO
+from edc.choices.common import YES_NO, PIMA
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -22,9 +23,12 @@ class Pima (BaseScheduledVisitModel):
     pima_today_other = models.CharField(
         verbose_name=_("If no PIMA CD4 today, please explain why"),
         max_length=50,
+        choices=PIMA,
         null=True,
         blank=True,
         )
+
+    pima_today_other_other = OtherCharField()
 
     pima_id = models.CharField(
         verbose_name=_("PIMA CD4 machine ID?"),
