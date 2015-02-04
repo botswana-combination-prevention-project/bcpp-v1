@@ -12,6 +12,7 @@ class PimaAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         'pima_today',
         'pima_today_other',
+        'pima_today_other_other',
         'pima_id',
         'cd4_value',
         'cd4_datetime',
