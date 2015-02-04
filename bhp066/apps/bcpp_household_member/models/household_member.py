@@ -260,6 +260,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         selected_member_status = None
         using = kwargs.get('using')
+        clear_enrollment_fields = []
         self.allow_enrollment(using)
         self.check_eligible_representative_filled(self.household_structure, using=using)
         if self.household_structure.household.replaced_by:
@@ -280,12 +281,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 if self.refused:
                     self.clear_refusal
                 if self.enrollment_checklist_completed:
-                    self.clear_enrollment_checklist
+                    clear_enrollment_fields = self.clear_enrollment_checklist
                 if self.htc:
                     self.clear_htc
             if self.member_status == REFUSED:
                 if self.enrollment_checklist_completed:
-                    self.clear_enrollment_checklist
+                    clear_enrollment_fields = self.clear_enrollment_checklist
             else:
                 self.undecided = True if selected_member_status == UNDECIDED else False
                 self.absent = True if selected_member_status == ABSENT else False
@@ -302,7 +303,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         try:
             update_fields = kwargs.get('update_fields') + [
                 'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc',
-                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc']
+                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc'] + clear_enrollment_fields
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
@@ -356,6 +357,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             EnrollmentChecklist.objects.get(household_member=self).delete()
         except EnrollmentChecklist.DoesNotExist:
             pass
+        return ['enrollment_checklist_completed', 'enrollment_loss_completed', 'eligible_subject']
 
     @property
     def evaluate_htc_eligibility(self):
