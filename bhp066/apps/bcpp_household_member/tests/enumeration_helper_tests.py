@@ -4,13 +4,11 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
-from django.core.exceptions import ValidationError
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.registration.models import RegisteredSubject
 from edc.constants import NOT_APPLICABLE
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.visit_schedule.classes import site_visit_schedules
@@ -19,12 +17,10 @@ from apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
-from apps.bcpp_household_member.models import EnrollmentLoss
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
@@ -115,6 +111,7 @@ class EnumerationHelperTests(TestCase):
             guardian='No',
             initials=household_member.initials,
             part_time_resident='Yes')
+        from apps.bcpp_subject.tests.factories import SubjectConsentFactory
         self.subject_consent = SubjectConsentFactory(
             household_member=enrollment_checklist.household_member,
             first_name="ERIK",
