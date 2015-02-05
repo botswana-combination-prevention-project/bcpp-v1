@@ -23,7 +23,7 @@ class Receive(BaseReceive):
         super(Receive, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return self.receive_identifier
+        return self.receive_identifier or u''
 
     def deserialize_get_missing_fk(self, attrname):
         retval = None
