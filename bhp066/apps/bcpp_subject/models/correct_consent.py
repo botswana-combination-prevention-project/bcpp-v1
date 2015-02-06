@@ -181,6 +181,14 @@ class CorrectConsent(BaseSyncUuidModel):
         if self.new_first_name:
             household_member.first_name = self.new_first_name
             self.subject_consent.first_name = self.new_first_name
+            if self.new_last_name:
+                household_member.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
+                enrollment_checklist.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
+                self.subject_consent.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
+            else:
+                household_member.initials = str(self.new_first_name)[0] + str(self.subject_consent.last_name)[0]
+                enrollment_checklist.initials = str(self.new_first_name)[0] + str(self.subject_consent.last_name)[0]
+                self.subject_consent.initials = str(self.new_first_name)[0] + str(self.subject_consent.last_name)[0]
         if self.new_initials:
             household_member.initials = self.new_initials
             enrollment_checklist.initials = self.new_initials
@@ -199,6 +207,16 @@ class CorrectConsent(BaseSyncUuidModel):
         if self.new_is_literate:
             enrollment_checklist.literacy = self.new_is_literate
             self.subject_consent.is_literate = self.new_is_literate
+        if self.new_last_name:
+            self.subject_consent.last_name = self.new_last_name
+            if self.new_first_name:
+                household_member.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
+                enrollment_checklist.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
+                self.subject_consent.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
+            else:
+                household_member.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
+                enrollment_checklist.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
+                self.subject_consent.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
         household_member.save(update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
         enrollment_checklist.save(update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
         self.subject_consent.save(update_fields=['first_name', 'last_name', 'initials', 'gender', 'is_literate', 'dob', 'guardian_name'])
