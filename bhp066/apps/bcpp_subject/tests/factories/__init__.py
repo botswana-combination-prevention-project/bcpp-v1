@@ -50,3 +50,4 @@ from .tb_symptoms_factory import TbSymptomsFactory
 from .call_list_factory import CallListFactory
 from .call_log_factory import CallLogFactory
 from .call_log_entry_factory import CallLogEntryFactory
+from .correct_consent_factory import CorrectConsentFactory
