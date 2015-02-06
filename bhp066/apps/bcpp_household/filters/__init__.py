@@ -4,3 +4,4 @@ from .replaceable_household_structure_filter import ReplaceableHouseholdStructur
 from .replaceable_plot_filter import ReplaceablePlotFilter
 from .replaced_by_filter import ReplacedByFilter
 from .replaces_filter import ReplacesFilter
+from .hic_enrolled_filter import HicEnrolledFilter
