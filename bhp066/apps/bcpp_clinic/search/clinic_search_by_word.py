@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from ..models import ClinicEligibility
 
 from edc.dashboard.search.classes import BaseSearchByWord
@@ -10,9 +12,16 @@ class ClinicSearchByWord(BaseSearchByWord):
     order_by = ['-created']
     template = 'cliniceligibility_include.html'
 
-    def contribute_to_context(self, context):
-        context = super(BaseSearchByWord, self).contribute_to_context(context)
-        context.update({
-            'subject_dashboard_url': 'subject_dashboard_url'},
-             clinic_eligibility_meta=ClinicEligibility._meta,)
-        return context
+    @property
+    def qset(self):
+        qset = (
+            Q(household_member__registered_subject__subject_identifier__icontains=self.search_value)
+            )
+        return qset
+
+#     def contribute_to_context(self, context):
+#         context = super(BaseSearchByWord, self).contribute_to_context(context)
+#         context.update({
+#             'subject_dashboard_url': 'subject_dashboard_url'},
+#              clinic_eligibility_meta=ClinicEligibility._meta,)
+#         return context
