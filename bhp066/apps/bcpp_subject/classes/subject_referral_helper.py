@@ -274,7 +274,8 @@ class SubjectReferralHelper(object):
     @property
     def arv_clinic(self):
         try:
-            clinic_receiving_from = self.hiv_care_adherence_instance.clinic_receiving_from
+            clinic_receiving_from = self._subject_status_helper.hiv_care_adherence_instance.clinic_receiving_from
+            print 'clinic_receiving_from='+str(clinic_receiving_from)
         except AttributeError:
             clinic_receiving_from = None
         return clinic_receiving_from
@@ -330,7 +331,7 @@ class SubjectReferralHelper(object):
     def next_arv_clinic_appointment_date(self):
         next_appointment_date = None
         try:
-            next_appointment_date = self.hiv_care_adherence_instance.next_appointment_date
+            next_appointment_date = self._subject_status_helper.hiv_care_adherence_instance.next_appointment_date
         except AttributeError:
             pass
         return next_appointment_date
