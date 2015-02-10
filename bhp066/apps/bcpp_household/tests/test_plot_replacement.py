@@ -1,7 +1,7 @@
 # import pprint
 import socket
 
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 
 from django.db import connections
 from django.test import TestCase
@@ -24,13 +24,15 @@ from apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
                                            RESIDENTIAL_HABITABLE)
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, Plot
-from apps.bcpp_household_member.constants import REFUSED, ABSENT
+from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory
+from apps.bcpp_household_member.constants import REFUSED, ABSENT, BHS_SCREEN
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectAbsentee
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.models import Survey
 
 from ..constants import NEARLY_ALWAYS_OCCUPIED, NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, UNKNOWN_OCCUPIED, FIVE_PERCENT
@@ -582,6 +584,60 @@ class TestPlotReplacement(TestCase):
         dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
         self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household1, dispatch_item_register)])
         self.teardown(producer.name)
+
+#     def test_absentees_ineligibles0(self):
+#         """Asserts a household with 1 absent member and no other eligible members is replaceable"""
+#         self.startup()
+#         plot = PlotFactory(
+#                 community='test_community',
+#                 household_count=1,
+#                 status=RESIDENTIAL_HABITABLE,
+#                 eligible_members=3,
+#                 description="A blue house with yellow screen wall",
+#                 time_of_week='Weekdays',
+#                 time_of_day='Morning',
+#                 gps_degrees_s=25,
+#                 gps_minutes_s=0.786540,
+#                 gps_degrees_e=25,
+#                 gps_minutes_e=44.8981199,
+#                 selected=1)
+#         household = Household.objects.get(plot=plot)
+#         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+#         RepresentativeEligibilityFactory(household_structure=household_structure)
+#         self.household_member_absent_factory(
+#             household_structure=household_structure,
+#             gender='F',
+#             age_in_years=51,
+#             present_today='No',
+#             study_resident='Yes')
+#         member = HouseholdMember.objects.get(household_structure=household_structure)
+#         member.member_status = BHS_SCREEN
+#         member.save()
+#         member = HouseholdMember.objects.get(household_structure=household_structure)
+#         enrollment_checklist = EnrollmentChecklistFactory(
+#                                 household_member=member, 
+#                                 initials='BB', 
+#                                 dob=date(1989, 10, 10),
+#                                 gender='M',
+#                                 guardian='N/A')
+#         dob = date(date.today().year - member.age_in_years, 2, 1)
+#         SubjectConsentFactory(household_member=member, dob=dob)
+#         producer = ProducerFactory()
+#         producer = update_producer_from_settings(producer)
+#         # print producer.name
+#         if not load_producer_db_settings():
+#             raise TypeError('no producers')
+#         self.create_survey_on_producer(producer.name)
+#         bcpp_dispatch = BcppDispatchController(using_source='default', using_destination=producer.name, dispatch_container_instance=plot)
+#         bcpp_dispatch.dispatch()
+#         replacement_helper = ReplacementHelper()
+#         options = dict(is_dispatched=True,
+#                        item_app_label='bcpp_household',
+#                        item_model_name='Plot',
+#                        item_identifier=plot.pk)
+#         dispatch_item_register = DispatchItemRegister.objects.using('default').get(**options)
+#         self.assertEquals(list(replacement_helper.replaceable_households(producer.name)), [(household, dispatch_item_register)])
+#         self.teardown(producer.name)
 
     def test_absentees_ineligibles1(self):
         """Asserts a household with 1 absent member and no other eligible members is replaceable"""

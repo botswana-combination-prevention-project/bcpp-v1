@@ -1,4 +1,5 @@
 import socket
+import re
 
 from datetime import datetime
 
@@ -376,6 +377,14 @@ class ReplacementHelper(object):
     def all_eligible_members_absent(self):
         """Returns True if all eligible members are absent
         after 3 attempts."""
+        eligible_members = HouseholdMember.objects.using('default').filter(
+                    household_structure=self.household_structure,
+                    eligible_member=True)
+        # If eligible members are consented the household is not replaceable
+        if eligible_members:
+            for member in eligible_members:
+                if member.is_consented:
+                    return False
         if self.household_structure.enumerated:
             absent_member_count = HouseholdMember.objects.using('default').filter(
                 household_structure=self.household_structure,
@@ -383,9 +392,7 @@ class ReplacementHelper(object):
                 absent=True,
                 visit_attempts__gte=VISIT_ATTEMPTS).count()
             if absent_member_count:
-                eligible_member_count = HouseholdMember.objects.using('default').filter(
-                    household_structure=self.household_structure,
-                    eligible_member=True).count()
+                eligible_member_count = eligible_members.count()
                 return eligible_member_count == absent_member_count
         return False
 
