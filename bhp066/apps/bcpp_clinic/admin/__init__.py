@@ -9,3 +9,4 @@ from .clinic_vl_result_admin import ClinicVlResultAdmin
 from .daily_log_admin import DailyLogAdmin
 from .questionnaire_admin import QuestionnaireAdmin
 from .viral_load_tracking_admin import ViralLoadTrackingAdmin
+from .clinic_household_member_admin import ClinicHouseholdMemberAdmin
