@@ -383,7 +383,7 @@ class ReplacementHelper(object):
         # If eligible members are consented the household is not replaceable
         if eligible_members:
             for member in eligible_members:
-                if re.sub(r'-.*$', "", member.registered_subject.subject_identifier) == '066':
+                if member.is_consented:
                     return False
         if self.household_structure.enumerated:
             absent_member_count = HouseholdMember.objects.using('default').filter(
