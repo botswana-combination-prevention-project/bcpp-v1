@@ -44,7 +44,10 @@ class ClinicHouseholdMember(HouseholdMember):
             #        household__plot__plot_identifier=clinic_plot.plot_identifier,
             #        survey__survey_slug=mapper_instance.current_survey_slug)
         super(HouseholdMember, self).save(*args, **kwargs)
-        HouseholdMember.objects.get(pk=self.pk).save(skip_eligible_representative_filled=True)
+        #HouseholdMember.objects.get(pk=self.pk).save(skip_eligible_representative_filled=True)
+
+    def serialize_proxy(self):
+        return True
 
     def __unicode__(self):
         return '{0} {1} {2}{3} {4}'.format(
