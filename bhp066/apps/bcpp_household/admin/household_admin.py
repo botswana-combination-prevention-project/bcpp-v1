@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from ..actions import update_replaceables
 from ..filters import ReplacedByFilter
-from ..filters import HicEnrolledFilter
+#from ..filters import HicEnrolledFilter
 from ..forms import HouseholdForm
 from ..models import Household
 
@@ -20,7 +20,7 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     list_display = ('household_identifier', 'structure', 'plot', 'community','replaceable', 'replaced_by', 'created',  'modified')
 
-    list_filter = ('created', 'modified', 'community', HicEnrolledFilter, 'replaceable', ReplacedByFilter, 'hostname_modified')
+    list_filter = ('created', 'modified', 'community', 'replaceable', ReplacedByFilter, 'hostname_modified')
 
     search_fields = ('household_identifier', 'community', 'id', 'plot__id', 'replaced_by')
 
