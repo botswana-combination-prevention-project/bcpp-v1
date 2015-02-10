@@ -44,6 +44,8 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
                                         BASE_UUID_MODEL_UPDATE_FIELDS)):
                 # instance.post_save_update_registered_subject(using) (called in base)
                 instance.household_member.is_consented = True
+                instance.household_member.absent = False
+                instance.household_member.undecided = False
                 instance.household_member.save(using=using, update_fields=['is_consented'])
                 # update household_structure if enrolled
                 instance.household_member.household_structure.enrolled = True
