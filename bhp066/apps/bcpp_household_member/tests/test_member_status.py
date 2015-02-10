@@ -66,7 +66,7 @@ class TestMemberStatus(TestCase):
         BcppSubjectVisitSchedule().build()
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-        plot = PlotFactory(community='mmankgodi', household_count=1, status='residential_habitable')
+        plot = PlotFactory(community='mmathethe', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
@@ -501,11 +501,12 @@ class TestMemberStatus(TestCase):
         enrollment_checklist.has_identity = 'No'
         enrollment_checklist.save()
         self.assertFalse(enrollment_checklist.household_member.eligible_subject)
+        self.assertFalse(household_member.household_structure.household.plot.bhs)
         if self.intervention:
             self.assertFalse(enrollment_checklist.household_member.eligible_htc)
             self.assertEquals(enrollment_checklist.household_member.member_status, NOT_ELIGIBLE)
         else:
-            self.assertFalse(enrollment_checklist.household_member.eligible_htc)
+            self.assertTrue(enrollment_checklist.household_member.eligible_htc)
             self.assertEquals(enrollment_checklist.household_member.member_status, HTC_ELIGIBLE)
         self.assertEqual(EnrollmentLoss.objects.filter(household_member=household_member).count(), 1)
 
@@ -531,9 +532,11 @@ class TestMemberStatus(TestCase):
         self.assertTrue(enrollment_checklist.household_member.enrollment_loss_completed)
         self.assertFalse(enrollment_checklist.household_member.refused)
         if self.intervention:
+            #This is in CPC(Plot should be enrolled for 1 to be HTC_ELIGIBLE)
             self.assertFalse(enrollment_checklist.household_member.eligible_htc)
             self.assertEquals(enrollment_checklist.household_member.member_status, NOT_ELIGIBLE)
         else:
+            #This is in CPC(Plot should be enrolled for 1 to be HTC_ELIGIBLE)
             self.assertTrue(enrollment_checklist.household_member.eligible_htc)
             self.assertEquals(enrollment_checklist.household_member.member_status, HTC_ELIGIBLE)
         self.assertEqual(EnrollmentLoss.objects.filter(household_member=enrollment_checklist.household_member).count(), 1)
@@ -571,8 +574,13 @@ class TestMemberStatus(TestCase):
             part_time_resident='Yes',
             has_identity='No')
         household_member1 = HouseholdMember.objects.get(pk=enrollment_checklist1.household_member.pk)
-        # 1 is now NOT_ELIGIBLE because has_identity='No' above
-        self.assertEquals(household_member1.member_status, NOT_ELIGIBLE)
+        self.assertFalse(household_member1.household_structure.household.plot.bhs)
+        if self.intervention:
+            #This is in CPC(Plot should be enrolled for 1 to be HTC_ELIGIBLE)
+            self.assertEquals(household_member1.member_status, NOT_ELIGIBLE)
+        else:
+            #This is in ECC(Plot does not need to be enrolled for 1 to be HTC_ELIGIBLE)
+            self.assertEquals(household_member1.member_status, HTC_ELIGIBLE)
         enrollment_checklist2 = EnrollmentChecklistFactory(
             household_member=household_member2,
             gender='M',
@@ -603,9 +611,15 @@ class TestMemberStatus(TestCase):
         self.assertTrue(household_member2.household_structure.enrolled)
         self.assertTrue(household_member2.household_structure.household.enrolled)
 
-        # since household is enrolled, 1 is now HTC_ELIGIBLE
         household_member1 = HouseholdMember.objects.get(pk=household_member1.pk)
-        self.assertEquals(household_member1.member_status, HTC_ELIGIBLE)
+        if self.intervention:
+            #This is in CPC(Plot should be enrolled for 1 to be HTC_ELIGIBLE)
+            #since household is enrolled, 1 is now HTC_ELIGIBLE in CPC
+            self.assertEquals(household_member1.member_status, HTC_ELIGIBLE)
+        else:
+            #This is in ECC(Plot does not need to be enrolled for 1 to be HTC_ELIGIBLE)
+            #household is now enrolled, 1 remains HTC_ELIGIBLE
+            self.assertEquals(household_member1.member_status, HTC_ELIGIBLE)
 
     def test_change_household_member8(self):
         """Asserts that an eligible member in a household that is enrolled AFTER the member was added and who fails eligibility is HTC ELIGIBLE."""
