@@ -257,13 +257,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             self.survey.survey_abbrev,
             is_bhs)
 
-    def save(self, skip_eligible_representative_filled=False, *args, **kwargs):
+    def save(self, *args, **kwargs):
         selected_member_status = None
         using = kwargs.get('using')
         clear_enrollment_fields = []
         self.allow_enrollment(using)
-        if not skip_eligible_representative_filled:
-            self.check_eligible_representative_filled(self.household_structure, using=using)
+        self.check_eligible_representative_filled(self.household_structure, using=using)
         if self.household_structure.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(
                 self.household_structure.household.household_identifier))
