@@ -275,7 +275,6 @@ class SubjectReferralHelper(object):
     def arv_clinic(self):
         try:
             clinic_receiving_from = self._subject_status_helper.hiv_care_adherence_instance.clinic_receiving_from
-            print 'clinic_receiving_from='+str(clinic_receiving_from)
         except AttributeError:
             clinic_receiving_from = None
         return clinic_receiving_from
