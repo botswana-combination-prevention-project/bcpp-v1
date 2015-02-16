@@ -59,6 +59,6 @@ class ClinicHouseholdMember(HouseholdMember):
 
     class Meta:
         proxy = True
-        app_label = 'bcpp_clinic'
-        verbose_name = 'Clinic Household Member'
-        verbose_name_plural = 'Clinic Household Member'
+#         app_label = 'bcpp_clinic'
+#         verbose_name = 'Clinic Household Member'
+#         verbose_name_plural = 'Clinic Household Member'
