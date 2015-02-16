@@ -29,9 +29,9 @@ class MaunatlalaPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 16),
-            full_enrollment_date=date(2015, 2, 6),
-            end_date=date(2015, 2, 13),
+            start_date=date(2015, 3, 7),
+            full_enrollment_date=date(2015, 3, 25),
+            end_date=date(2015, 4, 15),
             smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
