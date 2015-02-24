@@ -115,7 +115,7 @@ COMMUNITIES = (
     ('Lerala', _('Lerala')),
     ('Letlhakeng', _('Letlhakeng')),
     ('Mandunyane', _('Mandunyane')),
-    ('Mankgodi', _('Mankgodi')),
+    ('Mmankgodi', _('Mmankgodi')),
     ('Mmadinare', _('Mmadinare')),
     ('Mmathethe', _('Mmathethe')),
     ('Masunga', _('Masunga')),
