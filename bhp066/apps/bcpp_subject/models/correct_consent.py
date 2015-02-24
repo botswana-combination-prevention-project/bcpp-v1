@@ -19,6 +19,7 @@ from edc.device.sync.models import BaseSyncUuidModel
 from ..managers import CorrectConsentManager
 
 from .subject_consent import SubjectConsent
+from .hic_enrollment import HicEnrollment
 
 
 class CorrectConsent(BaseSyncUuidModel):
@@ -178,6 +179,7 @@ class CorrectConsent(BaseSyncUuidModel):
         #household member updates
         household_member = self.subject_consent.household_member
         enrollment_checklist = household_member.enrollment_checklist
+        hic_enrollment = None
         if self.new_first_name:
             household_member.first_name = self.new_first_name
             self.subject_consent.first_name = self.new_first_name
@@ -201,6 +203,9 @@ class CorrectConsent(BaseSyncUuidModel):
             household_member.age_in_years = relativedelta(date.today(), self.new_dob).years
             enrollment_checklist.dob = self.new_dob
             self.subject_consent.dob = self.new_dob
+            if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
+                hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
+                hic_enrollment.dob = self.new_dob
         if self.new_guardian_name:
             enrollment_checklist.guardian = self.new_guardian_name
             self.subject_consent.guardian_name = self.new_guardian_name
@@ -217,6 +222,8 @@ class CorrectConsent(BaseSyncUuidModel):
                 household_member.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
                 enrollment_checklist.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
                 self.subject_consent.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
+        if hic_enrollment:
+            hic_enrollment.save(update_fields=['dob'])
         household_member.save(update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
         enrollment_checklist.save(update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
         self.subject_consent.save(update_fields=['first_name', 'last_name', 'initials', 'gender', 'is_literate', 'dob', 'guardian_name'])
