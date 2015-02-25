@@ -20,10 +20,6 @@ class ClinicHouseholdMember(HouseholdMember):
 
     objects = ClinicHouseholdMemberManager()
 
-#     @property
-#     def skip_eligible_representative_filled(self):
-#         return True
-
     def save(self, *args, **kwargs):
         """Saves instance but skips proxy model save."""
         update_fields = kwargs.get('update_fields', [])
@@ -46,9 +42,6 @@ class ClinicHouseholdMember(HouseholdMember):
         super(HouseholdMember, self).save(*args, **kwargs)
         #HouseholdMember.objects.get(pk=self.pk).save(skip_eligible_representative_filled=True)
 
-    def serialize_proxy(self):
-        return True
-
     def __unicode__(self):
         return '{0} {1} {2}{3} {4}'.format(
             mask_encrypted(self.first_name),
@@ -59,6 +52,3 @@ class ClinicHouseholdMember(HouseholdMember):
 
     class Meta:
         proxy = True
-#         app_label = 'bcpp_clinic'
-#         verbose_name = 'Clinic Household Member'
-#         verbose_name_plural = 'Clinic Household Member'
