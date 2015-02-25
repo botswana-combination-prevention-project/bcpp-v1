@@ -5,6 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.subject.entry.models import LabEntry, Entry
+from edc.map.classes import site_mappers
 
 from apps.bcpp_clinic.models import ClinicVisit
 from apps.bcpp.choices import COMMUNITIES
@@ -29,19 +30,29 @@ class ClinicRequisition(BaseRequisition):
 
     entry_meta_data_manager = ClinicRequisitionManager(ClinicVisit)
 
+    def save(self, *args, **kwargs):
+        self.community = self.get_visit().household_member.household_structure.household.plot.community
+        super(ClinicRequisition, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return '{0} {1}'.format(unicode(self.panel), self.requisition_identifier)
+
     def natural_key(self):
         return (self.requisition_identifier,)
+
+    def get_site_code(self):
+        return site_mappers.get(self.community).map_code
 
     def get_visit(self):
         return self.clinic_visit
 
     @property
     def registered_subject(self):
-        return self.subject_visit.appointment.registered_subject
+        return self.clinic_visit.appointment.registered_subject
 
     @property
     def visit_code(self):
-        return self.subject_visit.appointment.visit_definition.code
+        return self.clinic_visit.appointment.visit_definition.code
 
     @property
     def optional_description(self):
@@ -57,7 +68,7 @@ class ClinicRequisition(BaseRequisition):
     aliquot.allow_tags = True
 
     def dashboard(self):
-        url = reverse('subject_dashboard_url',
+        url = reverse('clinic_dashboard_url',
                       kwargs={'dashboard_type': self.clinic_visit.appointment.registered_subject.subject_type.lower(),
                               'dashboard_model': 'appointment',
                               'dashboard_id': self.clinic_visit.appointment.pk,
