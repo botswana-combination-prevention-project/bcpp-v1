@@ -19,7 +19,7 @@ class RamokgonamiPlotMapper(BasePlotMapper):
 
     landmarks = RAMOKGONAMI_LANDMARKS
 
-    intervention = True
+    intervention = False
 
     gps_center_lat = -24.729571
     gps_center_lon = 25.649351
@@ -31,7 +31,7 @@ class RamokgonamiPlotMapper(BasePlotMapper):
             name='bhs',
             start_date=date(2015, 3, 7),
             full_enrollment_date=date(2015, 3, 24),
-            end_date=date(2015, 3, 24),
+            end_date=date(2015, 3, 15),
             smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
