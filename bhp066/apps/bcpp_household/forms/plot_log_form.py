@@ -1,4 +1,5 @@
 from django import forms
+from datetime import datetime, timedelta
 
 from edc.base.form.forms import BaseModelForm
 
@@ -30,6 +31,14 @@ class PlotLogEntryForm(BaseModelForm):
                                         'plot with rarely or seasonally present members.')
         if status == INACCESSIBLE and plot_log.plot.action == CONFIRMED:
             raise forms.ValidationError('This plot has been \'confirmed\'. You cannot set it as INACCESSIBLE.')
+
+        if PlotLogEntry.objects.filter(
+                            created__range=(datetime.today() + timedelta(days=-1),
+                                                       datetime.today() + timedelta(days=1))
+                                                                , plot_log__plot=plot_log.plot):
+            if not self.instance.id:
+                raise forms.ValidationError('The plot log entry has been added already.')
+
         return cleaned_data
 
     class Meta:

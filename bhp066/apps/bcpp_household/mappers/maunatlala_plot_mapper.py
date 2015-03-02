@@ -32,7 +32,7 @@ class MaunatlalaPlotMapper(BasePlotMapper):
             start_date=date(2015, 3, 7),
             full_enrollment_date=date(2015, 3, 25),
             end_date=date(2015, 4, 15),
-            smc_start_date=date(2015, 2, 13)),
+            smc_start_date=date(2015, 4, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
@@ -43,7 +43,7 @@ class MaunatlalaPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((TH, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
