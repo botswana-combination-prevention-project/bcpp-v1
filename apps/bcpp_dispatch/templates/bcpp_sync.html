@@ -1,0 +1,33 @@
+{% extends "sync.html"%}
+{% load i18n %}
+{% load admin_urls %}
+{% load common_tags %}
+
+{% block usb_sync %}
+{% if is_server %}
+	<form action="/bhp_sync/usb_consume/bcpp/">
+		<input type="submit" value="Synchronize from USB device">
+	</form>
+{% endif %}
+{% endblock usb_sync %}
+
+{% block return_app %}
+    <td><A href="/admin/dispatch/dispatchcontainerregister/?producer__id__exact={{producer.id}}">return {{ producer.name }}</A></td>
+{% endblock return_app %}
+    
+{% block consuming_app %}
+{% if is_server or is_middleman %}
+	<td><A href="{% url 'sync_consume_producer_url' producer.name app_name %}">synchronize with server</A>
+	</td>
+{% else %}
+	<td>SYNC NOT AVAILABLE IN NETBOOK</td>
+{% endif %}
+{% endblock consuming_app %}
+    
+{% block play_transactions %}
+{% if is_server %}
+	<form action="/dispatch/bcpp/play_transactions/">
+		<input type="submit" value="Play Transactions">
+	</form>
+{% endif %}
+{% endblock %}

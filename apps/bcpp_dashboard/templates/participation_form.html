@@ -1,0 +1,12 @@
+<form name="participation-{{household_member.pk}}" action="{% url 'participation_url' %}" method="POST">
+ {% csrf_token %}
+    <select name="status" id="status" onchange="this.form.submit()">
+        {% for status_key, status_value  in household_member.member_status_choices %}
+            <option value="{{ status_key }}"  {% if household_member.member_status == status_key %} selected="selected" {% endif %}>{{ status_value }}</option>
+        {% endfor %}
+    </select>
+    <input type="hidden" name="household_member" value={{ household_member.pk }}>
+    <input type="hidden" name="dashboard_id" value={{ household_structure.pk }}>
+    <input type="hidden" name="dashboard_model" value="household_structure">
+    <input type="hidden" name="dashboard_type" value="household">
+</form>
