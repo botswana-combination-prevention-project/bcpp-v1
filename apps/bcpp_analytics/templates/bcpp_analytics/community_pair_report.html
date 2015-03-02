@@ -1,0 +1,27 @@
+{% extends 'bcpp_analytics/reports_base.html' %}
+
+{% load staticfiles %}
+
+{% block add_css_styles %}
+  <link href="{% static 'bcpp_analytics/css/datepicker.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    {% include "bcpp_analytics/includes/report_criteria.html" with communities=communities action_url=action_url %} 
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      {% block community1_content %}{% endblock %}
+    </div>
+    <div class="col-md-6">
+      {% block community2_content %}{% endblock %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block add_js_files %}
+  <script src="{% static 'bcpp_analytics/js/bootstrap-datepicker.js' %}"></script>
+  <script src="{% static 'bcpp_analytics/js/analytics.js' %}"></script>
+{% endblock %}

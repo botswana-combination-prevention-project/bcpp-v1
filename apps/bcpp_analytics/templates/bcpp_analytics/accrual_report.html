@@ -1,0 +1,10 @@
+{% extends 'bcpp_analytics/community_pair_report.html' %}
+
+{% block report_title %} Community Accrual Report{% endblock %}
+
+{% block community1_content %}
+    {% include "bcpp_analytics/includes/community_accrual.html" with community_data=community1_data %}
+{% endblock %}
+{% block community2_content %}
+    {% include "bcpp_analytics/includes/community_accrual.html" with community_data=community2_data %}
+{% endblock %}
