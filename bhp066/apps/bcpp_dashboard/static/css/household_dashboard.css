@@ -1,0 +1,41 @@
+
+/* DASH MARQUEE */
+#dashboard_wrapper {
+   width:750px;
+   margin:5px auto;
+   background-color:white;
+   float:left;
+   overflow:hidden;
+   display: block;
+   content: ".";
+   }
+
+#dashboard_marquee {
+    float:left;
+    width:auto;
+    background:#FFFFEC;
+    border: 1px solid #EEEEAA;
+    padding: 2px;
+    height:15px;
+    margin:5px;
+    border-radius:5px;
+    font-size: 11px;
+}
+
+#household_structure_status_marquee {
+    float:right;
+    width:auto;
+    background:#FFFFEC;
+    border: 1px solid #EEEEAA;
+    padding: 2px;
+    height:15px;
+    margin:5px;
+    border-radius:5px;
+    font-size: 11px;
+}
+
+#participation td {
+    border: None;
+    padding: 1px;
+    }
+    

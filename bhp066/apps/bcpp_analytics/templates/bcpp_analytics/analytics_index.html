@@ -1,0 +1,23 @@
+{% extends "bcpp_analytics/reports_base.html" %}
+
+{% block report_title %}Reports Index{% endblock %}
+
+{% block content %}
+  <div class="col-md-6 centered"> 
+    <div class="panel panel-info"> 
+      <div class="panel-heading">
+        <h2 class="panel-title">Reports List</h2>
+      </div>
+      <div class="panel-body">
+        The links below represent the currently available predefined reports
+      </div>
+      <div class="list-group">
+        <a href="{% url 'analytics:operational' %}" class="list-group-item">Operational Reports</a>
+        <a href="{% url 'analytics:replacement' %}" class="list-group-item">Replacement Reports</a>
+        <a href="{% url 'analytics:accrual' %}" class="list-group-item">Community Accrual Report</a>
+        <a href="{% url 'analytics:indicators' %}" class="list-group-item">Key Indicators Report</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
