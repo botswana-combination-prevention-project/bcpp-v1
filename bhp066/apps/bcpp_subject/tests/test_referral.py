@@ -38,8 +38,8 @@ from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 class TestReferral(BaseScheduledModelTestCase):
 
-    community = 'mmankgodi'
-    site_code = '19'
+    community = 'lerala'
+    site_code = '21'
 
     def startup(self):
         super(TestReferral, self).startup()
