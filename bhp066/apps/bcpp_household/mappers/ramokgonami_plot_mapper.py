@@ -31,7 +31,7 @@ class RamokgonamiPlotMapper(BasePlotMapper):
             name='bhs',
             start_date=date(2015, 3, 7),
             full_enrollment_date=date(2015, 3, 24),
-            end_date=date(2015, 3, 15),
+            end_date=date(2015, 4, 15),
             smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
@@ -43,7 +43,7 @@ class RamokgonamiPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((FR, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
