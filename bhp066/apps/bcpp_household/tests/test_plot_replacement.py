@@ -5,15 +5,13 @@ from datetime import datetime, date, timedelta
 
 from django.db import connections
 from django.test import TestCase
-from django.core.exceptions import ValidationError
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.map.classes import site_mappers, Mapper
+from edc.map.classes import Mapper
 from edc.device.sync.utils import load_producer_db_settings, update_producer_from_settings
 from edc.device.sync.tests.factories import ProducerFactory
-from edc.device.sync.helpers import TransactionHelper
 from edc.device.dispatch.models.dispatch_item_register import DispatchItemRegister
 
 from apps.bcpp.app_configuration.classes import bcpp_app_configuration
@@ -24,7 +22,6 @@ from apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
                                            RESIDENTIAL_HABITABLE)
 from apps.bcpp_household.helpers import ReplacementHelper
 from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, Plot
-from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory
 from apps.bcpp_household_member.constants import REFUSED, ABSENT, BHS_SCREEN
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectAbsentee
@@ -32,7 +29,6 @@ from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from apps.bcpp_survey.models import Survey
 
 from ..constants import NEARLY_ALWAYS_OCCUPIED, NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, UNKNOWN_OCCUPIED, FIVE_PERCENT
