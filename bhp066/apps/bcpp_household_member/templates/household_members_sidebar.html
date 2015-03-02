@@ -1,0 +1,32 @@
+{% load common_tags %}
+{% load crypto_tags %}
+{% load dispatch_tags %}
+{% load admin_urls %}
+{% load url from future %}
+
+{% if household_members %}
+    {% for hsm in household_members %}
+        <tr {% if hsm.first_name == household_member.first_name%}style="background:lightyellow;"{% else %}class="row1"{% endif %}>
+        <td>
+        {% if hsm.is_eligible and not hsm.present == '-' %}
+            {{ forloop.counter }}.&nbsp;<A href="{% url household_dashboard_url dashboard_type='household' dashboard_model='household_structure' dashboard_id=household_structure.pk %}">{% if hsm.first_name == household_member.first_name%}<B>{% endif %}{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.initials }}&nbsp;{{ hsm.age_in_years }}{{ hsm.gender }}&nbsp;{{ hsm.hiv_status }}</A>{% if hsm.first_name == household_member.first_name%}</B>{% endif %}
+        {% else%}                
+            {{ forloop.counter }}.&nbsp;{{ hsm.first_name|encrypted }}&nbsp;{{ hsm.gender }}&nbsp;{{ hsm.age_in_years }}            
+        {% endif %}
+        {% if hsm.present == '-' %}
+            <span style="color:red;font-size:9px;vertical-align:super">Update!</span>
+        {% endif %}                    
+        </td>            
+        <td>{{ hsm.household_structure_relation }}</td>
+        <td>
+        {% if hsm.member_status %}
+            {{ hsm.member_status }}
+        {% else %}    
+            {{ hsm.is_eligible_label }}            
+        {% endif %}
+        </td>
+        </tr>
+    {% endfor %}
+{% else %}    
+    <tr><td colspan="3">no members</td></tr>
+{% endif %}
