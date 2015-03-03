@@ -1,4 +1,5 @@
-from . import BHSBaseExport
+from .bhs_base_export import BHSBaseExport
+
 
 class BHSSubjectHelper(BHSBaseExport):
 
@@ -11,25 +12,25 @@ class BHSSubjectHelper(BHSBaseExport):
 
     @property
     def omang_number(self):
-        """returns Omang number"""
+        """Returns Omang number."""
         return self._omang_number
 
     @property
     def first_name(self):
-        """returns First name"""
+        """Returns First name."""
         return self._first_name
 
     @property
     def last_name(self):
-        """returns Last name"""
+        """Returns Last name."""
         return self._last_name
 
     @property
     def date_of_birth(self):
-        """Returns date of birth"""
+        """Returns date of birth."""
         return self._date_of_birth
 
     @property
     def gender(self):
-        """Returns gender"""
+        """Returns gender."""
         return self._gender
