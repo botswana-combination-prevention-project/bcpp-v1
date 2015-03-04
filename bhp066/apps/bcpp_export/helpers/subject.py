@@ -7,6 +7,7 @@ from apps.bcpp_household_member.models import HouseholdMember, SubjectHtc
 from apps.bcpp_subject.models import SubjectConsent, SubjectReferral
 
 from .bhs_base_export import BaseExport
+from .plot import Plot
 
 
 class Subject(BaseExport):
@@ -30,10 +31,7 @@ class Subject(BaseExport):
         self.subject_referred = None
         self.survey_consented = None
         self.household_member = household_member
-        self.household_identifier = self.household_member.household_structure.household.household_identifier
-        self.plot_identifier = self.household_member.household_structure.household.plot.plot_identifier
-        self.gps_lat = self.household_member.household_structure.household.plot.gps_lat
-        self.gps_lon = self.household_member.household_structure.household.plot.gps_lat
+        self.plot_identifier, self.household_identifier, self.gps_lat, self.gps_lon = Plot(household_member=household_member)
         self.first_name = self.household_member.first_name
         self.gender = self.household_member.gender
         self.internal_identifier = self.household_member.internal_identifier
