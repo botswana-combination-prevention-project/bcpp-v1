@@ -148,7 +148,7 @@ class BasePlotMapper(Mapper):
     @property
     def clinic_plot(self):
         """Returns and, if needed, creates a non-residential plot to represent the CLINIC."""
-        #We can only do this on community servers, not on netbooks or central server.
+        # We can only do this on community servers, not on netbooks or central server.
         from edc.device.device.classes import Device
         try:
             plot = Plot.objects.get(plot_identifier=self.clinic_plot_identifier)

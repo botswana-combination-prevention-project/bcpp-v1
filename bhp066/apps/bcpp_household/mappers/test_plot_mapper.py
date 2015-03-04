@@ -1,4 +1,4 @@
-from dateutil.relativedelta import MO, TU, WE, TH, FR
+from dateutil.relativedelta import MO, TU, WE, TH, FR, relativedelta
 from datetime import date
 
 from edc.map.classes import site_mappers
@@ -29,10 +29,10 @@ class TestPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 1),
-            full_enrollment_date=date(2015, 2, 10),
-            end_date=date(2015, 3, 3),
-            smc_start_date=date(2015, 2, 11)),
+            start_date=date.today() + relativedelta(days=-1),
+            full_enrollment_date=date.today() + relativedelta(days=25),
+            end_date=date.today() + relativedelta(days=35),
+            smc_start_date=date.today() + relativedelta(days=26)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
