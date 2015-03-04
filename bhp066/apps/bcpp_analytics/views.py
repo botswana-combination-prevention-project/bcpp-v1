@@ -25,6 +25,7 @@ from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndec
 from apps.bcpp_subject.models import HivResult, HicEnrollment
 from apps.bcpp_survey.models import Survey
 
+from .classes import OperationalPlots
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
@@ -171,6 +172,16 @@ def _prepare_params(params_dict, date_format):
     start_date = date_from_s(params_dict.get("start") or default_start, date_format)
     end_date = date_from_s(params_dict.get("to") or default_end, date_format)
     return dict(community_pair=[community1, community2], start_date=start_date, end_date=end_date)
+
+
+@login_required
+def operational_report_plots_view(request, **kwargs):
+    operational_plots = OperationalPlots(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_plot.html', {'values': operational_plots.return_plot_data(),
+                                                        'communities': operational_plots.return_communities(),
+                                                        'ra_usernames': operational_plots.return_ra_usernames()},
+        context_instance=RequestContext(request))
 
 
 @login_required
