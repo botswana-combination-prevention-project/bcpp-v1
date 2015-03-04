@@ -24,7 +24,9 @@ class BhsEnumerationHelper(BHSBaseExport):
 
     @property
     def age_in_years(self):
-        """ returns age at time of enumeration """
+        """Returns age in years from enumeration data or, if exists, from the consent. """
+        
+        
         return self._age_in_years
 
     @property

@@ -1,1 +1,1 @@
-from .bhs_base_export import BHSBaseExport
+from .subject import Subject
