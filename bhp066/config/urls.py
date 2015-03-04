@@ -60,7 +60,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns(
     '',
-    (r'^bcpp/section/analytics/', include('apps.bcpp_analytics.urls', namespace="analytics")),
+    (r'^section/analytics/', include('apps.bcpp_analytics.urls', namespace="analytics")),
 )
 
 urlpatterns += patterns(
