@@ -20,6 +20,7 @@ from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
+from ..exceptions import AlreadyReplaced
 
 
 def is_valid_community(self, value):
@@ -270,9 +271,9 @@ class Plot(BaseDispatchSyncUuidModel):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
         self.allow_enrollment(using, update_fields=update_fields)
-#         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
-#             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
-#                                   'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
+        if self.replaced_by and update_fields != ['replaced_by', 'htc']:
+            raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
+                                  'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
         if not self.community:
             # plot data is imported and not entered, so community must be provided on import
             raise ValidationError('Attribute \'community\' may not be None for model {0}'.format(self))
