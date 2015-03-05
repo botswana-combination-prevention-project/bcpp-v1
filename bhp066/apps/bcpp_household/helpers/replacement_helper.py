@@ -245,7 +245,8 @@ class ReplacementHelper(object):
                 ReplacementHistory.objects.using('default').get(
                     replacing_item=plot.plot_identifier)
             except ReplacementHistory.DoesNotExist:
-                yield plot
+                if not plot.dispatched_to and not plot.section == 'E':
+                    yield plot
 
     def replace_household(self, using_producer):
         """Returns a list of plots used to replace households for a
