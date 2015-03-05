@@ -1,11 +1,12 @@
 from django import forms
+from django.forms.util import ErrorList
 from datetime import datetime, timedelta
 
 from edc.base.form.forms import BaseModelForm
 
 from ..models import PlotLog, PlotLogEntry
 
-from ..constants import INACCESSIBLE, CONFIRMED
+from ..constants import INACCESSIBLE, CONFIRMED, ACCESSIBLE
 
 
 class PlotLogForm(BaseModelForm):
@@ -32,6 +33,13 @@ class PlotLogEntryForm(BaseModelForm):
         if status == INACCESSIBLE and plot_log.plot.action == CONFIRMED:
             raise forms.ValidationError('This plot has been \'confirmed\'. You cannot set it as INACCESSIBLE.')
 
+        if status == ACCESSIBLE:
+            if cleaned_data.get('reason'):
+                self._errors['reason'] = ErrorList([u'This field is not required.'])
+                raise forms.ValidationError('Reason is not required if plot is accessible.')
+            if cleaned_data.get('reason_other'):
+                self._errors['reason_other'] = ErrorList([u'This field is not required.'])
+                raise forms.ValidationError('Other reason is not required if plot is accessible.')
         if PlotLogEntry.objects.filter(
                             created__range=(datetime.today() + timedelta(days=-1),
                                                        datetime.today() + timedelta(days=1))
