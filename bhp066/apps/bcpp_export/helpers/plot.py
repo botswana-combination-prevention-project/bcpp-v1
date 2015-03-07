@@ -47,7 +47,6 @@ class Plot(BaseHelper):
         del self.data['household_structures']
         del self.data['households']
         del self.data['household']
-        del self.data['customized']
 
     def update_plots(self):
         self.plot_identifier = self.plot.plot_identifier if not self.plot.plot_identifier.endswith('-00') else 'clinic'
