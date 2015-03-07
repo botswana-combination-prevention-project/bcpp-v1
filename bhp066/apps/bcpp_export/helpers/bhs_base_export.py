@@ -1,5 +1,0 @@
-
-
-class BaseExport(object):
-
-    pass
