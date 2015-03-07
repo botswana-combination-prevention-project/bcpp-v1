@@ -52,7 +52,6 @@ class Subject(BaseHelper):
         del self.data['member']
         del self.data['plot']
         del self.data['subject_consent']
-        del self.data['customized']
 
     def update_plot(self):
         self.plot = self.household_member.household_structure.household.plot
