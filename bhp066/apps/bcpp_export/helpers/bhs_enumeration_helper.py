@@ -1,7 +1,7 @@
-from . import BHSBaseExport
+from .plot import Plot
 
 
-class BhsEnumerationHelper(BHSBaseExport):
+class Enumeration(object):
 
     def __init__(self):
 
@@ -25,8 +25,6 @@ class BhsEnumerationHelper(BHSBaseExport):
     @property
     def age_in_years(self):
         """Returns age in years from enumeration data or, if exists, from the consent. """
-        
-        
         return self._age_in_years
 
     @property
