@@ -59,8 +59,9 @@ class BaseHelper(object):
                         pass
             if value is None:
                 self.data[key] = ''
+        del self.data['customized']
 
-    def _update(self, survey_abbrev, fieldattrs, model_cls, lookup_string, household_member):
+    def _update(self, survey_abbrev, fieldattrs, model_cls, lookup_string, lookup_instance):
         """Dynamically sets one or more instance attributes and adds the survey_abbrev suffix.
 
         This unormalizes or flattens the values relative to a survey. If this method is called
@@ -88,21 +89,20 @@ class BaseHelper(object):
         instance = None
         for fldname, attrname in fieldattrs:
             if not lookup_string:
-                instance = household_member
-                if instance:
-                    setattr(self, '{}_{}'.format(attrname, survey_abbrev.lower()), getattr(instance, fldname))
+                if lookup_instance:
+                    setattr(self, '{}_{}'.format(attrname, survey_abbrev.lower()), getattr(lookup_instance, fldname))
                 else:
                     setattr(self, '{}_{}'.format(attrname, survey_abbrev.lower()), None)
             else:
                 try:
                     instance = model_cls.objects.get(
-                        **{lookup_string: household_member})
+                        **{lookup_string: lookup_instance})
                     setattr(self, '{}_{}'.format(attrname, survey_abbrev.lower()), getattr(instance, fldname))
                 except model_cls.DoesNotExist:
                     setattr(self, '{}_{}'.format(attrname, survey_abbrev.lower()), None)
                 except MultipleObjectsReturned:
                     values = []
-                    instances = model_cls.objects.filter(**{lookup_string: household_member})
+                    instances = model_cls.objects.filter(**{lookup_string: lookup_instance})
                     for instance in instances:
                         values.append(getattr(instance, fldname))
                     setattr(self, '{}_{}'.format(attrname, survey_abbrev.lower()), values)
