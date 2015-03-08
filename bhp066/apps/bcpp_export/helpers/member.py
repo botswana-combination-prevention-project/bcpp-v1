@@ -7,7 +7,7 @@ from edc.subject.registration.models import RegisteredSubject
 from apps.bcpp_household.choices import HOUSEHOLD_STATUS
 from apps.bcpp_household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
 from apps.bcpp_household.models.household_log import HouseholdLogEntry
-from apps.bcpp_household_member.constants import BHS, UNDECIDED, ANNUAL, ABSENT, REFUSED, HTC
+from apps.bcpp_household_member.constants import BHS, UNDECIDED, ANNUAL, ABSENT, REFUSED, HTC, NOT_ELIGIBLE, REFUSED_HTC
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.models import SubjectRefusal, SubjectAbsenteeEntry
 from apps.bcpp_subject.models.subject_consent import SubjectConsent
@@ -38,7 +38,6 @@ class Member(BaseHelper):
 
     def __init__(self, household_member):
         super(Member, self).__init__()
-        site_mappers.autodiscover()
         self.errors = {}
         self.household_member = household_member
         self.internal_identifier = self.household_member.internal_identifier
@@ -114,9 +113,14 @@ class Member(BaseHelper):
                 member_status = self.household_membership_survey.get(survey.survey_slug).member_status
                 setattr(self, '{}_{}'.format('member_status', survey.survey_abbrev.lower()),
                         member_status)
-                if member_status not in [ABSENT, BHS, HTC, REFUSED]:
-                    print 'Warning: household_member.internal_identifier{} has member_status of {}.'.format(
-                        self.internal_identifier, member_status)
+                if member_status not in [ABSENT, BHS, HTC, REFUSED, NOT_ELIGIBLE, REFUSED_HTC]:
+                    print ('Warning: {first_name} plot {plot} {survey} has '
+                           'member_status of {status} (id).').format(
+                        first_name=self.first_name,
+                        plot=self.household_structure.household.plot.plot_identifier,
+                        survey=self.household_structure.survey.survey_slug,
+                        status=member_status,
+                        id=self.internal_identifier)
             except AttributeError:
                 setattr(self, '{}_{}'.format('member_status', survey.survey_abbrev.lower()), None)
 

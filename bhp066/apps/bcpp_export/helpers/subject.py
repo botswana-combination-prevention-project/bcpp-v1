@@ -83,7 +83,7 @@ class Subject(BaseHelper):
             self.spouse_of_citizen = None if NOT_APPLICABLE else self.subject_consent.legal_marriage
             self.subject_identifier = self.subject_consent.subject_identifier
             self.survey_consented = self.subject_consent.household_member.survey.survey_slug
-        except SubjectConsent.DoesNotExist:
+        except (SubjectConsent.DoesNotExist, ClinicConsent.DoesNotExist):
             self.age_in_years = self.household_member.age_in_years
             self.citizen = None
             self.consent_datetime = None

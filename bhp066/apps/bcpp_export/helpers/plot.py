@@ -34,6 +34,7 @@ class Plot(BaseHelper):
     def __str__(self):
         return '{0.plot!s}'.format(self)
 
+    @property
     def unique_key(self):
         return self.plot_identifier
 
@@ -49,7 +50,10 @@ class Plot(BaseHelper):
         del self.data['household']
 
     def update_plots(self):
-        self.plot_identifier = self.plot.plot_identifier if not self.plot.plot_identifier.endswith('-00') else 'clinic'
+        if self.plot.plot_identifier.endswith('0000-00'):
+            self.plot_identifier = '{}CLIN-IC'.format(self.plot.plot_identifier[:2])
+        else:
+            self.plot_identifier = self.plot.plot_identifier
         self.gps_lat_target = self.plot.gps_target_lat
         self.gps_lon_target = self.plot.gps_target_lon
         self.gps_lat_actual = self.plot.gps_lat
