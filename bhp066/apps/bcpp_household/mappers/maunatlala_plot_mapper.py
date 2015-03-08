@@ -33,7 +33,7 @@ class MaunatlalaPlotMapper(BasePlotMapper):
             start_date=date(2015, 3, 7),
             full_enrollment_date=date(2015, 3, 25),
             end_date=date(2015, 4, 15),
-            smc_start_date=date(2015, 4, 13)),
+            smc_start_date=date(2015, 4, 20)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
