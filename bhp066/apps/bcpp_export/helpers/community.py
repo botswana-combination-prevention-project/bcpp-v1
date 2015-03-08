@@ -1,90 +1,38 @@
-from .bhs_base_export import BHSBaseExport
+from apps.bcpp_survey.models import Survey
+
+from .base_helper import BaseHelper
 
 
-class BHSCommunityHelper(BHSBaseExport):
+class Community(BaseHelper):
 
-    def __init__(self):
-        self._community_id = None
-        self._community_name = None
-        self._community_code = None
-        self._pair = None
-        self._is_cpc = None
-        self._bhs_start_date = None
-        self._main_bhs_end_date = None
-        self._bhs_mop_up_date = None
-        self._fuv_1_start_date = None
-        self._fuv_1_end_date = None
-        self._fuv_2_start_date = None
-        self._fuv_2_end_date = None
-        self._ess_start_date = None
-        self._ess_end_date = None
+    def __init__(self, mapper):
+        super(Community, self).__init__()
+        self.mapper_cls = mapper
+        self.mapper = self.mapper_cls()
+        self.cpc = mapper.intervention
+        self.ecc = not mapper.intervention
+        self.community = mapper.map_area
+        self.community_id = mapper.map_code
+        self.community_code = mapper.map_code
+        self.pair = mapper.pair
+        for survey in Survey.objects.all():
+            survey_dates = mapper.survey_dates[survey.survey_slug]
+            setattr(self, '{}_{}'.format("start_date", survey.survey_abbrev.lower()), survey_dates.start_date)
+            setattr(self, '{}_{}'.format("full_enrollment_date", survey.survey_abbrev.lower()), survey_dates.full_enrollment_date)
+            setattr(self, '{}_{}'.format("end_date", survey.survey_abbrev.lower()), survey_dates.end_date)
+            setattr(self, '{}_{}'.format("smc_start_date", survey.survey_abbrev.lower()), survey_dates.smc_start_date)
 
-    @property
-    def community_id(self):
-        """Returns community id."""
-        return self._community_id
+    def __repr__(self):
+        return '{0}({1.mapper_cls!r})'.format(self.__class__.__name__, self)
 
-    @property
-    def community_name(self):
-        """Return community name."""
-        return self._community_name
-
-    @property
-    def community_code(self):
-        """Return community code."""
-        return self._community_code
+    def __str__(self):
+        return '{0.community!s}'.format(self)
 
     @property
-    def pair_name(self):
-        """Return village pair name."""
-        return self._pair
+    def unique_key(self):
+        return self.community
 
-    @property
-    def cpc(self):
-        """Returns True or False if community is cpc."""
-        return self._is_cpc
-
-    @property
-    def bhs_start_date(self):
-        """Returns main bhs start date."""
-        return self._bhs_start_date
-
-    @property
-    def bhs_end_date(self):
-        """Returns main bhs end date."""
-        return self._main_bhs_end_date
-
-    @property
-    def bhs_mop_up_end_date(self):
-        """Returns bhs mop up start date."""
-        return self._bhs_mop_up_end_date
-
-    @property
-    def fuv_1_start_date(self):
-        """Returns follow up visit 1 start date."""
-        return self._fuv_1_end_date
-
-    @property
-    def fuv_1_end_date(self):
-        """Returns follow up visit 1 end date."""
-        return self._fuv_1_end_date
-
-    @property
-    def fuv_2_start_date(self):
-        """Returns follow up visit 2 start date."""
-        return self._fuv_2_start_date
-
-    @property
-    def fuv_2_end_date(self):
-        """Returns follow up visit 2 end date."""
-        return self._fuv_2_end_date
-
-    @property
-    def ess_start_date(self):
-        """Returns End of Study Survey start date."""
-        return self._ess_start_date
-
-    @property
-    def ess_end_date(self):
-        """Returns End of Study Survey end date."""
-        return self._ess_end_date
+    def customize_for_csv(self):
+        super(Community, self).customize_for_csv()
+        del self.data['mapper']
+        del self.data['mapper_cls']

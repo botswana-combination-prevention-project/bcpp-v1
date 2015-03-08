@@ -26,7 +26,7 @@ class Household(BaseHelper):
 
     @property
     def unique_key(self):
-        return self.internal_identifier
+        return self.household_identifier
 
     def customize_for_csv(self):
         super(Household, self).customize_for_csv()
