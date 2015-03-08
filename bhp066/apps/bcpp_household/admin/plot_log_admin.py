@@ -15,7 +15,9 @@ class PlotLogEntryAdmin(BaseModelAdmin):
     list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community')
     search_fields = ('log_status', 'plot_log__plot__community', 'plot_log__plot__plot_identifier')
     radio_fields = {
-        }
+    'reason': admin.VERTICAL,
+    'log_status': admin.VERTICAL
+    }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "plot_log":
