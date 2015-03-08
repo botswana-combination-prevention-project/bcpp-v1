@@ -188,10 +188,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                                        self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
 
-    @property
-    def age(self):
-        return relativedelta(date.today(), self.dob).years
-
     class Meta:
         abstract = True
 
