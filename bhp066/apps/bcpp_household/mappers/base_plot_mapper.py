@@ -14,7 +14,8 @@ from ..models import Plot
 class BasePlotMapper(Mapper):
 
     map_code = None
-    mape_area = None
+    map_area = None
+    pair = None
 
     item_model = Plot
     item_model_cls = Plot
@@ -176,3 +177,7 @@ class BasePlotMapper(Mapper):
         if not self.map_code:
             raise TypeError('Expected a value for mapper.map_code, Got None.')
         return '{}0000-00'.format(self.map_code)
+
+    @property
+    def community(self):
+        return self.map_area

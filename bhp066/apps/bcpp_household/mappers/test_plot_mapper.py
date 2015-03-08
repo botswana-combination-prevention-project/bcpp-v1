@@ -14,6 +14,7 @@ class TestPlotMapper(BasePlotMapper):
 
     map_area = 'test_community'
     map_code = '01'
+    pair = 0
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -39,6 +40,12 @@ class TestPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 12, 17),
             end_date=date(2015, 12, 22),
             smc_start_date=date(2015, 12, 22)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {
