@@ -14,6 +14,7 @@ class RanakaPlotMapper(BasePlotMapper):
 
     map_area = 'ranaka'
     map_code = '11'
+    pair = 1
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -40,6 +41,12 @@ class RanakaPlotMapper(BasePlotMapper):
             end_date=date(2015, 1, 30),
             # non SMC referrals in ECC? see SubjectReferralHelper
             smc_start_date=date(2015, 1, 7)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {

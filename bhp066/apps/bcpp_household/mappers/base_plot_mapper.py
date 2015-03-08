@@ -14,7 +14,8 @@ from ..models import Plot
 class BasePlotMapper(Mapper):
 
     map_code = None
-    mape_area = None
+    map_area = None
+    pair = None
 
     item_model = Plot
     item_model_cls = Plot
@@ -148,7 +149,7 @@ class BasePlotMapper(Mapper):
     @property
     def clinic_plot(self):
         """Returns and, if needed, creates a non-residential plot to represent the CLINIC."""
-        #We can only do this on community servers, not on netbooks or central server.
+        # We can only do this on community servers, not on netbooks or central server.
         from edc.device.device.classes import Device
         try:
             plot = Plot.objects.get(plot_identifier=self.clinic_plot_identifier)
@@ -176,3 +177,7 @@ class BasePlotMapper(Mapper):
         if not self.map_code:
             raise TypeError('Expected a value for mapper.map_code, Got None.')
         return '{}0000-00'.format(self.map_code)
+
+    @property
+    def community(self):
+        return self.map_area
