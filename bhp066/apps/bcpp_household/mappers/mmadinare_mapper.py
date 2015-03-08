@@ -7,39 +7,39 @@ from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, SHOSHONG_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS
 
 
-class ShoshongPlotMapper(BasePlotMapper):
+class MmadinarePlotMapper(BasePlotMapper):
 
-    map_area = 'shoshong'
-    map_code = '25'
+    map_area = 'mmadinare'
+    map_code = '26'
     pair = 8
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = SHOSHONG_LANDMARKS
+    landmarks = None
 
     intervention = True
 
-    gps_center_lat = -23.037244
-    gps_center_lon = 26.508093
+    gps_center_lat = None
+    gps_center_lon = None
     radius = 5.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 1, 16),
-            full_enrollment_date=date(2015, 2, 6),
-            end_date=date(2015, 2, 13),
-            smc_start_date=date(2015, 2, 13)),
+            start_date=date(2015, 3, 25),
+            full_enrollment_date=date(2015, 4, 10),
+            end_date=date(2015, 4, 17),
+            smc_start_date=None),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=None,
@@ -61,4 +61,4 @@ class ShoshongPlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(ShoshongPlotMapper)
+site_mappers.register(MmadinarePlotMapper)

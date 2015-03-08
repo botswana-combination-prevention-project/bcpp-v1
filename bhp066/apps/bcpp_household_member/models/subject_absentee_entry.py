@@ -31,9 +31,16 @@ class SubjectAbsenteeEntry(BaseSubjectEntry):
                 self._meta.object_name, self.pk))
         super(SubjectAbsenteeEntry, self).save(*args, **kwargs)
 
+    def __unicode__(self):
+        return '{} {}'.format(self.report_datetime.strftime('%Y-%m-%d'), self.reason[0:20])
+
     @property
     def inline_parent(self):
         return self.subject_absentee
+
+    @property
+    def absent(self):
+        return self.subject_absentee.household_member.absent
 
     def natural_key(self):
         return (self.report_datetime, ) + self.subject_absentee.natural_key()
