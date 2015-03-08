@@ -4,10 +4,13 @@ from uuid import uuid4
 
 from django.core.exceptions import MultipleObjectsReturned
 
+from edc.map.classes import site_mappers
+
 
 class BaseHelper(object):
 
     def __init__(self):
+        site_mappers.autodiscover()
         self.customized = False
         self._data = OrderedDict()
         self.export_uuid = unicode(uuid4())
