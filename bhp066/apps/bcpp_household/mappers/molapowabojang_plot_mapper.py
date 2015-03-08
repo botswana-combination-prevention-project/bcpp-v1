@@ -14,6 +14,7 @@ class MolapowabojangPlotMapper(BasePlotMapper):
 
     map_area = 'molapowabojang'
     map_code = '13'
+    pair = 2
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -39,6 +40,12 @@ class MolapowabojangPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 11, 28),
             end_date=date(2015, 12, 20),
             smc_start_date=date(2015, 12, 1)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {

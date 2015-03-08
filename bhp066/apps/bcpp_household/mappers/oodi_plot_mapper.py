@@ -14,6 +14,7 @@ class OodiPlotMapper(BasePlotMapper):
 
     map_area = 'oodi'
     map_code = '18'
+    pair = 4
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -39,6 +40,12 @@ class OodiPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2014, 12, 17),
             end_date=date(2014, 12, 22),
             smc_start_date=date(2015, 12, 1)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {
