@@ -21,8 +21,8 @@ class MaunatlalaPlotMapper(BasePlotMapper):
 
     intervention = True
 
-    gps_center_lat = -24.729571
-    gps_center_lon = 25.649351
+    gps_center_lat = -22.8658437618
+    gps_center_lon = 27.4198811366
     radius = 5.5
     location_boundary = ()
 
