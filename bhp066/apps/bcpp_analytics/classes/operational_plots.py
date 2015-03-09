@@ -8,7 +8,7 @@ from edc.device.dispatch.models import DispatchContainerRegister
 from apps.bcpp_household.constants import (CONFIRMED, UNCONFIRMED, INACCESSIBLE, NON_RESIDENTIAL,
                                            RESIDENTIAL_NOT_HABITABLE, RESIDENTIAL_HABITABLE)
 from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_household.models import Plot, PlotLogEntry
+from apps.bcpp_household.models import Plot, PlotLogEntry, HouseholdStructure
 
 
 class OperationalPlots():
@@ -88,22 +88,28 @@ class OperationalPlots():
                                         modified__gte=self.date_from, modified__lte=self.date_to,
                                         user_modified__icontains=self.ra_username).count()
         self.plot_info['9. Plots not confirmed'] = un_confirmed
+        plots_enmerated_structures = HouseholdStructure.objects.filter(household__plot__community__icontains=self.community,
+                                                             modified__gte=self.date_from, modified__lte=self.date_to,
+                                                             user_modified__icontains=self.ra_username,
+                                                             enumerated=True)
+        plots_enumerated = plots_enmerated_structures.values('household__plot__plot_identifier').annotate(dcount=Count('household__plot__plot_identifier'))
+        self.plot_info['91. Enumerated plots'] = len(plots_enumerated)
         res_habitable = plt.filter(status=RESIDENTIAL_HABITABLE, community__icontains=self.community,
                                         modified__gte=self.date_from, modified__lte=self.date_to,
                                         user_modified__icontains=self.ra_username).count()
-        self.plot_info['91. Residential habitable plots'] = res_habitable
+        self.plot_info['92. Residential habitable plots'] = res_habitable
         res_not_habitable = plt.filter(status=RESIDENTIAL_NOT_HABITABLE, community__icontains=self.community,
                                         modified__gte=self.date_from, modified__lte=self.date_to,
                                         user_modified__icontains=self.ra_username).count()
-        self.plot_info['92. Residential not habitable plots'] = res_not_habitable
+        self.plot_info['93. Residential not habitable plots'] = res_not_habitable
         non_residential = plt.filter(status=NON_RESIDENTIAL, community__icontains=self.community,
                                         modified__gte=self.date_from, modified__lte=self.date_to,
                                         user_modified__icontains=self.ra_username).count()
-        self.plot_info['93. Not residential plots'] = non_residential
+        self.plot_info['94. Not residential plots'] = non_residential
         enrolled_plots = plt.filter(bhs=True, community__icontains=self.community,
                                         modified__gte=self.date_from, modified__lte=self.date_to,
                                         user_modified__icontains=self.ra_username).count()
-        self.plot_info['94. Enrolled plots'] = enrolled_plots
+        self.plot_info['95. Enrolled plots'] = enrolled_plots
 #         not_reached = (plt.filter(action=UNCONFIRMED, community__icontains=self.community,
 #                                                 modified__gte=self.date_from, modified__lte=self.date_to,
 #                                                 user_modified__icontains=self.ra_username).count())
