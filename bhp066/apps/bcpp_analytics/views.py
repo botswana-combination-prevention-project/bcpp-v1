@@ -25,7 +25,7 @@ from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndec
 from apps.bcpp_subject.models import HivResult, HicEnrollment
 from apps.bcpp_survey.models import Survey
 
-from .classes import OperationalPlots
+from .classes import OperationalPlots, OperationalHousehold, OperationalMember, OperationalSpecimen
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
@@ -181,6 +181,36 @@ def operational_report_plots_view(request, **kwargs):
         'bcpp_analytics/operational_report_plot.html', {'values': operational_plots.return_plot_data(),
                                                         'communities': operational_plots.return_communities(),
                                                         'ra_usernames': operational_plots.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_household_view(request, **kwargs):
+    operational_household = OperationalHousehold(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_plot.html', {'values': operational_household.return_plot_data(),
+                                                        'communities': operational_household.return_communities(),
+                                                        'ra_usernames': operational_household.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_member_view(request, **kwargs):
+    operational_member = OperationalMember(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_plot.html', {'values': operational_member.return_plot_data(),
+                                                        'communities': operational_member.return_communities(),
+                                                        'ra_usernames': operational_member.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_specimen_view(request, **kwargs):
+    operational_specimen = OperationalSpecimen(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_plot.html', {'values': operational_specimen.return_plot_data(),
+                                                        'communities': operational_specimen.return_communities(),
+                                                        'ra_usernames': operational_specimen.return_ra_usernames()},
         context_instance=RequestContext(request))
 
 
