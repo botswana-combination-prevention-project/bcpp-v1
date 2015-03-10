@@ -188,7 +188,7 @@ def operational_report_plots_view(request, **kwargs):
 def operational_report_household_view(request, **kwargs):
     operational_household = OperationalHousehold(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_plot.html', {'values': operational_household.return_plot_data(),
+        'bcpp_analytics/operational_report_household.html', {'values': operational_household.return_plot_data(),
                                                         'communities': operational_household.return_communities(),
                                                         'ra_usernames': operational_household.return_ra_usernames()},
         context_instance=RequestContext(request))
@@ -198,7 +198,7 @@ def operational_report_household_view(request, **kwargs):
 def operational_report_member_view(request, **kwargs):
     operational_member = OperationalMember(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_plot.html', {'values': operational_member.return_plot_data(),
+        'bcpp_analytics/operational_report_member.html', {'values': operational_member.return_plot_data(),
                                                         'communities': operational_member.return_communities(),
                                                         'ra_usernames': operational_member.return_ra_usernames()},
         context_instance=RequestContext(request))
@@ -208,7 +208,7 @@ def operational_report_member_view(request, **kwargs):
 def operational_report_specimen_view(request, **kwargs):
     operational_specimen = OperationalSpecimen(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_plot.html', {'values': operational_specimen.return_plot_data(),
+        'bcpp_analytics/operational_report_specimen.html', {'values': operational_specimen.return_plot_data(),
                                                         'communities': operational_specimen.return_communities(),
                                                         'ra_usernames': operational_specimen.return_ra_usernames()},
         context_instance=RequestContext(request))
