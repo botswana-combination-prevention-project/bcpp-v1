@@ -1,6 +1,7 @@
 import csv
 import os
 import pprint
+from datetime import datetime
 
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
@@ -60,7 +61,7 @@ class Command(BaseCommand):
         print 'Unallocated from 25%: {}'.format(plots.count())
         header_row = ['plot_identifier', 'action', 'status', 'household_count',
                       'gps_target_lat', 'gps_target_lon', 'enrolled', 'comment']
-        target_path = '~/plot_list_{}_25_pct_update.csv'.format(community_name)
+        target_path = '~/plot_list_{}_25_pct_update_{}.csv'.format(community_name, datetime.today().strftime('%Y%m%d%H%M'))
         cnt = 0
         status_options = {}
         with open(os.path.expanduser(target_path), 'w') as f:
@@ -96,7 +97,7 @@ class Command(BaseCommand):
                                         household_log__household_structure=household_structure):
                                     household_structure.household.replaced_by = None
                                     replacement_helper = ReplacementHelper(household_structure=household_structure)
-                                    if not replacement_helper.replacement_reason:
+                                    if not replacement_helper.household_replacement_reason:
                                         replacement_reason = ''.join(
                                             [log.household_status for log in HouseholdLogEntry.objects.filter(
                                                 household_log__household_structure=household_structure
@@ -106,7 +107,7 @@ class Command(BaseCommand):
                                             replacement_reason = 'eligible_representative_present-no_bhs_eligibles'
                                     status.append(
                                         'htc {}'.format(
-                                            (replacement_helper.replacement_reason or replacement_reason
+                                            (replacement_helper.household_replacement_reason or replacement_reason
                                              ).replace(' ', '_'))
                                         )
                     else:
