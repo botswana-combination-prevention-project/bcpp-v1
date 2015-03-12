@@ -39,102 +39,107 @@ class OperationalMember():
         if self.ra_username.find('----') != -1:
             self.ra_username = ''
         self.date_to += datetime.timedelta(days=1)
-        member = HouseholdMember.objects.all()
-        self.member_info['1. Total household members'] = member.filter(household_structure__household__plot__community__icontains=self.community,
-                                                                     modified__gte=self.date_from, modified__lte=self.date_to,
-                                                                     user_modified__icontains=self.ra_username).count()
-        age_eligible_members = member.objects.filter(eligible_member=True).count()
+        member = HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=self.community,
+                                             modified__gte=self.date_from, modified__lte=self.date_to,
+                                             user_modified__icontains=self.ra_username)
+        self.member_info['1. Total household members'] = member.count()
+        age_eligible_members = member.filter(eligible_member=True).count()
         self.member_info['2. Total age eligible members'] = age_eligible_members
-        not_age_eligible_members = member.objects.filter(eligible_member=False, inability_to_participate=NOT_APPLICABLE).count()
+        not_age_eligible_members = member.filter(eligible_member=False, inability_to_participate=NOT_APPLICABLE).count()
         self.member_info['3. Total members not eligible by age'] = not_age_eligible_members
-        unable_to_participate_members = member.objects.filter(eligible_member=False).exclude(inability_to_participate=NOT_APPLICABLE).count()
+        unable_to_participate_members = member.filter(eligible_member=False).exclude(inability_to_participate=NOT_APPLICABLE).count()
         self.member_info['3. Total members unable to participate'] = unable_to_participate_members
-        eligible_present_members = member.objects.exclude(member_status=ABSENT).count()
+        eligible_present_members = member.exclude(member_status=ABSENT).count()
         self.member_info['6. Eligible present'] = eligible_present_members
         total_enrollment_loss = EnrollmentLoss.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
                                                               modified__gte=self.date_from, modified__lte=self.date_to,
                                                               user_modified__icontains=self.ra_username).count()
         self.member_info['7. Total enrollment loss'] = total_enrollment_loss
-        bhs_enrolled = member.objects.filter(is_consented=True).count()
+        bhs_enrolled = member.filter(is_consented=True).count()
         self.member_info['8. Total bhs enrolled'] = bhs_enrolled
-        total_known_pos = PositiveParticipant.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        total_known_pos = PositiveParticipant.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                           created__gte=self.date_from,
                                                           created__lte=self.date_to,
                                                           user_created__icontains=self.ra_username).count()
         self.member_info['9. Known positive with documentation'] = total_known_pos
-        total_tested = HivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        total_tested = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
-                                            user_created__icontains=self.ra_username).exclude(hiv_result='Declined').exclude('Not performed').count()
+                                            user_created__icontains=self.ra_username).exclude(hiv_result='Declined').exclude(hiv_result='Not performed').count()
         self.member_info['91. Tested on filtering date'] = total_tested
-        total_tested_negative = HivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        total_tested_negative = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hiv_result='NEG').count()
         self.member_info['92. Tested and negative on filtering date'] = total_tested_negative
-        total_elisa_negative = ElisaHivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        total_elisa_negative = ElisaHivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hiv_result='NEG').count()
         self.member_info['92. Tested and negative from ELISA on filtering date'] = total_elisa_negative
-        total_tested_positive = HivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        total_tested_positive = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hiv_result='POS').count()
         self.member_info['93. Tested and positive on filtering date'] = total_tested_positive
-        total_elisa_positive = ElisaHivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        total_elisa_positive = ElisaHivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hiv_result='POS').count()
-        self.member_info['92. Tested and negative from ELISA on filtering date'] = total_elisa_positive
-        total_tested_indeterminate = HivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        self.member_info['94. Tested and negative from ELISA on filtering date'] = total_elisa_positive
+        total_tested_indeterminate = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hiv_result='IND').count()
-        self.member_info['94. Tested and indeterminate on filtering date'] = total_tested_indeterminate
-        total_tested_declined = HivResult.objects.all(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        self.member_info['95. Tested and indeterminate on filtering date'] = total_tested_indeterminate
+        total_tested_declined = HivResult.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hiv_result='Declined').count()
-        self.member_info['4. Tested and declined on filtering date'] = total_tested_declined
+        self.member_info['96. Tested and declined on filtering date'] = total_tested_declined
         total_hic_enrolled = HicEnrollment.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                             created__gte=self.date_from,
                                             created__lte=self.date_to,
                                             user_created__icontains=self.ra_username,
                                             hic_permission='Yes').count()
-        self.member_info['5. Total HIC enrolled'] = total_hic_enrolled
-        total_eligible_undecided = member.objects.filter(eligible_member=True, member_status=UNDECIDED).count()
-        self.member_info['96. Total eligibles undecided'] = total_eligible_undecided
+        self.member_info['97. Total HIC enrolled'] = total_hic_enrolled
+        total_eligible_undecided = member.filter(eligible_member=True, member_status=UNDECIDED).count()
+        self.member_info['98. Total eligibles undecided'] = total_eligible_undecided
         total_eligible_refused = SubjectRefusal.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
                                                                created__gte=self.date_from,
                                                                created__lte=self.date_to,
                                                                user_created__icontains=self.ra_username).count()
-        self.member_info['97. Total eligibles refused'] = total_eligible_refused
+        self.member_info['99. Total eligibles refused'] = total_eligible_refused
         total_eligible_absent = member.filter(eligible_member=True, member_status=ABSENT).count()
-        self.member_info['98. Total eligibles absent'] = total_eligible_absent
+        self.member_info['991. Total eligibles absent'] = total_eligible_absent
+        total_consents = SubjectConsent.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
+                                                       created__gte=self.date_from,
+                                                       created__lte=self.date_to,
+                                                       user_created__icontains=self.ra_username).count()
+        self.member_info['992. Total consents'] = total_consents
         total_consents_verified = SubjectConsent.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
                                                                created__gte=self.date_from,
                                                                created__lte=self.date_to,
                                                                user_created__icontains=self.ra_username,
                                                                is_verified=True).count()
-        self.member_info['99. Total consents verified'] = total_consents_verified
-        total_hic_eligible = member.objects.filter(eligible_member=True, member_status=HTC_ELIGIBLE).count()
-        self.member_info['991. Total HTC eligible'] = total_hic_eligible
-        total_hic_accepted = member.objects.filter(eligible_member=True, member_status=HTC).count()
-        self.member_info['991. Total HTC accepted'] = total_hic_accepted
-        total_hic_declined = member.objects.filter(eligible_member=True, member_status=REFUSED_HTC).count()
-        self.member_info['991. Total HTC declined'] = total_hic_declined
-        total_referrals = SubjectReferral.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
+        self.member_info['993. Total consents verified'] = total_consents_verified
+        total_hic_eligible = member.filter(eligible_member=True, member_status=HTC_ELIGIBLE).count()
+        self.member_info['994. Total HTC eligible'] = total_hic_eligible
+        total_hic_accepted = member.filter(eligible_member=True, member_status=HTC).count()
+        self.member_info['995. Total HTC accepted'] = total_hic_accepted
+        total_hic_declined = member.filter(eligible_member=True, member_status=REFUSED_HTC).count()
+        self.member_info['996. Total HTC declined'] = total_hic_declined
+        total_referrals = SubjectReferral.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                         created__gte=self.date_from,
                                                         created__lte=self.date_to,
                                                         user_created__icontains=self.ra_username).exclude(referral_code='NOT_REFERRED').count()
-        self.member_info['991. Referral codes generated'] = total_referrals
+        self.member_info['997. Referral codes generated'] = total_referrals
 
         values = collections.OrderedDict(sorted(self.member_info.items()))
         communities = []
