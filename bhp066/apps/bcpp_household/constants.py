@@ -15,6 +15,7 @@ REFUSED_ENUMERATION = 'refused'
 RESIDENTIAL_HABITABLE = 'residential_habitable'
 RESIDENTIAL_NOT_HABITABLE = 'residential_not_habitable'
 SEASONALLY_OCCUPIED = 'seasonally_occupied'  # replace
+SEVENTY_FIVE_PERCENT = None
 TWENTY_PERCENT = '1'
 UNCONFIRMED = 'unconfirmed'
 UNKNOWN_OCCUPIED = 'unknown'  # replaced
