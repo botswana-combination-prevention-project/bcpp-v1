@@ -6,11 +6,25 @@ from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE
                         NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT,
                         INACCESSIBLE, ACCESSIBLE)
 
-HOUSEHOLD_STATUS = (
+HOUSEHOLD_LOG_STATUS = (
     (ELIGIBLE_REPRESENTATIVE_PRESENT, 'Eligible Representative Present'),
     (ELIGIBLE_REPRESENTATIVE_ABSENT, 'Eligible Representative Absent'),
     (NO_HOUSEHOLD_INFORMANT, 'No Household Informant'),
     (REFUSED_ENUMERATION, 'Refused Enumeration'),
+    )
+
+# as used by HSPH
+HH_STATUS = (
+    ('ineligible', 'ineligible'),
+    ('not_enum_hh', 'not_enum_hh'),
+    ('not_enum_never_there', 'not_enum_never_there'),
+    ('not_enum_rarely_there', 'not_enum_rarely_there'),
+    ('not_enum_seasonally_occupied', 'not_enum_seasonally_occupied'),
+    ('not_enum_almost_always_there', 'not_enum_almost_always_there'),
+    ('not_enum_unknown_status', 'not_enum_unknown_status'),
+    ('not_enum_hh_refused', 'not_enum_hh_refused'),
+    ('enumerated_not_enrolled', 'enumerated_not_enrolled'),
+    ('enrolled', 'enrolled'),
     )
 
 HOUSEHOLD_REFUSAL = (
