@@ -7,7 +7,7 @@ from edc.base.model.validators import date_not_before_study_start, date_not_futu
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_STATUS
+from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_LOG_STATUS
 from ..managers import HouseholdLogManager, HouseholdLogEntryManager
 from ..exceptions import AlreadyReplaced
 
@@ -63,7 +63,7 @@ class HouseholdLogEntry(BaseDispatchSyncUuidModel):
     household_status = models.CharField(
         verbose_name='Household Status',
         max_length=50,
-        choices=HOUSEHOLD_STATUS,
+        choices=HOUSEHOLD_LOG_STATUS,
         null=True,
         blank=False)
 

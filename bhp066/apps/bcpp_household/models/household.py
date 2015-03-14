@@ -134,6 +134,7 @@ class Household(BaseDispatchSyncUuidModel):
         null=True,
         blank=True)
 
+    # not used!!
     action = models.CharField(
         max_length=25,
         null=True,
