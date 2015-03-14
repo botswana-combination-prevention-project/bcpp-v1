@@ -1,7 +1,0 @@
-python manage.py dumpdata --indent 2 bhp_variables bhp_appointment.configuration bhp_consent.consentcatalogue bhp_visit.membershipform bhp_visit.schedulegroup bhp_visit.visitdefinition bhp_entry.entry bhp_lab_entry.labentry lab_clinic_api.panel lab_clinic_api.testcode lab_clinic_api.aliquottype lab_clinic_api.testcodegroup bhp_adverse.deathcausecategory > bcpp/fixtures/initial.json
-
-
-
-
-#new
-python manage.py dumpdata --indent 2 bhp_variables appointment.configuration consent.consentcatalogue visit_schedule.membershipform visit_schedule.schedulegroup visit_schedule.visitdefinition entry.entry lab_entry.labentry lab_clinic_api.panel lab_clinic_api.testcode lab_clinic_api.aliquottype lab_clinic_api.testcodegroup adverse_event.deathcauseinfo > apps/bcpp/fixtures/base_initial.json

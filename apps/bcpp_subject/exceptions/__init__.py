@@ -1,2 +1,0 @@
-class OldConsentValueError(Exception):
-    pass
