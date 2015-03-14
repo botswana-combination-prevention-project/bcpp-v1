@@ -4,26 +4,26 @@ from apps.bcpp_clinic.models import ClinicConsent
 from apps.bcpp_household_member.models import SubjectHtc
 from apps.bcpp_subject.models import SubjectConsent, SubjectReferral
 from apps.bcpp_subject.models import SubjectLocator, Pima
-from apps.bcpp_survey.models import Survey
 
-from .base_helper import BaseHelper
+from .base import Base
 from .member import Member
+from .plot import Plot
+from .survey import Survey
 
 
-class Subject(BaseHelper):
+class Subject(Base):
 
     def __init__(self, household_member):
         super(Subject, self).__init__()
-        self.household_member = household_member
-        self.registered_subject = self.household_member.registered_subject
-        self.internal_identifier = self.household_member.internal_identifier
-        self.member = Member(self.household_member)
-        for survey in Survey.objects.all():
-            try:
-                setattr(self, '{}_{}'.format('member_status', survey.survey_abbrev),
-                        self.member.household_membership_survey.get(survey.survey_slug).member_status)
-            except AttributeError:
-                setattr(self, '{}_{}'.format('member_status', survey.survey_abbrev), None)
+        self.member = Member(household_member)
+        self.household_member = self.member.household_member
+        self.registered_subject = self.member.registered_subject
+        self.internal_identifier = self.member.internal_identifier
+        self.community = self.member.community
+        self.survey = Survey(self.community)
+        for survey_abbrev in self.survey.survey_abbrevs:
+            fieldattrs = [('member_status', 'member_status')]
+            self.denormalize(survey_abbrev, fieldattrs, self.member.household_member.membership_by_survey.get(survey_abbrev))
         self.update_plot()
         self.update_household()
         self.update_subject_consent()
@@ -54,9 +54,9 @@ class Subject(BaseHelper):
         del self.data['subject_consent']
 
     def update_plot(self):
-        self.plot = self.household_member.household_structure.household.plot
-        self.plot_identifier = self.plot.plot_identifier if not self.plot.plot_identifier.endswith('-00') else 'clinic'
-        self.recruitment_type = 'household_survey' if not self.plot_identifier == 'clinic' else 'clinic'
+        self.plot = Plot(household_member=self.household_member)
+        self.plot_identifier = self.plot.plot_identifier
+        self.location = self.plot.location
         self.community = self.plot.community
 
     def update_household(self):
@@ -66,7 +66,7 @@ class Subject(BaseHelper):
 
     def update_subject_consent(self):
         try:
-            if self.recruitment_type == 'clinic':
+            if self.location == 'clinic':
                 self.subject_consent = ClinicConsent.objects.get(registered_subject=self.registered_subject)
             else:
                 self.subject_consent = SubjectConsent.objects.get(registered_subject=self.registered_subject)
@@ -123,11 +123,12 @@ class Subject(BaseHelper):
                       ('last_hiv_result_date', 'last_hiv_result_date'),
                       ]
         model_cls = SubjectReferral
-        for survey in Survey.objects.all():
-            self._update(
-                survey.survey_abbrev, fieldattrs, model_cls,
-                'subject_visit__household_member',
-                self.member.household_membership_survey.get(survey.survey_slug))
+        for survey_abbrev in self.survey.survey_abbrevs:
+            self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=model_cls,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership_by_survey.get(survey_abbrev))
 
     def update_subject_htc(self, survey):
         fieldattrs = [('referral_clinic', 'subject_htc_referral_clinic'),
@@ -136,10 +137,11 @@ class Subject(BaseHelper):
                       ('offered', 'subject_htc_offered'),
                       ('referred', 'subject_htc_referred')]
         model_cls = SubjectHtc
-        self._update(
-            survey.survey_abbrev, fieldattrs, model_cls,
-            'household_member',
-            self.member.household_membership_survey.get(survey.survey_slug))
+        self.denormalize(
+            survey.survey_abbrev, fieldattrs,
+            lookup_model=model_cls,
+            lookup_string='household_member',
+            lookup_instance=self.member.household_membership_survey.get(survey.survey_slug))
 
     def update_subject_locator(self):
         try:
@@ -155,14 +157,15 @@ class Subject(BaseHelper):
                       ('cd4_datetime', 'cd4_date'),
                       ('cd4_value', 'cd4_value')]
         model_cls = Pima
-        for survey in Survey.objects.all():
-            pima = self._update(
-                survey.survey_abbrev, fieldattrs, model_cls,
-                'subject_visit__household_member',
-                self.member.household_membership_survey.get(survey.survey_slug)
+        for survey_abbrev in self.survey.survey_abbrevs:
+            pima = self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=model_cls,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership_by_survey.get(survey_abbrev)
                 )
             try:
-                setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey.survey_abbrev),
+                setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev),
                         pima.pima_today_other if not pima.pima_today_other.upper() == 'OTHER' else pima.pima_today_other_other)
             except AttributeError:
-                setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey.survey_abbrev), None)
+                setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev), None)
