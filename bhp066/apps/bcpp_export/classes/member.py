@@ -1,23 +1,24 @@
 from copy import copy
 from datetime import date
 
-from edc.map.classes import site_mappers
-from edc.subject.registration.models import RegisteredSubject
-
-from apps.bcpp_household.choices import HOUSEHOLD_STATUS
+from apps.bcpp_household.choices import HOUSEHOLD_LOG_STATUS
 from apps.bcpp_household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
-from apps.bcpp_household.models.household_log import HouseholdLogEntry
-from apps.bcpp_household_member.constants import BHS, UNDECIDED, ANNUAL, ABSENT, REFUSED, HTC, NOT_ELIGIBLE, REFUSED_HTC
-from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.classes import HouseholdMemberHelper
+from apps.bcpp_household_member.constants import (BHS, UNDECIDED, ANNUAL, ABSENT, REFUSED,
+                                                  HTC, NOT_ELIGIBLE, REFUSED_HTC)
 from apps.bcpp_household_member.models import SubjectRefusal, SubjectAbsenteeEntry
 from apps.bcpp_subject.models.subject_consent import SubjectConsent
-from apps.bcpp_survey.models import Survey
+from apps.bcpp_survey.models import Survey as SurveyModel
 
-from .base_helper import BaseHelper
+from .base import Base
+from .household import Household
+from .household_member import HouseholdMember
+from .htc import Htc
 from .plot import Plot
+from .survey import Survey
 
 
-class Member(BaseHelper):
+class Member(Base):
     """
     For example::
         from apps.bcpp_export.helpers import Subject, Plot as PlotCls, Member
@@ -36,26 +37,24 @@ class Member(BaseHelper):
 
     """
 
-    def __init__(self, household_member):
+    def __init__(self, household_member, check_errors=False):
         super(Member, self).__init__()
         self.errors = {}
-        self.household_member = household_member
+        self.household_member = HouseholdMember(household_member)
         self.internal_identifier = self.household_member.internal_identifier
-        self.household_membership = HouseholdMember.objects.filter(
-            internal_identifier=self.household_member.internal_identifier).order_by('created')
-        self.household_membership_status = {
-            hm.household_structure.survey.survey_slug: hm.member_status for hm in self.household_membership}
-        self.household_membership_survey = {
-            hm.household_structure.survey.survey_slug: hm for hm in self.household_membership}
-        self.registered_subject = RegisteredSubject.objects.get(
-            registration_identifier=self.household_member.internal_identifier)
+        self.registered_subject = self.household_member.registered_subject
         self.update_plot()
+        self.update_survey()
+        self.update_household()
         self.update_member()
         self.update_member_status()
-        self.update_household_log()
-        self.update_survey()
+        self.update_hm_status()
         self.update_refusal()
         self.update_absentee()
+        self.update_htc()
+        self.update_htc_status()
+        if check_errors:
+            self.data_errors
 
     def __repr__(self):
         return 'Member({0.household_member!r})'.format(self)
@@ -68,126 +67,211 @@ class Member(BaseHelper):
         return self.internal_identifier
 
     def customize_for_csv(self):
+        """Customizes attribute self.data dictionary."""
         super(Member, self).customize_for_csv()
         self.data['registered_subject'] = self.data['registered_subject'].registration_identifier
         self.data['household_member'] = self.data['household_member'].internal_identifier
-        del self.data['household_membership']
-        del self.data['household_membership_status']
-        del self.data['household_membership_survey']
+        del self.data['membership']
+        del self.data['membership_by_status']
+        del self.data['membership_by_survey']
         del self.data['member_survey']
-        del self.data['household_log']
         del self.data['plot']
-
-    def update_plot(self):
-        self.plot = Plot(household_member=self.household_member)
-        self.plot_identifier = self.plot.plot_identifier
-        self.recruitment_type = 'household_survey' if not self.plot_identifier == 'clinic' else 'clinic'
-        self.community = self.plot.community
-
-    def update_member(self):
-        """Set attributes from the HouseholdMember instance."""
-        self.enumeration_min_date = self.household_membership[0].created.date()
-        self.first_name = self.household_membership[0].first_name
-        self.gender = self.household_membership[0].gender
-        self.nights_away = '0-3'
-
-        fieldattrs = [('age_in_years', 'age_in_years'),
-                      ('created', 'enumeration_date'),
-                      ('visit_attempts', 'member_visit_attempts'),
-                      ('is_consented', 'member_consented'),
-                      ('study_resident', 'study_resident'),
-                      ('relation', 'relation_to_hoh'),
-                      ]
-        model_cls = HouseholdMember
-        for survey in Survey.objects.all():
-            self._update(
-                survey.survey_abbrev, fieldattrs, model_cls,
-                '',
-                self.household_membership_survey.get(survey.survey_slug)
-                )
-
-    def update_member_status(self):
-        """Sets attributes related to member status."""
-        for survey in Survey.objects.all():
-            try:
-                member_status = self.household_membership_survey.get(survey.survey_slug).member_status
-                setattr(self, '{}_{}'.format('member_status', survey.survey_abbrev.lower()),
-                        member_status)
-                if member_status not in [ABSENT, BHS, HTC, REFUSED, NOT_ELIGIBLE, REFUSED_HTC]:
-                    print ('Warning: {first_name} plot {plot} {survey} has '
-                           'member_status of {status} (id).').format(
-                        first_name=self.first_name,
-                        plot=self.household_structure.household.plot.plot_identifier,
-                        survey=self.household_structure.survey.survey_slug,
-                        status=member_status,
-                        id=self.internal_identifier)
-            except AttributeError:
-                setattr(self, '{}_{}'.format('member_status', survey.survey_abbrev.lower()), None)
-
-    def update_household_log(self):
-        """Set attributes from the HouseholdLog for this member's household."""
-        self.household_log = [
-            h for h in HouseholdLogEntry.objects.filter(
-                household_log__household_structure=self.household_member.household_structure).order_by(
-                    'report_datetime')]
-        self.household_log_date = [h.report_datetime for h in self.household_log]
-        self.household_log_status = [h.household_status for h in self.household_log]
+        del self.data['include_pii']
 
     def update_survey(self):
         """Set attributes related to the surveys the member has been enumerated in."""
-        self.surveys_enumerated = [hm.household_structure.survey.survey_slug for hm in self.household_membership]
-        self.member_survey = site_mappers.get_mapper(
-            self.community)
+        self.surveys_enumerated = [
+            hm.household_structure.survey.survey_abbrev.lower() for hm in self.household_member.membership]
+        self.survey = Survey(self.community)
+        for attr, value in self.survey.__dict__.iteritems():
+            setattr(self, attr, value)
+
+    def update_plot(self):
+        """Sets the plot attributes for this instance using an instance of the Plot class."""
+        self.plot = Plot(household_member=self.household_member)
+        attrs = [
+            ('plot_identifier', 'plot_identifier'),
+            ('location', 'location'),
+            ('community', 'community')]
+        for attr in attrs:
+            setattr(self, attr[1], getattr(self.plot, attr[0]))
+
+    def update_htc(self):
+        attrs_to_denormalize = [
+            ('offered', 'htc_offered'),
+            ('accepted', 'htc_accepted'),
+            ('date', 'htc_date'),
+            ('refusal_reason', 'htc_refusal_reason'),
+            ('referred', 'htc_referred'),
+            ('referral_clinic', 'htc_referral_clinic'),
+            ('tracking_identifier', 'htc_tracking_identifier')]
+        for survey_abbrev in self.survey.survey_abbrevs:
+            attr_suffix = survey_abbrev
+            htc = Htc(self.household_member.membership_by_survey.get(attr_suffix))
+            self.denormalize(
+                attr_suffix, attrs_to_denormalize,
+                instance=htc)
+
+    def update_htc_status(self):
+        """Sets a htc status attr according to HSPH logic."""
+        for attr_suffix in self.survey.survey_abbrevs:
+            status = None
+            offered = getattr(self, '{}_{}'.format('htc_offered', attr_suffix))
+            accepted = getattr(self, '{}_{}'.format('htc_accepted', attr_suffix))
+            refused = getattr(self, '{}_{}'.format('htc_refusal_reason', attr_suffix))
+            if offered and not accepted:
+                status = 'offered'
+            elif offered and accepted:
+                status = 'accepted'
+            elif offered and refused:
+                status = 'refused'
+            else:
+                status = None
+        setattr(self, 'htc_status', status)
+
+    def update_member(self):
+        """Set attributes from the HouseholdMember instance."""
+        attrs = [
+            ('first_name', 'first_name'),
+            ('initials', 'initials'),
+            ('age_in_years', 'age_in_years'),
+            ('gender', 'gender'),
+            ('study_resident', 'study_resident'),
+            ('enumeration_first_date', 'enumeration_first_date'),
+            ('enumeration_last_date', 'enumeration_last_date'),
+            ('consented', 'consented')]
+        for attr in attrs:
+            setattr(self, attr[1], getattr(self.household_member, attr[0]))
+        attrs_to_denormalize = [
+            ('created', 'enumeration_date'),
+            ('visit_attempts', 'member_visit_attempts'),
+            ('consented', 'member_consented'),
+            ('study_resident', 'study_resident'),
+            ('relation', 'relation_to_hoh'),
+            ('absent', 'absent'),
+            ('eligible_member', 'eligible_member'),
+            ('eligible_subject', 'eligible_subject'),
+            ('enrollment_checklist_completed', 'enrollment_checklist_completed'),
+            ('enrollment_loss_completed', 'enrollment_loss_completed'),
+            ]
+        for survey_abbrev in self.survey.survey_abbrevs:
+            attr_suffix = survey_abbrev
+            self.denormalize(
+                attr_suffix, attrs_to_denormalize,
+                instance=self.household_member.membership_by_survey.get(survey_abbrev))
+
+    def check_member_status(self, household_member, survey_abbrev):
         try:
-            self.member_survey_name = self.member_survey.survey_dates.get(
-                self.household_member.household_structure.survey.survey_slug).name.upper()
+            member_status = household_member.member_status
         except AttributeError:
-            print ('Warning: Unexpected survey slug! Mappers not configured for survey_slug {0!r}.'
-                   ).format(self.household_member.household_structure.survey.survey_slug)
-        self.member_survey_start_date = self.member_survey.survey_dates.get(
-            self.household_member.household_structure.survey.survey_slug).start_date
-        self.member_survey_full_enrollment_date = self.member_survey.survey_dates.get(
-            self.household_member.household_structure.survey.survey_slug).full_enrollment_date
-        self.member_survey_smc_start_date = self.member_survey.survey_dates.get(
-            self.household_member.household_structure.survey.survey_slug).smc_start_date
+            member_status = None
+        if survey_abbrev in self.surveys_enumerated:
+            if member_status not in [ABSENT, BHS, HTC, REFUSED, NOT_ELIGIBLE, REFUSED_HTC]:
+                print ('Warning: {first_name} plot {plot} has member_status of {status} ({id}).').format(
+                    first_name=self.first_name, plot=self.plot_identifier, status=member_status,
+                    id=self.internal_identifier)
+            else:
+                expected_member_status = HouseholdMemberHelper(household_member).member_status(member_status)
+                if member_status != expected_member_status:
+                    print 'Warning! Expected {} for {}. Got {}'.format(
+                        expected_member_status, self.household_member, member_status)
+
+    def update_member_status(self):
+        """Sets attributes related to member status."""
+        for survey_abbrev in self.survey.survey_abbrevs:
+            household_member = self.household_member.membership_by_survey.get(survey_abbrev)
+            self.check_member_status(household_member, survey_abbrev)
+            attrs = [('member_status', 'member_status')]
+            self.denormalize(survey_abbrev, attrs, household_member)
+
+    def update_hm_status(self):
+        """Sets member status as defined by HSPH.
+
+        Note: does not consider refused? is None when BHS, 
+        if refused, will set to failed checklist even if checklist was not complete
+            .
+
+        data status_2;
+        merge hh_members (keep=registered_subject_id  eligible_member eligible_subject member_status)
+            undecided (in=a keep=registered_subject_id)
+            refusal (in=b keep=registered_subject_id)
+            absentee (in=c keep=registered_subject_id)
+            consent (in=d keep=registered_subject_id subject_identifier);
+        by registered_subject_id; format status $30.;
+
+        if eligible_member == '0':
+            status='age_residency_ineligible'
+        if eligible_member == '1' and c and  not b and not a and eligible_subject <>'1':
+            status='absent'
+        if eligible_member == '1' and eligible_subject == '0':
+                status='failed_checklist';"""
+
+        options = {
+            'age_residency_ineligible': [NOT_ELIGIBLE, HTC, REFUSED_HTC],
+            'absent': [ABSENT],
+            'failed_checklist': [NOT_ELIGIBLE, HTC, REFUSED_HTC, REFUSED]
+            }
+        for survey_abbrev in self.survey.survey_abbrevs:
+            status = None
+            eligible_member = getattr(self, '{}_{}'.format('eligible_member', survey_abbrev))
+            eligible_subject = getattr(self, '{}_{}'.format('eligible_subject', survey_abbrev))
+            absent = getattr(self, '{}_{}'.format('absent', survey_abbrev))
+            if not eligible_member:
+                status = 'age_residency_ineligible'
+            elif eligible_member:
+                if not eligible_subject and absent:
+                    status = 'absent'
+                elif not eligible_subject:
+                    status = 'failed_checklist'
+            # only set attr if survey was conducted
+            setattr(self, '{}_{}'.format('hm_status', survey_abbrev), status if survey_abbrev in self.surveys_enumerated else None)
+            # get for this survey
+            member_status = getattr(self, '{}_{}'.format('member_status', survey_abbrev))
+            # warn if not equal and survey was conducted
+            if (survey_abbrev in self.surveys_enumerated) and (member_status not in options.get(status) if status else []):
+                print 'Warning! member_status <> hm_status. Got {} {}'.format(member_status, status)
+
+    def update_household(self):
+        try:
+            household = self.household_member.household_structure.household
+        except AttributeError:
+            household = None
+        self.household = Household(household)
+        self.household_identifier = self.household.household_identifier
 
     def update_refusal(self):
         """Set attributes related to member refusal, if relevant."""
-        fieldattrs = [('refusal_date', 'subject_refusal_date')]
-        model_cls = SubjectRefusal
-        for survey in Survey.objects.all():
-            subject_refusal = self._update(
-                survey.survey_abbrev, fieldattrs, model_cls,
-                'household_member',
-                self.household_membership_survey.get(survey.survey_slug)
+        fieldattrs = [
+            ('refusal_date', 'refusal_date'),
+            ('subject_refusal_status', 'refused')]
+        fieldattrs_other = [('reason', 'reason_other', 'refusal_reason')]
+        for survey in SurveyModel.objects.all():
+            attr_suffix = survey.survey_abbrev
+            subject_refusal = self.denormalize(
+                attr_suffix, fieldattrs,
+                lookup_model=SubjectRefusal,
+                lookup_string='household_member',
+                lookup_instance=self.household_member.membership_by_survey.get(survey.survey_abbrev)
                 )
-            try:
-                setattr(self, '{}_{}'.format('subject_refusal_reason', survey.survey_abbrev.lower()),
-                        subject_refusal.reason_other if not subject_refusal.reason.upper() == 'OTHER' else subject_refusal.reason_other)
-            except AttributeError:
-                setattr(self, '{}_{}'.format('subject_refusal_reason', survey.survey_abbrev.lower()), None)
-            try:
-                setattr(self, '{}_{}'.format('member_refused', survey.survey_abbrev.lower()),
-                        self.household_membership_survey.get(survey.survey_slug).refused)
-            except AttributeError:
-                setattr(self, '{}_{}'.format('member_refused', survey.survey_abbrev.lower()), None)
+            self.denormalize_other(
+                attr_suffix, fieldattrs_other,
+                instance=subject_refusal)
 
     def update_absentee(self):
         """Set attributes related to member absenteeism, if relevant."""
-        fieldattrs = [('report_datetime', 'member_absent_date'),
-                      ('absent', 'member_absent')]
-        model_cls = SubjectAbsenteeEntry
-        for survey in Survey.objects.all():
-            subject_absentee_entry = self._update(
-                survey.survey_abbrev, fieldattrs, model_cls,
-                'subject_absentee__household_member',
-                self.household_membership_survey.get(survey.survey_slug)
+        fieldattrs = [('report_datetime', 'absent_log_date')]
+        fieldattrs_other = [('reason', 'reason_other', 'absent_log_reason')]
+        for survey in SurveyModel.objects.all():
+            attr_suffix = survey.survey_abbrev
+            subject_absentee_entry = self.denormalize(
+                attr_suffix, fieldattrs,
+                lookup_model=SubjectAbsenteeEntry,
+                lookup_string='subject_absentee__household_member',
+                lookup_instance=self.household_member.membership_by_survey.get(attr_suffix)
                 )
-            try:
-                setattr(self, '{}_{}'.format('member_absent_reason', survey.survey_abbrev.lower()),
-                        subject_absentee_entry.reason_other if not subject_absentee_entry.reason.upper() == 'OTHER' else subject_absentee_entry.reason_other)
-            except AttributeError:
-                setattr(self, '{}_{}'.format('member_absent_reason', survey.survey_abbrev.lower()), None)
+            self.denormalize_other(
+                attr_suffix, fieldattrs_other,
+                instance=subject_absentee_entry)
 
     @property
     def data_errors(self):
@@ -195,9 +279,9 @@ class Member(BaseHelper):
         data_errors = {'member_status': [], 'enumeration_date': [],
                        'household_status': [], 'consented': [],
                        'household_log': []}
-        # 1. test if only uses current HOUSEHOLD_STATUS options
+        # 1. test if only uses current HOUSEHOLD_LOG_STATUS options
         condition = list(set(
-            [item for item in self.household_log_status if item not in [tpl[0] for tpl in HOUSEHOLD_STATUS]]
+            [item for item in self.household_log_status if item not in [tpl[0] for tpl in HOUSEHOLD_LOG_STATUS]]
             ))
         if condition:
             data_errors['household_status'].append(
