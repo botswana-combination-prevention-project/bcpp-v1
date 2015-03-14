@@ -1,9 +1,9 @@
 from apps.bcpp_survey.models import Survey
 
-from .base_helper import BaseHelper
+from .base import Base
 
 
-class Community(BaseHelper):
+class Community(Base):
 
     def __init__(self, mapper):
         super(Community, self).__init__()

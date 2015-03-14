@@ -1,7 +1,6 @@
-from edc.export.helpers import ExportObjectHelper
 from apps.bcpp_household.models import Plot as PlotModel
 
-from ..helpers import Plot
+from ..classes import Plot
 
 from .base_collector import BaseCollector
 
@@ -17,7 +16,8 @@ class Plots(BaseCollector):
         plots.export_to_csv()
     """
 
-    def __init__(self, export_plan=None, community=None, exception_cls=None):
+    def __init__(self, export_plan=None, community=None, exception_cls=None, include_clinic_plots=False):
+        self.include_clinic_plots = include_clinic_plots
         super(Plots, self).__init__(export_plan=export_plan, community=community, exception_cls=exception_cls)
 
     def export_to_csv(self):
@@ -25,6 +25,7 @@ class Plots(BaseCollector):
             print '{} **************************************'.format(community)
             for plot_model in PlotModel.objects.filter(community=community).order_by('plot_identifier'):
                 plot = Plot(plot=plot_model)
-                self._export(plot)
+                if not plot.plot_identifier.endswith('CLIN-IC') or self.include_clinic_plots:
+                    self._export(plot)
                 if self.test_run:
                     break

@@ -28,8 +28,8 @@ class BaseCollector(object):
         if community:
             self.community_list = [community]
         else:
-            mappers = site_mappers.sorted_by_pair()
-            self.community_list = [mapper().community for mapper in mappers.itervalues()]
+            self.mappers = site_mappers.sort_by_pair()
+            self.community_list = [mapper().community for mapper in self.mappers.itervalues()]
 
     def __repr__(self):
         return '{0}({1.export_plan!r})'.format(self.__class__.__name__, self)
