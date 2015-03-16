@@ -1,6 +1,6 @@
 from edc.map.classes import site_mappers
 
-from ..helpers import Community
+from ..classes import Community
 
 from .base_collector import BaseCollector
 

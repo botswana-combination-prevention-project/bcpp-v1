@@ -1,23 +1,19 @@
 from edc.subject.registration.models import RegisteredSubject
 
 from apps.bcpp_household_member.models import HouseholdMember as HouseholdMemberModel
-
+from apps.bcpp_export.classes.survey import Survey
 
 from .base import Base
-from .household import Household
-from apps.bcpp_export.classes.survey import Survey
 
 
 class HouseholdMember(Base):
 
-    def __init__(self, household_member):
-        super(HouseholdMember, self).__init__()
+    def __init__(self, household_member, verbose=None):
+        super(HouseholdMember, self).__init__(verbose=verbose)
         self.household_member = household_member
         self.household_structure = self.household_member.household_structure if self.household_member else None
-        self.household = Household(self.household_member.household_structure.household if self.household_member else None)
-        self.household_identifier = self.household.household_identifier
-        self.plot = self.household.plot
-        self.community = self.plot.community
+        self.household_identifier = self.household_member.household_structure.household.household_identifier
+        self.community = self.household_member.household_structure.household.plot.community
         try:
             self.internal_identifier = self.household_member.internal_identifier
         except AttributeError:
@@ -25,7 +21,7 @@ class HouseholdMember(Base):
         self.membership = []
         self.membership_by_status = {}
         self.membership_by_survey = {}
-        self.survey = Survey(self.community)
+        self.survey = Survey(self.community, verbose=self.verbose)
         for survey_abbrev in self.survey.survey_abbrevs:
             try:
                 hm = HouseholdMemberModel.objects.get(

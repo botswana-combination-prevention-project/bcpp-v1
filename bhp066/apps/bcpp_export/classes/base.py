@@ -12,13 +12,13 @@ DescriptionTuple = namedtuple('DescriptionTuple', 'value type tag')
 
 class Base(object):
 
-    def __init__(self):
+    def __init__(self, verbose=None):
+        self.verbose = verbose
         site_mappers.autodiscover()
         self.customized = False
         self._data = OrderedDict()
         self.export_uuid = unicode(uuid4())
-        self.timestamp = datetime.today().strftime('%Y%m%d%H%M%S%s')
-        self.timestamp_iso = datetime.today().isoformat()
+        self.timestamp = datetime.today().isoformat()
 
     @property
     def data(self):
@@ -77,6 +77,7 @@ class Base(object):
                     except TypeError:
                         pass
         del self.data['customized']
+        del self.data['verbose']
 
     def denormalize(self, attr_suffix, fieldattrs, instance=None,
                     lookup_model=None, lookup_instance=None, lookup_string=None):

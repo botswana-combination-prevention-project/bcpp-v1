@@ -2,25 +2,26 @@ from edc.constants import YES, NOT_APPLICABLE, NO
 
 from apps.bcpp_clinic.models import ClinicConsent
 from apps.bcpp_household_member.models import SubjectHtc
+from apps.bcpp_lab.models.subject_requisition import SubjectRequisition
 from apps.bcpp_subject.models import SubjectConsent, SubjectReferral
 from apps.bcpp_subject.models import SubjectLocator, Pima
 
 from .base import Base
 from .member import Member
-from .plot import Plot
 from .survey import Survey
+from .specimen import Specimen
 
 
 class Subject(Base):
 
-    def __init__(self, household_member):
-        super(Subject, self).__init__()
-        self.member = Member(household_member)
+    def __init__(self, household_member, verbose=None):
+        super(Subject, self).__init__(verbose=verbose)
+        self.member = Member(household_member, verbose=self.verbose)
         self.household_member = self.member.household_member
         self.registered_subject = self.member.registered_subject
         self.internal_identifier = self.member.internal_identifier
         self.community = self.member.community
-        self.survey = Survey(self.community)
+        self.survey = Survey(self.community, verbose=self.verbose)
         for survey_abbrev in self.survey.survey_abbrevs:
             fieldattrs = [('member_status', 'member_status')]
             self.denormalize(survey_abbrev, fieldattrs, self.member.household_member.membership_by_survey.get(survey_abbrev))
@@ -30,6 +31,7 @@ class Subject(Base):
         self.update_subject_referral()
         self.update_subject_locator()
         self.update_pima()
+        self.update_viral_load()
 
     def __repr__(self):
         return '{0}({1.household_member!r})'.format(self.__class__.__name__, self)
@@ -52,12 +54,18 @@ class Subject(Base):
         del self.data['member']
         del self.data['plot']
         del self.data['subject_consent']
+        del self.data['survey']
 
     def update_plot(self):
-        self.plot = Plot(household_member=self.household_member)
-        self.plot_identifier = self.plot.plot_identifier
-        self.location = self.plot.location
-        self.community = self.plot.community
+        """Sets the plot attributes for this instance using an instance of the Plot model."""
+        # self.plot = Plot(household_member=self.household_member)
+        plot = self.household_member.plot
+        attrs = [
+            ('plot_identifier', 'plot_identifier'),
+            ('location', 'location'),
+            ('community', 'community')]
+        for attr in attrs:
+            setattr(self, attr[1], getattr(plot, attr[0]))
 
     def update_household(self):
         self.household_identifier = self.household_member.household_structure.household.household_identifier
@@ -169,3 +177,25 @@ class Subject(Base):
                         pima.pima_today_other if not pima.pima_today_other.upper() == 'OTHER' else pima.pima_today_other_other)
             except AttributeError:
                 setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev), None)
+
+    def update_viral_load(self):
+        for survey_abbrev in self.survey.survey_abbrevs:
+            try:
+                subject_requisition = SubjectRequisition.objects.get(
+                    subject_visit__household_member=self.member.household_member.membership_by_survey.get(survey_abbrev),
+                    panel__name='Viral Load')
+                specimen = Specimen(subject_requisition, verbose=self.verbose)
+                print str(specimen)
+                vl_result, vl_drawn_datetime, vl_assay_date = [], [], []
+                for results in specimen.lis_results.itervalues():
+                    for result in results:
+                        vl_result.append('{}{}'.format(result.lis_result_quantifier, result.lis_result))
+                        vl_drawn_datetime.append(result.drawn_datetime)
+                        vl_assay_date.append(result.lis_assay_date)
+                setattr(self, '{}_{}'.format('vl_result', survey_abbrev), vl_result)
+                setattr(self, '{}_{}'.format('vl_drawn_datetime', survey_abbrev), vl_drawn_datetime)
+                setattr(self, '{}_{}'.format('vl_assay_datetime', survey_abbrev), vl_assay_date)
+            except SubjectRequisition.DoesNotExist:
+                setattr(self, '{}_{}'.format('vl_result', survey_abbrev), None)
+                setattr(self, '{}_{}'.format('vl_drawn_datetime', survey_abbrev), None)
+                setattr(self, '{}_{}'.format('vl_assay_datetime', survey_abbrev), None)

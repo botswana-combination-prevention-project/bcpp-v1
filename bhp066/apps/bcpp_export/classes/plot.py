@@ -10,8 +10,8 @@ from .survey import Survey
 
 
 class Plot(Base):
-    def __init__(self, plot=None, household=None, household_structure=None, household_member=None):
-        super(Plot, self).__init__()
+    def __init__(self, plot=None, household=None, household_structure=None, household_member=None, verbose=None):
+        super(Plot, self).__init__(verbose=verbose)
         self.household = household
         self.household_member = household_member
         self.household_structure = household_structure
@@ -48,7 +48,6 @@ class Plot(Base):
         self.data['household_members'] = [hm.internal_identifier for hm in self.household_members]
         super(Plot, self).customize_for_csv()
         del self.data['plot']
-        del self.data['plot_logs']
         del self.data['household_member']
         del self.data['household_structure']
         del self.data['household_structures']

@@ -1,11 +1,11 @@
 from apps.bcpp_household_member.models import HouseholdMember
 
-from ..classes import Member
+from ..classes import Htc
 
 from .base_collector import BaseCollector
 
 
-class Members(BaseCollector):
+class Htcs(BaseCollector):
 
     """Exports helper.household instances to CSV.
 
@@ -17,7 +17,7 @@ class Members(BaseCollector):
     """
 
     def __init__(self, export_plan=None, community=None, survey_slug=None, exception_cls=None):
-        super(Members, self).__init__(export_plan=export_plan, community=community, exception_cls=exception_cls)
+        super(Htcs, self).__init__(export_plan=export_plan, community=community, exception_cls=exception_cls)
         self.survey_slug = survey_slug
 
     def export_to_csv(self):
@@ -30,9 +30,9 @@ class Members(BaseCollector):
             household_members = HouseholdMember.objects.filter(
                 **filter_options).exclude(
                 **exclude_options).order_by('household_structure__household__household_identifier',
-                    'household_structure__survey__survey_slug')
+                                            'household_structure__survey__survey_slug')
             for household_member in household_members:
-                member = Member(household_member)
-                self._export(member)
+                htc = Htc(household_member)
+                self._export(htc)
                 if self.test_run:
                     break
