@@ -59,7 +59,7 @@ class Subject(Base):
     def update_plot(self):
         """Sets the plot attributes for this instance using an instance of the Plot model."""
         # self.plot = Plot(household_member=self.household_member)
-        plot = self.household_member.plot
+        plot = self.household_member.household_structure.household.plot
         attrs = [
             ('plot_identifier', 'plot_identifier'),
             ('location', 'location'),
