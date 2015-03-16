@@ -103,23 +103,23 @@ class OperationalHousehold():
 
         self.household_info['93. Non enrolled: no eligible members'] = len(enrolled)
 
-        self.household_info['94. Non enrolled: All eligible refused'] = 0
+        self.household_info['94. Non enrolled: All eligible refused'] = 'N/A'
 
         household_non_enumerated_absent = household_non_enumerated_hoh_absent.values('household__household_identifier').annotate(dcount=Count('household__household_identifier'))
-        
-        self.household_info['4. Non enumerated households: HOH Absent'] = 0#len(household_non_enumerated_absent)
-        
-        self.household_info['5. Non enumerated households: HOH Refused'] = 0#not_accessible_plots1
-        
-        self.household_info['96. Non enumerated: all eligible absent once'] = 0
-        
-        self.household_info['97. Non enumerated: all eligible absent twice'] = 0
-        
-        self.household_info['98. Non enumerated: all eligible absent thrice'] = 0
-        
-        self.household_info['99. Replaceable house holds'] = 0
-        
-        self.household_info['991. Replaced households'] = 0
+
+        self.household_info['4. Non enumerated households: HOH Absent'] = 'N/A'#len(household_non_enumerated_absent)
+
+        self.household_info['5. Non enumerated households: HOH Refused'] = 'N/A'#not_accessible_plots1
+
+        self.household_info['96. Non enumerated: all eligible absent once'] = 'N/A'
+
+        self.household_info['97. Non enumerated: all eligible absent twice'] = 'N/A'
+
+        self.household_info['98. Non enumerated: all eligible absent thrice'] = 'N/A'
+
+        self.household_info['99. Replaceable house holds'] = 'N/A'
+
+        self.household_info['991. Replaced households'] = 'N/A'
 
         values = collections.OrderedDict(sorted(self.household_info.items()))
         communities = []
