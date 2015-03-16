@@ -10,15 +10,15 @@ from .survey import Survey
 
 class Household(Base):
 
-    def __init__(self, household):
-        super(Household, self).__init__()
+    def __init__(self, household, verbose=None):
+        super(Household, self).__init__(verbose=verbose)
         self.household = household
         try:
             self.household_identifier = self.household.household_identifier
         except AttributeError:
             self.household_identifier = None
         self.update_plot()
-        self.survey = Survey(self.community)
+        self.survey = Survey(self.community, verbose=self.verbose)
         self.update_household_structure()
         self.update_household_log()
         self.update_household_refusal()
@@ -41,7 +41,7 @@ class Household(Base):
         del self.data['household']
 
     def update_plot(self):
-        self.plot = Plot(household=self.household)
+        self.plot = Plot(household=self.household, verbose=self.verbose)
         attrs = [
             ('community', 'community'),
             ('gps_lat', 'gps_lat'),
@@ -98,8 +98,9 @@ class Household(Base):
                 self.household_structures.update({survey_abbrev: HouseholdStructure.objects.get(
                     household=self.household, survey__survey_abbrev=survey_abbrev.upper())})
             except HouseholdStructure.DoesNotExist:
-                print 'Warning: No household_structure(s) for household {} {}'.format(
-                    self.household_identifier, survey_abbrev)
+                if self.verbose:
+                    print 'Warning: No household_structure(s) for household {} {}'.format(
+                        self.household_identifier, survey_abbrev)
                 self.household_structures.update({survey_abbrev: None})
         for survey_abbrev in self.survey.survey_abbrevs:
             attr_suffix = survey_abbrev

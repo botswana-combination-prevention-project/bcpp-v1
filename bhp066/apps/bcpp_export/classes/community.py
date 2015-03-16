@@ -5,8 +5,8 @@ from .base import Base
 
 class Community(Base):
 
-    def __init__(self, mapper):
-        super(Community, self).__init__()
+    def __init__(self, mapper, verbose=None):
+        super(Community, self).__init__(verbose=verbose)
         self.mapper_cls = mapper
         self.mapper = self.mapper_cls()
         self.cpc = mapper.intervention

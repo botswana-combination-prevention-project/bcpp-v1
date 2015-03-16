@@ -53,7 +53,7 @@ class BaseCollector(object):
         raise TypeError('Method must be overridden.')
 
     def _export(self, instance):
-        """Calls the csv writer to append each helper instance to the current file."""
+        """Calls the csv writer to append each instance to the current file."""
         instance.customize_for_csv()
         if not self.export_plan.fields:
             self.export_plan.fields = instance.data.keys()
@@ -64,4 +64,3 @@ class BaseCollector(object):
             self.export_plan, filename=self.filename, exception_cls=self.exception_cls)
         export_model_helper.writer.write_to_file([instance], self.write_header)
         self.write_header = False  # only write header once
-        # print instance, exit_status

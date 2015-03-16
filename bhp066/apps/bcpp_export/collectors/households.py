@@ -1,7 +1,7 @@
 from edc.export.helpers import ExportObjectHelper
 from apps.bcpp_household.models import Household as HouseholdModel
 
-from ..helpers import Household
+from ..classes import Household
 
 from .base_collector import BaseCollector
 
