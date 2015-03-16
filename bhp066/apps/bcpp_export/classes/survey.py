@@ -8,8 +8,9 @@ from .base import Base
 
 class Survey(Base):
 
-    def __init__(self, community):
+    def __init__(self, community, verbose=None):
         """Set attributes related to the surveys the member has been enumerated in."""
+        super(Survey, self).__init__(verbose=verbose)
         self.community = community
         self.plot_count_all = Plot.objects.filter(community=self.community).count()
         # self.plot_count_htc = Plot.objects.filter(community=self.community, htc=True).count()

@@ -1,9 +1,11 @@
 import csv
-from datetime import datetime
 import os
 
-from apps.bcpp_subject.models import SubjectConsent, HicEnrollment
+from datetime import datetime
+
 from apps.bcpp_clinic.models import ClinicConsent
+from apps.bcpp_subject.models import SubjectConsent, HicEnrollment
+
 from .base_collector import BaseCollector
 
 

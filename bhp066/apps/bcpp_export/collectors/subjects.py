@@ -1,7 +1,6 @@
-from edc.export.helpers import ExportObjectHelper
-from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_subject.models import SubjectConsent
 
-from ..helpers import Subject
+from ..classes import Subject
 
 from .base_collector import BaseCollector
 
@@ -24,13 +23,15 @@ class Subjects(BaseCollector):
     def export_to_csv(self):
         for community in self.community_list:
             print '{} **************************************'.format(community)
-            options = {'household_structure__household__plot__community': community}
+            filter_options = {'household_member__household_structure__household__plot__community': community}
+            exclude_options = {'household_member__household_structure__household__plot__plot_identifier__endswith': '0000-00'}
             if self.survey_slug:
-                options.update({'household_structure__survey__survey_slug': self.survey_slug})
-            household_members = HouseholdMember.objects.filter(
-                **options).order_by('household_structure__household__household_identifier')
-            for household_member in household_members:
-                subject = Subject(household_member)
+                filter_options.update({'household_member__household_structure__survey__survey_slug': self.survey_slug})
+            subject_consents = SubjectConsent.objects.filter(
+                **filter_options).exclude(
+                **exclude_options).order_by('registered_subject__subject_identifier')
+            for subject_consent in subject_consents:
+                subject = Subject(subject_consent.household_member)
                 self._export(subject)
                 if self.test_run:
                     break

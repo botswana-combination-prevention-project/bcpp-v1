@@ -6,3 +6,5 @@ from .plot import Plot
 from .subject import Subject
 from .survey import Survey
 from .household_member import HouseholdMember
+from .lab import Lab
+from .specimen import Specimen

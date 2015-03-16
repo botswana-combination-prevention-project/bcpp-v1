@@ -3,28 +3,29 @@ from edc.constants import NO
 from apps.bcpp_household_member.models import SubjectHtc
 
 from .base import Base
-from .household import Household
 from .household_member import HouseholdMember
-from .plot import Plot
 from .survey import Survey
 
 
 class Htc(Base):
-    def __init__(self, household_member, check_errors=False):
-        super(Htc, self).__init__()
+    def __init__(self, household_member, check_errors=False, verbose=None):
+        super(Htc, self).__init__(verbose=verbose)
         self.errors = {}
         self.household_member = HouseholdMember(household_member)
         self.update_member()
         try:
             plot = self.household_member.household_structure.household.plot
-            household = self.household_member.household_structure.household
+            self.household_identifier = self.household_member.household_structure.household.household_identifier
+            self.plot_identifier = plot.plot_identifier
+            self.community = plot.community
         except AttributeError:
             plot = None
-            household = None
-        self.plot = Plot(plot)
-        self.household = Household(household)
-        self.update_plot()
-        self.update_household()
+            self.plot_identifier = None
+            self.community = None
+        try:
+            self.household_identifier = self.household_member.household_structure.household.household_identifier
+        except AttributeError:
+            self.household_identifier = None
         self.update_survey()
         self.update_htc()
         if check_errors:
@@ -36,13 +37,15 @@ class Htc(Base):
     def __str__(self):
         return '{0.household_member!r}'.format(self)
 
+    @property
+    def unique_key(self):
+        return self.internal_identifier
+
     def customize_for_csv(self):
         """Customizes attribute self.data dictionary."""
         super(Htc, self).customize_for_csv()
         self.data['registered_subject'] = self.data['registered_subject'].registration_identifier
         self.data['household_member'] = self.data['household_member'].internal_identifier
-        del self.data['plot']
-        del self.data['household']
         del self.data['survey']
         del self.data['subject_htc']
 
@@ -69,13 +72,6 @@ class Htc(Base):
             self.refusal_reason = None
             self.referred = None
             self.referral_clinic = None
-
-    def update_plot(self):
-        self.plot_identifier = self.plot.plot_identifier
-        self.community = self.plot.community
-
-    def update_household(self):
-        self.household_identifier = self.household.household_identifier
 
     def update_survey(self):
         self.survey = Survey(self.community)
