@@ -52,7 +52,6 @@ class Subject(Base):
         except AttributeError:
             pass
         del self.data['member']
-        del self.data['plot']
         del self.data['subject_consent']
         del self.data['survey']
 
