@@ -498,6 +498,13 @@ class Plot(BaseDispatchSyncUuidModel):
         return url
 
     @property
+    def location(self):
+        if self.plot_identifier.endswith('0000-00'):
+            return 'clinic'
+        else:
+            return 'household'
+
+    @property
     def plot_inaccessible(self):
         """Returns True if the plot is inaccessible as defined by its status and number of attempts."""
         PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
