@@ -1,7 +1,10 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
+from django.core.management import call_command
 
 from edc.map.classes import Mapper, site_mappers
+from edc.notification.models import Notification, NotificationPlan
+from edc.export.models import ExportPlan
 
 from apps.bcpp_lab.models import AliquotType, Panel
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
@@ -139,6 +142,27 @@ class TestReferral(BaseScheduledModelTestCase):
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertNotIn('SMC', subject_referral.referral_code)
+
+    def tests_export_referred_smc3(self):
+        """if new POS and male and circumcised, do not refer for SMC"""
+        self.startup()
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertNotIn('SMC', subject_referral.referral_code)
+        self.assertEqual(2, NotificationPlan.objects.all().count())
+        self.assertEqual(2, ExportPlan.objects.all().count())
+        export_plan = ExportPlan.objects.get(object_name='SubjectReferral')
+        export_plan.target_path = '~/'
+        export_plan.save()
+        self.assertEqual(0, Notification.objects.all().count())
+        call_command('export_transactions bcpp_subject.subjectreferral')
+        self.assertEqual(1, Notification.objects.all().count())
 
     def tests_referred_smc3a(self):
         """if new POS and male and  NOT circumcised, do not refer for SMC"""
