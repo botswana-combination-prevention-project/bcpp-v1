@@ -16,13 +16,12 @@ from .base import Base
 from .subject import Subject
 from .survey import Survey
 from .specimen import Specimen
-
 ReceivedTuple = namedtuple(
     'ReceivedTuple',
     'edc_specimen_identifier, lis_specimen_identifier, lis_patient_ref, received_datetime')
 ResultTuple = namedtuple(
     'ResultTuple',
-    'edc_specimen_identifier, lis_specimen_identifier, lis_patient_ref, received_datetime, report_date, panel_id, lis_assay_date, utestid, result, result_quantifier lis_result_id')
+    'edc_specimen_identifier, lis_specimen_identifier, lis_patient_ref, received_datetime, report_date, panel_id, sample_assay_date, utestid, result, result_quantifier lis_result_id')
 
 
 class Lab(Base):
@@ -165,13 +164,13 @@ class Lab(Base):
         try:
             with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
                 with cnxn.cursor() as cursor:
-                    for lis_specimen_identifier, report_date, panel_id, assay_date, utestid, result, result_quantifier, lis_result_id in fetchall(cursor):
+                    for lis_specimen_identifier, report_date, panel_id, sample_assay_date, utestid, result, result_quantifier, lis_result_id in fetchall(cursor):
                         try:
                             report_date = parse(report_date, dayfirst=True)
                         except AttributeError:
                             pass
                         try:
-                            assay_date = parse(assay_date, dayfirst=True)
+                            sample_assay_date = parse(sample_assay_date, dayfirst=True)
                         except AttributeError:
                             pass
                         result_tuple = ResultTuple(
@@ -181,7 +180,7 @@ class Lab(Base):
                             self.lis_received_datetime,
                             report_date,
                             None,
-                            assay_date,
+                            sample_assay_date,
                             utestid,
                             result,
                             result_quantifier,
@@ -195,7 +194,7 @@ class Lab(Base):
                                 pass
                             self.lis_result_qnt = result_quantifier
                             self.lis_assay = utestid
-                            self.lis_assay_date = assay_date
+                            self.lis_assay_date = sample_assay_date
                         else:
                             print 'Warning! More than one result for {}.'.format(self.aliquot_identifier)
 

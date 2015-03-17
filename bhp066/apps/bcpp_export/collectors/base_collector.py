@@ -9,6 +9,7 @@ from ..plans import export_plan as default_export_plan
 class BaseCollector(object):
 
     def __init__(self, export_plan=None, community=None, exception_cls=None):
+        self.delimiter = "|"
         self.for_csv = False
         self.filename = None
         self.test_run = False
@@ -55,6 +56,7 @@ class BaseCollector(object):
     def _export(self, instance):
         """Calls the csv writer to append each instance to the current file."""
         instance.customize_for_csv()
+        self.export_plan = self.delimiter
         if not self.export_plan.fields:
             self.export_plan.fields = instance.data.keys()
         if not self.filename:
