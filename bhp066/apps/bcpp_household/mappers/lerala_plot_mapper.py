@@ -31,8 +31,8 @@ class LeralaPlotMapper(BasePlotMapper):
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2015, 2, 11),
-            full_enrollment_date=date(2015, 3, 6),
-            end_date=date(2015, 3, 27),
+            full_enrollment_date=date(2015, 4, 6),
+            end_date=date(2015, 4, 27),
             smc_start_date=date(2015, 3, 16)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
