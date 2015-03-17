@@ -56,7 +56,7 @@ class BaseCollector(object):
     def _export(self, instance):
         """Calls the csv writer to append each instance to the current file."""
         instance.customize_for_csv()
-        self.export_plan = self.delimiter
+        self.export_plan.delimiter = self.delimiter
         if not self.export_plan.fields:
             self.export_plan.fields = instance.data.keys()
         if not self.filename:
