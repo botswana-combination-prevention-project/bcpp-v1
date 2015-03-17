@@ -63,6 +63,8 @@ class Base(object):
                     self.data[key] = value.isoformat() if isoformat else value.strftime('%Y-%m-%d')
                 except AttributeError:
                     pass
+                except ValueError:
+                    pass
                 if isinstance(value, (list, tuple)):
                     for index, v in enumerate(value):
                         if v is None:
