@@ -44,8 +44,8 @@ class Htc(Base):
     def customize_for_csv(self):
         """Customizes attribute self.data dictionary."""
         super(Htc, self).customize_for_csv()
-        self.data['registered_subject'] = self.data['registered_subject'].registration_identifier
-        self.data['household_member'] = self.data['household_member'].internal_identifier
+        del self.data['registered_subject']
+        del self.data['household_member']
         del self.data['survey']
         del self.data['subject_htc']
 
