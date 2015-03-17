@@ -179,7 +179,7 @@ def _prepare_params(params_dict, date_format):
 def operational_report_plots_view(request, **kwargs):
     operational_plots = OperationalPlots(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_plot.html', {'values': operational_plots.return_plot_data(),
+        'bcpp_analytics/operational_report_plot.html', {'values': operational_plots.build_report(),
                                                         'communities': operational_plots.return_communities(),
                                                         'ra_usernames': operational_plots.return_ra_usernames()},
         context_instance=RequestContext(request))
@@ -189,7 +189,7 @@ def operational_report_plots_view(request, **kwargs):
 def operational_report_household_view(request, **kwargs):
     operational_household = OperationalHousehold(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_household.html', {'values': operational_household.return_household_data(),
+        'bcpp_analytics/operational_report_household.html', {'values': operational_household.build_report(),
                                                         'communities': operational_household.return_communities(),
                                                         'ra_usernames': operational_household.return_ra_usernames()},
         context_instance=RequestContext(request))
@@ -199,7 +199,7 @@ def operational_report_household_view(request, **kwargs):
 def operational_report_member_view(request, **kwargs):
     operational_member = OperationalMember(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_member.html', {'values': operational_member.return_member_data(),
+        'bcpp_analytics/operational_report_member.html', {'values': operational_member.build_report(),
                                                         'communities': operational_member.return_communities(),
                                                         'ra_usernames': operational_member.return_ra_usernames()},
         context_instance=RequestContext(request))
@@ -209,7 +209,7 @@ def operational_report_member_view(request, **kwargs):
 def operational_report_specimen_view(request, **kwargs):
     operational_specimen = OperationalSpecimen(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_specimen.html', {'values': operational_specimen.return_specimen_data(),
+        'bcpp_analytics/operational_report_specimen.html', {'values': operational_specimen.build_report(),
                                                         'communities': operational_specimen.return_communities(),
                                                         'ra_usernames': operational_specimen.return_ra_usernames()},
         context_instance=RequestContext(request))
@@ -229,7 +229,7 @@ def operational_report_annual_view(request, **kwargs):
 def operational_report_rbd_view(request, **kwargs):
     operational_rbd = OperationalRbd(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_rbd.html', {'values': operational_rbd.return_rbd_data(),
+        'bcpp_analytics/operational_report_rbd.html', {'values': operational_rbd.build_report(),
                                                         'communities': operational_rbd.return_communities(),
                                                         'ra_usernames': operational_rbd.return_ra_usernames()},
         context_instance=RequestContext(request))
