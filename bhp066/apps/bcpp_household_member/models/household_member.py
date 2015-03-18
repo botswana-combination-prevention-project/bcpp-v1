@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
@@ -25,6 +26,8 @@ from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
+
+from apps.bcpp_survey.models import Survey
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
@@ -307,6 +310,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
+        self.is_the_household_member_for_current_survey()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -835,6 +839,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             else:
                 return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
         return ' '
+
+    def is_the_household_member_for_current_survey(self):
+        """ Checks whether the household is saved for the current survey"""
+        if not settings.DEVICE_ID in settings.SERVER_DEVICE_ID_LIST:
+            if self.household_structure.survey != Survey.objects.current_survey():
+                raise ImproperlyConfigured('Your device is configured to create household_member for {0}'.format(Survey.objects.current_survey()))
+
     updated.allow_tags = True
 
     class Meta:

@@ -1,4 +1,5 @@
 from django import forms
+from django.forms.util import ErrorList
 
 from ..models import SexualBehaviour
 
@@ -34,6 +35,15 @@ class SexualBehaviourForm (BaseSubjectModelForm):
         self.validate_no_sex('condom', cleaned_data)
         self.validate_no_sex('alcohol_sex', cleaned_data)
 
+        # ensuring that the number of last year partners is not greater than lifetime partners
+        if cleaned_data.get('ever_sex') == 'Yes':
+            if cleaned_data.get('last_year_partners') or cleaned_data.get('lifetime_sex_partners'):
+                if not (cleaned_data.get('last_year_partners') and cleaned_data.get('lifetime_sex_partners')):
+                    for field in ["last_year_partners", "lifetime_sex_partners"]:
+                        if not cleaned_data.get(field):
+                            self._errors[field] = ErrorList([u"This field is required."])
+                            raise forms.ValidationError('You are required to fill both questions, last_year_partners and'
+                                                        'lifetime_sex_partners, otherwise do not answer both questions.')
         # If number of sexual partners in past 12months is more than zero, did
         # participant have sex with anyone outside the community 12months ago
         if cleaned_data.get('last_year_partners') > 0 and not cleaned_data.get('more_sex'):
@@ -48,10 +58,10 @@ class SexualBehaviourForm (BaseSubjectModelForm):
             raise forms.ValidationError(
                 'If participant has had sex at some point in their life, did participant '
                 'drink alcohol before sex last time?')
-        # ensuring that the number of last year partners is not greater than lifetime partners
+
         if cleaned_data.get('last_year_partners') > cleaned_data.get('lifetime_sex_partners'):
             raise forms.ValidationError('Number of partners in the past 12months CANNOT '
-                                        'exceed number of life time partners')
+                           -             'exceed number of life time partners')
         return cleaned_data
 
     def validate_no_sex(self, field, cleaned_data):
