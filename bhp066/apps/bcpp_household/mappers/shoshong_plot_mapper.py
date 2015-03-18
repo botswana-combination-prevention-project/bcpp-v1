@@ -30,9 +30,9 @@ class ShoshongPlotMapper(BasePlotMapper):
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2015, 3, 27),
-            full_enrollment_date=date(2015, 4, 25),
-            end_date=date(2015, 4, 15),
-            smc_start_date=date(2015, 5, 11)),
+            full_enrollment_date=date(2015, 4, 17),
+            end_date=date(2015, 4, 8),
+            smc_start_date=date(2015, 5,1)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
