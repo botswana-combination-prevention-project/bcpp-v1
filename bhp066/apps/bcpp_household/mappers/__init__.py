@@ -16,3 +16,6 @@ from .ranaka_plot_mapper import RanakaPlotMapper
 from .sefophe_plot_mapper import SefophePlotMapper
 from .shoshong_plot_mapper import ShoshongPlotMapper
 from .test_plot_mapper import TestPlotMapper
+from .mmadinare_plot_mapper import MmadinarePlotMapper
+from .metsimotlhabe_plot_mapper import MetsimotlhabePlotMapper
+from .tati_siding_plot_mapper import TatiSidingPlotMapper
