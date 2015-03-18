@@ -6,47 +6,64 @@ from django.test import TestCase
  
 from edc.map.classes import site_mappers, Mapper
 from edc.map.exceptions import MapperError
- 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+
 from apps.bcpp_survey.tests.factories import SurveyFactory
- 
+
 from ..forms import PlotForm
-from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot
- 
-from .factories import PlotFactory, PlotLogEntryFactory
- 
- 
-class TestPlotMapper(Mapper):
-    map_area = 'test_community'
-    map_code = '999'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.011111
-    gps_center_lon = 25.741111
-    radius = 5.5
-    location_boundary = ()
- 
-site_mappers.register(TestPlotMapper)
- 
- 
+from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
+from ..constants import CONFIRMED, UNCONFIRMED
+from ..models import Household, HouseholdStructure, Plot
+
+from .factories import PlotFactory, PlotLogEntryFactory, PlotLogFactory
+
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.rule_groups.classes import site_rule_groups
+
+from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+
+
+# class TestPlotMapper(Mapper):
+#     map_area = 'test_community'
+#     map_code = '999'
+#     regions = []
+#     sections = []
+#     landmarks = []
+#     gps_center_lat = -25.011111
+#     gps_center_lon = 25.741111
+#     radius = 5.5
+#     location_boundary = ()
+#
+# site_mappers.register(TestPlotMapper)
+
+
 class PlotTests(TestCase):
- 
+
     def setUp(self):
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration().prepare()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
+        site_rule_groups.autodiscover()
         SurveyFactory()
  
     def test_plot_creates_household1(self):
         """if you create a plot as residential_habitable, should create one household."""
- 
+
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
- 
+
     def test_plot_creates_household2(self):
         """if you create a plot with two households should create two households."""
         plot = PlotFactory(community='test_community', household_count=2, status='residential_habitable')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 2)
- 
+
     def test_plot_creates_household3(self):
         """if you change a plot by adding a second households should create another household."""
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
@@ -188,6 +205,37 @@ class PlotTests(TestCase):
         self.assertEqual(2, PlotLog.objects.all().count())
         plot_log_entry_3 = PlotLogEntryFactory(plot_log)
         self.assertRaises(TypeError, PlotLogEntryFactory(plot_log))
+
+    def test_validate_confirm_plot_inaccessible(self):
+
+        plot = PlotFactory(status=None, community='test_community', household_count=0, gps_target_lon=None, gps_target_lat=None)
+        plot_log = PlotLogFactory(plot=plot)
+        plot_entry = PlotLogEntryFactory(log_status=INACCESSIBLE)
+        plot_entry.plot_log = plot_log
+        plot_entry.save()
+        self.assertEqual(plot.action, UNCONFIRMED)
+
+    def test_validate_confirm_plot_inaccessible2(self):
+
+        plot = PlotFactory(status=None, community='test_community', household_count=0, gps_target_lon=None, gps_target_lat=None)
+        plot_log = PlotLogFactory(plot=plot)
+        plot_entry = PlotLogEntryFactory(log_status=INACCESSIBLE)
+        plot_entry.plot_log = plot_log
+        plot_entry.save()
+        #
+        self.assertFalse(plot.validate_plot_accessible)
+
+    def test_validate_confirm_plot_accessible(self):
+        plot = PlotFactory(status=None, community='test_community', household_count=0, gps_target_lon=None, gps_target_lat=None)
+        plot_log = PlotLogFactory(plot=plot)
+        plot_entry = PlotLogEntryFactory(log_status=ACCESSIBLE)
+        plot_entry.plot_log = plot_log
+        plot.household_count = 2
+        plot.gps_lon = '2.1231'
+        plot.gps_lat = '2.123451'
+        plot.save()
+        self.assertEqual(plot.action, CONFIRMED)
+
 #     def test_identifier(self):plot_log
 #         print 'create a survey'
 #         SurveyFactory()
