@@ -45,10 +45,10 @@ class Plot(Base):
         return self.plot_identifier
 
     def customize_for_csv(self):
-        self.data['household_members'] = [hm.internal_identifier for hm in self.household_members]
         super(Plot, self).customize_for_csv()
         del self.data['plot']
         del self.data['household_member']
+        del self.data['household_members']
         del self.data['household_structure']
         del self.data['household_structures']
         del self.data['households']
