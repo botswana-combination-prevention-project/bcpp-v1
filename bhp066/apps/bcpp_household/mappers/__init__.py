@@ -15,3 +15,6 @@ from .ramokgonami_plot_mapper import RamokgonamiPlotMapper
 from .lerala_plot_mapper import LeralaPlotMapper
 from .sefophe_plot_mapper import SefophePlotMapper
 from .shoshong_plot_mapper import ShoshongPlotMapper
+from .mmadinare_plot_mapper import MmadinarePlotMapper
+from .metsimotlhabe_plot_mapper import MetsimotlhabePlotMapper
+from .tati_siding_plot_mapper import TatiSidingPlotMapper
