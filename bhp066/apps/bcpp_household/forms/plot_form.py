@@ -11,6 +11,10 @@ class PlotForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
+
+        if not self.instance.validate_plot_accessible:
+            raise forms.ValidationError('You cannot confirm a plot, plot log entry is set to inacccessible.')
+
         if self.instance.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
             raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
                                         'It may not be edited by a user.')
