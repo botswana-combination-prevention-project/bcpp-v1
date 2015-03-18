@@ -1,10 +1,10 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxValueValidator
-from django.db import models, IntegrityError, transaction
+from django.db import models, IntegrityError, transaction, DatabaseError
 from django.utils.translation import ugettext as _
 
 from edc.audit.audit_trail import AuditTrail
@@ -16,7 +16,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.map.exceptions import MapperError
 
-from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE)
+from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
 from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
@@ -351,30 +351,65 @@ class Plot(BaseDispatchSyncUuidModel):
                                         self.community, mapper_instance.current_survey_dates.full_enrollment_date))
         return True
 
-    def safe_delete_households(self, count, instance=None, using=None):
-        """Deletes households and HouseholdStructure if member_count==0 and no log entry.
-
-        If there is a household log entry, this DOES NOT delete the household."""
+    def safe_delete_households(self, existing_no, instance=None, using=None):
+        """ Deletes households and HouseholdStructure if member_count==0 and no log entry.
+            If there is a household log entry, this DOES NOT delete the household
+        """
+        Household = models.get_model('bcpp_household', 'Household')
+        HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
+        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
+        HouseholdLogEntry = models.get_model('bcpp_household', 'HouseholdLogEntry')
         instance = instance or self
         using = using or 'default'
-        Household = models.get_model('bcpp_household', 'Household')
-        # HouseholdStructure = models.get_model('bcpp_household', 'HouseholdStructure')
-        HouseholdLog = models.get_model('bcpp_household', 'HouseholdLog')
-        for i in range(count, 0):
-            for household in Household.objects.using(using).filter(plot=instance):
+
+        def household_valid_to_delete(instance):
+            """ Checks whether there is a plot log entry for each log. If it does not exists the
+            household can be deleted. """
+            allowed_to_delete = []
+            for hh in Household.objects.using(using).filter(plot=instance):
+                if HouseholdLogEntry.objects.filter(household_log__household_structure__household=hh).exists()\
+                    or hh in allowed_to_delete:
+                    continue
+                allowed_to_delete.append(hh)
+            return allowed_to_delete
+
+        def delete_confirmed_household(instance, existing_no):
+            """ Deletes required number of households. """
+            def validate_number_to_delete(instance, existing_no):
+                if existing_no in [0, 1] or instance.household_count == existing_no or instance.household_count >\
+                    existing_no or instance.household_count == 0:
+                    return False
+                else:
+                    if household_valid_to_delete(instance):
+                        del_valid = existing_no - instance.household_count
+                        if len(household_valid_to_delete(instance)) < del_valid:
+                            return len(household_valid_to_delete(instance))
+                        else:
+                            return del_valid
+                    return False
+
+            def delete_household(instance, existing_no):
                 try:
-                    with transaction.atomic():
-                        HouseholdLog.objects.using(using).filter(household_structure__household=household).delete()
-                        # try:
-                        #    HouseholdStructure.objects.using(using).get(household=household).delete()
-                        # except HouseholdStructure.DoesNotExist:
-                        #    pass
-                        household.delete()
-                        break
-                except ValidationError:
-                    pass
+                    delete_no = validate_number_to_delete(instance, existing_no)\
+                                                if validate_number_to_delete(instance, existing_no) else 0
+                    if not delete_no == 0:
+                        deletes = household_valid_to_delete(instance)[:delete_no]
+                        hh = HouseholdStructure.objects.filter(household__in=deletes)
+                        hl = HouseholdLog.objects.filter(household_structure__in=hh)
+                        hl.delete()  # delete household_logs
+                        hh.delete()  # delete household_structure
+                        for hh in deletes:
+                            with transaction.atomic():
+                                Household.objects.get(id=hh.id).delete()  # delete household
+                        return True
+                    else:
+                        return False
                 except IntegrityError:
-                    pass
+                    return False
+                except  DatabaseError:
+                    return False
+            return delete_household(instance, existing_no)
+        return delete_confirmed_household(instance, existing_no)
 
     def create_or_delete_households(self, instance=None, using=None):
         """Creates or deletes households to try to equal the number of households reported on the plot instance.
@@ -396,14 +431,21 @@ class Plot(BaseDispatchSyncUuidModel):
         existing_household_count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
         if instance.status in ['residential_habitable', 'bcpp_clinic']:
             instance.create_household(instance.household_count - existing_household_count, using=using)
-            instance.safe_delete_households(instance.household_count - existing_household_count, using=using)
-        return Household.objects.using(using).filter(plot__pk=instance.pk).count()
+            instance.safe_delete_households(existing_household_count, using=using)
+        with transaction.atomic():
+            return Household.objects.using(using).filter(plot__pk=instance.pk).count()
 
     def get_action(self):
         retval = UNCONFIRMED
         if self.gps_lon and self.gps_lat:
             retval = CONFIRMED
         return retval
+
+    @property
+    def validate_plot_accessible(self):
+        if (self.plot_inaccessible == False) and self.plot_log_entry.log_status == ACCESSIBLE:
+            return True
+        return False
 
     def gps(self):
         return "S{0} {1} E{2} {3}".format(self.gps_degrees_s, self.gps_minutes_s,
@@ -566,6 +608,15 @@ class Plot(BaseDispatchSyncUuidModel):
         except PlotLog.DoesNotExist:
             instance = None
         return instance
+
+    @property
+    def plot_log_entry(self):
+        PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
+        try:
+            return  PlotLogEntry.objects.filter(
+                                plot_log__plot__id=self.id).latest('report_datetime')
+        except PlotLogEntry.DoesNotExist:
+            print "PlotLogEntry.DoesNotExist"
 
     class Meta:
         app_label = 'bcpp_household'
