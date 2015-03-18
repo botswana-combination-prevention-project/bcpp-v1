@@ -66,8 +66,9 @@ class Member(Base):
     def customize_for_csv(self):
         """Customizes attribute self.data dictionary."""
         super(Member, self).customize_for_csv()
-        self.data['registered_subject'] = self.data['registered_subject'].registration_identifier
+        del self.data['registered_subject']
         del self.data['household_member']
+        del self.data['survey']
 
     def update_survey(self):
         """Set attributes related to the surveys the member has been enumerated in."""
