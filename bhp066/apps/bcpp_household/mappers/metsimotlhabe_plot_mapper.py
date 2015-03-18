@@ -7,32 +7,32 @@ from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, SHOSHONG_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, METSIMOTLHABE_LANDMARKS
 
 
-class ShoshongPlotMapper(BasePlotMapper):
+class MetsimotlhabePlotMapper(BasePlotMapper):
 
-    map_area = 'shoshong'
-    map_code = '25'
+    map_area = 'metsimotlhabe'
+    map_code = '27'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = SHOSHONG_LANDMARKS
+    landmarks = METSIMOTLHABE_LANDMARKS
 
-    intervention = True
+    intervention = False
 
-    gps_center_lat = -23.032546
-    gps_center_lon = 26.516352
-    radius = 6.0
+    gps_center_lat = -24.554426
+    gps_center_lon = 25.809554
+    radius = 7.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 3, 27),
-            full_enrollment_date=date(2015, 4, 25),
-            end_date=date(2015, 4, 15),
-            smc_start_date=date(2015, 5, 11)),
+            start_date=date(2015, 5, 1),
+            full_enrollment_date=date(2015, 5, 31),
+            end_date=date(2015, 6, 21),
+            smc_start_date=date(2015, 8, 10)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
@@ -54,4 +54,4 @@ class ShoshongPlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(ShoshongPlotMapper)
+site_mappers.register(MetsimotlhabePlotMapper)
