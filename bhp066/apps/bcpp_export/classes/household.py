@@ -39,13 +39,15 @@ class Household(Base):
     def customize_for_csv(self):
         super(Household, self).customize_for_csv()
         del self.data['household']
+        del self.data['household_structures']
+        del self.data['survey']
 
     def update_plot(self):
         self.plot = Plot(household=self.household, verbose=self.verbose)
         attrs = [
             ('community', 'community'),
             ('gps_lat', 'gps_lat'),
-            ('gps_lat', 'gps_lat'),
+            ('gps_lon', 'gps_lon'),
             ('confirmed', 'confirmed'),
             ('confirmed_date', 'confirmed_date'),
             ('plot_identifier', 'plot_identifier'),
