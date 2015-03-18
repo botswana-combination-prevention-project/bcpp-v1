@@ -5,7 +5,6 @@ from .lentsweletau_plot_mapper import LentsweletauPlotMapper
 from .lerala_plot_mapper import LeralaPlotMapper
 from .letlhakeng_plot_mapper import LetlhakengPlotMapper
 from .maunatlala_plot_mapper import MaunatlalaPlotMapper
-from .mmadinare_mapper import MmadinarePlotMapper
 from .mmankgodi_plot_mapper import MmankgodiPlotMapper
 from .mmathethe_plot_mapper import MmathethePlotMapper
 from .molapowabojang_plot_mapper import MolapowabojangPlotMapper
@@ -16,3 +15,6 @@ from .ranaka_plot_mapper import RanakaPlotMapper
 from .sefophe_plot_mapper import SefophePlotMapper
 from .shoshong_plot_mapper import ShoshongPlotMapper
 from .test_plot_mapper import TestPlotMapper
+from .mmadinare_plot_mapper import MmadinarePlotMapper
+from .metsimotlhabe_plot_mapper import MetsimotlhabePlotMapper
+from .tati_siding_plot_mapper import TatiSidingPlotMapper
