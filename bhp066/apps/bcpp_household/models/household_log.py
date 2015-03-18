@@ -48,6 +48,12 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         return """<a href="{url}" />structure</a>""".format(url=url)
     structure.allow_tags = True
 
+    def deserialize_prep(self, **kwargs):
+        # HouseholdLog being deleted by an IncommingTransaction, we go ahead and delete it.
+        # An extra household created by mistake.
+        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
+            self.delete()
+
     class Meta:
         app_label = 'bcpp_household'
 
