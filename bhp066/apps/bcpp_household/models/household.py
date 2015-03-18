@@ -220,6 +220,12 @@ class Household(BaseDispatchSyncUuidModel):
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         return HouseholdMember.objects.filter(household_structure__household__pk=self.pk).count()
 
+    def deserialize_prep(self, **kwargs):
+        # Household being deleted by an IncommingTransaction, we go ahead and delete it.
+        # An extra household created by mistake.
+        if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
+            self.delete()
+
     class Meta:
         app_label = 'bcpp_household'
         ordering = ['-household_identifier', ]

@@ -61,7 +61,7 @@ class EnrollmentLoss(BaseDispatchSyncUuidModel):
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def deserialize_prep(self, **kwargs):
-        # EnrollmentLoss being deleted by an IncommingTransaction, we ahead and delete it.
+        # EnrollmentLoss being deleted by an IncommingTransaction, we go ahead and delete it.
         # Its no longer needed at all because member status changed.
         if kwargs.get('action', None) and kwargs.get('action', None) == 'D':
             self.delete()
