@@ -3,6 +3,8 @@ from datetime import datetime
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 
+from edc.constants import ALIVE
+
 from apps.bcpp_household.models import HouseholdStructure
 
 from .base_member_status_model import BaseMemberStatusModel
@@ -135,7 +137,7 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
                 household_structure = HouseholdStructure.objects.using(using).get(
                     pk=instance.household_structure.pk)
                 # create subject absentee if member_status == ABSENT otherwise delete the entries
-                if instance.absent or instance.present_today == 'No':
+                if instance.absent or (instance.present_today == 'No' and instance.survival_status == ALIVE):
                     try:
                         SubjectAbsentee.objects.using(using).get(household_member=instance)
                     except SubjectAbsentee.DoesNotExist:
