@@ -7,7 +7,7 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.map.classes import Mapper, site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_variables.models import StudySite
-from edc.constants import NOT_APPLICABLE
+from edc.constants import NOT_APPLICABLE, ALIVE, DEAD
 
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
@@ -20,7 +20,8 @@ from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 from ..exceptions import MemberStatusError
-from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, HTC, REFUSED_HTC
+from ..constants import (ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, HTC, REFUSED_HTC,
+                         DECEASED)
 
 
 # class TestPlotMapper(Mapper):
@@ -65,8 +66,8 @@ class TestMemberStatus(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
-        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-        plot = PlotFactory(community='mmathethe', household_count=1, status='residential_habitable')
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
+        plot = PlotFactory(community='digawana', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
@@ -364,6 +365,37 @@ class TestMemberStatus(TestCase):
 
         self.assertEqual(household_member.member_status, REFUSED)
         self.assertFalse(household_member.refused)
+
+    def test_change_deceased_member(self):
+        """Asserts that a household member can switch between DESEASED and BHS_MEMBER."""
+        household_member = HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender='M',
+            age_in_years=50,
+            present_today='Yes',
+            study_resident='Yes')
+        pk = household_member.pk
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, BHS_SCREEN)
+        self.assertEqual(household_member.survival_status, ALIVE)
+        self.assertTrue(household_member.eligible_member)
+
+        household_member.member_status = DECEASED
+        household_member.save(update_fields=['member_status'])
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.survival_status, DEAD)
+        self.assertEqual(household_member.present_today, 'No')
+        self.assertFalse(household_member.eligible_member)
+        self.assertFalse(household_member.absent)
+        self.assertEqual(household_member.member_status, DECEASED)
+
+        household_member.member_status = BHS_SCREEN
+        household_member.save(update_fields=['member_status'])
+        household_member = HouseholdMember.objects.get(pk=pk)
+        self.assertEqual(household_member.member_status, BHS_SCREEN)
+        self.assertEqual(household_member.survival_status, ALIVE)
+        self.assertTrue(household_member.eligible_member)
+
 
     def test_change_household_member5(self):
         """Asserts that an eligible member that refuses before eligibility is REFUSED."""
