@@ -237,6 +237,7 @@ INABILITY_TO_PARTICIPATE_REASON = (
     ('Mental Incapacity', _('Mental Incapacity')),
     ('Deaf/Mute', _('Deaf/Mute')),
     ('Too sick', _('Too sick')),
+    ('Incarcerated', _('Incarcerated')),
     ('OTHER', _('Other, specify:')),
 )
 
