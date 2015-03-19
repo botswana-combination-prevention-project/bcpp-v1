@@ -21,33 +21,33 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
-from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED
+from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED, DECEASED
 
 
-class TestPlotMapper(Mapper):
-    map_area = 'test_community6'
-    map_code = '094'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.033194
-    gps_center_lon = 25.747139
-    radius = 5.5
-    location_boundary = ()
-    intervention = True
-site_mappers.register(TestPlotMapper)
+# class TestPlotMapper(Mapper):
+#     map_area = 'test_community6'
+#     map_code = '094'
+#     regions = []
+#     sections = []
+#     landmarks = []
+#     gps_center_lat = -25.033194
+#     gps_center_lon = 25.747139
+#     radius = 5.5
+#     location_boundary = ()
+#     intervention = True
+# site_mappers.register(TestPlotMapper)
 
 
 class TestMemberStatusChoices(TestCase):
-    def __init__(self, *args, **kwargs):
-        self.household_member = None
-        self.subject_consent = None
-        self.enrollment_checklist = None
-        self.registered_subject = None
-        self.study_site = None
-        super(TestMemberStatusChoices, self).__init__(*args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         self.household_member = None
+#         self.subject_consent = None
+#         self.enrollment_checklist = None
+#         self.registered_subject = None
+#         self.study_site = None
+#         super(TestMemberStatusChoices, self).__init__(*args, **kwargs)
 
-    def startup(self):
+    def setUp(self):
 
         from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 
@@ -61,12 +61,12 @@ class TestMemberStatusChoices(TestCase):
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        BcppAppConfiguration()
+        BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-        plot = PlotFactory(community='test_community6', household_count=1, status='residential_habitable')
+        plot = PlotFactory(community='digawana', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
@@ -98,9 +98,9 @@ class TestMemberStatusChoices(TestCase):
         return household_member
 
     def test_new_eligible_member(self):
-        self.startup()
+        #self.startup()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
-        options = [ABSENT, BHS_SCREEN, REFUSED, UNDECIDED]
+        options = [ABSENT, BHS_SCREEN, REFUSED, UNDECIDED, DECEASED]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
@@ -110,7 +110,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_not_eligible_member(self):
         """Assert for not eligible for BHS and HTC (household not enrolled)."""
-        self.startup()
+        #self.startup()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EW', age_in_years=64, study_resident='No', household_structure=self.household_structure)
         options = [NOT_ELIGIBLE]
         options.append(household_member.member_status)
@@ -121,7 +121,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_eligible_htc_only(self):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled). No need to ever screen for BHS as not eligible member(by age or residency)."""
-        self.startup()
+        #self.startup()
         household_member = self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='No', household_structure=household_member.household_structure)
         self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
@@ -136,7 +136,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_eligible_htc_with_bhs_screen_option(self):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled), but with option to still screen for BHS in case eligibility information changes"""
-        self.startup()
+        #self.startup()
         household_member = self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=household_member.household_structure)
         self.assertTrue(household_member.household_structure.enrolled)
@@ -160,7 +160,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_eligible_member_bhs_and_htc(self):
         """Assert for not eligible for BHS but eligible for HTC (household enrolled)."""
-        self.startup()
+        #self.startup()
         household_member = self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=78, study_resident='Yes', household_structure=household_member.household_structure)
         self.assertEqual(household_member.member_status, HTC_ELIGIBLE)
@@ -174,7 +174,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_eligible_bhs_and_htc_and_refused_bhs(self):
         """Assert for eligible for BHS, household is enrolled, and eligible for HTC since has refused BHS."""
-        self.startup()
+        #self.startup()
         household_member = self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=household_member.household_structure)
 
@@ -196,7 +196,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_refused_bhs_and_consent_later(self):
         """Assert for refused BHS, household not enrolled and BHS_SCREEN still available as option."""
-        self.startup()
+        #self.startup()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
         household_member.member_status = REFUSED
         household_member.save(update_fields=['member_status'])
@@ -204,7 +204,7 @@ class TestMemberStatusChoices(TestCase):
         subject_refusal = SubjectRefusalFactory(household_member=household_member)
         self.assertEqual(subject_refusal.household_member.member_status, REFUSED)
         self.assertTrue(subject_refusal.household_member.refused)
-        options = [BHS_SCREEN]
+        options = [BHS_SCREEN, DECEASED]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
@@ -216,7 +216,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_eligible_bhs(self):
         """Assert for eligible for BHS, household enrolled."""
-        self.startup()
+        #self.startup()
         self.enroll_household()
         household_member = HouseholdMemberFactory(first_name='ERIK', initials='EXW', age_in_years=64, study_resident='Yes', household_structure=self.household_structure)
         household_member.member_status = BHS_SCREEN
@@ -232,7 +232,7 @@ class TestMemberStatusChoices(TestCase):
             part_time_resident='Yes')
         pk = household_member.pk
         household_member = HouseholdMember.objects.get(pk=pk)
-        options = [BHS, BHS_ELIGIBLE, REFUSED]
+        options = [BHS, BHS_ELIGIBLE, DECEASED, REFUSED]
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
@@ -257,7 +257,7 @@ class TestMemberStatusChoices(TestCase):
 
     def test_consented(self):
         """Assert only returns BHS if member is consented."""
-        self.startup()
+        #self.startup()
         household_member = self.enroll_household()
         self.assertTrue(household_member.is_consented)
         options = [BHS]
