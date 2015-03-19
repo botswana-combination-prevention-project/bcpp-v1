@@ -31,7 +31,7 @@ from apps.bcpp_survey.models import Survey
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC, DECEASED
 from ..managers import HouseholdMemberManager
 
 
@@ -273,8 +273,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #         if self.is_consented and not kwargs.get('update_fields'):
 #             raise MemberStatusError('Household member is consented. Changes are not allowed. '
 #                                     'Perhaps catch this in the form.')
+        if self.member_status == DECEASED:
+            self.survival_status = DEAD
+            self.present_today = 'No'
+        else:
+            self.survival_status = ALIVE
         self.eligible_member = self.is_eligible_member
-        self.absent = True if (not self.id and self.present_today == 'No') else self.absent
+        self.absent = True if (not self.id and 
+                               (self.present_today == 'No' and not self.survival_status == DEAD)) else self.absent
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
             if self.member_status == BHS_SCREEN:
@@ -306,7 +312,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         try:
             update_fields = kwargs.get('update_fields') + [
                 'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc',
-                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc'] + clear_enrollment_fields
+                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc', 'survival_status',
+                'present_today'] + clear_enrollment_fields
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
