@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
@@ -26,9 +27,11 @@ from apps.bcpp_household.models import Plot
 from apps.bcpp_household.exceptions import AlreadyReplaced
 from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
+from apps.bcpp_survey.models import Survey
+
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC, DECEASED
 from ..managers import HouseholdMemberManager
 
 
@@ -270,8 +273,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #         if self.is_consented and not kwargs.get('update_fields'):
 #             raise MemberStatusError('Household member is consented. Changes are not allowed. '
 #                                     'Perhaps catch this in the form.')
+        if self.member_status == DECEASED:
+            self.survival_status = DEAD
+            self.present_today = 'No'
+        else:
+            self.survival_status = ALIVE
         self.eligible_member = self.is_eligible_member
-        self.absent = True if (not self.id and self.present_today == 'No') else self.absent
+        self.absent = True if (not self.id and 
+                               (self.present_today == 'No' and not self.survival_status == DEAD)) else self.absent
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
             if self.member_status == BHS_SCREEN:
@@ -303,10 +312,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         try:
             update_fields = kwargs.get('update_fields') + [
                 'member_status', 'undecided', 'absent', 'refused', 'eligible_member', 'eligible_htc',
-                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc'] + clear_enrollment_fields
+                'enrollment_checklist_completed', 'enrollment_loss_completed', 'htc', 'survival_status',
+                'present_today'] + clear_enrollment_fields
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
+        self.is_the_household_member_for_current_survey()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -835,6 +846,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             else:
                 return '<img src="/static/admin/img/icon-no.gif" alt="False" />'
         return ' '
+
+    def is_the_household_member_for_current_survey(self):
+        """ Checks whether the household is saved for the current survey"""
+        if not settings.DEVICE_ID in settings.SERVER_DEVICE_ID_LIST:
+            if self.household_structure.survey != Survey.objects.current_survey():
+                raise ImproperlyConfigured('Your device is configured to create household_member for {0}'.format(Survey.objects.current_survey()))
+
     updated.allow_tags = True
 
     class Meta:
