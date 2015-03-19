@@ -178,7 +178,7 @@ if site_mappers.current_mapper().intervention is False:
                 BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
 
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
-        if item.model_name in ['pima', 'tbsymptoms', 'hivuntested']:
+        if item.model_name in ['tbsymptoms', 'hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
 
 if site_mappers.current_mapper().intervention is True:
