@@ -9,21 +9,25 @@ class Community(Base):
         super(Community, self).__init__(verbose=verbose)
         self.mapper_cls = mapper
         self.mapper = self.mapper_cls()
-        self.cpc = mapper.intervention
-        self.ecc = not mapper.intervention
-        self.community = mapper.map_area
-        self.community_id = mapper.map_code
-        self.community_code = mapper.map_code
-        self.pair = mapper.pair
+        self.cpc = self.mapper.intervention
+        self.ecc = not self.mapper.intervention
+        self.community = self.mapper.map_area
+        self.community_id = self.mapper.map_code
+        self.community_code = self.mapper.map_code
+        self.pair = self.mapper.pair
         for survey in Survey.objects.all():
-            survey_dates = mapper.survey_dates[survey.survey_slug]
-            setattr(self, '{}_{}'.format("start_date", survey.survey_abbrev.lower()), survey_dates.start_date)
-            setattr(self, '{}_{}'.format("full_enrollment_date", survey.survey_abbrev.lower()), survey_dates.full_enrollment_date)
-            setattr(self, '{}_{}'.format("end_date", survey.survey_abbrev.lower()), survey_dates.end_date)
-            setattr(self, '{}_{}'.format("smc_start_date", survey.survey_abbrev.lower()), survey_dates.smc_start_date)
+            survey_dates = self.mapper.survey_dates[survey.survey_slug]
+            setattr(self, '{}_{}'.format(
+                "start_date", survey.survey_abbrev.lower()), survey_dates.start_date)
+            setattr(self, '{}_{}'.format(
+                "full_enrollment_date", survey.survey_abbrev.lower()), survey_dates.full_enrollment_date)
+            setattr(self, '{}_{}'.format(
+                "end_date", survey.survey_abbrev.lower()), survey_dates.end_date)
+            setattr(self, '{}_{}'.format(
+                "smc_start_date", survey.survey_abbrev.lower()), survey_dates.smc_start_date)
 
     def __repr__(self):
-        return '{0}({1.mapper_cls!r})'.format(self.__class__.__name__, self)
+        return '{0}({1.mapper!r})'.format(self.__class__.__name__, self)
 
     def __str__(self):
         return '{0.community!s}'.format(self)

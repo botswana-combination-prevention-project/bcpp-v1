@@ -10,6 +10,9 @@ class Survey(Base):
 
     def __init__(self, community, verbose=None):
         """Set attributes related to the surveys the member has been enumerated in."""
+#         for index, survey in enumerate(SurveyModel.objects.all().order_by('survey_abbrev')):
+#             survey.chronological_order = index + 1
+#             survey.save()
         super(Survey, self).__init__(verbose=verbose)
         self.community = community
         self.plot_count_all = Plot.objects.filter(community=self.community).count()
@@ -27,7 +30,7 @@ class Survey(Base):
             self.pair = mapper.pair
         except AttributeError:
             self.pair = None
-        for survey in SurveyModel.objects.all().order_by('chronological_order'):
+        for survey in SurveyModel.objects.all().order_by('survey_abbrev'):
             self.survey_slugs.append(survey.survey_slug)
             self.survey_abbrevs.append(survey.survey_abbrev.lower())
         for index, survey_slug in enumerate(self.survey_slugs):
@@ -45,3 +48,9 @@ class Survey(Base):
                 self.survey_abbrevs[index], fieldattrs,
                 instance=type('Instance', (object, ), attrs)
                 )
+
+    def __repr__(self):
+        return '{0}({1.community!r})'.format(self.__class__.__name__, self)
+
+    def __str__(self):
+        return '{0.community!s}'.format(self)
