@@ -65,7 +65,7 @@ class TestMemberStatusChoices(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
-        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
         plot = PlotFactory(community='digawana', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
@@ -130,8 +130,8 @@ class TestMemberStatusChoices(TestCase):
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        pprint.pprint(member_status_choices)
-        pprint.pprint(household_member.member_status_choices)
+#         pprint.pprint(member_status_choices)
+#         pprint.pprint(household_member.member_status_choices)
         self.assertEqual(household_member.member_status_choices, member_status_choices)
 
     def test_eligible_htc_with_bhs_screen_option(self):
@@ -154,8 +154,8 @@ class TestMemberStatusChoices(TestCase):
         options = list(set(options))
         options.sort()
         member_status_choices = [(item, item) for item in options]
-        pprint.pprint(member_status_choices)
-        pprint.pprint(enrollment_checklist.household_member.member_status_choices)
+#         pprint.pprint(member_status_choices)
+#         pprint.pprint(enrollment_checklist.household_member.member_status_choices)
         self.assertEqual(enrollment_checklist.household_member.member_status_choices, member_status_choices)
 
     def test_eligible_member_bhs_and_htc(self):
@@ -208,10 +208,10 @@ class TestMemberStatusChoices(TestCase):
         options.append(household_member.member_status)
         options = list(set(options))
         options.sort()
-        print options
+#         print options
         member_status_choices = [(item, item) for item in options]
         x = household_member.member_status_choices
-        print x
+#         print x
         self.assertEqual(x, member_status_choices)
 
     def test_eligible_bhs(self):
