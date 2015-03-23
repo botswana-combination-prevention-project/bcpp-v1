@@ -8,8 +8,8 @@ from ..plans import export_plan as default_export_plan
 
 class BaseCollector(object):
 
-    def __init__(self, export_plan=None, community=None, exception_cls=None):
-        self.delimiter = "|"
+    def __init__(self, export_plan=None, community=None, exception_cls=None, delimiter=None):
+        self.delimiter = delimiter or "|"
         self.for_csv = False
         self.filename = None
         self.test_run = False
