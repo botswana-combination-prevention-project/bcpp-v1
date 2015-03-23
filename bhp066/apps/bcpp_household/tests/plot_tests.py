@@ -4,12 +4,10 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.test import TestCase
  
-from edc.map.classes import site_mappers, Mapper
 from edc.map.exceptions import MapperError
 
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ..forms import PlotForm
 from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
 from ..constants import CONFIRMED, UNCONFIRMED
 from ..models import Household, HouseholdStructure, Plot
@@ -154,6 +152,7 @@ class PlotTests(TestCase):
  
     def test_plot_form_verifies_gps1(self):
         """plot_form catches error if gps not within community boundary."""
+        from ..forms import PlotForm
         plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
         plot.gps_degrees_e = 25
         plot.gps_degrees_s = 25
