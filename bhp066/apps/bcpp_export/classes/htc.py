@@ -48,6 +48,7 @@ class Htc(Base):
         del self.data['household_member']
         del self.data['survey']
         del self.data['subject_htc']
+        del self.data['first_name']
 
     def update_htc(self):
         try:
