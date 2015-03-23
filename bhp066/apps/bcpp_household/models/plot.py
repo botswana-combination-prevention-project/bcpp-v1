@@ -443,7 +443,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def validate_plot_accessible(self):
-        if (self.plot_inaccessible == False) and self.plot_log_entry.log_status == ACCESSIBLE:
+        if self.plot_log_entry and (self.plot_inaccessible == False) and self.plot_log_entry.log_status == ACCESSIBLE:
             return True
         return False
 
