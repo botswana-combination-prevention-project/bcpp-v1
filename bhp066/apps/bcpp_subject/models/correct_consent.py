@@ -159,6 +159,26 @@ class CorrectConsent(BaseSyncUuidModel):
         null=True,
         choices=YES_NO,
         )
+    
+    old_witness_name = EncryptedLastnameField(
+        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+        validators=[
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+            ],
+        blank=True,
+        null=True,
+        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        )
+
+    new_witness_name = EncryptedLastnameField(
+        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+        validators=[
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+            ],
+        blank=True,
+        null=True,
+        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        )
 
     history = AuditTrail()
 
@@ -212,6 +232,8 @@ class CorrectConsent(BaseSyncUuidModel):
         if self.new_is_literate:
             enrollment_checklist.literacy = self.new_is_literate
             self.subject_consent.is_literate = self.new_is_literate
+            if self.new_witness_name:
+                self.subject_consent.witness_name = self.new_witness_name
         if self.new_last_name:
             self.subject_consent.last_name = self.new_last_name
             if self.new_first_name:
@@ -226,7 +248,7 @@ class CorrectConsent(BaseSyncUuidModel):
             hic_enrollment.save(update_fields=['dob'])
         household_member.save(update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
         enrollment_checklist.save(update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
-        self.subject_consent.save(update_fields=['first_name', 'last_name', 'initials', 'gender', 'is_literate', 'dob', 'guardian_name'])
+        self.subject_consent.save(update_fields=['first_name', 'last_name', 'initials', 'gender', 'is_literate', 'witness_name', 'dob', 'guardian_name'])
 
     def compare_old_fields_to_consent(self, instance=None, exception_cls=None):
         """Raises an exception if an 'old_" field does not match the value
