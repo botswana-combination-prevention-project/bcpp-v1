@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
@@ -274,10 +274,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #             raise MemberStatusError('Household member is consented. Changes are not allowed. '
 #                                     'Perhaps catch this in the form.')
         if self.member_status == DECEASED:
-            self.survival_status = DEAD
-            self.present_today = 'No'
+            self.create_suject_death
         else:
-            self.survival_status = ALIVE
+            self.clear_subject_death
         self.eligible_member = self.is_eligible_member
         self.absent = True if (not self.id and 
                                (self.present_today == 'No' and not self.survival_status == DEAD)) else self.absent
@@ -338,6 +337,28 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return self.household_structure.household.plot.allow_enrollment(
             using, exception_cls=exception_cls,
             plot_instance=instance.household_structure.household.plot)
+
+    @property
+    def create_suject_death(self):
+        from ..models import SubjectDeath
+        self.survival_status = DEAD
+        self.present_today = 'No'
+        try:
+            SubjectDeath.objects.get(household_member=self)
+        except SubjectDeath.DoesNotExist:
+            SubjectDeath.objects.create(household_member=self,
+                                        registered_subject=self.registered_subject,
+                                        survey=self.household_structure.survey,
+                                        report_datetime=datetime.now())
+
+    @property
+    def clear_subject_death(self):
+        from ..models import SubjectDeath
+        self.survival_status = ALIVE
+        try:
+            SubjectDeath.objects.get(household_member=self).delete()
+        except SubjectDeath.DoesNotExist:
+            pass
 
     @property
     def clear_refusal(self):
