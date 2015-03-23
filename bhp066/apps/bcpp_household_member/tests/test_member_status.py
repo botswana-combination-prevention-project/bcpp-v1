@@ -11,7 +11,8 @@ from edc.constants import NOT_APPLICABLE, ALIVE, DEAD
 
 from apps.bcpp_household.models import Household, HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import HouseholdMember, SubjectAbsentee, EnrollmentChecklist, EnrollmentLoss
+from apps.bcpp_household_member.models import (HouseholdMember, SubjectAbsentee, EnrollmentChecklist, EnrollmentLoss,
+                                               SubjectDeath)
 from apps.bcpp_household_member.tests.factories import (HouseholdMemberFactory, EnrollmentChecklistFactory,
                                                         SubjectRefusalFactory, SubjectHtcFactory)
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -379,6 +380,7 @@ class TestMemberStatus(TestCase):
         self.assertEqual(household_member.member_status, BHS_SCREEN)
         self.assertEqual(household_member.survival_status, ALIVE)
         self.assertTrue(household_member.eligible_member)
+        self.assertEqual(SubjectDeath.objects.all().count(), 0)
 
         household_member.member_status = DECEASED
         household_member.save(update_fields=['member_status'])
@@ -388,6 +390,7 @@ class TestMemberStatus(TestCase):
         self.assertFalse(household_member.eligible_member)
         self.assertFalse(household_member.absent)
         self.assertEqual(household_member.member_status, DECEASED)
+        self.assertEqual(SubjectDeath.objects.all().count(), 1)
 
         household_member.member_status = BHS_SCREEN
         household_member.save(update_fields=['member_status'])
@@ -395,7 +398,7 @@ class TestMemberStatus(TestCase):
         self.assertEqual(household_member.member_status, BHS_SCREEN)
         self.assertEqual(household_member.survival_status, ALIVE)
         self.assertTrue(household_member.eligible_member)
-
+        self.assertEqual(SubjectDeath.objects.all().count(), 0)
 
     def test_change_household_member5(self):
         """Asserts that an eligible member that refuses before eligibility is REFUSED."""
