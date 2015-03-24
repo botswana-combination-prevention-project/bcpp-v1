@@ -1,15 +1,16 @@
 from edc.constants import YES, NOT_APPLICABLE, NO
 
 from apps.bcpp_clinic.models import ClinicConsent
-from apps.bcpp_household_member.models import SubjectHtc
 from apps.bcpp_lab.models.subject_requisition import SubjectRequisition
-from apps.bcpp_subject.models import SubjectConsent, SubjectReferral
+from apps.bcpp_subject.models import (SubjectConsent, SubjectReferral, HivTestingHistory,
+                                      HivCareAdherence, Pregnancy, HivUntested, HivTestReview)
 from apps.bcpp_subject.models import SubjectLocator, Pima
 
 from .base import Base
 from .member import Member
 from .survey import Survey
 from .specimen import Specimen
+from apps.bcpp_subject.models.hiv_tested import HivTested
 
 
 class Subject(Base):
@@ -24,12 +25,14 @@ class Subject(Base):
         self.survey = Survey(self.community, verbose=self.verbose)
         for survey_abbrev in self.survey.survey_abbrevs:
             fieldattrs = [('member_status', 'member_status')]
-            self.denormalize(survey_abbrev, fieldattrs, self.member.household_member.membership_by_survey.get(survey_abbrev))
+            self.denormalize(survey_abbrev, fieldattrs, self.member.household_member.membership.by_survey.get(survey_abbrev))
         self.update_plot()
         self.update_household()
         self.update_subject_consent()
         self.update_subject_referral()
         self.update_subject_locator()
+        self.update_hiv_and_art()
+        self.update_pregnancy()
         self.update_pima()
         self.update_viral_load()
 
@@ -135,20 +138,58 @@ class Subject(Base):
                 survey_abbrev, fieldattrs,
                 lookup_model=model_cls,
                 lookup_string='subject_visit__household_member',
-                lookup_instance=self.member.household_member.membership_by_survey.get(survey_abbrev))
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
 
-    def update_subject_htc(self, survey):
-        fieldattrs = [('referral_clinic', 'subject_htc_referral_clinic'),
-                      ('accepted', 'subject_htc_accepted'),
-                      ('tracking_identifier', 'subject_htc_reference'),
-                      ('offered', 'subject_htc_offered'),
-                      ('referred', 'subject_htc_referred')]
-        model_cls = SubjectHtc
-        self.denormalize(
-            survey.survey_abbrev, fieldattrs,
-            lookup_model=model_cls,
-            lookup_string='household_member',
-            lookup_instance=self.member.household_membership_survey.get(survey.survey_slug))
+    def update_hiv_and_art(self):
+        for survey_abbrev in self.survey.survey_abbrevs:
+            # HivTestingHistory
+            fieldattrs = [('has_tested', 'has_tested')]
+            self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=HivTestingHistory,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
+            # HivTestReview
+            fieldattrs = [('recorded_hiv_result', 'recorded_hiv_result')]
+            self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=HivTestReview,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
+            # HivTested
+            fieldattrs = [('where_hiv_test', 'where_hiv_test')]
+            fieldattrs_other = [('where_hiv_test', 'where_hiv_test_other', 'where_hiv_test')]
+            hiv_tested = self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=HivTested,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
+            self.denormalize_other(
+                survey_abbrev, fieldattrs_other,
+                instance=hiv_tested)
+            # HivCareAdherence
+            fieldattrs = [('ever_taken_arv', 'ever_taken_arv')]
+            self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=HivCareAdherence,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
+            # HivUntested
+            fieldattrs = [('why_no_hiv_test', 'why_no_hiv_test')]
+            self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=HivUntested,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
+
+    def update_pregnancy(self):
+        for survey_abbrev in self.survey.survey_abbrevs:
+            fieldattrs = [('anc_reg', 'anc_reg')]
+            self.denormalize(
+                survey_abbrev, fieldattrs,
+                lookup_model=Pregnancy,
+                lookup_string='subject_visit__household_member',
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev))
 
     def update_subject_locator(self):
         try:
@@ -169,7 +210,7 @@ class Subject(Base):
                 survey_abbrev, fieldattrs,
                 lookup_model=model_cls,
                 lookup_string='subject_visit__household_member',
-                lookup_instance=self.member.household_member.membership_by_survey.get(survey_abbrev)
+                lookup_instance=self.member.household_member.membership.by_survey.get(survey_abbrev)
                 )
             try:
                 setattr(self, '{}_{}'.format('cd4_not_tested_reason', survey_abbrev),
@@ -181,7 +222,7 @@ class Subject(Base):
         for survey_abbrev in self.survey.survey_abbrevs:
             try:
                 subject_requisition = SubjectRequisition.objects.get(
-                    subject_visit__household_member=self.member.household_member.membership_by_survey.get(survey_abbrev),
+                    subject_visit__household_member=self.member.household_member.membership.by_survey.get(survey_abbrev),
                     panel__name='Viral Load')
                 specimen = Specimen(subject_requisition, verbose=self.verbose)
                 print str(specimen)

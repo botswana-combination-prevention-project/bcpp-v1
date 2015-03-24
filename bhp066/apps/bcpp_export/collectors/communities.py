@@ -22,6 +22,8 @@ class Communities(BaseCollector):
             self.mappers = [site_mappers.get(community)]
 
     def export_to_csv(self):
-        for mapper in self.mappers:
-            community = Community(mapper)
-            self._export(community)
+        for mapper in site_mappers.registry.itervalues():
+            if mapper.pair > 0:
+                community = Community(mapper)
+                print str(community)
+                self._export(community)
