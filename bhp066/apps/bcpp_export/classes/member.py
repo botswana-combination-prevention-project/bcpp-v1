@@ -69,6 +69,7 @@ class Member(Base):
         del self.data['registered_subject']
         del self.data['household_member']
         del self.data['survey']
+        del self.data['first_name']
 
     def update_survey(self):
         """Set attributes related to the surveys the member has been enumerated in."""
@@ -100,7 +101,7 @@ class Member(Base):
             ('tracking_identifier', 'htc_tracking_identifier')]
         for survey_abbrev in self.survey.survey_abbrevs:
             attr_suffix = survey_abbrev
-            htc = Htc(self.household_member.membership_by_survey.get(attr_suffix))
+            htc = Htc(self.household_member.membership.by_survey.get(attr_suffix))
             self.denormalize(
                 attr_suffix, attrs_to_denormalize,
                 instance=htc)
@@ -151,7 +152,7 @@ class Member(Base):
             attr_suffix = survey_abbrev
             self.denormalize(
                 attr_suffix, attrs_to_denormalize,
-                instance=self.household_member.membership_by_survey.get(survey_abbrev))
+                instance=self.household_member.membership.by_survey.get(survey_abbrev))
 
     def check_member_status(self, household_member, survey_abbrev):
         try:
@@ -172,7 +173,7 @@ class Member(Base):
     def update_member_status(self):
         """Sets attributes related to member status."""
         for survey_abbrev in self.survey.survey_abbrevs:
-            household_member = self.household_member.membership_by_survey.get(survey_abbrev)
+            household_member = self.household_member.membership.by_survey.get(survey_abbrev)
             self.check_member_status(household_member, survey_abbrev)
             attrs = [('member_status', 'member_status')]
             self.denormalize(survey_abbrev, attrs, household_member)
@@ -243,7 +244,7 @@ class Member(Base):
                 attr_suffix, fieldattrs,
                 lookup_model=SubjectRefusal,
                 lookup_string='household_member',
-                lookup_instance=self.household_member.membership_by_survey.get(survey_abbrev)
+                lookup_instance=self.household_member.membership.by_survey.get(survey_abbrev)
                 )
             self.denormalize_other(
                 attr_suffix, fieldattrs_other,
@@ -259,7 +260,7 @@ class Member(Base):
                 attr_suffix, fieldattrs,
                 lookup_model=SubjectAbsenteeEntry,
                 lookup_string='subject_absentee__household_member',
-                lookup_instance=self.household_member.membership_by_survey.get(attr_suffix)
+                lookup_instance=self.household_member.membership.by_survey.get(attr_suffix)
                 )
             self.denormalize_other(
                 attr_suffix, fieldattrs_other,

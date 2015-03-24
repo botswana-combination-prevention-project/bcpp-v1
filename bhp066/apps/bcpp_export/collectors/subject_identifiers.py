@@ -37,6 +37,6 @@ class SubjectIdentifiers(BaseCollector):
                         household_member__household_structure__household__plot__community=community
                         ).order_by('household_member__registered_subject__subject_identifier'):
                     writer.writerow([
-                        community, clinic_consent.subject_identifier, 'RBD',
+                        community, clinic_consent.subject_identifier, 'CLINIC_RBD',
                         clinic_consent.household_member.member_status,
                         clinic_consent.household_member.household_structure.survey.survey_slug])
