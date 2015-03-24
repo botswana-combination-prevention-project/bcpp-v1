@@ -31,7 +31,7 @@ class ShoshongPlotMapper(BasePlotMapper):
             name='bhs',
             start_date=date(2015, 3, 27),
             full_enrollment_date=date(2015, 4, 17),
-            end_date=date(2015, 4, 8),
+            end_date=date(2015, 5, 8),
             smc_start_date=date(2015, 5, 11)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
@@ -43,7 +43,7 @@ class ShoshongPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((TU, WE, TH, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
