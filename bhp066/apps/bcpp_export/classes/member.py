@@ -3,6 +3,7 @@ from datetime import date
 
 from apps.bcpp_household.choices import HOUSEHOLD_LOG_STATUS
 from apps.bcpp_household.constants import ELIGIBLE_REPRESENTATIVE_PRESENT
+from apps.bcpp_household.models import Plot
 from apps.bcpp_household_member.classes import HouseholdMemberHelper
 from apps.bcpp_household_member.constants import (BHS, UNDECIDED, ANNUAL, ABSENT, REFUSED,
                                                   HTC, NOT_ELIGIBLE, REFUSED_HTC)
@@ -38,7 +39,9 @@ class Member(Base):
         super(Member, self).__init__(verbose=verbose)
         self.errors = {}
         self.household_member = HouseholdMember(household_member)
+        self.revision = self.household_member.revision
         self.internal_identifier = self.household_member.internal_identifier
+        self.household = self.household_member.household
         self.registered_subject = self.household_member.registered_subject
         self.update_plot()
         self.update_survey()
@@ -68,13 +71,14 @@ class Member(Base):
         super(Member, self).customize_for_csv()
         del self.data['registered_subject']
         del self.data['household_member']
+        del self.data['household']
         del self.data['survey']
         del self.data['first_name']
 
     def update_survey(self):
         """Set attributes related to the surveys the member has been enumerated in."""
         self.surveys_enumerated = [
-            hm.household_structure.survey.survey_abbrev.lower() for hm in self.household_member.membership]
+            hm.household_structure.survey.survey_abbrev.lower() for hm in self.household_member.membership.members]
         self.survey = self.household_member.survey
         for attr, value in self.survey.__dict__.iteritems():
             setattr(self, attr, value)
@@ -82,7 +86,7 @@ class Member(Base):
     def update_plot(self):
         """Sets the plot attributes for this instance using an instance of the Plot model."""
         # self.plot = Plot(household_member=self.household_member)
-        plot = self.household_member.household_structure.household.plot
+        plot = Plot.objects.defer(*Plot.encrypted_fields()).get(id=self.household.plot_id)
         attrs = [
             ('plot_identifier', 'plot_identifier'),
             ('location', 'location'),
@@ -135,7 +139,7 @@ class Member(Base):
             ('enumeration_last_date', 'enumeration_last_date'),
             ('consented', 'consented')]
         for attr in attrs:
-            setattr(self, attr[1], getattr(self.household_member, attr[0]))
+            setattr(self, attr[1], getattr(self.household_member.membership, attr[0]))
         attrs_to_denormalize = [
             ('created', 'enumeration_date'),
             ('visit_attempts', 'member_visit_attempts'),
@@ -280,11 +284,7 @@ class Member(Base):
             data_errors['household_status'].append(
                 'Invalid household status options in {}. Got {}'.format(self.community, condition))
         # 2. confirm is_consented agrees with SubjectConsent
-        try:
-            SubjectConsent.objects.get(household_member=self.household_member)
-            consented = True
-        except SubjectConsent.DoesNotExist:
-            consented = False
+        consented = SubjectConsent.objects.filter(household_member=self.household_member).exists
         if self.member_consented != consented:
             data_errors['consented'].append(
                 'household_member.is_consented should be \'{0!r}\' in {1!r}'.format(consented, self.community))

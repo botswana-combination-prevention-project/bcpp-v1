@@ -2,6 +2,7 @@ from edc.constants import YES, NOT_APPLICABLE, NO
 
 from apps.bcpp_clinic.models import ClinicConsent
 from apps.bcpp_lab.models.subject_requisition import SubjectRequisition
+from apps.bcpp_household.models import Plot
 from apps.bcpp_subject.models import (SubjectConsent, SubjectReferral, HivTestingHistory,
                                       HivCareAdherence, Pregnancy, HivUntested, HivTestReview)
 from apps.bcpp_subject.models import SubjectLocator, Pima
@@ -18,7 +19,9 @@ class Subject(Base):
     def __init__(self, household_member, verbose=None):
         super(Subject, self).__init__(verbose=verbose)
         self.member = Member(household_member, verbose=self.verbose)
+        self.revision = self.member.revision
         self.household_member = self.member.household_member
+        self.household = self.household_member.household_structure.household
         self.registered_subject = self.member.registered_subject
         self.internal_identifier = self.member.internal_identifier
         self.community = self.member.community
@@ -48,20 +51,17 @@ class Subject(Base):
 
     def customize_for_csv(self):
         super(Subject, self).customize_for_csv()
-        self.data['household_member'] = self.data['household_member'].internal_identifier
-        self.data['registered_subject'] = self.data['registered_subject'].registration_identifier
-        try:
-            self.data['consenting_household_member'] = self.data['consenting_household_member'].internal_identifier
-        except AttributeError:
-            pass
+        self.data['revision'] = self.revision
+        del self.data['household_member']
+        del self.data['registered_subject']
         del self.data['member']
+        del self.data['household']
         del self.data['subject_consent']
         del self.data['survey']
 
     def update_plot(self):
         """Sets the plot attributes for this instance using an instance of the Plot model."""
-        # self.plot = Plot(household_member=self.household_member)
-        plot = self.household_member.household_structure.household.plot
+        plot = Plot.objects.defer(*Plot.encrypted_fields()).get(id=self.household.plot_id)
         attrs = [
             ('plot_identifier', 'plot_identifier'),
             ('location', 'location'),
@@ -70,40 +70,43 @@ class Subject(Base):
             setattr(self, attr[1], getattr(plot, attr[0]))
 
     def update_household(self):
-        self.household_identifier = self.household_member.household_structure.household.household_identifier
-        if self.plot_identifier == 'clinic':
+        if self.location == 'clinic':
             self.household_identifier = None
+        else:
+            self.household_identifier = self.household.household_identifier
 
     def update_subject_consent(self):
         try:
             if self.location == 'clinic':
-                self.subject_consent = ClinicConsent.objects.get(registered_subject=self.registered_subject)
+                self.subject_consent = ClinicConsent.objects.defer(*ClinicConsent.encrypted_fields()).get(
+                    registered_subject=self.registered_subject)
             else:
-                self.subject_consent = SubjectConsent.objects.get(registered_subject=self.registered_subject)
-            self.consenting_household_member = self.subject_consent.household_member
+                self.subject_consent = SubjectConsent.objects.defer(*SubjectConsent.encrypted_fields()).get(
+                    registered_subject=self.registered_subject)
+            # self.consenting_household_member = self.subject_consent.household_member
             self.age_in_years = self.subject_consent.age
-            self.citizen = self.subject_consent.citizen or YES if self.subject_consent.identity_type == 'OMANG' else NO
+            self.citizen = YES if self.subject_consent.citizen else NO
             self.consent_datetime = self.subject_consent.consent_datetime
             self.date_of_birth = self.subject_consent.dob
-            self.first_name = self.subject_consent.first_name
+            # self.first_name = self.subject_consent.first_name
             self.gender = self.subject_consent.gender
             self.identity = self.subject_consent.identity
             self.identity_type = self.subject_consent.identity_type
-            self.last_name = self.subject_consent.last_name
+            # self.last_name = self.subject_consent.last_name
             self.spouse_of_citizen = None if NOT_APPLICABLE else self.subject_consent.legal_marriage
             self.subject_identifier = self.subject_consent.subject_identifier
-            self.survey_consented = self.subject_consent.household_member.survey.survey_slug
+            self.survey_consented = self.subject_consent.household_member.survey.survey_abbrev
         except (SubjectConsent.DoesNotExist, ClinicConsent.DoesNotExist):
             self.age_in_years = self.household_member.age_in_years
             self.citizen = None
             self.consent_datetime = None
-            self.consenting_household_member = None
+            # self.consenting_household_member = None
             self.date_of_birth = None
-            self.first_name = self.household_member.first_name
+            # self.first_name = self.household_member.first_name
             self.gender = self.household_member.gender
             self.identity = None
             self.identity_type = None
-            self.last_name = None
+            # self.last_name = None
             self.spouse_of_citizen = None
             self.subject_consent = None
             self.subject_identifier = None
@@ -193,7 +196,8 @@ class Subject(Base):
 
     def update_subject_locator(self):
         try:
-            subject_locator = SubjectLocator.objects.get(registered_subject=self.registered_subject)
+            subject_locator = SubjectLocator.objects.defer(*SubjectLocator.encrypted_fields()).get(
+                registered_subject=self.registered_subject)
             self.home_visit_permission = subject_locator.home_visit_permission
             self.may_follow_up = subject_locator.may_follow_up
         except SubjectLocator.DoesNotExist:
@@ -221,11 +225,16 @@ class Subject(Base):
     def update_viral_load(self):
         for survey_abbrev in self.survey.survey_abbrevs:
             try:
-                subject_requisition = SubjectRequisition.objects.get(
+                subject_requisition = SubjectRequisition.objects.defer(
+                    *SubjectRequisition.encrypted_fields()).get(
                     subject_visit__household_member=self.member.household_member.membership.by_survey.get(survey_abbrev),
                     panel__name='Viral Load')
-                specimen = Specimen(subject_requisition, verbose=self.verbose)
-                print str(specimen)
+                specimen = Specimen(
+                    subject_requisition,
+                    subject_identifier=self.subject_identifier,
+                    survey_abbrev=survey_abbrev,
+                    verbose=self.verbose)
+                # print str(specimen)
                 vl_result, vl_drawn_datetime, vl_assay_date = [], [], []
                 for results in specimen.lis_results.itervalues():
                     for result in results:

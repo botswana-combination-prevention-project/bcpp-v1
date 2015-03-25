@@ -1,5 +1,8 @@
+import sys
+
 from datetime import datetime
 
+from edc.export.classes import ExportDictAsCsv
 from edc.export.helpers import ExportObjectHelper
 from edc.map.classes import site_mappers
 
@@ -17,6 +20,7 @@ class BaseCollector(object):
         self.export_plan = export_plan or default_export_plan
         self.export_plan.notification_plan = 'rdb'
         self.exception_cls = exception_cls or TypeError
+        self.instances = []
         site_mappers.autodiscover()
         try:
             del site_mappers._registry['bhp']
@@ -53,16 +57,49 @@ class BaseCollector(object):
         """
         raise TypeError('Method must be overridden.')
 
-    def _export(self, instance):
+    def export(self, instance, filename_prefix=None):
         """Calls the csv writer to append each instance to the current file."""
         instance.customize_for_csv()
-        self.export_plan.delimiter = self.delimiter
-        if not self.export_plan.fields:
-            self.export_plan.fields = instance.data.keys()
         if not self.filename:
-            self.filename = '{0}_{1}.csv'.format(
-                instance.__class__.__name__, datetime.today().strftime('%Y%m%d%H%M%S'))
+            self.filename = '{0}{1}_{2}.csv'.format(
+                filename_prefix or '', instance.__class__.__name__, datetime.today().strftime('%Y%m%d%H%M%S'))
+        if self.write_header:
+            self.output_to_console('Writing to {}\n'.format(self.filename))
         export_model_helper = ExportObjectHelper(
-            self.export_plan, filename=self.filename, exception_cls=self.exception_cls)
-        export_model_helper.writer.write_to_file([instance], self.write_header)
+            self.export_plan,
+            delimiter=self.delimiter,
+            fields=instance.data.keys(),
+            filename=self.filename,
+            exception_cls=self.exception_cls)
+        export_model_helper.writer_cls = ExportDictAsCsv
+        export_model_helper.writer.write_to_file([instance.data], self.write_header)
         self.write_header = False  # only write header once
+
+    def collect(self, instance):
+        self.instances.append(instance)
+
+    def export_all(self):
+        """Calls the csv writer to append each instance to a list then write all to file at once."""
+        instances_for_csv = (instance.customize_for_csv() for instance in self.instances)
+        if not self.filename:
+            self.filename = '{0}{1}_{2}.csv'.format(
+                self.instances[0].__class__.__name__, datetime.today().strftime('%Y%m%d%H%M%S'))
+        self.output_to_console('Writing to {}\n'.format(self.filename))
+        export_model_helper = ExportObjectHelper(
+            self.export_plan,
+            delimiter=self.delimiter,
+            fields=self.instances[0].data.keys(),
+            filename=self.filename,
+            exception_cls=self.exception_cls)
+        export_model_helper.writer.write_to_file(instances_for_csv, self.write_header)
+
+    def output_to_console(self, text):
+        """Outputs a text string to the console."""
+        sys.stdout.write(text)
+        sys.stdout.flush()
+
+    def progress_to_console(self, text, index, count):
+        """Outputs the progress to console while staying on one line."""
+        progress = round(100 * (float(index) / float(count)))
+        sys.stdout.write('{0} [{1} %] \r'.format(text, progress))
+        sys.stdout.flush()
