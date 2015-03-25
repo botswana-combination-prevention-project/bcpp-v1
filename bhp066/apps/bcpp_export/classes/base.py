@@ -1,13 +1,21 @@
 from collections import OrderedDict, namedtuple
+from copy import copy
 from datetime import datetime
 from uuid import uuid4
 
 from django.core.exceptions import MultipleObjectsReturned
 
 from edc.base.model.fields.helpers import site_revision
+from edc.constants import YES, NO
 from edc.map.classes import site_mappers
 
 DescriptionTuple = namedtuple('DescriptionTuple', 'value type tag')
+
+
+class NewOrderedDict(OrderedDict):
+    @property
+    def unique_key(self):
+        return self['unique_key']
 
 
 class Base(object):
@@ -16,7 +24,7 @@ class Base(object):
         self.verbose = verbose
         site_mappers.autodiscover()
         self.customized = False
-        self._data = OrderedDict()
+        self._data = NewOrderedDict()
         self.export_uuid = unicode(uuid4())
         self.timestamp = datetime.today().isoformat()
 
@@ -29,9 +37,15 @@ class Base(object):
 
         if not self._data:
             keys = self.__dict__.keys()
+            keys.append('export_revision')
+            keys.append('revision')
             keys.sort()
+            keys.insert(0, 'unique_key')
             for key in keys:
-                self._data[key] = self.__dict__[key]
+                try:
+                    self._data[key] = copy(self.__dict__[key])
+                except KeyError:
+                    self._data[key] = None
             try:
                 del self._data['_data']
             except KeyError:
@@ -44,10 +58,12 @@ class Base(object):
                 del self._data['errors']
             except KeyError:
                 pass
+            self._data['export_revision'] = self.export_revision
+            self._data['unique_key'] = self.unique_key
         return self._data
 
     @property
-    def revision(self):
+    def export_revision(self):
         return str(site_revision)
 
     def customize_for_csv(self, isoformat=None):
@@ -56,8 +72,13 @@ class Base(object):
             raise TypeError('Method cannot be called twice')
         self.customized = True
         for key, value in self.data.iteritems():
+                # convert booleans to YES/NO
             if value is None:
                 self.data[key] = ''
+            elif value is True or value == 'True':
+                self.data[key] = YES
+            elif value is False or value == 'False':
+                self.data[key] = NO
             else:
                 try:
                     self.data[key] = value.isoformat() if isoformat else value.strftime('%Y-%m-%d')
@@ -110,27 +131,38 @@ class Base(object):
         ...]
         """
         obj = None
+        lookup_flds = {}
         for fldname, attrname in fieldattrs:
+            # set attribute on self to None
             attrname = '{}_{}'.format(attrname, attr_suffix.lower())
+            setattr(self, attrname, None)
             try:
+                # try to set value from instance
                 field_value = getattr(instance, fldname)
                 setattr(self, attrname, field_value)
             except AttributeError:
-                if not lookup_model:
-                    setattr(self, attrname, None)
-                else:
-                    try:
-                        obj = lookup_model.objects.get(
-                            **{lookup_string: lookup_instance})
-                        setattr(self, attrname, getattr(obj, fldname))
-                    except lookup_model.DoesNotExist:
-                        setattr(self, attrname, None)
-                    except MultipleObjectsReturned:
-                        field_values = []
-                        insts = lookup_model.objects.filter(**{lookup_string: lookup_instance})
-                        for inst in insts:
-                            field_values.append(getattr(inst, fldname))
-                        setattr(self, attrname, field_values)
+                if lookup_model:
+                    # collect fields/attrs for query below
+                    lookup_flds.update({fldname: attrname})
+        if lookup_flds:
+            try:
+                values = lookup_model.objects.values(
+                    *lookup_flds).get(
+                    **{lookup_string: lookup_instance})
+                for fld, value in values.iteritems():
+                    setattr(self, lookup_flds[fld], value)
+            except lookup_model.DoesNotExist:
+                for attr in lookup_flds.values():
+                    setattr(self, attr, None)
+            except MultipleObjectsReturned:
+                values_queryset = lookup_model.objects.values(
+                    *lookup_flds).filter(
+                    **{lookup_string: lookup_instance})
+                for values in values_queryset:
+                    vals = []
+                    for fld, value in values.iteritems():
+                        vals.append(value)
+                    setattr(self, lookup_flds[fld], ';'.join(vals))
         return obj
 
     def denormalize_other(self, attr_suffix, fieldattrs, instance):
