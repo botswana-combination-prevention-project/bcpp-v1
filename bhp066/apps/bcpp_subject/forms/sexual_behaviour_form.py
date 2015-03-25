@@ -37,13 +37,13 @@ class SexualBehaviourForm (BaseSubjectModelForm):
 
         # ensuring that the number of last year partners is not greater than lifetime partners
         if cleaned_data.get('ever_sex') == 'Yes':
-            if cleaned_data.get('last_year_partners') or cleaned_data.get('lifetime_sex_partners'):
-                if not (cleaned_data.get('last_year_partners') and cleaned_data.get('lifetime_sex_partners')):
-                    for field in ["last_year_partners", "lifetime_sex_partners"]:
-                        if not cleaned_data.get(field):
-                            self._errors[field] = ErrorList([u"This field is required."])
-                            raise forms.ValidationError('You are required to fill both questions, last_year_partners and'
-                                                        'lifetime_sex_partners, otherwise do not answer both questions.')
+            if not cleaned_data.get('lifetime_sex_partners'):
+                raise forms.ValidationError('If participant has ever had sex, CANNOT have 0 lifetime partners.')
+
+        if cleaned_data.get('more_sex') == 'Yes':
+            if not cleaned_data.get('last_year_partners'):
+                raise forms.ValidationError('If participant has ever had sex with somebody living outside of the community, CANNOT have 0 last year partners.')
+
         # If number of sexual partners in past 12months is more than zero, did
         # participant have sex with anyone outside the community 12months ago
         if cleaned_data.get('last_year_partners') > 0 and not cleaned_data.get('more_sex'):

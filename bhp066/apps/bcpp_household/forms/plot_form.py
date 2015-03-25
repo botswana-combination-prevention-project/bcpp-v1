@@ -12,9 +12,6 @@ class PlotForm(BaseModelForm):
     def clean(self):
         cleaned_data = self.cleaned_data
 
-        if not self.instance.validate_plot_accessible:
-            raise forms.ValidationError('You cannot confirm a plot, plot log entry is set to inacccessible.')
-
         if self.instance.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
             raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
                                         'It may not be edited by a user.')
@@ -38,6 +35,8 @@ class PlotForm(BaseModelForm):
             raise forms.ValidationError('Unknown community {0}. Must be one '
                                         'of {1}.'.format(self.instance.community,
                                                          ', '.join(site_mappers.get_as_list())))
+        if not self.instance.validate_plot_accessible:
+            raise forms.ValidationError('You cannot confirm a plot, plot log entry is set to inacccessible.')
 
         # verify gps to target before the save() method does
         if (not cleaned_data.get('gps_degrees_s') and not cleaned_data.get('gps_minutes_s') and

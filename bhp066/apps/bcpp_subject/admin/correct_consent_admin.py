@@ -29,6 +29,8 @@ class CorrectConsentAdmin(BaseModelAdmin):
         'new_may_store_samples',
         'old_is_literate',
         'new_is_literate',
+        'new_witness_name',
+        'old_witness_name',
         )
 
     list_display = ('subject_consent', 'report_datetime')
