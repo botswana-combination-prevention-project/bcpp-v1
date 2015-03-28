@@ -18,6 +18,7 @@ class HouseholdMemberHelper(object):
 
     def member_status(self, selected_member_status):
         """Returns the member_status based on the boolean values set in the signals, mostly."""
+        member_status = None
         if selected_member_status == DECEASED:
             return DECEASED
         elif self.household_member.is_consented:
@@ -61,10 +62,10 @@ class HouseholdMemberHelper(object):
             member_status = HTC
         elif self.household_member.refused_htc:
             member_status = REFUSED_HTC
-        elif (not self.household_member.eligible_member and not self.household_member.eligible_subject 
-                  and self.household_member.eligible_htc):
+        elif (not self.household_member.eligible_member and not self.household_member.eligible_subject
+                and self.household_member.eligible_htc):
             member_status = HTC_ELIGIBLE  # e.g over 64yrs or just not eligible for BHS
-        elif (self.household_member.eligible_member and not self.household_member.eligible_subject 
+        elif (self.household_member.eligible_member and not self.household_member.eligible_subject
               and self.household_member.eligible_htc):
             member_status = HTC_ELIGIBLE  # e.g failed enrollment
         elif self.household_member.eligible_member:
