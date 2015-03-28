@@ -29,14 +29,13 @@ class Subjects(BaseCollector):
         subjects.subject_consents.filter(is_minor=True)
     """
 
-    def __init__(self, export_plan=None, community=None, survey_slug=None, exception_cls=None, reverse_order=None):
-        self._subject_consents = None
-        self._clinic_consents = None
-        self.order = '-' if reverse_order else ''
-        self.filter_options = {}
+    def __init__(self, export_plan=None, community=None, survey_slug=None,
+                 exception_cls=None, **kwargs):
         super(Subjects, self).__init__(
             export_plan=export_plan, community=community,
-            exception_cls=exception_cls)
+            exception_cls=exception_cls, **kwargs)
+        self._clinic_consents = None
+        self._subject_consents = None
         if survey_slug:
             self.filter_options.update({
                 'household_member__household_structure__survey__survey_slug': survey_slug})
@@ -76,7 +75,9 @@ class Subjects(BaseCollector):
         self.output_to_console('\n{} {}\n'.format(count, name))
         for index, subject_consent in enumerate(self.subject_consents, start=1):
             self.progress_to_console(name, index, count)
-            subject = Subject(subject_consent[0])
+            subject = Subject(
+                subject_consent[0], isoformat=self.isoformat,
+                dateformat=self.dateformat, floor_datetime=self.floor_datetime)
             self.export(subject, filename_prefix)
         self._subject_consents = None
 
@@ -88,7 +89,9 @@ class Subjects(BaseCollector):
         self.output_to_console('\n{} {}\n'.format(count, name))
         for index, clinic_consent in enumerate(self.clinic_consents, start=1):
             self.progress_to_console(name, index, count)
-            subject = Subject(clinic_consent[0])
+            subject = Subject(
+                clinic_consent[0], isoformat=self.isoformat,
+                dateformat=self.dateformat, floor_datetime=self.floor_datetime)
             self.export(subject, filename_prefix)
         self._clinic_consents = None
 
