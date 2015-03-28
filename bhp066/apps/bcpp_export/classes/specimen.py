@@ -22,8 +22,8 @@ ResultTuple = namedtuple(
 
 
 class Specimen(Base):
-    def __init__(self, subject_requisition, subject_identifier=None, survey_abbrev=None, verbose=None):
-        super(Specimen, self).__init__(verbose=verbose)
+    def __init__(self, subject_requisition, subject_identifier=None, survey_abbrev=None, **kwargs):
+        super(Specimen, self).__init__(**kwargs)
         self.sql = {}
         self.lis_receive = {}
         self.subject_requisition = subject_requisition
@@ -41,10 +41,13 @@ class Specimen(Base):
                 'receive_datetime', 'receive_identifier').get(
                 receive_identifier=self.specimen_identifier)
         except Receive.DoesNotExist:
-            print 'Warning! Specimen \'{}\' has not been received on the EDC.'.format(self.specimen_identifier)
+            self.output_to_console(
+                'Warning! Specimen \'{}\' has not been received on the EDC. See {}\n'.format(
+                    self.specimen_identifier, self.subject_identifier))
             self.receive = Receive()
         except MultipleObjectsReturned:
-            print 'Warning! Specimen \'{}\' received on EDC more than once.'.format(self.specimen_identifier)
+            self.output_to_console('Warning! Specimen \'{}\' received on EDC more than once. See {}\n'.format(
+                self.specimen_identifier, self.subject_identifier))
             self.receive = Receive()
         self.receive_datetime = self.receive.receive_datetime  # where does this date come from??
         self.receive_identifier = self.receive.receive_identifier

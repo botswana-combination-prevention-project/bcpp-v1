@@ -1,4 +1,4 @@
-from apps.bcpp_household.models import Household, HouseholdStructure, PlotLog, PlotLogEntry
+from apps.bcpp_household.models import Household, HouseholdStructure, PlotLog, PlotLogEntry, Plot as PlotModel
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household.constants import TWENTY_PERCENT, FIVE_PERCENT, CONFIRMED, SEVENTY_FIVE_PERCENT,\
     RESIDENTIAL_NOT_HABITABLE, RESIDENTIAL_HABITABLE, NON_RESIDENTIAL, ACCESSIBLE
@@ -10,8 +10,8 @@ from .survey import Survey
 
 
 class Plot(Base):
-    def __init__(self, plot=None, household=None, household_structure=None, household_member=None, verbose=None):
-        super(Plot, self).__init__(verbose=verbose)
+    def __init__(self, plot=None, household=None, household_structure=None, household_member=None, **kwargs):
+        super(Plot, self).__init__(**kwargs)
         self.household = household
         self.household_member = household_member
         self.household_structure = household_structure
@@ -24,7 +24,10 @@ class Plot(Base):
                 try:
                     self.plot = household.plot
                 except AttributeError:
-                    self.plot = plot
+                    try:
+                        self.plot = PlotModel.objects.get(id=plot)
+                    except PlotModel.DoesNotExist:
+                        self.plot = plot
         self.update_plot()
         self.survey = Survey(self.community)
         self.update_plot_owner()
@@ -44,16 +47,17 @@ class Plot(Base):
     def unique_key(self):
         return self.plot_identifier
 
-    def customize_for_csv(self):
-        super(Plot, self).customize_for_csv()
-        del self.data['plot']
-        del self.data['household_member']
-        del self.data['household_members']
-        del self.data['household_structure']
-        del self.data['household_structures']
-        del self.data['households']
-        del self.data['household']
-        del self.data['logs']
+    def prepare_csv_data(self, delimiter=None):
+        super(Plot, self).prepare_csv_data(delimiter=delimiter)
+        del self.csv_data['plot']
+        del self.csv_data['household_member']
+        del self.csv_data['household_members']
+        del self.csv_data['household_structure']
+        del self.csv_data['household_structures']
+        del self.csv_data['households']
+        del self.csv_data['household']
+        del self.csv_data['logs']
+        del self.csv_data['survey']
 
     def clean_clinic_plot(self):
         is_clinic = False

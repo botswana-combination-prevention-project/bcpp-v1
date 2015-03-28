@@ -5,8 +5,9 @@ from .base import Base
 
 class Community(Base):
 
-    def __init__(self, mapper, verbose=None):
-        super(Community, self).__init__(verbose=verbose)
+    def __init__(self, mapper, verbose=None, isoformat=None, dateformat=None, floor_datetime=None):
+        super(Community, self).__init__(
+            verbose=verbose, isoformat=isoformat, dateformat=dateformat, floor_datetime=floor_datetime)
         self.mapper_cls = mapper
         self.mapper = self.mapper_cls()
         self.cpc = self.mapper.intervention
@@ -36,7 +37,7 @@ class Community(Base):
     def unique_key(self):
         return self.community
 
-    def customize_for_csv(self):
-        super(Community, self).customize_for_csv()
+    def prepare_csv_data(self, delimiter=None):
+        super(Community, self).prepare_csv_data(delimiter=delimiter)
         del self.data['mapper']
         del self.data['mapper_cls']
