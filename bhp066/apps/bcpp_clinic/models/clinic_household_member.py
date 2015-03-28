@@ -33,14 +33,7 @@ class ClinicHouseholdMember(HouseholdMember):
             self.member_status = CLINIC_RBD
             self.absent = False
             self.undecided = False
-            #if not self.id:
-            #    mapper_instance = site_mappers.current_mapper()
-            #    clinic_plot = mapper_instance.clinic_plot
-            #    self.household_structure = HouseholdStructure.objects.get(
-            #        household__plot__plot_identifier=clinic_plot.plot_identifier,
-            #        survey__survey_slug=mapper_instance.current_survey_slug)
         super(HouseholdMember, self).save(*args, **kwargs)
-        #HouseholdMember.objects.get(pk=self.pk).save(skip_eligible_representative_filled=True)
 
     def __unicode__(self):
         return '{0} {1} {2}{3} {4}'.format(
