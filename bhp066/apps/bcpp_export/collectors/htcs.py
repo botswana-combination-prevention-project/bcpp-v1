@@ -1,4 +1,4 @@
-from apps.bcpp_household_member.models import HouseholdMember
+from apps.bcpp_household_member.models import SubjectHtc
 
 from ..classes import Htc
 
@@ -12,27 +12,54 @@ class Htcs(BaseCollector):
     For example::
         from apps.bcpp_export.collectors import Members
 
-        members = Members()
-        members.export_to_csv()
+        htcs = Htcs(isoformat=True, floor_datetime=True)
+        htcs.export_by_community()
     """
 
-    def __init__(self, export_plan=None, community=None, survey_slug=None, exception_cls=None):
-        super(Htcs, self).__init__(export_plan=export_plan, community=community, exception_cls=exception_cls)
+    def __init__(self, export_plan=None, community=None, survey_slug=None, exception_cls=None, **kwargs):
+        super(Htcs, self).__init__(export_plan=export_plan, community=community, exception_cls=exception_cls, **kwargs)
+        self._subject_htcs = None
+        self.exclude_options = {}
         self.survey_slug = survey_slug
 
-    def export_to_csv(self):
+    @property
+    def subject_htcs(self):
+        """Returns a unique filtered list of subject_htc identifiers."""
+        if not self._subject_htcs:
+            subject_htcs = SubjectHtc.objects.values_list('id').filter(
+                **self.filter_options).exclude(
+                **self.exclude_options)
+            self._subject_htcs = list(set([i[0] for i in subject_htcs]))
+        return self._subject_htcs
+
+    def export_htcs(self, filter_options=None, filename_prefix=None):
+        """Creates then exports Htc instances from the current list of Htcs."""
+        self.filename_prefix = filename_prefix or self.filename_prefix
+        try:
+            self.filter_options.update(filter_options)
+        except TypeError:
+            pass
+        count = len(self.subject_htcs)
+        self.output_to_console('\n{} {}\n'.format(count, 'Htc'))
+        for index, subject_htc in enumerate(self.subject_htcs, start=1):
+            self.progress_to_console('Htcs', index, count)
+            htc = Htc(
+                subject_htc, isoformat=self.isoformat,
+                dateformat=self.dateformat, floor_datetime=self.floor_datetime)
+            self.export(htc)
+        self._subject_htcs = None
+
+    def export_by_community(self, communities=None, filter_options=None, filename_prefix=None):
+        """Exports subject instances one at a time to csv for each community."""
+        try:
+            self.filter_options.update(filter_options)
+        except TypeError:
+            pass
+        self.filename_prefix = filename_prefix or self.filename_prefix
+        community_list = communities or self.community_list
+        if self.order == '-':
+            community_list.reverse()
         for community in self.community_list:
-            print '{} **************************************'.format(community)
-            filter_options = {'household_structure__household__plot__community': community}
-            exclude_options = {'household_structure__household__plot__plot_identifier__endswith': '0000-00'}
-            if self.survey_slug:
-                filter_options.update({'household_structure__survey__survey_slug': self.survey_slug})
-            household_members = HouseholdMember.objects.filter(
-                **filter_options).exclude(
-                **exclude_options).order_by('household_structure__household__household_identifier',
-                                            'household_structure__survey__survey_slug')
-            for household_member in household_members:
-                htc = Htc(household_member)
-                self._export(htc)
-                if self.test_run:
-                    break
+            self.output_to_console('{} **************************************\n'.format(community))
+            self.filter_options.update({'household_member__household_structure__household__plot__community': community})
+            self.export_htcs()

@@ -53,4 +53,4 @@ class Membership(object):
         return '{0}({1.internal_identifier!r}, {1.survey_abbrevs!r})'.format(self.__class__.__name__, self)
 
     def __str__(self):
-        return '{0.internal_identifier!s, {1.survey_abbrevs!s}}'.format(self)
+        return '{0.internal_identifier!s}, {0.survey_abbrevs!s}'.format(self)
