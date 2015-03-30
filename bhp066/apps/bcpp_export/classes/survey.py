@@ -8,16 +8,12 @@ from .base import Base
 
 class Survey(Base):
 
-    def __init__(self, community, verbose=None):
+    def __init__(self, community, verbose=None, isoformat=None, dateformat=None, floor_datetime=None):
         """Set attributes related to the surveys the member has been enumerated in."""
-#         for index, survey in enumerate(SurveyModel.objects.all().order_by('survey_abbrev')):
-#             survey.chronological_order = index + 1
-#             survey.save()
-        super(Survey, self).__init__(verbose=verbose)
+        super(Survey, self).__init__(
+            verbose=verbose, isoformat=isoformat, dateformat=dateformat, floor_datetime=floor_datetime)
         self.community = community
         self.plot_count_all = Plot.objects.filter(community=self.community).count()
-        # self.plot_count_htc = Plot.objects.filter(community=self.community, htc=True).count()
-        # self.plot_count_bhs = Plot.objects.filter(community=self.community, bhs=True).count()
         mapper = site_mappers.get_mapper(self.community)
         self.survey_slugs = []
         self.survey_abbrevs = []
