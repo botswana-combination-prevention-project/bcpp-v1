@@ -1,4 +1,5 @@
-from apps.bcpp_household.models import HouseholdStructure, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
+from apps.bcpp_household.models import (HouseholdStructure, HouseholdLogEntry, HouseholdRefusal,
+                                        HouseholdAssessment, Household as HouseholdModel)
 from apps.bcpp_household.choices import HH_STATUS
 from apps.bcpp_household.constants import (NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED,
                                            RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED)
@@ -10,9 +11,12 @@ from .survey import Survey
 
 class Household(Base):
 
-    def __init__(self, household, verbose=None):
-        super(Household, self).__init__(verbose=verbose)
-        self.household = household
+    def __init__(self, household, **kwargs):
+        super(Household, self).__init__(**kwargs)
+        try:
+            self.household = HouseholdModel.objects.get(id=household)
+        except HouseholdModel.DoesNotExist:
+            self.household = household
         try:
             self.household_identifier = self.household.household_identifier
         except AttributeError:
@@ -36,11 +40,11 @@ class Household(Base):
     def unique_key(self):
         return self.household_identifier
 
-    def customize_for_csv(self):
-        super(Household, self).customize_for_csv()
-        del self.data['household']
-        del self.data['household_structures']
-        del self.data['survey']
+    def prepare_csv_data(self, delimiter=None):
+        super(Household, self).prepare_csv_data(delimiter=delimiter)
+        del self.csv_data['household']
+        del self.csv_data['household_structures']
+        del self.csv_data['survey']
 
     def update_plot(self):
         self.plot = Plot(household=self.household, verbose=self.verbose)
@@ -121,35 +125,31 @@ class Household(Base):
 
     def update_household_log(self):
         """Adds HouseholdLog attrs to self denormalized on survey."""
-        lookup_string = 'household_log__household_structure'
         for survey_abbrev in self.survey.survey_abbrevs:
-            attr_suffix = survey_abbrev
             fieldattrs = [
                 ('report_datetime', 'log_date'),
                 ('household_status', 'log_status')]
             self.denormalize(
-                attr_suffix, fieldattrs,
+                survey_abbrev, fieldattrs,
                 lookup_model=HouseholdLogEntry,
-                lookup_string=lookup_string,
+                lookup_string='household_log__household_structure',
                 lookup_instance=self.household_structures.get(survey_abbrev))
-            # set custom attrs for first and last log date using the denormalized
-            # log_date_xx attrs
             try:
                 setattr(
-                    self, '{}_{}'.format('log_first_date', attr_suffix),
-                    min(getattr(self, '{}_{}'.format('log_date', attr_suffix))))
+                    self, '{}_{}'.format('log_first_date', survey_abbrev),
+                    min(getattr(self, '{}_{}'.format('log_date', survey_abbrev))))
             except TypeError:
                 setattr(
-                    self, '{}_{}'.format('log_first_date', attr_suffix),
-                    getattr(self, '{}_{}'.format('log_date', attr_suffix)))
+                    self, '{}_{}'.format('log_first_date', survey_abbrev),
+                    getattr(self, '{}_{}'.format('log_date', survey_abbrev)))
             try:
                 setattr(
-                    self, '{}_{}'.format('log_last_date', attr_suffix),
-                    max(getattr(self, '{}_{}'.format('log_date', attr_suffix))))
+                    self, '{}_{}'.format('log_last_date', survey_abbrev),
+                    max(getattr(self, '{}_{}'.format('log_date', survey_abbrev))))
             except TypeError:
                 setattr(
-                    self, '{}_{}'.format('log_last_date', attr_suffix),
-                    getattr(self, '{}_{}'.format('log_date', attr_suffix)))
+                    self, '{}_{}'.format('log_last_date', survey_abbrev),
+                    getattr(self, '{}_{}'.format('log_date', survey_abbrev)))
 
     def update_household_refusal(self):
         """Adds HouseholdRefusal attrs to self denormalized on survey."""
