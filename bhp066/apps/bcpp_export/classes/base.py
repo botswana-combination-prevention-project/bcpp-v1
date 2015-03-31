@@ -1,156 +1,106 @@
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
+from copy import copy
 from datetime import datetime
 from uuid import uuid4
-
-from django.core.exceptions import MultipleObjectsReturned
 
 from edc.base.model.fields.helpers import site_revision
 from edc.map.classes import site_mappers
 
-DescriptionTuple = namedtuple('DescriptionTuple', 'value type tag')
+from ..mixins import DenormalizeMixin, FormatForExportMixin, ConsoleMixin
 
 
-class Base(object):
+class NewOrderedDict(OrderedDict):
+    @property
+    def unique_key(self):
+        return self['unique_key']
 
-    def __init__(self, verbose=None):
-        self.verbose = verbose
+
+class Base(DenormalizeMixin, FormatForExportMixin, ConsoleMixin):
+
+    def __init__(self, verbose=None, dateformat=None, isoformat=None, floor_datetime=None):
         site_mappers.autodiscover()
+        self.verbose = verbose
         self.customized = False
-        self._data = OrderedDict()
+        self.csv_data = NewOrderedDict()
         self.export_uuid = unicode(uuid4())
         self.timestamp = datetime.today().isoformat()
+        self.dateformat = dateformat or '%Y-%m-%d'
+        self.isoformat = isoformat
+        self.floor_datetime = floor_datetime
 
-    @property
-    def data(self):
-        """Returns an ordered dictionary of the instance attributes.
-
-        To see this as a dictionary:
-            >>> dict(instance.data)"""
-
-        if not self._data:
-            keys = self.__dict__.keys()
-            keys.sort()
-            for key in keys:
-                self._data[key] = self.__dict__[key]
-            try:
-                del self._data['_data']
-            except KeyError:
-                pass
-            try:
-                del self._data['_data_errors']
-            except KeyError:
-                pass
-            try:
-                del self._data['errors']
-            except KeyError:
-                pass
-        return self._data
-
-    @property
-    def revision(self):
-        return str(site_revision)
-
-    def customize_for_csv(self, isoformat=None):
-        """Modifies values in the 'data' attribute to be more friendly for CSV export."""
+    def prepare_csv_data(self, delimiter=None):
+        """Modifies values in the 'csv_data' attribute to be more friendly for CSV export."""
+        delimiter = delimiter or ','
         if self.customized:
             raise TypeError('Method cannot be called twice')
+        self.copy_all_into_csv_data()
+        self.remove_unwanted_from_csv_data()
+        self.add_to_csv_data()
         self.customized = True
-        for key, value in self.data.iteritems():
-            if value is None:
-                self.data[key] = ''
-            else:
-                try:
-                    self.data[key] = value.isoformat() if isoformat else value.strftime('%Y-%m-%d')
-                except AttributeError:
-                    pass
-                except ValueError:
-                    pass
-                if isinstance(value, (list, tuple)):
-                    for index, v in enumerate(value):
-                        if v is None:
-                            self.data[key][index] = ''
-                        else:
-                            try:
-                                self.data[key][index] = v.isoformat() if isoformat else v.strftime('%Y-%m-%d')
-                            except AttributeError:
-                                pass
-                    try:
-                        self.data[key] = ','.join(value)
-                    except TypeError:
-                        pass
-        del self.data['customized']
-        del self.data['verbose']
+        for key, value in self.csv_data.iteritems():
+            value = self.format_if_none(value)
+            value = self.format_if_boolean(value)
+            value = self.format_if_date(value, floor_datetime=self.floor_datetime)
+            value = self.format_if_list(value, delimiter=delimiter)
+            self.csv_data[key] = value
+        del self.csv_data['customized']
 
-    def denormalize(self, attr_suffix, fieldattrs, instance=None,
-                    lookup_model=None, lookup_instance=None, lookup_string=None):
-        """Denormalizes one or more instance attributes and adds the survey_abbrev suffix.
+    @property
+    def export_revision(self):
+        return str(site_revision)
 
-        This denormalize or flattens the values relative to a survey. If this method is called
-        in a loop on Survey for surveys [Y1, Y2, Y3] an attribute name 'example_attribute' would
-        be set as example_attribute_y1, example_attribute_y2, example_attribute_y3.
+    @property
+    def csv_keys(self):
+        """Copy and sort keys from __dict__ for use to create csv_data dict.
 
-        For example::
-            attr_suffix = suffix to add to an attr name that the data is denormalized on
-            fieldattrs = [('report_datetime', 'member_absent_date'),
-                          ('absent', 'member_absent')]
-            for survey in Survey.objects.all():
-                attr_suffix = survey.survey_abbrev
-                subject_absentee_entry = self.denormalize((
-                    attr_suffix, fieldattrs,
-                    lookup_model=SubjectAbsenteeEntry
-                    lookup_string='subject_absentee__household_member',
-                    lookup_instance=self.household_membership_survey.get(survey.survey_slug)
-                    )
+        Add export_revision, revision and unique_key."""
+        csv_keys = self.__dict__.keys()
+        csv_keys.append('export_revision')
+        csv_keys.append('revision')
+        csv_keys.sort()
+        csv_keys.insert(0, 'unique_key')
+        return csv_keys
 
-        >>> dir(self)
-        [ ...,
-        member_absent_y1, member_absent_y3, member_absent_y3,
-        ...,
-        member_absent_date_y1, member_absent_date_y2, member_absent_date_y3,
-        ...]
-        """
-        obj = None
-        for fldname, attrname in fieldattrs:
-            attrname = '{}_{}'.format(attrname, attr_suffix.lower())
+    def remove_unwanted_from_csv_data(self):
+        """Removes columns from the csv_data dict that are not to be exposed."""
+        try:
+            del self.csv_data['csv_data']
+        except KeyError:
+            pass
+        try:
+            del self.csv_data['_data_errors']
+        except KeyError:
+            pass
+        try:
+            del self.csv_data['errors']
+        except KeyError:
+            pass
+        try:
+            del self.csv_data['verbose']
+        except KeyError:
+            pass
+        try:
+            del self.csv_data['dateformat']
+        except KeyError:
+            pass
+        try:
+            del self.csv_data['isoformat']
+        except KeyError:
+            pass
+        try:
+            del self.csv_data['floor_datetime']
+        except KeyError:
+            pass
+
+    def copy_all_into_csv_data(self):
+        """Copies ___dict___ into csv_data ordered dictionary."""
+        for csv_key in self.csv_keys:
             try:
-                field_value = getattr(instance, fldname)
-                setattr(self, attrname, field_value)
-            except AttributeError:
-                if not lookup_model:
-                    setattr(self, attrname, None)
-                else:
-                    try:
-                        obj = lookup_model.objects.get(
-                            **{lookup_string: lookup_instance})
-                        setattr(self, attrname, getattr(obj, fldname))
-                    except lookup_model.DoesNotExist:
-                        setattr(self, attrname, None)
-                    except MultipleObjectsReturned:
-                        field_values = []
-                        insts = lookup_model.objects.filter(**{lookup_string: lookup_instance})
-                        for inst in insts:
-                            field_values.append(getattr(inst, fldname))
-                        setattr(self, attrname, field_values)
-        return obj
+                self.csv_data[csv_key] = copy(self.__dict__[csv_key])
+            except KeyError:
+                self.csv_data[csv_key] = None
 
-    def denormalize_other(self, attr_suffix, fieldattrs, instance):
-        """Adds denormalized attrs to self from "Other Specify ..." fields
-
-        If the value of attr 'fldname' is 'OTHER' uses the value of 'other_fldname'."""
-        for fldname, other_fldname, attrname in fieldattrs:
-            attrname = '{}_{}'.format(attrname, attr_suffix.lower())
-            try:
-                if getattr(instance, fldname) == 'OTHER':
-                    field_value = getattr(instance, other_fldname)
-                else:
-                    field_value = getattr(instance, fldname)
-                setattr(self, attrname, field_value)
-            except AttributeError:
-                setattr(self, attrname, None)
-
-    def normalize(self, instance, attrname, attr_suffix_list):
-        values = []
-        for attr_suffix in attr_suffix_list:
-            print getattr(instance, '{}_{}'.format(attrname, attr_suffix))
-            values.append(getattr(instance, '{}_{}'.format(attrname, attr_suffix)))
-        return values
+    def add_to_csv_data(self):
+        """Adds custom values to the csv_data dict."""
+        self.csv_data['export_revision'] = self.export_revision
+        self.csv_data['unique_key'] = self.unique_key
