@@ -63,6 +63,13 @@ def func_require_pima_hiv_care_ad(visit_instance):
         do_pima = False
     return do_pima
 
+def func_reqiure_pima_cd4_vl(visit_instance):
+    if func_known_pos_in_prev_year(visit_instance):
+        return True
+    elif func_hiv_positive_today(visit_instance) and func_art_naive(visit_instance):
+        return True
+    return False  
+
 
 def func_known_pos(visit_instance):
     """Returns True if participant is NOT a newly diagnosed POS as determined
