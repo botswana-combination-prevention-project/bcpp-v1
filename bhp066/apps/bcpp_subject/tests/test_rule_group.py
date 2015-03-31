@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED
+from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, NEG, NO
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -29,7 +29,8 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, Pima)
-from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory)
+from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
+                        SubjectLocatorFactory, HivResultFactory)
 
 
 # class TestPlotMapper(Mapper):
@@ -1181,6 +1182,22 @@ class TestRuleGroup(TestCase):
             lab_entry__requisition_panel__name='Microtube',
             appointment=self.subject_visit_male.appointment)
 
+        HivResultFactory(
+            subject_visit=self.subject_visit_male_T0,
+            hiv_result=NEG,
+        )
+
+        SubjectLocatorFactory(
+            subject_visit=self.subject_visit_male_T0,
+            registered_subject=self.registered_subject_male,
+            subject_cell='71122301',
+            )
+
+        ResidencyMobilityFactory(
+            subject_visit=self.subject_visit_male_T0,
+            intend_residency=NO,
+            )
+
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
@@ -1221,6 +1238,22 @@ class TestRuleGroup(TestCase):
             entry__app_label='bcpp_subject',
             entry__model_name='hivresult',
             appointment=self.subject_visit_male.appointment)
+
+        HivResultFactory(
+            subject_visit=self.subject_visit_male_T0,
+            hiv_result=NEG,
+        )
+
+        SubjectLocatorFactory(
+            subject_visit=self.subject_visit_male_T0,
+            registered_subject=self.registered_subject_male,
+            subject_cell='71122301',
+            )
+
+        ResidencyMobilityFactory(
+            subject_visit=self.subject_visit_male_T0,
+            intend_residency=NO,
+            )
 
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
