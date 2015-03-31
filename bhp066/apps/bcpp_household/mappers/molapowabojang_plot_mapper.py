@@ -36,10 +36,10 @@ class MolapowabojangPlotMapper(BasePlotMapper):
             smc_start_date=date(2014, 12, 1)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 5),
-            full_enrollment_date=date(2015, 11, 28),
-            end_date=date(2015, 12, 20),
-            smc_start_date=date(2015, 12, 1)),
+            start_date=date(2015, 4, 18),
+            full_enrollment_date=date(2015, 4, 30),
+            end_date=date(2015, 10, 30),
+            smc_start_date=date(2015, 5, 30)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=None,
@@ -55,7 +55,7 @@ class MolapowabojangPlotMapper(BasePlotMapper):
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((WE, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
