@@ -22,15 +22,14 @@ ResultTuple = namedtuple(
 
 
 class Specimen(Base):
-    def __init__(self, subject_requisition, verbose=None):
-        super(Specimen, self).__init__(verbose=verbose)
+    def __init__(self, subject_requisition, subject_identifier=None, survey_abbrev=None, **kwargs):
+        super(Specimen, self).__init__(**kwargs)
         self.sql = {}
         self.lis_receive = {}
         self.subject_requisition = subject_requisition
         self.specimen_identifier = self.subject_requisition.specimen_identifier
-        self.household_member = self.subject_requisition.subject_visit.household_member
-        self.subject_identifier = self.household_member.registered_subject.subject_identifier
-        self.survey_abbrev = self.household_member.household_structure.survey.survey_abbrev.lower()
+        self.subject_identifier = subject_identifier or self.household_member.registered_subject.subject_identifier
+        self.survey_abbrev = survey_abbrev or self.household_member.household_structure.survey.survey_abbrev.lower()
         self.requisition_identifier = self.subject_requisition.requisition_identifier
         self.requisition_datetime = self.subject_requisition.requisition_datetime
         self.requisition_panel = self.subject_requisition.panel.name
@@ -38,16 +37,22 @@ class Specimen(Base):
         self.reason_not_drawn = self.subject_requisition.reason_not_drawn
         self.drawn_datetime = self.subject_requisition.drawn_datetime
         try:
-            self.receive = Receive.objects.get(receive_identifier=self.specimen_identifier)
+            self.receive = Receive.objects.only(
+                'receive_datetime', 'receive_identifier').get(
+                receive_identifier=self.specimen_identifier)
         except Receive.DoesNotExist:
-            print 'Warning! Specimen {} has not been received on the EDC.'.format(self.specimen_identifier)
+            self.output_to_console(
+                'Warning! Specimen \'{}\' has not been received on the EDC. See {}\n'.format(
+                    self.specimen_identifier, self.subject_identifier))
             self.receive = Receive()
         except MultipleObjectsReturned:
-            print 'Warning! Specimen {} received on EDC more than once.'.format(self.specimen_identifier)
+            self.output_to_console('Warning! Specimen \'{}\' received on EDC more than once. See {}\n'.format(
+                self.specimen_identifier, self.subject_identifier))
             self.receive = Receive()
         self.receive_datetime = self.receive.receive_datetime  # where does this date come from??
         self.receive_identifier = self.receive.receive_identifier
-        self.aliquots = {a.aliquot_identifier: a for a in AliquotModel.objects.filter(receive=self.receive)}
+        self.aliquots = {a.aliquot_identifier: a for a in AliquotModel.objects.only(
+            'aliquot_identifier').filter(receive__id=self.receive.id)}
         self.dmis_column = 'edc_specimen_identifier'
         self.lis_results = {}
         self.fetch_receiving()
@@ -58,6 +63,10 @@ class Specimen(Base):
 
     def __str__(self):
         return '{0.specimen_identifier!s}'.format(self)
+
+    @property
+    def household_member(self):
+        return self.subject_requisition.subject_visit.household_member
 
     def fetch_receiving(self):
         """Fetches the receiving data from the LIS for each identifier."""
@@ -72,7 +81,7 @@ class Specimen(Base):
         if self.verbose:
             print "Querying dmis for {} {}".format(self.specimen_identifier, self.aliquot_type)
         try:
-            with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
+            with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE, timeout=3) as cnxn:
                 with cnxn.cursor() as cursor:
                     for edc_specimen_identifier, lis_specimen_identifier, lis_subject_identifier, lis_received_datetime in fetchall(cursor):
                         if lis_subject_identifier != self.subject_identifier:
@@ -89,7 +98,8 @@ class Specimen(Base):
                                 })
             self.lis_results = {edc_specimen_identifier: [] for edc_specimen_identifier in self.lis_receive}
         except pyodbc.Error as e:
-            raise pyodbc.Error(e)
+            print(e)
+            pass
 
     def fetch_result(self):
         """Fetches the receiving data from the LIS for each identifier."""
@@ -109,7 +119,7 @@ class Specimen(Base):
         if self.verbose:
             print "Querying dmis for {} resulted items".format(self.lis_specimen_identifier)
         try:
-            with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE) as cnxn:
+            with pyodbc.connect(settings.LAB_IMPORT_DMIS_DATA_SOURCE, timeout=3) as cnxn:
                 with cnxn.cursor() as cursor:
                     for lis_specimen_identifier, report_date, assay_date, utestid, result, result_quantifier, lis_result_id in fetchall(cursor):
                         try:
@@ -136,4 +146,5 @@ class Specimen(Base):
                             lis_result_id)
                         self.lis_results[rcv.edc_specimen_identifier].append(result_tuple)
         except pyodbc.Error as e:
-            raise pyodbc.Error(e)
+            print(e)
+            pass

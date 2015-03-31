@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from edc.constants import NOT_APPLICABLE, YES, NO
 
-from apps.bcpp_export.helpers import Subject
+from apps.bcpp_export.classes import Subject
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_household_member.tests import BaseTestMember
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
