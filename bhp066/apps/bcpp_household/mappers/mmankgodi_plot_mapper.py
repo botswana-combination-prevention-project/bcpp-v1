@@ -14,7 +14,6 @@ class MmankgodiPlotMapper(BasePlotMapper):
 
     map_area = 'mmankgodi'
     map_code = '19'
-    pair = 5
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -36,16 +35,10 @@ class MmankgodiPlotMapper(BasePlotMapper):
             smc_start_date=date(2015, 2, 11)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
+            start_date=date(2015, 03, 21),
             full_enrollment_date=date(2015, 12, 17),
             end_date=date(2015, 12, 22),
             smc_start_date=date(2015, 12, 22)),
-        'bcpp-year-3': SurveyDatesTuple(
-            name='t2',
-            start_date=None,
-            full_enrollment_date=None,
-            end_date=None,
-            smc_start_date=None),
     }
 
     clinic_days = {

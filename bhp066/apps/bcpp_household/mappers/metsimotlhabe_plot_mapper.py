@@ -13,7 +13,7 @@ from .choices import SECTIONS, SUB_SECTIONS, METSIMOTLHABE_LANDMARKS
 class MetsimotlhabePlotMapper(BasePlotMapper):
 
     map_area = 'metsimotlhabe'
-    map_code = '27'
+    map_code = '29'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
