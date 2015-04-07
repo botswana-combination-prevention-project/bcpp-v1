@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, NEG, NO
+from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, NEG, NO, POS, YES
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -30,7 +30,8 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, Pima)
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
-                        SubjectLocatorFactory, HivResultFactory)
+                        SubjectLocatorFactory, HivResultFactory, HivResultDocumentationFactory, HivCareAdherenceFactory,
+                        PimaFactory)
 
 
 # class TestPlotMapper(Mapper):
@@ -874,6 +875,13 @@ class TestRuleGroup(TestCase):
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **reproductivehealth_options).count(), 1)
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pregnancy_options).count(), 1)
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **nonpregnancy_options).count(), 1)
+        elif self.subject_visit_male:
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumsition_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **uncircumcised_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **reproductivehealth_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pregnancy_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **nonpregnancy_options).count(), 1)
         else:
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **reproductivehealth_options).count(), 1)
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pregnancy_options).count(), 1)
@@ -1404,3 +1412,320 @@ class TestRuleGroup(TestCase):
             )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+
+    def test_known_neg_y1_and_hiv_test_today_pos1(self):
+        """If previous result is NEG, need to test today (HivResult), and should offer poc cd4 and VL, RBD.
+
+        See rule_groups.ReviewNotPositiveRuleGroup
+        """
+        
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        hiv_result = HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result=NEG,
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+
+        rbd_options = {}
+        rbd_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+        hiv_result = HivResult.objects.create(
+             subject_visit=self.subject_visit_male,
+             hiv_result=POS,
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
+
+ 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+#  
+
+#  
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+
+
+    def test_known_neg_y1_and_known_pos_y2(self):
+        """If previous result is NEG, need to test today (HivResult), and should offer poc cd4 and VL, RBD.
+
+        See rule_groups.ReviewNotPositiveRuleGroup
+        """
+        
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        hiv_result = HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result=NEG,
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+
+        rbd_options = {}
+        rbd_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+        hiv_result_documentation_options = {}
+        hiv_result_documentation_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresultdocumentation',
+            appointment=self.subject_visit_male.appointment)
+        
+        HivResultDocumentationFactory(
+            subject_visit=self.subject_visit_male,
+            result_recorded=POS
+            )
+        
+        HivCareAdherenceFactory(
+            subject_visit=self.subject_visit_male,
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
+            )
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
+
+ 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+#  
+
+#  
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+
+
+    def test_known_neg_y1_and_known_pos_y2_on_art(self):
+        """If previous result is NEG, need to test today (HivResult), and should offer poc cd4 and VL, RBD.
+
+        See rule_groups.ReviewNotPositiveRuleGroup
+        """
+        
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        hiv_result = HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result=NEG,
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+
+        rbd_options = {}
+        rbd_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+        hiv_result_documentation_options = {}
+        hiv_result_documentation_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresultdocumentation',
+            appointment=self.subject_visit_male.appointment)
+        
+        HivResultDocumentationFactory(
+            subject_visit=self.subject_visit_male,
+            result_recorded=POS
+            )
+        
+        HivCareAdherenceFactory(
+            subject_visit=self.subject_visit_male,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,
+            )
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
+
+    def test_known_pos_y1_and_known_pos_y2_on_art(self):
+        """If previous result is POS, test today (HivResult) POS,  VL AND RBD.
+
+        See rule_groups.ReviewNotPositiveRuleGroup
+        """
+        
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        hiv_result = HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result=POS,
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+        
+        HivCareAdherenceFactory(
+            subject_visit=self.subject_visit_male_T0,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
+            )
+        
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+        
+#         pima_options = {}
+#         pima_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='pima',
+#             appointment=self.subject_visit_male_T0.appointment)
+
+
+        HivCareAdherenceFactory(
+            subject_visit=self.subject_visit_male,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
+            )
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+
+        rbd_options = {}
+        rbd_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+#         
+#         PimaFactory(
+#             subject_visit=self.subject_visit_male_T0,
+#         )
+        
+#         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
+#         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **pima_options).count(), 1)
+
+#         rbd_options = {}
+#         rbd_options.update(
+#             lab_entry__app_label='bcpp_lab',
+#             lab_entry__model_name='subjectrequisition',
+#             lab_entry__requisition_panel__name='Viral Load',
+#             appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **rbd_options).count(), 1)
+
+#         viral_load_options = {}
+#         viral_load_options.update(
+#             lab_entry__app_label='bcpp_lab',
+#             lab_entry__model_name='subjectrequisition',
+#             lab_entry__requisition_panel__name='Research Blood Draw',
+#             appointment=self.subject_visit_male.appointment)
+        
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)

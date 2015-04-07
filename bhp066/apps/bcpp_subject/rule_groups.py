@@ -46,7 +46,7 @@ def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    art_naive = not subject_status_helper.on_art and (subject_status_helper.hiv_result == POS or func_known_pos_in_prev_year(visit_instance))
 #     if art_naive:
 #         subject_status_helper = SubjectStatusHelper(visit_instance)
 #         art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
@@ -54,21 +54,13 @@ def func_art_naive(visit_instance):
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
-    #past_visit = func_previous_visit_instance(visit_instance)
     if func_known_pos_in_prev_year(visit_instance):
         do_pima = False
-    elif func_art_naive(visit_instance):
+    if func_art_naive(visit_instance):
         do_pima = True
     else:
         do_pima = False
     return do_pima
-
-def func_reqiure_pima_cd4_vl(visit_instance):
-    if func_known_pos_in_prev_year(visit_instance):
-        return True
-    elif func_hiv_positive_today(visit_instance) and func_art_naive(visit_instance):
-        return True
-    return False  
 
 
 def func_known_pos(visit_instance):
@@ -265,7 +257,22 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'pima'])
+        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult'])
+    
+    known_pos_no_art_in_y0 = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_require_pima_hiv_care_ad,
+            consequence='not_required',
+            alternative='new'),
+        target_model=['pima'])
+
+    vl_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_hiv_positive_today,
+            consequence='not_required',
+            alternative='new'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'])
 
     require_microtube = RequisitionRule(
         logic=Logic(

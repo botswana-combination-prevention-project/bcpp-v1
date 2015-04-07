@@ -18,3 +18,5 @@ from .test_plot_mapper import TestPlotMapper
 from .mmadinare_plot_mapper import MmadinarePlotMapper
 from .metsimotlhabe_plot_mapper import MetsimotlhabePlotMapper
 from .tati_siding_plot_mapper import TatiSidingPlotMapper
+from .nkange_plot_mapper import NkangePlotMapper
+from .sebina_plot_mapper import SebinaPlotMapper
