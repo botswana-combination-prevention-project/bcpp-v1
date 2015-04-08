@@ -257,22 +257,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult'])
-    
-    known_pos_no_art_in_y0 = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_require_pima_hiv_care_ad,
-            consequence='not_required',
-            alternative='new'),
-        target_model=['pima'])
-
-    vl_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_hiv_positive_today,
-            consequence='not_required',
-            alternative='new'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Viral Load'])
+        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'pima'])
 
     require_microtube = RequisitionRule(
         logic=Logic(
@@ -447,6 +432,21 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
+    
+    known_pos_not_art_in_y0 = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_require_pima_hiv_care_ad,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
+  
+    vl_for_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_known_pos_in_prev_year,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'],)
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
