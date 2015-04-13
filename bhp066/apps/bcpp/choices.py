@@ -1034,3 +1034,21 @@ GENDER_UNDETERMINED = (
     ('M', 'Male'),
     ('F', 'Female'),
 )
+
+MEDICAL_CARE = (
+    ('Doctor', _('Doctor')),
+    ('Nurse', _('Nurse')),
+    ('Traditional healer', _('Traditional healer')),
+    ('Both clinician and traditional healer', _('Both clinician and traditional healer')),
+    ('No known medical care received (family/friends only)', _('No known medical care received (family/friends only)')),
+    ('Unknown', _('Unknown')),
+)
+
+RELATIONSHIP_STUDY = (
+    ('Definitely not related', _('Definitely not related')),
+    ('Probably not related', _('Probably not related')),
+    ('Possible related', _('Possible related')),
+    ('Probably related', _('Probably related')),
+    ('Definitely related', _('Definitely related')),
+)
+
