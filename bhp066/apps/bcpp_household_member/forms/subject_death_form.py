@@ -1,9 +1,9 @@
-from edc.base.form.forms import BaseModelForm
+from edc.subject.adverse_event.forms import BaseInfantDeathForm
 
 from ..models import SubjectDeath
 
 
-class SubjectDeathForm (BaseModelForm):
+class SubjectDeathForm (BaseInfantDeathForm):
 
     class Meta:
         model = SubjectDeath

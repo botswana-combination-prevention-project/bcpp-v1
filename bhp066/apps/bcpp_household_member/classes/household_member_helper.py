@@ -14,7 +14,8 @@ class HouseholdMemberHelper(object):
         self.household_member = household_member
 
     def annual_member_status(self, selected_member_status):
-        return selected_member_status or self.household_member.member_status
+        return (ANNUAL if selected_member_status == BHS_SCREEN
+                else selected_member_status or self.household_member.member_status)
 
     def member_status(self, selected_member_status):
         """Returns the member_status based on the boolean values set in the signals, mostly."""
