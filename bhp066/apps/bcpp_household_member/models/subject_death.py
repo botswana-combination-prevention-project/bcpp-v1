@@ -7,15 +7,16 @@ from edc.audit.audit_trail import AuditTrail
 from edc.subject.adverse_event.models import BaseDeath
 
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_household.models import Plot
 
 from .base_member_status_model import BaseMemberStatusModel
 from .household_member import HouseholdMember
 
+from apps.bcpp.choices import MEDICAL_CARE, RELATIONSHIP_STUDY
+
 
 class SubjectDeath(BaseDeath):
 
-    history = AuditTrail()
-    
     household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(
@@ -26,6 +27,31 @@ class SubjectDeath(BaseDeath):
         default=datetime.today())
 
     survey = models.ForeignKey(Survey, editable=False)
+
+
+    illness_duration = models.IntegerField(
+        verbose_name="For how many days was the participant hospitalised during the illness immediately before death? ",
+        help_text="in days",
+        default=0,
+        )
+
+    site_aware_datetime = models.DateTimeField(
+           verbose_name="Site Aware Date",
+           )
+
+    medical_care = models.CharField(
+            verbose_name='Who was responsible for primary medical care during the month prior to death?',
+            max_length=100,
+            choices=MEDICAL_CARE,
+            )
+
+    relationship_study = models.CharField(
+            verbose_name='What is the relationship of the death to study participation?',
+            max_length=200,
+            choices=RELATIONSHIP_STUDY
+            )
+
+    history = AuditTrail()
 
     def __unicode__(self):
         return unicode(self.registered_subject)

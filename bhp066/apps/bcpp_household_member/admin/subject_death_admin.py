@@ -12,7 +12,14 @@ class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
     form = SubjectDeathForm
     fields = (
         'household_member',
-        'report_datetime')
+        'report_datetime',
+        'death_date',
+        'site_aware_datetime',
+        'death_cause_info',
+        'death_cause',
+        'death_cause_category',
+        'illness_duration',
+        'relationship_study',)
 
     list_display = ('household_member', 'report_datetime')
 
@@ -22,6 +29,12 @@ class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member__household_structure__household__household_identifier']
 
     list_filter = ('report_datetime', 'household_member__household_structure__household__community')
+
+    radio_fields = {
+        "relationship_study": admin.VERTICAL,
+        "death_cause_info": admin.VERTICAL,
+        "death_cause_category": admin.VERTICAL
+        }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
