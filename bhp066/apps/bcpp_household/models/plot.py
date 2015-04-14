@@ -22,6 +22,8 @@ from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
 from ..exceptions import AlreadyReplaced
 
+from .household_identifier_history import HouseholdIdentifierHistory
+
 
 def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""
@@ -270,7 +272,8 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        self.allow_enrollment(using, update_fields=update_fields)
+        if not self.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
+            self.allow_enrollment(using, update_fields=update_fields)
         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
                                   'by plot {1}.'.format(self.plot_identifier, self.replaced_by))
@@ -538,6 +541,13 @@ class Plot(BaseDispatchSyncUuidModel):
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
         return url
+
+    @property
+    def location(self):
+        if self.plot_identifier.endswith('0000-00'):
+            return 'clinic'
+        else:
+            return 'household'
 
     @property
     def plot_inaccessible(self):

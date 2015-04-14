@@ -25,6 +25,8 @@ from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndec
 from apps.bcpp_subject.models import HivResult, HicEnrollment
 from apps.bcpp_survey.models import Survey
 
+from .classes import (OperationalPlots, OperationalHousehold, OperationalMember, OperationalSpecimen, OperationalAnnual,
+                      OperationalRbd)
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
@@ -171,6 +173,66 @@ def _prepare_params(params_dict, date_format):
     start_date = date_from_s(params_dict.get("start") or default_start, date_format)
     end_date = date_from_s(params_dict.get("to") or default_end, date_format)
     return dict(community_pair=[community1, community2], start_date=start_date, end_date=end_date)
+
+
+@login_required
+def operational_report_plots_view(request, **kwargs):
+    operational_plots = OperationalPlots(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_plot.html', {'values': operational_plots.build_report(),
+                                                        'communities': operational_plots.return_communities(),
+                                                        'ra_usernames': operational_plots.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_household_view(request, **kwargs):
+    operational_household = OperationalHousehold(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_household.html', {'values': operational_household.build_report(),
+                                                        'communities': operational_household.return_communities(),
+                                                        'ra_usernames': operational_household.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_member_view(request, **kwargs):
+    operational_member = OperationalMember(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_member.html', {'values': operational_member.build_report(),
+                                                        'communities': operational_member.return_communities(),
+                                                        'ra_usernames': operational_member.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_specimen_view(request, **kwargs):
+    operational_specimen = OperationalSpecimen(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_specimen.html', {'values': operational_specimen.build_report(),
+                                                        'communities': operational_specimen.return_communities(),
+                                                        'ra_usernames': operational_specimen.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_annual_view(request, **kwargs):
+    operational_annual = OperationalAnnual(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_annual.html', {'values': operational_annual.build_report(),
+                                                        'communities': operational_annual.return_communities(),
+                                                        'ra_usernames': operational_annual.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_rbd_view(request, **kwargs):
+    operational_rbd = OperationalRbd(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_rbd.html', {'values': operational_rbd.build_report(),
+                                                        'communities': operational_rbd.return_communities(),
+                                                        'ra_usernames': operational_rbd.return_ra_usernames()},
+        context_instance=RequestContext(request))
 
 
 @login_required

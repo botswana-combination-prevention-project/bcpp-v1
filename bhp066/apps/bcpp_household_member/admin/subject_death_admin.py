@@ -10,9 +10,6 @@ from ..models import SubjectDeath
 
 class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
     form = SubjectDeathForm
-    fields = (
-        'household_member',
-        'report_datetime')
 
     list_display = ('household_member', 'report_datetime')
 
@@ -22,6 +19,13 @@ class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
         'household_member__household_structure__household__household_identifier']
 
     list_filter = ('report_datetime', 'household_member__household_structure__household__community')
+
+    radio_fields = {
+        "death_cause_info": admin.VERTICAL,
+        "death_cause_category": admin.VERTICAL,
+        "death_reason_hospitalized": admin.VERTICAL,
+        "participant_hospitalized": admin.VERTICAL
+        }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

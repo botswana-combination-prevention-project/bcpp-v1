@@ -1,3 +1,5 @@
+from django.db import models
+
 from edc.core.identifier.classes import BaseIdentifier
 
 
@@ -23,3 +25,9 @@ class PlotIdentifier(BaseIdentifier):
         """ Users may override to pass non-default keyword arguments to get_identifier
         before the identifier is created."""
         return {'community': self.get_community()}
+
+    @classmethod
+    def get_notebook_plot_lists(self):
+        """ Returns a list of plots allocated to research assistant machine """
+        NotebookPlotList = models.get_model('bcpp_household', 'notebookplotlist')
+        return [notebook.plot_identifier for notebook in NotebookPlotList.objects.all()]

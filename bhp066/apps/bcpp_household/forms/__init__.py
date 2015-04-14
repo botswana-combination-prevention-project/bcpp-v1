@@ -11,3 +11,4 @@ from .household_assessment_form import HouseholdAssessmentForm
 from .replacement_history_form import ReplacementHistoryForm
 from .representative_eligibility_form import RepresentativeEligibilityForm
 from .increase_plot_radius_form import IncreasePlotRadiusForm
+from .notebook_plot_list_form import NotebookPlotListForm

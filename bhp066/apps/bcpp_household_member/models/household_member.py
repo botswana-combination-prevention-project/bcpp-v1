@@ -274,9 +274,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 #             raise MemberStatusError('Household member is consented. Changes are not allowed. '
 #                                     'Perhaps catch this in the form.')
         if self.member_status == DECEASED:
-            self.create_suject_death
+            self.set_death_flags
         else:
-            self.clear_subject_death
+            self.clear_death_flags
         self.eligible_member = self.is_eligible_member
         self.absent = True if (not self.id and 
                                (self.present_today == 'No' and not self.survival_status == DEAD)) else self.absent
@@ -339,20 +339,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             plot_instance=instance.household_structure.household.plot)
 
     @property
-    def create_suject_death(self):
-        from ..models import SubjectDeath
+    def set_death_flags(self):
         self.survival_status = DEAD
         self.present_today = 'No'
-        try:
-            SubjectDeath.objects.get(household_member=self)
-        except SubjectDeath.DoesNotExist:
-            SubjectDeath.objects.create(household_member=self,
-                                        registered_subject=self.registered_subject,
-                                        survey=self.household_structure.survey,
-                                        report_datetime=datetime.now())
 
     @property
-    def clear_subject_death(self):
+    def clear_death_flags(self):
         from ..models import SubjectDeath
         self.survival_status = ALIVE
         try:
@@ -764,6 +756,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         return self._get_form_url('subjectrefusal')
 
     @property
+    def death_form_url(self):
+        url = self._get_form_url('subjectdeath')
+        return url
+
+    @property
     def moved_form_url(self):
         return self._get_form_url('subjectmoved')
 
@@ -776,6 +773,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def refused_form_label(self):
         return self.get_form_label('SubjectRefusal')
+    refused_form_label.allow_tags = True
+
+    def death_form_label(self):
+        return self.get_form_label('SubjectDeath')
     refused_form_label.allow_tags = True
 
     def moved_form_label(self):

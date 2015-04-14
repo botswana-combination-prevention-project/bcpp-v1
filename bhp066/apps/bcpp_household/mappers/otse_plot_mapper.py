@@ -14,6 +14,7 @@ class OtsePlotMapper(BasePlotMapper):
 
     map_area = 'otse'
     map_code = '14'
+    pair = 2    
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -39,6 +40,12 @@ class OtsePlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 4, 30),
             end_date=date(2015, 10, 30),
             smc_start_date=date(2015, 5, 30)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {

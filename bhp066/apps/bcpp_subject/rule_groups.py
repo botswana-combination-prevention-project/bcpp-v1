@@ -46,7 +46,7 @@ def func_art_naive(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    art_naive = not subject_status_helper.on_art and (subject_status_helper.hiv_result == POS or func_known_pos_in_prev_year(visit_instance))
 #     if art_naive:
 #         subject_status_helper = SubjectStatusHelper(visit_instance)
 #         art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
@@ -54,10 +54,9 @@ def func_art_naive(visit_instance):
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
-    #past_visit = func_previous_visit_instance(visit_instance)
     if func_known_pos_in_prev_year(visit_instance):
         do_pima = False
-    elif func_art_naive(visit_instance):
+    if func_art_naive(visit_instance):
         do_pima = True
     else:
         do_pima = False
@@ -433,6 +432,21 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
+    
+    known_pos_not_art_in_y0 = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_require_pima_hiv_care_ad,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
+  
+    vl_for_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_known_pos_in_prev_year,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'],)
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(

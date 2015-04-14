@@ -14,6 +14,7 @@ class LetlhakengPlotMapper(BasePlotMapper):
 
     map_area = 'letlhakeng'
     map_code = '15'
+    pair = 3
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -39,6 +40,12 @@ class LetlhakengPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 10, 15),
             end_date=date(2015, 10, 21),
             smc_start_date=date(2015, 10, 29)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {
