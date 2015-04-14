@@ -14,6 +14,7 @@ class MaunatlalaPlotMapper(BasePlotMapper):
 
     map_area = 'maunatlala'
     map_code = '23'
+    pair = 7
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -21,8 +22,8 @@ class MaunatlalaPlotMapper(BasePlotMapper):
 
     intervention = True
 
-    gps_center_lat = -24.729571
-    gps_center_lon = 25.649351
+    gps_center_lat = -22.8658437618
+    gps_center_lon = 27.4198811366
     radius = 5.5
     location_boundary = ()
 
@@ -39,6 +40,12 @@ class MaunatlalaPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 12, 17),
             end_date=date(2015, 12, 22),
             smc_start_date=date(2015, 12, 22)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {

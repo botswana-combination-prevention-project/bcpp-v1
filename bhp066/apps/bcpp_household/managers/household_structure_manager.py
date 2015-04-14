@@ -5,6 +5,7 @@ from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household_member.classes.enumeration_helper import EnumerationHelper
+from apps.bcpp_household.classes import PlotIdentifier
 
 
 class HouseholdStructureManager(models.Manager):
@@ -24,6 +25,10 @@ class HouseholdStructureManager(models.Manager):
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
             community = site_mappers.current_mapper.map_area
-            return super(HouseholdStructureManager, self).get_queryset().filter(
-                household__plot__community=community)
+            if PlotIdentifier.get_notebook_plot_lists():
+                return super(HouseholdStructureManager, self).get_queryset().filter(
+                    household__plot__community=community,
+                    household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
+            else:
+                return super(HouseholdStructureManager, self).get_queryset().filter(household__plot__community=community)
         return super(HouseholdStructureManager, self).get_queryset()

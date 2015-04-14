@@ -14,6 +14,7 @@ class DigawanaPlotMapper(BasePlotMapper):
 
     map_area = 'digawana'
     map_code = '12'
+    pair = 1
     regions = SECTIONS
     sections = SUB_SECTIONS
 
@@ -39,6 +40,12 @@ class DigawanaPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 1, 18),
             end_date=date(2015, 1, 30),
             smc_start_date=date(2015, 1, 7)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {

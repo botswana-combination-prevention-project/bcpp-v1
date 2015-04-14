@@ -6,7 +6,7 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from apps.bcpp_survey.models import Survey
 
-from ..choices import HOUSEHOLD_STATUS
+from ..choices import HOUSEHOLD_LOG_STATUS
 from ..managers import HouseholdWorkListManager
 
 from .household_structure import HouseholdStructure
@@ -69,7 +69,7 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
     log_status = models.CharField(
         verbose_name='Household Status',
         max_length=50,
-        choices=HOUSEHOLD_STATUS,
+        choices=HOUSEHOLD_LOG_STATUS,
         null=True,
         blank=False)
 

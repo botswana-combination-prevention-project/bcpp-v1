@@ -100,19 +100,22 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2015, 11, 19, 23, 59, 0)},
+             'datetime_end': datetime(2014, 12, 9, 23, 59, 0),
+             'chronological_order': 1},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2015, 11, 20, 0, 0, 0),
-             'datetime_end': datetime(2016, 11, 19, 23, 59, 0)},
+             'datetime_start': datetime(2014, 12, 10, 0, 0, 0),
+             'datetime_end': datetime(2016, 11, 19, 23, 59, 0),
+             'chronological_order': 2},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
              'survey_slug': 'bcpp-year-3',
              'survey_abbrev': 'Y3',
              'datetime_start': datetime(2016, 11, 20, 0, 0, 0),
-             'datetime_end': datetime(2017, 10, 29, 23, 59, 0)}
+             'datetime_end': datetime(2017, 10, 29, 23, 59, 0),
+             'chronological_order': 3},
     }
 
     lab_clinic_api_setup = {
@@ -336,19 +339,21 @@ class BcppAppConfiguration(BaseAppConfiguration):
             * plot identifier community prefix is the same as the site code.
         """
         try:
-            map_code = site_mappers.get_current_mapper().map_code
+            map_code = site_mappers.current_mapper().map_code
         except AttributeError:
             map_code = '00'
-        if map_code != settings.SITE_CODE:
-            raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
-                                       'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
+        if self.confirm_site_code_in_settings:  # default is True, set to False for tests
+            if map_code != settings.SITE_CODE:
+                raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
+                                           'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
         try:
-            map_area = site_mappers.get_current_mapper().map_area
+            map_area = site_mappers.current_mapper().map_area
         except AttributeError:
             map_area = 'BHP'
-        if map_area != settings.CURRENT_COMMUNITY:
-            raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
-                                       'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
+        if self.confirm_community_in_settings:  # default is True, set to False for tests
+            if map_area != settings.CURRENT_COMMUNITY:
+                raise ImproperlyConfigured('Current community {} returned by mapper does not equal '
+                                           'settings.CURRENT_COMMUNITY {}.'.format(map_area, settings.CURRENT_COMMUNITY))
         try:
             community_check = settings.CURRENT_COMMUNITY_CHECK
         except AttributeError:
@@ -374,20 +379,27 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.survey_abbrev = survey_values.get('survey_abbrev')
                 survey.datetime_start = survey_values.get('datetime_start')
                 survey.datetime_end = survey_values.get('datetime_end')
+                survey.chronological_order = survey_values.get('chronological_order')
                 survey.save()
             except Survey.DoesNotExist:
                 Survey.objects.create(**survey_values)
 
     def search_limit_setup(self):
-        if not str(device) == '99':
-            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and settings.FILTERED_DEFAULT_SEARCH):
-                raise ImproperlyConfigured('LIMIT_EDIT_TO_CURRENT_SURVEY,  LIMIT_EDIT_TO_CURRENT_COMMUNITY and FILTERED_DEFAULT_SEARCH'
-                ' should be set to true in a notebook. Update in bcpp_settings.py.'
-                )
-        elif str(device) == '99':
-            if (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and settings.FILTERED_DEFAULT_SEARCH):
-                raise ImproperlyConfigured('LIMIT_EDIT_TO_CURRENT_SURVEY,  LIMIT_EDIT_TO_CURRENT_COMMUNITY and FILTERED_DEFAULT_SEARCH'
-                ' should be set to false in a central server. Update in bcpp_settings.py.'
-                )
+        if str(device) == '99':
+            if (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and
+                    settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and
+                    settings.FILTERED_DEFAULT_SEARCH):
+                raise ImproperlyConfigured(
+                    'LIMIT_EDIT_TO_CURRENT_SURVEY,  LIMIT_EDIT_TO_CURRENT_COMMUNITY '
+                    'and FILTERED_DEFAULT_SEARCH should be set to false in a central '
+                    'server. Update in bcpp_settings.py.')
+        else:
+            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and
+                    settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and
+                    settings.FILTERED_DEFAULT_SEARCH):
+                raise ImproperlyConfigured(
+                    'LIMIT_EDIT_TO_CURRENT_SURVEY,  LIMIT_EDIT_TO_CURRENT_COMMUNITY '
+                    'and FILTERED_DEFAULT_SEARCH should be set to true in a notebook. '
+                    'Update in bcpp_settings.py.')
 
 bcpp_app_configuration = BcppAppConfiguration()

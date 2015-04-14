@@ -611,3 +611,8 @@ TATI_SIDING_LANDMARKS = (
     ('Water Utilites Office-tati', -21.273343, 27.477058),
     ('Water Utilities Tanks-tati', -21.263909, 27.470993)
 )
+
+
+NKANGE_LANDMARKS = ()
+
+SEBINA_LANDMARKS = ()
