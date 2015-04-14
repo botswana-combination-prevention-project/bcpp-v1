@@ -12,3 +12,4 @@ from .plot_log_admin import PlotLogEntryAdmin, PlotLogAdmin
 from .replaceable_admin import ReplaceableAdmin
 from .replacement_history_admin import ReplacementHistoryAdmin
 from .representative_eligibility_admin import RepresentativeEligibilityAdmin
+from .notebook_plot_list_admin import NotebookPlotListAdmin

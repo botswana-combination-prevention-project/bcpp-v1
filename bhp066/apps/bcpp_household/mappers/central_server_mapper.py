@@ -12,6 +12,7 @@ class CentralServerMapper(BasePlotMapper):
 
     map_area = 'bhp'  # corresponds with settings.CURRENT_COMMUNITY
     map_code = '00'  # corresponds with settings.SITE_CODE
+    pair = 0
     regions = ()
     sections = ()
 
