@@ -4,6 +4,8 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
+from apps.bcpp_household.classes import PlotIdentifier
+
 
 class SubjectAbsenteeEntryManager(models.Manager):
     def get_by_natural_key(self, report_datetime, household_identifier, survey_name, subject_identifier_as_pk):
@@ -17,6 +19,12 @@ class SubjectAbsenteeEntryManager(models.Manager):
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
             community = site_mappers.current_mapper.map_area
-            return super(SubjectAbsenteeEntryManager, self).get_queryset().filter(
-                subject_absentee__household_member__household_structure__household__plot__community=community)
+            if PlotIdentifier.get_notebook_plot_lists():
+                return super(SubjectAbsenteeEntryManager, self).get_queryset().filter(
+                    subject_absentee__household_member__household_structure__household__plot__community=community,
+                     subject_absentee__household_member__household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists()
+                    )
+            else:
+                return super(SubjectAbsenteeEntryManager, self).get_queryset().filter(
+                    subject_absentee__household_member__household_structure__household__plot__community=community)
         return super(SubjectAbsenteeEntryManager, self).get_queryset()
