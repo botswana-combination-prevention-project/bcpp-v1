@@ -270,7 +270,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        if not self.plot_identifier == site_mappers.current_mapper()().clinic_plot_identifier:
+        if not self.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
             self.allow_enrollment(using, update_fields=update_fields)
         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
