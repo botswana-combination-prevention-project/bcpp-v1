@@ -3,6 +3,8 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
+from apps.bcpp_household.classes import PlotIdentifier
+
 
 class ScheduledModelManager(models.Manager):
     """Manager for all scheduled models (those with a subject_visit fk)."""
@@ -14,6 +16,12 @@ class ScheduledModelManager(models.Manager):
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
             community = site_mappers.current_mapper.map_area
-            return super(ScheduledModelManager, self).get_queryset().filter(
-                subject_visit__household_member__household_structure__household__plot__community=community)
+            if PlotIdentifier.get_notebook_plot_lists():
+                return super(ScheduledModelManager, self).get_queryset().filter(
+                    subject_visit__household_member__household_structure__household__plot__community=community,
+                    subject_visit__household_member__household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists()
+                    )
+            else:
+                return super(ScheduledModelManager, self).get_queryset().filter(
+                    subject_visit__household_member__household_structure__household__plot__community=community)
         return super(ScheduledModelManager, self).get_queryset()
