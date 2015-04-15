@@ -1,8 +1,8 @@
 from apps.bcpp_household.models import (HouseholdStructure, HouseholdLogEntry, HouseholdRefusal,
                                         HouseholdAssessment, Household as HouseholdModel)
 from apps.bcpp_household.choices import HH_STATUS
-from apps.bcpp_household.constants import (NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED,
-                                           RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED)
+from apps.bcpp_household.constants import (NEARLY_ALWAYS_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, 
+                                           UNKNOWN_OCCUPIED)
 
 from .base import Base
 from .plot import Plot
@@ -77,14 +77,10 @@ class Household(Base):
                 if refused:
                     status = hh_status['not_enum_hh_refused']
                 elif last_seen:
-                    if last_seen == NEARLY_ALWAYS_OCCUPIED:
-                        status = hh_status['not_enum_almost_always_there']
-                    elif last_seen == SEASONALLY_OCCUPIED:
-                        status = hh_status['not_enum_seasonally_occupied']
-                    elif last_seen == RARELY_OCCUPIED:
-                        status = hh_status['not_enum_rarely_there']
-                    elif last_seen == NEVER_OCCUPIED:
-                        status = hh_status['not_enum_never_there']
+                    if last_seen == SEASONALLY_NEARLY_ALWAYS_OCCUPIED:
+                        status = hh_status['not_enum_almost_always_there_or_seasonally_occupied']
+                    elif last_seen == RARELY_NEVER_OCCUPIED:
+                        status = hh_status['not_enum_rarely_there_or_never_there']
                     elif last_seen == UNKNOWN_OCCUPIED:
                         status = hh_status['not_enum_unknown_status']
                     else:
