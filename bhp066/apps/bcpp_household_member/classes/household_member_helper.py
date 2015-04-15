@@ -14,7 +14,8 @@ class HouseholdMemberHelper(object):
         self.household_member = household_member
 
     def annual_member_status(self, selected_member_status):
-        return selected_member_status or self.household_member.member_status
+        return (ANNUAL if selected_member_status == BHS_SCREEN
+                else selected_member_status or self.household_member.member_status)
 
     def member_status(self, selected_member_status):
         """Returns the member_status based on the boolean values set in the signals, mostly."""
@@ -26,12 +27,8 @@ class HouseholdMemberHelper(object):
                 member_status = self.annual_member_status(selected_member_status)
             else:
                 member_status = BHS
-        elif self.household_member.eligible_subject and not self.household_member.refused:
-            if (self.household_member.household_structure.survey.survey_slug != BASELINE_SURVEY_SLUG and
-                    not site_mappers.current_mapper().intervention):
-                member_status = HTC_ELIGIBLE
-            else:
-                member_status = BHS_ELIGIBLE
+        elif self.household_member.eligible_subject:
+            member_status = BHS_ELIGIBLE
         elif ((self.household_member.undecided or self.household_member.absent or
                self.household_member.refused)
               and selected_member_status == BHS_SCREEN):

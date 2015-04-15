@@ -14,7 +14,7 @@ from apps.bcpp_household.tests.factories import PlotFactory
 from apps.bcpp_household_member.models import (HouseholdMember, SubjectAbsentee, EnrollmentChecklist, EnrollmentLoss,
                                                SubjectDeath)
 from apps.bcpp_household_member.tests.factories import (HouseholdMemberFactory, EnrollmentChecklistFactory,
-                                                        SubjectRefusalFactory, SubjectHtcFactory)
+                                                        SubjectRefusalFactory, SubjectHtcFactory, SubjectDeathFactory)
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
@@ -68,7 +68,7 @@ class TestMemberStatus(TestCase):
         BcppSubjectVisitSchedule().build()
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
-        plot = PlotFactory(community='digawana', household_count=1, status='residential_habitable')
+        plot = PlotFactory(community='molapowabojang', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
@@ -390,8 +390,8 @@ class TestMemberStatus(TestCase):
         self.assertFalse(household_member.eligible_member)
         self.assertFalse(household_member.absent)
         self.assertEqual(household_member.member_status, DECEASED)
+        subject_death = SubjectDeathFactory(household_member=household_member, survey=self.survey1)
         self.assertEqual(SubjectDeath.objects.all().count(), 1)
-
         household_member.member_status = BHS_SCREEN
         household_member.save(update_fields=['member_status'])
         household_member = HouseholdMember.objects.get(pk=pk)
@@ -479,6 +479,37 @@ class TestMemberStatus(TestCase):
         subject_htc.accepted = 'Yes'
         subject_htc.save()
         self.assertEquals(subject_htc.household_member.member_status, HTC)
+
+    def test_can_consent_member_in_yr2(self):
+        """Asserts that a member member that was not consented year one can now be consented in y2."""
+        household_member = self.enroll_household()
+        household_member_y1 = HouseholdMemberFactory(
+            household_structure=household_member.household_structure,
+            gender='M',
+            age_in_years=20,
+            present_today='Yes',
+            study_resident='Yes')
+        # Now add a year2 household member
+        year2_survey = Survey.objects.get(survey_slug='bcpp-year-2')
+        year2_structure = HouseholdStructure.objects.get(survey=year2_survey)
+        household_member_y2 = HouseholdMemberFactory(
+            household_structure=year2_structure,
+            gender='M',
+            age_in_years=21,
+            present_today='Yes',
+            study_resident='Yes')
+        #Fill an enrollment checklist for the year two household member
+        self.assertEquals(household_member_y2.member_status, BHS_SCREEN)
+        enrollment_checklist = EnrollmentChecklistFactory(
+            household_member=household_member_y2,
+            gender='M',
+            dob=date.today() - relativedelta(years=21),
+            guardian='No',
+            initials=household_member_y2.initials,
+            part_time_resident='Yes',
+            has_identity='Yes')
+        self.assertEquals(household_member_y2.member_status, BHS_ELIGIBLE)
+        self.assertTrue(enrollment_checklist.household_member.eligible_subject)
 
     def test_member_refusing_htc_after_refusing_bhs(self):
         """Asserts that an eligible member that refuses BHS but household is enrolled
