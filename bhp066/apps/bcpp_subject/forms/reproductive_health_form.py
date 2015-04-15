@@ -17,6 +17,12 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(ReproductiveHealthForm, self).clean()
+        if ((cleaned_data.get('when_pregnant') and cleaned_data.get('when_pregnant') == 'No') and
+            (cleaned_data.get('gestational_weeks') or cleaned_data.get('pregnancy_hiv_tested')
+             or cleaned_data.get('pregnancy_hiv_retested'))):
+            raise forms.ValidationError(
+                'If participant did not get pregnant since last interview, then do not provide answers for \
+                questions from "At about what gestational age (in weeks) did you start arv\'s during this (or your last) pregnancy?"')
         if cleaned_data.get('menopause') == 'Yes' and cleaned_data.get('family_planning'):
             raise forms.ValidationError(
                 'if participant has reached menopause, you should not be giving details about family planning')

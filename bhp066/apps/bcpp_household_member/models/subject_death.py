@@ -1,10 +1,10 @@
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices.common import YES_NO
+from edc.choices.common import DEATH_RELATIONSIP_TO_STUDY
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_before_study_start, date_not_future
-from edc.subject.adverse_event.models import DeathCauseInfo, DeathCauseCategory, DeathReasonHospitalized
+from edc.subject.adverse_event.models import DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility
 
 from apps.bcpp_household.exceptions import AlreadyReplaced
 
@@ -15,6 +15,15 @@ class SubjectDeath(BaseMemberStatusModel):
 
     death_date = models.DateField(
         verbose_name="Date of Death:",
+        validators=[
+            date_not_before_study_start,
+            date_not_future,
+            ],
+        help_text="",
+        )
+
+    site_aware_date = models.DateField(
+        verbose_name="Date site aware of Death:",
         validators=[
             date_not_before_study_start,
             date_not_future,
@@ -52,31 +61,22 @@ class SubjectDeath(BaseMemberStatusModel):
         null=True,
         )
 
-    participant_hospitalized = models.CharField(
-        max_length=3,
-        choices=YES_NO,
-        verbose_name="Was the participant hospitalised before death?",
-        help_text="",
-        )
-
-    death_reason_hospitalized = models.ForeignKey(DeathReasonHospitalized,
-        verbose_name="if yes, hospitalized, what was the primary reason for hospitalisation? ",
-        help_text="",
-        blank=True,
-        null=True,
-        )
-
-    days_hospitalized = models.IntegerField(
-        verbose_name="For how many days was the participant hospitalised during the illness immediately before death? ",
+    duration_of_illness = models.IntegerField(
+        verbose_name="Duration of acute illness directly causing death (in days, or choose Unknown)?",
         help_text="in days",
         default=0,
         )
 
-    comment = models.TextField(
-        max_length=500,
-        verbose_name="Comments",
-        blank=True,
-        null=True,
+    primary_medical_care_giver = models.ForeignKey(DeathMedicalResponsibility,
+        verbose_name="Who was responsible for primary medical care during the month prior to death?",
+        help_text="",
+        )
+
+    relationship_death_study = models.CharField(
+        verbose_name="What is the relationship of the death to study participation?",
+        max_length=3,
+        choices=DEATH_RELATIONSIP_TO_STUDY,
+        help_text="",
         )
 
     history = AuditTrail()
