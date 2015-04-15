@@ -23,8 +23,8 @@ class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
     radio_fields = {
         "death_cause_info": admin.VERTICAL,
         "death_cause_category": admin.VERTICAL,
-        "death_reason_hospitalized": admin.VERTICAL,
-        "participant_hospitalized": admin.VERTICAL
+        "primary_medical_care_giver": admin.VERTICAL,
+        "relationship_death_study": admin.VERTICAL
         }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
