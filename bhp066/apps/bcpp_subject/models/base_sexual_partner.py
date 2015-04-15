@@ -3,9 +3,9 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,
-                               LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE,
+                               LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, COMMUNITY_NA,
                                FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE,
-                               FIRSTCONDOMFREQ_CHOICE, AGE_RANGES)
+                               FIRSTCONDOMFREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
 from apps.bcpp_list.models import PartnerResidency
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
@@ -17,6 +17,19 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         PartnerResidency,
         verbose_name=_("Over the past 12 months, where has this sexual partner"
                        " lived to the best of your knowledge?"),
+        help_text="")
+
+    sex_partner_community = models.CharField(
+        verbose_name=_("If outside community or farm outside this community ask:"
+                       " Does this sexual partner live in any of the following communities?"),
+        max_length=25,
+        choices=COMMUNITY_NA,
+        help_text="")
+
+    past_year_sex_freq = models.CharField(
+        verbose_name=_("Approximately how often did you have sex with this partner during the past 12 months?"),
+        max_length=25,
+        choices=FREQ_IN_YEAR,
         help_text="")
 
     third_last_sex = models.CharField(
