@@ -93,7 +93,4 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
                    )
 
     list_per_page = 15
-if HouseholdMemberAdmin.current_survey != HouseholdMemberAdmin.first_survey:
-    HouseholdMemberAdmin.fields.insert(4, 'survival_status')
-    HouseholdMemberAdmin.radio_fields['survival_status'] = admin.VERTICAL
 admin.site.register(HouseholdMember, HouseholdMemberAdmin)
