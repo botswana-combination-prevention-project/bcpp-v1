@@ -10,18 +10,13 @@ class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
 
     fields = (
         'household_structure',
-        'residency',
-        'member_count',
-        'eligibles',
-        'ineligible_reason',
-        'last_seen_home',
+        'potential_eligibles',
+        'eligibles_last_seen_home',
         )
 
     radio_fields = {
-        'residency': admin.VERTICAL,
-        'eligibles': admin.VERTICAL,
-        'ineligible_reason': admin.VERTICAL,
-        'last_seen_home': admin.VERTICAL,
+        'potential_eligibles': admin.VERTICAL,
+        'eligibles_last_seen_home': admin.VERTICAL,
         }
 
     list_filter = ('household_structure__household__community',)
