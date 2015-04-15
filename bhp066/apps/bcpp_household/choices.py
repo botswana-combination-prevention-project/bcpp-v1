@@ -1,8 +1,8 @@
 from edc.constants import COMPLETE, INCOMPLETE
 
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, NEARLY_ALWAYS_OCCUPIED, SEASONALLY_OCCUPIED,
-                        RARELY_OCCUPIED, NEVER_OCCUPIED, UNKNOWN_OCCUPIED,
+                        REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, RARELY_NEVER_OCCUPIED,
+                        SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED,
                         NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, TWENTY_PERCENT, FIVE_PERCENT,
                         INACCESSIBLE, ACCESSIBLE)
 
@@ -138,18 +138,11 @@ INELIGIBLE_REASON = (
     )
 
 RESIDENT_LAST_SEEN = (
-    (NEARLY_ALWAYS_OCCUPIED, (
-        'at least 1 person stays in the household for at least half the nights in the year')
+    (SEASONALLY_NEARLY_ALWAYS_OCCUPIED, (
+        'spent at least 4 weeks in household over the course of the past year')
      ),  # replace
-    (SEASONALLY_OCCUPIED, (
-        'at least 1 person stays in the household for at least 4 weeks '
-        'but less than half the nights over the past year')
-     ),  # replace
-    (RARELY_OCCUPIED, (
-        'at least 1 person stays in the household for 1 or more nights but '
-        'less than 4 weeks over the past year')
-     ),  # NOT replaced
-    (NEVER_OCCUPIED, 'nobody spent at least 1 night in the household over the past year'),  # NOT replaced
+    (RARELY_NEVER_OCCUPIED, 'pent less than 4 weeks in the household  over the course of the' 
+    'past year, or never occupied over the course of the past year'),  # NOT replaced
     (UNKNOWN_OCCUPIED, 'Don\'t know'),  # replaced
 )
 

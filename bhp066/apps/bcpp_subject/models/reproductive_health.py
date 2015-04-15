@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
+from edc.choices.common import YES_NO_NA, NOT_APPLICABLE
 
 from apps.bcpp.choices import YES_NO, YES_NO_UNSURE
 from apps.bcpp_list.models import FamilyPlanning
@@ -38,6 +39,7 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         blank=True,
         help_text="check all that apply",
         )
+
     family_planning_other = OtherCharField()
 
     currently_pregnant = models.CharField(
@@ -49,7 +51,41 @@ class ReproductiveHealth (BaseScheduledVisitModel):
         help_text="",
         )
 
+    when_pregnant = models.CharField(
+        verbose_name=_("Did you become pregnant since the last interview we had with you?"),
+        max_length=3,
+        choices=YES_NO,
+        help_text="",
+        )
+
+    gestational_weeks = models.IntegerField(
+        verbose_name=_("At about what gestational age (in weeks) did you start arv's during this (or your last) pregnancy?"),
+        null=True,
+        blank=True,
+        max_length=2,
+        help_text="gestational age in WEEKS. Among HIV-infected women who took/started ARVs during their last (or current pregnancy).",
+        )
+
+    pregnancy_hiv_tested = models.CharField(
+        verbose_name=_("Were you tested for HIV during your most recent (or this current) pregnancy?"),
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE,
+        max_length=3,
+        help_text="Among women who were not known to be HIV-infected prior to the last (or current pregnancy).",
+        )
+
+    pregnancy_hiv_retested = models.CharField(
+        verbose_name=_("If you tested HIV-negative during the most recent (or this current) pregnancy, were you re-tested for HIV in the last 3 months of your pregnancy or at delivery? "),
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE,
+        max_length=3,
+        help_text="if the respondent has reached that point by the time of the current interview.",
+        )
+
     history = AuditTrail()
+
+    def validate_not_hiv_infected(self, enrollment_checklist, household_member, exception_cls=None):
+        pass
 
     class Meta:
         app_label = 'bcpp_subject'

@@ -16,8 +16,8 @@ from .plot import Plot
 from .plot_log import PlotLogEntry
 
 from ..constants import (ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                         REFUSED_ENUMERATION, INACCESSIBLE, SEASONALLY_OCCUPIED,
-                         UNKNOWN_OCCUPIED, NEARLY_ALWAYS_OCCUPIED)
+                         REFUSED_ENUMERATION, INACCESSIBLE, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, 
+                         UNKNOWN_OCCUPIED)
 
 
 @receiver(post_save, weak=False, dispatch_uid="household_on_post_save")
@@ -127,7 +127,7 @@ def household_assessment_on_post_save(sender, instance, raw, created, using, **k
                 instance.household_structure.failed_enumeration = True
                 update_fields.append('failed_enumeration')
             instance.household_structure.no_informant = instance.last_seen_home in [
-                SEASONALLY_OCCUPIED, UNKNOWN_OCCUPIED, NEARLY_ALWAYS_OCCUPIED]
+                SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED]
             update_fields.append('no_informant')
             instance.household_structure.save(using=using, update_fields=update_fields)
 

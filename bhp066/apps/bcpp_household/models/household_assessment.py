@@ -19,40 +19,16 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
     be enumerated."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
-    residency = models.CharField(
-        verbose_name=('Does anyone ever stay in this household?'),
-        choices=YES_NO,
-        max_length=25,
-        null=True,
-        editable=True,
-        )
-
-    member_count = models.IntegerField(
-        verbose_name=("How many people live in this household (estimate)?"),
-        null=True,
-        blank=True,
-        help_text=("Provide the number of members in this household."))
-
-    eligibles = models.CharField(
-        verbose_name=('In speaking with the individual(s) above, at '
-                      'least one member of this plot is potentially eligible'),
+    potential_eligibles = models.CharField(
+        verbose_name=('Research Assistant: From speaking with the respondent, is at least one' 
+                      'member of this plot potentially eligible?'),
         choices=YES_NO_DONT_KNOW,
         max_length=25,
         null=True,
-        blank=True,
         editable=True,
         )
 
-    ineligible_reason = models.CharField(
-        verbose_name=('If no members are eligible for this study, please state '
-                      'the reason for ineligility.'),
-        null=True,
-        max_length=25,
-        choices=INELIGIBLE_REASON,
-        editable=True,
-        blank=True)
-
-    last_seen_home = models.CharField(
+    eligibles_last_seen_home = models.CharField(
         verbose_name=('When was a resident last seen in this household?'),
         choices=RESIDENT_LAST_SEEN,
         max_length=25,
