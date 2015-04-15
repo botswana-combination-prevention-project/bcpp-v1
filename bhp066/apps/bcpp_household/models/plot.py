@@ -22,6 +22,8 @@ from ..constants import CONFIRMED, UNCONFIRMED
 from ..managers import PlotManager
 from ..exceptions import AlreadyReplaced
 
+from .household_identifier_history import HouseholdIdentifierHistory
+
 
 def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""

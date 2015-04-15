@@ -1,85 +1,96 @@
-from datetime import datetime
-
 from django.db import models
 
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.audit.audit_trail import AuditTrail
-from edc.subject.adverse_event.models import BaseDeath
+from edc.choices.common import YES_NO
+from edc.base.model.fields import OtherCharField
+from edc.base.model.validators import date_not_before_study_start, date_not_future
+from edc.subject.adverse_event.models import DeathCauseInfo, DeathCauseCategory, DeathReasonHospitalized
 
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.models import Plot
+from apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .base_member_status_model import BaseMemberStatusModel
-from .household_member import HouseholdMember
-
-from apps.bcpp.choices import MEDICAL_CARE, RELATIONSHIP_STUDY
 
 
-class SubjectDeath(BaseDeath):
+class SubjectDeath(BaseMemberStatusModel):
 
-    household_member = models.OneToOneField(HouseholdMember)
-
-    report_datetime = models.DateTimeField(
-        verbose_name="Report date",
+    death_date = models.DateField(
+        verbose_name="Date of Death:",
         validators=[
-            datetime_not_before_study_start,
-            datetime_not_future, ],
-        default=datetime.today())
+            date_not_before_study_start,
+            date_not_future,
+            ],
+        help_text="",
+        )
 
-    survey = models.ForeignKey(Survey, editable=False)
+    death_cause_info = models.ForeignKey(DeathCauseInfo,
+        verbose_name="What is the primary source of cause of death information? (if multiple source of information, list one with the smallest number closest to the top of the list) ",
+        help_text="",
+        )
 
+    death_cause_info_other = OtherCharField(
+        verbose_name="if other specify...",
+        blank=True,
+        null=True,
+        )
 
-    illness_duration = models.IntegerField(
+    death_cause = models.TextField(
+        max_length=1000,
+        blank=True,
+        null=True,
+        verbose_name="Describe the major cause of death(including pertinent autopsy information if available),starting with the first noticeable illness thought to be related to death,continuing to time of death. ",
+        help_text="Note: Cardiac and pulmonary arrest are not major reasons and should not be used to describe major cause)"
+        )
+
+    death_cause_category = models.ForeignKey(DeathCauseCategory,
+        verbose_name="Based on the above description, what category best defines the major cause of death? ",
+        help_text="",
+        )
+
+    death_cause_other = OtherCharField(
+        verbose_name="if other specify...",
+        blank=True,
+        null=True,
+        )
+
+    participant_hospitalized = models.CharField(
+        max_length=3,
+        choices=YES_NO,
+        verbose_name="Was the participant hospitalised before death?",
+        help_text="",
+        )
+
+    death_reason_hospitalized = models.ForeignKey(DeathReasonHospitalized,
+        verbose_name="if yes, hospitalized, what was the primary reason for hospitalisation? ",
+        help_text="",
+        blank=True,
+        null=True,
+        )
+
+    days_hospitalized = models.IntegerField(
         verbose_name="For how many days was the participant hospitalised during the illness immediately before death? ",
         help_text="in days",
         default=0,
         )
 
-    site_aware_datetime = models.DateTimeField(
-           verbose_name="Site Aware Date",
-           )
-
-    medical_care = models.CharField(
-            verbose_name='Who was responsible for primary medical care during the month prior to death?',
-            max_length=100,
-            choices=MEDICAL_CARE,
-            )
-
-    relationship_study = models.CharField(
-            verbose_name='What is the relationship of the death to study participation?',
-            max_length=200,
-            choices=RELATIONSHIP_STUDY
-            )
+    comment = models.TextField(
+        max_length=500,
+        verbose_name="Comments",
+        blank=True,
+        null=True,
+        )
 
     history = AuditTrail()
 
+    def save(self, *args, **kwargs):
+        if self.household_member.household_structure.household.replaced_by:
+            raise AlreadyReplaced('Household {0} replaced.'.format(
+                self.subject_undecided.household_member.household_structure.household.household_identifier))
+        self.survey = self.household_member.survey
+        self.registered_subject = self.household_member.registered_subject
+        super(SubjectDeath, self).save(*args, **kwargs)
+
     def __unicode__(self):
         return unicode(self.registered_subject)
-
-    def get_report_datetime(self):
-        return self.report_datetime
-
-    def dispatch_item_container_reference(self, using=None):
-        return (('bcpp_household', 'plot'), 'household_member__household_structure__household__plot')
-
-    def natural_key(self):
-        return self.household_member.natural_key()
-    natural_key.dependencies = ['bcpp_household_member.householdmember', ]
-
-    def dispatch_container_lookup(self, using=None):
-        return (Plot, 'household_member__household_structure__household__plot__plot_identifier')
-
-    def is_dispatchable(self):
-        return True
-
-    def get_registration_datetime(self):
-        return self.report_datetime
-
-    def confirm_registered_subject_pk_on_post_save(self, using):
-        if self.registered_subject.pk != self.household_member.registered_subject.pk:
-            raise TypeError('Expected self.registered_subject.pk == self.household_member.'
-                            'registered_subject.pk. Got {0} != {1}.'.format(
-                                self.registered_subject.pk, self.household_member.registered_subject.pk))
 
     class Meta:
         app_label = "bcpp_household_member"
