@@ -31,9 +31,11 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_survey.models import Survey
 
-from ..constants import NEARLY_ALWAYS_OCCUPIED, NEVER_OCCUPIED, SEASONALLY_OCCUPIED, RARELY_OCCUPIED, UNKNOWN_OCCUPIED, FIVE_PERCENT
+from ..constants import (RARELY_NEVER_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED, 
+                        FIVE_PERCENT)
 
-from .factories import PlotFactory, HouseholdRefusalFactory, RepresentativeEligibilityFactory, HouseholdLogEntryFactory, HouseholdAssessmentFactory
+from .factories import (PlotFactory, HouseholdRefusalFactory, RepresentativeEligibilityFactory, 
+                       HouseholdLogEntryFactory, HouseholdAssessmentFactory)
 
 
 class TestPlotMapper(Mapper):
@@ -884,7 +886,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_OCCUPIED)  # Status value becomes rarely occupied
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_NEVER_OCCUPIED)  # Status value becomes rarely occupied
         producer = ProducerFactory()
         producer = update_producer_from_settings(producer)
         # print producer.name
@@ -920,7 +922,7 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEVER_OCCUPIED)  # Status value becomes never occupied
+        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=RARELY_NEVER_OCCUPIED)  # Status value becomes never occupied
         producer = ProducerFactory()
         producer = update_producer_from_settings(producer)
         # print producer.name
