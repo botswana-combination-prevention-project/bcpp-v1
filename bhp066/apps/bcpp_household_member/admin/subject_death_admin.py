@@ -11,6 +11,19 @@ from ..models import SubjectDeath
 class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
     form = SubjectDeathForm
 
+    fields = (
+        'household_member',
+        'death_date',
+        'site_aware_date',
+        'death_cause_info',
+        'death_cause_info_other',
+        'death_cause',
+        'death_cause_category',
+        'death_cause_other',
+        'duration_of_illness',
+        'primary_medical_care_giver',
+        'relationship_death_study')
+
     list_display = ('household_member', 'report_datetime')
 
     search_fields = [
