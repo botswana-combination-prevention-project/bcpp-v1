@@ -74,7 +74,7 @@ class SubjectDeath(BaseMemberStatusModel):
 
     relationship_death_study = models.CharField(
         verbose_name="What is the relationship of the death to study participation?",
-        max_length=3,
+        max_length=50,
         choices=DEATH_RELATIONSIP_TO_STUDY,
         help_text="",
         )
