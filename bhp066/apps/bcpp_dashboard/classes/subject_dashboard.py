@@ -80,7 +80,14 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     @property
     def appointment(self):
+        
         if not self._appointment:
+            try:
+                appointment_helper = AppointmentHelper()
+                appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
+                self._appointment = appointments[0]
+            except AppointmentCreateError:
+                self._appointment = None
             if self.dashboard_model_name == 'appointment':
                 self._appointment = Appointment.objects.get(pk=self.dashboard_id)
             elif self.dashboard_model_name == 'visit':
@@ -120,13 +127,6 @@ class SubjectDashboard(BaseSubjectDashboard):
             self._appointment_zero = None
             self._appointment_code = None
             self._appointment_continuation_count = None
-            if not self._appointment:
-                try:
-                    appointment_helper = AppointmentHelper()
-                    appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
-                    self._appointment = appointments[0]
-                except AppointmentCreateError:
-                    self._appointment = None
         return self._appointment
 
     @property
