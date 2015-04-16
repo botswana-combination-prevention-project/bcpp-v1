@@ -84,6 +84,14 @@ class SubjectDashboard(BaseSubjectDashboard):
         if not self._appointment:
             try:
                 appointment_helper = AppointmentHelper()
+                options = {
+                'model_name': 'subjectconsent',
+                'using': 'default',
+                'base_appt_datetime': None,
+                'dashboard_type': 'subject',
+                'source': 'BaseAppointmentMixin',
+                'visit_definitions': None,
+                'verbose': False}
                 appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
                 self._appointment = appointments[0]
             except AppointmentCreateError:
