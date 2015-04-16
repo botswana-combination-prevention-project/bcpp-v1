@@ -1,22 +1,19 @@
 from datetime import datetime
 
 from django.conf import settings
-from django.core.exceptions import MultipleObjectsReturned
 from django.template.loader import render_to_string
 
 from edc.subject.appointment.models import Appointment
-from edc.subject.appointment_helper.classes import AppointmentHelper
-from edc.subject.visit_schedule.models import ScheduleGroup, VisitDefinition, MembershipForm
-from edc.subject.appointment_helper.classes import AppointmentHelper
 from edc.subject.appointment_helper.exceptions import AppointmentCreateError
+from edc.subject.appointment_helper.classes import AppointmentHelper
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
                                       CorrectConsent, ElisaHivResult, HivResult)
+from apps.bcpp_household_member.constants import BHS, ANNUAL
 from apps.bcpp_lab.models import SubjectRequisition, PackingList
 
 from .base_subject_dashboard import BaseSubjectDashboard
-from apps.bcpp_subject.constants import BASELINE_CODES, ANNUAL_CODES
 
 
 class SubjectDashboard(BaseSubjectDashboard):
@@ -78,51 +75,8 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     @property
     def appointments(self):
-        """Returns a single apppointment as a list.
-
-        * subject_dashboard should only display one appointment
-        * select an appointment that has a subject_visit associated with THIS household_member,
-        * skip an appointment that has a subject_visit associated with any other household_member,
-          even if for the same registered_subject
-        * select an appointment that does not have a subject_visit IF not other
-          is available
-        * select only one appointment
-        * if no appointment is selected, try to create additional appointments
-        """
-        appointments = super(BaseSubjectDashboard, self).appointments
-        appointment_to_show = []
-        if self.household_structure.survey.survey_name == 'BCPP Year 1':
-            for appointment in appointments:
-                if appointment.visit_definition.code == 'T0':
-                    appointment_to_show.append(appointment)
-                    break
-        elif self.household_structure.survey.survey_name == 'BCPP Year 2':
-            for appointment in appointments:
-                if appointment.visit_definition.code == 'T1':
-                    appointment_to_show.append(appointment)
-                    break
-        else:
-            for appointment in appointments:
-                if appointment.visit_definition.code == 'T2':
-                    appointment_to_show.append(appointment)
-                    break
-
-        if not appointment_to_show:
-            appointment_helper = AppointmentHelper()
-            options = {
-                'model_name': 'subjectconsent',
-                'using': 'default',
-                'base_appt_datetime': None,
-                'dashboard_type': 'subject',
-                'source': 'BaseAppointmentMixin',
-                'visit_definitions': None,
-                'verbose': False}
-            try:
-                appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
-                appointment_to_show.append(appointments[0])
-            except AppointmentCreateError:
-                pass
-        return appointment_to_show
+        #Show only one appointment as it the case in BCPP
+        return [self.appointment]
 
     @property
     def appointment(self):
@@ -133,14 +87,31 @@ class SubjectDashboard(BaseSubjectDashboard):
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
                 if settings.CURRENT_SURVEY == 'bcpp-year-1':
+                    # In this case its straight foward that the appointment you want is the T0 appointment.
                     try:
                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
                     except Appointment.DoesNotExist:
                         self._appointment = None
                 elif settings.CURRENT_SURVEY == 'bcpp-year-2':
-                    try:
+                    # In this case you could have those doing an annual survey and those being consented for the first time. Choose accordingly.
+                    members = HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True)
+                    if members.count() == 1 and members[0].member_status == BHS:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
+                    elif members.count() == 2 and members.filter(member_status=ANNUAL).count() == 1:
                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
-                    except Appointment.DoesNotExist:
+                    else:
+                        self._appointment = None
+                elif settings.CURRENT_SURVEY == 'bcpp-year-3':
+                    # In this case too some might be getting consented for the first time while others 
+                    # might be in their 1st or 2nd annual survey. Choose accordingly.
+                    members = HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True)
+                    if members.count() == 1 and members[0].member_status == BHS:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
+                    elif members.count() == 2 and members.filter(member_status=ANNUAL).count() == 1:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
+                    elif members.count() == 3 and members.filter(member_status=ANNUAL).count() == 2:
+                        self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T2')
+                    else:
                         self._appointment = None
                 else:
                     self._appointment = None
