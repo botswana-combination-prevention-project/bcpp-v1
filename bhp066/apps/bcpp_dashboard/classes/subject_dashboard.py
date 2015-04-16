@@ -120,6 +120,12 @@ class SubjectDashboard(BaseSubjectDashboard):
             self._appointment_zero = None
             self._appointment_code = None
             self._appointment_continuation_count = None
+            if not self._appointment:
+                try:
+                    appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
+                    self._appointment = appointments[0]
+                except AppointmentCreateError:
+                    self._appointment = None
         return self._appointment
 
     @property
