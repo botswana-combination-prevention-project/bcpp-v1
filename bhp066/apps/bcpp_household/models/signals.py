@@ -126,7 +126,7 @@ def household_assessment_on_post_save(sender, instance, raw, created, using, **k
             if created:
                 instance.household_structure.failed_enumeration = True
                 update_fields.append('failed_enumeration')
-            instance.household_structure.no_informant = instance.last_seen_home in [
+            instance.household_structure.no_informant = instance.eligibles_last_seen_home in [
                 SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED]
             update_fields.append('no_informant')
             instance.household_structure.save(using=using, update_fields=update_fields)
