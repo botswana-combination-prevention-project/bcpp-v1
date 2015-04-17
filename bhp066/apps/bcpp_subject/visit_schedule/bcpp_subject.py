@@ -174,7 +174,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
 if site_mappers.current_mapper().intervention is False:
     if site_mappers.current_mapper().current_survey_in_settings != BASELINE_SURVEY_SLUG:
         for item in BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries'):
-            if item.model_name in ['pima', 'tbsymptoms']:
+            if item.model_name in ['tbsymptoms']:
                 BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
 
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
