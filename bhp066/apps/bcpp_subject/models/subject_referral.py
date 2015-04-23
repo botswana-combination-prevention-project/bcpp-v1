@@ -355,7 +355,8 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
         try:
             # check if there is a subject locator.
             # Cannot export this referral without the Subject Locator.
-            subject_locator = SubjectLocator.objects.get(subject_visit=self.subject_visit)
+            subject_locator = SubjectLocator.objects.get(
+             subject_visit__appointment__registered_subject=self.subject_visit.appointment.registered_subject)
             # check if referral is complete
             if (self.referral_code and self.referral_appt_date and self.referral_clinic_type):
                 try:
