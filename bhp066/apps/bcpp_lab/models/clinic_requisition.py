@@ -104,3 +104,4 @@ class ClinicRequisition(BaseRequisition):
     class Meta:
         app_label = 'bcpp_lab'
         verbose_name = 'Patient Clinic Requisition'
+        unique_together = ('clinic_visit', 'panel', 'is_drawn')

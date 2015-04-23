@@ -30,7 +30,7 @@ class MmadinarePlotMapper(BasePlotMapper):
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2015, 3, 27),
-            full_enrollment_date=date(2015, 4, 17),
+            full_enrollment_date=date(2015, 4, 24),
             end_date=date(2015, 5, 8),
             smc_start_date=date(2015, 5, 11)),
         'bcpp-year-2': SurveyDatesTuple(
