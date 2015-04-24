@@ -28,7 +28,7 @@ class BaseMemberStatusModel(BaseDispatchSyncUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        default=datetime.today())
+        auto_now=False)
 
     survey = models.ForeignKey(Survey, editable=False)
 
