@@ -370,6 +370,9 @@ class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
                 except SubjectLocator.export_history.export_transaction_model.DoesNotExist:
                     SubjectLocator.export_history.serialize_to_export_transaction(
                         subject_locator, 'I', 'default', force_export=True)
+                except SubjectLocator.export_history.export_transaction_model.MultipleObjectsReturned:
+                    SubjectLocator.export_history.serialize_to_export_transaction(
+                        subject_locator, 'U', 'default', force_export=True)
                 finally:
                     export_subject_referral = True
             else:
