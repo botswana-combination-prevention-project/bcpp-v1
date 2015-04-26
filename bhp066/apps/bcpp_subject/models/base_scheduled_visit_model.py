@@ -27,7 +27,8 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        auto_now=False,
+        #auto_now=False,
+        default=datetime.today(),
         help_text=('If reporting today, use today\'s date/time, otherwise use '
                    'the date/time this information was reported.'))
 
