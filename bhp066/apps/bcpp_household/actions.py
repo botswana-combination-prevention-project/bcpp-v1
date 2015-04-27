@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import get_model
 from django.http import HttpResponseRedirect
 
 from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
@@ -52,9 +53,19 @@ update_increaseplotradius_action.short_description = "Update increase plot radiu
 def process_dispatch(modeladmin, request, queryset, **kwargs):
     selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
     content_type = ContentType.objects.get_for_model(queryset.model)
-    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type.pk, ",".join(selected)))
+    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=not_allocated".format(content_type.pk, ",".join(selected)))
 
 process_dispatch.short_description = "Dispatch plots to netbook."
+
+
+def process_dispatch_notebook_plot_list(modeladmin, request, queryset, **kwargs):
+    selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+    NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
+    content_type2 = ContentType.objects.get_for_model(NotebookPlotList)
+    content_type = ContentType.objects.get_for_model(queryset.model)
+    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(content_type.pk, ",".join(selected), content_type2.pk))
+
+process_dispatch_notebook_plot_list.short_description = "Dispatch plots to netbook plot list model."
 
 
 def export_as_kml(modeladmin, request, queryset, **kwargs):
