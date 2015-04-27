@@ -12,7 +12,7 @@ from .choices import SECTIONS, SUB_SECTIONS, TATI_SIDING_LANDMARKS
 
 class TatiSidingPlotMapper(BasePlotMapper):
 
-    map_area = 'tati_siding'
+    map_area = 'tatisiding'
     map_code = '30'
     regions = SECTIONS
     sections = SUB_SECTIONS
