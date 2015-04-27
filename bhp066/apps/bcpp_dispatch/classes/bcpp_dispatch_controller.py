@@ -111,103 +111,108 @@ class BcppDispatchController(DispatchController):
 #         self.dispatch_registered_subjects()
         if Plot.objects.using(self.get_using_source()).filter(plot_identifier=plot_identifier).exists():
             plot = Plot.objects.using(self.get_using_source()).get(plot_identifier=plot_identifier)
-            if PlotLog.objects.filter(plot=plot).exists():
-                plot_log = PlotLog.objects.using(self.get_using_source()).get(plot=plot)
-                plot_log_entries = PlotLogEntry.objects.using(self.get_using_source()).filter(plot_log=plot_log)
-                self.dispatch_user_items_as_json(plot_log, plot, ['plot_id'])
-                if plot_log_entries:
-                    self.dispatch_user_items_as_json(plot_log_entries, plot, ['plot_log_id, plot_id'])
-            # self.dispatch_user_container_as_json(plot)
-            for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
-                self.dispatch_user_items_as_json(household, plot, ['plot_id'])
-                # for survey in surveys:
-                #    self.dispatch_user_items_as_json(survey, plot)
-                for survey in surveys:
-                    household_structure = HouseholdStructure.objects.filter(household=household, survey_id=survey.id)
-                    if household_structure:
-                        self.dispatch_user_items_as_json(household_structure, plot, ['plot_id', 'household_id', 'survey_id'])
-                        if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
-                            household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
-                            household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
-                            work_list = HouseholdWorkList.objects.filter(household_structure__in=household_structure)
-                            representative_eligibility = RepresentativeEligibility.objects.filter(household_structure__in=household_structure)
-                            household_refusal = HouseholdRefusal.objects.filter(household_structure__in=household_structure)
-                            self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
-                            if household_log_entries:
-                                self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
-                            if work_list:
-                                self.dispatch_user_items_as_json(work_list, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
-                            if representative_eligibility:
-                                self.dispatch_user_items_as_json(representative_eligibility, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
-                            if household_refusal:
-                                self.dispatch_user_items_as_json(household_refusal, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
-                        household_members = HouseholdMember.objects.using(self.get_using_source()).filter(household_structure=household_structure)
-                        if household_members:
-                            missing_rs = [hsm for hsm in household_members if not hsm.registered_subject]
-                            if missing_rs:
-                                raise DispatchError('HouseholdMember field registered_subject cannot be None. Got {0}.'.format(missing_rs))
-                            registered_subjects = RegisteredSubject.objects.filter(pk__in=[hsm.registered_subject.pk for hsm in household_members])
-                            self._dispatch_as_json(
-                                registered_subjects,
-                                plot,
-                                additional_base_model_class=RegisteredSubject,
-                                )
-                            self.dispatch_user_items_as_json(
-                                household_members,
-                                plot,
-                                ['household_structure_id'],
-                                )
-                            for household_member in household_members:
-                                # dispatch consents
-                                # self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
-                                # dispatch membership forms + consent
-                                self.dispatch_membership_forms(
-                                    household_member.registered_subject,
+            is_notebook_plot = True if kwargs.get('plot_list_status', None) == 'allocated' else False
+            if is_notebook_plot:
+                notebook_plot_list = kwargs.get('notebook_plot_list', None)
+                self.dispatch_notebook_plot_list(notebook_plot_list, plot)
+            else:
+                if PlotLog.objects.filter(plot=plot).exists():
+                    plot_log = PlotLog.objects.using(self.get_using_source()).get(plot=plot)
+                    plot_log_entries = PlotLogEntry.objects.using(self.get_using_source()).filter(plot_log=plot_log)
+                    self.dispatch_user_items_as_json(plot_log, plot, ['plot_id'])
+                    if plot_log_entries:
+                        self.dispatch_user_items_as_json(plot_log_entries, plot, ['plot_log_id, plot_id'])
+                # self.dispatch_user_container_as_json(plot)
+                for household in Household.objects.using(self.get_using_source()).filter(plot=plot):
+                    self.dispatch_user_items_as_json(household, plot, ['plot_id'])
+                    # for survey in surveys:
+                    #    self.dispatch_user_items_as_json(survey, plot)
+                    for survey in surveys:
+                        household_structure = HouseholdStructure.objects.filter(household=household, survey_id=survey.id)
+                        if household_structure:
+                            self.dispatch_user_items_as_json(household_structure, plot, ['plot_id', 'household_id', 'survey_id'])
+                            if HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure).exists():
+                                household_logs = HouseholdLog.objects.using(self.get_using_source()).filter(household_structure=household_structure)
+                                household_log_entries = HouseholdLogEntry.objects.using(self.get_using_source()).filter(household_log__in=household_logs)
+                                work_list = HouseholdWorkList.objects.filter(household_structure__in=household_structure)
+                                representative_eligibility = RepresentativeEligibility.objects.filter(household_structure__in=household_structure)
+                                household_refusal = HouseholdRefusal.objects.filter(household_structure__in=household_structure)
+                                self.dispatch_user_items_as_json(household_logs, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
+                                if household_log_entries:
+                                    self.dispatch_user_items_as_json(household_log_entries, plot, ['household_log_id'])
+                                if work_list:
+                                    self.dispatch_user_items_as_json(work_list, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
+                                if representative_eligibility:
+                                    self.dispatch_user_items_as_json(representative_eligibility, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
+                                if household_refusal:
+                                    self.dispatch_user_items_as_json(household_refusal, plot, ['survey_id', 'household_id', 'household_structure_id', 'plot_id'])
+                            household_members = HouseholdMember.objects.using(self.get_using_source()).filter(household_structure=household_structure)
+                            if household_members:
+                                missing_rs = [hsm for hsm in household_members if not hsm.registered_subject]
+                                if missing_rs:
+                                    raise DispatchError('HouseholdMember field registered_subject cannot be None. Got {0}.'.format(missing_rs))
+                                registered_subjects = RegisteredSubject.objects.filter(pk__in=[hsm.registered_subject.pk for hsm in household_members])
+                                self._dispatch_as_json(
+                                    registered_subjects,
                                     plot,
-                                    fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'],
+                                    additional_base_model_class=RegisteredSubject,
                                     )
-                                # dispatch scheduled instances. This will dispatch appointments first
-                                visit_app = None
-                                visit_model = None
-                                if self.get_visit_model_data(household_member):
-                                    visit_app, visit_model = self.get_visit_model_data(household_member)
-                                appointmnet_instance = self.get_visit_instance(survey)
-                                self.dispatch_scheduled_instances(
-                                    'bcpp_subject',
-                                    appointmnet_instance,
-                                    household_member.registered_subject,
+                                self.dispatch_user_items_as_json(
+                                    household_members,
                                     plot,
-                                    visit_app,
-                                    visit_model,
-                                    survey.datetime_start,
-                                    survey.datetime_end,
-                                    fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
-                                    options={},
+                                    ['household_structure_id'],
                                     )
-                                self.dispatch_requisitions('bcpp_lab', household_member.registered_subject, plot)
-                                self.dispatch_member_status_instances(
-                                    'bcpp_household_member',
-                                    household_member.registered_subject,
-                                    plot,
-                                    options={},
-                                    )
-                                self.dispatch_lab_tracker_history(
-                                    household_member.registered_subject,
-                                    group_name='HIV',
-                                    )
-                                # self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
-                                self.dispatch_membership_form_inlines(
-                                    'bcpp_household_member',
-                                    household_member.registered_subject,
-                                    plot,
-                                    ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
-                                    )
-                            call_list = CallList.objects.filter(household_member__in=household_members)
-                            if call_list:
-                                self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
-                            call_log = CallLog.objects.filter(household_member__in=household_members)
-                            if call_log:
-                                self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
+                                for household_member in household_members:
+                                    # dispatch consents
+                                    # self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
+                                    # dispatch membership forms + consent
+                                    self.dispatch_membership_forms(
+                                        household_member.registered_subject,
+                                        plot,
+                                        fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'],
+                                        )
+                                    # dispatch scheduled instances. This will dispatch appointments first
+                                    visit_app = None
+                                    visit_model = None
+                                    if self.get_visit_model_data(household_member):
+                                        visit_app, visit_model = self.get_visit_model_data(household_member)
+                                    appointmnet_instance = self.get_visit_instance(survey)
+                                    self.dispatch_scheduled_instances(
+                                        'bcpp_subject',
+                                        appointmnet_instance,
+                                        household_member.registered_subject,
+                                        plot,
+                                        visit_app,
+                                        visit_model,
+                                        survey.datetime_start,
+                                        survey.datetime_end,
+                                        fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
+                                        options={},
+                                        )
+                                    self.dispatch_requisitions('bcpp_lab', household_member.registered_subject, plot)
+                                    self.dispatch_member_status_instances(
+                                        'bcpp_household_member',
+                                        household_member.registered_subject,
+                                        plot,
+                                        options={},
+                                        )
+                                    self.dispatch_lab_tracker_history(
+                                        household_member.registered_subject,
+                                        group_name='HIV',
+                                        )
+                                    # self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
+                                    self.dispatch_membership_form_inlines(
+                                        'bcpp_household_member',
+                                        household_member.registered_subject,
+                                        plot,
+                                        ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
+                                        )
+                                call_list = CallList.objects.filter(household_member__in=household_members)
+                                if call_list:
+                                    self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
+                                call_log = CallLog.objects.filter(household_member__in=household_members)
+                                if call_log:
+                                    self.dispatch_user_items_as_json(call_log, plot, ['household_structure_id', 'household_member_id'])
 
     def dispatch_member_status_instances(self, app_label, registered_subject, user_container, **kwargs):
         """Dispatches all member status for this subject, e.g SubjectAbsentee, SubjectUndecided, ...."""
@@ -265,3 +270,10 @@ class BcppDispatchController(DispatchController):
             return 1
         if survey.survey_name == 'BCPP Year 3':
             return 2
+
+    def dispatch_notebook_plot_list(self, notebook_plot_list, plot):
+        NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
+        NotebookPlotList.objects.create(plot_identifier=plot.plot_identifier)
+        notebook_plot_list = NotebookPlotList.objects.get(plot_identifier=plot.plot_identifier)
+        self.dispatch_user_items_as_json(notebook_plot_list, plot)  # ['notebook_plot_list_id', 'plot_id']
+        return True
