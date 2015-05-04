@@ -419,3 +419,39 @@ class ReplacementHelper(object):
             except HouseholdLogEntry.DoesNotExist:
                 pass
         return eligible_representative_absent
+
+
+    @property
+    def isreplaceable_household(self):
+        """Returns True if a household meets the criteria to be replaced by a plot."""
+        replaceable = False
+        try:
+            if self.plot.status == RESIDENTIAL_HABITABLE:
+                if self.household_structure.refused_enumeration:
+                    replaceable = True
+                    # self.replacement_reason = 'household refused_enumeration'
+                elif self.all_eligible_members_refused:
+                    replaceable = True
+                    # self.replacement_reason = 'household all_eligible_members_refused'
+                elif self.eligible_representative_absent:
+                    replaceable = True
+                    # self.replacement_reason = 'household eligible_representative_absent'
+                elif self.all_eligible_members_absent:
+                    replaceable = True
+                    self.replacement_reason = 'household all_eligible_members_absent'
+                elif (self.household_structure.failed_enumeration and
+                      self.household_structure.no_informant):
+                    replaceable = True
+        except AttributeError as attribute_error:
+            if 'has no attribute \'household\'' in str(attribute_error):
+                pass
+        return replaceable
+
+    @property
+    def isreplaceable_plot(self):
+        """Returns True if the plot, from the 5% pool, meets the criteria to be replaced by another plot."""
+        replaceable = False
+        if int(self.plot.selected) == FIVE_PERCENT:
+            if self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE] and self.plot.replaces:
+                replaceable = True
+        return replaceable

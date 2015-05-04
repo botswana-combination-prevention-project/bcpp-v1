@@ -42,7 +42,7 @@ class BasePlotMapper(Mapper):
     other_identifier_field_attr = 'cso_number'
     other_identifier_field_label = 'cso'
 
-    item_target_field = 'target'
+    item_target_field = 'bhs'
     item_selected_field = 'selected'
 
     gps_degrees_s_field_attr = 'gps_degrees_s'
