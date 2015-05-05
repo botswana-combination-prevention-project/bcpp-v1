@@ -59,6 +59,9 @@ process_dispatch.short_description = "Dispatch plots to netbook."
 
 
 def process_dispatch_notebook_plot_list(modeladmin, request, queryset, **kwargs):
+    """This action will use GET method to display a list of plots to be dispatched to notebook_plot_list,
+       using dispatch.html template.
+    """
     selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
     NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
     content_type2 = ContentType.objects.get_for_model(NotebookPlotList)
