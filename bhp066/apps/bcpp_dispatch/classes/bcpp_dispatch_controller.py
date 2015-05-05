@@ -5,6 +5,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model, get_models, get_app, ForeignKey
 from edc.base.model.models import BaseListModel
+from django.db import transaction
 from edc.device.dispatch.classes import DispatchController
 from edc.device.dispatch.exceptions import DispatchError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -273,7 +274,13 @@ class BcppDispatchController(DispatchController):
 
     def dispatch_notebook_plot_list(self, notebook_plot_list, plot):
         NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
-        NotebookPlotList.objects.create(plot_identifier=plot.plot_identifier)
-        notebook_plot_list = NotebookPlotList.objects.get(plot_identifier=plot.plot_identifier)
-        self.dispatch_user_items_as_json(notebook_plot_list, plot)  # ['notebook_plot_list_id', 'plot_id']
+        with transaction.atomic():
+            NotebookPlotList.objects.create(plot_identifier=plot.plot_identifier)
+            notebook_plot_list = NotebookPlotList.objects.get(plot_identifier=plot.plot_identifier)
+            self.dispatch_user_items_as_json(notebook_plot_list, plot)  # ['notebook_plot_list_id', 'plot_id']
+            # update replaces on producer
+            plot.replaces = plot.replaces
+            plot.save(update_fields=['replaces'], using=plot.dispatched_to)
+            # delete the notebook list from the server
+            NotebookPlotList.objects.all().delete()
         return True
