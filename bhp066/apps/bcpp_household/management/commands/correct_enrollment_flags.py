@@ -103,7 +103,7 @@ class Command(BaseCommand):
         count = 0
         settings.VERIFY_GPS = False
         for pt in not_enrolled_plot:
-            pt.enrolled = True
+            pt.bhs = True
             pt.save()
             count += 1
             print "{}/{} {}".format(count, len(not_enrolled_plot), pt)
