@@ -1,6 +1,7 @@
 import itertools
 
 from django.contrib import messages
+from django.db.models import get_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.db import OperationalError
@@ -15,12 +16,13 @@ from edc.device.sync.utils import getproducerbyaddr
 
 from ..exceptions import ReplacementError
 from ..helpers import ReplacementHelper
-from ..models import Plot
+from ..models import Plot, NotebookPlotList
 
 
 @login_required
 def replace_household_plot(request):
     template = 'replace_household_plot.html'
+    NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
     if not Plot.objects.filter(selected=2, replaces=None).exists():
         messages.add_message(request, messages.INFO, 'There are no plots available for replacement.')
     else:
@@ -44,7 +46,11 @@ def replace_household_plot(request):
                 pks = Plot.objects.filter(plot_identifier__in=plot_identifiers).values_list('pk')
                 selected = list(itertools.chain(*pks))
                 content_type_pk = ContentType.objects.get_for_model(Plot).pk
-            return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}".format(content_type_pk, ",".join(selected)))
+                content_type2 = ContentType.objects.get_for_model(NotebookPlotList)
+                if not NotebookPlotList.objects.using(producer_name).all():
+                    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&notebook_plot_list=not_allocated&items={1}".format(content_type_pk, ",".join(selected)))
+                else:
+                    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(content_type_pk, ",".join(selected), content_type2.pk))
         except Producer.DoesNotExist:
             messages.add_message(request, messages.ERROR, (
                 '\'{}\' not a valid producer. See model Producer.').format(producer_name))
