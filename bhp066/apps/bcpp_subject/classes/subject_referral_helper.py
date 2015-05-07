@@ -384,9 +384,12 @@ class SubjectReferralHelper(object):
 
     @property
     def enrollment_checklist_instance(self):
+        # Can have multiple enrollment checklists for one each household_member__internal_identifier,
+        # but only one of them will be associated with a consented member. Thats the 1 we want to pull here.
         if not self._enrollment_checklist_instance:
             self._enrollment_checklist_instance = EnrollmentChecklist.objects.get(
-                household_member__internal_identifier=self.subject_visit.household_member.internal_identifier)
+                household_member__internal_identifier=self.subject_visit.household_member.internal_identifier,
+                household_member__is_consented=True)
         return self._enrollment_checklist_instance
 
     @property
