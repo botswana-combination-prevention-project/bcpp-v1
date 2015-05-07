@@ -279,8 +279,8 @@ class BcppDispatchController(DispatchController):
             notebook_plot_list = NotebookPlotList.objects.get(plot_identifier=plot.plot_identifier)
             self.dispatch_user_items_as_json(notebook_plot_list, plot)  # ['notebook_plot_list_id', 'plot_id']
             # update replaces on producer
-            plot.replaces = plot.replaces
-            plot.save(update_fields=['replaces'], using=plot.dispatched_to)
+            if plot.replaces and not plot.replaced_by:
+                plot.save(update_fields=['replaces'], using=plot.dispatched_to)
             # delete the notebook list from the server
             NotebookPlotList.objects.all().delete()
         return True
