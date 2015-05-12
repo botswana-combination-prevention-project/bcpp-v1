@@ -26,25 +26,28 @@
 {% if not has_household_log_entry or survey.survey_slug != current_survey %}
   {% for household_member in household_members %}
     <tr {% if household_member.first_name == first_name %}style="background:lightyellow;"{% else %}class="{% cycle 'row1' 'row2' %}"{% endif %}>
-    <td>{{ forloop.counter }}.&nbsp;{{ household_member.first_name|encrypted }}</td>
-    <td>{{ household_member.initials }}</td>
-    <td>{{ household_member.get_gender_display }}</td>
-    <td>{{ household_member.age_in_years }}</td>
-    {% if not household_structure.survey.survey_abbrev == 'Y1' %}
-        <td>{{ household_member.survival_status }}</td>
-    {% endif %}
-    <td>{{ household_member.get_relation_display }}</td>
-    <td>{{ household_member.get_study_resident_display }}</td>
-    <td>{{ household_member.visit_attempts }}</td>
-    <td>{{ household_member.member_status }}</td>
-    <td> {%if household_member.bypass_household_log %}
-         	{% comment %} show link to dashboard/consent {% endcomment %} 
-         	Subject Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.consent %}/consented-{{ household_member.consent.survey.survey_abbrev }}{{ household_member.get_hiv_history }}{%endif%}</a>
-         	
-         {%else%}
-    	 &nbsp; 
-    	 {%endif%}
-    	 </td>
+	    <td>{{ forloop.counter }}.&nbsp;{{ household_member.first_name|encrypted }}</td>
+	    <td>{{ household_member.initials }}</td>
+	    <td>{{ household_member.get_gender_display }}</td>
+	    <td>{{ household_member.age_in_years }}</td>
+	    {% if not household_structure.survey.survey_abbrev == 'Y1' %}
+	        <td>{{ household_member.survival_status }}</td>
+	    {% endif %}
+	    <td>{{ household_member.get_relation_display }}</td>
+	    <td>{{ household_member.get_study_resident_display }}</td>
+	    <td>{{ household_member.visit_attempts }}</td>
+	    <td>{{ household_member.member_status }}</td>
+	    <td> {% if household_member.bypass_household_log %}
+	         	{% comment %} show link to dashboard/consent {% endcomment %}
+	         	{% if household_member.is_consented %}
+	         		Subject Dashboard <A name="consented-{{household_member.pk}}" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.consent %}/consented-{{ household_member.consent.survey.survey_abbrev }}{{ household_member.get_hiv_history }}{%endif%}</a>
+	         	{% else %}
+	         		Subject Dashboard <A name="consented-{{household_member.pk}}" onclick="return false" href="{% url subject_dashboard_url dashboard_type='subject' dashboard_model='household_member' dashboard_id=household_member.pk show='appointments' %}">{{ household_member.registered_subject|subject_identifier|default:'participant dashboard' }}{% if household_member.consent %}/consented-{{ household_member.consent.survey.survey_abbrev }}{{ household_member.get_hiv_history }}{%endif%}</a>
+	         	{% endif %}
+	         {% else %}
+	    	 &nbsp; 
+	    	 {% endif %}
+	    	 </td>
     </tr>
   {% endfor %}
 {% else %}
