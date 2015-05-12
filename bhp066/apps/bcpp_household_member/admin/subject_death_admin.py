@@ -13,6 +13,7 @@ class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
 
     fields = (
         'household_member',
+        'report_datetime',
         'death_date',
         'site_aware_date',
         'death_cause_info',
