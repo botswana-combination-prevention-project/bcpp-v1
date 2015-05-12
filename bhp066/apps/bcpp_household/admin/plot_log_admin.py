@@ -12,7 +12,7 @@ class PlotLogEntryAdmin(BaseModelAdmin):
     fields = ('plot_log', 'report_datetime', 'log_status', 'reason', 'reason_other', 'comment')
     list_per_page = 15
     list_display = ('plot_log', 'log_status', 'report_datetime')
-    list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community')
+    list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community', 'log_status')
     search_fields = ('log_status', 'plot_log__plot__community', 'plot_log__plot__plot_identifier')
     radio_fields = {
     'reason': admin.VERTICAL,

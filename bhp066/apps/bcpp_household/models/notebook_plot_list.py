@@ -19,7 +19,7 @@ class NotebookPlotList(BaseDispatchSyncUuidModel):
         return (self.plot_identifier, )
 
     def is_serialized(self):
-        return True
+        return False
 
     def dispatch_container_lookup(self, using=None):
         return (self.__class__, 'plot_identifier')
