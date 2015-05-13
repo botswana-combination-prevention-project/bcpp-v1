@@ -103,33 +103,6 @@ class SubjectDashboard(BaseSubjectDashboard):
             elif self.dashboard_model_name == 'visit':
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
-#                 if settings.CURRENT_SURVEY == 'bcpp-year-1':
-#                     # In this case its straight forward that the appointment you want is the T0 appointment.
-#                     try:
-#                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
-#                     except Appointment.DoesNotExist:
-#                         self._appointment = None
-#                 elif settings.CURRENT_SURVEY == 'bcpp-year-2':
-#                     # In this case you could have those doing an annual survey and those being consented for the first time. Choose accordingly.
-#                     members = HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True)
-#                     if members.count() == 1 and members.filter(member_status=BHS).count() == 1:
-#                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
-#                     elif members.count() == 2 and members.filter(member_status=ANNUAL).count() == 1:
-#                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
-#                     else:
-#                         self._appointment = None
-#                 elif settings.CURRENT_SURVEY == 'bcpp-year-3':
-#                     # In this case too some might be getting consented for the first time while others 
-#                     # might be in their 1st or 2nd annual survey. Choose accordingly.
-#                     members = HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True)
-#                     if members.count() == 1 and members.filter(member_status=BHS).count() == 1:
-#                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T0')
-#                     elif members.count() == 2 and members.filter(member_status=ANNUAL).count() == 1:
-#                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T1')
-#                     elif members.count() == 3 and members.filter(member_status=ANNUAL).count() == 2:
-#                         self._appointment = Appointment.objects.get(registered_subject=self.registered_subject, visit_definition__code='T2')
-#                     else:
-#                         self._appointment = None
                 survey_year = int(settings.CURRENT_SURVEY.split('-')[2])
                 if (HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == survey_year):
                     # In this case you know for certain that the survey year in household member dashboard represents exactly the
