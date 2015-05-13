@@ -130,6 +130,27 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = self.referral_smc2()
         self.assertNotIn('SMC', subject_referral.referral_code)
 
+    def tests_circumsised_y2_not_smc(self):
+        """if NEG and male and not circumcised in Y1, then refer for SMC in Y1. 
+            Then if male circumsised in Y2 then do not refer for SMC in Y2."""
+        self.startup()
+        report_datetime = self.subject_visit_male.report_datetime
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+        CircumcisionFactory(subject_visit=self.subject_visit_male, circumcised='No')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertIn('SMC', subject_referral.referral_code)
+
+        report_datetime = self.subject_visit_male_annual.report_datetime
+        CircumcisionFactory(subject_visit=self.subject_visit_male_annual, circumcised='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male_annual,
+            report_datetime=report_datetime)
+        self.assertNotIn('SMC', subject_referral.referral_code)
+
     def tests_referred_smc3(self):
         """if new POS and male and circumcised, do not refer for SMC"""
         self.startup()
