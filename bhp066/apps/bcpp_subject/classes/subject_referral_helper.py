@@ -287,16 +287,16 @@ class SubjectReferralHelper(object):
                 circumcised = None
                 if self.previous_subject_referrals:
                     # save current visit
-                    current_subject_referral = copy(self.subject_referral)
+#                     current_subject_referral = copy(self.subject_referral)
                     previous_subject_referrals = copy(self.previous_subject_referrals)
                     for subject_referral in previous_subject_referrals:
                         # check for CIRCUMCISED result from previous data
-                        self.subject_referral = subject_referral
-                        circumcised = self.circumcised
-                        if circumcised is not None:
+#                         self.subject_referral = subject_referral
+                        circumcised = subject_referral.circumcised
+                        if circumcised:
                             break
-                    self.subject_referral = current_subject_referral
-                if circumcised is None:
+#                     self.subject_referral = current_subject_referral
+                if not circumcised:
                     try:
                         circumcision_instance = self.models[self.timepoint_key].get(
                             'circumcision').objects.get(subject_visit=self.subject_visit)
