@@ -5,6 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.subject.entry.models import LabEntry, Entry
+from edc.constants import NO
 from edc.map.classes import site_mappers
 
 from apps.bcpp_clinic.models import ClinicVisit
@@ -100,6 +101,28 @@ class ClinicRequisition(BaseRequisition):
                 scheduled_meta_data.entry_status = 'NEW'
                 scheduled_meta_data.save()
                 return scheduled_meta_data
+
+    def requisition_not_drawn(self):
+            requisition = LabEntry.objects.get(requisition_panel__name='Clinic Viral Load', app_label='bcpp_lab', model_name='clinicrequisition')
+            requisition_meta = RequisitionMetaData.objects.filter(appointment=self.clinic_visit.appointment,
+                                                   lab_entry=requisition,
+                                                   registered_subject=self.clinic_visit.appointment.registered_subject)
+            if requisition_meta:
+                requisition_meta = RequisitionMetaData.objects.get(appointment=self.clinic_visit.appointment,
+                                                       lab_entry=requisition,
+                                                       registered_subject=self.clinic_visit.appointment.registered_subject)
+                if requisition_meta.entry_status == 'KEYED':
+                    if self.is_drawn == NO:
+                        get_scheduled_form = 'clinicvlresult'
+                        scheduled_entry = Entry.objects.filter(model_name=get_scheduled_form,
+                                                               visit_definition_id=self.clinic_visit.appointment.visit_definition_id)
+                        scheduled_meta = ScheduledEntryMetaData.objects.filter(appointment=self.clinic_visit.appointment,
+                                                                               entry=scheduled_entry,
+                                                                               registered_subject=self.clinic_visit.appointment.registered_subject)
+                        for metadata in scheduled_meta:
+                            if metadata.entry_status == 'NEW':
+                                metadata.entry_status = 'NOT_REQUIRED'
+                                metadata.save()
 
     class Meta:
         app_label = 'bcpp_lab'
