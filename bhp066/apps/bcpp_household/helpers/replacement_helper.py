@@ -171,7 +171,7 @@ class ReplacementHelper(object):
         Also, a plot, that is added as a replacement, itself can be replaced if not yet enrolled
         and residential habitable."""
         replaceable = False
-        if not self.plot.replaced_by and not self.plot.bhs and int(self.plot.selected) == FIVE_PERCENT:
+        if not self.plot.replaced_by and not self.plot.bhs and self.plot.selected == FIVE_PERCENT:
             if self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE] and self.plot.replaces:
                 replaceable = True
         return replaceable
