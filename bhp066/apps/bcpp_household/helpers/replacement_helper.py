@@ -451,7 +451,7 @@ class ReplacementHelper(object):
     def isreplaceable_plot(self):
         """Returns True if the plot, from the 5% pool, meets the criteria to be replaced by another plot."""
         replaceable = False
-        if int(self.plot.selected) == FIVE_PERCENT:
+        if self.plot.selected == FIVE_PERCENT:
             if self.plot.status in [NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE] and self.plot.replaces:
                 replaceable = True
         return replaceable
