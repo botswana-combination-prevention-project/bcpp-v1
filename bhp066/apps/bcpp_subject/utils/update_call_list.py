@@ -2,6 +2,7 @@ from django.db.models import get_model
 
 from config.celery import app
 
+from edc.map.exceptions import MapperError
 from edc.constants import NEW
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_household.models import HouseholdStructure
@@ -10,7 +11,7 @@ from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 
 
 @app.task
-def update_call_list(survey_slug, label, verbose=False):
+def update_call_list(community, survey_slug, label, verbose=False):
     """Adds information from SubjectConsent instances from the specified survey to the
     CallList model for the current survey.
 
@@ -25,10 +26,13 @@ def update_call_list(survey_slug, label, verbose=False):
     HicEnrollment = get_model('bcpp_subject', 'HicEnrollment')
     SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
     SubjectLocator = get_model('bcpp_subject', 'SubjectLocator')
-    consent_options = dict(household_member__household_structure__survey__survey_slug=survey_slug)
+    consent_options = dict(household_member__household_structure__survey__survey_slug=survey_slug,
+                           community=community)
     options = {}
     n = 0
-    total = SubjectConsent.objects.all().count()
+    #total = SubjectConsent.objects.all().count()
+    total = SubjectConsent.objects.filter(**consent_options).count()
+    print 'Pulled {} consents for village {}.'.format(total, community.upper())
     for subject_consent in SubjectConsent.objects.filter(**consent_options).order_by('subject_identifier'):
         n += 1
         try:
@@ -98,6 +102,8 @@ def update_call_list(survey_slug, label, verbose=False):
             call_list.hostname_created = subject_consent.hostname_created
             call_list.user_created = subject_consent.user_created
             call_list.save()
+        except MapperError as e:
+            print e
         except SubjectLocator.DoesNotExist:
             print('Not adding {} to call list. No contact information or may not '
                   'follow (SubjectLocator)'.format(subject_consent))
