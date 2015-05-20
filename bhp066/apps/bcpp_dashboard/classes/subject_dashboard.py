@@ -104,7 +104,9 @@ class SubjectDashboard(BaseSubjectDashboard):
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
                 survey_year = int(settings.CURRENT_SURVEY.split('-')[2])
-                if (HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == survey_year):
+                if ((HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == survey_year)
+                    or (HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == 1 
+                        and self.household_member.household_structure.survey.survey_slug == 'bcpp-year-1')):
                     # In this case you know for certain that the survey year in household member dashboard represents exactly the
                     # the settings.CURRENT_SURVEY in the system. Therefore just return the visit corresponding to 
                     # household member's set survey.
