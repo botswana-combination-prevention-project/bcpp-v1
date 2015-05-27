@@ -194,7 +194,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         """Compares shared values on household_member form and returns True if all match."""
         error_msg = None
         exception_cls = exception_cls or ValidationError
-        age_in_years = relativedelta(household_member.created.date() or date.today(), enrollment_checklist.dob).years
+        age_in_years = relativedelta(date.today(), enrollment_checklist.dob).years
         if age_in_years != household_member.age_in_years:
             error_msg = ('Enrollment Checklist Age does not match Household Member age. '
                          'Got {0} <> {1}').format(age_in_years, household_member.age_in_years)

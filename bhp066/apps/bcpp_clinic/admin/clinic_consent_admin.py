@@ -20,5 +20,8 @@ class ClinicConsentAdmin(BaseConsentModelAdmin):
         self.search_fields.append('htc_identifier')
         self.search_fields.append('lab_identifier')
         self.search_fields.append('pims_identifier')
+        self.list_display.insert(1, 'htc_identifier')
+        self.list_display.insert(2, 'lab_identifier')
+        self.list_display.insert(3, 'pims_identifier')
 
 admin.site.register(ClinicConsent, ClinicConsentAdmin)

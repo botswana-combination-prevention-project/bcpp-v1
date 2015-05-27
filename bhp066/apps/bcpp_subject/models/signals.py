@@ -73,14 +73,14 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
                 if instance.household_member.household_structure.enrolled:
                     household_members = instance.household_member.__class__.objects.filter(
                         household_structure__household__plot=instance.household_member.household_structure.household.plot,
-                        household_structure__survey=instance.household_member.household_structure.survey
-                        ).exclude(is_consented=True, household_structure__household__replaced_by__isnull=False)  # This includes instance.household_member
+                        household_structure__survey=instance.household_member.household_structure.survey,
+                        household_structure__household__replaced_by__isnull=False
+                        ).exclude(is_consented=True)  # This includes instance.household_member
                     for household_member in household_members:
                         try:
                             household_member.save(update_fields=['member_status'])
                         except MemberStatusError:
                             pass
-
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
 def update_subject_referral_on_post_save(sender, instance, raw, created, using, **kwargs):
