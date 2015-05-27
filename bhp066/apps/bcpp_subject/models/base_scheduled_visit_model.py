@@ -27,8 +27,8 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        #auto_now=False,
-        default=datetime.today(),
+#         auto_now=False,
+        default=datetime.now,  # By passing datetime.now without the parentheses, you are passing the actual function, which will be called each time a record is added ref: http://stackoverflow.com/questions/2771676/django-default-datetime-now-problem
         help_text=('If reporting today, use today\'s date/time, otherwise use '
                    'the date/time this information was reported.'))
 
