@@ -21,8 +21,8 @@ class NkangePlotMapper(BasePlotMapper):
 
     intervention = True
 
-    gps_center_lat = -21.274018
-    gps_center_lon = 27.474822
+    gps_center_lat = -20.29269441
+    gps_center_lon = 27.13549895
     radius = 6.5
     location_boundary = ()
 
