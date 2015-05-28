@@ -21,8 +21,8 @@ class SebinaPlotMapper(BasePlotMapper):
 
     intervention = False
 
-    gps_center_lat = -21.274018
-    gps_center_lon = 27.474822
+    gps_center_lat = -20.806103
+    gps_center_lon = 27.200003
     radius = 6.5
     location_boundary = ()
 
