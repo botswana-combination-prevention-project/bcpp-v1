@@ -2,7 +2,7 @@ import collections
 import datetime
 
 from apps.bcpp_clinic.models import (ClinicConsent, ClinicEligibility, ClinicRefusal, ClinicEnrollmentLoss,
-                                     Questionnaire)
+                                     Questionnaire, ClinicVlResult)
 from apps.bcpp_lab.models import SubjectRequisition
 
 from .base_operational_report import BaseOperationalReport
@@ -42,38 +42,44 @@ class OperationalRbd(BaseOperationalReport):
                                                               created__gte=self.date_from,
                                                               created__lte=self.date_to,
                                                               user_created__icontains=self.ra_username)
-        self.data_dict['6. Enrollment loss'] = enrollment_loss.count()
+        self.data_dict['7. Enrollment loss'] = enrollment_loss.count()
         enrolled_initiation = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                        created__gte=self.date_from,
                                                        created__lte=self.date_to,
                                                        user_created__icontains=self.ra_username,
                                                        registration_type='initiation')
-        self.data_dict['6. Enrolled by initiation visit'] = enrolled_initiation.count()
+        self.data_dict['8. Enrolled by initiation visit'] = enrolled_initiation.count()
         enrolled_ccc = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                        created__gte=self.date_from,
                                                        created__lte=self.date_to,
                                                        user_created__icontains=self.ra_username,
                                                        registration_type='ccc_scheduled')
-        self.data_dict['6. Enrolled by ccc'] = enrolled_ccc.count()
+        self.data_dict['9. Enrolled by ccc'] = enrolled_ccc.count()
         enrolled_scheduled = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                        created__gte=self.date_from,
                                                        created__lte=self.date_to,
                                                        user_created__icontains=self.ra_username,
                                                        registration_type='masa_vl_scheduled')
-        self.data_dict['6. Enrolled by scheduled viral load visit'] = enrolled_scheduled.count()
+        self.data_dict['91. Enrolled by scheduled viral load visit'] = enrolled_scheduled.count()
         enrolled_non_viral_load = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                                created__gte=self.date_from,
                                                                created__lte=self.date_to,
                                                                user_created__icontains=self.ra_username,
                                                                registration_type='OTHER')
-        self.data_dict['6. Enrolled by non viral load visit'] = enrolled_non_viral_load.count()
+        self.data_dict['92. Enrolled by non viral load visit'] = enrolled_non_viral_load.count()
         viral_load_requisitions = SubjectRequisition.objects.filter(community__icontains=self.community,
-                                                      modified__gte=self.date_from, modified__lte=self.date_to,
-                                                      user_modified__icontains=self.ra_username,
-                                                      panel__name='Viral Load')
-        self.data_dict['6. Viral load requisitions'] = viral_load_requisitions.count()
-        self.data_dict['6. Viral load results received'] = 'N/A'
-        self.data_dict['6. Viral load results pending'] = 'N/A'
+                                                                    modified__gte=self.date_from, modified__lte=self.date_to,
+                                                                    user_modified__icontains=self.ra_username,
+                                                                    panel__name='Viral Load',
+                                                                    is_drawn='Yes')
+        self.data_dict['93. Viral load requisitions'] = viral_load_requisitions.count()
+        viral_loads_received = ClinicVlResult.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+                                                             clinic_visit__household_member__member_status='CLINIC_RBD',
+                                                             created__gte=self.date_from,
+                                                             created__lte=self.date_to,
+                                                             user_created__icontains=self.ra_username,)
+        self.data_dict['94. Viral load results received'] = viral_loads_received.count()
+        self.data_dict['95. Viral load results pending'] = viral_load_requisitions.count() - viral_loads_received.count()
 
         values = collections.OrderedDict(sorted(self.data_dict.items()))
         return values

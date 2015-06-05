@@ -7,31 +7,31 @@ from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, SEBINA_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, MMANDUNYANE_LANDMARKS
 
 
-class SebinaPlotMapper(BasePlotMapper):
+class MmandunyanePlotMapper(BasePlotMapper):
 
-    map_area = 'sebina'
-    map_code = '28'
+    map_area = 'mmandunyane'
+    map_code = '32'
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = SEBINA_LANDMARKS
+    landmarks = MMANDUNYANE_LANDMARKS
 
     intervention = False
 
-    gps_center_lat = -20.806103
-    gps_center_lon = 27.200003
+    gps_center_lat = -20.993214
+    gps_center_lon = 27.333963
     radius = 6.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 6, 1),
-            full_enrollment_date=date(2015, 6, 15),
-            end_date=date(2015, 7, 6),
+            start_date=date(2015, 5, 1),
+            full_enrollment_date=date(2015, 5, 31),
+            end_date=date(2015, 6, 21),
             smc_start_date=date(2015, 8, 10)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
@@ -39,11 +39,17 @@ class SebinaPlotMapper(BasePlotMapper):
             full_enrollment_date=date(2015, 12, 17),
             end_date=date(2015, 12, 22),
             smc_start_date=date(2015, 12, 22)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=None,
+            full_enrollment_date=None,
+            end_date=None,
+            smc_start_date=None),
     }
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((WE, ), None),
+            'IDCC': ClinicDaysTuple((MO, WE, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
@@ -54,4 +60,4 @@ class SebinaPlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(SebinaPlotMapper)
+site_mappers.register(MmandunyanePlotMapper)

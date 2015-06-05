@@ -20,3 +20,5 @@ from .metsimotlhabe_plot_mapper import MetsimotlhabePlotMapper
 from .tati_siding_plot_mapper import TatiSidingPlotMapper
 from .nkange_plot_mapper import NkangePlotMapper
 from .sebina_plot_mapper import SebinaPlotMapper
+from .mathangwane_plot_mapper import MathangwanePlotMapper
+from .mmandunyane_plot_mapper import MmandunyanePlotMapper
