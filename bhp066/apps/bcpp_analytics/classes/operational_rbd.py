@@ -68,6 +68,7 @@ class OperationalRbd(BaseOperationalReport):
                                                                registration_type='OTHER')
         self.data_dict['92. Enrolled by non viral load visit'] = enrolled_non_viral_load.count()
         viral_load_requisitions = SubjectRequisition.objects.filter(community__icontains=self.community,
+                                                                    subject_visit__household_member__member_status='CLINIC_RBD',
                                                                     modified__gte=self.date_from, modified__lte=self.date_to,
                                                                     user_modified__icontains=self.ra_username,
                                                                     panel__name='Viral Load',
