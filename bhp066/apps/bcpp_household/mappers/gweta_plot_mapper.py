@@ -12,7 +12,7 @@ from .choices import SECTIONS, SUB_SECTIONS, GWETA_LANDMARKS
 
 class GwetaPlotMapper(BasePlotMapper):
 
-    map_area = 'GWETA'
+    map_area = 'gweta'
     map_code = '34'
     pair = 7
     regions = SECTIONS
