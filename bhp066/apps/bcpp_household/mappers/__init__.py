@@ -22,3 +22,11 @@ from .nkange_plot_mapper import NkangePlotMapper
 from .sebina_plot_mapper import SebinaPlotMapper
 from .mathangwane_plot_mapper import MathangwanePlotMapper
 from .mmandunyane_plot_mapper import MmandunyanePlotMapper
+from .rakops_plot_mapper import RakopsPlotMapper
+from .tsetsebjwe_plot_mapper import TsetsebjwePlotMapper
+from .gweta_plot_mapper import GwetaPlotMapper
+from .gumare_plot_mapper import GumarePlotMapper
+from .shakawe_plot_mapper import ShakawePlotMapper
+from .masunga_plot_mapper import MasungaPlotMapper
+from .nata_plot_mmaper import NataPlotMapper
+from .sefhare_plot_mapper import SefharePlotMapper
