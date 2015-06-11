@@ -12,19 +12,34 @@ class Tracker(BaseModel):
          null=True
         )
 
+    is_active = models.BooleanField(
+        default=True,
+        help_text=("Is the tracker active."))
+
+    name = models.CharField(
+        max_length=100,
+        help_text=("The name of the server, e.g central.")
+        )
+
+    value_type = models.CharField(
+        max_length=100,
+        help_text=("Type of the value being tracked, e.g mobile setup value or household setup.")
+        )
+
     app_name = models.CharField(
         max_length=100,
+        help_text=("app where the value being tracked is.")
         )
 
     model = models.CharField(
         max_length=150,
+        help_text=("model being tracked.")
         )
 
     tracked_value = models.IntegerField(
         default=0,
         editable=True,
-        help_text=('Updated by a signal on <<<>>>. '
-                   'Number of <<><>>>.')
+        help_text=("updated after consuming transactions.")
     )
 
     value_limit = models.IntegerField(
@@ -42,15 +57,11 @@ class Tracker(BaseModel):
         null=True
         )
 
-    def save(self, *args, **kwargs):
-        using = kwargs.get('using,')
-        super(Tracker, self).save(*args, **kwargs)
-
-
     class Meta:
         app_label = 'bcpp_tracking'
 
-class SiteTracker(BaseDispatchSyncUuidModel):
+
+class SiteTracker(BaseModel):
 
     tracker = models.ForeignKey(Tracker)
 
@@ -70,8 +81,6 @@ class SiteTracker(BaseDispatchSyncUuidModel):
     tracked_value = models.IntegerField(
         default=0,
         editable=True,
-        help_text=('Updated by a signal on <<<>>>. '
-                   'Number of <<><>>>.')
     )
 
     site_name = models.CharField(
@@ -88,7 +97,6 @@ class SiteTracker(BaseDispatchSyncUuidModel):
         null=True
         )
 
-
-    def save(self, *args, **kwargs):
-        using = kwargs.get('using,')
-        super(SiteTracker, self).save(*args, **kwargs)
+    class Meta:
+        app_label = 'bcpp_tracking'
+        unique_together = (('site_name', 'tracker'),)
