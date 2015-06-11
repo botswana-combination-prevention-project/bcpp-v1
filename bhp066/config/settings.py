@@ -16,6 +16,7 @@ from .lab import LAB_IMPORT_DMIS_DATA_SOURCE
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 from .middleman import MIDDLE_MAN_LIST
+from .tracker_settings import REGISTERED_SITES
 
 DEBUG = True  # Note: should be False for collectstatic
 TEMPLATE_DEBUG = DEBUG
@@ -276,6 +277,9 @@ VERIFY_GPS_LOCATION = VERIFY_GPS_LOCATION
 
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = MIDDLE_MAN_LIST
+
+# apps.bcpp_tracker
+REGISTERED_SITES = REGISTERED_SITES
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True

@@ -1,0 +1,1 @@
+REGISTERED_SITES = ['mathangwane', 'mmandunyane']
