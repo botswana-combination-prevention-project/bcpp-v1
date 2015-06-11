@@ -31,7 +31,7 @@ class TrackerHelper(object):
                                    value_type=value_type,
                                    app_name='',
                                    model='',
-                                   tracked_value=self.tracked_value_at_site(using),
+                                   tracked_value=self.site_tracked_value(using, value_type, site),
                                    start_date=datetime.today(),
                                    end_date=datetime.today())
         site = settings.CURRENT_COMMUNITY
@@ -49,7 +49,7 @@ class TrackerHelper(object):
                                    app_name='',
                                    site_name=site,
                                    model='',
-                                   tracked_value=self.tracked_value_at_site(using),
+                                   tracked_value=self.site_tracked_value(using, value_type, site),
                                    start_date=datetime.today(),
                                    end_date=datetime.today())
 
@@ -96,21 +96,15 @@ class TrackerHelper(object):
         tracked_value = PimaVl.objects.filter(value_type=value_type)
         return tracked_value
 
-    def site_tracked_value(self, value_type, site):
+    def site_tracked_value(self, using, value_type, site):
         """Gets the value of the tracked value for the site."""
 
         site_tracked_value = PimaVl.objects.filter(
             value_type=value_type,
-            subject_visit__household_member__household_structure__household__plot__community=site)
+            subject_visit__household_member__household_structure__household__plot__community=site,
+            using=using)
         site_tracked_value.count()
         return site_tracked_value
-
-    def tracked_value_at_site(self, using):
-        """Queries the tracked value from the site server."""
-
-        site = settings.CURRENT_COMMUNITY
-        tracker = Tracker.objects.get(site_name=site, using=using)
-        return tracker.tracked_value
 
     def producer_online(self):
         pass
