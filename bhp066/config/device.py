@@ -1,4 +1,4 @@
-DEVICE_ID = 17
+DEVICE_ID = 99
 SITE_CODE = '30'
 CURRENT_COMMUNITY = 'tati_siding'
 VERIFY_GPS = False if DEVICE_ID == 99 else True
