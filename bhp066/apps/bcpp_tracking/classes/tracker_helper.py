@@ -14,49 +14,51 @@ class TrackerHelper(object):
     """Calculates and updates tracked value.
     """
 
-    def update_site_tracker(self, value_type, name):
+    def update_site_tracker(self):
         """Update the tracker and site tracker at the site."""
 
+        online_sites = self.online_producers()
         for site in self.registered_sites:
             # Update tracker
             using = site + ".bhp.org.bw"
-            try:
-                tracker = Tracker.objects.get(is_active=True, name=name, value_type)
-                tracker.tracked_value = self.site_tracked_value(value_type, site)
-                tracker.update_date = datetime.today()
-                tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
-            except Tracker.DoesNotExist:
-                # Create the tracker if it does not exist.
-                Tracker.objects.create(is_active=True,
-                                       name=name,
-                                       value_type=value_type,
-                                       app_name='',
-                                       model='',
-                                       tracked_value=self.site_tracked_value(value_type, site),
-                                       start_date=datetime.today(),
-                                       end_date=datetime.today(),
-                                       using=using)
-            #Update site tracker
-            try:
-                site_tracker = SiteTracker.objects.get(site_name=site)
-                site_tracker.tracked_value = self.site_tracked_value(value_type, site)
-                site_tracker.update_date = datetime.today()
-                site_tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
-            except SiteTracker.DoesNotExist:
-                # Create the site tracker if it does not exist.
-                SiteTracker.objects.create(is_active=True,
-                                       tracker=tracker,
-                                       name=name,
-                                       value_type=value_type,
-                                       app_name='bcpp_subject',
-                                       site_name=site,
-                                       model='PimaVl',
-                                       tracked_value=self.site_tracked_value(value_type, site),
-                                       start_date=datetime.today(),
-                                       end_date=datetime.today(),
-                                       using=using)
+            if using in online_sites:
+                try:
+                    tracker = Tracker.objects.get(is_active=True, name=name, value_type)
+                    tracker.tracked_value = self.site_tracked_value(value_type, site)
+                    tracker.update_date = datetime.today()
+                    tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
+                except Tracker.DoesNotExist:
+                    # Create the tracker if it does not exist.
+                    Tracker.objects.create(is_active=True,
+                                           name=name,
+                                           value_type=value_type,
+                                           app_name='',
+                                           model='',
+                                           tracked_value=self.site_tracked_value(value_type, site),
+                                           start_date=datetime.today(),
+                                           end_date=datetime.today(),
+                                           using=using)
+                #Update site tracker
+                try:
+                    site_tracker = SiteTracker.objects.get(site_name=site)
+                    site_tracker.tracked_value = self.site_tracked_value(value_type, site)
+                    site_tracker.update_date = datetime.today()
+                    site_tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
+                except SiteTracker.DoesNotExist:
+                    # Create the site tracker if it does not exist.
+                    SiteTracker.objects.create(is_active=True,
+                                           tracker=tracker,
+                                           name=name,
+                                           value_type=value_type,
+                                           app_name='bcpp_subject',
+                                           site_name=site,
+                                           model='PimaVl',
+                                           tracked_value=self.site_tracked_value(value_type, site),
+                                           start_date=datetime.today(),
+                                           end_date=datetime.today(),
+                                           using=using)
 
-    def update_producer_tracker(self, using, value_type, name):
+    def update_producer_tracker(self, value_type, name):
         """Updates the tracked value on the producer.
 
         Attributes:
@@ -66,42 +68,45 @@ class TrackerHelper(object):
         """
 
         site = settings.CURRENT_COMMUNITY
-        # Update tracker
-        try:
-            tracker = Tracker.objects.get(is_active=True, name=name, value_type)
-            tracker.tracked_value = self.site_tracked_value(value_type, site)
-            tracker.update_date = datetime.today()
-            tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
-        except Tracker.DoesNotExist:
-            # Create the tracker if it does not exist.
-            Tracker.objects.create(is_active=True,
-                                   name=name,
-                                   value_type=value_type,
-                                   app_name='',
-                                   model='',
-                                   tracked_value=self.site_tracked_value(value_type, site),
-                                   start_date=datetime.today(),
-                                   end_date=datetime.today(),
-                                   using=using)
-        #Update site tracker
-        try:
-            site_tracker = SiteTracker.objects.get(site_name=site)
-            site_tracker.tracked_value = self.site_tracked_value(value_type, site)
-            site_tracker.update_date = datetime.today()
-            site_tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
-        except SiteTracker.DoesNotExist:
-            # Create the site tracker if it does not exist.
-            SiteTracker.objects.create(is_active=True,
-                                   tracker=tracker,
-                                   name=name,
-                                   value_type=value_type,
-                                   app_name='bcpp_subject',
-                                   site_name=site,
-                                   model='PimaVl',
-                                   tracked_value=self.site_tracked_value(value_type, site),
-                                   start_date=datetime.today(),
-                                   end_date=datetime.today(),
-                                   using=using)
+        online_sites = self.online_producers()
+        for using in online_sites:
+            if not using in settings.MIDDLE_MAN_LIST:
+                # Update tracker
+                try:
+                    tracker = Tracker.objects.get(is_active=True, name=name, value_type)
+                    tracker.tracked_value = self.site_tracked_value(value_type, site)
+                    tracker.update_date = datetime.today()
+                    tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
+                except Tracker.DoesNotExist:
+                    # Create the tracker if it does not exist.
+                    Tracker.objects.create(is_active=True,
+                                           name=name,
+                                           value_type=value_type,
+                                           app_name='',
+                                           model='',
+                                           tracked_value=self.site_tracked_value(value_type, site),
+                                           start_date=datetime.today(),
+                                           end_date=datetime.today(),
+                                           using=using)
+                #Update site tracker
+                try:
+                    site_tracker = SiteTracker.objects.get(site_name=site)
+                    site_tracker.tracked_value = self.site_tracked_value(value_type, site)
+                    site_tracker.update_date = datetime.today()
+                    site_tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
+                except SiteTracker.DoesNotExist:
+                    # Create the site tracker if it does not exist.
+                    SiteTracker.objects.create(is_active=True,
+                                           tracker=tracker,
+                                           name=name,
+                                           value_type=value_type,
+                                           app_name='bcpp_subject',
+                                           site_name=site,
+                                           model='PimaVl',
+                                           tracked_value=self.site_tracked_value(value_type, site),
+                                           start_date=datetime.today(),
+                                           end_date=datetime.today(),
+                                           using=using)
 
     def update_central_tracker(self, using, value_type, name):
         """Undates the tracked value on the central site."""
@@ -166,6 +171,14 @@ class TrackerHelper(object):
             message = "Error on connect: %s" % e
         s.close()
         return connected
+
+    def online_producers(self):
+        producer = Producer.objects.all()
+        online_producers = []
+        for producer in producers:
+            if self.producer_online(producer):
+                online_producers.append(producer.name)
+        return online_producers
 
     @property
     def registered_sites(self):
