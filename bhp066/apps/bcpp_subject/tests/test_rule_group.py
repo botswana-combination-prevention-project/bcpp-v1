@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
+from django.db.models import get_model
 
 from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
@@ -30,6 +31,7 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, Pima)
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory)
+from apps.bcpp_tracking.tests.factories import TrackerFactory
 
 
 # class TestPlotMapper(Mapper):
@@ -124,6 +126,9 @@ class TestRuleGroup(TestCase):
         self.appointment_male_T0 = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T0')
         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+#         Tracker = get_model('bcpp_tracking', 'tracker')
+        self.tracker_mobile_setting = TrackerFactory(name='central', is_active=True, value_type='mobile setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
+        self.tracker_household_setting = TrackerFactory(name='central', is_active=True, value_type='household setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
 
     def new_metadata_is_not_keyed(self):
         self.assertEquals(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
@@ -1392,3 +1397,286 @@ class TestRuleGroup(TestCase):
             )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
+
+    def test_pima_vl_mobile_setting_t0(self):
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        pima_vl_options = {}
+        pima_vl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+
+    def test_pima_vl_mobile_setting_exceed_limit(self):
+        self.tracker_mobile_setting.tracked_value = 401
+        self.tracker_mobile_setting.save()
+
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        pima_vl_options = {}
+        pima_vl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
+
+    def test_pima_vl_mobile_setting_t1(self):
+
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        pima_vl_options = {}
+        pima_vl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
+        pima_vl_options = {}
+        pima_vl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male.appointment)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+
+    def test_hic_ecc_pima_vl(self):
+        """ """
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male_T0,
+             hiv_result='NEG',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        self.subject_visit_male.delete()
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        HivResult.objects.create(
+             subject_visit=self.subject_visit_male,
+             hiv_result='POS',
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+
+#         aliquot_type = AliquotType.objects.all()[0]
+#         site = StudySite.objects.all()[0]
+#         microtube_panel = Panel.objects.get(name='Microtube')
+#         micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+# 
+#         HivResult.objects.create(
+#              subject_visit=self.subject_visit_male,
+#              hiv_result='POS',
+#              report_datetime=datetime.today(),
+#              insufficient_vol='No'
+#             )
+# 
+#         HivCareAdherence.objects.create(
+#             subject_visit=self.subject_visit_male,
+#             first_positive=None,
+#             medical_care='No',
+#             ever_recommended_arv='No',
+#             ever_taken_arv='No',
+#             on_arv='No',
+#             arv_evidence='No',  # this is the rule field
+#             )
+
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+
+#     def test_pima_vl_household_setting_t0(self):
+#         self.subject_visit_male_T0.delete()
+#         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+#         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+# 
+#         pima_vl_options = {}
+#         pima_vl_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='pimavl',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
+# 
+#         HivResult.objects.create(
+#              subject_visit=self.subject_visit_male_T0,
+#              hiv_result='POS',
+#              report_datetime=datetime.today(),
+#              insufficient_vol='No'
+#             )
+# 
+#         HivCareAdherence.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             first_positive=None,
+#             medical_care='No',
+#             ever_recommended_arv='No',
+#             ever_taken_arv='Yes',
+#             on_arv='No',
+#             arv_evidence='No',  # this is the rule field
+#             )
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+# 
+#     def test_pima_vl_household_setting_t1(self):
+#         self.household_member_male
+#         self.household_member_male.delete()
+#         self.household_member_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+#         self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+# 
+#         pima_vl_options = {}
+#         pima_vl_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='pimavl',
+#             appointment=self.subject_visit_male.appointment)
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
+# 
+#         HivResult.objects.create(
+#              subject_visit=self.subject_visit_male,
+#              hiv_result='POS',
+#              report_datetime=datetime.today(),
+#              insufficient_vol='No'
+#             )
+# 
+#         HivCareAdherence.objects.create(
+#             subject_visit=self.subject_visit_male,
+#             first_positive=None,
+#             medical_care='No',
+#             ever_recommended_arv='No',
+#             ever_taken_arv='Yes',
+#             on_arv='No',
+#             arv_evidence='No',  # this is the rule field
+#             )
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
