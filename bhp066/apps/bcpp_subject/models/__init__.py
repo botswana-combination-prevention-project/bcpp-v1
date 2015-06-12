@@ -49,6 +49,7 @@ from .pregnancy import Pregnancy
 from .non_pregnancy import NonPregnancy
 from .hiv_result_documentation import HivResultDocumentation
 from .pima import Pima
+from .pima_vl import PimaVl
 from .cd4_history import Cd4History
 from .subject_consent_history import SubjectConsentHistory
 from .clinic_questionnaire import ClinicQuestionnaire
