@@ -18,4 +18,3 @@ class Command(BaseCommand):
 #         if not args or len(args) < 1:
 #             raise CommandError('Missing \'using\' parameters.')
         community_name = args[0]
-        tracked_value = Tracker.objects.
