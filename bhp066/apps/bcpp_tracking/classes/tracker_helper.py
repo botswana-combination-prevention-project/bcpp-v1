@@ -4,6 +4,8 @@ from datetime import datetime
 
 from django.conf import settings
 
+from edc.device.sync.utils import getproducerbyaddr
+
 from apps.bcpp_subject.models import PimaVl
 from ..models import Tracker, SiteTracker
 
@@ -12,7 +14,7 @@ class TrackerHelper(object):
     """Calculates and updates tracked value.
     """
 
-    def update_site_tracker(self):
+    def update_site_tracker(self, value_type, name):
         """Update the tracker and site tracker at the site."""
 
         for site in self.registered_sites:
@@ -152,8 +154,18 @@ class TrackerHelper(object):
         site_tracked_value.count()
         return site_tracked_value
 
-    def producer_online(self):
-        pass
+    def producer_online(self, producer):
+        hostname, _, _ = getproducerbyaddr(producer)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        connected = False
+        message = None
+        try:
+            s.connect((hostname, 3306))
+            connected = True
+        except socket.error as e:
+            message = "Error on connect: %s" % e
+        s.close()
+        return connected
 
     @property
     def registered_sites(self):
