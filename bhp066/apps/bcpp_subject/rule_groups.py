@@ -1,4 +1,8 @@
+from django.conf import settings
+from django.db.models import get_model
+
 from edc.constants import POS, NEG, IND
+from edc.map.classes import site_mappers
 
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
@@ -11,6 +15,7 @@ from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                      SexualBehaviour, HivCareAdherence, Circumcision, Circumcised,
                      HivTestReview, ReproductiveHealth, MedicalDiagnoses,
                      HivResult, HivResultDocumentation, ElisaHivResult, HicEnrollment)
+
 from apps.bcpp_subject.constants import BASELINE_CODES
 
 
@@ -51,6 +56,19 @@ def func_art_naive(visit_instance):
 #         subject_status_helper = SubjectStatusHelper(visit_instance)
 #         art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
     return art_naive
+
+
+def func_art_naive_pima_vl(visit_instance):
+    """Returns True if the participant is NOT on art or cannot
+    be confirmed to be on art."""
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    return (not subject_status_helper.on_art) and subject_status_helper.hiv_result == POS and is_pimal_vl_no_within()
+
+
+def is_pimal_vl_no_within():
+    Tracker = get_model('bcpp_tracking', 'tracker')
+    tracker = Tracker.objects.get(value_type=settings.PIMA_VL_TYPE_SETTING, is_active=True, name='central')
+    return True if tracker.tracked_value <= tracker.value_limit else False
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
@@ -433,6 +451,13 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
+
+    pimavl_for_art_naive = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_art_naive_pima_vl,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pimavl'])
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(

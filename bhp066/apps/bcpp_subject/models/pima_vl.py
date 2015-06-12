@@ -6,12 +6,20 @@ from django.core.validators import MaxValueValidator, MinValueValidator, RegexVa
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_future
-from edc.choices.common import YES_NO, PIMA
+from edc.choices.common import YES_NO, PIMA, PIMA_SETTING
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class PimaVl (BaseScheduledVisitModel):
+
+    pima_type = models.CharField(
+        verbose_name=_("Type mobile setting or household"),
+        choices=PIMA_SETTING,
+        max_length=150,
+        help_text="",
+        default=PIMA_SETTING[0][0],
+        )
 
     pima_today = models.CharField(
         verbose_name=_("Was a PIMA CD4 done today?"),
