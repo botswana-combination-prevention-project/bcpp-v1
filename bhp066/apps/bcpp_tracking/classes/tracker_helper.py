@@ -123,7 +123,7 @@ class TrackerHelper(object):
 
         if Device().is_central_server:
             try:
-                tracker = Tracker.objects.get(is_active=True, name=self.name, value_type)
+                tracker = Tracker.objects.get(is_active=True, name=self.name, value_type=self.value_type)
                 tracker.tracked_value = self.tracked_value
                 tracker.update_date = datetime.today()
                 tracker.save(update_fields=['tracked_value', 'update_date'])
@@ -161,7 +161,7 @@ class TrackerHelper(object):
         tracked_value = PimaVl.objects.filter(value_type=self.value_type)
         return tracked_value
 
-    def site_tracked_value(self, using='default', site):
+    def site_tracked_value(self, site, using='default'):
         """Gets the value of the tracked value for the site."""
 
         site_tracked_value = PimaVl.objects.filter(

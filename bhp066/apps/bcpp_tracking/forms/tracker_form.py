@@ -6,8 +6,6 @@ from edc.base.form.forms import BaseModelForm
 
 from ..models import Tracker, SiteTracker
 
-from ..constants import INACCESSIBLE, CONFIRMED, ACCESSIBLE
-
 
 class TrackerForm(BaseModelForm):
 
