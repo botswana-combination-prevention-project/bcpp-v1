@@ -2,8 +2,6 @@ from django.db import models
 
 from edc.base.model.models import BaseModel
 
-from .site_tracker import SiteTracker
-
 
 class Tracker(BaseModel):
 
