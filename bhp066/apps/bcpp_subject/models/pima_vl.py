@@ -14,7 +14,7 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class PimaVl (BaseScheduledVisitModel):
 
     pima_type = models.CharField(
-        verbose_name=_("Type mobile setting or household"),
+        verbose_name=_("Type mobile or household setting"),
         choices=PIMA_SETTING_VL,
         max_length=150,
         help_text="",
