@@ -4,6 +4,7 @@ from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
+from apps.bcpp_tracking.classes import TrackerHelper
 
 from ..forms import GpsSearchForm
 from ..search import PlotSearchByWord
@@ -29,6 +30,9 @@ class SectionPlotView(BaseSectionView):
             'mapper_name': site_mappers.current_mapper.map_area,
             'gps_search_form': GpsSearchForm(initial={'radius': 100}),
             'use_gps_to_target_verification': settings.VERIFY_GPS,
+            'tracked_value': TrackerHelper().tracked_value,
+            'value_type': TrackerHelper().value_type,
+            'required_pimavl': TrackerHelper().required_pimavl,
             'search_term': kwargs.get('search_term'),
             })
         return context
