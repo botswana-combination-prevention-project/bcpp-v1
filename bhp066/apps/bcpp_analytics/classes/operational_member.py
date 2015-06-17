@@ -111,7 +111,7 @@ class OperationalMember(BaseOperationalReport):
         self.data_dict['993. Total consents verified'] = total_consents_verified
         total_hic_eligible = member.filter(eligible_member=True, member_status=HTC_ELIGIBLE).count()
         self.data_dict['994. Total HTC eligible'] = total_hic_eligible
-        total_hic_accepted = member.filter(eligible_member=True, member_status=HTC).count()
+        total_hic_accepted = member.filter(htc=True).count()
         self.data_dict['995. Total HTC accepted'] = total_hic_accepted
         total_hic_declined = member.filter(eligible_member=True, member_status=REFUSED_HTC).count()
         self.data_dict['996. Total HTC declined'] = total_hic_declined

@@ -20,7 +20,7 @@ class OperationalPlots(BaseOperationalReport):
             self.ra_username = ''
         self.date_to += datetime.timedelta(days=1)
         plt = Plot.objects.all()
-        dispatched_identifiers = [container.plot_identifier for container in DispatchContainerRegister.objects.filter(is_dispatched=True)]
+        dispatched_identifiers = [container.container_identifier for container in DispatchContainerRegister.objects.filter(is_dispatched=True)]
         total_dispatched = Plot.objects.filter(community__icontains=self.community,
                                                modified__gte=self.date_from, modified__lte=self.date_to,
                                                user_modified__icontains=self.ra_username,
