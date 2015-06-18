@@ -7,32 +7,33 @@ from ..constants import BASELINE_SURVEY_SLUG
 from ..utils import ClinicDaysTuple, SurveyDatesTuple
 
 from .base_plot_mapper import BasePlotMapper
-from .choices import SECTIONS, SUB_SECTIONS, MATHANGWANE_LANDMARKS
+from .choices import SECTIONS, SUB_SECTIONS, SHAKAWE_LANDMARKS
 
 
-class MathangwanePlotMapper(BasePlotMapper):
+class ShakawePlotMapper(BasePlotMapper):
 
-    map_area = 'mathangwane'
-    map_code = '31'
+    map_area = 'shakawe'
+    map_code = '36'
+    pair = 11.0
     regions = SECTIONS
     sections = SUB_SECTIONS
 
-    landmarks = MATHANGWANE_LANDMARKS
+    landmarks = SHAKAWE_LANDMARKS
 
-    intervention = True
+    intervention = False
 
-    gps_center_lat = -20.993214
-    gps_center_lon = 27.333963
-    radius = 6.5
+    gps_center_lat = -18.360902
+    gps_center_lon = 21.836862
+    radius = 11
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2016, 6, 8),
-            full_enrollment_date=date(2015, 7, 4),
-            end_date=date(2015, 7, 25),
-            smc_start_date=date(2015, 8, 27)),
+            start_date=date(2015, 6, 1),
+            full_enrollment_date=date(2015, 6, 20),
+            end_date=date(2015, 6, 21),
+            smc_start_date=date(2015, 2, 13)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
@@ -49,7 +50,7 @@ class MathangwanePlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((TU, ), None),
+            'IDCC': ClinicDaysTuple((FR, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
@@ -60,4 +61,4 @@ class MathangwanePlotMapper(BasePlotMapper):
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
     }
 
-site_mappers.register(MathangwanePlotMapper)
+site_mappers.register(ShakawePlotMapper)
