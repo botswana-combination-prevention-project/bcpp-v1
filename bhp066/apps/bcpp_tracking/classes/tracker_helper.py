@@ -10,6 +10,7 @@ from edc.device.sync.models import Producer
 
 from apps.bcpp_subject.models import PimaVl
 from ..models import Tracker, SiteTracker
+from ..classes import Mail, Reciever
 
 
 class TrackerHelper(object):
@@ -158,8 +159,16 @@ class TrackerHelper(object):
     def tracked_value(self):
         """Gets the tracked value."""
 
-        tracked_value = PimaVl.objects.filter(value_type=self.value_type)
+        tracked_value = Tracker.objects.filter(value_type=self.value_type, name=self.name, is_active=True)
         return tracked_value
+
+    @property
+    def required_pimavl(self):
+        """ Return the number of required pimavl """
+        try:
+            return self.tracked_value.value_limit - self.tracked_value.tracked_value
+        except:
+            return 400
 
     def site_tracked_value(self, site, using='default'):
         """Gets the value of the tracked value for the site."""
@@ -202,3 +211,9 @@ class TrackerHelper(object):
         self.update_site_tracker()
         self.update_producer_tracker()
         self.update_central_tracker()
+
+    def send_email_notification(self):
+        receiver = Reciever()
+        mail = Mail(receiver=receiver)
+        mail.send_mail()
+ 
