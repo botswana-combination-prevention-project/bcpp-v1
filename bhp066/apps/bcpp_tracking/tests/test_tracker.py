@@ -79,3 +79,6 @@ class TestTracker(TestCase):
 
     def test_central_community_tracker(self):
         pass
+
+    def test_update_producer_tracker(self):
+        pass
