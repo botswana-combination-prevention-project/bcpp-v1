@@ -2,7 +2,7 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO, YES_NO_NA
+from edc.choices.common import YES_NO, YES_NO_NA, YES_NO_UNKNOWN
 from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
 from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
@@ -17,8 +17,8 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
-        max_length=3,
-        choices=YES_NO,
+        max_length=7,
+        choices=YES_NO_UNKNOWN,
         help_text="",
         )
 
