@@ -21,6 +21,7 @@ class Reciever(object):
 
     @property
     def mail_to(self):
+        self._to = 'tsetsiba@bhp.org.bw'
         return self._to
 
     @property
@@ -36,15 +37,16 @@ class Reciever(object):
     @property
     def message(self):
         """ """
-        self._boby = "/nGood day Team./n/n"
-        return self._body
+        self._message = "/nGood day Team./n/n"
+        return self._message
 
     @property
     def recipent_list(self):
         """ A list of strings, each an email address."""
         for user in User.objects.filter(groups__name='field_supervisor'):
-            self._recepient_list.append(user.email)
-        return self.self._recepient_list
+            if user.email == 'tsetsiba@bhp.org.bw':
+                self._recepient_list.append(user.email)
+        return self._recepient_list
 
     @property
     def mail_bcc(self):
@@ -60,7 +62,7 @@ class Mail(object):
         self.receiver = receiver
 
     def send_mail(self):
-        return EmailMessage(self.receiver.subject, self.message, self.receiver.mail_from, self.receiver.recipent_list, self.receiver.bcc, headers={"Cc": self.receiver.mail_cc}).send(fail_silently=False)
+        return EmailMessage(self.receiver.subject, self.receiver.message, self.receiver.mail_from, self.receiver.recipent_list, self.receiver.mail_bcc, headers={"Cc": self.receiver.mail_cc}).send(fail_silently=False)
 
     def send_mass_mail(self):
         """ is intended to handle mass emailing."""
