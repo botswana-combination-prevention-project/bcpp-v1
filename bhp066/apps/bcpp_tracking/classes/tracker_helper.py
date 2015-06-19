@@ -10,7 +10,7 @@ from edc.device.sync.models import Producer
 
 from apps.bcpp_subject.models import PimaVl
 from ..models import Tracker, SiteTracker
-# from apps.bcpp_tracking.classes import Mail, Reciever
+from .mail import Reciever, Mail
 
 
 class TrackerHelper(object):
@@ -212,8 +212,7 @@ class TrackerHelper(object):
         self.update_producer_tracker()
         self.update_central_tracker()
 
-#     def send_email_notification(self):
-#         receiver = Reciever()
-#         mail = Mail(receiver=receiver)
-#         mail.send_mail()
-#  
+    def send_email_notification(self):
+        receiver = Reciever()
+        mail = Mail(receiver=receiver)
+        mail.send_mail()
