@@ -30,11 +30,9 @@ class SectionPlotView(BaseSectionView):
             'mapper_name': site_mappers.current_mapper.map_area,
             'gps_search_form': GpsSearchForm(initial={'radius': 100}),
             'use_gps_to_target_verification': settings.VERIFY_GPS,
-            'tracked_value': TrackerHelper().tracked_value,
-            'value_type': TrackerHelper().value_type,
-            'required_pimavl': TrackerHelper().required_pimavl,
             'search_term': kwargs.get('search_term'),
             })
+        context.update(TrackerHelper().tracked_values(),)
         return context
 
     def get_current_community(self):
