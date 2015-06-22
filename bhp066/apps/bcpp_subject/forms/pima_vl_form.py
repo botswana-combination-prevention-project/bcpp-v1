@@ -1,13 +1,17 @@
 from django import forms
-from ..models import Pima
+from django.conf import settings
+
+from ..models import PimaVl
 from .base_subject_model_form import BaseSubjectModelForm
+
+from apps.bcpp_tracking.classes import TrackerHelper
 
 
 class PimaVlForm (BaseSubjectModelForm):
 
     def clean(self):
 
-        cleaned_data = super(PimaForm, self).clean()
+        cleaned_data = super(PimaVlForm, self).clean()
         if cleaned_data.get('pima_today') == 'No' and not cleaned_data.get('pima_today_other'):
             raise forms.ValidationError('If PIMA CD4 NOT done today, please explain why not?')
 
@@ -25,7 +29,11 @@ class PimaVlForm (BaseSubjectModelForm):
         if cleaned_data.get('pima_today') == 'Yes' and not cleaned_data.get('cd4_datetime'):
             raise forms.ValidationError('If PIMA CD4 done today, what is the CD4 test datetime?')
 
+        tracker = TrackerHelper()
+        if tracker.tracked_value.tracked_value >= tracker.tracked_value.value_limit:
+            raise forms.ValidationError('The number of pima vl for {0} cannot be greater than {1} '.format(settings.PIMA_VL_TYPE, tracker.tracked_value.value_limit))
+
         return cleaned_data
 
     class Meta:
-        model = Pima
+        model = PimaVl
