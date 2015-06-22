@@ -222,10 +222,10 @@ class SubjectStatusHelper(object):
             new_pos = self.previous_value(value_if_pos=True, value_if_not_pos=None)
             if new_pos is None:
                 new_pos = False
-                if ((self.todays_hiv_result == POS or self.elisa_hiv_result_datetime == POS) and
+                if ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
                         self.recorded_hiv_result == POS):
                     pass
-                elif ((self.todays_hiv_result == POS or self.elisa_hiv_result_datetime == POS) and
+                elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
                         self.verbal_hiv_result == POS and not self.indirect_hiv_documentation):
                     pass
                 elif self.verbal_hiv_result == POS and (self.direct_hiv_pos_documentation or
@@ -367,6 +367,8 @@ class SubjectStatusHelper(object):
                 else:
                     self._on_art = False
             except AttributeError:
+                if self.new_pos:
+                    self._on_art = False
                 self._on_art = None
         return self._on_art
 
