@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.exceptions import ImproperlyConfigured
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
@@ -9,6 +10,8 @@ from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+
+from apps.bcpp_tracking.classes import TrackerHelper
 
 
 class PimaVl (BaseScheduledVisitModel):
@@ -64,6 +67,15 @@ class PimaVl (BaseScheduledVisitModel):
         )
 
     history = AuditTrail()
+
+    def validate_pimavl_no(self):
+        tracker = TrackerHelper().tracked_value
+        if tracker.tracked_value >= tracker.value_limit:
+            raise ImproperlyConfigured('Pima Vl records ({}), cannot be greater than {} for {}.'.format(tracker.tracked_value, tracker.value_limit, tracker.value_type))
+
+    def save(self, *args, **kwargs):
+        self.validate_pimavl_no()
+        super(PimaVl, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bcpp_subject'
