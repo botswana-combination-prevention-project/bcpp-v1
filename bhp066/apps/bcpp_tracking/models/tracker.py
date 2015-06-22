@@ -55,6 +55,9 @@ class Tracker(BaseModel):
         null=True
         )
 
+    def __unicode__(self):
+        return "{}_{}".format(self.name, self.value_type)
+
     class Meta:
         app_label = 'bcpp_tracking'
 
@@ -94,6 +97,9 @@ class SiteTracker(BaseModel):
         verbose_name='End Date/Time',
         null=True
         )
+
+    def __unicode__(self):
+        return "{}_{}".format(self.model, self.tracker.value_type)
 
     class Meta:
         app_label = 'bcpp_tracking'
