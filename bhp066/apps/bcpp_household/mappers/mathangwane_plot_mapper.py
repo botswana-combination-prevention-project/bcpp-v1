@@ -29,7 +29,7 @@ class MathangwanePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2016, 6, 16),
+            start_date=date(2015, 6, 16),
             full_enrollment_date=date(2015, 7, 4),
             end_date=date(2015, 7, 25),
             smc_start_date=date(2015, 8, 27)),
