@@ -17,12 +17,16 @@ from .factories import (
     HivCareAdherenceFactory, HivResultFactory, CircumcisionFactory,
     PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory, TbSymptomsFactory,
     HivResultDocumentationFactory)
+from edc.subject.appointment.models import Appointment
 from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryMetaData
-from edc.constants import NOT_REQUIRED, REQUIRED
+from edc.constants import NOT_REQUIRED, REQUIRED, NOT_APPLICABLE
 from edc.entry_meta_data.models.requisition_meta_data import RequisitionMetaData
 from edc.export.models.export_transaction import ExportTransaction
 from apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
+from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
+from apps.bcpp_subject.models import HivCareAdherence, HivTestingHistory, HivTestReview
 
 
 # class TestPlotMapper(Mapper):
@@ -707,6 +711,49 @@ class TestReferral(BaseScheduledModelTestCase):
             entry__model_name='pima',
             entry_status=REQUIRED).count() == 1)
 
+    def tests_on_art_always_true_or_false_pos(self):
+        """If result is POS then on_art has to take values in [True, False] never None.
+        If result is not POS then on_art has to be None as as the other two are not applicable."""
+        self.startup()
+        base_line_report_datetime = self.subject_visit_male.report_datetime
+        testing_history = HivTestingHistoryFactory(subject_visit=self.subject_visit_male,
+                                 report_datetime=base_line_report_datetime,
+                                 verbal_hiv_result='POS', has_record='No', other_record='No')
+        hiv_test_review = HivTestReviewFactory(
+            subject_visit=self.subject_visit_male,
+            hiv_test_date=(base_line_report_datetime + timedelta(days=-15)).date(),
+            recorded_hiv_result='POS')
+        care_adherance = HivCareAdherenceFactory(subject_visit=self.subject_visit_male,
+                                report_datetime=base_line_report_datetime,
+                                on_arv='Yes', arv_evidence='Yes')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=base_line_report_datetime)
+
+        self.assertEqual('POS', subject_referral.hiv_result)
+        self.assertTrue(subject_referral.on_art)
+
+        care_adherance.on_arv = 'No'
+        care_adherance.arv_evidence = 'No'
+        care_adherance.save()
+
+        subject_referral.save()
+        self.assertEqual(subject_referral.on_art, False)
+
+        care_adherance.delete()
+        self.assertEqual(HivCareAdherence.objects.all().count(), 0)
+        hiv_test_review.delete()
+        self.assertEqual(HivTestReview.objects.all().count(), 0)
+        testing_history.delete()
+        self.assertEqual(HivTestingHistory.objects.all().count(), 0)
+
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='NEG')
+
+        subject_referral.save()
+        self.assertEqual(subject_referral.on_art, None)
+
     def tests_referred_verbal1b(self):
         """"""
         self.startup()
@@ -1195,3 +1242,64 @@ class TestReferral(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertIn('SMC-NEG', subject_referral.referral_code)
         self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk).count(), 1)
+
+    def tests_correctness_of_citizen_field(self):
+        """Asserts that a citizen field is populated correctly following enrollment_checklist value."""
+        self.startup()
+        report_datetime = datetime.today()
+        #last_date = report_datetime.date() - relativedelta(years=3)
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
+        #HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result='POS')
+        #HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded='POS', result_doc_type='Record of CD4 count')
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertTrue(subject_referral.citizen)
+
+        non_citizen_household_member_male = HouseholdMemberFactory(household_structure=self.household_structure,
+                                                            first_name='ONEP', initials='OP', gender='M',
+                                                            age_in_years=30, study_resident='Yes', relation='brother',
+                                                            inability_to_participate=NOT_APPLICABLE)
+
+        non_citizen_enrollment_male = EnrollmentChecklistFactory(
+            household_member=non_citizen_household_member_male,
+            initials=non_citizen_household_member_male.initials,
+            gender=non_citizen_household_member_male.gender,
+            dob=date.today() - relativedelta(years=non_citizen_household_member_male.age_in_years),
+            guardian=NOT_APPLICABLE,
+            part_time_resident='Yes',
+            citizen='No',
+            legal_marriage='Yes',
+            marriage_certificate='Yes')
+
+        non_citizen_subject_consent_male = SubjectConsentFactory(
+            consent_datetime=datetime.today() + relativedelta(years=-1),
+            household_member=non_citizen_household_member_male,
+            gender='M',
+            dob=non_citizen_enrollment_male.dob,
+            first_name='ONEP',
+            last_name='PH',
+            citizen='No',
+            initials=non_citizen_enrollment_male.initials,
+            legal_marriage='Yes',
+            marriage_certificate='Yes',
+            marriage_certificate_no='9999776',
+            study_site=self.study_site)
+
+        non_citizen_appointment_male = Appointment.objects.get(registered_subject=non_citizen_subject_consent_male.registered_subject,
+                                                               visit_definition__time_point=0)
+
+        non_citizen_subject_visit_male = SubjectVisitFactory(
+            report_datetime=datetime.today() + relativedelta(years=-1),
+            appointment=non_citizen_appointment_male, household_member=non_citizen_household_member_male)
+        SubjectLocatorFactory(subject_visit=non_citizen_subject_visit_male)
+        SubjectRequisitionFactory(subject_visit=non_citizen_subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivTestingHistoryFactory(subject_visit=non_citizen_subject_visit_male, verbal_hiv_result='POS', has_record='Yes', other_record='Yes')
+        HivResultFactory(subject_visit=non_citizen_subject_visit_male, hiv_result='POS')
+        subject_referral = SubjectReferralFactory(
+            subject_visit=non_citizen_subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertFalse(subject_referral.citizen)
