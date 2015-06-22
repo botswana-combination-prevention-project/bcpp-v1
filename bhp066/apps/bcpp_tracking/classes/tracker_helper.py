@@ -3,12 +3,13 @@ import socket
 from datetime import datetime
 
 from django.conf import settings
+from django.db.models import get_model
+from django.core.exceptions import ImproperlyConfigured
 
 from edc.device.sync.utils import getproducerbyaddr
 from edc.device.device.classes import Device
 from edc.device.sync.models import Producer
 
-from apps.bcpp_subject.models import PimaVl
 from ..models import Tracker, SiteTracker
 from .mail import Reciever, Mail
 
@@ -158,21 +159,19 @@ class TrackerHelper(object):
     @property
     def tracked_value(self):
         """Gets the tracked value."""
-
-        tracked_value = Tracker.objects.filter(value_type=self.value_type, name=self.name, is_active=True)
-        return tracked_value
+        try:
+            return Tracker.objects.get(value_type=self.value_type, name=self.name, is_active=True)
+        except Tracker.DoesNotExist:
+            raise ImproperlyConfigured("Cannot retrieve tracker model instance, make sure it exists.")
 
     @property
     def required_pimavl(self):
         """ Return the number of required pimavl """
-        try:
-            return self.tracked_value.value_limit - self.tracked_value.tracked_value
-        except:
-            return 400
+        return self.tracked_value.value_limit - self.tracked_value.tracked_value
 
     def site_tracked_value(self, site, using='default'):
         """Gets the value of the tracked value for the site."""
-
+        PimaVl = get_model('bcpp_subject', 'pimavl')
         site_tracked_value = PimaVl.objects.filter(
             value_type=self.value_type,
             subject_visit__household_member__household_structure__household__plot__community=site,
@@ -212,7 +211,26 @@ class TrackerHelper(object):
         self.update_producer_tracker()
         self.update_central_tracker()
 
+    def tracked_values(self):
+        tracked_dict = {}
+        tracker = self.tracked_value
+        color_scheme = ['F2FFA1', 'FFE787', 'FF9A42', 'FF4B1F']
+        if tracker.tracked_value == 400:
+            req_color = color_scheme[3]
+        elif tracker.tracked_value >= 390:
+            req_color = color_scheme[2]
+        elif tracker.tracked_value >= 350:
+            req_color = color_scheme[1]
+        else:
+            req_color = color_scheme[0]
+        tracked_dict['tracked_value'] = tracker.tracked_value
+        tracked_dict['value_type'] = TrackerHelper().value_type
+        tracked_dict['req_pimavl'] = TrackerHelper().required_pimavl
+        tracked_dict['color_status'] = req_color
+        return tracked_dict
+
     def send_email_notification(self):
-        receiver = Reciever()
-        mail = Mail(receiver=receiver)
-        mail.send_mail()
+        if Device().is_central_server:
+            if self.tracked_value.tracked_value >= 300:
+                mail = Mail(receiver=Reciever())
+                mail.send_mail()
