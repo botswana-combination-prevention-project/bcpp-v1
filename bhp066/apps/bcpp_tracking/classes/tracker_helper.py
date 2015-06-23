@@ -230,4 +230,4 @@ class TrackerHelper(object):
         if Device().is_central_server:
             if self.tracked_value.tracked_value >= 300:
                 mail = Mail(receiver=Reciever())
-                mail.send_mail()
+                mail.send_mail_with_cc_or_bcc()
