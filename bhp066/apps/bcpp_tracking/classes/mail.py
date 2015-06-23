@@ -1,4 +1,4 @@
-from django.core.mail import send_mass_mail, EmailMessage
+from django.core.mail import send_mail, send_mass_mail, EmailMessage
 from django.contrib.auth.models import User
 
 
@@ -61,12 +61,22 @@ class Mail(object):
     def __init__(self, receiver=None, *args, **kwargs):
         self.receiver = receiver
 
+    def send_mail_with_cc_or_bcc(self):
+        """ Send email including cc and bcc."""
+        return EmailMessage(self.receiver.subject, self.receiver.message, self.receiver.mail_from,\
+               self.receiver.recipent_list, self.receiver.mail_bcc, headers={"Cc": self.receiver.mail_cc}).send(fail_silently=False)
+
     def send_mail(self):
-        return EmailMessage(self.receiver.subject, self.receiver.message, self.receiver.mail_from, self.receiver.recipent_list, self.receiver.mail_bcc, headers={"Cc": self.receiver.mail_cc}).send(fail_silently=False)
+        """ Send email without cc and bcc."""
+        return send_mail(self.receiver.subject, self.receiver.message, self.receiver.mail_from, self.receiver.recipent_list)
 
     def send_mass_mail(self):
-        """ is intended to handle mass emailing."""
-        return send_mass_mail()
+        """ is intended to handle mass emailing or send multiple emails using a single connection."""
+        datatuple = (
+            (self.receiver.subject, "Testing EDC Test Server", self.receiver.mail_from, self.receiver.recipent_list),
+            (self.receiver.subject, "Testing EDC", self.receiver.mail_from, self.receiver.recipent_list),
+        )
+        return send_mass_mail(datatuple)
 
     def attach_file(self, file_path, *args, **kwargs):
         """ Override this method to attach files to """
