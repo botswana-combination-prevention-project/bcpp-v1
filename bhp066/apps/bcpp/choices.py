@@ -122,7 +122,7 @@ COMMUNITIES = (
     ('Lentsweletau', _('Lentsweletau')),
     ('Lerala', _('Lerala')),
     ('Letlhakeng', _('Letlhakeng')),
-    ('Mandunyane', _('Mandunyane')),
+    ('Mmandunyane', _('Mmandunyane')),
     ('Mmankgodi', _('Mmankgodi')),
     ('Mmadinare', _('Mmadinare')),
     ('Mmathethe', _('Mmathethe')),
@@ -143,7 +143,7 @@ COMMUNITIES = (
     ('Sefophe', _('Sefophe')),
     ('Shakawe', _('Shakawe')),
     ('Shoshong', _('Shoshong')),
-    ('Tati Siding', _('Tati Siding')),
+    ('Tati_Siding', _('Tati_Siding')),
     ('Tsetsebjwe', _('Tsetsebjwe')),
     ('OTHER', _('Other non study community')),
 )
