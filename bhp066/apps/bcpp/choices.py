@@ -1092,3 +1092,11 @@ RELATIONSHIP_STUDY = (
     ('Definitely related', _('Definitely related')),
 )
 
+EASY_OF_USE = (
+    ('easy', _('Easy')),
+    ('Very easy', _('Very Easy')),
+    ('Fairly easy', _('Fairly easy')),
+    ('Difficult', _('Difficult')),
+    ('Very difficult', _('Very difficult')),
+)
+
