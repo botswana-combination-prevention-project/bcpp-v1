@@ -72,9 +72,8 @@ def is_pimal_vl_no_within():
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
-    #past_visit = func_previous_visit_instance(visit_instance)
-    if func_known_pos_in_prev_year(visit_instance):
-        do_pima = False
+    if func_art_naive(func_previous_visit_instance(visit_instance)):
+        do_pima = True
     elif func_art_naive(visit_instance):
         do_pima = True
     else:
@@ -102,6 +101,7 @@ def func_circumcision(visit_instance):
 
 
 def func_show_hic_enrollment(visit_instance):
+    """ If the participant still test HIV NEG and was not HIC enrolled then HIC should be REQUIRED. """
     past_visit = func_previous_visit_instance(visit_instance)
     if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(past_visit):
         return True
