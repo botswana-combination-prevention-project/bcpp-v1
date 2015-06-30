@@ -9,7 +9,7 @@ from django.db import models
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER
-from edc.choices.common import YES_NO, YES_NO_NA
+from edc.choices.common import YES_NO, YES_NO_NA, BLOCK_CONTINUE
 from edc.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
@@ -84,6 +84,25 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         max_length=3,
         choices=YES_NO,
         help_text="")
+
+    study_participation = models.CharField(
+        verbose_name=_("Have you participated in a Ya Tsie Study with Botswana Harvard Partnership?"),
+        max_length=3,
+        choices=YES_NO,
+        null=True,
+        blank=False,
+        default=NOT_APPLICABLE,
+        help_text=_(""))
+
+    confirm_participation = models.CharField(
+        verbose_name=_("If Yes, RA should obtain documentation of participation and ask CBS to" 
+        "confirm(give Omang Number). Has Participation been confirmed"),
+        max_length=15,
+        choices=BLOCK_CONTINUE,
+        null=True,
+        blank=False,
+        default=NOT_APPLICABLE,
+        help_text=_(""))
 
     legal_marriage = models.CharField(
         verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
@@ -235,6 +254,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
             loss_reason.append('Illiterate with no literate witness.')
         if self.household_member.is_minor and self.guardian.lower() != 'yes':
             loss_reason.append('Minor without guardian available.')
+        if self.confirm_participation.lower() == 'block':
+            loss_reason.append('Already enrolled.')
         return (False if loss_reason else True, loss_reason)
 
     def deserialize_prep(self, **kwargs):
