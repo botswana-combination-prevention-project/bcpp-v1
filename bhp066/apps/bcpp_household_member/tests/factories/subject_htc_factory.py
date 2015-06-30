@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import factory
 from datetime import datetime
 
@@ -15,6 +17,7 @@ class SubjectHtcFactory(BaseUuidModelFactory):
 
     report_datetime = datetime.today()
     household_member = factory.SubFactory(HouseholdMemberFactory)
+    report_datetime = datetime.today()
     offered = 'Yes'
     accepted = 'Yes'
     referred = 'No'
