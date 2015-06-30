@@ -30,7 +30,7 @@ class SebinaPlotMapper(BasePlotMapper):
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2015, 6, 1),
-            full_enrollment_date=date(2015, 7, 2),
+            full_enrollment_date=date(2015, 6, 15),
             end_date=date(2015, 7, 6),
             smc_start_date=date(2015, 8, 10)),
         'bcpp-year-2': SurveyDatesTuple(
