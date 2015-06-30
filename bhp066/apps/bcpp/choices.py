@@ -279,7 +279,7 @@ INABILITY_TO_PARTICIPATE_REASON = (
     ('Deaf/Mute', _('Deaf/Mute')),
     ('Too sick', _('Too sick')),
     ('Incarcerated', _('Incarcerated')),
-    ('OTHER', _('Other, specify:')),
+    ('OTHER', _('Other, specify.')),
 )
 
 EMPLOYMENT_CHOICE = (
