@@ -22,6 +22,7 @@ from .circumcision_form import CircumcisionForm, CircumcisedForm, UncircumcisedF
 from .access_to_care_form import AccessToCareForm
 from .reproductive_health_form import ReproductiveHealthForm
 from .pima_form import PimaForm
+from .pima_vl_form import PimaVlForm
 from .cd4_history_form import Cd4HistoryForm
 from .education_form import EducationForm
 from .hic_enrollment_form import HicEnrollmentForm
