@@ -1,24 +1,29 @@
 from django.contrib import admin
-from ..models import Pima
-from ..forms import PimaForm
+from ..models import PimaVl
+from ..forms import PimaVlForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 from ..filters import Cd4ThreshHoldFilter
 
 
 class PimaVlAdmin(SubjectVisitModelAdmin):
 
-    form = PimaForm
+    form = PimaVlForm
     fields = (
         "subject_visit",
-        'pima_today',
-        'pima_today_other',
-        'pima_today_other_other',
+        'poc_vl_today',
+        'poc_today_vl_other',
+        'poc_today_vl_other_other',
         'pima_id',
         'cd4_value',
-        'cd4_datetime',
+        'time_of_test',
+        'time_of_result',
+        'easy_of_use',
+        'stability',
         )
-    list_filter = ('subject_visit', 'cd4_datetime', 'pima_id', Cd4ThreshHoldFilter,)
-    list_display = ('subject_visit', 'cd4_datetime', 'cd4_value', 'pima_id')
+    exclude = ('poc_vl_type',)
+    list_filter = ('subject_visit', 'time_of_test', 'pima_id', Cd4ThreshHoldFilter,)
+    list_display = ('subject_visit', 'time_of_test', 'cd4_value', 'pima_id')
     radio_fields = {
-        'pima_today': admin.VERTICAL}
-admin.site.register(Pima, PimaAdmin)
+        'poc_vl_today': admin.VERTICAL,
+        'easy_of_use': admin.VERTICAL}
+admin.site.register(PimaVl, PimaVlAdmin)
