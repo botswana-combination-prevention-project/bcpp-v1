@@ -44,3 +44,4 @@ from .review import *
 from .correct_consent_admin import CorrectConsentAdmin
 from .quality_of_life_admin import QualityOfLifeAdmin
 from .resource_utilization_admin import ResourceUtilizationAdmin
+from .pima_vl_admin import PimaVlAdmin
