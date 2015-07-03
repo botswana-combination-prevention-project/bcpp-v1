@@ -30,6 +30,7 @@ class GwetaPlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
+
             start_date=date(2015, 7, 7),
             full_enrollment_date=date(2015, 8, 4),
             end_date=date(2015, 8, 25),
@@ -50,7 +51,8 @@ class GwetaPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((TU, ), None),
+            'IDCC': ClinicDaysTuple((TH, ), None),
+
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
