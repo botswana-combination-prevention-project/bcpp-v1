@@ -14,7 +14,7 @@ from .clinic_visit import ClinicVisit
 REGISTRATION_TYPES = (
     ('initiation', _('Initiation Visit')),
     ('masa_vl_scheduled', _('MASA Scheduled Viral Load Visit')),
-    ('ccc_scheduled', _('CCC Enrollment Visit')),
+    ('etc_scheduled', _('ETC Enrollment Visit')),
     ('OTHER', _('Other NON-Viral Load Visit'))
 )
 
