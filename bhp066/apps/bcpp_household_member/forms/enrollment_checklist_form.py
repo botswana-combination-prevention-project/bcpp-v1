@@ -29,13 +29,15 @@ class EnrollmentChecklistForm(BaseModelForm):
             if not cleaned_data.get('marriage_certificate') == NOT_APPLICABLE:
                 raise forms.ValidationError('Marriage Certificate is not applicable, Participant is a citizen.')
 
-        if cleaned_data.get('study_participation') == 'Yes':
-            if not cleaned_data.get('confirm_participation'):
-                raise forms.ValidationError('Confirmation on study participation required.')
-
         if cleaned_data.get('study_participation') == 'No':
-            if cleaned_data.get('confirm_participation'):
-                raise forms.ValidationError('Confirmation on study participation is not required.')
+            if not cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
+                raise forms.ValidationError('Confirmation on study participation is not required.' 
+                                            'The question is not applicable')
+
+        if cleaned_data.get('study_participation') == 'Yes':
+            if cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
+                raise forms.ValidationError('Confirmation on study participation required.'
+                                            'The answer can not be Not Applicable.')
 
         if cleaned_data.get('citizen') == 'No':
             if cleaned_data.get('legal_marriage') == NOT_APPLICABLE:
