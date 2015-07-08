@@ -21,5 +21,9 @@ class SubjectDeathFactory(BaseUuidModelFactory):
     survey = factory.SubFactory(SurveyFactory)
     death_date = datetime(2015, 4, 11)
     participant_hospitalized = 'No'
+    primary_medical_care_giver = factory.SubFactory(DeathMedicalResponsibilityFactory)
+    relationship_death_study = 'Definitely not related'
+    site_aware_date = datetime.today()
+#     participant_hospitalized = 'No'
     death_cause_category = factory.SubFactory(DeathCauseCategoryFactory)
     death_cause_info = factory.SubFactory(DeathCauseInfoFactory)
