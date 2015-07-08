@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 from django.db.models import get_model
 
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED
+from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
@@ -30,7 +30,10 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, Pima)
-from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory)
+
+from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
+                        SubjectLocatorFactory)
+
 from apps.bcpp_tracking.tests.factories import TrackerFactory
 
 
@@ -129,10 +132,43 @@ class TestRuleGroup(TestCase):
 #         Tracker = get_model('bcpp_tracking', 'tracker')
         self.tracker_mobile_setting = TrackerFactory(name='central', is_active=True, value_type='mobile setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
         self.tracker_household_setting = TrackerFactory(name='central', is_active=True, value_type='household setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
+        self._hiv_result = None
 
     def new_metadata_is_not_keyed(self):
         self.assertEquals(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
         self.assertEquals(RequisitionMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
+
+    @property
+    def baseline_subject_visit(self):
+        """ Return baseline subject visit"""
+        self.subject_visit_male_T0.delete()
+        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        return self.subject_visit_male_T0
+
+    @property
+    def annual_subject_visit(self):
+        """ Return annuall subject visit """
+        self.subject_visit_male.delete()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male).count(), 0)
+        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        #self.check_male_registered_subject_rule_groups(self.subject_visit_male)
+        return self.subject_visit_male
+
+    def hiv_result(self, status, subject_visit):
+        """ Create HivResult for a particular survey"""
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=subject_visit, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        self._hiv_result = HivResult.objects.create(
+             subject_visit=subject_visit,
+             hiv_result=status,
+             report_datetime=datetime.today(),
+             insufficient_vol='No'
+            )
+        return self._hiv_result
 
     def test_hiv_car_adherence_and_pima1(self):
         """If POS and not on arv and no doc evidence, Pima required.
@@ -141,10 +177,7 @@ class TestRuleGroup(TestCase):
             * HivCareAdherence
             * HivResult
         """
-        self.subject_visit_male_T0.delete()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male_T0).count(), 0)
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
@@ -175,15 +208,13 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_hiv_car_adherence_and_pima2(self):
-        """If POS and on arv and have doc evidence, Pima not required.
+        """If NEG and on arv and have doc evidence, Pima not required.
 
         Models:
             * HivCareAdherence
             * HivResult
         """
-        self.subject_visit_female_T0.delete()
-        self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_female_T0)
+        self.subject_visit_female_T0 = self.baseline_subject_visit
 
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
@@ -221,9 +252,7 @@ class TestRuleGroup(TestCase):
             * HivCareAdherence
             * HivResult
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
@@ -253,61 +282,10 @@ class TestRuleGroup(TestCase):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
-    def test_pos_in_yr0_hiv_car_adherence_and_no_pima_yr1(self):
-        """If POS, from year 0 and pima was filled, then Pima not required in yr1.
-        """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
-
-        pima_options = {}
-        pima_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='pima',
-            appointment=self.subject_visit_male.appointment)
-
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        hiv_result = HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
-        Pima.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            pima_today='Yes',
-            cd4_value=400
-            )
-
-        care_adhereance = HivCareAdherence.objects.create(
-            subject_visit=self.subject_visit_male,
-            first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='Yes',
-            arv_evidence='No',
-            )
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
-
-        care_adhereance.on_arv = 'No'
-        care_adhereance.save()
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
-
     def test_newly_pos_hiv_care_adherence_and_pima4(self):
         """If Newly POS, Pima required.
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         pima_options = {}
         pima_options.update(
@@ -315,30 +293,18 @@ class TestRuleGroup(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male_T0.appointment)
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        hiv_result = HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self._hiv_result = self.hiv_result(POS, self.subject_visit_male_T0)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
-        hiv_result.hiv_result = 'NEG'
-        hiv_result.save()
+        self._hiv_result.hiv_result = 'NEG'
+        self._hiv_result.save()
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
     def test_not_known_pos_runs_hiv_and_cd4(self):
         """If not a known POS, requires HIV and CD4 (until today's result is known)."""
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -383,9 +349,7 @@ class TestRuleGroup(TestCase):
 
     def test_known_pos_completes_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -411,9 +375,7 @@ class TestRuleGroup(TestCase):
 
     def test_known_neg_does_not_complete_hiv_care_adherence(self):
         """If known POS (not including today's test), requires hiv_care_adherence."""
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_history_options = {}
         hiv_test_history_options.update(
@@ -454,9 +416,7 @@ class TestRuleGroup(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -485,11 +445,7 @@ class TestRuleGroup(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-#         for entry in ScheduledEntryMetaData.objects.filter(appointment=self.subject_visit_male.appointment):
-#             print '{0}, {1}'.format(entry.entry, entry.entry_status)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -644,9 +600,7 @@ class TestRuleGroup(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -705,9 +659,7 @@ class TestRuleGroup(TestCase):
         """HivCareAdharance form should be made available any verbal positive,
             not considering availability or lack thereof documentation.
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
@@ -731,9 +683,7 @@ class TestRuleGroup(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -791,9 +741,7 @@ class TestRuleGroup(TestCase):
 
         See rule_groups.ReviewNotPositiveRuleGroup and
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -900,9 +848,7 @@ class TestRuleGroup(TestCase):
         """when an elisa result is keyed in, a +ve result should result in RBD and VL
             being REQUIRED just like Today's HivResult
         """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -970,9 +916,8 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
     def test_normal_circumsition_in_y1(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         circumsition_options = {}
         circumsition_options.update(
@@ -1036,9 +981,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
 
     def test_no_circumsition_in_y2(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         circumsition_options = {}
         circumsition_options.update(
@@ -1077,52 +1020,8 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
 
-#     def test_circumsition_for_known_pos(self):
-#         self.subject_visit_male_T0.delete()
-#         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-#         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
-# 
-#         circumsition_options = {}
-#         circumsition_options.update(
-#             entry__app_label='bcpp_subject',
-#             entry__model_name='circumcision',
-#             appointment=self.subject_visit_male_T0.appointment)
-# 
-#         circumcised_options = {}
-#         circumcised_options.update(
-#             entry__app_label='bcpp_subject',
-#             entry__model_name='circumcised',
-#             appointment=self.subject_visit_male_T0.appointment)
-# 
-#         uncircumcised_options = {}
-#         uncircumcised_options.update(
-#             entry__app_label='bcpp_subject',
-#             entry__model_name='uncircumcised',
-#             appointment=self.subject_visit_male_T0.appointment)
-# 
-#         HivTestingHistory.objects.create(
-#             subject_visit=self.subject_visit_male_T0,
-#             has_tested='Yes',
-#             when_hiv_test='1 to 5 months ago',
-#             has_record='Yes',
-#             verbal_hiv_result='POS',
-#             other_record='No'
-#             )
-# 
-#         HivTestReview.objects.create(
-#             subject_visit=self.subject_visit_male_T0,
-#             hiv_test_date=datetime.today() - timedelta(days=50),
-#             recorded_hiv_result='POS',
-#             )
-# 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
-
     def test_pos_in_y1_no_hiv_forms(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_test_review_options = {}
         hiv_test_review_options.update(
@@ -1184,9 +1083,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **microtube_options).count(), 1)
 
     def test_hic_filled_in_y1(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hic_enrollment_options = {}
         hic_enrollment_options.update(
@@ -1200,6 +1097,10 @@ class TestRuleGroup(TestCase):
             lab_entry__model_name='subjectrequisition',
             lab_entry__requisition_panel__name='Microtube',
             appointment=self.subject_visit_male.appointment)
+
+        ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0)
+
+        self.hiv_result(NEG, self.subject_visit_male_T0)
 
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
@@ -1215,19 +1116,10 @@ class TestRuleGroup(TestCase):
             consent_datetime=datetime.today()
            )
 
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male,
-             hiv_result='NEG',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
-
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
 
     def test_microtube_always_required_for_previous_hic(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         microtube_options = {}
         microtube_options.update(
@@ -1236,11 +1128,17 @@ class TestRuleGroup(TestCase):
             lab_entry__requisition_panel__name='Microtube',
             appointment=self.subject_visit_male.appointment)
 
+        SubjectLocatorFactory(subject_visit=self.subject_visit_male_T0)
+
+        self.hiv_result(NEG, self.subject_visit_male_T0)
+
         hiv_result_options = {}
         hiv_result_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='hivresult',
             appointment=self.subject_visit_male.appointment)
+
+        ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0)
 
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
@@ -1282,9 +1180,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
 
     def test_hiv_pos_requisitions_y2(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         rbd_options = {}
         rbd_options.update(
@@ -1300,40 +1196,15 @@ class TestRuleGroup(TestCase):
             lab_entry__requisition_panel__name='Research Blood Draw',
             appointment=self.subject_visit_male.appointment)
 
-#         pima_options = {}
-#         pima_options.update(
-#             entry__app_label='bcpp_subject',
-#             entry__model_name='pima',
-#             appointment=self.subject_visit_male.appointment)
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+        self.hiv_result(NEG, self.subject_visit_male_T0)
 
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='NEG',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(POS, self.subject_visit_male)
 
-        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
-
-        #self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **rbd_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **viral_load_options).count(), 1)
 
     def test_Known_hiv_pos_y2_not_hic_require_no_testing(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_result_options = {}
         hiv_result_options.update(
@@ -1341,17 +1212,7 @@ class TestRuleGroup(TestCase):
             entry__model_name='hivresult',
             appointment=self.subject_visit_male.appointment)
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='NEG',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(NEG, self.subject_visit_male_T0)
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
@@ -1371,9 +1232,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
     def test_Known_hiv_pos_y1_require_no_testing(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         hiv_result_options = {}
         hiv_result_options.update(
@@ -1399,9 +1258,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
     def test_pima_vl_mobile_setting_t0(self):
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         pima_vl_options = {}
         pima_vl_options.update(
@@ -1411,17 +1268,7 @@ class TestRuleGroup(TestCase):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(POS, self.subject_visit_male_T0)
 
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
@@ -1439,9 +1286,7 @@ class TestRuleGroup(TestCase):
         self.tracker_mobile_setting.tracked_value = 401
         self.tracker_mobile_setting.save()
 
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         pima_vl_options = {}
         pima_vl_options.update(
@@ -1451,17 +1296,7 @@ class TestRuleGroup(TestCase):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(POS, self.subject_visit_male_T0)
 
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
@@ -1477,9 +1312,7 @@ class TestRuleGroup(TestCase):
 
     def test_pima_vl_mobile_setting_t1(self):
 
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
         pima_vl_options = {}
         pima_vl_options.update(
@@ -1489,17 +1322,7 @@ class TestRuleGroup(TestCase):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(POS, self.subject_visit_male_T0)
 
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
@@ -1511,8 +1334,7 @@ class TestRuleGroup(TestCase):
             arv_evidence='No',  # this is the rule field
             )
 
-        self.subject_visit_male.delete()
-        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        self.subject_visit_male = self.annual_subject_visit
 
         pima_vl_options = {}
         pima_vl_options.update(
@@ -1520,17 +1342,7 @@ class TestRuleGroup(TestCase):
             entry__model_name='pimavl',
             appointment=self.subject_visit_male.appointment)
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(POS, self.subject_visit_male)
 
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
@@ -1546,35 +1358,13 @@ class TestRuleGroup(TestCase):
 
     def test_hic_ecc_pima_vl(self):
         """ """
-        self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+        self.hiv_result(NEG, self.subject_visit_male_T0)
 
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='NEG',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.subject_visit_male = self.annual_subject_visit
 
-        self.subject_visit_male.delete()
-        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
-
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-
-        HivResult.objects.create(
-             subject_visit=self.subject_visit_male,
-             hiv_result='POS',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+        self.hiv_result(POS, self.subject_visit_male)
 
         pima_options = {}
         pima_options.update(
@@ -1592,91 +1382,169 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
-#         aliquot_type = AliquotType.objects.all()[0]
-#         site = StudySite.objects.all()[0]
-#         microtube_panel = Panel.objects.get(name='Microtube')
-#         micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-# 
-#         HivResult.objects.create(
-#              subject_visit=self.subject_visit_male,
-#              hiv_result='POS',
-#              report_datetime=datetime.today(),
-#              insufficient_vol='No'
-#             )
-# 
-#         HivCareAdherence.objects.create(
-#             subject_visit=self.subject_visit_male,
-#             first_positive=None,
-#             medical_care='No',
-#             ever_recommended_arv='No',
-#             ever_taken_arv='No',
-#             on_arv='No',
-#             arv_evidence='No',  # this is the rule field
-#             )
+    def test_hic_enrolled_at_bhs(self):
+        """ If there is an hic record at bhs then at ahs inspect the record then check for hic status if not enrolled then Hic_enrollment
+            should be filled otherwise should not be filled.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+        ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0)
 
-#     def test_pima_vl_household_setting_t0(self):
-#         self.subject_visit_male_T0.delete()
-#         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-#         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
-# 
-#         pima_vl_options = {}
-#         pima_vl_options.update(
-#             entry__app_label='bcpp_subject',
-#             entry__model_name='pimavl',
-#             appointment=self.subject_visit_male_T0.appointment)
-# 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
-# 
-#         HivResult.objects.create(
-#              subject_visit=self.subject_visit_male_T0,
-#              hiv_result='POS',
-#              report_datetime=datetime.today(),
-#              insufficient_vol='No'
-#             )
-# 
-#         HivCareAdherence.objects.create(
-#             subject_visit=self.subject_visit_male_T0,
-#             first_positive=None,
-#             medical_care='No',
-#             ever_recommended_arv='No',
-#             ever_taken_arv='Yes',
-#             on_arv='No',
-#             arv_evidence='No',  # this is the rule field
-#             )
-# 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
-# 
-#     def test_pima_vl_household_setting_t1(self):
-#         self.household_member_male
-#         self.household_member_male.delete()
-#         self.household_member_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
-#         self.check_male_registered_subject_rule_groups(self.subject_visit_male)
-# 
-#         pima_vl_options = {}
-#         pima_vl_options.update(
-#             entry__app_label='bcpp_subject',
-#             entry__model_name='pimavl',
-#             appointment=self.subject_visit_male.appointment)
-# 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_vl_options).count(), 1)
-# 
-#         HivResult.objects.create(
-#              subject_visit=self.subject_visit_male,
-#              hiv_result='POS',
-#              report_datetime=datetime.today(),
-#              insufficient_vol='No'
-#             )
-# 
-#         HivCareAdherence.objects.create(
-#             subject_visit=self.subject_visit_male,
-#             first_positive=None,
-#             medical_care='No',
-#             ever_recommended_arv='No',
-#             ever_taken_arv='Yes',
-#             on_arv='No',
-#             arv_evidence='No',  # this is the rule field
-#             )
-# 
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+        hic_enrollment_options = {}
+        hic_enrollment_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hicenrollment',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.hiv_result(NEG, self.subject_visit_male_T0)
+
+        HicEnrollment.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            report_datetime=datetime.today(),
+            hic_permission='Yes',
+            permanent_resident=True,
+            intend_residency=True,
+            hiv_status_today='NEG',
+            dob=datetime(1990, 01, 01),
+            household_residency=True,
+            citizen_or_spouse=True,
+            locator_information=True,
+            consent_datetime=datetime.today()
+           )
+
+        self.subject_visit_male = self.annual_subject_visit
+
+        hic_enrollment_options = {}
+        hic_enrollment_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hicenrollment',
+            appointment=self.subject_visit_male.appointment)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
+
+    def test_hic_not_enrolled_at_bhs(self):
+        """ If there is an hic record inspect the record then check for hic status if not enrolled then Hic_enrollment
+            should be filled otherwise should not be filled.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0)
+
+        hic_enrollment_options = {}
+        hic_enrollment_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hicenrollment',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.hiv_result(NEG, self.subject_visit_male_T0)
+
+        HicEnrollment.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            report_datetime=datetime.today(),
+            hic_permission='No',
+            permanent_resident=True,
+            intend_residency=True,
+            hiv_status_today='NEG',
+            dob=datetime(1990, 01, 01),
+            household_residency=True,
+            citizen_or_spouse=True,
+            locator_information=True,
+            consent_datetime=datetime.today()
+           )
+
+        self.subject_visit_male = self.annual_subject_visit
+
+        hic_enrollment_options = {}
+        hic_enrollment_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hicenrollment',
+            appointment=self.subject_visit_male.appointment)
+
+        self.hiv_result(NEG, self.subject_visit_male)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **hic_enrollment_options).count(), 1)
+
+    def test_hiv_pos_nd_art_naive_at_ahs_new_erollee(self):
+        """New enrollees at T1 who are HIV-positive and ART naive, then PIMA required.
+        """
+        self.subject_visit_male = self.annual_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male.appointment)
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.hiv_result(POS, self.subject_visit_male)
+
+        # add HivCarAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+        # said they have taken ARV so not required
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+
+    def test_hiv_pos_nd_art_naive_at_bhs(self):
+        """Previously enrollees at t0 who are HIV-positive but were not on ART naive at the time of enrollment. Pima required.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male_T0.appointment)
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.hiv_result(POS, self.subject_visit_male_T0)
+
+        # add HivCarAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+
+        self.subject_visit_male = self.annual_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male.appointment)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care='Yes',
+            ever_recommended_arv='Yes',
+            ever_taken_arv='Yes',
+            on_arv='Yes',
+            arv_evidence='Yes',  # this is the rule field
+            )
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
