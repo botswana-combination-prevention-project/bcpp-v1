@@ -1,4 +1,5 @@
 from django.core.mail import send_mail, send_mass_mail, EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
 
 
@@ -7,7 +8,7 @@ class Reciever(object):
     def __init__(self, *args, **kwargs):
         self._from = None
         self._to = None
-        self._cc = []
+        self._cc = ['tsetsiba@bhp.org.bw']
         self._bbc = []
         self._sender = None
         self._subject = None
@@ -26,19 +27,25 @@ class Reciever(object):
 
     @property
     def mail_cc(self):
-        self._cc.append('tsetsiba@bhp.org.bw')
         return self._cc
 
     @property
     def subject(self):
-        self._subject = "Pima VL Stats"
+        self._subject = "<strong>Pima VL Stats</strong>"
         return self._subject
 
     @property
     def message(self):
         """ """
-        self._message = "/nGood day Team./n/n"
+        self._message = "<p>Good Day Team.</p><br>Consider preparing the proposal using a single author or a team. It"
+        " is a lot of work for one person, who needs to have all the required skills. Using multiple"
+        " authors spreads theworkload, but requires careful control, communication, collaboration and proposal editing<br></p>"
         return self._message
+
+    @property
+    def footer(self):
+        """EDC"""
+        return ""
 
     @property
     def recipent_list(self):
@@ -51,8 +58,8 @@ class Reciever(object):
     @property
     def mail_bcc(self):
         """ blind carbon copy"""
-        self._bbc.append('ckgathi@bhp.org.bw')
-        self._bbc.append('opharatlhatlhe@bhp.org.bw')
+        #self._bbc.append('ckgathi@bhp.org.bw')
+        #self._bbc.append('opharatlhatlhe@bhp.org.bw')
         return self._bbc
 
 
@@ -64,7 +71,14 @@ class Mail(object):
     def send_mail_with_cc_or_bcc(self):
         """ Send email including cc and bcc."""
         return EmailMessage(self.receiver.subject, self.receiver.message, self.receiver.mail_from,\
-               self.receiver.recipent_list, self.receiver.mail_bcc, headers={"Cc": self.receiver.mail_cc}).send(fail_silently=False)
+               self.receiver.recipent_list, self.receiver.mail_bcc, headers={"Cc": ','.join(self.receiver.mail_cc)}).send(fail_silently=False)
+
+    def send_mail_with_cc_or_bcc_alt(self):
+        """ """
+        msg = EmailMultiAlternatives(self.receiver.subject, self.receiver.message, self.receiver.mail_from,\
+               self.receiver.recipent_list, self.receiver.mail_bcc, headers={"Cc": ','.join(self.receiver.mail_cc)}).send(fail_silently=False)
+        msg.content_subtype = "html"
+        return msg.send()
 
     def send_mail(self):
         """ Send email without cc and bcc."""
