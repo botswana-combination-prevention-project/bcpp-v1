@@ -28,6 +28,7 @@ from apps.bcpp_lab.models import Panel, AliquotType
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from apps.bcpp_tracking.classes import TrackerHelper
 
 from .factories import SubjectConsentFactory, SubjectVisitFactory
 
@@ -73,12 +74,22 @@ class TestTracker(TestCase):
         PimaVLFactory(
             pima_type='mobile setting',
             subject_visit=self.subject_visit_male,
-            site_name='otse',
+            site_name='rakops',
             )
-        self.assertEqual(1, SiteTracker.objects.filter(site_name='otse').count())
+        self.assertEqual(1, SiteTracker.objects.filter(site_name='rakops').count())
 
     def test_central_community_tracker(self):
-        pass
+
+        PimaVLFactory(
+            pima_type='mobile setting',
+            subject_visit=self.subject_visit_male,
+            site_name='rakops',
+            )
+        self.assertEqual(1, SiteTracker.objects.filter(site_name='rakops').count())
+
+        tracker = TrackerHelper()
+        tracker.update_central_tracker()
+        tracker.update_site_tracker()
 
     def test_update_producer_tracker(self):
         pass
