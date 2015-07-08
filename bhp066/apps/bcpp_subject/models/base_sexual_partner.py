@@ -166,7 +166,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         return skip and not not_skip
 
     def is_ecc_or_cpc(self):
-        if not self.sex_partner_community == NOT_APPLICABLE:
+        if  self.sex_partner_community not in [NOT_APPLICABLE, 'OTHER', None]:
             return 'CPC' if site_mappers.registry.get(self.sex_partner_community.lower()).intervention else 'ECC'
         return False
 
