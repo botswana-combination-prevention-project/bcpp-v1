@@ -40,15 +40,14 @@ class TrackerHelper(object):
                         tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
                     except Tracker.DoesNotExist:
                         # Create the tracker if it does not exist.
-                        Tracker.objects.create(is_active=True,
+                        Tracker.objects.using(using).create(is_active=True,
                                                name=self.name,
                                                value_type=self.value_type,
                                                app_name='',
                                                model='',
                                                tracked_value=self.site_tracked_value(site),
                                                start_date=datetime.today(),
-                                               end_date=datetime.today(),
-                                               using=using)
+                                               end_date=datetime.today())
                     #Update site tracker
                     try:
                         site_tracker = SiteTracker.objects.get(site_name=site)
@@ -57,7 +56,7 @@ class TrackerHelper(object):
                         site_tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
                     except SiteTracker.DoesNotExist:
                         # Create the site tracker if it does not exist.
-                        SiteTracker.objects.create(is_active=True,
+                        SiteTracker.objects.using(using).create(is_active=True,
                                                tracker=tracker,
                                                name=self.name,
                                                value_type=self.value_type,
@@ -66,8 +65,8 @@ class TrackerHelper(object):
                                                model='PimaVl',
                                                tracked_value=self.site_tracked_value(site),
                                                start_date=datetime.today(),
-                                               end_date=datetime.today(),
-                                               using=using)
+                                               end_date=datetime.today()
+                                               )
 
     def update_producer_tracker(self):
         """Updates the tracked value on the producer.
@@ -91,15 +90,14 @@ class TrackerHelper(object):
                         tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
                     except Tracker.DoesNotExist:
                         # Create the tracker if it does not exist.
-                        Tracker.objects.create(is_active=True,
+                        Tracker.objects.using(using).create(is_active=True,
                                                name=self.name,
                                                value_type=self.value_type,
                                                app_name='',
                                                model='',
                                                tracked_value=self.site_tracked_value(site),
                                                start_date=datetime.today(),
-                                               end_date=datetime.today(),
-                                               using=using)
+                                               end_date=datetime.today())
                     #Update site tracker
                     try:
                         site_tracker = SiteTracker.objects.get(site_name=site)
@@ -108,7 +106,7 @@ class TrackerHelper(object):
                         site_tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
                     except SiteTracker.DoesNotExist:
                         # Create the site tracker if it does not exist.
-                        SiteTracker.objects.create(is_active=True,
+                        SiteTracker.objects.using(using).create(is_active=True,
                                                tracker=tracker,
                                                name=self.name,
                                                value_type=self.value_type,
@@ -117,8 +115,7 @@ class TrackerHelper(object):
                                                model='PimaVl',
                                                tracked_value=self.site_tracked_value(site),
                                                start_date=datetime.today(),
-                                               end_date=datetime.today(),
-                                               using=using)
+                                               end_date=datetime.today())
 
     def update_central_tracker(self, using='default'):
         """Undates the tracked value on the central site."""
@@ -172,10 +169,10 @@ class TrackerHelper(object):
     def site_tracked_value(self, site, using='default'):
         """Gets the value of the tracked value for the site."""
         PimaVl = get_model('bcpp_subject', 'pimavl')
-        site_tracked_value = PimaVl.objects.filter(
+        site_tracked_value = PimaVl.objects.using(using).filter(
             value_type=self.value_type,
-            subject_visit__household_member__household_structure__household__plot__community=site,
-            using=using)
+            subject_visit__household_member__household_structure__household__plot__community=site
+            )
         site_tracked_value.count()
         return site_tracked_value
 
@@ -233,4 +230,4 @@ class TrackerHelper(object):
         if Device().is_central_server:
             if self.tracked_value.tracked_value >= 300:
                 mail = Mail(receiver=Reciever())
-                mail.send_mail()
+                mail.send_mail_with_cc_or_bcc()
