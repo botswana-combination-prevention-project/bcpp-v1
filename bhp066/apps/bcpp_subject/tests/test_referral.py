@@ -1009,7 +1009,7 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr3(self):
         self.startup()
-        yesterday = datetime.today() - timedelta(days=1)
+        yesterday = self.subject_visit_female.report_datetime - timedelta(days=1)
         report_datetime = datetime.today()
         today = datetime.today()
         today_date = date.today()
@@ -1018,8 +1018,8 @@ class TestReferral(BaseScheduledModelTestCase):
         self.subject_visit_female.report_datetime = yesterday
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.study_site, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         # verbal POS with indirect docs
-        HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
-        # on ART and there are docs
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='Yes')
+        # on ART and there are docs hence indirect documentations
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
 
         panel = Panel.objects.get(name='Viral Load')
@@ -1059,7 +1059,8 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_subject_referral_field_attr4(self):
         self.startup()
-        yesterday = datetime.today() - timedelta(days=1)
+        yesterday = self.subject_visit_female.report_datetime - timedelta(days=1)
+        first_arv = self.subject_visit_female.report_datetime - timedelta(days=120)
         report_datetime = datetime.today()
         today = datetime.today()
         today_date = date.today()
@@ -1070,8 +1071,15 @@ class TestReferral(BaseScheduledModelTestCase):
         # verbal POS with indirect docs
         HivTestingHistoryFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, verbal_hiv_result='POS', has_record='No', other_record='No')
         # on ART and there are docs 
-        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes')
-        HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS', hiv_result_datetime=yesterday)
+        HivCareAdherenceFactory(subject_visit=self.subject_visit_female, report_datetime=yesterday, ever_taken_arv='Yes', on_arv='No', arv_stop_date=last_year_date, arv_evidence='Yes',
+                                first_arv=first_arv.date())
+#         hiv_result_options = {}
+#         hiv_result_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='hivresult',
+#             appointment=self.subject_visit_female.appointment)
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status='NOT_REQUIRED', **hiv_result_options).count(), 1)
+        #HivResultFactory(subject_visit=self.subject_visit_female, hiv_result='POS', hiv_result_datetime=yesterday)
         panel = Panel.objects.get(name='Viral Load')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.study_site, is_drawn='Yes', panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'), drawn_datetime=yesterday)
         subject_referral = SubjectReferralFactory(
@@ -1090,9 +1098,9 @@ class TestReferral(BaseScheduledModelTestCase):
             'direct_hiv_documentation': False,
             'gender': u'F',
             'hiv_result': 'POS',
-            'hiv_result_datetime': yesterday,
+            'hiv_result_datetime': first_arv.replace(hour=0, minute=0, second=0, microsecond=0),
             'indirect_hiv_documentation': True,
-            'last_hiv_result': None,  # undocumented verbal_hiv_result cannot be the last result
+            'last_hiv_result': 'POS',
             'new_pos': False,  # undocumented verbal_hiv_result can suggest not a new POS
             'next_arv_clinic_appointment_date': None,
             'on_art': True,
@@ -1222,7 +1230,8 @@ class TestReferral(BaseScheduledModelTestCase):
         expected = {
             'direct_hiv_documentation': False,
             'indirect_hiv_documentation': True,
-            'last_hiv_result': None,
+#             'last_hiv_result': None,
+            'last_hiv_result': 'POS',
             'last_hiv_result_date': None,
             'new_pos': False,
             'verbal_hiv_result': 'POS',
@@ -1242,6 +1251,23 @@ class TestReferral(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         self.assertIn('SMC-NEG', subject_referral.referral_code)
         self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk).count(), 1)
+
+    def tests_new_pos_evaluated_correctly_in_annual(self):
+        """Test that new_pos field in referral is evaluated correctly in y2."""
+        self.startup()
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=349, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertTrue(subject_referral.new_pos)
+        subject_referral_annual = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male_annual,
+            report_datetime=report_datetime)
+        self.assertFalse(subject_referral_annual.new_pos)
 
     def tests_correctness_of_citizen_field(self):
         """Asserts that a citizen field is populated correctly following enrollment_checklist value."""
