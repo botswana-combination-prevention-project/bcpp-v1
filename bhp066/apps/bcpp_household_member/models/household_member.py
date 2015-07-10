@@ -287,6 +287,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 self.undecided = False
                 self.absent = False
                 self.eligible_htc = False
+                self.refused_htc = False
                 if self.refused:
                     self.clear_refusal
                 if self.enrollment_checklist_completed:
@@ -609,8 +610,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         show = False
         if self.consented_in_previous_survey:
             show = True
-        elif (not self.is_consented and not self.member_status == NOT_ELIGIBLE and
-                not self.member_status == REFUSED_HTC):
+        elif (not self.is_consented and not self.member_status == NOT_ELIGIBLE):
             show = True
         return show
 
