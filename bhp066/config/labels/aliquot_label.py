@@ -5,6 +5,7 @@ from lis.labeling.classes import ZplTemplateTuple
 aliquot_label = ZplTemplateTuple(
     'aliquot_label', (
         ('^XA\n'
+         '~SD22'
          '^FO310,15^A0N,20,20^FD${protocol} Site ${site} ${clinician_initials}   ${aliquot_type} ${aliquot_count}${primary}^FS\n'
          '^FO310,34^BY1,3.0^BCN,50,N,N,N\n'
          '^BY^FD${aliquot_identifier}^FS\n'
