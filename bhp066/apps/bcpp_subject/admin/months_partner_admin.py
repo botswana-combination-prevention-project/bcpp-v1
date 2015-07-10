@@ -29,6 +29,9 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp',)
+    exclude = (
+               'first_partner_arm',
+               )
     radio_fields = {
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
@@ -79,6 +82,9 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp',)
+    exclude = (
+               'second_partner_arm',
+               )
     radio_fields = {
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
@@ -132,6 +138,10 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp',)
+
+    exclude = (
+               'third_partner_arm',
+               )
     radio_fields = {
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
