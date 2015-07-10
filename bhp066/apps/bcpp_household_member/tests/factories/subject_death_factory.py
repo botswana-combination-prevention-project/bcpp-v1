@@ -23,13 +23,8 @@ class SubjectDeathFactory(BaseUuidModelFactory):
     duration_of_illness = 10
     survey = factory.SubFactory(SurveyFactory)
     death_date = datetime(2015, 4, 11)
-<<<<<<< Updated upstream
-    primary_medical_care_giver = factory.SubFactory(DeathMedicalResponsibilityFactory)
-    relationship_death_study = 'Definitely not related'
-=======
     site_aware_date = datetime.today()
     primary_medical_care_giver = factory.SubFactory(DeathMedicalResponsibilityFactory)
 #     participant_hospitalized = 'No'
->>>>>>> Stashed changes
     death_cause_category = factory.SubFactory(DeathCauseCategoryFactory)
     death_cause_info = factory.SubFactory(DeathCauseInfoFactory)
