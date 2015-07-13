@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.bcpp_subject.tests.factory import PimaVLFactory
+from apps.bcpp_subject.tests.factories import PimaVlFactory
 
 from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
@@ -29,11 +29,15 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from apps.bcpp_tracking.classes import TrackerHelper
+from apps.bcpp_tracking.models import Tracker, SiteTracker
 
-from .factories import SubjectConsentFactory, SubjectVisitFactory
+from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
 
 
 class TestTracker(TestCase):
+
+    app_label = 'bcpp_tracking'
+    community = 'rakops'
 
     def setUp(self):
         try:
@@ -48,7 +52,7 @@ class TestTracker(TestCase):
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 
         survey = Survey.objects.all().order_by('datetime_start')[0]
-        self.study_site = StudySite.objects.get(site_code='14')
+        self.study_site = StudySite.objects.get(site_code='33')
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         RepresentativeEligibilityFactory(household_structure=household_structure)
@@ -57,7 +61,7 @@ class TestTracker(TestCase):
             consent_datetime=datetime.today() + relativedelta(years=-1),
             household_member=self.household_member_male,
             gender='M',
-            dob=self.household_member_male.dob,
+#             dob=self.household_member_male.age_in_years,
             first_name='SUE',
             last_name='W',
             citizen='Yes',
@@ -69,27 +73,28 @@ class TestTracker(TestCase):
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male,
                         household_member=self.household_member_male)
 
-    def test_tracker(self):
-        """ """
-        PimaVLFactory(
-            pima_type='mobile setting',
-            subject_visit=self.subject_visit_male,
-            site_name='rakops',
-            )
-        self.assertEqual(1, SiteTracker.objects.filter(site_name='rakops').count())
+#     def test_tracker(self):
+#         """ """
+#         PimaVLFactory(
+#             pima_type='mobile setting',
+#             subject_visit=self.subject_visit_male,
+#             site_name='rakops',
+#             )
+#         self.assertEqual(1, SiteTracker.objects.filter(site_name='rakops').count())
 
     def test_central_community_tracker(self):
 
-        PimaVLFactory(
+        PimaVlFactory(
             pima_type='mobile setting',
             subject_visit=self.subject_visit_male,
             site_name='rakops',
             )
-        self.assertEqual(1, SiteTracker.objects.filter(site_name='rakops').count())
 
         tracker = TrackerHelper()
         tracker.update_central_tracker()
-        tracker.update_site_tracker()
+#         tracker.update_site_tracker()
+        self.assertEqual(1, SiteTracker.objects.filter(site_name='rakops').count())
+        self.assertEqual(1, Tracker.objects.all().count())
 
-    def test_update_producer_tracker(self):
-        pass
+#     def test_update_producer_tracker(self):
+#         pass

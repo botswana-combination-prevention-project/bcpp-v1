@@ -35,8 +35,6 @@ class TrackerHelper(object):
                 if using in online_sites:
                     try:
                         tracker = Tracker.objects.get(is_active=True, name=self.name, value_type=self.value_type)
-                        tracker.tracked_value = self.site_tracked_value(site)
-                        tracker.update_date = datetime.today()
                         tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
                     except Tracker.DoesNotExist:
                         # Create the tracker if it does not exist.
@@ -45,7 +43,7 @@ class TrackerHelper(object):
                                                value_type=self.value_type,
                                                app_name='',
                                                model='',
-                                               tracked_value=self.site_tracked_value(site),
+                                               tracked_value=self.central_tracked_value,
                                                start_date=datetime.today(),
                                                end_date=datetime.today())
                     #Update site tracker
@@ -85,8 +83,6 @@ class TrackerHelper(object):
                     # Update tracker
                     try:
                         tracker = Tracker.objects.get(is_active=True, name=self.name, value_type=self.value_type)
-                        tracker.tracked_value = self.site_tracked_value(site)
-                        tracker.update_date = datetime.today()
                         tracker.save(update_fields=['tracked_value', 'update_date'], using=using)
                     except Tracker.DoesNotExist:
                         # Create the tracker if it does not exist.
@@ -123,7 +119,7 @@ class TrackerHelper(object):
         if Device().is_central_server:
             try:
                 tracker = Tracker.objects.get(is_active=True, name=self.name, value_type=self.value_type)
-                tracker.tracked_value = self.tracked_value
+                tracker.tracked_value = self.central_tracked_value
                 tracker.update_date = datetime.today()
                 tracker.save(update_fields=['tracked_value', 'update_date'])
             except Tracker.DoesNotExist:
@@ -132,7 +128,7 @@ class TrackerHelper(object):
                                    value_type=self.value_type,
                                    app_name='bcpp_subject',
                                    model='PimaVl',
-                                   tracked_value=self.tracked_value,
+                                   tracked_value=self.central_tracked_value,
                                    start_date=datetime.today(),
                                    end_date=datetime.today())
             for site in self.registered_sites:
@@ -142,19 +138,38 @@ class TrackerHelper(object):
                     site_tracker.update_date = datetime.today()
                     site_tracker.save(update_fields=['tracked_value', 'update_date'])
                 except SiteTracker.DoesNotExist:
-                    SiteTracker.objects.create(is_active=True,
-                                   tracker=tracker,
-                                   name=self.name,
-                                   value_type=self.value_type,
-                                   app_name='bcpp_subject',
-                                   site_name=site,
-                                   model='PimaVl',
-                                   tracked_value=self.tracked_value,
-                                   start_date=datetime.today(),
-                                   end_date=datetime.today())
+                    SiteTracker.objects.create(
+                        is_active=True,
+                        tracker=tracker,
+                        name=self.name,
+                        value_type=self.value_type,
+                        app_name='bcpp_subject',
+                        site_name=site,
+                        model='PimaVl',
+                        tracked_value=self.tracked_value,
+                        start_date=datetime.today(),
+                        end_date=datetime.today()
+                    )
 
     @property
     def tracked_value(self):
+        """Gets the tracked value."""
+        try:
+            return Tracker.objects.get(value_type=self.value_type, name=self.name, is_active=True).tracked_value
+        except Tracker.DoesNotExist:
+            raise ImproperlyConfigured("Cannot retrieve tracker model instance, make sure it exists.")
+
+    @property
+    def central_tracked_value(self):
+        """Counts all POC VL."""
+        PimaVl = get_model('bcpp_subject', 'pimavl')
+        tracked_value = PimaVl.objects.filter(
+            value_type=self.value_type,
+            ).count()
+        return tracked_value
+
+    @property
+    def tracker(self):
         """Gets the tracked value."""
         try:
             return Tracker.objects.get(value_type=self.value_type, name=self.name, is_active=True)
@@ -164,7 +179,7 @@ class TrackerHelper(object):
     @property
     def required_pimavl(self):
         """ Return the number of required pimavl """
-        return self.tracked_value.value_limit - self.tracked_value.tracked_value
+        return self.tracker.value_limit - self.tracked_value
 
     def site_tracked_value(self, site, using='default'):
         """Gets the value of the tracked value for the site."""
@@ -210,17 +225,16 @@ class TrackerHelper(object):
 
     def tracked_values(self):
         tracked_dict = {}
-        tracker = self.tracked_value
         color_scheme = ['F2FFA1', 'FFE787', 'FF9A42', 'FF4B1F']
-        if tracker.tracked_value == 400:
+        if self.tracked_value == 400:
             req_color = color_scheme[3]
-        elif tracker.tracked_value >= 390:
+        elif self.tracked_value >= 390:
             req_color = color_scheme[2]
-        elif tracker.tracked_value >= 350:
+        elif self.tracked_value >= 350:
             req_color = color_scheme[1]
         else:
             req_color = color_scheme[0]
-        tracked_dict['tracked_value'] = tracker.tracked_value
+        tracked_dict['tracked_value'] = self.tracked_value
         tracked_dict['value_type'] = TrackerHelper().value_type
         tracked_dict['req_pimavl'] = TrackerHelper().required_pimavl
         tracked_dict['color_status'] = req_color
@@ -228,6 +242,6 @@ class TrackerHelper(object):
 
     def send_email_notification(self):
         if Device().is_central_server:
-            if self.tracked_value.tracked_value >= 300:
+            if self.tracked_value >= 300:
                 mail = Mail(receiver=Reciever())
                 mail.send_mail_with_cc_or_bcc()
