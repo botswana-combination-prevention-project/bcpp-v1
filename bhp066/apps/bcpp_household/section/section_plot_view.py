@@ -32,7 +32,7 @@ class SectionPlotView(BaseSectionView):
             'use_gps_to_target_verification': settings.VERIFY_GPS,
             'search_term': kwargs.get('search_term'),
             })
-        context.update(TrackerHelper().tracked_values(),)
+        context.update()
         return context
 
     def get_current_community(self):
