@@ -28,8 +28,6 @@ class BaseSexualPartner (BaseScheduledVisitModel):
                        " Does this sexual partner live in any of the following communities?"),
         max_length=25,
         choices=COMMUNITY_NA,
-        null=True,
-        blank=True,
         help_text="")
 
     past_year_sex_freq = models.CharField(
