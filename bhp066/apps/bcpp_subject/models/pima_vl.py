@@ -32,7 +32,7 @@ class PimaVl (BaseScheduledVisitModel):
         help_text="",
         )
 
-    poc_vl_today = models.CharField(
+    pima_today_other = models.CharField(
         verbose_name=_("If no POC VL today, please explain why"),
         max_length=50,
         choices=PIMA,
