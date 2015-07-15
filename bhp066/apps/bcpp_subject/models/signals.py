@@ -74,7 +74,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
                     household_members = instance.household_member.__class__.objects.filter(
                         household_structure__household__plot=instance.household_member.household_structure.household.plot,
                         household_structure__survey=instance.household_member.household_structure.survey,
-                        household_structure__household__replaced_by__isnull=False
+                        household_structure__household__replaced_by__isnull=True
                         ).exclude(is_consented=True)  # This includes instance.household_member
                     for household_member in household_members:
                         try:

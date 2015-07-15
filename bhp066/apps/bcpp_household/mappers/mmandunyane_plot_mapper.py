@@ -21,16 +21,16 @@ class MmandunyanePlotMapper(BasePlotMapper):
 
     intervention = False
 
-    gps_center_lat = -20.993214
-    gps_center_lon = 27.333963
+    gps_center_lat = -20.994015
+    gps_center_lon = 27.334564
     radius = 6.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 6, 8),
-            full_enrollment_date=date(2015, 7, 4),
+            start_date=date(2015, 6, 16),
+            full_enrollment_date=date(2015, 7, 17),
             end_date=date(2015, 7, 25),
             smc_start_date=date(2015, 8, 27)),
         'bcpp-year-2': SurveyDatesTuple(
@@ -49,7 +49,7 @@ class MmandunyanePlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((FR, ), None),
+            'IDCC': ClinicDaysTuple((TU, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},

@@ -6394,7 +6394,7 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2015-04-13T10:03:05", 
+    "last_login": "2015-06-26T14:43:48", 
     "groups": [], 
     "user_permissions": [], 
     "password": "pbkdf2_sha256$12000$6rYxwrUK6tND$H2aiHG3TrHFa/RmiGFG0kbgS86a1lc96kf3+Bk2oInk=", 
@@ -6731,7 +6731,7 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2015-03-24T13:34:48", 
+    "last_login": "2015-06-22T11:53:27", 
     "groups": [], 
     "user_permissions": [], 
     "password": "pbkdf2_sha256$12000$zy62mvxp07XB$mh9wHuFRpEUbOCBmOKyg/FAiFx4Y0v503jG2fQbu+bs=", 
@@ -7350,7 +7350,7 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2015-04-29T15:43:16", 
+    "last_login": "2015-06-24T07:26:51", 
     "groups": [
       3
     ], 
@@ -7390,10 +7390,10 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2014-04-01T07:04:22", 
+    "last_login": "2015-06-23T20:48:50", 
     "groups": [], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$KrrXS5wqKprq$f+5seEReS1WqpMnuMu51OTL0sACLO6EBYeTtfDlZMdo=", 
+    "password": "pbkdf2_sha256$12000$8YX3TgZMlW9w$yMxbuSiIPRCHMeVqeRwRW2W7RlYZG5AHCu6jvLjkDeE=", 
     "email": "ew2789@gmail.com", 
     "date_joined": "2013-10-21T01:17:01"
   }
@@ -7408,7 +7408,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2015-04-28T12:54:52", 
+    "last_login": "2015-06-25T13:18:21", 
     "groups": [
       2, 
       3, 
@@ -7849,7 +7849,7 @@
     "is_active": true, 
     "is_superuser": false, 
     "is_staff": true, 
-    "last_login": "2015-04-29T10:40:51", 
+    "last_login": "2015-06-11T14:46:24", 
     "groups": [
       3, 
       4, 
@@ -7892,10 +7892,10 @@
     "is_active": true, 
     "is_superuser": true, 
     "is_staff": true, 
-    "last_login": "2014-03-06T23:49:56", 
+    "last_login": "2015-06-23T21:00:08", 
     "groups": [], 
     "user_permissions": [], 
-    "password": "pbkdf2_sha256$10000$RnW2r4y9rqfF$s4FkSf7kSCpjrJVBiPXFij+iWtyVuc2lJJOz4oq6pso=", 
+    "password": "pbkdf2_sha256$12000$p7mvb4gOdRHr$smhhBjEcdoc87zriY62eb1vZvwyHN5yHHhavYH360PE=", 
     "email": "nkhan@hsph.harvard.edu", 
     "date_joined": "2014-02-18T08:45:48"
   }
@@ -8352,6 +8352,28 @@
     "password": "pbkdf2_sha256$12000$bAD4ROpopcjf$ZBzB44DrYXQmsAUT5NuzABOJBxyooJGASnLc1ESkja8=", 
     "email": "nmoagi@bhp.org.bw", 
     "date_joined": "2015-04-29T16:04:22"
+  }
+},
+{
+  "pk": 100, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "kbennett", 
+    "first_name": "Kara", 
+    "last_name": "Bennett", 
+    "is_active": true, 
+    "is_superuser": false, 
+    "is_staff": true, 
+    "last_login": "2015-06-24T07:27:45", 
+    "groups": [
+      3, 
+      4, 
+      11
+    ], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$12000$0FhJj9mJtwbv$dIG1ff/AYJDGcXu/7fEHVrZNd0zHzl5az0XPbKljtBI=", 
+    "email": "", 
+    "date_joined": "2015-06-24T07:27:45"
   }
 },
 {
