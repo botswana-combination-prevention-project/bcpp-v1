@@ -130,6 +130,7 @@ class SubjectReferralHelper(object):
 
     @property
     def on_art(self):
+        """Returns None if hiv_result==NEG otherwise True if hiv_result==POS and on ART or False if not."""
         return self.subject_status_helper.on_art
 
     @property
@@ -339,7 +340,9 @@ class SubjectReferralHelper(object):
     def part_time_resident(self):
         """Returns True if part_time_resident as stated on enrollment_checklist."""
         try:
-            part_time_resident = convert_to_nullboolean(self.enrollment_checklist_instance.part_time_resident)
+            #Note: Reading the question in EnrollmentChecklist, you should interpret in the following way,
+            # Yes => not part_time_resident, No => part_time_resident.
+            part_time_resident = not convert_to_nullboolean(self.enrollment_checklist_instance.part_time_resident)
         except AttributeError:
             part_time_resident = None
         return part_time_resident

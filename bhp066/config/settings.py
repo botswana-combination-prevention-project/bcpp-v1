@@ -114,6 +114,7 @@ ugettext = lambda s: s  # does this do anything?
 LANGUAGES = (
     ('tn', 'Setswana'),
     ('en', 'English'),
+    ('kck', 'Ikalanga'),
 )
 
 LOCALE_PATHS = (

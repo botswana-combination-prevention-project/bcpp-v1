@@ -1,4 +1,8 @@
 from django import forms
+
+from edc.constants import NOT_APPLICABLE
+from edc.map.classes import site_mappers
+
 from apps.bcpp.choices import FIRSTPARTNERHIV_CHOICE, YES_NO_UNSURE
 from ..models import MonthsRecentPartner, MonthsSecondPartner, MonthsThirdPartner
 from .base_subject_model_form import BaseSubjectModelForm
@@ -30,6 +34,10 @@ class BaseMonthsPartnerForm (BaseSubjectModelForm):
             raise forms.ValidationError('if first time of sex is in days, then days cannot exceed 31')
         if cleaned_data.get('first_first_sex', None) == 'Months' and cleaned_data.get('first_first_sex_calc') > 12:
             raise forms.ValidationError('if first time of sex is in months, then months in a year cannot exceed 12')
+        if self.instance.skip_logic_questions(self.cleaned_data.get('first_partner_live')):
+            if not cleaned_data['sex_partner_community'] == NOT_APPLICABLE:
+                raise forms.ValidationError('if response in question 3, is In this community or Farm within this community or'
+                                             'Cattle post within this community. The response in the next question is NOT_APPLICABLE')
         return cleaned_data
 
 

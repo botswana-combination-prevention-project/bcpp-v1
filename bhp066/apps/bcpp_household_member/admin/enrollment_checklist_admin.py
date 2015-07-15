@@ -26,6 +26,8 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         'has_identity',
         "citizen",
         "legal_marriage",
+        "study_participation",
+        "confirm_participation",
         "marriage_certificate",
         "part_time_resident",
         "household_residency",
@@ -48,6 +50,8 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "household_residency": admin.VERTICAL,
         "literacy": admin.VERTICAL,
         "guardian": admin.VERTICAL,
+        "study_participation": admin.VERTICAL,
+        "confirm_participation": admin.VERTICAL,
         }
 
     search_fields = ('household_member__first_name', 'household_member__pk')

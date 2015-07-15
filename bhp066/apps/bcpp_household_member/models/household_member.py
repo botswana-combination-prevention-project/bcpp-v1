@@ -33,6 +33,7 @@ from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
 from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC, DECEASED
 from ..managers import HouseholdMemberManager
+# from bhp066.apps.bcpp_household_member.models.enrollment_checklist import EnrollmentChecklist
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -286,6 +287,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
                 self.undecided = False
                 self.absent = False
                 self.eligible_htc = False
+                self.refused_htc = False
                 if self.refused:
                     self.clear_refusal
                 if self.enrollment_checklist_completed:
@@ -385,6 +387,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     @property
     def evaluate_htc_eligibility(self):
+        from ..models import EnrollmentChecklist
         eligible_htc = False
         if self.age_in_years > 64:
             eligible_htc = True
@@ -394,7 +397,14 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         elif self.eligible_member and self.refused:
             eligible_htc = True
         elif self.enrollment_checklist_completed and not self.eligible_subject:
-            eligible_htc = True
+            try:
+                erollment_checklist = EnrollmentChecklist.objects.get(household_member=self)
+            except EnrollmentChecklist.DoesNotExist:
+                pass
+            if erollment_checklist.confirm_participation.lower() == 'block':
+                eligible_htc = False
+            else:
+                eligible_htc = True
         return eligible_htc
 
     @property
@@ -600,8 +610,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         show = False
         if self.consented_in_previous_survey:
             show = True
-        elif (not self.is_consented and not self.member_status == NOT_ELIGIBLE and
-                not self.member_status == REFUSED_HTC):
+        elif (not self.is_consented and not self.member_status == NOT_ELIGIBLE):
             show = True
         return show
 
