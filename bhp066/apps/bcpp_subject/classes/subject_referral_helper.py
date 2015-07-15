@@ -222,10 +222,10 @@ class SubjectReferralHelper(object):
                     elif not self.on_art:
                         if not self.cd4_result:
                             self._referral_code_list.append('TST-CD4')
-                        elif self.cd4_result > 350:
+                        elif self.cd4_result > 500:
                             self._referral_code_list.append(
                                 'POS!-HI') if self.new_pos else self._referral_code_list.append('POS#-HI')
-                        elif self.cd4_result <= 350:
+                        elif self.cd4_result <= 500:
                             self._referral_code_list.append(
                                 'POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
                     elif self.on_art:
