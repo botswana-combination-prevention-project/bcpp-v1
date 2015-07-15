@@ -67,8 +67,9 @@ class TestMemberStatus(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
 
-        self.survey1 = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
-        plot = PlotFactory(community='molapowabojang', household_count=1, status='residential_habitable')
+        self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
+        self.survey = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
+        plot = PlotFactory(community='sebina', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
@@ -492,6 +493,10 @@ class TestMemberStatus(TestCase):
         # Now add a year2 household member
         year2_survey = Survey.objects.get(survey_slug='bcpp-year-2')
         year2_structure = HouseholdStructure.objects.get(survey=year2_survey)
+        #Representative eligibility
+        representative_eligibility = RepresentativeEligibilityFactory(
+            household_structure=year2_structure
+            )
         household_member_y2 = HouseholdMemberFactory(
             household_structure=year2_structure,
             gender='M',

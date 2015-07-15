@@ -13,3 +13,4 @@ from .test_subject_referral_appt_helper import TestSubjectReferralApptHelper
 # from .test_next_clinic_date import TestNextClinicDate
 from .test_correct_consent import TestCorrectConsent
 
+from .test_sexual_behaviour_form import TestSexualBehaviourForm

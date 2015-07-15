@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from edc.constants import NOT_APPLICABLE
+from edc.base.model.fields import OtherCharField
+from edc.map.classes import site_mappers
+
 
 from apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,
                                LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, COMMUNITY_NA,
@@ -20,7 +24,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         help_text="")
 
     sex_partner_community = models.CharField(
-        verbose_name=_("If outside community or farm outside this community ask:"
+        verbose_name=_("If outside community or farm outside this community or cattle post outside this community ask:"
                        " Does this sexual partner live in any of the following communities?"),
         max_length=25,
         choices=COMMUNITY_NA,
@@ -142,6 +146,27 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         choices=YES_NO_UNSURE,
         null=True,
         help_text="supplemental")
+
+    def skip_logic_questions(self, first_partner_choices):
+        first_partner_live = ['In this community', 'Farm within this community', 'Cattle post within this community']
+        skip = False
+        not_skip = False
+        in_out_comm = []
+        for _partner in first_partner_choices:
+            if _partner.name in first_partner_live:
+                skip = True
+            if 'In this community' == _partner.name:
+                in_out_comm.append(_partner.name)
+            if 'Outside community' == _partner.name:
+                in_out_comm.append(_partner.name)
+            if len(in_out_comm) == 2:
+                return not_skip
+        return skip and not not_skip
+
+    def is_ecc_or_cpc(self):
+        if  self.sex_partner_community not in [NOT_APPLICABLE, 'OTHER', None]:
+            return 'CPC' if site_mappers.registry.get(self.sex_partner_community.lower()).intervention else 'ECC'
+        return False
 
     class Meta:
         abstract = True
