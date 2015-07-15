@@ -3,7 +3,8 @@ import factory
 from datetime import datetime
 
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from edc.subject.adverse_event.tests.factories import DeathCauseCategoryFactory, DeathCauseInfoFactory, DeathMedicalResponsibilityFactory
+from edc.subject.adverse_event.tests.factories import (DeathCauseCategoryFactory, DeathCauseInfoFactory, 
+                                                       DeathMedicalResponsibilityFactory)
 from apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ...models import SubjectDeath
@@ -18,12 +19,12 @@ class SubjectDeathFactory(BaseUuidModelFactory):
 
     household_member = factory.SubFactory(HouseholdMemberFactory)
     report_datetime = datetime.today()
+    site_aware_date = datetime.today()
+    duration_of_illness = 10
     survey = factory.SubFactory(SurveyFactory)
     death_date = datetime(2015, 4, 11)
-    participant_hospitalized = 'No'
-    primary_medical_care_giver = factory.SubFactory(DeathMedicalResponsibilityFactory)
-    relationship_death_study = 'Definitely not related'
     site_aware_date = datetime.today()
+    primary_medical_care_giver = factory.SubFactory(DeathMedicalResponsibilityFactory)
 #     participant_hospitalized = 'No'
     death_cause_category = factory.SubFactory(DeathCauseCategoryFactory)
     death_cause_info = factory.SubFactory(DeathCauseInfoFactory)
