@@ -4,7 +4,6 @@ from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_tracking.classes import TrackerHelper
 
 from ..forms import GpsSearchForm
 from ..search import PlotSearchByWord

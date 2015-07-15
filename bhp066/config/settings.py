@@ -16,7 +16,6 @@ from .lab import LAB_IMPORT_DMIS_DATA_SOURCE
 from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 from .middleman import MIDDLE_MAN_LIST
-from .tracker_settings import REGISTERED_SITES, PIMA_VL_TYPE_SETTING, TRACKER_SERVER_NAME
 
 DEBUG = True  # Note: should be False for collectstatic
 TEMPLATE_DEBUG = DEBUG
@@ -30,7 +29,7 @@ APP_NAME = APP_NAME
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(3)  # e.g. /home/django/source
-EDC_DIR = SOURCE_ROOT.child('edc').child('edc')  # e.g. /home/django/source/edc_project/edc
+EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
 TEMPLATE_DIRS = (
     EDC_DIR.child('templates'),
 )
@@ -277,11 +276,6 @@ VERIFY_GPS_LOCATION = VERIFY_GPS_LOCATION
 
 # edc.device.inspector (middleman)
 MIDDLE_MAN_LIST = MIDDLE_MAN_LIST
-
-# apps.bcpp_tracker
-REGISTERED_SITES = REGISTERED_SITES
-PIMA_VL_TYPE_SETTING = PIMA_VL_TYPE_SETTING
-TRACKER_SERVER_NAME = TRACKER_SERVER_NAME
 
 # edc.device.sync
 ALLOW_MODEL_SERIALIZATION = True
