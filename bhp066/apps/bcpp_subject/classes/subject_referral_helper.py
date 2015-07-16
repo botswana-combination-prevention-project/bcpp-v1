@@ -222,10 +222,10 @@ class SubjectReferralHelper(object):
                     elif not self.on_art:
                         if not self.cd4_result:
                             self._referral_code_list.append('TST-CD4')
-                        elif self.cd4_result > 500:
+                        elif self.cd4_result > (500 if self.intervention else 350):
                             self._referral_code_list.append(
                                 'POS!-HI') if self.new_pos else self._referral_code_list.append('POS#-HI')
-                        elif self.cd4_result <= 500:
+                        elif self.cd4_result <= (500 if self.intervention else 350):
                             self._referral_code_list.append(
                                 'POS!-LO') if self.new_pos else self._referral_code_list.append('POS#-LO')
                     elif self.on_art:
@@ -262,7 +262,7 @@ class SubjectReferralHelper(object):
 
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
-        if (not site_mappers.current_mapper().intervention and
+        if (not self.intervention and
                 self.subject_visit.household_member.household_structure.survey.survey_slug != \
                 BASELINE_SURVEY_SLUG):
             referral_code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
@@ -271,6 +271,10 @@ class SubjectReferralHelper(object):
     @property
     def valid_referral_codes(self):
         return [code for code, _ in REFERRAL_CODES if not code == 'pending']
+
+    @property
+    def intervention(self):
+        return site_mappers.get_current_mapper().intervention
 
     @property
     def arv_clinic(self):
