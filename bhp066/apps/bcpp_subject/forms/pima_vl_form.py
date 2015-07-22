@@ -4,8 +4,6 @@ from django.conf import settings
 from ..models import PimaVl
 from .base_subject_model_form import BaseSubjectModelForm
 
-from apps.bcpp_tracking.classes import TrackerHelper
-
 
 class PimaVlForm (BaseSubjectModelForm):
 
@@ -28,10 +26,6 @@ class PimaVlForm (BaseSubjectModelForm):
             raise forms.ValidationError('If POC VL done today, what is the CD4 value?')
         if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('cd4_datetime'):
             raise forms.ValidationError('If POC VL done today, what is the CD4 test datetime?')
-
-        tracker = TrackerHelper()
-        if tracker.tracked_value.tracked_value >= tracker.tracked_value.value_limit:
-            raise forms.ValidationError('The number of POC vl for {0} cannot be greater than {1} '.format(settings.PIMA_VL_TYPE, tracker.tracked_value.value_limit))
 
         return cleaned_data
 
