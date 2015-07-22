@@ -26,7 +26,7 @@ from apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLoc
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
-from apps.bcpp_subject.models import HivCareAdherence, HivTestingHistory, HivTestReview, SubjectReferral
+from apps.bcpp_subject.models import HivCareAdherence, HivTestingHistory, HivTestReview, SubjectReferral, Pima
 
 
 # class TestPlotMapper(Mapper):
@@ -500,6 +500,12 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferral.objects.all()[0]
         subject_referral.save()
         self.assertIn('POS!-HI', subject_referral.referral_code)
+        pima = Pima.objects.all()[0]
+        pima.cd4_value = 349
+        pima.save()
+        subject_referral = SubjectReferral.objects.all()[0]
+        subject_referral.save()
+        self.assertIn('POS!-LO', subject_referral.referral_code)
 
     def tests_referred_urgent1(self):
         """if existing POS, low PIMA CD4 and art unknown, urgent referral"""
@@ -549,12 +555,18 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS', hiv_result_datetime=datetime.today())
+        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         self.assertTrue(subject_referral_helper.urgent_referral)
+        self.set_intervention(False)
+        subject_referral = SubjectReferral.objects.all()[0]
+        subject_referral.save()
+        subject_referral_helper = SubjectReferralHelper(subject_referral)
+        self.assertFalse(subject_referral_helper.urgent_referral)
 
     def tests_referred_ccc3(self):
         """if new pos, high PIMA CD4 and not on art, """
@@ -564,10 +576,15 @@ class TestReferral(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
+        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=501, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
+        self.assertIn('POS!-HI', subject_referral.referral_code)
+        self.set_intervention(False)
+        subject_referral = SubjectReferral.objects.all()[0]
+        subject_referral.save()
         self.assertIn('POS!-HI', subject_referral.referral_code)
 
     def tests_referred_masa1(self):
@@ -578,10 +595,21 @@ class TestReferral(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
+        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
+        self.assertIn('POS!-LO', subject_referral.referral_code)
+        self.set_intervention(False)
+        subject_referral = SubjectReferral.objects.all()[0]
+        subject_referral.save()
+        self.assertIn('POS!-HI', subject_referral.referral_code)
+        pima = Pima.objects.all()[0]
+        pima.cd4_value = 349
+        pima.save()
+        subject_referral = SubjectReferral.objects.all()[0]
+        subject_referral.save()
         self.assertIn('POS!-LO', subject_referral.referral_code)
 
     def tests_referred_verbal1(self):
@@ -826,11 +854,16 @@ class TestReferral(BaseScheduledModelTestCase):
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result='POS', other_record='Yes')
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result='POS')
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv='No')
+        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
         self.assertIn('POS#-LO', subject_referral.referral_code)
+        self.set_intervention(False)
+        subject_referral = SubjectReferral.objects.all()[0]
+        subject_referral.save()
+        self.assertIn('POS#-HI', subject_referral.referral_code)
 
     def tests_referred_verbal4(self):
         """"""
