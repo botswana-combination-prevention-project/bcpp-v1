@@ -9,7 +9,6 @@ from edc.device.device.classes import Device
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_tracking.classes import TrackerHelper
 
 from ..search import SubjectSearchByWord
 
@@ -32,7 +31,7 @@ class SectionSubjectView(BaseSectionView):
             'mapper_name': site_mappers.current_mapper.map_area,
             'subject_dashboard_url': self.dashboard_url_name,
             })
-        context.update(TrackerHelper().tracked_values())
+        context.update()
         return context
 
     def _paginate(self, search_result, page, results_per_page=None):
