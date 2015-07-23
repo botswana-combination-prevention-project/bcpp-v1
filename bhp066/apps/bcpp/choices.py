@@ -135,7 +135,7 @@ COMMUNITIES = (
     ('Nkange', _('Nkange')),
     ('Oodi', _('Oodi')),
     ('Otse', _('Otse')),
-    ('Raikops', _('Raikops')),
+    ('Rakops', _('Rakops')),
     ('Ramokgonami', _('Ramokgonami')),
     ('Ranaka', _('Ranaka')),
     ('Sebina', _('Sebina')),
