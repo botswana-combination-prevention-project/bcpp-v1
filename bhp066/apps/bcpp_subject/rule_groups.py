@@ -58,6 +58,17 @@ def func_art_naive(visit_instance):
     return art_naive
 
 
+def func_on_art(visit_instance):
+    """Returns True if the participant is NOT on art or cannot
+    be confirmed to be on art."""
+    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
+    on_art = subject_status_helper.on_art and not func_is_baseline(visit_instance)
+    if func_is_baseline(visit_instance):
+        if func_art_naive(visit_instance):
+            on_art = True
+    return on_art
+
+
 def func_art_naive_pima_vl(visit_instance):
     """Returns True if the participant is NOT on art or cannot
     be confirmed to be on art."""
@@ -66,8 +77,8 @@ def func_art_naive_pima_vl(visit_instance):
 
 
 def is_pimal_vl_no_within():
-    Tracker = get_model('bcpp_tracking', 'tracker')
-    tracker = Tracker.objects.get(value_type=settings.PIMA_VL_TYPE_SETTING, is_active=True, name='central')
+    Tracker = get_model('edc_tracker', 'tracker')
+    tracker = Tracker.objects.get(value_type='Mobile settings', is_active=True)
     return True if tracker.tracked_value <= tracker.value_limit else False
 
 
@@ -459,6 +470,14 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['pimavl'])
 
+    vl_for_known_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_on_art,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'],)
+
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
             predicate=func_show_microtube,
@@ -627,6 +646,15 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
+
+    pimavl_for_art_naive = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_art_naive,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load']
+        )
 
     hic = ScheduledDataRule(
         logic=Logic(
