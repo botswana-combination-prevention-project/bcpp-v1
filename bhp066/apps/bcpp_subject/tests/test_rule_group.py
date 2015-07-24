@@ -34,7 +34,7 @@ from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivRes
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
                         SubjectLocatorFactory)
 
-from apps.bcpp_tracking.tests.factories import TrackerFactory
+from edc_tracker.tracker_factory import TrackerFactory
 
 
 # class TestPlotMapper(Mapper):
@@ -130,9 +130,14 @@ class TestRuleGroup(TestCase):
         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
 #         Tracker = get_model('bcpp_tracking', 'tracker')
-        self.tracker_mobile_setting = TrackerFactory(name='central', is_active=True, value_type='mobile setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
-        self.tracker_household_setting = TrackerFactory(name='central', is_active=True, value_type='household setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
-        self._hiv_result = None
+#         self.tracker_mobile_setting = TrackerFactory(name='central', is_active=True, value_type='mobile setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
+#         self.tracker_household_setting = TrackerFactory(name='central', is_active=True, value_type='household setting', app_name='bcpp_tracking', model='pimavl', tracked_value=100, start_date=datetime.today(), end_date=datetime(2015, 06, 30))
+#         self._hiv_result = None
+        self.tracker_mobile_setting = TrackerFactory()
+#         Tracker = get_model('edc_tracker', 'tracker')
+#         PimaVL = get_model('bcpp_subject', 'pimavl')
+#         Tracker.objects.create(master_server_name='central', value_limit=400,\
+#             app_name='edc_tracker', model=PimaVL, value_type='Mobile settings', is_active=True)
 
     def new_metadata_is_not_keyed(self):
         self.assertEquals(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
@@ -1398,6 +1403,8 @@ class TestRuleGroup(TestCase):
 
         self.hiv_result(NEG, self.subject_visit_male_T0)
 
+        SubjectLocatorFactory(subject_visit=self.subject_visit_male_T0)
+
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
@@ -1548,3 +1555,181 @@ class TestRuleGroup(TestCase):
             )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+
+    def test_hiv_pos_nd_not_on_art_at_bhs(self):
+        """HIV POS not on ART at BHS. Pima required.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male_T0.appointment)
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        research_blood_draw_options = {}
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.hiv_result(POS, self.subject_visit_male_T0)
+
+        # add HivCarAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+
+    def test_hiv_pos_nd_not_on_art_at_pocvl(self):
+        """HIV POS not on ART at BHS. PimaVL required.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male_T0.appointment)
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        pimavl_options = {}
+        pimavl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        research_blood_draw_options = {}
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.hiv_result(POS, self.subject_visit_male_T0)
+
+        # add HivCarAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pimavl_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+
+    def test_hiv_pos_nd_on_art_at_ahs(self):
+        """Previously enrollees at t0 who are HIV-positive but were not on ART naive at the time of enrollment. Pima required.
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male_T0.appointment)
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        self.hiv_result(POS, self.subject_visit_male_T0)
+
+        # add HivCarAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',  # this is the rule field
+            )
+
+        self.subject_visit_male = self.annual_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male.appointment)
+
+        pimavl_options = {}
+        pimavl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male.appointment)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care='Yes',
+            ever_recommended_arv='Yes',
+            ever_taken_arv='Yes',
+            on_arv='Yes',
+            arv_evidence='Yes',  # this is the rule field
+            )
+
+        research_blood_draw_options = {}
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
+
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **research_blood_draw_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pimavl_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+
