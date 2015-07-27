@@ -4,6 +4,10 @@ from ..forms import PimaVlForm
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 from ..filters import Cd4ThreshHoldFilter
 
+from django.contrib.auth.models import User
+
+from edc_tracker import TrackerHelper
+
 
 class PimaVlAdmin(SubjectVisitModelAdmin):
 
@@ -11,7 +15,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'poc_vl_today',
-        'poc_today_vl_other',
+        'poc_vl_today_other',
         'poc_today_vl_other_other',
         'pima_id',
         'cd4_value',
@@ -26,4 +30,21 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         'poc_vl_today': admin.VERTICAL,
         'easy_of_use': admin.VERTICAL}
+
+    def save_model(self, request, obj, form, change):
+        pass
+        #self.valid_user(self, request.user)
+        #obj.save()
+
+    def valid_user(self, user):
+        """ A list for user contacts."""
+        pass
+#         tracker = TrackerHelper()
+#         if tracker.tracked_value < 400:
+#             if not user in User.objects.filter(groups__name='field_supervisor'):
+#                 raise "Access denied, you don't have permission to save/modified this model."
+#         else:
+#             if not user in User.objects.filter(groups__name='field_research_assistant'):
+#                 raise "Access denied, you don't have permission to save/modified this model."
+#         return True
 admin.site.register(PimaVl, PimaVlAdmin)
