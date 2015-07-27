@@ -1557,7 +1557,6 @@ class TestRuleGroup(TestCase):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
 
-<<<<<<< Updated upstream
     def test_hiv_pos_nd_not_on_art_at_bhs(self):
         """HIV POS not on ART at BHS. Pima required.
         """
