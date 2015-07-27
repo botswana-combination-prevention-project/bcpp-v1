@@ -32,6 +32,7 @@ class BaseScheduledModelTestCase(TestCase):
     community = None
     site_code = None
     study_site = None
+    household_strucure = None
     subject_visit_female = None
     subject_visit_male = None
 
@@ -76,6 +77,7 @@ class BaseScheduledModelTestCase(TestCase):
 
     def create_baseline(self, household):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
+        self.household_structure = household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
