@@ -30,11 +30,12 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, Pima)
-
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
                         SubjectLocatorFactory)
-
 from edc_tracker.tracker_factory import TrackerFactory
+from apps.bcpp_tracking.tests.factories import TrackerFactory
+from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, HivResultFactory,
+                        PimaVlFactory)
 
 
 # class TestPlotMapper(Mapper):
@@ -71,15 +72,15 @@ class TestRuleGroup(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        study_site = StudySite.objects.get(site_code='14')
+        self.study_site = StudySite.objects.get(site_code='00')
 
-        household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
-        household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
-        RepresentativeEligibilityFactory(household_structure=household_structure)
-        RepresentativeEligibilityFactory(household_structure=household_structure_y2)
-        HouseholdMemberFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
-        HouseholdMemberFactory(household_structure=household_structure)
+        self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
+        self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
+        HouseholdMemberFactory(household_structure=self.household_structure)
+        HouseholdMemberFactory(household_structure=self.household_structure)
+        HouseholdMemberFactory(household_structure=self.household_structure)
 
         male_dob = date.today() - relativedelta(years=25)
         male_age_in_years = 25
@@ -90,8 +91,8 @@ class TestRuleGroup(TestCase):
         female_first_name = 'ERIKA'
         female_initials = "EW"
 
-        self.household_member_female_T0 = HouseholdMemberFactory(household_structure=household_structure, gender='F', age_in_years=female_age_in_years, first_name=female_first_name, initials=female_initials)
-        self.household_member_male_T0 = HouseholdMemberFactory(household_structure=household_structure, gender='M', age_in_years=male_age_in_years, first_name=male_first_name, initials=male_initials)
+        self.household_member_female_T0 = HouseholdMemberFactory(household_structure=self.household_structure, gender='F', age_in_years=female_age_in_years, first_name=female_first_name, initials=female_initials)
+        self.household_member_male_T0 = HouseholdMemberFactory(household_structure=self.household_structure, gender='M', age_in_years=male_age_in_years, first_name=male_first_name, initials=male_initials)
         self.household_member_female_T0.member_status = 'BHS_SCREEN'
         self.household_member_male_T0.member_status = 'BHS_SCREEN'
         self.household_member_female_T0.save()
@@ -112,10 +113,10 @@ class TestRuleGroup(TestCase):
             guardian='No',
             initials=self.household_member_male_T0.initials,
             part_time_resident='Yes')
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, study_site=study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, study_site=study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
 
-        enumeration_helper = EnumerationHelper(household_structure.household, survey, next_survey)
+        enumeration_helper = EnumerationHelper(self.household_structure.household, survey, next_survey)
         self.household_member_female = enumeration_helper.create_member_on_target(self.household_member_female_T0)
         self.household_member_male = enumeration_helper.create_member_on_target(self.household_member_male_T0)
 
@@ -1556,6 +1557,7 @@ class TestRuleGroup(TestCase):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
 
+<<<<<<< Updated upstream
     def test_hiv_pos_nd_not_on_art_at_bhs(self):
         """HIV POS not on ART at BHS. Pima required.
         """
@@ -1733,3 +1735,18 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pimavl_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
 
+    def test_poc_viral_load_mobile_household(self):
+        count = 0
+        for element in range(0, 100):
+            count = count + 1
+            hm = HouseholdMemberFactory(household_structure=self.household_structure)
+            en = EnrollmentChecklistFactory(household_member=hm, gender=hm.gender,
+                                            dob=date(1990, 3, 3), initials=hm.initials)
+            subject_consent = SubjectConsentFactory(household_member=hm, study_site=self.study_site, dob=en.dob,
+                                                    gender=hm.gender, initials=en.initials)
+            registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
+            appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='T1')
+            subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
+            self.hiv_result('POS', subject_visit)
+            poc_vl = PimaVlFactory(subject_visit=subject_visit)
+            print '{}/{}'.format(count, 100)

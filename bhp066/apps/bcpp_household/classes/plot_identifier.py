@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.utils import OperationalError
 from edc.core.identifier.classes import BaseIdentifier
 
 
@@ -30,4 +30,7 @@ class PlotIdentifier(BaseIdentifier):
     def get_notebook_plot_lists(self):
         """ Returns a list of plots allocated to research assistant machine """
         NotebookPlotList = models.get_model('bcpp_household', 'notebookplotlist')
+#         try:
         return [notebook.plot_identifier for notebook in NotebookPlotList.objects.all()]
+#         except OperationalError as e:
+#             print e.__dict__
