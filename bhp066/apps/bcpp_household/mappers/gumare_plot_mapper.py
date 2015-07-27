@@ -14,7 +14,7 @@ class GumarePlotMapper(BasePlotMapper):
 
     map_area = 'gumare'
     map_code = '35'
-    pair = 6.5
+    pair = 13.0
     regions = SECTIONS
     sections = SUB_SECTIONS
 
