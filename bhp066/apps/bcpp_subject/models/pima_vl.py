@@ -3,12 +3,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth.models import User
 
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
+from edc_tracker import TrackerHelper
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -69,12 +71,16 @@ class PimaVl (BaseScheduledVisitModel):
     time_of_test = models.DateTimeField(
         verbose_name=_("Test Date and time"),
         validators=[datetime_not_future],
+        null=True,
+        blank=True,
         )
 
     time_of_result = models.DateTimeField(
         verbose_name=_("Result Date and time"),
         validators=[datetime_not_future],
-        help_text="Time it takes to obtain viral load result."
+        help_text="Time it takes to obtain viral load result.",
+        null=True,
+        blank=True,
         )
 
     easy_of_use = models.CharField(
@@ -94,6 +100,19 @@ class PimaVl (BaseScheduledVisitModel):
 
     def save(self, *args, **kwargs):
         super(PimaVl, self).save(*args, **kwargs)
+
+    def valid_user(self, user):
+        """ A list for user contacts."""
+        tracker = TrackerHelper()
+        tracker.master_server_name = 'central'
+        tracker.value_type = 'Mobile settings'
+        if tracker.tracked_value < 400:
+            if user not in User.objects.filter(groups__name='field_supervisor'):
+                raise "Access denied, you don't have permission to save/modified this model."
+        else:
+            if user not in User.objects.filter(groups__name='field_research_assistant'):
+                raise "Access denied, you don't have permission to save/modified this model."
+        return True
 
     class Meta:
         app_label = 'bcpp_subject'

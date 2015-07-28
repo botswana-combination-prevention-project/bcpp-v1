@@ -26,7 +26,9 @@ class PimaVlForm (BaseSubjectModelForm):
             raise forms.ValidationError('If POC VL done today, what is the CD4 value?')
         if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('cd4_datetime'):
             raise forms.ValidationError('If POC VL done today, what is the CD4 test datetime?')
-
+        if cleaned_data.get('poc_vl_today') == 'Yes':
+            if not (cleaned_data.get('time_of_test')  or cleaned_data.get('time_of_result')):
+                raise forms.ValidationError('Time of test and time of result should be provided.')
         return cleaned_data
 
     class Meta:
