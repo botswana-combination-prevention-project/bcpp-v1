@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import User
 
 from edc.core.crypto_fields.fields import EncryptedTextField
@@ -13,6 +13,9 @@ from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 from edc_tracker import TrackerHelper
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from ..exceptions import DeniedPermissionPimaVLError
+
+from ..constants import PIMA_VL_TYPE, CENTRAL_SERVER
 
 from apps.bcpp.choices import EASY_OF_USE
 
@@ -104,14 +107,14 @@ class PimaVl (BaseScheduledVisitModel):
     def valid_user(self, user):
         """ A list for user contacts."""
         tracker = TrackerHelper()
-        tracker.master_server_name = 'central'
-        tracker.value_type = 'Mobile settings'
-        if tracker.tracked_value < 400:
+        tracker.master_server_name = CENTRAL_SERVER
+        tracker.value_type = PIMA_VL_TYPE
+        if tracker.tracked_value < settings.PIMA_VL_LIMIT:
             if user not in User.objects.filter(groups__name='field_supervisor'):
-                raise "Access denied, you don't have permission to save/modified this model."
+                raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
         else:
             if user not in User.objects.filter(groups__name='field_research_assistant'):
-                raise "Access denied, you don't have permission to save/modified this model."
+                raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
         return True
 
     class Meta:
