@@ -8,7 +8,7 @@ from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, L
 from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
                             PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
                             LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
-                            FILTERED_DEFAULT_SEARCH)
+                            FILTERED_DEFAULT_SEARCH, PIMA_VL_LIMIT)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .device import (CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
                      VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
@@ -220,7 +220,7 @@ DAJAXICE_MEDIA_PREFIX = "dajaxice"
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
 SUBJECT_TYPES = ['subject', 'clinic']
-MAX_SUBJECTS = {'subject': 9999,
+MAX_SUBJECTS = {'subject': 99999,
                 'clinic': 9999}
 
 # edc.device.dispatch
@@ -294,3 +294,7 @@ LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_
 # with multiple plots but you want default filter(?) to show current community instances.
 # Central Server in BHP must always be set to FALSE.
 FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
+DO_SUPPLEMENTAL = False
+#
+PIMA_VL_TYPE_SETTING = 'Mobile settings'
+PIMA_VL_LIMIT = PIMA_VL_LIMIT
