@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 
+from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.db.models import get_model
 
@@ -29,14 +30,15 @@ from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
-                      Circumcision, Circumcised, HicEnrollment, Pima)
+                      Circumcision, Circumcised, HicEnrollment, Pima, PimaVl)
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
                         SubjectLocatorFactory)
 from edc_tracker.tracker_factory import TrackerFactory
 from apps.bcpp_tracking.tests.factories import TrackerFactory
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, HivResultFactory,
                         PimaVlFactory)
-
+from ..exceptions import DeniedPermissionPimaVLError
+from ..constants import FIELD_RESEARCH_ASSISTANT_GROUP, FIELD_SUPERVISOR_GROUP
 
 # class TestPlotMapper(Mapper):
 #     map_area = 'test_community9'
@@ -1735,6 +1737,10 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
 
     def test_poc_viral_load_mobile_household(self):
+        Group.objects.create(name=FIELD_RESEARCH_ASSISTANT_GROUP)
+        Group.objects.create(name=FIELD_SUPERVISOR_GROUP)
+        ra_user = User.objects.create()
+        cbs_user = User.objects.create()
         count = 0
         for element in range(0, 100):
             count = count + 1
@@ -1749,3 +1755,10 @@ class TestRuleGroup(TestCase):
             self.hiv_result('POS', subject_visit)
             poc_vl = PimaVlFactory(subject_visit=subject_visit)
             print '{}/{}'.format(count, 100)
+        poc_vl = PimaVl(subject_visit=subject_visit)
+        self.assertRaises(DeniedPermissionPimaVLError, poc_vl.valid_user())
+        
+        
+        
+        
+        

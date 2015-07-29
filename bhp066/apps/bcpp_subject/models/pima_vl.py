@@ -15,7 +15,7 @@ from edc_tracker import TrackerHelper
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from ..exceptions import DeniedPermissionPimaVLError
 
-from ..constants import PIMA_VL_TYPE, CENTRAL_SERVER
+from ..constants import PIMA_VL_TYPE, CENTRAL_SERVER, FIELD_SUPERVISOR_GROUP, FIELD_RESEARCH_ASSISTANT_GROUP
 
 from apps.bcpp.choices import EASY_OF_USE
 
@@ -110,10 +110,10 @@ class PimaVl (BaseScheduledVisitModel):
         tracker.master_server_name = CENTRAL_SERVER
         tracker.value_type = PIMA_VL_TYPE
         if tracker.tracked_value < settings.PIMA_VL_LIMIT:
-            if user not in User.objects.filter(groups__name='field_supervisor'):
+            if user not in User.objects.filter(groups__nam__in=[FIELD_SUPERVISOR_GROUP]):
                 raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
         else:
-            if user not in User.objects.filter(groups__name='field_research_assistant'):
+            if user not in User.objects.filter(groups__name__in=[FIELD_RESEARCH_ASSISTANT_GROUP]):
                 raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
         return True
 
