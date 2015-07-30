@@ -341,7 +341,7 @@ MAUNATLALA_LANDMARKS = (
     ('Tsela E Butswe Bar-m/tlala', -22.580285, 27.641793),
     ('Tshimologo G/dealer-m/tlala', -22.602635, 27.632544),
     ('Tswelelopele Depot-m/tlala', -22.59731, 27.637838),
-('Tune Ward-m/tlala', -22.596092, 27.62879)
+    ('Tune Ward-m/tlala', -22.596092, 27.62879)
 )
 
 RAMOKGONAMI_LANDMARKS = (
