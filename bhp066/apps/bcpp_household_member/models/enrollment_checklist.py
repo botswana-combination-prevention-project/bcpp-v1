@@ -92,7 +92,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         default=NOT_APPLICABLE,
-        help_text=_(""))
+        help_text="If 'YES' then not eligible")
 
     confirm_participation = models.CharField(
         verbose_name=_("If Yes, RA should obtain documentation of participation and ask CBS to" 
@@ -102,7 +102,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         null=True,
         blank=False,
         default=NOT_APPLICABLE,
-        help_text=_(""))
+        help_text="")
 
     legal_marriage = models.CharField(
         verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
