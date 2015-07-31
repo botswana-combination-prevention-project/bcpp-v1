@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import Group, User
 from django.test import TestCase
-from django.db.models import get_model
+from django.conf import settings
 
 from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
@@ -34,11 +34,10 @@ from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivRes
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
                         SubjectLocatorFactory)
 from edc_tracker.tracker_factory import TrackerFactory
-from apps.bcpp_tracking.tests.factories import TrackerFactory
 from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, HivResultFactory,
                         PimaVlFactory)
 from ..exceptions import DeniedPermissionPimaVLError
-from ..constants import FIELD_RESEARCH_ASSISTANT_GROUP, FIELD_SUPERVISOR_GROUP
+from ..constants import FIELD_RESEARCH_ASSISTANT_GROUP, CLINIC_RESEARCH_ASSISTANT
 
 # class TestPlotMapper(Mapper):
 #     map_area = 'test_community9'
@@ -1737,12 +1736,15 @@ class TestRuleGroup(TestCase):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
 
     def test_poc_viral_load_mobile_household(self):
-        Group.objects.create(name=FIELD_RESEARCH_ASSISTANT_GROUP)
-        Group.objects.create(name=FIELD_SUPERVISOR_GROUP)
-        ra_user = User.objects.create()
-        cbs_user = User.objects.create()
+#         settings.PIMA_VL_LIMIT = 10
+        ra_group = Group.objects.create(name=FIELD_RESEARCH_ASSISTANT_GROUP)
+        clinic_ra_group = Group.objects.create(name=CLINIC_RESEARCH_ASSISTANT)
+        ra_user = User.objects.create_user('ra_user', 'ra_user@bhp.org.bw')
+        clinic_ra_user = User.objects.create_user('clinic_ra_user', 'clinic_ra_user@bhp.org.bw')
+        ra_group.user_set.add(ra_user)
+        clinic_ra_group.user_set.add(clinic_ra_user)
         count = 0
-        for element in range(0, 100):
+        for element in range(0, 10):
             count = count + 1
             hm = HouseholdMemberFactory(household_structure=self.household_structure)
             en = EnrollmentChecklistFactory(household_member=hm, gender=hm.gender,
@@ -1754,9 +1756,12 @@ class TestRuleGroup(TestCase):
             subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
             self.hiv_result('POS', subject_visit)
             poc_vl = PimaVlFactory(subject_visit=subject_visit)
-            print '{}/{}'.format(count, 100)
+            self.assertRaises(DeniedPermissionPimaVLError, poc_vl.valid_user(ra_user))
+            self.assertTrue(poc_vl.valid_user(clinic_ra_user))
+            print '{}/{}'.format(count, 10)
         poc_vl = PimaVl(subject_visit=subject_visit)
-        self.assertRaises(DeniedPermissionPimaVLError, poc_vl.valid_user())
+        self.assertRaises(DeniedPermissionPimaVLError, poc_vl.valid_user(clinic_ra_user))
+        self.assertTrue(poc_vl.valid_user(ra_user))
         
         
         

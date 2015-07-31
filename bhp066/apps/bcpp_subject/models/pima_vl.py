@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.contrib.auth.models import User
 
+from edc.device.device.classes import Device
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
@@ -15,7 +16,7 @@ from edc_tracker import TrackerHelper
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from ..exceptions import DeniedPermissionPimaVLError
 
-from ..constants import PIMA_VL_TYPE, CENTRAL_SERVER, FIELD_SUPERVISOR_GROUP, FIELD_RESEARCH_ASSISTANT_GROUP
+from ..constants import PIMA_VL_TYPE, CENTRAL_SERVER, CLINIC_RESEARCH_ASSISTANT, FIELD_RESEARCH_ASSISTANT_GROUP
 
 from apps.bcpp.choices import EASY_OF_USE
 
@@ -106,14 +107,27 @@ class PimaVl (BaseScheduledVisitModel):
 
     def valid_user(self, user):
         """ A list for user contacts."""
-        tracker = TrackerHelper()
-        tracker.master_server_name = CENTRAL_SERVER
-        tracker.value_type = PIMA_VL_TYPE
-        if tracker.tracked_value < settings.PIMA_VL_LIMIT:
-            if user not in User.objects.filter(groups__nam__in=[FIELD_SUPERVISOR_GROUP]):
+        tracker_helper = TrackerHelper()
+        tracker_helper.app_label = 'bcpp_subject'
+        tracker_helper.master_server_url = 'central'
+#         tracker_helper.value_type = 'Mobile settings'
+        tracker_helper.tracked_model = self.__class__
+        tracker_helper.value_limit = 10
+        device = Device()
+        if device.is_central_server:
+            tracker_helper.master_filter_dict.update({'poc_vl_type': PIMA_VL_TYPE})
+        else:
+            tracker_helper.site_filter_dict.update({'poc_vl_type': PIMA_VL_TYPE})
+        tracker_helper.master_server_name = CENTRAL_SERVER
+#         tracker_helper.value_type = PIMA_VL_TYPE
+        tr = tracker_helper.tracker()
+        if tracker_helper.tracker().tracked_value < tracker_helper.value_limit:
+            #if user not in User.objects.filter(groups__name__in=[CLINIC_RESEARCH_ASSISTANT]):
+            if not user.groups.filter(name=CLINIC_RESEARCH_ASSISTANT).exists():
                 raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
         else:
-            if user not in User.objects.filter(groups__name__in=[FIELD_RESEARCH_ASSISTANT_GROUP]):
+            #if user not in User.objects.filter(groups__name__in=[FIELD_RESEARCH_ASSISTANT_GROUP]):
+            if not user.groups.filter(name=FIELD_RESEARCH_ASSISTANT_GROUP).exists():
                 raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
         return True
 
