@@ -2024,7 +2024,7 @@ class TestRuleGroup(TestCase):
         ra_group.user_set.add(ra_user)
         clinic_ra_group.user_set.add(clinic_ra_user)
         count = 0
-        for element in range(0, 10):
+        for element in range(0, 5):
             count = count + 1
             hm = HouseholdMemberFactory(household_structure=self.household_structure)
             en = EnrollmentChecklistFactory(household_member=hm, gender=hm.gender,
@@ -2038,7 +2038,8 @@ class TestRuleGroup(TestCase):
             poc_vl = PimaVlFactory(subject_visit=subject_visit)
             self.assertRaises(DeniedPermissionPimaVLError, lambda: poc_vl.valid_user(ra_user))
             self.assertTrue(poc_vl.valid_user(clinic_ra_user))
-            print '{}/{}'.format(count, 10)
+            print '{}/{}'.format(count, 5)
+        count = count +1
         hm = HouseholdMemberFactory(household_structure=self.household_structure)
         en = EnrollmentChecklistFactory(household_member=hm, gender=hm.gender,
                                         dob=date(1990, 3, 3), initials=hm.initials)
@@ -2048,5 +2049,6 @@ class TestRuleGroup(TestCase):
         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='T1')
         subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
         self.hiv_result('POS', subject_visit)
+        print '{}/{}'.format(count, 5)
         poc_vl = PimaVlFactory(subject_visit=subject_visit)
         self.assertRaises(DeniedPermissionPimaVLError, lambda: poc_vl.valid_user(clinic_ra_user))
