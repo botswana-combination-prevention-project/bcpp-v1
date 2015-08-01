@@ -22,8 +22,8 @@
 <tr style="background:lightyellow;">
 <td><B>Name:</B> {{ household_member.first_name|encrypted }} ({{ household_member.initials }})</td> 
 <td><B>Gender:</B> {{ household_member.gender|gender }}</td>
-<td><B>Age:</B> {% if subject_consent %}{{ subject_consent.dob|age }} at consent{% else %}{{ household_member.age_in_years }} at survey{% endif %}</td>
-<td><B>Survey:</B> {% if subject_consent %}Consented during survey '{{household_structure.survey}}'{% endif %}</td>
+<td><B>Age:</B> {% if subject_consent %}{{ subject_consent.age_at_consent }}y at consent{% else %}{{ household_member.age_in_years }} at survey{% endif %}</td>
+<td><B>Survey:</B> {% if subject_consent %}Consented during survey '{{subject_consent.survey_of_consent}}'{% endif %}</td>
 {% if subject_consent %}
     {% if not subject_consent.first_name == household_member.first_name %}
         <td><div style="background:red;color:white;">Name mismatch: {{ subject_consent.first_name|encrypted }} <> {{household_member.first_name|encrypted}}</div></td>  
