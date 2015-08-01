@@ -181,6 +181,16 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
 
     @property
+    def age_at_consent(self):
+        age_in_years = relativedelta(date.today(), self.dob).years
+        years_since_consent = relativedelta(date.today(), self.consent_datetime).years
+        return age_in_years - years_since_consent
+
+    @property
+    def survey_of_consent(self):
+        return self.survey.survey_name
+
+    @property
     def minor(self):
         age_at_consent = relativedelta(date(self.consent_datetime.year,
                                             self.consent_datetime.month,
