@@ -73,7 +73,7 @@ class TestRuleGroup(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        self.study_site = StudySite.objects.get(site_code='14')
+        self.study_site = StudySite.objects.get(site_code='00')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
@@ -2036,8 +2036,17 @@ class TestRuleGroup(TestCase):
             subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
             self.hiv_result('POS', subject_visit)
             poc_vl = PimaVlFactory(subject_visit=subject_visit)
-            self.assertRaises(DeniedPermissionPimaVLError, poc_vl.valid_user(ra_user))
+            self.assertRaises(DeniedPermissionPimaVLError, lambda: poc_vl.valid_user(ra_user))
             self.assertTrue(poc_vl.valid_user(clinic_ra_user))
             print '{}/{}'.format(count, 10)
-        poc_vl = PimaVl(subject_visit=subject_visit)
-        self.assertRaises(DeniedPermissionPimaVLError, poc_vl.valid_user(clinic_ra_user))
+        hm = HouseholdMemberFactory(household_structure=self.household_structure)
+        en = EnrollmentChecklistFactory(household_member=hm, gender=hm.gender,
+                                        dob=date(1990, 3, 3), initials=hm.initials)
+        subject_consent = SubjectConsentFactory(household_member=hm, study_site=self.study_site, dob=en.dob,
+                                                gender=hm.gender, initials=en.initials)
+        registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
+        appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='T1')
+        subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
+        self.hiv_result('POS', subject_visit)
+        poc_vl = PimaVlFactory(subject_visit=subject_visit)
+        self.assertRaises(DeniedPermissionPimaVLError, lambda: poc_vl.valid_user(clinic_ra_user))
