@@ -113,7 +113,8 @@ class PimaVl (BaseScheduledVisitModel):
         tracker_helper.master_server_url = 'central'
         tracker_helper.value_type = 'Mobile settings'
         tracker_helper.tracked_model = self.__class__
-        tracker_helper.value_limit = 10
+        #NOTE: un-comment this line
+        #tracker_helper.value_limit = 5
         device = Device()
         if device.is_central_server:
             tracker_helper.master_filter_dict.update({'poc_vl_type': PIMA_VL_TYPE})
@@ -121,7 +122,8 @@ class PimaVl (BaseScheduledVisitModel):
             tracker_helper.site_filter_dict.update({'poc_vl_type': PIMA_VL_TYPE})
         tracker_helper.master_server_name = CENTRAL_SERVER
 #         tracker_helper.value_type = PIMA_VL_TYPE
-        if tracker_helper.tracker().tracked_value < tracker_helper.value_limit:
+        #print 'TRACKED_VALUE='+str(tracker_helper.tracker().tracked_value)
+        if tracker_helper.tracker().tracked_value <= tracker_helper.value_limit:
             #if user not in User.objects.filter(groups__name__in=[CLINIC_RESEARCH_ASSISTANT]):
             if not user.groups.filter(name=CLINIC_RESEARCH_ASSISTANT).exists():
                 raise DeniedPermissionPimaVLError("Access denied, you don't have permission to save/modified this model.")
