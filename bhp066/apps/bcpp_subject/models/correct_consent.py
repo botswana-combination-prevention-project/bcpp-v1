@@ -159,7 +159,7 @@ class CorrectConsent(BaseSyncUuidModel):
         null=True,
         choices=YES_NO,
         )
-    
+
     old_witness_name = EncryptedLastnameField(
         verbose_name=_("Witness\'s Last and first name (illiterates only)"),
         validators=[
@@ -232,6 +232,8 @@ class CorrectConsent(BaseSyncUuidModel):
         if self.new_is_literate:
             enrollment_checklist.literacy = self.new_is_literate
             self.subject_consent.is_literate = self.new_is_literate
+            if self.new_is_literate == 'Yes':
+                self.subject_consent.witness_name = None
             if self.new_witness_name:
                 self.subject_consent.witness_name = self.new_witness_name
         if self.new_last_name:
@@ -244,6 +246,8 @@ class CorrectConsent(BaseSyncUuidModel):
                 household_member.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
                 enrollment_checklist.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
                 self.subject_consent.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
+        if self.new_witness_name:
+            self.subject_consent.witness_name = self.new_witness_name
         if hic_enrollment:
             hic_enrollment.save(update_fields=['dob'])
         household_member.save(update_fields=['first_name', 'initials', 'gender', 'age_in_years'])

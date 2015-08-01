@@ -95,9 +95,11 @@ class HicEnrollment (BaseScheduledVisitModel):
             self.locator_information = self.is_locator_information()
             self.citizen_or_spouse = self.is_citizen_or_spouse()
             self.hiv_status_today = self.get_hiv_status_today()
-        dob, consent_datetime = self.get_dob_consent_datetime()
-        self.consent_datetime = consent_datetime
-        self.dob = dob
+        update_fields = kwargs.get('update_fields')
+        if not update_fields:
+            dob, consent_datetime = self.get_dob_consent_datetime()
+            self.dob = dob
+            self.consent_datetime = consent_datetime
         super(HicEnrollment, self).save(*args, **kwargs)
 
     def is_permanent_resident(self, exception_cls=None):
