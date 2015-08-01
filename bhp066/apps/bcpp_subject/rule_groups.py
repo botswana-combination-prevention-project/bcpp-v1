@@ -10,6 +10,7 @@ from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, Schedu
 from edc.subject.appointment.models import Appointment
 
 from .classes import SubjectStatusHelper
+from .constants import PIMA_VL_TYPE, CENTRAL_SERVER
 
 from .models import (SubjectVisit, ResourceUtilization, HivTestingHistory,
                      SexualBehaviour, HivCareAdherence, Circumcision, Circumcised,
@@ -59,27 +60,22 @@ def func_art_naive(visit_instance):
 
 
 def func_on_art(visit_instance):
-    """Returns True if the participant is NOT on art or cannot
+    """Returns True if the participant is on art or cannot
     be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    on_art = subject_status_helper.on_art and not func_is_baseline(visit_instance)
-    if func_is_baseline(visit_instance):
-        if func_art_naive(visit_instance):
-            on_art = True
-    return on_art
+    art_naive = subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    return art_naive
 
 
-def func_art_naive_pima_vl(visit_instance):
-    """Returns True if the participant is NOT on art or cannot
-    be confirmed to be on art."""
-    subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    return (not subject_status_helper.on_art) and subject_status_helper.hiv_result == POS and is_pimal_vl_no_within()
-
-
-def is_pimal_vl_no_within():
-    Tracker = get_model('edc_tracker', 'tracker')
-    tracker = Tracker.objects.get(value_type='Mobile settings', is_active=True)
-    return True if tracker.tracked_value <= tracker.value_limit else False
+def func_rbd_ahs(visit_instance):
+    """Returns True if the participant is on art at ahs"""
+    if not func_is_baseline(visit_instance):
+        if func_hiv_negative_today(func_previous_visit_instance(visit_instance)):
+            return False
+        else:
+            return True
+    else:
+        return False
 
 
 def func_require_pima_hiv_care_ad(visit_instance):
@@ -164,12 +160,37 @@ def func_hiv_positive_today(visit_instance):
     return hiv_result == POS
 
 
+def func_hiv_positive_today_ahs(visit_instance):
+    """Returns True if  """
+    if func_is_baseline(visit_instance):
+        return func_hiv_positive_today(visit_instance)
+    else:
+        if func_hiv_positive_today(visit_instance) and SubjectStatusHelper(visit_instance).on_art:
+            return True
+    return False
+
+
 def func_hic_enrolled(visit_instance):
     try:
         HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='Yes')
     except HicEnrollment.DoesNotExist:
         return False
     return True
+
+
+def func_hic_not_enrolled(visit_instance):
+    try:
+        HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='No')
+    except HicEnrollment.DoesNotExist:
+        return False
+    return True
+
+
+def func_hic(visit_instance):
+    past_visit = func_previous_visit_instance(visit_instance)
+    if func_hic_enrolled(past_visit) or func_hic_not_enrolled(past_visit):
+        return True
+    return False
 
 
 def func_hiv_result_neg_baseline(visit_instance):
@@ -245,7 +266,7 @@ def circumsised_in_past(visit_instance):
 
 
 def func_should_not_show_circumsition(visit_instance):
-    show_cicumsition = is_gender_female(visit_instance) or circumsised_in_past(visit_instance) 
+    show_cicumsition = is_gender_female(visit_instance) or circumsised_in_past(visit_instance)
 #                         or (func_known_pos(visit_instance) or func_known_pos(func_previous_visit_instance(visit_instance))))
     return show_cicumsition
 
@@ -262,6 +283,74 @@ def evaluate_ever_had_sex_for_female(visit_instance):
         return False
     # if we come here then gender must be FEMALE
     elif sexual_behaviour.ever_sex.lower() == 'yes':
+        return True
+    return False
+
+
+def previous_record(visit_instance, model, panel):
+    """ Returns requisition model based on visit_instance """
+    Model = get_model('bcpp_lab', model)
+    try:
+        _model = Model.objects.get(subject_visit=func_previous_visit_instance(visit_instance), panel__name=panel)
+    except Model.DoesNotExist:
+        return False
+    return True
+
+
+def previous_record_model(app_name, model, visit_instance):
+    """ Returns requisition model based on visit_instance """
+    Model = get_model(app_name, model)
+    try:
+        _model = Model.objects.get(subject_visit=func_previous_visit_instance(visit_instance))
+    except Model.DoesNotExist:
+        return False
+    return True
+
+
+def art_naive_at_enrollment(visit_instance):
+    prev_visit = func_previous_visit_instance(visit_instance)
+    if func_is_baseline(prev_visit):
+        return func_art_naive(prev_visit)
+
+
+def sero_converter(visit_instance):
+    """ previously NEG and currently POS """
+    return True if func_hiv_negative_today(func_previous_visit_instance(visit_instance)) and\
+        func_hiv_positive_today(visit_instance) else False
+
+
+def func_rbd(visit_instance):
+    """Returns True  or False based on hiv status and art status at each survey."""
+    #if pos at bhs then return true
+    if func_is_baseline(visit_instance):
+        return func_hiv_positive_today(visit_instance)
+    elif func_hiv_positive_today(visit_instance) and not previous_record(visit_instance, 'subjectrequisition', 'Research Blood Draw'):
+        return True
+    return False
+
+
+def func_vl(visit_instance):
+    """Returns True  or False based on hiv status and art status at each survey."""
+    if func_is_baseline(visit_instance):
+        return func_hiv_positive_today(visit_instance)
+    # Hiv+ve at enrollment, art naive at enrollment
+    elif art_naive_at_enrollment(visit_instance):
+        return True
+    #func_art_naive should imply HIV +ve
+    elif func_art_naive(visit_instance) and sero_converter(visit_instance):
+        return True
+    return False
+
+
+def func_poc_vl(visit_instance):
+    """Returns True  or False based on hiv status and art status at each survey."""
+    #if pos at bhs then return true
+    if func_is_baseline(visit_instance):
+        return func_art_naive(visit_instance)
+    #Hiv+ve at enrollment, art naive at enrollment
+    elif art_naive_at_enrollment(visit_instance) and func_art_naive(visit_instance):
+        return True
+    elif func_art_naive(visit_instance) and sero_converter(visit_instance):
         return True
     return False
 
@@ -333,7 +422,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_art_naive,
+            predicate=func_require_pima_hiv_care_ad,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -414,7 +503,7 @@ site_rule_groups.register(HivTestingHistoryRuleGroup)
 class ReviewPositiveRuleGroup(RuleGroup):
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_art_naive,
+            predicate=func_require_pima_hiv_care_ad,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
@@ -465,18 +554,18 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     pimavl_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_art_naive_pima_vl,
+            predicate=func_poc_vl,
             consequence='new',
             alternative='not_required'),
         target_model=['pimavl'])
 
-    vl_for_known_pos = RequisitionRule(
-        logic=Logic(
-            predicate=func_on_art,
-            consequence='new',
-            alternative='not_required'),
-        target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Viral Load'],)
+#     vl_for_known_pos = RequisitionRule(
+#         logic=Logic(
+#             predicate=func_art_naive,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Viral Load'],)
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -623,13 +712,29 @@ site_rule_groups.register(MedicalDiagnosesRuleGroup)
 
 class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures an RBD requisition if HIV result is POS."""
-    rbd_vl_for_pos = RequisitionRule(
+    vl_for_pos = RequisitionRule(
         logic=Logic(
-            predicate=func_hiv_positive_today,
+            predicate=func_rbd,
             consequence='new',
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
-        target_requisition_panels=['Research Blood Draw', 'Viral Load'], )
+        target_requisition_panels=['Research Blood Draw'], )
+
+    rbd_for_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_vl,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'], )
+
+#     vl_for_known_pos = RequisitionRule(
+#         logic=Logic(
+#             predicate=func_rbd_ahs,
+#             consequence='not_required',
+#             alternative='new'),
+#         target_model=[('bcpp_lab', 'subjectrequisition')],
+#         target_requisition_panels=['Research Blood Draw'],)
 
     """Ensures a Microtube is not required for POS."""
     microtube_for_neg = RequisitionRule(
@@ -642,7 +747,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_art_naive,
+            predicate=func_require_pima_hiv_care_ad,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
