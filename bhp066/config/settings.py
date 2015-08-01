@@ -114,6 +114,7 @@ LANGUAGES = (
     ('tn', 'Setswana'),
     ('en', 'English'),
     ('kck', 'Ikalanga'),
+    ('hbs', 'Hambukushu'),
 )
 
 LOCALE_PATHS = (
