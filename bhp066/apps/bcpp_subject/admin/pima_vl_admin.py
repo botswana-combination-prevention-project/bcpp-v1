@@ -28,6 +28,6 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'easy_of_use': admin.VERTICAL}
 
     def save_model(self, request, obj, form, change):
-        self.obj.valid_user(self, request.user)
+        obj.valid_user(self, request.user)
 
 admin.site.register(PimaVl, PimaVlAdmin)
