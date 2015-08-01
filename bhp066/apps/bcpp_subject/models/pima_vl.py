@@ -109,8 +109,9 @@ class PimaVl (BaseScheduledVisitModel):
         """ A list for user contacts."""
         tracker_helper = TrackerHelper()
         tracker_helper.app_label = 'bcpp_subject'
+        tracker_helper.model_name = 'PimaVl'
         tracker_helper.master_server_url = 'central'
-#         tracker_helper.value_type = 'Mobile settings'
+        tracker_helper.value_type = 'Mobile settings'
         tracker_helper.tracked_model = self.__class__
         tracker_helper.value_limit = 10
         device = Device()
@@ -120,7 +121,6 @@ class PimaVl (BaseScheduledVisitModel):
             tracker_helper.site_filter_dict.update({'poc_vl_type': PIMA_VL_TYPE})
         tracker_helper.master_server_name = CENTRAL_SERVER
 #         tracker_helper.value_type = PIMA_VL_TYPE
-        tr = tracker_helper.tracker()
         if tracker_helper.tracker().tracked_value < tracker_helper.value_limit:
             #if user not in User.objects.filter(groups__name__in=[CLINIC_RESEARCH_ASSISTANT]):
             if not user.groups.filter(name=CLINIC_RESEARCH_ASSISTANT).exists():

@@ -37,7 +37,7 @@ def func_previous_visit_instance(visit_instance):
 
 
 def func_is_baseline(visit_instance):
-    if visit_instance.appointment.visit_definition.code in BASELINE_CODES:
+    if visit_instance and visit_instance.appointment.visit_definition.code in BASELINE_CODES:
         return True
     return False
 
@@ -311,6 +311,7 @@ def art_naive_at_enrollment(visit_instance):
     prev_visit = func_previous_visit_instance(visit_instance)
     if func_is_baseline(prev_visit):
         return func_art_naive(prev_visit)
+    return False
 
 
 def sero_converter(visit_instance):
