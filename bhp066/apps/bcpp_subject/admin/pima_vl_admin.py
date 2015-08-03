@@ -14,7 +14,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'poc_vl_today_other',
         'poc_today_vl_other_other',
         'pima_id',
-        'cd4_value',
+        'poc_vl_value',
         'time_of_test',
         'time_of_result',
         'easy_of_use',
@@ -22,7 +22,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         )
     exclude = ('poc_vl_type',)
     list_filter = ('subject_visit', 'time_of_test', 'pima_id', Cd4ThreshHoldFilter,)
-    list_display = ('subject_visit', 'time_of_test', 'cd4_value', 'pima_id')
+    list_display = ('subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id')
     radio_fields = {
         'poc_vl_today': admin.VERTICAL,
         'poc_vl_today_other': admin.VERTICAL,
