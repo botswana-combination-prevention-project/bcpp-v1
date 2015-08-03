@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta, date
+from django.test import TestCase
+from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import Group, User
@@ -38,6 +40,7 @@ from .factories import (SubjectConsentFactory, SubjectVisitFactory, Circumcision
                         PimaVlFactory)
 from ..exceptions import DeniedPermissionPimaVLError
 from ..constants import FIELD_RESEARCH_ASSISTANT_GROUP, CLINIC_RESEARCH_ASSISTANT
+
 
 # class TestPlotMapper(Mapper):
 #     map_area = 'test_community9'
@@ -197,9 +200,9 @@ class TestRuleGroup(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male_T0.appointment)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -216,13 +219,13 @@ class TestRuleGroup(TestCase):
 
     def test_hiv_car_adherence_and_pima2(self):
         """If POS and on arv and have doc evidence, Pima not required, not a defaulter.
- 
+
         Models:
             * HivCareAdherence
             * HivResult
         """
         self.subject_visit_female_T0 = self.baseline_subject_visit
- 
+
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
             entry__app_label='bcpp_subject',
@@ -233,11 +236,11 @@ class TestRuleGroup(TestCase):
             entry__app_label='bcpp_subject',
             entry__model_name='pima',
             appointment=self.subject_visit_female_T0.appointment)
- 
+
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
- 
+
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
- 
+
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_female_T0,
@@ -413,7 +416,7 @@ class TestRuleGroup(TestCase):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_history_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_test_review_options).count(), 1)
         # add HivTestReview,
-        hiv_care_adherence = HivTestReview.objects.create(
+        HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
             recorded_hiv_result='NEG',
@@ -1265,8 +1268,21 @@ class TestRuleGroup(TestCase):
             entry__model_name='pimavl',
             appointment=self.subject_visit_male_T0.appointment)
 
-        self.hiv_result(POS, self.subject_visit_male_T0)
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            has_tested='Yes',
+            when_hiv_test='1 to 5 months ago',
+            has_record='Yes',
+            verbal_hiv_result='POS',
+            other_record='No'
+            )
 
+        HivTestReview.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            hiv_test_date=datetime.today() - timedelta(days=50),
+            recorded_hiv_result='POS',
+            )
+        # known pos
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
@@ -1295,7 +1311,20 @@ class TestRuleGroup(TestCase):
             entry__model_name='pimavl',
             appointment=self.subject_visit_male.appointment)
 
-        self.hiv_result(POS, self.subject_visit_male)
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male,
+            has_tested='Yes',
+            when_hiv_test='1 to 5 months ago',
+            has_record='Yes',
+            verbal_hiv_result='POS',
+            other_record='No'
+            )
+
+        HivTestReview.objects.create(
+            subject_visit=self.subject_visit_male,
+            hiv_test_date=datetime.today() - timedelta(days=50),
+            recorded_hiv_result='POS',
+            )
 
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
@@ -1422,22 +1451,6 @@ class TestRuleGroup(TestCase):
             )
         # said they have taken ARV so not required
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
-
-#     def test_poc_viral_load_mobile_household(self):
-#         count = 0
-#         for element in range(0, 1):
-#             count = count + 1
-#             hm = HouseholdMemberFactory(household_structure=self.household_structure)
-#             en = EnrollmentChecklistFactory(household_member=hm, gender=hm.gender,
-#                                             dob=date(1990, 3, 3), initials=hm.initials)
-#             subject_consent = SubjectConsentFactory(household_member=hm, study_site=self.study_site, dob=en.dob,
-#                                                     gender=hm.gender, initials=en.initials)
-#             registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
-#             appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='T1')
-#             subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
-#             self.hiv_result('POS', subject_visit)
-#             poc_vl = PimaVlFactory(subject_visit=subject_visit)
-#             print '{}/{}'.format(count, 100)
 
     def test_hiv_pos_nd_art_naive_at_bhs(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART naive at the time of enrollment. Pima required.
@@ -1720,16 +1733,104 @@ class TestRuleGroup(TestCase):
             entry__model_name='pima',
             appointment=self.subject_visit_male.appointment)
 
-        self.hiv_result(POS, self.subject_visit_male)
+        research_blood_draw_options = {}
+        research_blood_draw_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Research Blood Draw',
+            appointment=self.subject_visit_male.appointment)
 
-        HivCareAdherence.objects.create(
+        viral_load_options = {}
+        viral_load_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Viral Load',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **research_blood_draw_options).count(), 1)
+
+    def test_hiv_pos_nd_on_art_at_ahs1(self):
+        """Previously enrollees at t0 who are HIV-positive but were not on ART naive at the time of enrollment. Pima required.
+           HIV Positive not on ART at T1: Should offer POC CD4 and VL. No RBD
+        """
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male_T0.appointment)
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male_T0.appointment)
+
+        HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
+            has_tested='Yes',
+            when_hiv_test='1 to 5 months ago',
+            has_record='Yes',
+            verbal_hiv_result='POS',
+            other_record='No'
+            )
+
+        HivTestReview.objects.create(
+            subject_visit=self.subject_visit_male,
+            hiv_test_date=datetime.today() - timedelta(days=50),
+            recorded_hiv_result='POS',
+            )
+
+        self.hiv_result(POS, self.subject_visit_male_T0)
+
+        aliquot_type = AliquotType.objects.all()[0]
+        site = StudySite.objects.all()[0]
+        microtube_panel = Panel.objects.get(name='Research Blood Draw')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+
+        # add HivCarAdherence,
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
             first_positive=None,
             medical_care='No',
             ever_recommended_arv='No',
             ever_taken_arv='No',
             on_arv='No',
             arv_evidence='No',  # this is the rule field
+            )
+
+        self.subject_visit_male = self.annual_subject_visit
+
+        hiv_car_adherence_options = {}
+        hiv_car_adherence_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivcareadherence',
+            appointment=self.subject_visit_male.appointment)
+
+        pimavl_options = {}
+        pimavl_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pimavl',
+            appointment=self.subject_visit_male.appointment)
+
+        pima_options = {}
+        pima_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='pima',
+            appointment=self.subject_visit_male.appointment)
+
+        self.hiv_result(POS, self.subject_visit_male)
+
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male,
+            first_positive=None,
+            medical_care='Yes',
+            ever_recommended_arv='Yes',
+            ever_taken_arv='Yes',
+            on_arv='Yes',
+            arv_evidence='Yes',  # this is the rule field
             )
 
         research_blood_draw_options = {}
