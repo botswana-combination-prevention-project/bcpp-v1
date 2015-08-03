@@ -55,14 +55,14 @@ class PimaVl (BaseScheduledVisitModel):
         blank=True,
         help_text="type this id directly from the machine as labeled")
 
-    cd4_datetime = models.DateTimeField(
+    poc_vl_datetime = models.DateTimeField(
         verbose_name=_("POC viral load Date and time"),
         validators=[datetime_not_future],
         null=True,
         blank=True,
         )
 
-    cd4_value = models.DecimalField(
+    poc_vl_value = models.DecimalField(
         verbose_name=_("POC viral load count"),
         null=True,
         blank=True,
