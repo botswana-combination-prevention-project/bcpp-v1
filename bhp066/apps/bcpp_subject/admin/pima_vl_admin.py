@@ -25,6 +25,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
     list_display = ('subject_visit', 'time_of_test', 'cd4_value', 'pima_id')
     radio_fields = {
         'poc_vl_today': admin.VERTICAL,
+        'poc_vl_today_other': admin.VERTICAL,
         'easy_of_use': admin.VERTICAL}
 
     def save_model(self, request, obj, form, change):

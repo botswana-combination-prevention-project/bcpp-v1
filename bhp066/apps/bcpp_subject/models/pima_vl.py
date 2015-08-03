@@ -31,14 +31,14 @@ class PimaVl (BaseScheduledVisitModel):
         )
 
     poc_vl_today = models.CharField(
-        verbose_name=_("Was a POC VL done today?"),
+        verbose_name=_("Was a POC viral load done today?"),
         choices=YES_NO,
         max_length=3,
         help_text="",
         )
 
     poc_vl_today_other = models.CharField(
-        verbose_name=_("If no POC VL today, please explain why"),
+        verbose_name=_("If no POC viral load today, please explain why"),
         max_length=50,
         choices=PIMA,
         null=True,
@@ -48,22 +48,22 @@ class PimaVl (BaseScheduledVisitModel):
     poc_today_vl_other_other = OtherCharField()
 
     pima_id = models.CharField(
-        verbose_name=_("POC VL machine ID?"),
+        verbose_name=_("POC viral load machine ID?"),
         max_length=9,
-        validators=[RegexValidator(regex='\d+', message='POC VL ID must be a two digit number.')],
+        validators=[RegexValidator(regex='\d+', message='POC viral load ID must be a two digit number.')],
         null=True,
         blank=True,
         help_text="type this id directly from the machine as labeled")
 
     cd4_datetime = models.DateTimeField(
-        verbose_name=_("POC VL Date and time"),
+        verbose_name=_("POC viral load Date and time"),
         validators=[datetime_not_future],
         null=True,
         blank=True,
         )
 
     cd4_value = models.DecimalField(
-        verbose_name=_("POC VL count"),
+        verbose_name=_("POC viral load count"),
         null=True,
         blank=True,
         max_digits=6,
