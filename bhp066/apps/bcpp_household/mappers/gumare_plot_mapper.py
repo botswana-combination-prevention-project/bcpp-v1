@@ -20,7 +20,7 @@ class GumarePlotMapper(BasePlotMapper):
 
     landmarks = GUMARE_LANDMARKS
 
-    intervention = False
+    intervention = True
 
     gps_center_lat = -19.359734
     gps_center_lon = 22.163286
