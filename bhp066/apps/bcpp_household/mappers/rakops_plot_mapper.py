@@ -31,7 +31,7 @@ class RakopsPlotMapper(BasePlotMapper):
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2015, 7, 7),
-            full_enrollment_date=date(2015, 8, 4),
+            full_enrollment_date=date(2015, 8, 15),
             end_date=date(2015, 8, 25),
             smc_start_date=date(2015, 9, 6)),
         'bcpp-year-2': SurveyDatesTuple(
