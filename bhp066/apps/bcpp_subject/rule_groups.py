@@ -377,7 +377,14 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'pima'])
+        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult'])
+
+    pima_naive_bhs_req_ahs = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_require_pima_hiv_care_ad,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
 
     require_microtube = RequisitionRule(
         logic=Logic(
@@ -386,6 +393,14 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Microtube'])
+
+    vl_for_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_vl,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Viral Load'], )
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -713,7 +728,7 @@ site_rule_groups.register(MedicalDiagnosesRuleGroup)
 
 class BaseRequisitionRuleGroup(RuleGroup):
     """Ensures an RBD requisition if HIV result is POS."""
-    vl_for_pos = RequisitionRule(
+    rbd_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_rbd,
             consequence='new',
@@ -721,7 +736,7 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Research Blood Draw'], )
 
-    rbd_for_pos = RequisitionRule(
+    vl_for_pos = RequisitionRule(
         logic=Logic(
             predicate=func_vl,
             consequence='new',
