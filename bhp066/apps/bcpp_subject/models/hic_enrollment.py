@@ -11,6 +11,7 @@ from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentA
 from apps.bcpp.choices import YES_NO
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from ..models import ElisaHivResult
 
 
 class HicEnrollment (BaseScheduledVisitModel):
@@ -132,11 +133,13 @@ class HicEnrollment (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         from ..models import HivResult
         hiv_result = HivResult.objects.filter(subject_visit=self.subject_visit)
+        elisa_result = ElisaHivResult.objects.filter(subject_visit=self.subject_visit)
         if hiv_result.exists():
-            if hiv_result[0].hiv_result.lower() == 'neg':
+            if (hiv_result[0].hiv_result.lower() == 'neg' or
+                (elisa_result.exists() and elisa_result[0].hiv_result.lower() == 'neg')):
                 return 'NEG'
             else:
-                raise exception_cls('Please review \'hiv_result\' in Today\'s Hiv Result form '
+                raise exception_cls('Please review \'hiv_result\' in Today\'s Hiv Result form or in Elisa Hiv Result'
                                     'before proceeding with this one.')
         else:
             raise exception_cls('Please fill Today\'s Hiv Result form before proceeding with this one.')
