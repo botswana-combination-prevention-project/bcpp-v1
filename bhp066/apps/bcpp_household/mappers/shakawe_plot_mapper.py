@@ -20,7 +20,7 @@ class ShakawePlotMapper(BasePlotMapper):
 
     landmarks = SHAKAWE_LANDMARKS
 
-    intervention = True
+    intervention = False
 
     gps_center_lat = -18.360902
     gps_center_lon = 21.836862
@@ -33,7 +33,7 @@ class ShakawePlotMapper(BasePlotMapper):
             start_date=date(2015, 8, 5),
             full_enrollment_date=date(2015, 9, 8),
             end_date=date(2015, 9, 29),
-            smc_start_date=date(2015, 10, 13)),
+            smc_start_date=date(2015, 8, 5)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 11, 21),
