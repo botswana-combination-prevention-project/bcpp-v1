@@ -11,8 +11,6 @@ from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentA
 from apps.bcpp.choices import YES_NO
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
-from ..models import ElisaHivResult
-
 
 class HicEnrollment (BaseScheduledVisitModel):
 
@@ -132,6 +130,7 @@ class HicEnrollment (BaseScheduledVisitModel):
     def get_hiv_status_today(self, exception_cls=None):
         exception_cls = exception_cls or ValidationError
         from ..models import HivResult
+        from ..models import ElisaHivResult
         hiv_result = HivResult.objects.filter(subject_visit=self.subject_visit)
         elisa_result = ElisaHivResult.objects.filter(subject_visit=self.subject_visit)
         if hiv_result.exists():
