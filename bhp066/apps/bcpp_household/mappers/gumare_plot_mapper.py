@@ -30,7 +30,7 @@ class GumarePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 8, 5),
+            start_date=date(2015, 8, 10),
             full_enrollment_date=date(2015, 9, 8),
             end_date=date(2015, 9, 29),
             smc_start_date=date(2015, 10, 13)),
