@@ -15,7 +15,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
-from edc_confirmation_code import ConfirmationCode
+
 from edc_quota_client.models import QuotaModelWithOverride, Quota
 
 
@@ -104,21 +104,6 @@ class PimaVl (QuotaModelWithOverride, BaseScheduledVisitModel):
         help_text="Comment")
 
     history = AuditTrail()
-
-    def validate_quota(self, server_key):
-        """ Increase quota limit with confirmation key."""
-
-        if not ConfirmationCode().is_validcheckdigit(self.server_key, self.client_key):
-            raise forms.ValidationError('Invalid confirmation key, provide correct confirmation key.')
-        device = Device()
-        if not (device.is_central_server and device.is_community_server()):
-            if self.quota:
-                self.quota.created_by = self.user_created
-                self.quota.servey_key = server_key
-                self.quota.target += 1
-                self.quota.save()
-                return True
-        return False
 
     class Meta:
         app_label = 'bcpp_subject'
