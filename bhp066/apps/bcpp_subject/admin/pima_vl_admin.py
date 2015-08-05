@@ -36,12 +36,9 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'poc_vl_today_other': admin.VERTICAL,
         'easy_of_use': admin.VERTICAL}
 
-#     def save_model(self, request, obj, form, change):
-#         obj.valid_user(self, request.user)
-
     @property
     def client_key_instructions(self):
-        return  'You have reached quota limit. Send client code: <span style="color:red;">{0}</span> to CBS for confirmation key to increase quota limit. Ignore this key you have send key'.\
+        return  'You have reached quota limit. Send client code: <span style="color:red;">{0}</span> to CBS for confirmation key to increase quota limit. otherwise ignore the key.'.\
             format(Override().code) if PimaVl().quota_reached else ''
 
     @property
