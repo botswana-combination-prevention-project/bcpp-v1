@@ -5,17 +5,10 @@ from datetime import timedelta, datetime
 
 from ..models import PimaVl
 
-from datetime import datetime, timedelta, date
-from django.test import TestCase
-from django.utils import timezone
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.contrib.auth.models import Group, User
-from django.test import TestCase
-from django.conf import settings
 
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
-from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import Mapper, site_mappers
@@ -38,15 +31,7 @@ from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
-from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
-                      Circumcision, Circumcised, HicEnrollment, Pima, PimaVl)
-from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory,
-                        SubjectLocatorFactory, PimaVlFactory)
-from edc_tracker.tracker_factory import TrackerFactory
-from .factories import (SubjectConsentFactory, SubjectVisitFactory, CircumcisionFactory, HivResultFactory,
-                        PimaVlFactory)
-from ..exceptions import DeniedPermissionPimaVLError
-from ..constants import FIELD_RESEARCH_ASSISTANT_GROUP, CLINIC_RESEARCH_ASSISTANT
+from .factories import SubjectConsentFactory, SubjectVisitFactory
 
 
 from edc_quota_client.models import Quota 
@@ -131,22 +116,6 @@ class TestPimaVL(TestCase):
         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
         self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
 
-    def test_quota_reached(self):
-        """Asserts mixin save method works with model save."""
-        Quota.objects.create(
-            app_label='bcpp_subject',
-            model_name='PimaVl',
-            target=0,
-            expires_datetime=timezone.now() + timedelta(days=1)
-        )
-        self.assertEqual(1, Quota.objects.all().count())
-
-        self.create_pimavl(1)
-
-        self.assertRaises(QuotaReachedError, self.create_pimavl(2))
-
-    def test_quota_reached1(self):
-        """Asserts mixin save method works with model save."""
         Quota.objects.create(
             app_label='bcpp_subject',
             model_name='PimaVl',
@@ -155,22 +124,35 @@ class TestPimaVL(TestCase):
         )
         self.assertEqual(1, Quota.objects.all().count())
 
-        self.create_pimavl(1)
+    def test_within_quota(self):
+        """Asserts mixin save method works with model save."""
+        self.create_pimavl(1, self.subject_visit_male_T0)
         self.assertEqual(1, PimaVl.objects.all().count())
 
-        self.assertRaises(QuotaReachedError, self.create_pimavl(2))
+    def test_quota_reached(self):
+        """Asserts mixin save method works with model save."""
+        self.create_pimavl(1, self.subject_visit_male_T0)
+        self.assertEqual(1, PimaVl.objects.all().count())
+        self.assertRaises(QuotaReachedError, self.create_pimavl(2, self.subject_visit_male_T0))
 
-    def create_pimavl(self, pima_id):
+    def test_quota_reached_override(self):
+        """Asserts mixin save method works with model save."""
+        self.create_pimavl(1, self.subject_visit_male_T0)
+        self.assertEqual(1, PimaVl.objects.all().count())
+        #
+        self.create_pimavl(2, self.subject_visit_female_T0, 'V7D8N', 'DR2AW')
+        self.assertEqual(2, PimaVl.objects.all().count())
+
+    def create_pimavl(self, pima_id, subject_visit, override_key=None, confirmation_code=None):
         """ """
         try:
-            PimaVl.objects.create(
+            PimaVl(
                 report_datetime=datetime.today(), poc_vl_today='Yes', poc_vl_type='Mobile settings',
                 poc_vl_datetime=datetime.today(), time_of_test=datetime.today(), time_of_result=datetime.today(),
                 easy_of_use='easy', pima_id='pima_id{0}'.format(pima_id), poc_vl_value=1000,
-                subject_visit=self.subject_visit_male_T0,
-                override_code='TU2RB',
-                confirmation_code='RLU[;',
-                )
+                subject_visit=subject_visit,
+                override_code=override_key,
+                confirmation_code=confirmation_code,
+                ).save()
         except QuotaReachedError as ex:
             return PimaVl.objects.create
-
