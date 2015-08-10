@@ -2,7 +2,7 @@ import collections
 import datetime
 
 from apps.bcpp_clinic.models import (ClinicConsent, ClinicEligibility, ClinicRefusal, ClinicEnrollmentLoss,
-                                     Questionnaire, ClinicVlResult)
+                                     Questionnaire, ClinicVlResult, ViralLoadTracking)
 from apps.bcpp_lab.models import ClinicRequisition
 
 from .base_operational_report import BaseOperationalReport
@@ -84,10 +84,10 @@ class OperationalRbd(BaseOperationalReport):
                                                              created__lte=self.date_to,
                                                              user_created__icontains=self.ra_username)
         self.data_dict['94. Viral loads drawn on request of the government (viral load tracking form)'] = viral_loads_tracking.count()
-        viral_loads_received = ClinicVlResult.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
-                                                             created__gte=self.date_from,
-                                                             created__lte=self.date_to,
-                                                             user_created__icontains=self.ra_username)
+        viral_loads_received = ViralLoadTracking.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+                                                                created__gte=self.date_from,
+                                                                created__lte=self.date_to,
+                                                                user_created__icontains=self.ra_username)
         self.data_dict['95. Viral load results received'] = viral_loads_received.count()
         self.data_dict['96. Viral load results pending'] = (viral_load_requisitions.count() + viral_loads_tracking.count()) - viral_loads_received.count()
 
