@@ -38,7 +38,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
 
     @property
     def client_key_instructions(self):
-        return  'You have reached quota limit. Send client code: <span style="color:red;">{0}</span> to CBS for confirmation key to increase quota limit. otherwise ignore the key.'.\
+        return  'You have reached quota limit. Send client code: <span style="color:red;">{0}</span> to CBS for confirmation key to increase quota limit. Otherwise ignore the key if you are still waiting for confirmation code.'.\
             format(Override().code) if PimaVl().quota_reached else ''
 
     @property
