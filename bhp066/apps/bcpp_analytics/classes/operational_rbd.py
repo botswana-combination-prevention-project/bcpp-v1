@@ -3,7 +3,7 @@ import datetime
 
 from apps.bcpp_clinic.models import (ClinicConsent, ClinicEligibility, ClinicRefusal, ClinicEnrollmentLoss,
                                      Questionnaire, ClinicVlResult)
-from apps.bcpp_lab.models import SubjectRequisition
+from apps.bcpp_lab.models import ClinicRequisition
 
 from .base_operational_report import BaseOperationalReport
 
@@ -67,20 +67,24 @@ class OperationalRbd(BaseOperationalReport):
                                                                user_created__icontains=self.ra_username,
                                                                registration_type='OTHER')
         self.data_dict['92. Enrolled by non viral load visit'] = enrolled_non_viral_load.count()
-        viral_load_requisitions = SubjectRequisition.objects.filter(community__icontains=self.community,
-                                                                    subject_visit__household_member__member_status='CLINIC_RBD',
+        rdb_requisitions = ClinicRequisition.objects.filter(community__icontains=self.community,
+                                                            modified__gte=self.date_from, modified__lte=self.date_to,
+                                                            user_modified__icontains=self.ra_username,
+                                                            panel__name='Research Blood Draw',
+                                                            is_drawn='Yes')
+        self.data_dict['93. Research blood draw requisitions drawn'] = rdb_requisitions.count()
+        viral_load_requisitions = ClinicRequisition.objects.filter(community__icontains=self.community,
                                                                     modified__gte=self.date_from, modified__lte=self.date_to,
                                                                     user_modified__icontains=self.ra_username,
-                                                                    panel__name='Viral Load',
+                                                                    panel__name='Clinic Viral Load',
                                                                     is_drawn='Yes')
-        self.data_dict['93. Viral load requisitions'] = viral_load_requisitions.count()
+        self.data_dict['94. Viral load requisitions drawn'] = viral_load_requisitions.count()
         viral_loads_received = ClinicVlResult.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
-                                                             clinic_visit__household_member__member_status='CLINIC_RBD',
                                                              created__gte=self.date_from,
                                                              created__lte=self.date_to,
-                                                             user_created__icontains=self.ra_username,)
-        self.data_dict['94. Viral load results received'] = viral_loads_received.count()
-        self.data_dict['95. Viral load results pending'] = viral_load_requisitions.count() - viral_loads_received.count()
+                                                             user_created__icontains=self.ra_username)
+        self.data_dict['95. Viral load results received'] = viral_loads_received.count()
+        self.data_dict['96. Viral load results pending'] = viral_load_requisitions.count() - viral_loads_received.count()
 
         values = collections.OrderedDict(sorted(self.data_dict.items()))
         return values
