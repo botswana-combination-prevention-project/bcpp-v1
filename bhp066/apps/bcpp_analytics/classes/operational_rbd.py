@@ -79,12 +79,17 @@ class OperationalRbd(BaseOperationalReport):
                                                                     panel__name='Clinic Viral Load',
                                                                     is_drawn='Yes')
         self.data_dict['94. Viral load requisitions drawn'] = viral_load_requisitions.count()
+        viral_loads_tracking = ClinicVlResult.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+                                                             created__gte=self.date_from,
+                                                             created__lte=self.date_to,
+                                                             user_created__icontains=self.ra_username)
+        self.data_dict['94. Viral loads drawn on request of the government (viral load tracking form)'] = viral_loads_tracking.count()
         viral_loads_received = ClinicVlResult.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                              created__gte=self.date_from,
                                                              created__lte=self.date_to,
                                                              user_created__icontains=self.ra_username)
         self.data_dict['95. Viral load results received'] = viral_loads_received.count()
-        self.data_dict['96. Viral load results pending'] = viral_load_requisitions.count() - viral_loads_received.count()
+        self.data_dict['96. Viral load results pending'] = (viral_load_requisitions.count() + viral_loads_tracking.count()) - viral_loads_received.count()
 
         values = collections.OrderedDict(sorted(self.data_dict.items()))
         return values
