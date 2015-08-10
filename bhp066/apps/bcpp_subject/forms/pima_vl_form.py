@@ -1,13 +1,10 @@
 from django import forms
-from django.contrib import messages
 
 from ..models import PimaVl
 from .base_subject_model_form import BaseSubjectModelForm
 
 
 class PimaVlForm (BaseSubjectModelForm):
-
-    confirmation_code = forms.CharField(label='Confirmation Code', max_length=250, required=False)
 
     def clean(self):
 
@@ -33,11 +30,11 @@ class PimaVlForm (BaseSubjectModelForm):
                 raise forms.ValidationError('Time of test and time of result should be provided.')
 
         if self.instance.quota_reached:
-            if not cleaned_data.get('confirmation_code'):
-                #cleaned_data['override_code'].editable = False
-                raise forms.ValidationError('Provide confirmation to increase quota limit.')
-                messages.add_message(
-                    self.request, messages.ERROR, 'Quota key')
+            if not cleaned_data.get('confirmation_code') or not cleaned_data.get('override_key'):
+                raise forms.ValidationError('Provide confirmation code to increase quota limit.')
+
+            if not self.instance.override_quota():
+                raise forms.ValidationError('Invalid confirmation code or override key, please provide correct keys. Got {}-{}'.format(cleaned_data.get('confirmation_code'), cleaned_data.get('override_key')))
 
         return cleaned_data
 
