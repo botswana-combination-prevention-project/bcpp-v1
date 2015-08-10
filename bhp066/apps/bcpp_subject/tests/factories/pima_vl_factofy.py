@@ -9,9 +9,9 @@ class PimaVlFactory(BaseScheduledModelFactory):
     report_datetime = datetime.today()
     poc_vl_today = 'Yes'
     poc_vl_type = 'mobile setting'
-    cd4_datetime = datetime.today()
+    poc_vl_datetime = datetime.today()
     time_of_test = datetime.today()
     time_of_result = datetime.today()
     easy_of_use = 'easy'
     pima_id = factory.Sequence(lambda n: 'pima_id{0}'.format(n))
-    cd4_value = 1000
+    poc_vl_value = 1000
