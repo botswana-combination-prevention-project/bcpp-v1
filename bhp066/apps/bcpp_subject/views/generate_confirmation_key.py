@@ -25,4 +25,4 @@ class GenerateConfirmationKeyView(View):
         return render(request, self.template_name, {})
 
     def create_confirmation_code(self, override_code):
-        return Override().make_confirmation_code(override_code)[1]
+        return Override(override_code).confirmation_code

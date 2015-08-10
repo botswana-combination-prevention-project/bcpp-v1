@@ -17,6 +17,7 @@ from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 
 from edc_quota_client.models import QuotaModelWithOverride, Quota
+from edc_quota import Override
 
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
@@ -104,6 +105,9 @@ class PimaVl (QuotaModelWithOverride, BaseScheduledVisitModel):
         help_text="Comment")
 
     history = AuditTrail()
+
+    def override_quota(self, exception_cls=None, override_code=None, confirmation_code=None):
+        return Override(override_code, confirmation_code).is_valid_combination
 
     class Meta:
         app_label = 'bcpp_subject'
