@@ -454,7 +454,6 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status,
                                                                                               PLOT_STATUS))
         existing_household_count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
-#         if instance.status in ['residential_habitable', 'bcpp_clinic']:
         instance.create_household(instance.household_count - existing_household_count, using=using)
         instance.safe_delete_households(existing_household_count, using=using)
         with transaction.atomic():

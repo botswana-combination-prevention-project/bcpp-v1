@@ -102,8 +102,20 @@ class DeleteHouseholdTests(TestCase):
         """ Test that if the status of the plot changes and the household count is zero a household is deleted. """
         plot = PlotFactory(community='gumare', household_count=1, status='residential_habitable')
         self.assertEqual(plot.status, 'residential_habitable')
-#         plot.household_count = 0
+        plot.household_count = 0
+
         plot.status = 'residential_not_habitable'
         plot.save()
         self.assertEqual(plot.status, 'residential_not_habitable')
         self.assertEqual(Household.objects.filter(plot=plot).count(), 0)
+
+    def test_plot_status_change_with_log_entry(self):
+        """ Test that if the status of the plot changes and the household count is zero a household is deleted. """
+        plot = PlotFactory(community='gumare', household_count=1, status='residential_habitable')
+        for hh in Household.objects.filter(plot=plot):
+            hs = HouseholdStructure.objects.filter(household=hh).first()
+            hl = HouseholdLog.objects.filter(household_structure=hs).first()
+            HouseholdLogEntry.objects.create(household_log=hl, report_datetime=datetime.today())
+        plot.household_count = 0
+        plot.save()
+        self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
