@@ -18,7 +18,7 @@ from edc.map.exceptions import MapperError
 
 from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
 from ..classes import PlotIdentifier
-from ..constants import CONFIRMED, UNCONFIRMED
+from ..constants import CONFIRMED, UNCONFIRMED, RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL
 from ..managers import PlotManager
 from ..exceptions import AlreadyReplaced
 
@@ -391,6 +391,25 @@ class Plot(BaseDispatchSyncUuidModel):
                             return del_valid
                     return False
 
+            def delete_households_for_non_residential(instance, existing_no):
+                household_to_delete = household_valid_to_delete(instance)
+                try:
+                    if len(household_to_delete) == existing_no and existing_no > 0:
+                        hh = HouseholdStructure.objects.filter(household__in=household_to_delete)
+                        hl = HouseholdLog.objects.filter(household_structure__in=hh)
+                        hl.delete()  # delete household_logs
+                        hh.delete()  # delete household_structure
+                        for hh in household_to_delete:
+                            with transaction.atomic():
+                                Household.objects.get(id=hh.id).delete()  # delete household
+                        return True
+                    else:
+                        return False
+                except IntegrityError:
+                    return False
+                except  DatabaseError:
+                    return False
+
             def delete_household(instance, existing_no):
                 try:
                     delete_no = validate_number_to_delete(instance, existing_no)\
@@ -411,7 +430,10 @@ class Plot(BaseDispatchSyncUuidModel):
                     return False
                 except  DatabaseError:
                     return False
-            return delete_household(instance, existing_no)
+            if instance.status in [RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
+                return delete_households_for_non_residential(instance, existing_no)
+            else:
+                return delete_household(instance, existing_no)
         return delete_confirmed_household(instance, existing_no)
 
     def create_or_delete_households(self, instance=None, using=None):
@@ -432,9 +454,9 @@ class Plot(BaseDispatchSyncUuidModel):
                 raise AttributeError('{0} not found in choices tuple PLOT_STATUS. {1}'.format(instance.status,
                                                                                               PLOT_STATUS))
         existing_household_count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
-        if instance.status in ['residential_habitable', 'bcpp_clinic']:
-            instance.create_household(instance.household_count - existing_household_count, using=using)
-            instance.safe_delete_households(existing_household_count, using=using)
+#         if instance.status in ['residential_habitable', 'bcpp_clinic']:
+        instance.create_household(instance.household_count - existing_household_count, using=using)
+        instance.safe_delete_households(existing_household_count, using=using)
         with transaction.atomic():
             return Household.objects.using(using).filter(plot__pk=instance.pk).count()
 
