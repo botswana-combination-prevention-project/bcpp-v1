@@ -11,7 +11,7 @@ from edc.base.model.validators import (datetime_not_future, datetime_not_before_
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER_UNDETERMINED
-from edc.choices.common import YES_NO
+from edc.choices.common import YES_NO, YES
 from edc.core.crypto_fields.fields import EncryptedFirstnameField, EncryptedCharField
 from edc.core.crypto_fields.fields import EncryptedLastnameField
 from edc.device.sync.models import BaseSyncUuidModel
@@ -227,7 +227,7 @@ class CorrectConsent(BaseSyncUuidModel):
                 hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
                 hic_enrollment.dob = self.new_dob
         if self.new_guardian_name:
-            enrollment_checklist.guardian = self.new_guardian_name
+            enrollment_checklist.guardian = YES
             self.subject_consent.guardian_name = self.new_guardian_name
         if self.new_is_literate:
             enrollment_checklist.literacy = self.new_is_literate
