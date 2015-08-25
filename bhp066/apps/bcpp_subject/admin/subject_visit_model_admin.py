@@ -20,8 +20,8 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
     date_heirarchy = 'subject_visit__report_datetime'
     current_survey = Survey.objects.current_survey().survey_slug
     first_survey = Survey.objects.first_survey.survey_slug
-    baseline_fields = None
-    annual_fields = None
+#     baseline_fields = None
+#     annual_fields = None
     baseline_radio_fields = None
     annual_radio_fields = None
     baseline_instructions = None
