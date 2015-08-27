@@ -74,6 +74,9 @@ EDC_APPS = (
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
     'edc.lab.lab_profile',
+    'getresults_identifier',
+    'edc_quota_client',
+    'edc_quota_controller',
  
     'edc.audit',
 )
