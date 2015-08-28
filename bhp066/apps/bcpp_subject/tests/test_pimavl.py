@@ -20,12 +20,8 @@ from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp_household.models import HouseholdStructure
 from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
-from apps.bcpp_subject.tests.factories import HivTestingHistoryFactory
 from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from apps.bcpp_household_member.classes  import EnumerationHelper
 from apps.bcpp_survey.models import Survey
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_lab.models import Panel, AliquotType
 
 from apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
@@ -77,7 +73,7 @@ class TestPimaVL(TestCase):
             age_in_years=female_age_in_years,
             first_name=female_first_name,
             initials=female_initials
-            )
+        )
         self.household_member_male_T0 = HouseholdMemberFactory(
             household_structure=self.household_structure, gender='M',
             age_in_years=self.male_age_in_years, first_name=self.male_first_name,
@@ -133,7 +129,7 @@ class TestPimaVL(TestCase):
         """Asserts mixin save method works with model save."""
         self.create_pimavl(1, self.subject_visit_male_T0)
         self.assertEqual(1, PimaVl.objects.all().count())
-        self.assertRaises(QuotaReachedError, self.create_pimavl(2, self.subject_visit_male_T0))
+        self.assertRaises(QuotaReachedError, self.create_pimavl(2, self.subject_visit_female_T0))
 
     def test_quota_reached_override(self):
         """Asserts mixin save method works with model save."""
@@ -153,6 +149,10 @@ class TestPimaVL(TestCase):
                 subject_visit=subject_visit,
                 override_code=override_key,
                 confirmation_code=confirmation_code,
-                ).save()
+            ).save()
         except QuotaReachedError as ex:
             return PimaVl.objects.create
+
+    def test_pimavl_message_quota_reached(self):
+        # load html and inspect whether is a message.
+        pass
