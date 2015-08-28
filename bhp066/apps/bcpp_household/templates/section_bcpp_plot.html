@@ -4,7 +4,14 @@
  <div style="clear:left;">
 
 {{ current_community }}: {{ current_survey }}
- {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
+ {% if not use_gps_to_target_verification %}
+ 	  &nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>
+	 {% if tracked_value < 300 %}<span style="background-color:#{{color_status}};"><strong>{{tracked_value}} pimal viral load recorded for {{value_type}}. {{req_pimavl}} more are required. {% endif %}</strong></span>
+ {%else%}
+ 	{% if tracked_value < 300 %}
+ 		<div>You have reached {{tracked_value}} pimal vl participants for {{value_type}}. {{required_pimavl}} more are required.</div>
+ 	{% endif %}
+ {% endif %}
 </div>
 
 {% endblock%}

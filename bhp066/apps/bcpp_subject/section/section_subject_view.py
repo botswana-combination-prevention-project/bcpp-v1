@@ -31,6 +31,7 @@ class SectionSubjectView(BaseSectionView):
             'mapper_name': site_mappers.current_mapper.map_area,
             'subject_dashboard_url': self.dashboard_url_name,
             })
+        context.update()
         return context
 
     def _paginate(self, search_result, page, results_per_page=None):
