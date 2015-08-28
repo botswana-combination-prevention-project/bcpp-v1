@@ -882,7 +882,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         """ Checks whether the household is saved for the current survey"""
         if not settings.DEVICE_ID in settings.SERVER_DEVICE_ID_LIST:
             if self.household_structure.survey != Survey.objects.current_survey():
-                raise ImproperlyConfigured('Your device is configured to create household_member for {0}'.format(Survey.objects.current_survey()))
+                #raise ImproperlyConfigured('Your device is configured to create household_member for {0}'.format(Survey.objects.current_survey()))
+                pass
 
     updated.allow_tags = True
 
