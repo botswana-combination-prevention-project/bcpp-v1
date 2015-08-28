@@ -20,5 +20,6 @@ class PimaAdmin(SubjectVisitModelAdmin):
     list_filter = ('subject_visit', 'cd4_datetime', 'pima_id', Cd4ThreshHoldFilter,)
     list_display = ('subject_visit', 'cd4_datetime', 'cd4_value', 'pima_id')
     radio_fields = {
-        'pima_today': admin.VERTICAL}
+        'pima_today': admin.VERTICAL,
+        'pima_today_other': admin.VERTICAL}
 admin.site.register(Pima, PimaAdmin)

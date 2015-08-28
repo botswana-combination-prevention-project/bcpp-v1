@@ -49,12 +49,12 @@ class OperationalRbd(BaseOperationalReport):
                                                        user_created__icontains=self.ra_username,
                                                        registration_type='initiation')
         self.data_dict['8. Enrolled by initiation visit'] = enrolled_initiation.count()
-        enrolled_ccc = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
+        enrolled_etc = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                        created__gte=self.date_from,
                                                        created__lte=self.date_to,
                                                        user_created__icontains=self.ra_username,
-                                                       registration_type='ccc_scheduled')
-        self.data_dict['9. Enrolled by ccc'] = enrolled_ccc.count()
+                                                       registration_type='etc_scheduled')
+        self.data_dict['9. Enrolled by etc'] = enrolled_etc.count()
         enrolled_scheduled = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                        created__gte=self.date_from,
                                                        created__lte=self.date_to,
