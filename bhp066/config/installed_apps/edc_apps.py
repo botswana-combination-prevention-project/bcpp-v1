@@ -30,23 +30,23 @@ EDC_APPS = (
     'edc.device.netbook',
     'edc.device.device',
     'edc.device.sync',
-
+ 
     'edc.dashboard.base',
     'edc.dashboard.search',
     'edc.dashboard.subject',
     'edc.dashboard.section',
-
+ 
     'edc.export',
     'edc.import',
     'edc.entry_meta_data',
-
+ 
     'edc.data_dictionary',
-
+ 
     'edc.map',
-
+ 
     'edc.testing',
     'edc.utils',
-
+ 
     'edc.subject.lab_tracker',
     'edc.subject.code_lists',
     'edc.subject.rule_groups',
@@ -66,14 +66,17 @@ EDC_APPS = (
     'edc.subject.subject',
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
-
+ 
     'edc.notification',
-
+ 
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
     'edc.lab.lab_packing',
     'edc.lab.lab_profile',
-
+    'getresults_identifier',
+    'edc_quota_client',
+    'edc_quota_controller',
+ 
     'edc.audit',
 )
