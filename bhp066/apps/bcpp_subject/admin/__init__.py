@@ -3,7 +3,7 @@ from .main import *
 from .access_to_care_admin import AccessToCareAdmin
 from .call_log_admin import CallLogAdmin, CallLogEntryAdmin
 from .call_list_admin import CallListAdmin
-from .cea_enrollment_checklist_admin import CeaEnrollmentChecklistAdmin
+# from .cea_enrollment_checklist_admin import CeaEnrollmentChecklistAdmin
 from .circumcision_admin import CircumcisionAdmin, UncircumcisedAdmin, CircumcisedAdmin
 from .community_engagement_admin import CommunityEngagementAdmin
 from .demographics_admin import DemographicsAdmin
