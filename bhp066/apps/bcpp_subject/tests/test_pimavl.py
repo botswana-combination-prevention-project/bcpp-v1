@@ -11,7 +11,6 @@ from dateutil.relativedelta import relativedelta
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
@@ -30,8 +29,8 @@ from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from .factories import SubjectConsentFactory, SubjectVisitFactory
 
 
-from edc_quota_client.models import Quota 
-from edc_quota_client.exceptions import QuotaReachedError
+from edc_quota.client.models import Quota
+from edc_quota.client.exceptions import QuotaReachedError
 
 
 class TestPimaVL(TestCase):
@@ -152,7 +151,3 @@ class TestPimaVL(TestCase):
             ).save()
         except QuotaReachedError as ex:
             return PimaVl.objects.create
-
-    def test_pimavl_message_quota_reached(self):
-        # load html and inspect whether is a message.
-        pass
