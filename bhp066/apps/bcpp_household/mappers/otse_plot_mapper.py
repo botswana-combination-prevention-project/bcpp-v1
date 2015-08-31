@@ -37,7 +37,7 @@ class OtsePlotMapper(BasePlotMapper):
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
             start_date=date(2015, 4, 20),
-            full_enrollment_date=date(2015, 5, 14),
+            full_enrollment_date=date(2015, 10, 14),
             end_date=date(2015, 10, 30),
             smc_start_date=date(2015, 5, 30)),
         'bcpp-year-3': SurveyDatesTuple(
