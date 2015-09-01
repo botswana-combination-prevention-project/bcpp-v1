@@ -58,7 +58,7 @@ class Command(BaseCommand):
         for consent in consents:
             if consent.household_member.household_structure.id not in household_structure:
                 household_structure.append(consent.household_member.household_structure.id)
-        not_enrolled_structures = HouseholdStructure.objects.filter(id__in=household_structure).exclude(enrolled=True)
+        not_enrolled_structures = HouseholdStructure.objects.filter(id__in=household_structure, household__replaced_by__isnull=True).exclude(enrolled=True)
         print "..... {}/{} household structures for community {} are not enrolled".format(not_enrolled_structures.count(),
                                                                                           len(household_structure),
                                                                                            community.upper())
@@ -75,7 +75,7 @@ class Command(BaseCommand):
         for consent in consents:
             if consent.household_member.household_structure.household.id not in households:
                 households.append(consent.household_member.household_structure.household.id)
-        not_enrolled_household = Household.objects.filter(id__in=households).exclude(enrolled=True)
+        not_enrolled_household = Household.objects.filter(id__in=households, replaced_by__isnull=True).exclude(enrolled=True)
         print "..... {}/{} households for community {} are not enrolled".format(not_enrolled_household.count(),
                                                                                 len(households),
                                                                                 community.upper())
@@ -92,7 +92,7 @@ class Command(BaseCommand):
         for consent in consents:
             if consent.household_member.household_structure.household.plot.id not in plots:
                 plots.append(consent.household_member.household_structure.household.plot.id)
-        not_enrolled_plot = Plot.objects.filter(id__in=plots).exclude(bhs=True)
+        not_enrolled_plot = Plot.objects.filter(id__in=plots, replaced_by__isnull=True).exclude(bhs=True)
         print "..... {}/{} plots for community {} are not enrolled".format(not_enrolled_plot.count(),
                                                                            len(plots),
                                                                            community.upper())
