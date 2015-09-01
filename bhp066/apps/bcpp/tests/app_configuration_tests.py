@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.test import TestCase
 
 from edc.core.bhp_variables.models import StudySpecific
+from edc.device.device.classes import Device
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.consent.models import ConsentCatalogue
@@ -8,10 +10,9 @@ from edc.subject.consent.models import ConsentCatalogue
 from ..app_configuration.classes import BcppAppConfiguration
 
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from edc_quota.client.models import Quota, QuotaModelWithOverride
+from edc_quota.client.models import Quota
+from edc_quota.controller.models import ControllerQuota
 from apps.bcpp_subject.models import PimaVl
-from django.utils import timezone
-from datetime import timedelta
 
 
 class BcppAppConfigurationTests(TestCase):
@@ -33,8 +34,17 @@ class BcppAppConfigurationTests(TestCase):
         self.assertEqual(1, ConsentCatalogue.objects.count())
 
     def test_create_quota(self):
+        settings.DEVICE_ID = 34
         BcppAppConfiguration().create_quota()
         self.assertEqual(Quota.objects.filter(
+            app_label=PimaVl._meta.app_label,
+            model_name=PimaVl._meta.model_name,
+        ).count(), 1)
+
+    def test_create_quota_on_server(self):
+        settings.DEVICE_ID = 99
+        BcppAppConfiguration().create_quota()
+        self.assertEqual(ControllerQuota.objects.filter(
             app_label=PimaVl._meta.app_label,
             model_name=PimaVl._meta.model_name,
         ).count(), 1)

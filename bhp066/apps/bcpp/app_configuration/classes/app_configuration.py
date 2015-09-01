@@ -13,11 +13,13 @@ from edc.device.device.classes import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
-from edc_quota.client.models import Quota, QuotaModelWithOverride 
+from edc_quota.client.models import Quota, QuotaModelWithOverride
+from edc_quota.controller.models import ControllerQuota
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 from django.utils import timezone
+from edc.device.device.classes.device import Device
 
 
 try:
@@ -413,11 +415,31 @@ class BcppAppConfiguration(BaseAppConfiguration):
             if ct is None:
                 continue
             if issubclass(ct.model_class(), Quota) or issubclass(ct.model_class(), QuotaModelWithOverride):
-                Quota.objects.create(
-                    app_label=ct.model_class()._meta.app_label,
-                    model_name=ct.model_class()._meta.model_name,
-                    target=0,
-                    expires_datetime=timezone.now()
-                )
+                if device.is_central_server or device.is_community_server:
+                    try:
+                        ControllerQuota.objects.get(
+                            app_label=ct.model_class()._meta.app_label,
+                            model_name=ct.model_class()._meta.model_name,
+                        )
+                    except ControllerQuota.DoesNotExist:
+                        ControllerQuota.objects.create(
+                            app_label=ct.model_class()._meta.app_label,
+                            model_name=ct.model_class()._meta.model_name,
+                            target=0,
+                            expires_datetime=timezone.now()
+                        )
+                else:
+                    try:
+                        Quota.objects.get(
+                            app_label=ct.model_class()._meta.app_label,
+                            model_name=ct.model_class()._meta.model_name,
+                        )
+                    except Quota.DoesNotExist:
+                        Quota.objects.create(
+                            app_label=ct.model_class()._meta.app_label,
+                            model_name=ct.model_class()._meta.model_name,
+                            target=0,
+                            expires_datetime=timezone.now()
+                        )
 
 bcpp_app_configuration = BcppAppConfiguration()
