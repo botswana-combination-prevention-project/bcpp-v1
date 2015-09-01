@@ -8,6 +8,10 @@ from edc.subject.consent.models import ConsentCatalogue
 from ..app_configuration.classes import BcppAppConfiguration
 
 from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from edc_quota.client.models import Quota, QuotaModelWithOverride
+from apps.bcpp_subject.models import PimaVl
+from django.utils import timezone
+from datetime import timedelta
 
 
 class BcppAppConfigurationTests(TestCase):
@@ -27,3 +31,10 @@ class BcppAppConfigurationTests(TestCase):
         self.assertEqual(0, ConsentCatalogue.objects.count())
         BcppAppConfiguration().update_or_create_consent_catalogue()
         self.assertEqual(1, ConsentCatalogue.objects.count())
+
+    def test_create_quota(self):
+        BcppAppConfiguration().create_quota()
+        self.assertEqual(Quota.objects.filter(
+            app_label=PimaVl._meta.app_label,
+            model_name=PimaVl._meta.model_name,
+        ).count(), 1)
