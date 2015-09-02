@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.subject.registration.models import RegisteredSubject
-from edc_quota_client.models import Quota
+from edc_quota.client.models import Quota
 
 from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from apps.bcpp_lab.models import Panel, AliquotType
@@ -39,7 +39,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -76,7 +76,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -114,7 +114,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_car_adherence_options).count(), 1)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
@@ -942,7 +942,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
 
     def test_hiv_pos_requisitions_y2(self):
-        """ HIV Negative and not in HIC at T0 and Tests Positive during home visits at T1 and is Not on ART at T1.
+        """ HIV Negative and in HIC at T0 and Tests Positive during home visits at T1 and is Not on ART at T1.
             Sero Converter, Should offer POC CD4, RBD and VL.
         """
 
@@ -1086,13 +1086,14 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             arv_evidence='No',  # this is the rule field
             )
 
-        quota = Quota.objects.create(
-            app_label='bcpp_subject',
-            model_name='PimaVl',
-            target=2,
-            expires_datetime=datetime.now() + timedelta(days=1)
-        )
-
+#         quota = Quota.objects.create(
+#             app_label='bcpp_subject',
+#             model_name='PimaVl',
+#             target=2,
+#             expires_datetime=datetime.now() + timedelta(days=1)
+#         )
+        Quota.objects.all()[0].__dict__
+        self.assertEqual(Quota.objects.all().count(), 1)
         PimaVlFactory(subject_visit=self.subject_visit_male_T0)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **pima_vl_options).count(), 1)
@@ -1259,7 +1260,6 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             on_arv='No',
             arv_evidence='No',  # this is the rule field
             )
-        # said they have taken ARV so not required
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
 
     def hiv_pos_nd_art_naive_at_bhs(self):
@@ -1369,7 +1369,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
     def test_hiv_pos_nd_on_art_at_ahs(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART (i.e arv_naive) at the time of enrollment.
-           But now on ART at T1. Pima and VL required at T1. RBD keyed in T0, so not required. POC VL not required at T1.
+           But now on ART at T1. Pima and VL required at T1(rule: art naive at enrollment).
+           RBD keyed in T0, so not required. POC VL not required at T1.
         """
         self.subject_visit_male_T0 = self.baseline_subject_visit
         #         self.hiv_result(POS, self.subject_visit_male_T0)
@@ -1512,7 +1513,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
     def test_hiv_pos_nd_not_on_art_at_ahs(self):
         """Previously enrollees at t0 who are HIV-positive but were not on ART (i.e art_naive) at the time of enrollment. Pima required.
-           HIV Positive not on ART at T1: Should offer POC CD4 and VL. No RBD
+           Still HIV Positive and still not on ART at T1: Should offer POC CD4 and VL. No RBD
         """
         self.subject_visit_male_T0 = self.baseline_subject_visit
 
