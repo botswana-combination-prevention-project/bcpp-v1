@@ -41,9 +41,6 @@ def func_art_naive(visit_instance):
     be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
     art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
-#     if art_naive:
-#         subject_status_helper = SubjectStatusHelper(visit_instance)
-#         art_naive = not subject_status_helper.on_art and subject_status_helper.hiv_result == POS
     return art_naive
 
 
@@ -66,24 +63,27 @@ def func_rbd_ahs(visit_instance):
         return False
 
 
-def func_require_pima_hiv_care_ad(visit_instance):
-    if func_art_naive(func_previous_visit_instance(visit_instance)):
-        do_pima = True
-    elif func_art_naive(visit_instance):
-        do_pima = True
-    else:
-        do_pima = False
-    return do_pima
-
+def func_require_pima(visit_instance):
+    """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
+    if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
+#         print '*********************IN 1'
+        return True
+    # Hiv+ve at enrollment, art naive at enrollment
+    elif art_naive_at_enrollment(visit_instance):
+#         print '*********************IN 2'
+        return True
+    # Hiv -ve at enrollment, now changed to Hiv +ve
+    elif sero_converter(visit_instance) and func_art_naive(visit_instance):
+#         print '*********************IN 3'
+        return True
+#     print '*********************IN 4'
+    return False
 
 def func_known_pos(visit_instance):
     """Returns True if participant is NOT a newly diagnosed POS as determined
     by the SubjectStatusHelper.new_pos method."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
     known_pos = subject_status_helper.new_pos is False
-#     if not known_pos:
-#         subject_status_helper = SubjectStatusHelper(visit_instance)
-#         known_pos = subject_status_helper.new_pos is False
     return known_pos
 
 
@@ -226,6 +226,8 @@ def func_baseline_rbd_drawn(visit_instance):
 def func_baseline_pima_keyed(visit_instance):
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).pima_instance
 
+def func_baseline_hiv_care_adherance_keyed(visit_instance):
+    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_care_adherence_instance
 
 def func_not_required(visit_instance):
     """Returns True (always)."""
@@ -255,7 +257,6 @@ def circumsised_in_past(visit_instance):
 
 def func_should_not_show_circumsition(visit_instance):
     show_cicumsition = is_gender_female(visit_instance) or circumsised_in_past(visit_instance)
-#                         or (func_known_pos(visit_instance) or func_known_pos(func_previous_visit_instance(visit_instance))))
     return show_cicumsition
 
 
@@ -276,70 +277,62 @@ def evaluate_ever_had_sex_for_female(visit_instance):
     return False
 
 
-def previous_record(visit_instance, model, panel):
-    """ Returns requisition model based on visit_instance """
-    Model = get_model('bcpp_lab', model)
-    try:
-        _model = Model.objects.get(subject_visit=func_previous_visit_instance(visit_instance), panel__name=panel)
-    except Model.DoesNotExist:
-        return False
-    return True
-
-
-def previous_record_model(app_name, model, visit_instance):
-    """ Returns requisition model based on visit_instance """
-    Model = get_model(app_name, model)
-    try:
-        _model = Model.objects.get(subject_visit=func_previous_visit_instance(visit_instance))
-    except Model.DoesNotExist:
+def first_enrolled(visit_instance):
+    """ Returns true if visit_instance is the visit of first enrollment. """
+    # visit_instance is the visit of first enrollment if no other visit exists prior to it.
+    if func_previous_visit_instance(visit_instance):
         return False
     return True
 
 
 def art_naive_at_enrollment(visit_instance):
-    prev_visit = func_previous_visit_instance(visit_instance)
-    if func_is_baseline(prev_visit):
-        return func_art_naive(prev_visit)
+    """ visit_instance is T3, then prev_visit1 is T2 and prev_visit2 is Baseline.
+        visit_instance is T2, then prev_visit1 is T1 and prev_visit2 is None.
+        visit_instance is T0, then prev_visit1 is None and prev_visit2 is None. """
+    prev_visit1 = func_previous_visit_instance(visit_instance)
+    prev_visit2 = func_previous_visit_instance(prev_visit1)
+    if first_enrolled(prev_visit1) and func_art_naive(prev_visit1):
+        return True
+    elif first_enrolled(prev_visit2) and func_art_naive(prev_visit2):
+        return True
     return False
 
 
 def sero_converter(visit_instance):
     """ previously NEG and currently POS """
-    return True if func_hiv_negative_today(func_previous_visit_instance(visit_instance)) and\
-        func_hiv_positive_today(visit_instance) else False
+    return True if (func_hiv_negative_today(func_previous_visit_instance(visit_instance)) and
+        func_hiv_positive_today(visit_instance)) else False
 
 
 def func_rbd(visit_instance):
-    """Returns True  or False based on hiv status and art status at each survey."""
+    """Returns True or False to indicate a participant should be offered an rbd."""
     #if pos at bhs then return true
-    if func_is_baseline(visit_instance):
-        return func_hiv_positive_today(visit_instance)
-    elif func_hiv_positive_today(visit_instance) and not previous_record(visit_instance, 'subjectrequisition', 'Research Blood Draw'):
+    if func_hiv_positive_today(visit_instance) and not func_baseline_rbd_drawn(visit_instance):
         return True
     return False
 
 
 def func_vl(visit_instance):
-    """Returns True  or False based on hiv status and art status at each survey."""
+    """Returns True  or False to indicate participant needs to be offered a viral load."""
     if func_is_baseline(visit_instance):
         return func_hiv_positive_today(visit_instance)
     # Hiv+ve at enrollment, art naive at enrollment
     elif art_naive_at_enrollment(visit_instance):
         return True
-    #func_art_naive should imply HIV +ve
-    elif func_art_naive(visit_instance) and sero_converter(visit_instance):
+    # Hiv -ve at enrollment, now changed to Hiv +ve
+    elif sero_converter(visit_instance):
         return True
     return False
 
 
 def func_poc_vl(visit_instance):
-    """Returns True  or False based on hiv status and art status at each survey."""
-    #if pos at bhs then return true
-    if func_is_baseline(visit_instance):
-        return func_art_naive(visit_instance)
-    #Hiv+ve at enrollment, art naive at enrollment
+    """Returns True or False to indicate participant needs to be offered a POC viral load."""
+    # if pos at bhs then return true
+    if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
+        return True
+    # art naive at enrollment
     elif art_naive_at_enrollment(visit_instance) and func_art_naive(visit_instance):
         return True
-    elif func_art_naive(visit_instance) and sero_converter(visit_instance):
+    elif sero_converter(visit_instance) and func_art_naive(visit_instance):
         return True
     return False
