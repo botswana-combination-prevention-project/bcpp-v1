@@ -426,20 +426,21 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             app_label=ct.model_class()._meta.app_label,
                             model_name=ct.model_class()._meta.model_name,
                             target=0,
-                            expires_datetime=timezone.now()
-                        )
-                else:
-                    try:
-                        Quota.objects.get(
-                            app_label=ct.model_class()._meta.app_label,
-                            model_name=ct.model_class()._meta.model_name,
-                        )
-                    except Quota.DoesNotExist:
-                        Quota.objects.create(
-                            app_label=ct.model_class()._meta.app_label,
-                            model_name=ct.model_class()._meta.model_name,
-                            target=0,
                             expiration_date=timezone.now()
                         )
+                else:
+                    if not device.is_central_server:
+                        try:
+                            Quota.objects.get(
+                                app_label=ct.model_class()._meta.app_label,
+                                model_name=ct.model_class()._meta.model_name,
+                            )
+                        except Quota.DoesNotExist:
+                            Quota.objects.create(
+                                app_label=ct.model_class()._meta.app_label,
+                                model_name=ct.model_class()._meta.model_name,
+                                target=0,
+                                expiration_date=timezone.now()
+                            )
 
 bcpp_app_configuration = BcppAppConfiguration()
