@@ -4,7 +4,9 @@
  <div style="clear:left;">
 
 {{ current_community }}: {{ current_survey }}
- {% if not use_gps_to_target_verification %}&nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>{% endif %}
+ {% if not use_gps_to_target_verification %}
+ 	  &nbsp;<span style="background-color:red; color:white;">GPS to target verification is disabled!</span>
+ {% endif %}
 </div>
 
 {% endblock%}
