@@ -61,3 +61,12 @@ class TatiSidingPlotMapper(BasePlotMapper):
     }
 
 site_mappers.register(TatiSidingPlotMapper)
+
+# git filter-branch -f --commit-filter '
+#         if [ "$GIT_AUTHOR_EMAIL" = "sirone@One.local" ];
+#         then
+#                 GIT_AUTHOR_EMAIL="sirpharatlhatlhe@yahoo.co.uk";
+#                 git commit-tree "$@";
+#         else
+#                 git commit-tree "$@";
+#         fi' HEAD

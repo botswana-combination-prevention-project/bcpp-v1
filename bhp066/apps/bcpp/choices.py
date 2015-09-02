@@ -170,7 +170,7 @@ COMMUNITY_NA = (
     ('Nkange', _('Nkange')),
     ('Oodi', _('Oodi')),
     ('Otse', _('Otse')),
-    ('Raikops', _('Raikops')),
+    ('Rakops', _('Rakops')),
     ('Ramokgonami', _('Ramokgonami')),
     ('Ranaka', _('Ranaka')),
     ('Sebina', _('Sebina')),
@@ -1090,5 +1090,13 @@ RELATIONSHIP_STUDY = (
     ('Possible related', _('Possible related')),
     ('Probably related', _('Probably related')),
     ('Definitely related', _('Definitely related')),
+)
+
+EASY_OF_USE = (
+    ('easy', _('Easy')),
+    ('Very easy', _('Very Easy')),
+    ('Fairly easy', _('Fairly easy')),
+    ('Difficult', _('Difficult')),
+    ('Very difficult', _('Very difficult')),
 )
 
