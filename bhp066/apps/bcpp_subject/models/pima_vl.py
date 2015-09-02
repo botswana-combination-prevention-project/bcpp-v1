@@ -10,13 +10,14 @@ from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 
-from edc_quota.client.models import QuotaModelWithOverride
+from edc_quota.client.models import QuotaModelWithOverride, Quota
 from edc_quota import Override
 
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 from apps.bcpp.choices import EASY_OF_USE
+from datetime import date
 
 
 class PimaVl (QuotaModelWithOverride, BaseScheduledVisitModel):
@@ -99,6 +100,27 @@ class PimaVl (QuotaModelWithOverride, BaseScheduledVisitModel):
         help_text="Comment")
 
     history = AuditTrail()
+
+    @property
+    def quota_reached(self):
+        """Returns True if the model instance count is greater than the quota target for this model.
+
+        - called from the save method;
+        - ignores existing instances;
+        - will raise an exception if no Quota for this model.
+        """
+        if self.id:
+            return False
+        quota = Quota.objects.filter(
+            app_label=self._meta.app_label,
+            model_name=self._meta.object_name,
+        ).last()
+        if quota.expiration_date > date.today():
+            quota_reached = quota.model_count >= quota.target
+        else:
+            quota_reached = True
+        self.quota_pk = quota.pk
+        return quota_reached
 
     def override_quota(self, exception_cls=None, override_code=None, confirmation_code=None):
         return Override(override_code, confirmation_code).is_valid_combination
