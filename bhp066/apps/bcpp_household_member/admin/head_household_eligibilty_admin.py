@@ -35,7 +35,7 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
 #                                               relation='Head').exists():
             kwargs["queryset"] = HouseholdMember.objects.filter(Q(household_structure__exact=request.
                                           GET.get('household_structure', 0)),
-                                          Q(is_consented=True) | Q(relation='Head') | Q(age_in_years__gte=18))
+                                          (Q(is_consented=True) | Q(age_in_years__gte=18) | Q(relation='Head')) &( ~Q(survival_status='Dead')))
 #             else:
 #                 kwargs["queryset"] = HouseholdMember.objects.filter(
 #                     household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=False)
