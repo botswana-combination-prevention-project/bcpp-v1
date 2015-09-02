@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from edc.core.bhp_birt_reports.classes import OperationalReportUtilities
 
 from apps.bcpp.choices import COMMUNITIES
+from apps.bcpp_survey.models import Survey
 
 
 class BaseOperationalReport():
@@ -13,11 +14,14 @@ class BaseOperationalReport():
         self.date_to = self.utilities.date_format_utility(request.GET.get('date_to', ''), '2099-12-31')
         self.ra_username = request.GET.get('ra', '')
         self.community = request.GET.get('community', '')
+        self.survey = request.GET.get('survey', '')
         self.previous_ra = self.ra_username
         self.previous_community = self.community
+        self.previous_survey = self.survey
         self.data_dict = {}
         self.communities = None
         self.ra_usernames = None
+        self.surveys = None
 
     def build_report(self):
         report_data = self.report_data()
@@ -34,6 +38,9 @@ class BaseOperationalReport():
 
     def return_ra_usernames(self):
         return self.ra_usernames
+
+    def return_surveys(self):
+        return self.surveys
 
     def configure_filtering(self):
         communities = []
@@ -59,3 +66,14 @@ class BaseOperationalReport():
             ra_usernames = [user.username for user in User.objects.filter(groups__name='field_research_assistant')]
             ra_usernames.insert(0, '---------')
         self.ra_usernames = ra_usernames
+        surveys = []
+        if (self.previous_survey.find('----') == -1) and (not self.previous_survey == ''):
+            for slug in [survey.survey_slug for survey in Survey.objects.all()]:
+                if slug != self.previous_survey:
+                    surveys.append(slug)
+            surveys.insert(0, self.previous_survey)
+            surveys.insert(1, '---------')
+        else:
+            surveys = [survey.survey_slug for survey in Survey.objects.all()]
+            surveys.insert(0, '---------')
+        self.surveys = surveys
