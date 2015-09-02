@@ -1,4 +1,5 @@
 from .community import Community
+from .notebook_plot_list import NotebookPlotList
 from .gps_device import GpsDevice
 from .household import Household
 from .household_assessment import HouseholdAssessment
@@ -19,4 +20,3 @@ from .signals import (household_on_post_save, household_structure_on_post_save, 
 from .representative_eligibility import RepresentativeEligibility
 from .base_representative_eligibility import BaseRepresentativeEligibility
 from .increase_plot_radius import IncreasePlotRadius
-from .notebook_plot_list import NotebookPlotList

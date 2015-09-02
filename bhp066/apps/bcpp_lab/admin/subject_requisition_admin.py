@@ -12,10 +12,24 @@ from ..models import SubjectRequisition, Panel
 
 class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
 
-    def __init__(self, *args, **kwargs):
-        super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
-        self.list_filter.append('community')
-
+    #def __init__(self, *args, **kwargs):
+    #    super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
+    #    self.list_filter.append('community')
+    fields = [
+            "subject_visit",
+            "requisition_datetime",
+            "is_drawn",
+            "reason_not_drawn",
+            "drawn_datetime",
+            "site",
+            "panel",
+            "test_code",
+            "aliquot_type",
+            "item_type",
+            "item_count_total",
+            "estimated_volume",
+            "priority",
+            "comments", ]
     visit_model = SubjectVisit
     visit_fieldname = 'subject_visit'
     dashboard_type = 'subject'

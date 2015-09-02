@@ -36,7 +36,7 @@ class LetlhakengPlotMapper(BasePlotMapper):
             smc_start_date=date(2014, 10, 29)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 9, 5),
+            start_date=date(2015, 5, 1),
             full_enrollment_date=date(2015, 10, 15),
             end_date=date(2015, 10, 21),
             smc_start_date=date(2015, 10, 29)),

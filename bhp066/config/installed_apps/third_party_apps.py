@@ -6,6 +6,6 @@ THIRD_PARTY_APPS = (
     'dajaxice',
     'storages',
     'dajax',
-    #'south',
+    'south',
     'tastypie',
 )

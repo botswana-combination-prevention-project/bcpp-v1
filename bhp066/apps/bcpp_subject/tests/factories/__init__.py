@@ -8,6 +8,7 @@ from .subject_consent_factory import SubjectConsentFactory
 from .heart_attack_factory import HeartAttackFactory
 from .cd4_history_factory import Cd4HistoryFactory
 from .pima_factory import PimaFactory
+from .pima_vl_factofy import PimaVlFactory
 from .sti_factory import StiFactory
 from .subject_locator_factory import SubjectLocatorFactory
 from .subject_visit_factory import SubjectVisitFactory
