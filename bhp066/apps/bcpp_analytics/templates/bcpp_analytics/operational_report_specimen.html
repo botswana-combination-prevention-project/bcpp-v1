@@ -36,6 +36,16 @@
 					{% endfor %}
 				</select>
 			</td>
+            <td>
+            Survey
+            </td>
+            <td>
+                <select name="survey">
+                    {% for survey in surveys %}
+                        <option value={{survey}}>{{survey}}</option> 
+                    {% endfor %}
+                </select>
+            </td>
 			<td>
 			Date from:
 			</td>
