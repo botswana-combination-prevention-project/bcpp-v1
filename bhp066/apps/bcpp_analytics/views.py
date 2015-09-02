@@ -191,7 +191,7 @@ def operational_report_household_view(request, **kwargs):
     return render_to_response(
         'bcpp_analytics/operational_report_household.html', {'values': operational_household.build_report(),
                                                         'communities': operational_household.return_communities(),
-                                                        'ra_usernames': operational_household.return_ra_usernames()},
+                                                        'ra_usernames': operational_household.return_ra_usernames(),},
         context_instance=RequestContext(request))
 
 
@@ -201,7 +201,8 @@ def operational_report_member_view(request, **kwargs):
     return render_to_response(
         'bcpp_analytics/operational_report_member.html', {'values': operational_member.build_report(),
                                                         'communities': operational_member.return_communities(),
-                                                        'ra_usernames': operational_member.return_ra_usernames()},
+                                                        'ra_usernames': operational_member.return_ra_usernames(),
+                                                        'surveys': operational_member.return_surveys()},
         context_instance=RequestContext(request))
 
 
@@ -211,7 +212,8 @@ def operational_report_specimen_view(request, **kwargs):
     return render_to_response(
         'bcpp_analytics/operational_report_specimen.html', {'values': operational_specimen.build_report(),
                                                         'communities': operational_specimen.return_communities(),
-                                                        'ra_usernames': operational_specimen.return_ra_usernames()},
+                                                        'ra_usernames': operational_specimen.return_ra_usernames(),
+                                                        'surveys': operational_specimen.return_surveys()},
         context_instance=RequestContext(request))
 
 

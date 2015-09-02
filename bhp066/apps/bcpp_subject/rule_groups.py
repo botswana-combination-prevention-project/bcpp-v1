@@ -33,12 +33,12 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             alternative='new'),
         target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult'])
 
-#     pima_naive_bhs_req_ahs = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_require_pima_hiv_care_ad,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['pima'])
+    pima_art_naive_enrollment_req_ahs = ScheduledDataRule(
+        logic=Logic(
+            predicate=func_require_pima,
+            consequence='new',
+            alternative='not_required'),
+        target_model=['pima'])
 
     require_microtube = RequisitionRule(
         logic=Logic(
@@ -55,6 +55,14 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Viral Load'], )
+
+    rbd_for_pos = RequisitionRule(
+        logic=Logic(
+            predicate=func_rbd,
+            consequence='new',
+            alternative='not_required'),
+        target_model=[('bcpp_lab', 'subjectrequisition')],
+        target_requisition_panels=['Research Blood Draw'], )
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -89,13 +97,6 @@ site_rule_groups.register(ResourceUtilizationRuleGroup)
 
 
 class HivTestingHistoryRuleGroup(RuleGroup):
-
-    pima_for_art_naive = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_require_pima_hiv_care_ad,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pima'])
 
     has_record = ScheduledDataRule(
         logic=Logic(
@@ -146,13 +147,6 @@ class HivTestingHistoryRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['stigma', 'stigmaopinion'])
 
-#     verbal_result_response = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('verbal_hiv_result', 'equals', 'POS'),
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=['positiveparticipant', 'hivmedicalcare', 'hivhealthcarecosts'])
-
     other_response = ScheduledDataRule(
         logic=Logic(
             predicate=func_no_verbal_hiv_result,
@@ -171,12 +165,6 @@ site_rule_groups.register(HivTestingHistoryRuleGroup)
 
 
 class ReviewPositiveRuleGroup(RuleGroup):
-    pima_for_art_naive = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_require_pima_hiv_care_ad,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pima'])
 
     recorded_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -217,25 +205,17 @@ class HivCareAdherenceRuleGroup(RuleGroup):
 
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_require_pima_hiv_care_ad,
+            predicate=func_require_pima,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
 
     pimavl_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_poc_vl,
+            predicate=func_art_naive,
             consequence='new',
             alternative='not_required'),
         target_model=['pimavl'])
-
-#     vl_for_known_pos = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_art_naive,
-#             consequence='new',
-#             alternative='not_required'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Viral Load'],)
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -303,21 +283,6 @@ class CircumcisionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['uncircumcised'])
-
-#     not_sure_circumcised = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=('circumcised', 'equals', 'Not Sure'),
-#             consequence='not_required',
-#             alternative='none'),
-#         target_model=['uncircumcised', 'circumcised'])
-
-    # if circumcised do not require circumcision forms again
-#     circumcised_annual = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_circumcision,
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['circumcised', 'uncircumcised'])
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -398,14 +363,6 @@ class BaseRequisitionRuleGroup(RuleGroup):
         target_model=[('bcpp_lab', 'subjectrequisition')],
         target_requisition_panels=['Viral Load'], )
 
-#     vl_for_known_pos = RequisitionRule(
-#         logic=Logic(
-#             predicate=func_rbd_ahs,
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=[('bcpp_lab', 'subjectrequisition')],
-#         target_requisition_panels=['Research Blood Draw'],)
-
     """Ensures a Microtube is not required for POS."""
     microtube_for_neg = RequisitionRule(
         logic=Logic(
@@ -417,14 +374,14 @@ class BaseRequisitionRuleGroup(RuleGroup):
 
     pima_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_require_pima_hiv_care_ad,
+            predicate=func_require_pima,
             consequence='new',
             alternative='not_required'),
         target_model=['pima'])
 
     pimavl_for_art_naive = ScheduledDataRule(
         logic=Logic(
-            predicate=func_poc_vl,
+            predicate=func_art_naive,
             consequence='new',
             alternative='not_required'),
         target_model=['pimavl'])
@@ -435,13 +392,6 @@ class BaseRequisitionRuleGroup(RuleGroup):
             consequence='new',
             alternative='not_required'),
         target_model=['hicenrollment'])
-
-#     known_pos_circumcised = ScheduledDataRule(
-#         logic=Logic(
-#             predicate=func_should_not_show_circumsition,
-#             consequence='not_required',
-#             alternative='new'),
-#         target_model=['circumcised', 'uncircumcised', 'circumcision'])
 
     class Meta:
         abstract = True
@@ -500,13 +450,6 @@ site_rule_groups.register(RequisitionRuleGroup2)
 
 class RequisitionRuleGroup3(BaseRequisitionRuleGroup):
 
-    known_pos_circumcised_2 = ScheduledDataRule(
-    logic=Logic(
-        predicate=func_should_not_show_circumsition,
-        consequence='not_required',
-        alternative='new'),
-    target_model=['circumcised', 'uncircumcised', 'circumcision'])
-
     class Meta:
         app_label = 'bcpp_subject'
         source_fk = (SubjectVisit, 'subject_visit')
@@ -515,13 +458,6 @@ site_rule_groups.register(RequisitionRuleGroup3)
 
 
 class RequisitionRuleGroup4(BaseRequisitionRuleGroup):
-
-    known_pos_circumcised_3 = ScheduledDataRule(
-    logic=Logic(
-        predicate=func_should_not_show_circumsition,
-        consequence='not_required',
-        alternative='new'),
-    target_model=['circumcised', 'uncircumcised', 'circumcision'])
 
     class Meta:
         app_label = 'bcpp_subject'
