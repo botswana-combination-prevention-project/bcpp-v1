@@ -415,7 +415,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             if ct is None:
                 continue
             if issubclass(ct.model_class(), Quota) or issubclass(ct.model_class(), QuotaModelWithOverride):
-                if device.is_central_server or device.is_community_server:
+                if device.is_community_server:
                     try:
                         ControllerQuota.objects.get(
                             app_label=ct.model_class()._meta.app_label,
@@ -439,7 +439,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             app_label=ct.model_class()._meta.app_label,
                             model_name=ct.model_class()._meta.model_name,
                             target=0,
-                            expires_datetime=timezone.now()
+                            expiration_date=timezone.now()
                         )
 
 bcpp_app_configuration = BcppAppConfiguration()
