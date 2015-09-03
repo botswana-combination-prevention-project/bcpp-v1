@@ -55,9 +55,11 @@ urlpatterns = patterns(
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
 
-#this is for additional_requisitions
+urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
+
 urlpatterns += patterns('',
-    url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME), additional_requisition, name="add_requisition"),
+    url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME),
+    additional_requisition, name="add_requisition"),
 )
 
 urlpatterns += patterns(
@@ -142,5 +144,3 @@ urlpatterns += patterns(
         RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
     url(r'', RedirectView.as_view(url='/{app_name}/section/'.format(app_name=APP_NAME))),
 )
-
-urlpatterns += [url(r'', include(edc_quota_urls))]
