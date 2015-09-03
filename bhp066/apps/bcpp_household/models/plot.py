@@ -299,10 +299,10 @@ class Plot(BaseDispatchSyncUuidModel):
             self.gps_lon = mapper.get_gps_lon(self.gps_degrees_e, self.gps_minutes_e)
             mapper.verify_gps_location(self.gps_lat, self.gps_lon, MapperError)
             mapper.verify_gps_to_target(self.gps_lat, self.gps_lon, self.gps_target_lat,
-                                        self.gps_target_lon, self.target_radius, MapperError)
+                                        self.gps_target_lon, self.target_radius, MapperError,
+                                        self.increase_radius_instance)
             self.distance_from_target = mapper.gps_distance_between_points(
-                self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon,
-                self.increase_radius_instance) * 1000
+                self.gps_lat, self.gps_lon, self.gps_target_lat, self.gps_target_lon) * 1000
         self.action = self.get_action()
         try:
             update_fields = update_fields + ['action', 'distance_from_target', 'plot_identifier', 'user_modified']
