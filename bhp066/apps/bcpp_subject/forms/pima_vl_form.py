@@ -2,6 +2,7 @@ from django import forms
 
 from ..models import PimaVl
 from .base_subject_model_form import BaseSubjectModelForm
+from edc_quota.override import Override
 
 
 class PimaVlForm (BaseSubjectModelForm):
@@ -31,10 +32,14 @@ class PimaVlForm (BaseSubjectModelForm):
 
         if self.instance.quota_reached:
             if not cleaned_data.get('confirmation_code') or not cleaned_data.get('override_code'):
-                raise forms.ValidationError('Provide confirmation code to increase quota limit.')
+                raise forms.ValidationError(
+                    'You have reached quota limit. Send client code:{0} '
+                    'to CBS for confirmation key to increase quota limit.'
+                    'Otherwise ignore the key if you are still waiting for confirmation code.'.format(Override().code),
+                    code='min_value'
+                )
             override_code = cleaned_data.get('override_code')
             confirmation_code = cleaned_data.get('confirmation_code')
-
             if not self.instance.override_quota(forms.ValidationError, override_code, confirmation_code):
                 raise forms.ValidationError('Invalid confirmation code or override key, please provide correct keys. Got {} and {}'.format(override_code, confirmation_code))
         else:
