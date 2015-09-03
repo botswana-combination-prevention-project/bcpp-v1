@@ -57,8 +57,8 @@ urlpatterns = patterns(
 
 #this is for additional_requisitions
 urlpatterns += patterns('',
-                        url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME), additional_requisition, name="add_requisition"),
-                        )
+    url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME), additional_requisition, name="add_requisition"),
+)
 
 urlpatterns += patterns(
     '',
