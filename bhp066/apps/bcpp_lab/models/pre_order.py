@@ -2,17 +2,16 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_subject.constants import NEW, CLOSED
+from apps.bcpp_subject.constants import NEW, PENDING, VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
 from apps.bcpp_subject.models import SubjectVisit
 
 from ..models import Aliquot, Panel
-from django.core.exceptions import ValidationError
-
-# from ..managers import PreOrderManager
+from ..managers import PreOrderManager
 
 
 class PreOrder(BaseSyncUuidModel):
@@ -46,7 +45,7 @@ class PreOrder(BaseSyncUuidModel):
 
     history = AuditTrail()
 
-    objects = models.Manager()
+    objects = PreOrderManager()
 
     def save(self, *args, **kwargs):
         if self.aliquot_identifier:
@@ -69,11 +68,19 @@ class PreOrder(BaseSyncUuidModel):
             if aliquot.receive.registered_subject.subject_identifier != self.subject_visit.subject_identifier:
                 raise ValidationError('The Aliquot you are attempting to use for "{}", belongs to "{}".'.
                                       format(self.subject_visit, aliquot.receive.registered_subject))
-            self.status = CLOSED
+#             update_fields = kwargs.get('update_fields')
+#             kwargs.update({'update_fields': update_fields})
+            if not kwargs.get('update_fields'):
+                # if no update fields then we must be linking pre order with aliquot, otherwise we must be
+                # setting it as COMPLETE from bcpp_subject.signal
+                self.status = PENDING
         super(PreOrder, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return (self.order_identifier, )
+        return self.subject_visit.natural_key() + self.panel.natural_key()
+
+    def __unicode__(self):
+        return str(self.subject_visit)
 
     @property
     def model_url(self):
@@ -84,6 +91,14 @@ class PreOrder(BaseSyncUuidModel):
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
         return url
+
+    def result(self):
+        url = reverse('admin:bcpp_subject_pimavl_add')
+        if self.panel.name == POC_VIRAL_LOAD and self.aliquot_identifier:
+            return '<a href="{0}?subject_visit={1}">result</a>'.format(url, self.subject_visit.id)
+        else:
+            return None
+    result.allow_tags = True
 
     class Meta:
         app_label = 'bcpp_lab'

@@ -6,7 +6,7 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 from apps.bcpp_subject.classes import func_poc_vl
-from apps.bcpp_subject.constants import CLOSED, VIRAL_LOAD, ARBIT_VIRAL_LOAD, POC_VIRAL_LOAD
+from apps.bcpp_subject.constants import COMPLETE, VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
 
 from ..models import ClinicRequisition, SubjectRequisition, PreOrder, Panel, Order
 
@@ -32,7 +32,7 @@ def create_requisition_preorder_on_post_save(sender, instance, raw, created, usi
             with transaction.atomic():
                 if instance.panel.name == VIRAL_LOAD and func_poc_vl(instance.subject_visit):
                     poc_viral_load = Panel.objects.get(name=POC_VIRAL_LOAD)
-                    arbit_viral_load = Panel.objects.get(name=ARBIT_VIRAL_LOAD)
+                    arbit_viral_load = Panel.objects.get(name=ABBOTT_VIRAL_LOAD)
                     try:
                         PreOrder.objects.create(panel=poc_viral_load, preorder_datetime=datetime.now(), subject_visit=instance.subject_visit)
                         PreOrder.objects.create(panel=arbit_viral_load, preorder_datetime=datetime.now(), subject_visit=instance.subject_visit)
@@ -54,5 +54,5 @@ def create_requisition_preorder_on_post_save(sender, instance, raw, created, usi
 @receiver(post_save, weak=False, dispatch_uid="create_order_on_pre_save")
 def create_order_on_pre_save(sender, instance, raw, created, using, **kwargs):
     if not kwargs.get('raw', False):
-        if isinstance(instance, PreOrder) and instance.status == CLOSED:
+        if isinstance(instance, PreOrder) and instance.status == COMPLETE:
             pass
