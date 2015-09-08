@@ -100,7 +100,10 @@ class PimaVl (QuotaMixin, BaseScheduledVisitModel):
 
     history = AuditTrail()
 
-    QuotaManager()
+    objects = QuotaManager()
+
+    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
+        return True
 
     class Meta:
         app_label = 'bcpp_subject'
