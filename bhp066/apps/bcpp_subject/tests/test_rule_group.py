@@ -61,7 +61,6 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             * HivCareAdherence
             * HivResult
         """
-        self.subject_visit_female_T0 = self.baseline_subject_visit
 
         hiv_car_adherence_options = {}
         hiv_car_adherence_options.update(
