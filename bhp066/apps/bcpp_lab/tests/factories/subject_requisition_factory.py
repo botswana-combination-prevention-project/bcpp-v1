@@ -21,3 +21,4 @@ class SubjectRequisitionFactory(BaseUuidModelFactory):
     site = factory.SubFactory(StudySiteFactory)
     requisition_datetime = datetime.today()
     drawn_datetime = datetime.today()
+    is_drawn = 'Yes'
