@@ -2,7 +2,7 @@ from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 from collections import OrderedDict
 
-from apps.bcpp import COMMUNITIES
+from apps.bcpp.choices import COMMUNITIES
 
 from ..models import SubjectRequisition, Receive
 
