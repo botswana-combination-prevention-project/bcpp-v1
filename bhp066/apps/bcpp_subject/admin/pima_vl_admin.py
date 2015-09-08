@@ -28,7 +28,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'stability',
         'confirmation_code',
     )
-    exclude = ('poc_vl_type',)
+    exclude = ('poc_vl_type', 'quota_pk')
     list_filter = ('subject_visit', 'time_of_test', 'pima_id', Cd4ThreshHoldFilter,)
     list_display = ('subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id')
     radio_fields = {
