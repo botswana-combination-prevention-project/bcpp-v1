@@ -2,25 +2,28 @@ from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from apps.bcpp_household.models import Plot
 from apps.bcpp_survey.models import Survey
 from collections import OrderedDict
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 from django.core.exceptions import ImproperlyConfigured
+
 from edc.apps.app_configuration.classes import BaseAppConfiguration
 from edc.device.device.classes import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
+
 from edc_quota.client.models import Quota
 from edc_quota.controller.models import ControllerQuota
+from edc_quota.controller.models import Client
+
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
 from django.utils import timezone
 from edc.device.device.classes.device import Device
-
 
 try:
     from config.labels import aliquot_label
@@ -337,6 +340,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
         }
     }
 
+    quota_client_setup = ['bcpp001', 'bcpp005', 'bcpp007', 'bcpp008', 'bcpp009', 'bcpp010', 'bcpp011', 'bcpp012', 'bcpp014',
+                          'bcpp015', 'bcpp016', 'bcpp018', 'bcpp019', 'bcpp022', 'bcpp023', 'bcpp024', 'bcpp025', 'bcpp027',
+                          'bcpp028', 'bcpp030', 'bcpp031', 'bcpp034', 'bcpp035', 'bcpp037', 'bcpp038', 'bcpp039', 'bcpp040',
+                          'bcpp043', 'bcpp048', 'bcpp049', 'bcpp050', 'bcpp051', 'bcpp052', 'bcpp053', 'bcpp054', 'bcpp055',
+                          'bcpp056', 'bcpp062', 'bcpp063', 'bcpp064', 'bcpp065'
+                          ]
+
     @property
     def study_site_setup(self):
         """Returns a dictionary of the the site code and site name.
@@ -414,37 +424,46 @@ class BcppAppConfiguration(BaseAppConfiguration):
                     'and FILTERED_DEFAULT_SEARCH should be set to true in a notebook. '
                     'Update in bcpp_settings.py.')
 
-#     def create_quota(self):
-#         for ct in ContentType.objects.filter(app_label='bcpp_subject'):
-#             if ct is None:
-#                 continue
-#             if issubclass(ct.model_class(), Quota) or issubclass(ct.model_class(), QuotaModelWithOverride):
-#                 if device.is_community_server:
-#                     try:
-#                         ControllerQuota.objects.get(
-#                             app_label=ct.model_class()._meta.app_label,
-#                             model_name=ct.model_class()._meta.model_name,
-#                         )
-#                     except ControllerQuota.DoesNotExist:
-#                         ControllerQuota.objects.create(
-#                             app_label=ct.model_class()._meta.app_label,
-#                             model_name=ct.model_class()._meta.model_name,
-#                             target=0,
-#                             expiration_date=timezone.now()
-#                         )
-#                 else:
-#                     if not device.is_central_server:
-#                         try:
-#                             Quota.objects.get(
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                             )
-#                         except Quota.DoesNotExist:
-#                             Quota.objects.create(
-#                                 app_label=ct.model_class()._meta.app_label,
-#                                 model_name=ct.model_class()._meta.model_name,
-#                                 target=0,
-#                                 expiration_date=timezone.now()
-#                             )
+    def create_quota(self):
+        for ct in ContentType.objects.filter(app_label='bcpp_subject'):
+            if ct is None:
+                continue
+            if issubclass(ct.model_class(), QuotaMixin):
+                if device.is_community_server:
+                    try:
+                        ControllerQuota.objects.get(
+                            app_label=ct.model_class()._meta.app_label,
+                            model_name=ct.model_class()._meta.model_name,
+                        )
+                    except ControllerQuota.DoesNotExist:
+                        ControllerQuota.objects.create(
+                            app_label=ct.model_class()._meta.app_label,
+                            model_name=ct.model_class()._meta.model_name,
+                            target=0,
+                            expiration_date=timezone.now().date() + timedelta(days=28)
+                        )
+                        for hostname in self.quota_client_setup:
+                            try:
+                                Client.objects.get(hostname=hostname)
+                            except Client.DoesNotExist:
+                                Client.objects.create(
+                                    hostname=hostname,
+                                    app_label=ct.model_class()._meta.app_label,
+                                    model_name=ct.model_class()._meta.model_name,
+                                )
+                else:
+                    if not device.is_central_server:
+                        try:
+                            Quota.objects.get(
+                                app_label=ct.model_class()._meta.app_label,
+                                model_name=ct.model_class()._meta.model_name,
+                            )
+                        except Quota.DoesNotExist:
+                            Quota.objects.create(
+                                app_label=ct.model_class()._meta.app_label,
+                                model_name=ct.model_class()._meta.model_name,
+                                target=0,
+                                expiration_date=timezone.now()
+                            )
 
 bcpp_app_configuration = BcppAppConfiguration()
