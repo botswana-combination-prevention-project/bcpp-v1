@@ -5,6 +5,7 @@ from .profile_item_manager import ProfileItemManager
 from .aliquot_processing_manager import AliquotProcessingManager
 from .receive_manager import ReceiveManager
 from .order_manager import OrderItemManager, OrderManager
+from .pre_order_manager import PreOrderManager
 from .packing_list_manager import PackingListItemManager, PackingListManager
 from .clinic_requisition_manager import ClinicRequisitionManager
 from .aliquot_manager import AliquotManager
