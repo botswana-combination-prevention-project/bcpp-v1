@@ -7,6 +7,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 
 from apps.bcpp_subject.constants import NEW, CLOSED
+from apps.bcpp_subject.models import SubjectVisit
 
 from ..models import Aliquot, Panel
 from django.core.exceptions import ValidationError
@@ -16,11 +17,7 @@ from django.core.exceptions import ValidationError
 
 class PreOrder(BaseSyncUuidModel):
 
-    subject_identifier = models.CharField(
-        max_length=50,
-        null=True,
-        help_text="non-user helper field to simplify search and filtering"
-    )
+    subject_visit = models.ForeignKey(SubjectVisit)
 
     panel = models.ForeignKey(
         Panel,
@@ -54,9 +51,20 @@ class PreOrder(BaseSyncUuidModel):
     def save(self, *args, **kwargs):
         if self.aliquot_identifier:
             try:
+                # Can only link pre-order with existing aliquot record.
                 Aliquot.objects.get(aliquot_identifier=self.aliquot_identifier)
             except Aliquot.DoesNotExist:
                 raise ValidationError('Aliquot identifier "{}" does not exist'.format(self.aliquot_identifier))
+            if self._meta.model.objects.filter(aliquot_identifier=self.aliquot_identifier).exclude(id=self.id).exists():
+                # If i can get another preorder instance which is not me, then i know i am trying to re-use
+                # an aliquot identifier, which is wrong. 
+                # NOTE: Its being done this way instead of puttting unique=True in the aliquot_identifier field
+                # definition because the field is nullable.
+                raise ValidationError('You are attempting to re-use aliquout identifier "{}". This is not allowed.'.
+                                      format(self.aliquot_identifier))
+            else:
+                # If i fail to get it, then proceed as normal.
+                pass
             self.status = CLOSED
         super(PreOrder, self).save(*args, **kwargs)
 
@@ -66,25 +74,14 @@ class PreOrder(BaseSyncUuidModel):
     @property
     def model_url(self):
         app_label = 'bcpp_lab'
-        model = 'orderitem'
+        model = 'preorder'
         if self.id:
             url = reverse('admin:{0}_{1}_change'.format(app_label, model), args=(self.id, ))
         else:
             url = reverse('admin:{0}_{1}_add'.format(app_label, model))
         return url
 
-    @property
-    def display_label(self):
-        return self.panel.name
-
-    @property
-    def databrowse_url(self):
-        return False
-
-    @property
-    def audit_trail_url(self):
-        return False
-
     class Meta:
         app_label = 'bcpp_lab'
         ordering = ['-preorder_datetime', ]
+        unique_together = ('subject_visit', 'panel')
