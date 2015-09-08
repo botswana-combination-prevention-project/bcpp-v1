@@ -21,6 +21,8 @@ from edc.subject.visit_schedule.classes import site_visit_schedules
 
 from apps.bcpp.app_configuration.classes import bcpp_app_configuration
 
+from edc_quota import urls as edc_quota_urls
+
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
 site_mappers.autodiscover()
@@ -53,10 +55,12 @@ urlpatterns = patterns(
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
 
-#this is for additional_requisitions
+urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
+
 urlpatterns += patterns('',
-                        url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME), additional_requisition, name="add_requisition"),
-                        )
+    url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME),
+    additional_requisition, name="add_requisition"),
+)
 
 urlpatterns += patterns(
     '',
