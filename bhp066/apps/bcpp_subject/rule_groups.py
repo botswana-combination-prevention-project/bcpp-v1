@@ -210,12 +210,12 @@ class HivCareAdherenceRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['pima'])
 
-    pimavl_for_art_naive = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_art_naive,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pimavl'])
+#     pimavl_for_art_naive = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_art_naive,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['pimavl'])
 
     require_todays_hiv_result = ScheduledDataRule(
         logic=Logic(
@@ -379,12 +379,12 @@ class BaseRequisitionRuleGroup(RuleGroup):
             alternative='not_required'),
         target_model=['pima'])
 
-    pimavl_for_art_naive = ScheduledDataRule(
-        logic=Logic(
-            predicate=func_art_naive,
-            consequence='new',
-            alternative='not_required'),
-        target_model=['pimavl'])
+#     pimavl_for_art_naive = ScheduledDataRule(
+#         logic=Logic(
+#             predicate=func_art_naive,
+#             consequence='new',
+#             alternative='not_required'),
+#         target_model=['pimavl'])
 
     hic = ScheduledDataRule(
         logic=Logic(
