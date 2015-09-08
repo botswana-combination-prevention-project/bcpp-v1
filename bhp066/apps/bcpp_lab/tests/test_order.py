@@ -51,12 +51,6 @@ class TestOrder(BaseRuleGroupTestSetup):
         aliquot_type = AliquotType.objects.all()[0]
         viral_load_panel = Panel.objects.get(name='Viral Load')
         PreOrder.objects.all().delete()
-        SubjectRequisitionFactory(
-            subject_visit=self.subject_visit_male_T0, 
-            panel=viral_load_panel,
-            aliquot_type=aliquot_type,
-            site=self.study_site
-        )
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
@@ -64,7 +58,13 @@ class TestOrder(BaseRuleGroupTestSetup):
             ever_recommended_arv='No',
             ever_taken_arv='No',
             on_arv='No',
-            arv_evidence='No',  # this is the rule field
+            arv_evidence='No',
+        )
+        SubjectRequisitionFactory(
+            subject_visit=self.subject_visit_male_T0, 
+            panel=viral_load_panel,
+            aliquot_type=aliquot_type,
+            site=self.study_site
         )
         self.assertEqual(PreOrder.objects.all().count(), 2)
         self.assertEqual(PreOrder.objects.first().status, NEW)
@@ -93,3 +93,79 @@ class TestOrder(BaseRuleGroupTestSetup):
         with self.assertRaises(ValidationError):
             pre_order.save()
 
+    def test_attempt_to_duplicate_pre_order_records(self):
+        """ Attempt to duplicate pre order records"""
+        PreOrder.objects.all().delete()
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+        self._hiv_result = self.hiv_result(NEG, self.subject_visit_male_T0)
+        self.assertEqual(PreOrder.objects.all().count(), 1)
+        self.assertEqual(PreOrder.objects.first().status, NEW)
+        requisition = SubjectRequisition.objects.get(panel__name='Microtube')
+        # Attempt to duplicate pre order records
+        requisition.save()
+        self.assertEqual(PreOrder.objects.all().count(), 1)
+        self.assertEqual(PreOrder.objects.first().status, NEW)
+
+    def test_attempt_to_link_multiple_preorder_to_same_aliquot(self):
+        """ Attempt to link multiple pre order records to the same aliquot identifier"""
+        PreOrder.objects.all().delete()
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+        self._hiv_result = self.hiv_result(POS, self.subject_visit_male_T0)
+        aliquot_type = AliquotType.objects.all()[0]
+        viral_load_panel = Panel.objects.get(name='Viral Load')
+        PreOrder.objects.all().delete()
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            first_positive=None,
+            medical_care='No',
+            ever_recommended_arv='No',
+            ever_taken_arv='No',
+            on_arv='No',
+            arv_evidence='No',
+        )
+        SubjectRequisitionFactory(
+            subject_visit=self.subject_visit_male_T0,
+            panel=viral_load_panel,
+            aliquot_type=aliquot_type,
+            site=self.study_site
+        )
+        self.assertEqual(PreOrder.objects.all().count(), 2)
+        self.assertEqual(PreOrder.objects.first().status, NEW)
+        pre_order1 = PreOrder.objects.all()[0]
+        pre_order2 = PreOrder.objects.all()[1]
+
+        # Process the primary aliquot
+        lab_profile = site_lab_profiles.get('SubjectRequisition')
+        lab_profile().receive(SubjectRequisition.objects.get(panel__name='Viral Load'))
+        self.assertEqual(Receive.objects.all().count(), 1)
+        self.assertEqual(Aliquot.objects.all().count(), 1)
+        ProcessingFactory(aliquot=Aliquot.objects.first(), profile=AliquotProfile.objects.get(name='Viral Load'))
+
+        pre_order1.aliquot_identifier = Aliquot.objects.filter(aliquot_type__alpha_code='PL').first().aliquot_identifier
+        pre_order2.aliquot_identifier = pre_order1.aliquot_identifier
+        pre_order1.save()
+        with self.assertRaises(ValidationError):
+            pre_order2.save()
+
+    def test_use_aliquot_that_belongs_to_subject(self):
+        """ Attempt to link multiple pre order records to the same aliquot identifier"""
+        PreOrder.objects.all().delete()
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+        self._hiv_result = self.hiv_result(NEG, self.subject_visit_male_T0)
+        self.assertEqual(PreOrder.objects.all().count(), 1)
+        male_preorder = PreOrder.objects.all()[0]
+        self._hiv_result = self.hiv_result(NEG, self.subject_visit_female_T0)
+        self.assertEqual(PreOrder.objects.all().count(), 2)
+
+        # Process the female's Aliquots.
+        lab_profile = site_lab_profiles.get('SubjectRequisition')
+        receive = lab_profile().receive(SubjectRequisition.objects.get(subject_visit=self.subject_visit_female_T0, panel__name='Microtube'))
+        self.assertEqual(Receive.objects.all().count(), 1)
+        self.assertEqual(Aliquot.objects.all().count(), 1)
+        ProcessingFactory(aliquot=Aliquot.objects.first(), profile=AliquotProfile.objects.get(name='Microtube'))
+
+        # Attempt to save the male_preorder using a female's aliquot
+        male_preorder.aliquot_identifier = Aliquot.objects.first().aliquot_identifier
+
+        with self.assertRaises(ValidationError):
+            male_preorder.save()
