@@ -129,6 +129,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                   PanelTuple('Viral Load', 'TEST', 'WB'),
+                  PanelTuple('Viral Load (Abbott)', 'TEST', 'WB'),
+                  PanelTuple('Viral Load (POC)', 'TEST', 'WB'),
                   PanelTuple('Clinic Viral Load', 'TEST', 'WB'),
                   PanelTuple('Microtube', 'STORAGE', 'WB'),
                   PanelTuple('ELISA', 'TEST', 'WB'),
@@ -143,6 +145,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                                   'Gaborone', '3902671', 'bhhrl@bhp.org.bw')],
                  'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
                            PanelTuple('Viral Load', 'TEST', 'WB'),
+                           PanelTuple('Viral Load (Abbott)', 'TEST', 'WB'),
+                           PanelTuple('Viral Load (POC)', 'TEST', 'WB'),
                            PanelTuple('Clinic Viral Load', 'TEST', 'WB'),
                            PanelTuple('Microtube', 'STORAGE', 'WB'),
                            PanelTuple('ELISA', 'TEST', 'WB'),
