@@ -37,7 +37,7 @@ def create_requisition_preorder_on_post_save(sender, instance, raw, created, usi
                         PreOrder.objects.create(panel=poc_viral_load, preorder_datetime=datetime.now(), subject_visit=instance.subject_visit)
                         PreOrder.objects.create(panel=arbit_viral_load, preorder_datetime=datetime.now(), subject_visit=instance.subject_visit)
                     except IntegrityError as integrity_error:
-                        if 'unique' in str(integrity_error):
+                        if 'unique' in str(integrity_error) or 'Duplicate' in str(integrity_error):
                             pass
                         else:
                             raise integrity_error
@@ -45,7 +45,7 @@ def create_requisition_preorder_on_post_save(sender, instance, raw, created, usi
                     try:
                         PreOrder.objects.create(panel=instance.panel, preorder_datetime=datetime.now(), subject_visit=instance.subject_visit)
                     except IntegrityError as integrity_error:
-                        if 'unique' in str(integrity_error):
+                        if 'unique' in str(integrity_error) or 'Duplicate' in str(integrity_error):
                             pass
                         else:
                             raise integrity_error

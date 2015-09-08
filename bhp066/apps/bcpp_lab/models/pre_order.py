@@ -65,6 +65,10 @@ class PreOrder(BaseSyncUuidModel):
             else:
                 # If i fail to get it, then proceed as normal.
                 pass
+            aliquot = Aliquot.objects.get(aliquot_identifier=self.aliquot_identifier)
+            if aliquot.receive.registered_subject.subject_identifier != self.subject_visit.subject_identifier:
+                raise ValidationError('The Aliquot you are attempting to use for "{}", belongs to "{}".'.
+                                      format(self.subject_visit, aliquot.receive.registered_subject))
             self.status = CLOSED
         super(PreOrder, self).save(*args, **kwargs)
 
