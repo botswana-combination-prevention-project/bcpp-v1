@@ -62,6 +62,8 @@ urlpatterns += patterns('',
     additional_requisition, name="add_requisition"),
 )
 
+urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
+
 urlpatterns += patterns(
     '',
     (r'^section/analytics/', include('apps.bcpp_analytics.urls', namespace="analytics")),
