@@ -90,7 +90,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
         blank=True,
         max_digits=6,
         decimal_places=2,
-        validators=[MinValueValidator(0), MaxValueValidator(3000)],
+        validators=[MinValueValidator(0)],
         help_text="",
     )
 
