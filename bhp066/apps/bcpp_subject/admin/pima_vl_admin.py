@@ -9,7 +9,7 @@ from edc_quota import Override
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 from ..models import PimaVl
 from ..forms import PimaVlForm
-from ..filters import Cd4ThreshHoldFilter
+#from ..filters import Cd4ThreshHoldFilter
 
 
 class PimaVlAdmin(SubjectVisitModelAdmin):
@@ -29,8 +29,8 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'confirmation_code',
     )
     exclude = ('poc_vl_type', 'quota_pk')
-    list_filter = ('subject_visit', 'time_of_test', 'pima_id', Cd4ThreshHoldFilter,)
-    list_display = ('subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id')
+    list_filter = ('subject_visit', 'time_of_test', 'pima_id')
+    list_display = ('subject_visit', 'time_of_test', 'poc_vl_value', 'pima_id', 'pre_order')
     radio_fields = {
         'poc_vl_today': admin.VERTICAL,
         'poc_vl_today_other': admin.VERTICAL,
