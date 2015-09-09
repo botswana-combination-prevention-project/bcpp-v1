@@ -2,6 +2,7 @@ from datetime import date, datetime
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 
@@ -118,6 +119,18 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
     history = AuditTrail()
 
     objects = PimaVlManager()
+
+    def pre_order(self):
+        if self.pre_order_instance:
+            url = reverse('admin:bcpp_lab_preorder')
+            return '<a href="{0}?q={1}">pre_orders</a>'.format(url, self.subject_visit.subject_identifier)
+        else:
+            return None
+    pre_order.allow_tags = True
+
+    def pre_order_instance(self):
+        from apps.bcpp_lab.models import PreOrder
+        return PreOrder.objects.filter(subject_visit=self.subject_visit)
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         return True
