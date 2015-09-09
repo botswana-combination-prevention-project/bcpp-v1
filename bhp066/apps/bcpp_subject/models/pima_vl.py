@@ -20,11 +20,12 @@ from edc.subject.consent.models import BaseConsentedUuidModel
 from apps.bcpp.choices import EASY_OF_USE
 from apps.bcpp_household.models import Plot
 
+from .subject_off_study_mixin import SubjectOffStudyMixin
 from ..managers import PimaVlManager
 from .subject_visit import SubjectVisit
 
 
-class PimaVl (QuotaMixin, BaseConsentedUuidModel):
+class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
