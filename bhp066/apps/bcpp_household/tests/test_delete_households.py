@@ -103,6 +103,7 @@ class DeleteHouseholdTests(TestCase):
         plot = PlotFactory(community='gumare', household_count=1, status='residential_habitable')
         self.assertEqual(plot.status, 'residential_habitable')
         plot.household_count = 0
+
         plot.status = 'residential_not_habitable'
         plot.save()
         self.assertEqual(plot.status, 'residential_not_habitable')

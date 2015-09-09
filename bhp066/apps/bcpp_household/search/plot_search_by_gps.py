@@ -62,7 +62,7 @@ class PlotSearchByGps(BaseSearcher):
         items = {}
         mapper = site_mappers.current_mapper
         for item in queryset:
-            distance_from_gps = mapper().gps_distance_between_points(lat, lon, item.gps_target_lat, item.gps_target_lon, radius)
+            distance_from_gps = mapper().gps_distance_between_points(lat, lon, item.gps_target_lat, item.gps_target_lon)
             if distance_from_gps <= radius:
                 while distance_from_gps in ordered_list_of_keys:
                     distance_from_gps += .0001  # slightly adjust so no two are the same
