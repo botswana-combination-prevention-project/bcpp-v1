@@ -122,7 +122,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     def pre_order(self):
         if self.pre_order_instance:
-            url = reverse('admin:bcpp_lab_preorder')
+            url = reverse('admin:bcpp_lab_preorder_changelist')
             return '<a href="{0}?q={1}">pre_orders</a>'.format(url, self.subject_visit.subject_identifier)
         else:
             return None
