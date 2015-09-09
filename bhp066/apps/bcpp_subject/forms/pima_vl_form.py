@@ -30,22 +30,6 @@ class PimaVlForm (BaseSubjectModelForm):
             if not (cleaned_data.get('time_of_test')  or cleaned_data.get('time_of_result')):
                 raise forms.ValidationError('Time of test and time of result should be provided.')
 
-        if self.instance.quota_reached:
-            if not cleaned_data.get('confirmation_code') or not cleaned_data.get('override_code'):
-                raise forms.ValidationError(
-                    'You have reached quota limit. Send client code:{0} '
-                    'to CBS for confirmation key to increase quota limit.'
-                    'Otherwise ignore the key if you are still waiting for confirmation code.'.format(Override().code),
-                    code='min_value'
-                )
-            override_code = cleaned_data.get('override_code')
-            confirmation_code = cleaned_data.get('confirmation_code')
-            if not self.instance.override_quota(forms.ValidationError, override_code, confirmation_code):
-                raise forms.ValidationError('Invalid confirmation code or override key, please provide correct keys. Got {} and {}'.format(override_code, confirmation_code))
-        else:
-            if cleaned_data.get('confirmation_code') or cleaned_data.get('override_code'):
-                if not self.instance.id:
-                    raise forms.ValidationError('Do not provide confirmation code or override code. Quota limit is not reached.')
         return cleaned_data
 
     class Meta:
