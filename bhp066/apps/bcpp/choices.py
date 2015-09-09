@@ -2,6 +2,12 @@ from django.utils.translation import ugettext as _
 
 from edc.constants import NOT_APPLICABLE
 
+QUANTIFIER = (
+    ('greater_than', _('Greater Than')),
+    ('equal_to', _('Equal To')),
+    ('less_than', _('Less Than')),
+)
+
 YES_NO_DONT_ANSWER = (
     ('Yes', _('Yes')),
     ('No', _('No')),
