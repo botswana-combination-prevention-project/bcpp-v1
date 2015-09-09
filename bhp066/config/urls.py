@@ -21,8 +21,6 @@ from edc.subject.visit_schedule.classes import site_visit_schedules
 
 from apps.bcpp.app_configuration.classes import bcpp_app_configuration
 
-from edc_quota import urls as edc_quota_urls
-
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
 site_mappers.autodiscover()
