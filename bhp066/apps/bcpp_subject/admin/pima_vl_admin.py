@@ -21,6 +21,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'poc_vl_today_other',
         'poc_today_vl_other_other',
         'pima_id',
+        'vl_value_quatifier',
         'poc_vl_value',
         'time_of_test',
         'time_of_result',

@@ -18,7 +18,7 @@ from edc_quota.client.models import QuotaMixin
 
 from edc.subject.consent.models import BaseConsentedUuidModel
 
-from apps.bcpp.choices import EASY_OF_USE
+from apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
 from apps.bcpp_household.models import Plot
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
@@ -76,6 +76,12 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
         validators=[datetime_not_future],
         null=True,
         blank=True,
+    )
+
+    vl_value_quatifier = models.CharField(
+        verbose_name=_("Select a quatifier for the value of the result"),
+        choices=QUANTIFIER,
+        max_length=20,
     )
 
     poc_vl_value = models.DecimalField(
