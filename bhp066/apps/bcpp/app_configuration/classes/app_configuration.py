@@ -440,8 +440,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                         ControllerQuota.objects.create(
                             app_label=ct.model_class()._meta.app_label,
                             model_name=ct.model_class()._meta.model_name,
-                            target=0,
-                            expiration_date=timezone.now().date() + timedelta(days=28)
+                            target=100,
+                            expiration_date=timezone.now().date() + timedelta(days=28),
                         )
                         for hostname in self.quota_client_setup:
                             try:
