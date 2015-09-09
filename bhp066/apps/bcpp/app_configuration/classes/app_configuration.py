@@ -41,7 +41,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
         self.search_limit_setup()
-#         self.create_quota()
+        self.create_quota()
 
     global_configuration = {
         'dashboard':
