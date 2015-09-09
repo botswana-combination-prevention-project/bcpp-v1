@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
@@ -10,6 +10,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
+from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 
 from edc_quota.client.models import QuotaMixin
 
@@ -26,6 +27,15 @@ from .subject_visit import SubjectVisit
 class PimaVl (QuotaMixin, BaseConsentedUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
+
+    report_datetime = models.DateTimeField(
+        verbose_name="Report Date",
+        validators=[
+            datetime_not_before_study_start,
+            datetime_not_future, ],
+        default=datetime.now,  # By passing datetime.now without the parentheses, you are passing the actual function, which will be called each time a record is added ref: http://stackoverflow.com/questions/2771676/django-default-datetime-now-problem
+        help_text=('If reporting today, use today\'s date/time, otherwise use '
+                   'the date/time this information was reported.'))
 
     poc_vl_type = models.CharField(
         verbose_name=_("Type mobile or household setting"),
