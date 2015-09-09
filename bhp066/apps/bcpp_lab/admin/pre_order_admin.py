@@ -2,10 +2,12 @@ from django.contrib import admin
 
 from edc.base.modeladmin.admin import BaseModelAdmin
 
+from ..forms import PreOrderForm
 from ..models import PreOrder
 
 
 class PreOrderAdmin(BaseModelAdmin):
+    form = PreOrderForm
 
     list_display = ('subject_visit', 'panel', 'preorder_datetime', 'status', 'aliquot_identifier', 'result')
     list_filter = ('panel', 'preorder_datetime', 'status',)
