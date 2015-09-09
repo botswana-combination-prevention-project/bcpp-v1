@@ -20,7 +20,7 @@ class SefharePlotMapper(BasePlotMapper):
 
     landmarks = SEFHARE_LANDMARKS
 
-    intervention = False
+    intervention = True
 
     gps_center_lat = -23.027271
     gps_center_lon = 27.526095
@@ -30,9 +30,9 @@ class SefharePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 10, 8),
-            full_enrollment_date=date(2015, 10, 24),
-            end_date=date(2015, 11, 14),
+            start_date=date(2015, 9, 9),
+            full_enrollment_date=date(2015, 10, 7),
+            end_date=date(2015, 10, 28),
             smc_start_date=date(2016, 1, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
@@ -50,7 +50,7 @@ class SefharePlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((FR, ), None),
+            'IDCC': ClinicDaysTuple((MO, TU, TH, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},

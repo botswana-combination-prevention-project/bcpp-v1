@@ -14,9 +14,10 @@ from apps.bcpp_household_member.models import MemberAppointment
 
 from .subject_consent import SubjectConsent
 
+from ..constants import COMPLETE, PENDING, POC_VIRAL_LOAD
 from ..classes import SubjectReferralHelper, CallHelper
 
-from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList, HivCareAdherence
+from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList, HivCareAdherence, PimaVl
 
 from apps.bcpp.choices import YES_NO_DWTA
 from apps.bcpp_subject.constants import BASELINE_CODES
@@ -178,3 +179,21 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
             else:
                 call_list.call_status = CLOSED
             call_list.save(update_fields=['call_status', 'call_attempts', 'call_outcome', 'member_appointment'])
+
+
+@receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')
+def update_pocvl_preorder_status_post_save(sender, instance, raw, created, using, **kwargs):
+    if not raw:
+        from apps.bcpp_lab.models import PreOrder
+        if (isinstance(instance, PimaVl) and
+            PreOrder.objects.filter(subject_visit=instance.subject_visit, panel__name=POC_VIRAL_LOAD, status=PENDING).exists()):
+            try:
+                pre_order = PreOrder.objects.get(
+                    subject_visit=instance.subject_visit,
+                    panel__name=POC_VIRAL_LOAD,
+                    status=PENDING
+                )
+                pre_order.status = COMPLETE
+                pre_order.save(update_fields=['status'])
+            except PreOrder.DoesNotExist as e:
+                raise e

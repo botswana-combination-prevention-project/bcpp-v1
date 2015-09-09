@@ -58,7 +58,7 @@ class EnumerationHelper(object):
             try:
                 # once enrolled, the household is considered enrolled for future surveys as well
                 self.target_household_structure.enrolled = self.source_household_structure.enrolled
-                self.target_household_structure.enrolled = self.source_household_structure.enrolled_datetime
+                self.target_household_structure.enrolled_datetime = self.source_household_structure.enrolled_datetime
                 self.target_household_structure.enrolled_household_member = \
                     self.source_household_structure.enrolled_household_member
                 # self.target_household_structure.enumerated = False
