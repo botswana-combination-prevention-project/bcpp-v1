@@ -15,7 +15,7 @@ class PimaVlForm (BaseSubjectModelForm):
 
         #If no PIMA CD4 performed, do not provide any CD4 related information
         if cleaned_data.get('poc_vl_today') == 'No' and cleaned_data.get('pima_id'):
-            raise forms.ValidationError('Do not provide the PIMA machine id if the POC CD4 was not performed')
+            raise forms.ValidationError('Do not provide the PIMA machine id if the POC VL was not performed')
         if cleaned_data.get('poc_vl_today') == 'No' and cleaned_data.get('poc_vl_value'):
             raise forms.ValidationError('POC VL was not performed, do not provide the POC viral load count')
 
