@@ -443,15 +443,15 @@ class BcppAppConfiguration(BaseAppConfiguration):
                             target=100,
                             expiration_date=timezone.now().date() + timedelta(days=28),
                         )
-                        for hostname in self.quota_client_setup:
-                            try:
-                                Client.objects.get(hostname=hostname)
-                            except Client.DoesNotExist:
-                                Client.objects.create(
-                                    hostname=hostname,
-                                    app_label=ct.model_class()._meta.app_label,
-                                    model_name=ct.model_class()._meta.model_name,
-                                )
+                    for hostname in self.quota_client_setup:
+                        try:
+                            Client.objects.get(hostname=hostname)
+                        except Client.DoesNotExist:
+                            Client.objects.create(
+                                hostname=hostname,
+                                app_label=ct.model_class()._meta.app_label,
+                                model_name=ct.model_class()._meta.model_name,
+                            )
                 else:
                     if not device.is_central_server:
                         try:
