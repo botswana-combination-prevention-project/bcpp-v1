@@ -10,6 +10,6 @@ class PreOrderAdmin(BaseModelAdmin):
     list_display = ('subject_visit', 'panel', 'preorder_datetime', 'status', 'aliquot_identifier', 'result')
     list_filter = ('panel', 'preorder_datetime', 'status',)
     search_fields = ('status', 'subject_visit__subject_identifier')
-    list_editable = ('aliquot_identifier', )
+    readonly_fields = ('status', )
 
 admin.site.register(PreOrder, PreOrderAdmin)
