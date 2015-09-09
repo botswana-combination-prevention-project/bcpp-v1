@@ -18,6 +18,7 @@ from edc.map.classes import site_mappers
 from edc_quota.client.models import Quota
 from edc_quota.controller.models import ControllerQuota
 from edc_quota.controller.models import Client
+from edc_quota.client import QuotaMixin
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
