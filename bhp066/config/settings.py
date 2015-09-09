@@ -17,6 +17,7 @@ from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
                             EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
 from .middleman import MIDDLE_MAN_LIST
 
+
 DEBUG = True  # Note: should be False for collectstatic
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (('erikvw', 'ew@2789@gmail.com'),
@@ -30,13 +31,14 @@ APP_NAME = APP_NAME
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
 SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(3)  # e.g. /home/django/source
 EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
-TEMPLATE_DIRS = (
-    EDC_DIR.child('templates'),
-)
 PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source/bhp066_project
 PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project/bhp066
 APP_DIR = PROJECT_DIR.child('apps').child(APP_NAME)  # e.g. /home/django/source/bhp066_project/bhp066/apps/bcpp
 ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
+TEMPLATE_DIRS = (
+    os.path.join(PROJECT_DIR, 'templates'),
+    EDC_DIR.child('templates'),
+)
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
 FIXTURE_DIRS = (

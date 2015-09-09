@@ -2,6 +2,12 @@ from django.utils.translation import ugettext as _
 
 from edc.constants import NOT_APPLICABLE
 
+QUANTIFIER = (
+    ('greater_than', _('Greater Than')),
+    ('equal_to', _('Equal To')),
+    ('less_than', _('Less Than')),
+)
+
 YES_NO_DONT_ANSWER = (
     ('Yes', _('Yes')),
     ('No', _('No')),
@@ -170,7 +176,7 @@ COMMUNITY_NA = (
     ('Nkange', _('Nkange')),
     ('Oodi', _('Oodi')),
     ('Otse', _('Otse')),
-    ('Raikops', _('Raikops')),
+    ('Rakops', _('Rakops')),
     ('Ramokgonami', _('Ramokgonami')),
     ('Ranaka', _('Ranaka')),
     ('Sebina', _('Sebina')),
@@ -1090,5 +1096,13 @@ RELATIONSHIP_STUDY = (
     ('Possible related', _('Possible related')),
     ('Probably related', _('Probably related')),
     ('Definitely related', _('Definitely related')),
+)
+
+EASY_OF_USE = (
+    ('easy', _('Easy')),
+    ('Very easy', _('Very Easy')),
+    ('Fairly easy', _('Fairly easy')),
+    ('Difficult', _('Difficult')),
+    ('Very difficult', _('Very difficult')),
 )
 

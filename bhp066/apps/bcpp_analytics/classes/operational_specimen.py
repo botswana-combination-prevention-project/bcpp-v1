@@ -15,10 +15,13 @@ class OperationalSpecimen(BaseOperationalReport):
             self.community = ''
         if self.ra_username.find('----') != -1:
             self.ra_username = ''
+        if self.survey.find('----') != -1:
+            self.survey = ''
         self.date_to += datetime.timedelta(days=1)
         requisitions = SubjectRequisition.objects.filter(community__icontains=self.community,
                                                       modified__gte=self.date_from, modified__lte=self.date_to,
-                                                      user_modified__icontains=self.ra_username)
+                                                      user_modified__icontains=self.ra_username,
+                                                      subject_visit__household_member__household_structure__survey__survey_slug__icontains=self.survey)
         number_requisitions = requisitions.count()
         self.data_dict['1. Total No. of requisitions'] = number_requisitions
         requisitions_received = requisitions.filter(is_receive=True).count()

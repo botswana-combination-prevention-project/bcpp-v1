@@ -53,10 +53,14 @@ urlpatterns = patterns(
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
 
-#this is for additional_requisitions
+urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
+
 urlpatterns += patterns('',
-                        url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME), additional_requisition, name="add_requisition"),
-                        )
+    url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME),
+    additional_requisition, name="add_requisition"),
+)
+
+urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
 
 urlpatterns += patterns(
     '',
@@ -111,6 +115,7 @@ urlpatterns += patterns(
     '',
     url(r'^dispatch/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_dispatch.urls')),
     url(r'^bcpp_household/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_household.urls')),
+    url(r'^bcpp_subject/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_subject.urls')),
 )
 
 urlpatterns += patterns(
