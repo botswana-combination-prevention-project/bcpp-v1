@@ -11,6 +11,8 @@ from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_inspector.classes import InspectorMixin
 from apps.bcpp_subject.models import SubjectVisit
 
+from apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
+
 from ..managers import SubjectRequisitionManager
 
 from .aliquot_type import AliquotType
@@ -56,6 +58,15 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
     @property
     def visit_code(self):
         return self.subject_visit.appointment.visit_definition.code
+
+    @property
+    def is_pov_vl(self):
+        from ..models import PreOrder
+        if (self.panel.name == VIRAL_LOAD and
+             PreOrder.objects.filter(subject_visit=self.subject_visit, panel__name=POC_VIRAL_LOAD)):
+            return 'Yes'
+        else:
+            return 'No'
 
     @property
     def optional_description(self):
