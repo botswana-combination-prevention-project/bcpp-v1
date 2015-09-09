@@ -70,5 +70,8 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
             return self.subject_visit
         return retval
 
+    def bypass_meta_data(self):
+        return False
+
     class Meta:
         abstract = True

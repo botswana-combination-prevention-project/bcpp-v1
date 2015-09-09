@@ -105,6 +105,9 @@ class PimaVl (QuotaMixin, BaseScheduledVisitModel):
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         return True
 
+    def bypass_meta_data(self):
+        return True
+
     class Meta:
         app_label = 'bcpp_subject'
         verbose_name = "POC VL"
