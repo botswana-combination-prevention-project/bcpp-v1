@@ -25,8 +25,8 @@ from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndec
 from apps.bcpp_subject.models import HivResult, HicEnrollment
 from apps.bcpp_survey.models import Survey
 
-from .classes import (OperationalPlots, OperationalHousehold, OperationalMember, OperationalSpecimen, OperationalAnnual,
-                      OperationalRbd)
+from .classes import (OperationalPlots, OperationalHousehold, OperationalMember,
+                      OperationalSpecimen, OperationalAnnual, OperationalRbd, OperationalVisits)
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
@@ -234,6 +234,16 @@ def operational_report_rbd_view(request, **kwargs):
         'bcpp_analytics/operational_report_rbd.html', {'values': operational_rbd.build_report(),
                                                         'communities': operational_rbd.return_communities(),
                                                         'ra_usernames': operational_rbd.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_visits_view(request, **kwargs):
+    operational_visits = OperationalVisits(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_visits.html', {'values': operational_visits.build_report(),
+                                                          'communities': operational_visits.return_communities(),
+                                                          'ra_usernames': operational_visits.return_ra_usernames()},
         context_instance=RequestContext(request))
 
 
