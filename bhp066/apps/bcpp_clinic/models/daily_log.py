@@ -13,7 +13,7 @@ class DailyLog(BaseSyncUuidModel):
 
     report_date = models.DateField(
         default=date.today(),
-        unique=True
+        # unique=True
         )
 
     from_pharma = models.IntegerField(
@@ -62,3 +62,4 @@ class DailyLog(BaseSyncUuidModel):
 
     class Meta:
         app_label = 'bcpp_clinic'
+        unique_together = ['report_date', 'hostname_created']
