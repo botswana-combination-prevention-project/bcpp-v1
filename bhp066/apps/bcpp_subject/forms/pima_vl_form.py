@@ -2,7 +2,6 @@ from django import forms
 
 from ..models import PimaVl
 from .base_subject_model_form import BaseSubjectModelForm
-from edc_quota.override import Override
 
 
 class PimaVlForm (BaseSubjectModelForm):
