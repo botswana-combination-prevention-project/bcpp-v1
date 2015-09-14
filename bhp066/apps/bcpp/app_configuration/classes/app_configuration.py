@@ -15,10 +15,10 @@ from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
 
-from edc_quota.client.models import Quota
-from edc_quota.controller.models import ControllerQuota
-from edc_quota.controller.models import Client
-from edc_quota.client import QuotaMixin
+# from edc_quota.client.models import Quota
+# from edc_quota.controller.models import ControllerQuota
+# from edc_quota.controller.models import Client
+# from edc_quota.client import QuotaMixin
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
@@ -41,7 +41,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
         self.search_limit_setup()
-        self.create_quota()
+        #self.create_quota()
 
     global_configuration = {
         'dashboard':
@@ -425,46 +425,46 @@ class BcppAppConfiguration(BaseAppConfiguration):
                     'and FILTERED_DEFAULT_SEARCH should be set to true in a notebook. '
                     'Update in bcpp_settings.py.')
 
-    def create_quota(self):
-        for ct in ContentType.objects.filter(app_label='bcpp_subject'):
-            if ct is None:
-                continue
-            if issubclass(ct.model_class(), QuotaMixin):
-                if device.is_community_server:
-                    try:
-                        ControllerQuota.objects.get(
-                            app_label=ct.model_class()._meta.app_label,
-                            model_name=ct.model_class()._meta.model_name,
-                        )
-                    except ControllerQuota.DoesNotExist:
-                        ControllerQuota.objects.create(
-                            app_label=ct.model_class()._meta.app_label,
-                            model_name=ct.model_class()._meta.model_name,
-                            target=100,
-                            expiration_date=timezone.now().date() + timedelta(days=28),
-                        )
-                    for hostname in self.quota_client_setup:
-                        try:
-                            Client.objects.get(hostname=hostname)
-                        except Client.DoesNotExist:
-                            Client.objects.create(
-                                hostname=hostname,
-                                app_label=ct.model_class()._meta.app_label,
-                                model_name=ct.model_class()._meta.model_name,
-                            )
-                else:
-                    if not device.is_central_server:
-                        try:
-                            Quota.objects.get(
-                                app_label=ct.model_class()._meta.app_label,
-                                model_name=ct.model_class()._meta.model_name,
-                            )
-                        except Quota.DoesNotExist:
-                            Quota.objects.create(
-                                app_label=ct.model_class()._meta.app_label,
-                                model_name=ct.model_class()._meta.model_name,
-                                target=0,
-                                expiration_date=timezone.now()
-                            )
+#     def create_quota(self):
+#         for ct in ContentType.objects.filter(app_label='bcpp_subject'):
+#             if ct is None:
+#                 continue
+#             if issubclass(ct.model_class(), QuotaMixin):
+#                 if device.is_community_server:
+#                     try:
+#                         ControllerQuota.objects.get(
+#                             app_label=ct.model_class()._meta.app_label,
+#                             model_name=ct.model_class()._meta.model_name,
+#                         )
+#                     except ControllerQuota.DoesNotExist:
+#                         ControllerQuota.objects.create(
+#                             app_label=ct.model_class()._meta.app_label,
+#                             model_name=ct.model_class()._meta.model_name,
+#                             target=100,
+#                             expiration_date=timezone.now().date() + timedelta(days=28),
+#                         )
+#                     for hostname in self.quota_client_setup:
+#                         try:
+#                             Client.objects.get(hostname=hostname)
+#                         except Client.DoesNotExist:
+#                             Client.objects.create(
+#                                 hostname=hostname,
+#                                 app_label=ct.model_class()._meta.app_label,
+#                                 model_name=ct.model_class()._meta.model_name,
+#                             )
+#                 else:
+#                     if not device.is_central_server:
+#                         try:
+#                             Quota.objects.get(
+#                                 app_label=ct.model_class()._meta.app_label,
+#                                 model_name=ct.model_class()._meta.model_name,
+#                             )
+#                         except Quota.DoesNotExist:
+#                             Quota.objects.create(
+#                                 app_label=ct.model_class()._meta.app_label,
+#                                 model_name=ct.model_class()._meta.model_name,
+#                                 target=0,
+#                                 expiration_date=timezone.now()
+#                             )
 
 bcpp_app_configuration = BcppAppConfiguration()
