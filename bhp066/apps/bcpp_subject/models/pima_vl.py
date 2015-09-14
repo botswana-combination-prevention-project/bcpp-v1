@@ -13,8 +13,7 @@ from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 
-from edc_quota.client.models import QuotaMixin
-
+from edc_quota.client.models import QuotaMixin, QuotaManager
 
 from edc.subject.consent.models import BaseConsentedUuidModel
 
@@ -123,6 +122,8 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
         help_text="Comment")
 
     history = AuditTrail()
+
+    quota = QuotaManager()
 
     objects = PimaVlManager()
 
