@@ -1,7 +1,7 @@
 from django.views.generic import View
 from django.shortcuts import render
 
-from edc_quota import Override
+from edc_quota.override import Override
 
 
 class GenerateConfirmationKeyView(View):
