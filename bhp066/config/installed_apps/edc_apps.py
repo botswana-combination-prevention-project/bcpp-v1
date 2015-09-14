@@ -78,7 +78,7 @@ EDC_APPS = (
     'edc_quota',
     'edc_quota.client',
     'edc_quota.controller',
-    'edc_quota.override'
+    'edc_quota.override',
 
     'edc.audit',
 )
