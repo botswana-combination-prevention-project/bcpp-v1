@@ -22,8 +22,8 @@ class TsetsebjwePlotMapper(BasePlotMapper):
 
     intervention = False
 
-    gps_center_lat = -19.359734
-    gps_center_lon = 22.163286
+    gps_center_lat = -22.41391
+    gps_center_lon = 28.39465
     radius = 5.5
     location_boundary = ()
 
