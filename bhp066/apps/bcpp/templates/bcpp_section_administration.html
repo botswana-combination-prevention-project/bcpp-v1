@@ -4,10 +4,12 @@
 
 {% block admin_sections %}
     <ul><li><A href="/admin/">All sections</A></ul>
-	    <H5>Override Code</H5>
-	    <ul>
-	    	<li><A href="{% url 'override_code_url_bcpp' %}">Override Code</A></li>
-	    </ul>
+    	{% if is_server %}
+		    <H5>Override Code</H5>
+		    <ul>
+		    	<li><A href="{% url 'override_code_url_bcpp' %}">Override Code</A></li>
+		    </ul>
+		 {% endif %}
     <H5>BHS</H5>
     <ul>
     <li><A href="{% url 'admin:bcpp_household_plot_changelist' %}">Plots</A>
