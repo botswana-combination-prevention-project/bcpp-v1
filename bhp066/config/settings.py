@@ -297,3 +297,8 @@ LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_
 # with multiple plots but you want default filter(?) to show current community instances.
 # Central Server in BHP must always be set to FALSE.
 FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
+
+MIN_AGE_OF_CONSENT = 16
+MAX_AGE_OF_CONSENT = 64
+AGE_IS_ADULT = 18
+GENDER_OF_CONSENT = ['M', 'F']
