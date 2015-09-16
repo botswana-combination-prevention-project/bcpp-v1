@@ -9,9 +9,13 @@ from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
-from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
-from edc.subject.consent.mixins.bw import IdentityFieldsMixin
+#from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
+#from edc.subject.consent.mixins.bw import IdentityFieldsMixin
+from edc_consent.models.fields.bw import IdentityFieldsMixin
+from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
+                                       SampleCollectionFieldsMixin)
 from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.core.bhp_variables.models import StudySite
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
@@ -34,6 +38,12 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 
 # declare abstract base class
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
+
+    study_site = models.ForeignKey(StudySite,
+        verbose_name='Site',
+        null=True,
+        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+        )
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
@@ -202,17 +212,18 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         abstract = True
 
 # add Mixin fields to abstract class
-for field in IdentityFieldsMixin._meta.fields:
-    if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
-        field.contribute_to_class(BaseSubjectConsent, field.name)
-
-for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
-    if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
-        field.contribute_to_class(BaseSubjectConsent, field.name)
+# for field in IdentityFieldsMixin._meta.fields:
+#     if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
+#         field.contribute_to_class(BaseSubjectConsent, field.name)
+# 
+# for field in ReviewFieldsMixin._meta.fields:
+#     if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
+#         field.contribute_to_class(BaseSubjectConsent, field.name)
 
 
 # declare concrete class
-class SubjectConsent(BaseSubjectConsent):
+class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
+                     VulnerabilityFieldsMixin, BaseSubjectConsent):
 
     history = AuditTrail()
 
@@ -224,5 +235,5 @@ class SubjectConsent(BaseSubjectConsent):
 
     class Meta:
         app_label = 'bcpp_subject'
-        unique_together = (('subject_identifier', 'survey'), ('first_name', 'dob', 'initials'))
+        unique_together = (('subject_identifier', 'survey', 'version'), ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
