@@ -1,5 +1,5 @@
-from django.db.models.signals import post_save
-from django.db import DatabaseError
+from django.db.models.signals import post_save,  post_delete
+from django.db import DatabaseError, models
 
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
@@ -100,7 +100,7 @@ def update_or_create_registered_subject_on_post_save(sender, instance, raw, crea
                 # this should not be used
                 # self does not have a foreign key to RegisteredSubject but RegisteredSubject
                 # still needs to be created or updated
-                RegisteredSubject = get_model('registration', 'registeredsubject')
+                RegisteredSubject = models.get_model('registration', 'registeredsubject')
                 try:
                     registered_subject = RegisteredSubject.objects.using(using).get(
                         subject_identifier=instance.subject_identifier)
@@ -119,14 +119,14 @@ def update_or_create_registered_subject_on_post_save(sender, instance, raw, crea
 def update_consent_history(sender, instance, raw, created, using, **kwargs):
     """Updates the consent history model with this instance if such model exists."""
     if not raw:
-        if isinstance(instance, BaseConsent):
+        if isinstance(instance, BaseSubjectConsent):
             instance.update_consent_history(created, using)
 
 
 @receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
 def delete_consent_history(sender, instance, using, **kwargs):
     """Updates the consent history model with this instance if such model exists."""
-    if isinstance(instance, BaseConsent):
+    if isinstance(instance, BaseSubjectConsent):
         instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
 
 
