@@ -23,7 +23,6 @@ from edc.subject.consent.exceptions import ConsentError
 from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.consent.classes import ConsentedSubjectIdentifier
 
-from .base_consent_history import BaseConsentHistory
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
@@ -302,6 +301,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         return True
 
     def update_consent_history(self, created, using):
+        from edc.subject.consent.models import BaseConsentHistory
         """Updates the consent history model for this consent instance if there is a consent history model."""
         if self.get_consent_history_model():
             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
@@ -309,6 +309,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             self.get_consent_history_model().objects.update_consent_history(self, created, using)
 
     def delete_consent_history(self, app_label, model_name, pk, using):
+        from edc.subject.consent.models import BaseConsentHistory
         if self.get_consent_history_model():
             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
