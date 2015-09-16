@@ -1,24 +1,32 @@
 from datetime import datetime
 
 from django.db import models
+from django.conf import settings
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.entry_meta_data.managers import EntryMetaDataManager
-from edc.subject.consent.models import BaseConsentedUuidModel
+if 'edc.device.dispatch' in settings.INSTALLED_APPS:
+    from edc.device.dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
+else:
+    from edc.device.sync.models import BaseSyncUuidModel
+#from edc.subject.consent.models import BaseConsentedUuidModel
+from edc_consent.models import RequiresConsentMixin
+from edc.data_manager.models import TimepointStatusMixin
 
 from apps.bcpp_household.models import Plot
 
 from ..managers import ScheduledModelManager
-
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 # from ..constants import RBD, FULL, Questionnaires, HTC
 
 
-class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
+class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin, TimepointStatusMixin, BaseSyncUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
+
+    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
 
     subject_visit = models.OneToOneField(SubjectVisit)
 
@@ -46,6 +54,10 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     def get_report_datetime(self):
         return self.get_visit().report_datetime
+
+    @property
+    def subject_identifier(self):
+        return self.get_visit().get_subject_identifier()
 
     def get_subject_identifier(self):
         return self.get_visit().get_subject_identifier()

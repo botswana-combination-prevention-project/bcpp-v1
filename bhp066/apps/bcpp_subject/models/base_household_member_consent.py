@@ -1,18 +1,24 @@
 import re
 from django.db import models
+from django.conf import settings
 
 from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc.subject.consent.models import BaseConsent
+#from edc.subject.consent.models import BaseConsent
+from edc_consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_schedule.models import VisitDefinition, ScheduleGroup
+if 'edc.device.dispatch' in settings.INSTALLED_APPS:
+    from edc.device.dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
+else:
+    from edc.device.sync.models import BaseSyncUuidModel
 
 from apps.bcpp_household_member.models import HouseholdMember
 from apps.bcpp_survey.models import Survey
 from apps.bcpp_subject.constants import BASELINE_CODES
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 
