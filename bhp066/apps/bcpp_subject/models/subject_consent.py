@@ -1,7 +1,9 @@
+import re
+from uuid import uuid4
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
@@ -9,6 +11,7 @@ from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
+from edc.core.bhp_common.utils import formatted_age
 #from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
 #from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 from edc_consent.models.fields.bw import IdentityFieldsMixin
@@ -16,6 +19,11 @@ from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, V
                                        SampleCollectionFieldsMixin)
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_variables.models import StudySite
+from edc.subject.consent.exceptions import ConsentError
+from edc.core.identifier.exceptions import IdentifierError
+from edc.subject.consent.classes import ConsentedSubjectIdentifier
+
+from .base_consent_history import BaseConsentHistory
 
 from apps.bcpp.choices import COMMUNITIES
 from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
@@ -106,17 +114,12 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     # see additional mixin fields below
 
     def save(self, *args, **kwargs):
+        using = kwargs.get('using')
+        # From old edc BaseConsent
         if not self.id:
-            expected_member_status = BHS_ELIGIBLE
-        else:
-            expected_member_status = BHS
-        if self.household_member.member_status != expected_member_status:
-            raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
-                expected_member_status, self.household_member.member_status, self.household_member))
-        self.is_minor = 'Yes' if self.minor else 'No'
-        self.matches_enrollment_checklist(self, self.household_member)
-        self.matches_hic_enrollment(self, self.household_member)
-        self.community = self.household_member.household_structure.household.plot.community
+            self._save_new_consent(kwargs.get('using', None))
+        # From old edc BaseSubject
+        self.subject_type = self.get_subject_type()
         super(BaseSubjectConsent, self).save(*args, **kwargs)
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
@@ -208,17 +211,114 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                                        self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
 
+    def save_new_consent(self, using=None, subject_identifier=None):
+        """ Users may override this to compliment the default behavior for new instances.
+
+        Must return a subject_identifier or None."""
+
+        return subject_identifier
+
+    def _save_new_consent(self, using=None, **kwargs):
+        """ Creates or gets a subject identifier.
+
+        ..note:: registered subject is updated/created on edc.subject signal.
+
+        Also, calls user method :func:`save_new_consent`"""
+        try:
+            registered_subject = getattr(self, 'registered_subject')
+        except AttributeError:
+            registered_subject = None
+        self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
+        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        dummy = self.subject_identifier
+        # recall, if subject_identifier is not set, subject_identifier will be a uuid.
+        if re_pk.match(self.subject_identifier):
+            # test for user provided subject_identifier field method
+            if self.get_user_provided_subject_identifier_attrname():
+                self.subject_identifier = self._get_user_provided_subject_identifier()
+                if not self.subject_identifier:
+                    self.subject_identifier = dummy
+            # try to get from registered_subject (was created  using signal in edc.subject)
+            if re_pk.match(self.subject_identifier):
+                if registered_subject:
+                    if registered_subject.subject_identifier:
+                        # check for  registered subject key and if it already has
+                        # a subject_identifier (e.g for subjects re-consenting)
+                        self.subject_identifier = self.registered_subject.subject_identifier
+            # create a subject identifier, if not already done
+            if re_pk.match(self.subject_identifier):
+                consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.get_site_code(), using=using)
+                self.subject_identifier = consented_subject_identifier.get_identifier(using=using)
+        if not self.subject_identifier:
+            self.subject_identifier = dummy
+        if re_pk.match(self.subject_identifier):
+            raise ConsentError("Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
+
+    @property
+    def registered_subject_options(self):
+        """Returns a dictionary of RegisteredSubject attributes
+        ({field, value}) to be used, for example, as the defaults
+        kwarg RegisteredSubject.objects.get_or_create()."""
+        options = {
+            'study_site': self.study_site,
+            'dob': self.dob,
+            'is_dob_estimated': self.is_dob_estimated,
+            'gender': self.gender,
+            'initials': self.initials,
+            'identity': self.identity,
+            'identity_type': self.identity_type,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'subject_type': self.get_subject_type(),
+        }
+        if self.last_name:
+            options.update({'registration_status': 'consented'})
+        return options
+
+    @property
+    def age(self):
+        return relativedelta(self.consent_datetime, self.dob).years
+
+    def formatted_age_at_consent(self):
+        return formatted_age(self.dob, self.consent_datetime)
+
+    @classmethod
+    def get_consent_update_model(self):
+        raise TypeError('The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to return the ConsentUpdateModel class.')
+
+    def get_report_datetime(self):
+        return self.consent_datetime
+
+    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
+        """Allow bypass only if doing consent verification."""
+        # requery myself
+        obj = self.__class__.objects.using(using).get(pk=self.pk)
+        # dont allow values in these fields to change if dispatched
+        may_not_change_these_fields = [(k, v) for k, v in obj.__dict__.iteritems() if k not in ['is_verified_datetime', 'is_verified']]
+        for k, v in may_not_change_these_fields:
+            if k[0] != '_':
+                if getattr(self, k) != v:
+                    return False
+        return True
+
+    def update_consent_history(self, created, using):
+        """Updates the consent history model for this consent instance if there is a consent history model."""
+        if self.get_consent_history_model():
+            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
+                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
+            self.get_consent_history_model().objects.update_consent_history(self, created, using)
+
+    def delete_consent_history(self, app_label, model_name, pk, using):
+        if self.get_consent_history_model():
+            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
+                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
+            self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
+
+    def include_for_dispatch(self):
+        return True
+
     class Meta:
         abstract = True
-
-# add Mixin fields to abstract class
-# for field in IdentityFieldsMixin._meta.fields:
-#     if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
-#         field.contribute_to_class(BaseSubjectConsent, field.name)
-# 
-# for field in ReviewFieldsMixin._meta.fields:
-#     if field.name not in [fld.name for fld in BaseSubjectConsent._meta.fields]:
-#         field.contribute_to_class(BaseSubjectConsent, field.name)
 
 
 # declare concrete class
@@ -232,6 +332,23 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
                 'household_member__household_structure__household__plot__plot_identifier')
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            expected_member_status = BHS_ELIGIBLE
+        else:
+            expected_member_status = BHS
+        if self.household_member.member_status != expected_member_status:
+            raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
+                expected_member_status, self.household_member.member_status, self.household_member))
+        if self.confirm_identity:
+            if self.identity != self.confirm_identity:
+                raise ValueError('Attribute \'identity\' must match attribute \'confirm_identity\'. Catch this error on the form')
+        self.is_minor = 'Yes' if self.minor else 'No'
+        self.matches_enrollment_checklist(self, self.household_member)
+        self.matches_hic_enrollment(self, self.household_member)
+        self.community = self.household_member.household_structure.household.plot.community
+        super(SubjectConsent, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'bcpp_subject'
