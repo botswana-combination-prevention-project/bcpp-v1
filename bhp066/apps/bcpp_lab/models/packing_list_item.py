@@ -1,6 +1,7 @@
 from django.db import models
 
 from edc.lab.lab_packing.models import BasePackingListItem
+from edc.device.sync.models import BaseSyncUuidModel
 
 from .aliquot import Aliquot
 from .packing_list import PackingList
@@ -11,7 +12,7 @@ from .receive import Receive
 from ..managers import PackingListItemManager
 
 
-class PackingListItem(BasePackingListItem):
+class PackingListItem(BasePackingListItem, BaseSyncUuidModel):
 
     packing_list = models.ForeignKey(PackingList, null=True)
 

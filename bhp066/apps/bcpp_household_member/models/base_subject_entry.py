@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_before_study_start, date_not_future
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -14,7 +15,7 @@ from .base_member_status_model import BaseMemberStatusModel
 from ..choices import NEXT_APPOINTMENT_SOURCE
 
 
-class BaseSubjectEntry(BaseDispatchSyncUuidModel):
+class BaseSubjectEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """For absentee and undecided log models."""
     report_datetime = models.DateField(
         verbose_name="Report date",

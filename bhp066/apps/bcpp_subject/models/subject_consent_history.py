@@ -1,7 +1,7 @@
 from django.db import models
-
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
+from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
@@ -9,7 +9,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 from ..managers import ConsentHistoryManager
 
 
-class SubjectConsentHistory(BaseDispatchSyncUuidModel):
+class SubjectConsentHistory(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     survey = models.ForeignKey(Survey)
 

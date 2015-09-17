@@ -2,13 +2,14 @@ from django.db import models
 
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.base.model.validators import eligible_if_yes
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.choices.common import YES_NO
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..exceptions import AlreadyReplaced
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 
-class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel):
+class BaseRepresentativeEligibility(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """Determines if the household member is eligible representative of the household."""
 
     report_datetime = models.DateTimeField(

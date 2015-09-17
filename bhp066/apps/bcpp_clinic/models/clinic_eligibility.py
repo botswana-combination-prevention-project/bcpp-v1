@@ -6,7 +6,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator, Regex
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.fields import IdentityTypeField
 from edc.base.model.fields.local.bw import EncryptedOmangField
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)

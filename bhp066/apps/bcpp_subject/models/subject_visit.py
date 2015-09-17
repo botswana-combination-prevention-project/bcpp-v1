@@ -1,7 +1,9 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.visit_tracking.models import BaseVisitTracking
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
@@ -10,7 +12,7 @@ from ..choices import VISIT_UNSCHEDULED_REASON
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
+class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember)
 

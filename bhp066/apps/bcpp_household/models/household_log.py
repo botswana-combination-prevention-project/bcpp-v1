@@ -2,9 +2,11 @@ from datetime import date
 
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_before_study_start, date_not_future
+from edc_base.model.models import BaseUuidModel
 from edc.core.crypto_fields.fields import EncryptedTextField
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from ..choices import NEXT_APPOINTMENT_SOURCE, HOUSEHOLD_LOG_STATUS
@@ -15,7 +17,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdLog(BaseDispatchSyncUuidModel):
+class HouseholdLog(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A system model that links the household log to the household."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
@@ -58,7 +60,7 @@ class HouseholdLog(BaseDispatchSyncUuidModel):
         app_label = 'bcpp_household'
 
 
-class HouseholdLogEntry(BaseDispatchSyncUuidModel):
+class HouseholdLogEntry(BaseDispatchSyncUuidModel, BaseUuidModel):
     """A model completed by the user each time the household is visited."""
     household_log = models.ForeignKey(HouseholdLog)
 

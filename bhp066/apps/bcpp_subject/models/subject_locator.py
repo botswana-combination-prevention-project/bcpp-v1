@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
 from edc.choices.common import YES_NO
 from edc.core.crypto_fields.fields import EncryptedCharField
@@ -13,13 +13,17 @@ from edc.subject.locator.models import BaseLocator
 
 from bhp066.apps.bcpp_household.models import Plot
 
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
+
 from ..managers import SubjectLocatorManager
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator,
+                     BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.fields.local.bw import EncryptedOmangField
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
 from edc.choices.common import YES_NO, YES_NO_DONT_KNOW

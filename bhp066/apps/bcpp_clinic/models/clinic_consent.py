@@ -1,19 +1,29 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA, YES_NO_UNKNOWN
 from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
-from edc_consent.models.fields import ReviewFieldsMixin
+from edc.core.bhp_variables.models import StudySite
+from edc_consent.models.fields import (
+    ReviewFieldsMixin, SampleCollectionFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin)
 from edc_consent.models.fields.bw import IdentityFieldsMixin
+from edc.device.sync.models import BaseSyncUuidModel
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .clinic_consent_history import ClinicConsentHistory
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
 
-class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
+class BaseClinicConsent(BaseHouseholdMemberConsent, BaseSyncUuidModel):
+
+    study_site = models.ForeignKey(
+        StudySite,
+        verbose_name='Site',
+        null=True,
+        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+    )
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
@@ -92,7 +102,8 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
 
 
 # declare concrete class
-class ClinicConsent(ReviewFieldsMixin, IdentityFieldsMixin, BaseClinicConsent):
+class ClinicConsent(ClinicOffStudyMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
+                    SampleCollectionFieldsMixin, ReviewFieldsMixin, IdentityFieldsMixin, BaseClinicConsent):
     """A model completed by the user to capture the ICF."""
     lab_identifier = models.CharField(
         verbose_name=("lab allocated identifier"),

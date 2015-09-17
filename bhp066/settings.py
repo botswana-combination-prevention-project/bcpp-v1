@@ -30,6 +30,9 @@ APP_NAME = APP_NAME
 
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
+BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
+GIT_DIR = BASE_DIR.ancestor(1)
+
 SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source
 EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
 PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project

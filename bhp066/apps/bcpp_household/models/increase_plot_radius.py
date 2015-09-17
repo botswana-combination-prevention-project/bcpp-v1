@@ -1,13 +1,14 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.dispatch.models import DispatchItemRegister
 
 from .plot import Plot
 
 
-class IncreasePlotRadius(BaseDispatchSyncUuidModel):
+class IncreasePlotRadius(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to allow a plot\'s GPS target radius to be changed.
 
     An instance is auto created once the criteria is met. See method plot.increase_plot_radius."""

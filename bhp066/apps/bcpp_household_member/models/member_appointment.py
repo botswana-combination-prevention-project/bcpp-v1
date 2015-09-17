@@ -1,10 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.choices import TIME_OF_DAY, TIME_OF_WEEK
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment.choices import APPT_STATUS
+from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_survey.models import Survey
 
@@ -13,7 +14,7 @@ from ..managers import MemberAppointmentManager
 from .household_member import HouseholdMember
 
 
-class MemberAppointment(BaseDispatchSyncUuidModel):
+class MemberAppointment(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember)
 

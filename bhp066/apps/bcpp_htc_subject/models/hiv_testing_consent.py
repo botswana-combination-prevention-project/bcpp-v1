@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.choices.common import YES_NO
 from ..choices import REASON_NOT_TESTING
 from .base_scheduled_model import BaseScheduledModel

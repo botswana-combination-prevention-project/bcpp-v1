@@ -3,8 +3,9 @@ from datetime import datetime
 from django.core.validators import RegexValidator
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
+
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.base.model.validators import date_is_future
 from edc.choices import YES_NO_UNKNOWN, TIME_OF_DAY, TIME_OF_WEEK, ALIVE_DEAD_UNKNOWN, YES_NO

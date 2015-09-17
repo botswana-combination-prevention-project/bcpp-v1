@@ -4,7 +4,8 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from bhp066.apps.bcpp_survey.models import Survey
@@ -16,7 +17,7 @@ from .household import Household
 from .plot import Plot
 
 
-class HouseholdStructure(BaseDispatchSyncUuidModel):
+class HouseholdStructure(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """A system model that links a household to its household members
     for a given survey year and helps track the enrollment status, enumeration

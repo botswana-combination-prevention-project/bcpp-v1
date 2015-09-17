@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.choices import YES_NO
 
 from bhp066.apps.bcpp.choices import PARTIAL_PARTICIPATION_TYPE

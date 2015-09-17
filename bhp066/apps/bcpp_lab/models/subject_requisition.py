@@ -1,11 +1,14 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.constants import YES, NO
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
+from edc.device.sync.models import BaseSyncUuidModel
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_inspector.classes import InspectorMixin
@@ -18,7 +21,7 @@ from .aliquot_type import AliquotType
 from .panel import Panel
 
 
-class SubjectRequisition(InspectorMixin, BaseRequisition):
+class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
