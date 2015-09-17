@@ -90,7 +90,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
         verbose_name=_("POC viral load count"),
         null=True,
         blank=True,
-        max_digits=6,
+        max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0)],
         help_text="",
