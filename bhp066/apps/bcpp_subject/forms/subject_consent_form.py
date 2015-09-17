@@ -7,7 +7,6 @@ from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRender
 
 from edc.core.bhp_variables.models import StudySpecific
 from edc.map.classes import site_mappers
-from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.subject.registration.models import RegisteredSubject
 
 from bhp066.apps.bcpp.choices import GENDER_UNDETERMINED
@@ -16,6 +15,8 @@ from bhp066.apps.bcpp_household_member.models import HouseholdInfo
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 from ..models import SubjectConsent
+
+from .base_subject_consent_form import BaseSubjectConsentForm
 
 
 class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN METHOD IN BASE!!
@@ -44,7 +45,6 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         # check subject consent values against household member values
         initials = cleaned_data.get("initials")
         first_name = cleaned_data.get("first_name")
-        last_name = cleaned_data.get("last_name")
         if initials != household_member.initials:
             raise forms.ValidationError('Initials for household member record do not match initials here. Got {0} <> {1}'.format(household_member.initials, initials))
         if first_name and household_member:
