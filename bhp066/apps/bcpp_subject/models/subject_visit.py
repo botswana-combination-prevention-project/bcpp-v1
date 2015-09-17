@@ -16,7 +16,7 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,
                    BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+    CONSENT_MODEL = None
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -31,6 +31,8 @@ class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking
     history = AuditTrail(True)
 
     def save(self, *args, **kwargs):
+        self.CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+        self.subject_identifier = self.household_member.registered_subject.subject_identifier
         self.info_source = 'subject'
         self.reason = 'consent'
         super(SubjectVisit, self).save(*args, **kwargs)

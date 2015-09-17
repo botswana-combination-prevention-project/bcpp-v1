@@ -38,7 +38,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
             if update_fields != sorted((['is_verified', 'is_verified_datetime'] +
                                         BASE_MODEL_UPDATE_FIELDS +
                                         BASE_UUID_MODEL_UPDATE_FIELDS)):
-                # instance.post_save_update_registered_subject(using) (called in base)
+                instance.post_save_update_registered_subject(using)# (called in base)
                 instance.household_member.is_consented = True
                 instance.household_member.absent = False
                 instance.household_member.undecided = False
@@ -95,43 +95,6 @@ def update_or_create_registered_subject_on_post_save(sender, instance, raw, crea
             instance.registered_subject.save(using=using)
         except AttributeError:
             pass
-#                 # this should not be used
-#                 # self does not have a foreign key to RegisteredSubject but RegisteredSubject
-#                 # still needs to be created or updated
-#                 RegisteredSubject = models.get_model('registration', 'registeredsubject')
-#                 try:
-#                     registered_subject = RegisteredSubject.objects.using(using).get(
-#                         subject_identifier=instance.subject_identifier)
-#                     for field_name, value in instance.registered_subject_options.iteritems():
-#                         setattr(registered_subject, field_name, value)
-#                     if created:
-#                         registered_subject.subject_identifier = instance.subject_identifier
-#                     registered_subject.save(using=using)
-#                 except RegisteredSubject.DoesNotExist:
-#                     RegisteredSubject.objects.using(using).create(
-#                         subject_identifier=instance.subject_identifier,
-#                         **instance.registered_subject_options)
-
-
-# @receiver(post_save, weak=False, dispatch_uid='update_consent_history')
-# def update_consent_history(sender, instance, raw, created, using, **kwargs):
-#     """Updates the consent history model with this instance if such model exists."""
-#     if not raw:
-#         # if isinstance(instance, BaseSubjectConsent):
-#         try:
-#             instance.update_consent_history(created, using)
-#         except AttributeError:
-#             pass
-# 
-# 
-# @receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
-# def delete_consent_history(sender, instance, using, **kwargs):
-#     """Updates the consent history model with this instance if such model exists."""
-#     # if isinstance(instance, BaseSubjectConsent):
-#     try:
-#         instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
-#     except AttributeError:
-#         pass
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')

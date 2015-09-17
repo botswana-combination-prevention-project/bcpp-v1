@@ -1,3 +1,4 @@
+import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -551,6 +552,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                     registration_datetime=self.created,
                     user_created=self.user_created,
                     registration_status='member',
+                    subject_identifier_as_pk=str(uuid.uuid4()),
                     additional_key=self.additional_key)
             # set registered_subject for this hsm
             self.registered_subject = registered_subject
