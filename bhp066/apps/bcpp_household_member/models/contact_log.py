@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from edc.choices.common import YES_NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.choices import INFO_PROVIDER, STATUS
+from bhp066.apps.bcpp_household.choices import INFO_PROVIDER, STATUS
 
 from ..managers import ContactLogManager, ContactLogItemManager
 
@@ -45,7 +45,7 @@ class ContactLogItem(BaseDispatchSyncUuidModel):
         help_text="",
         null=True,
         blank=True,
-        )
+    )
 
     appointment_datetime = models.DateTimeField(
         verbose_name='Appointment',
@@ -60,7 +60,7 @@ class ContactLogItem(BaseDispatchSyncUuidModel):
         max_length=50,
         blank=True,
         null=True,
-        )
+    )
 
     objects = ContactLogItemManager()
 

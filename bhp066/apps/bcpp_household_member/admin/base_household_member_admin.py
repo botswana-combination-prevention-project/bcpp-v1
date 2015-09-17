@@ -1,6 +1,6 @@
 from edc.base.modeladmin.admin import BaseModelAdmin
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class BaseHouseholdMemberAdmin(BaseModelAdmin):

@@ -2,10 +2,10 @@ from django import forms
 
 from edc.constants import NOT_APPLICABLE
 
+from ..constants import ANNUAL
 from ..models import ResidencyMobility
 
 from .base_subject_model_form import BaseSubjectModelForm
-from apps.bcpp_subject.constants import ANNUAL
 
 
 class ResidencyMobilityForm (BaseSubjectModelForm):
@@ -14,9 +14,8 @@ class ResidencyMobilityForm (BaseSubjectModelForm):
         'help_text': {'permanent_resident': (
             'If participant has moved into the community in the past 12 months, then since moving in '
             'has the participant typically spent more than 14 nights per month in this community.'),
-            }
         }
-    }
+    }}
 
     def clean(self):
         cleaned_data = super(ResidencyMobilityForm, self).clean()

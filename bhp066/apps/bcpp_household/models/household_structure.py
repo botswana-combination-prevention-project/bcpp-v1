@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdStructureManager

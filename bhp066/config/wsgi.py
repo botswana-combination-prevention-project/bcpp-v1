@@ -22,7 +22,7 @@ sys.path.append('/Users/django/source/bhp066_project/config')
 # if running multiple sites in the same mod_wsgi process. To fix this, use
 # mod_wsgi daemon mode with each site in its own daemon process, or use
 # os.environ["DJANGO_SETTINGS_MODULE"] = "x.settings"
-os.environ["DJANGO_SETTINGS_MODULE"] = "config.settings"
+os.environ["DJANGO_SETTINGS_MODULE"] = "bhp066.settings"
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

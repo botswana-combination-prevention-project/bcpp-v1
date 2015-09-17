@@ -13,7 +13,7 @@ class PackingList(BasePackingList):
         max_length=25,
         null=True,
         blank=False,
-        )
+    )
 
     objects = PackingListManager()
 

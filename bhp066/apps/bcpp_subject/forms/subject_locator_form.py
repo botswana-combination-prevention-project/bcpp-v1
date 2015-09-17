@@ -1,5 +1,7 @@
 from django import forms
+
 from ..models import SubjectLocator
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 

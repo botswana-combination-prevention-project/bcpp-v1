@@ -1,9 +1,10 @@
 import collections
 import datetime
 
-from apps.bcpp_clinic.models import (ClinicConsent, ClinicEligibility, ClinicRefusal, ClinicEnrollmentLoss,
-                                     Questionnaire, ClinicVlResult, ViralLoadTracking)
-from apps.bcpp_lab.models import ClinicRequisition
+from bhp066.apps.bcpp_clinic.models import (
+    ClinicConsent, ClinicEligibility, ClinicRefusal, ClinicEnrollmentLoss,
+    Questionnaire, ClinicVlResult, ViralLoadTracking)
+from bhp066.apps.bcpp_lab.models import ClinicRequisition
 
 from .base_operational_report import BaseOperationalReport
 

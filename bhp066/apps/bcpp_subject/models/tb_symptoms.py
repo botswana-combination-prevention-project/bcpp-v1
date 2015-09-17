@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO
+from bhp066.apps.bcpp.choices import YES_NO
 
 from ..managers import TbSymptomsManager
 
@@ -17,42 +17,42 @@ class TbSymptoms (BaseScheduledVisitModel):
         max_length=10,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     fever = models.CharField(
         verbose_name=_("In the last two weeks has the participant had FEVER?"),
         max_length=10,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     lymph_nodes = models.CharField(
         verbose_name=_("Does the participant currently have ENLARGED LYMPH NODES?"),
         max_length=10,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     cough_blood = models.CharField(
         verbose_name=_("In the last two weeks has the participant COUGHED UP BLOOD?"),
         max_length=10,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     night_sweat = models.CharField(
         verbose_name=_("In the last two weeks has the participant had NIGHT SWEATS?"),
         max_length=10,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     weight_loss = models.CharField(
         verbose_name=_("In the last month has the participant had unexplained WEIGHT LOSS?"),
         max_length=10,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     objects = TbSymptomsManager()
 

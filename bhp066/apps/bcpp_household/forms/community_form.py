@@ -1,4 +1,5 @@
 from django import forms
+
 from edc.map.classes import site_mappers
 
 
@@ -8,4 +9,4 @@ class CommunityForm(forms.Form):
         label="Community",
         initial=None,
         help_text="",
-        )
+    )

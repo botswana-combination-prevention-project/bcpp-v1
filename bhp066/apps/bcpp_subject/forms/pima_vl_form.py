@@ -1,6 +1,7 @@
 from django import forms
 
 from ..models import PimaVl
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -12,13 +13,13 @@ class PimaVlForm (BaseSubjectModelForm):
         if cleaned_data.get('poc_vl_today') == 'No' and not cleaned_data.get('poc_vl_today_other'):
             raise forms.ValidationError('If POC VL NOT done today, please explain why not?')
 
-        #If no PIMA CD4 performed, do not provide any CD4 related information
+        # If no PIMA CD4 performed, do not provide any CD4 related information
         if cleaned_data.get('poc_vl_today') == 'No' and cleaned_data.get('pima_id'):
             raise forms.ValidationError('Do not provide the PIMA machine id if the POC VL was not performed')
         if cleaned_data.get('poc_vl_today') == 'No' and cleaned_data.get('poc_vl_value'):
             raise forms.ValidationError('POC VL was not performed, do not provide the POC viral load count')
 
-#         # If PIMA CD4 performed, provide details
+        # If PIMA CD4 performed, provide details
         if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('pima_id'):
             raise forms.ValidationError('If POC VL done today, please provide machine id?')
         if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('poc_vl_value'):

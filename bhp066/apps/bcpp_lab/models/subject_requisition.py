@@ -7,16 +7,14 @@ from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
 
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_inspector.classes import InspectorMixin
-from apps.bcpp_subject.models import SubjectVisit
-
-from apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_inspector.classes import InspectorMixin
+from bhp066.apps.bcpp_subject.models import SubjectVisit
+from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
 
 from ..managers import SubjectRequisitionManager
 
 from .aliquot_type import AliquotType
-# from .packing_list import PackingList
 from .panel import Panel
 
 
@@ -62,8 +60,8 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
     @property
     def is_pov_vl(self):
         from ..models import PreOrder
-        if (self.panel.name == VIRAL_LOAD and
-             PreOrder.objects.filter(subject_visit=self.subject_visit, panel__name=POC_VIRAL_LOAD)):
+        if (self.panel.name == VIRAL_LOAD and PreOrder.objects.filter(
+                subject_visit=self.subject_visit, panel__name=POC_VIRAL_LOAD)):
             return 'Yes'
         else:
             return 'No'
@@ -79,7 +77,7 @@ class SubjectRequisition(InspectorMixin, BaseRequisition):
                 YES if subject_referral.on_art else NO)
         except SubjectReferral.DoesNotExist:
             return ''
-        except AttributeError as e:
+        except AttributeError:
             return ''
 
     def dispatch_container_lookup(self, using=None):

@@ -3,8 +3,6 @@ from django.utils.translation import ugettext as _
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from .plot import Plot
-
 
 class NotebookPlotList(BaseDispatchSyncUuidModel):
 

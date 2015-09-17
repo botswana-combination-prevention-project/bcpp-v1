@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE,
+from bhp066.apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE,
                                FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE)
 
 from .base_circumcision import BaseCircumcision
@@ -18,7 +18,7 @@ class Uncircumcised (BaseCircumcision):
         null=True,
         choices=REASONCIRC_CHOICE,
         help_text="supplemental",
-        )
+    )
 
     reason_circ_other = OtherCharField(
         null=True,)
@@ -28,7 +28,7 @@ class Uncircumcised (BaseCircumcision):
         max_length=25,
         choices=YES_NO_UNSURE,
         help_text="",
-        )
+    )
 
     future_reasons_smc = models.CharField(
         verbose_name=_("Which of the following might increase your willingness to"
@@ -37,7 +37,7 @@ class Uncircumcised (BaseCircumcision):
         choices=FUTUREREASONSSMC_CHOICE,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     service_facilities = models.CharField(
         verbose_name=_("Were you aware that circumcision services are provided "
@@ -46,7 +46,7 @@ class Uncircumcised (BaseCircumcision):
         choices=YES_NO_DWTA,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     aware_free = models.CharField(
         verbose_name=_("Where did you learn that circumcision services were "
@@ -56,7 +56,7 @@ class Uncircumcised (BaseCircumcision):
         blank=True,
         choices=AWAREFREE_CHOICE,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

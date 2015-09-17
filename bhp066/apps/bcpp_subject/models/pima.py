@@ -18,7 +18,7 @@ class Pima (BaseScheduledVisitModel):
         choices=YES_NO,
         max_length=3,
         help_text="",
-        )
+    )
 
     pima_today_other = models.CharField(
         verbose_name=_("If no PIMA CD4 today, please explain why"),
@@ -26,7 +26,7 @@ class Pima (BaseScheduledVisitModel):
         choices=PIMA,
         null=True,
         blank=True,
-        )
+    )
 
     pima_today_other_other = OtherCharField()
 
@@ -43,7 +43,7 @@ class Pima (BaseScheduledVisitModel):
         validators=[datetime_not_future],
         null=True,
         blank=True,
-        )
+    )
 
     cd4_value = models.DecimalField(
         verbose_name=_("PIMA CD4 count"),
@@ -53,7 +53,7 @@ class Pima (BaseScheduledVisitModel):
         decimal_places=2,
         validators=[MinValueValidator(0), MaxValueValidator(3000)],
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

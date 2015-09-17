@@ -18,20 +18,21 @@ class OrderItem(BaseSyncUuidModel):
 
     aliquot = models.ForeignKey(Aliquot)
 
-    panel = models.ForeignKey(Panel,
+    panel = models.ForeignKey(
+        Panel,
         null=True,
         blank=False,
-        )
+    )
 
     order_identifier = models.CharField(
         max_length=25,
         null=True,
         help_text='',
-        )
+    )
 
     order_datetime = models.DateTimeField(
         default=datetime.today()
-        )
+    )
 
     subject_identifier = models.CharField(
         max_length=50,

@@ -20,7 +20,7 @@ class RepresentativeEligibility(BaseRepresentativeEligibility):
         editable=False,
         help_text=('This form is autofilled for non-BHS surveys using information from a'
                    'member consented in a previous survey. See HouseholdMemberHelper')
-        )
+    )
 
     auto_fill_member_id = models.CharField(
         max_length=50,

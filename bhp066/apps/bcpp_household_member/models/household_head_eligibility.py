@@ -4,8 +4,8 @@ from django.db.models import get_model
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp_household.models import BaseRepresentativeEligibility
-from apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import BaseRepresentativeEligibility
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from ..managers import HouseholdHeadEligibilityManager
 
@@ -17,7 +17,8 @@ class HouseholdHeadEligibility(BaseRepresentativeEligibility):
     as a head of household or household representative."""
     household_structure = models.ForeignKey(HouseholdStructure)
 
-    household_member = models.OneToOneField(HouseholdMember,
+    household_member = models.OneToOneField(
+        HouseholdMember,
         help_text=('Important: The household member must verbally consent '
                    'before completing this questionnaire.'))
 

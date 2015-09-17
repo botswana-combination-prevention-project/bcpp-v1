@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import LOWESTCD4_CHOICE
+from bhp066.apps.bcpp.choices import LOWESTCD4_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -21,7 +21,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
         blank=True,
         help_text=_("Note: If participant does not want to answer, leave blank.  "
                     "If participant is unable to estimate date, leave blank."),
-        )
+    )
 
     last_hiv_care_pos = models.DateField(
         verbose_name=_("When did you last (most recently) receive HIV-related "
@@ -33,7 +33,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
         blank=True,
         help_text=_("Note: If participant does not want to answer,leave blank. "
                     "If participant is unable to estimate date, leave blank."),
-        )
+    )
 
     lowest_cd4 = models.CharField(
         verbose_name=_("What was your lowest CD4 (masole) count that was ever measured?"),
@@ -41,7 +41,7 @@ class HivMedicalCare (BaseScheduledVisitModel):
         choices=LOWESTCD4_CHOICE,
         help_text=_("Assist the participant by helping review their outpatient cards if "
                     "they are available."),
-        )
+    )
 
     history = AuditTrail()
 

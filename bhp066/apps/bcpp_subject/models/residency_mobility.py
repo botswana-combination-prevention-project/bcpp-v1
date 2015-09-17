@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.constants import NOT_APPLICABLE
 
-from apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE
+from bhp066.apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_CHOICE, CATTLEPOSTLANDS_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
@@ -21,7 +21,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         max_length=25,
         choices=LENGTHRESIDENCE_CHOICE,
         help_text="",
-        )
+    )
 
     permanent_resident = models.CharField(
         verbose_name=_("In the past 12 months, have you typically spent 14 or"
@@ -33,14 +33,14 @@ class ResidencyMobility (BaseScheduledVisitModel):
                    "since moving in has the participant typically "
                    "spent more than 14 nights per month in this community. "
                    "If 'NO (or don't want to answer)' STOP. Participant cannot be enrolled."),
-        )
+    )
 
     intend_residency = models.CharField(
         verbose_name=_("Do you intend to move out of the community in the next 12 months?"),
         max_length=25,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     # see redmine 423 and 401 and 126
     nights_away = models.CharField(
@@ -50,7 +50,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         max_length=35,
         choices=NIGHTSAWAY_CHOICE,
         help_text="",
-        )
+    )
 
     cattle_postlands = models.CharField(
         verbose_name=_("In the past 12 months, during the times you were away from this community, "
@@ -59,7 +59,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         choices=CATTLEPOSTLANDS_CHOICE,
         default=NOT_APPLICABLE,
         help_text="",
-        )
+    )
 
     cattle_postlands_other = models.CharField(
         verbose_name=_("Give the name of the community"),
@@ -67,7 +67,7 @@ class ResidencyMobility (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

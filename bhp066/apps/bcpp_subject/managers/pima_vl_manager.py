@@ -1,11 +1,9 @@
-from datetime import timedelta
-
 from django.conf import settings
 from django.db import models
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_household.classes import PlotIdentifier
 
 
 class PimaVlManager(models.Manager):
@@ -22,7 +20,7 @@ class PimaVlManager(models.Manager):
                 return super(PimaVlManager, self).get_queryset().filter(
                     subject_visit__household_member__household_structure__household__plot__community=community,
                     subject_visit__household_member__household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists()
-                    )
+                )
             else:
                 return super(PimaVlManager, self).get_queryset().filter(
                     subject_visit__household_member__household_structure__household__plot__community=community)

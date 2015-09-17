@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import AGREE_STRONGLY
+from bhp066.apps.bcpp.choices import AGREE_STRONGLY
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -21,7 +21,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     internalized_stigma = models.CharField(
         verbose_name=_("I have felt ashamed because of having HIV."),
@@ -29,7 +29,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     friend_stigma = models.CharField(
         verbose_name=_("I fear that if I disclosed my HIV status to my"
@@ -38,7 +38,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     family_stigma = models.CharField(
         verbose_name=_("I fear that if I disclosed my HIV status to my family,"
@@ -47,7 +47,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_talk_stigma = models.CharField(
         verbose_name=_("People have talked badly about me."),
@@ -55,7 +55,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_respect_stigma = models.CharField(
         verbose_name=_("I have lost respect or standing in the community."),
@@ -63,7 +63,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_jobs_tigma = models.CharField(
         verbose_name=_("I have lost a job because of having HIV."),
@@ -71,7 +71,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

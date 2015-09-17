@@ -7,7 +7,7 @@ from edc.base.model.validators import datetime_not_future
 from edc.choices import YES_NO_NA
 from edc.constants import NOT_APPLICABLE
 
-from apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
+from bhp066.apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment

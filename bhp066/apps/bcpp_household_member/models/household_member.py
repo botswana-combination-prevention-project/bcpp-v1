@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
@@ -22,18 +22,17 @@ from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household.models import Plot
-from apps.bcpp_household.exceptions import AlreadyReplaced
-from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
-from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, REFUSED_HTC, DECEASED
+from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DECEASED
 from ..managers import HouseholdMemberManager
-# from bhp066.apps.bcpp_household_member.models.enrollment_checklist import EnrollmentChecklist
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel):
@@ -75,7 +74,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         blank=False,
         help_text=("If age is unknown, enter 0. If member is less "
                    "than one year old, enter 1"),
-        )
+    )
 
     survival_status = models.CharField(
         verbose_name='Survival status',
@@ -83,7 +82,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         default=ALIVE,
         choices=ALIVE_DEAD_UNKNOWN,
         help_text=""
-        )
+    )
 
     present_today = models.CharField(
         verbose_name=_('Is the member present today?'),
@@ -105,7 +104,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         help_text=("Participant can only participate if NONE is selected. "
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
-        )
+    )
 
     inability_to_participate_other = OtherCharField(
         null=True)
@@ -215,20 +214,20 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     target = models.IntegerField(
         default=0,
         editable=False,
-        )
+    )
 
     auto_filled = models.BooleanField(
         default=False,
         editable=False,
         help_text=('Was autofilled for follow-up surveys using information from '
                    'previous survey. See EnumerationHelper')
-        )
+    )
 
     updated_after_auto_filled = models.BooleanField(
         default=True,
         editable=False,
         help_text=('if True, a user updated the values or this was not autofilled')
-        )
+    )
 
     additional_key = models.CharField(
         max_length=36,
@@ -242,7 +241,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
             'Should remain as the default value for normal enumeration. Is needed '
             'for Members added to the data from the clinic section where '
             'household_structure is always the same value.'),
-        )
+    )
 
     objects = HouseholdMemberManager()
 
@@ -279,7 +278,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         else:
             self.clear_death_flags
         self.eligible_member = self.is_eligible_member
-        self.absent = True if (not self.id and 
+        self.absent = True if (not self.id and
                                (self.present_today == 'No' and not self.survival_status == DEAD)) else self.absent
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
@@ -419,8 +418,8 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
     def is_eligible_member(self):
         if self.survival_status == DEAD:
             return False
-        return (self.age_in_years >= 16 and self.age_in_years <= 64 and self.study_resident == 'Yes'
-                and self.inability_to_participate == NOT_APPLICABLE)
+        return (self.age_in_years >= 16 and self.age_in_years <= 64 and self.study_resident == 'Yes' and
+                self.inability_to_participate == NOT_APPLICABLE)
 
     def check_eligible_representative_filled(self, household_structure, using=None, exception_cls=None):
         """Raises an exception if the RepresentativeEligibility form has not been completed.
@@ -880,7 +879,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
 
     def is_the_household_member_for_current_survey(self):
         """ Checks whether the household is saved for the current survey"""
-        if not settings.DEVICE_ID in settings.SERVER_DEVICE_ID_LIST:
+        if settings.DEVICE_ID not in settings.SERVER_DEVICE_ID_LIST:
             if self.household_structure.survey != Survey.objects.current_survey():
                 raise ImproperlyConfigured('Your device is configured to create household_member for {0}'.format(Survey.objects.current_survey()))
 
@@ -890,7 +889,6 @@ class HouseholdMember(BaseDispatchSyncUuidModel):
         ordering = ['-created']
         unique_together = (
             ("household_structure", "first_name", "initials", "additional_key"),
-            ('registered_subject', 'household_structure')
-        )
+            ('registered_subject', 'household_structure'), )
         app_label = 'bcpp_household_member'
         index_together = [['id', 'registered_subject', 'created'], ]

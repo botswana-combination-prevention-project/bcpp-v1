@@ -14,19 +14,18 @@ class RepresentativeEligibilityForm(BaseModelForm):
         household_structure = cleaned_data.get('household_structure')
         try:
             report_datetime = HouseholdLogEntry.objects.filter(
-                household_log__household_structure=household_structure
-                ).aggregate(Max('report_datetime')).get('report_datetime__max')
-
+                household_log__household_structure=household_structure).aggregate(
+                    Max('report_datetime')).get('report_datetime__max')
             if HouseholdLogEntry.objects.get(
-                           household_log__household_structure=household_structure,
-                           household_status='no_household_informant',
-                           report_datetime=report_datetime):
+                    household_log__household_structure=household_structure,
+                    household_status='no_household_informant',
+                    report_datetime=report_datetime):
                 raise ValidationError('You cannot save representative eligibility, no household informant.')
 
             HouseholdLogEntry.objects.get(
-                        household_log__household_structure=household_structure,
-                        report_datetime=report_datetime,
-                        household_status=ELIGIBLE_REPRESENTATIVE_ABSENT)
+                household_log__household_structure=household_structure,
+                report_datetime=report_datetime,
+                household_status=ELIGIBLE_REPRESENTATIVE_ABSENT)
             raise ValidationError('The eligible household representative is absent. See Household Log.')
         except HouseholdLogEntry.DoesNotExist:
             pass

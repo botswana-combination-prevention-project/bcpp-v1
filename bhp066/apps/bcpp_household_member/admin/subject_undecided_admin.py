@@ -3,7 +3,7 @@ from django.contrib import admin
 from edc.base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import SubjectUndecidedForm, SubjectUndecidedEntryForm
 from ..models import SubjectUndecided, SubjectUndecidedEntry

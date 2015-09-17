@@ -1,5 +1,4 @@
-from edc.export.helpers import ExportObjectHelper
-from apps.bcpp_household.models import Household as HouseholdModel
+from bhp066.apps.bcpp_household.models import Household as HouseholdModel
 
 from ..classes import Household
 

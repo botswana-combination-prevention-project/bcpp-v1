@@ -5,7 +5,7 @@ from django.db import models
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from ..classes import PlotIdentifier
 
 
 class PlotLogManager(models.Manager):
@@ -19,8 +19,9 @@ class PlotLogManager(models.Manager):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
             community = site_mappers.current_mapper.map_area
             if PlotIdentifier.get_notebook_plot_lists():
-                return super(PlotLogManager, self).get_queryset().filter(plot__community=community,
-                                                plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
+                return super(
+                    PlotLogManager, self).get_queryset().filter(
+                        plot__community=community, plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
             else:
                 return super(PlotLogManager, self).get_queryset().filter(plot__community=community)
         return super(PlotLogManager, self).get_queryset()
@@ -34,7 +35,7 @@ class PlotLogEntryManager(models.Manager):
         margin = timedelta(microseconds=999)
         return self.get(report_datetime__range=(
             report_datetime - margin, report_datetime + margin),
-            plot_log = plot_log)
+            plot_log=plot_log)
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
@@ -43,7 +44,7 @@ class PlotLogEntryManager(models.Manager):
                 return super(PlotLogEntryManager, self).get_queryset().filter(
                     plot_log__plot__community=community,
                     plot_log__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists(),
-                    )
+                )
             else:
                 return super(PlotLogEntryManager, self).get_queryset().filter(plot_log__plot__community=community)
         return super(PlotLogEntryManager, self).get_queryset()

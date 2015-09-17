@@ -1,18 +1,14 @@
 from edc.subject.visit_tracking.admin import BaseVisitTrackingModelAdmin
 
-from apps.bcpp_survey.models import Survey
-
-from ..models import SubjectVisit
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..constants import ANNUAL, ANNUAL_CODES
+from ..models import SubjectVisit
 
 
 class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
 
     """Model Admin for models with a foreignkey to the subject visit model."""
-
-#     def __init__(self, *args, **kwargs):
-#         super(SubjectVisitModelAdmin, self).__init__(*args, **kwargs)
 
     visit_model = SubjectVisit
     visit_model_foreign_key = 'subject_visit'

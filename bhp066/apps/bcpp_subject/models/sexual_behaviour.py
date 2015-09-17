@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_SEX
+from bhp066.apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_SEX
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -19,7 +19,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
-        )
+    )
 
     lifetime_sex_partners = models.IntegerField(
         verbose_name=_("In your lifetime, how many different people have you had"
@@ -31,7 +31,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     last_year_partners = models.IntegerField(
         verbose_name=_("In the past 12 months, how many different people have you had"
@@ -43,7 +43,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="Note:Leave blank if participant does not want to respond. ",
-        )
+    )
 
     more_sex = models.CharField(
         verbose_name=_("In the past 12 months, did you have sex with somebody"
@@ -53,7 +53,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         blank=True,
         choices=YES_NO_DWTA,
         help_text="",
-        )
+    )
 
     first_sex = models.IntegerField(
         verbose_name=_("How old were you when you had sex for the first time?"
@@ -63,7 +63,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         blank=True,
         validators=[MinValueValidator(10), MaxValueValidator(64)],
         help_text="Note:leave blank if participant does not want to respond.",
-        )
+    )
 
     condom = models.CharField(
         verbose_name=_("During the last [most recent] time you had sex, did"
@@ -73,7 +73,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         blank=True,
         choices=YES_NO_DWTA,
         help_text="",
-        )
+    )
 
     alcohol_sex = models.CharField(
         verbose_name=_("During the last [most recent] time you had sex, were"
@@ -83,7 +83,7 @@ class SexualBehaviour (BaseScheduledVisitModel):
         blank=True,
         choices=ALCOHOL_SEX,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

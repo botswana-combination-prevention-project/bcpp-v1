@@ -5,7 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import DXTB_CHOICE
+from bhp066.apps.bcpp.choices import DXTB_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -19,17 +19,17 @@ class Tubercolosis (BaseScheduledVisitModel):
         verbose_name=_("Date of the diagnosis of tuberculosis:"),
         validators=[date_not_future],
         help_text="",
-        )
+    )
 
     dx_tb = models.CharField(
         verbose_name=_("[Interviewer:]What is the tuberculosis diagnosis as recorded?"),
         max_length=50,
         choices=DXTB_CHOICE,
         help_text="",
-        )
+    )
     dx_tb_other = OtherCharField(
-         null=True,
-        )
+        null=True,
+    )
 
     history = AuditTrail()
 

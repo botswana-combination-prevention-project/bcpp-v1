@@ -1,5 +1,6 @@
 from django.db.models import signals
-from apps.bcpp_clinic.models import clinic_eligibility_on_post_save
+
+from bhp066.apps.bcpp_clinic.models import clinic_eligibility_on_post_save
 
 
 class ClinicSignalManager(object):

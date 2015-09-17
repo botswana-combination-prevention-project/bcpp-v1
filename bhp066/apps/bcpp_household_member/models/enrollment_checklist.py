@@ -19,7 +19,7 @@ from ..managers import EnrollmentChecklistManager
 
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .household_member import HouseholdMember
 
@@ -33,10 +33,9 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         verbose_name="Report Date and Time",
         validators=[
             datetime_not_before_study_start,
-            datetime_not_future,
-            ],
+            datetime_not_future],
         help_text=''
-        )
+    )
 
     initials = models.CharField(
         verbose_name='Initials',
@@ -95,8 +94,8 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         help_text="If 'YES' then not eligible")
 
     confirm_participation = models.CharField(
-        verbose_name=_("If Yes, RA should obtain documentation of participation and ask CBS to" 
-        "confirm(give Omang Number). Has Participation been confirmed"),
+        verbose_name=_("If Yes, RA should obtain documentation of participation and ask CBS to"
+                       "confirm(give Omang Number). Has Participation been confirmed"),
         max_length=15,
         choices=BLOCK_CONTINUE,
         null=True,
@@ -162,7 +161,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel):
         default=False,
         editable=False,
         help_text=('Was autofilled on data conversion')
-        )
+    )
 
     objects = EnrollmentChecklistManager()
 

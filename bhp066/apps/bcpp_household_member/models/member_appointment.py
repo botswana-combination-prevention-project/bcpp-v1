@@ -6,7 +6,7 @@ from edc.choices import TIME_OF_DAY, TIME_OF_WEEK
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment.choices import APPT_STATUS
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import MemberAppointmentManager
 
@@ -32,7 +32,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
     label = models.CharField(
         max_length=25,
         help_text="label to group, e.g. T1 prep"
-        )
+    )
 
     time_of_week = models.CharField(
         verbose_name='Time of week when participant will be available',
@@ -41,7 +41,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
         blank=True,
         null=True,
         help_text=""
-        )
+    )
 
     time_of_day = models.CharField(
         verbose_name='Time of day when participant will be available',
@@ -50,7 +50,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
         blank=True,
         null=True,
         help_text=""
-        )
+    )
 
     is_confirmed = models.BooleanField(default=False)
 

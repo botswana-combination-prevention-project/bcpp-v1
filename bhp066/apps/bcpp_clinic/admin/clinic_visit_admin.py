@@ -2,8 +2,8 @@ from django.contrib import admin
 
 from edc.subject.appointment.admin import BaseAppointmentModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_lab.models import ClinicRequisition
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_lab.models import ClinicRequisition
 
 from ..forms import ClinicVisitForm
 from ..models import ClinicVisit, ClinicEligibility

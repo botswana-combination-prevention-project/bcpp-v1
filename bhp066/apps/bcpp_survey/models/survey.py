@@ -18,7 +18,7 @@ class Survey (BaseUuidModel):
         help_text="format is, form example, BCPP Year 1",
         db_index=True,
         unique=True,
-        )
+    )
 
     survey_abbrev = models.CharField(
         verbose_name="Survey name abbreviation",
@@ -26,7 +26,7 @@ class Survey (BaseUuidModel):
         unique=True,
         null=True,
         blank=True,
-        )
+    )
 
     survey_description = models.CharField(
         verbose_name="Description",
@@ -35,7 +35,7 @@ class Survey (BaseUuidModel):
         null=True,
         blank=True,
         db_index=True,
-        )
+    )
 
     survey_slug = models.SlugField(max_length=40, db_index=True)
 
@@ -44,12 +44,12 @@ class Survey (BaseUuidModel):
     datetime_start = models.DateTimeField(
         verbose_name="Start Date",
         help_text="",
-        )
+    )
 
     datetime_end = models.DateTimeField(
         verbose_name="End Date",
         help_text="",
-        )
+    )
 
     objects = SurveyManager()
 

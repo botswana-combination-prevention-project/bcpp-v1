@@ -47,7 +47,7 @@ class IncreasePlotRadius(BaseDispatchSyncUuidModel):
     @property
     def action(self):
         return self.plot.action
-    
+
     @property
     def bypass_radius(self):
         return self.radius

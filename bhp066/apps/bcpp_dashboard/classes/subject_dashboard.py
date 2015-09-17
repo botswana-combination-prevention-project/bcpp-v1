@@ -7,11 +7,11 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.appointment_helper.exceptions import AppointmentCreateError
 from edc.subject.appointment_helper.classes import AppointmentHelper
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_subject.models import (SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
-                                      CorrectConsent, ElisaHivResult, HivResult)
-from apps.bcpp_household_member.constants import BHS, ANNUAL
-from apps.bcpp_lab.models import SubjectRequisition, PackingList
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_subject.models import (
+    SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
+    CorrectConsent, ElisaHivResult, HivResult)
+from bhp066.apps.bcpp_lab.models import SubjectRequisition, PackingList
 
 from .base_subject_dashboard import BaseSubjectDashboard
 
@@ -23,8 +23,7 @@ class SubjectDashboard(BaseSubjectDashboard):
     urlpattern_view = 'apps.bcpp_dashboard.views'
     dashboard_url_name = 'subject_dashboard_url'
     urlpatterns = [
-        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'
-        ] + BaseSubjectDashboard.urlpatterns
+        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'] + BaseSubjectDashboard.urlpatterns
     urlpattern_options = dict(BaseSubjectDashboard.urlpattern_options, appointment_code='T0|T1|T2|T3|T4')
 
     template_name = 'subject_dashboard.html'
@@ -61,7 +60,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             membership_form_extra_url_context=membership_form_extra_url_context,
-            )
+        )
         return self.context
 
     @property
@@ -75,7 +74,6 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     @property
     def appointments(self):
-        #Show only one appointment as it the case in BCPP
         if self.appointment:
             return [self.appointment]
         else:
@@ -88,14 +86,14 @@ class SubjectDashboard(BaseSubjectDashboard):
             try:
                 appointment_helper = AppointmentHelper()
                 options = {
-                'model_name': 'subjectconsent',
-                'using': 'default',
-                'base_appt_datetime': None,
-                'dashboard_type': 'subject',
-                'source': 'BaseAppointmentMixin',
-                'visit_definitions': None,
-                'verbose': False}
-                appointments = appointment_helper.create_all(self.household_member.registered_subject, **options)
+                    'model_name': 'subjectconsent',
+                    'using': 'default',
+                    'base_appt_datetime': None,
+                    'dashboard_type': 'subject',
+                    'source': 'BaseAppointmentMixin',
+                    'visit_definitions': None,
+                    'verbose': False}
+                appointment_helper.create_all(self.household_member.registered_subject, **options)
             except AppointmentCreateError:
                 self._appointment = None
             if self.dashboard_model_name == 'appointment':
@@ -104,17 +102,17 @@ class SubjectDashboard(BaseSubjectDashboard):
                 self._appointment = self.visit_model.objects.get(pk=self.dashboard_id).appointment
             elif self.dashboard_model_name == 'household_member':
                 survey_year = int(settings.CURRENT_SURVEY.split('-')[2])
-                if ((HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == survey_year)
-                    or (HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == 1 
-                        and self.household_member.household_structure.survey.survey_slug == 'bcpp-year-1')):
+                if ((HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == survey_year) or (
+                        HouseholdMember.objects.filter(registered_subject=self.registered_subject, is_consented=True).count() == 1 and
+                        self.household_member.household_structure.survey.survey_slug == 'bcpp-year-1')):
                     # In this case you know for certain that the survey year in household member dashboard represents exactly the
-                    # the settings.CURRENT_SURVEY in the system. Therefore just return the visit corresponding to 
+                    # the settings.CURRENT_SURVEY in the system. Therefore just return the visit corresponding to
                     # household member's set survey.
                     visit_code = self.generate_visit_code_from_member(self.household_member)
                     try:
                         self._appointment = Appointment.objects.get(
-                                            registered_subject=self.registered_subject,
-                                            visit_definition__code=visit_code)
+                            registered_subject=self.registered_subject,
+                            visit_definition__code=visit_code)
                     except Appointment.DoesNotExist:
                         self._appointment = None
                 else:
@@ -149,8 +147,9 @@ class SubjectDashboard(BaseSubjectDashboard):
     def generate_visit_code_from_member(self, household_member):
         survey_year = int(household_member.household_structure.survey.survey_slug.split('-')[2])
         if survey_year < 1:
-            raise TypeError('{} from household member {} is invalid.'.format(household_member.household_structure.survey.survey_slug,
-                                                                              household_member))
+            raise TypeError('{} from household member {} is invalid.'.format(
+                household_member.household_structure.survey.survey_slug,
+                household_member))
         return 'T{}'.format(survey_year - 1)
 
     @property
@@ -168,8 +167,8 @@ class SubjectDashboard(BaseSubjectDashboard):
         try:
             subject_referrals = SubjectReferral.objects.filter(
                 referral_appt_date__lt=datetime.today(),
-                subject_visit__household_member__internal_identifier=self.household_member.internal_identifier
-                ).exclude(subject_visit__household_member=self.household_member).order_by('-referral_appt_date')
+                subject_visit__household_member__internal_identifier=self.household_member.internal_identifier).exclude(
+                    subject_visit__household_member=self.household_member).order_by('-referral_appt_date')
             subject_referral = subject_referrals[0]
         except SubjectReferral.DoesNotExist:
             subject_referral = None
@@ -227,7 +226,8 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     def render_household_members_sidebar(self):
         """Renders to string the household members sidebar."""
-        return render_to_string('household_members_sidebar.html',
+        return render_to_string(
+            'household_members_sidebar.html',
             {'household_members': self.household_members,
              'household_dashboard_url': self.household_dashboard_url,
              'household_structure': self.household_structure})

@@ -31,7 +31,7 @@ class EnrollmentChecklistForm(BaseModelForm):
 
         if cleaned_data.get('study_participation') == 'No':
             if not cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
-                raise forms.ValidationError('Confirmation on study participation is not required.' 
+                raise forms.ValidationError('Confirmation on study participation is not required.'
                                             'The question is not applicable')
 
         if cleaned_data.get('study_participation') == 'Yes':

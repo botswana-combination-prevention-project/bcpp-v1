@@ -1,4 +1,5 @@
 from edc.subject.visit_tracking.admin import BaseVisitTrackingModelAdmin
+
 from ..models import ClinicVisit
 
 

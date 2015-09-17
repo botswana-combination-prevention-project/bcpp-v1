@@ -29,9 +29,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp',)
-    exclude = (
-               'first_partner_arm',
-               )
+    exclude = ('first_partner_arm', )
     radio_fields = {
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
@@ -84,9 +82,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
         'first_disclose',
         'first_condom_freq',
         'first_partner_cp',)
-    exclude = (
-               'second_partner_arm',
-               )
+    exclude = ('second_partner_arm', )
     radio_fields = {
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
@@ -143,9 +139,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         'first_condom_freq',
         'first_partner_cp',)
 
-    exclude = (
-               'third_partner_arm',
-               )
+    exclude = ('third_partner_arm', )
     radio_fields = {
         "third_last_sex": admin.VERTICAL,
         "first_first_sex": admin.VERTICAL,
@@ -172,7 +166,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
         " most recent sexual partner. It may be helpful for"
         " respondent to give initials or nickname, but DO NOT"
         " write down or otherwise record this information."
-        ),
+    ),
         _("<H5>Read to Participant</H5> I am now going to ask you about"
           "your second most recent sexual partner in the past"
           " 12 months, the one before the person we were just"

@@ -10,7 +10,9 @@ from edc.device.dispatch.classes import DispatchController
 from edc.device.dispatch.exceptions import DispatchError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
-from apps.bcpp_survey.models import Survey
+
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import BaseMemberStatusModel
 
 logger = logging.getLogger(__name__)
 
@@ -157,12 +159,12 @@ class BcppDispatchController(DispatchController):
                                     registered_subjects,
                                     plot,
                                     additional_base_model_class=RegisteredSubject,
-                                    )
+                                )
                                 self.dispatch_user_items_as_json(
                                     household_members,
                                     plot,
                                     ['household_structure_id'],
-                                    )
+                                )
                                 for household_member in household_members:
                                     # dispatch consents
                                     # self.dispatch_consent_instances('bcpp_subject', household_member.registered_subject, plot)
@@ -171,7 +173,7 @@ class BcppDispatchController(DispatchController):
                                         household_member.registered_subject,
                                         plot,
                                         fk_to_skip=['household_member_id', 'survey_id', 'registered_subject_id', 'study_site_id'],
-                                        )
+                                    )
                                     # dispatch scheduled instances. This will dispatch appointments first
                                     visit_app = None
                                     visit_model = None
@@ -189,25 +191,25 @@ class BcppDispatchController(DispatchController):
                                         survey.datetime_end,
                                         fk_to_skip=['visit_definition_id', 'study_site_id', 'registered_subject_id'],
                                         options={},
-                                        )
+                                    )
                                     self.dispatch_requisitions('bcpp_lab', household_member.registered_subject, plot)
                                     self.dispatch_member_status_instances(
                                         'bcpp_household_member',
                                         household_member.registered_subject,
                                         plot,
                                         options={},
-                                        )
+                                    )
                                     self.dispatch_lab_tracker_history(
                                         household_member.registered_subject,
                                         group_name='HIV',
-                                        )
+                                    )
                                     # self.dispatch_entry_buckets(household_member.registered_subject)#PROBLEM dispatch_entry_buckets missing
                                     self.dispatch_membership_form_inlines(
                                         'bcpp_household_member',
                                         household_member.registered_subject,
                                         plot,
                                         ['subject_absentee_id', 'subject_undecided_id', 'subject_other_id'],
-                                        )
+                                    )
                                 call_list = CallList.objects.filter(household_member__in=household_members)
                                 if call_list:
                                     self.dispatch_user_items_as_json(call_list, plot, ['household_structure_id', 'household_member_id'])
@@ -224,7 +226,7 @@ class BcppDispatchController(DispatchController):
                 self.dispatch_user_items_as_json(member_status, user_container)
 
     def get_member_status_models(self, app_label):
-        from apps.bcpp_household_member.models import BaseMemberStatusModel
+        # from apps.bcpp_household_member.models import BaseMemberStatusModel
         return self._get_models_by_base('bcpp_household_member', BaseMemberStatusModel)
 
     def get_inlines(self, app_name):
@@ -258,7 +260,6 @@ class BcppDispatchController(DispatchController):
                                 pass
 
     def get_visit_model_data(self, household_member):
-        #SubjectVisit instance and ClinicVisit instance are mutually exclusive for a household member
         if get_model('bcpp_subject', 'subjectvisit').objects.filter(household_member=household_member).exists():
             return ('bcpp_subject', 'subjectvisit')
         elif get_model('bcpp_clinic', 'clinicvisit').objects.filter(household_member=household_member).exists():

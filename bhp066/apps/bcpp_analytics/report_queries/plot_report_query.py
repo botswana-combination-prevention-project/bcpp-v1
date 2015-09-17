@@ -1,7 +1,7 @@
 from django.db.models import Count, Sum
 
-from apps.bcpp_household.constants import CONFIRMED
-from apps.bcpp_household.models.plot import Plot
+from bhp066.apps.bcpp_household.constants import CONFIRMED
+from bhp066.apps.bcpp_household.models.plot import Plot
 
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery

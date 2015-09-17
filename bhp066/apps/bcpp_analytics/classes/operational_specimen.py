@@ -2,7 +2,7 @@ import collections
 import datetime
 from edc.constants import NO
 
-from apps.bcpp_lab.models import SubjectRequisition
+from bhp066.apps.bcpp_lab.models import SubjectRequisition
 
 from .base_operational_report import BaseOperationalReport
 

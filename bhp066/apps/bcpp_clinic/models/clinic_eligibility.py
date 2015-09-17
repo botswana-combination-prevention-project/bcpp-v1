@@ -18,39 +18,39 @@ from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
-from apps.bcpp_clinic.models.clinic_refusal import ClinicRefusal
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household_member.constants import CLINIC_RBD
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_subject.models import SubjectConsent
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import BaseClinicHouseholdMemberManager
 
 from .clinic_consent import ClinicConsent
 from .clinic_enrollment_loss import ClinicEnrollmentLoss
 from .clinic_household_member import ClinicHouseholdMember
+from .clinic_refusal import ClinicRefusal
 
 
 class ClinicEligibility (BaseSyncUuidModel):
     """A model completed by the user that confirms and saves eligibility
     information for potential participant."""
 
-    household_member = models.OneToOneField(HouseholdMember,
+    household_member = models.OneToOneField(
+        HouseholdMember,
         null=True,
         blank=True,
         help_text='Created automatically and associated with the clinic plot.'
-        )
+    )
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
         validators=[
             datetime_not_before_study_start,
-            datetime_not_future,
-            ],
+            datetime_not_future],
         help_text='Date and time of collection'
-        )
+    )
 
     first_name = EncryptedFirstnameField(
         verbose_name='First name',
@@ -105,7 +105,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=("Use Omang, Passport number, driver's license number or Omang receipt number")
-        )
+    )
 
     identity_type = IdentityTypeField(
         null=True)
@@ -141,7 +141,7 @@ class ClinicEligibility (BaseSyncUuidModel):
             "since moving in has the participant typically "
             "spent more than 3 nights per month in this community. "
             "If 'NO (or don't want to answer)' STOP. Participant is not eligible."),
-        )
+    )
 
     literacy = models.CharField(
         verbose_name=_("Is the participant LITERATE?, or if ILLITERATE, is there a"
@@ -158,14 +158,14 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text=("Participant can only participate if NONE is selected. "
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
-        )
+    )
 
     hiv_status = models.CharField(
         verbose_name=_("Please tell me your current HIV status?"),
         max_length=30,
         choices=VERBALHIVRESULT_CHOICE,
         help_text='If not HIV(+) participant is not elgiible.'
-        )
+    )
 
     age_in_years = models.IntegerField(editable=False)
 
@@ -192,7 +192,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         editable=False,
         null=True,
         help_text='filled from clinic_consent'
-        )
+    )
 
     community = models.CharField(max_length=25, editable=False)
 
@@ -205,7 +205,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text=('A uuid to be added to clinic members to bypass the '
                    'unique constraint for firstname, initials, household_structure. '
                    'Always null for non-clinic members.'),
-        )
+    )
 
     history = AuditTrail()
 
@@ -282,7 +282,7 @@ class ClinicEligibility (BaseSyncUuidModel):
                 eligible_member=True,
                 eligible_subject=True,
                 additional_key=self.additional_key,
-                )
+            )
         if not self.household_member:
             # only set if self.household_member was None
             self.household_member = clinic_household_member

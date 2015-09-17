@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import AGREE_STRONGLY
+from bhp066.apps.bcpp.choices import AGREE_STRONGLY
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -20,7 +20,7 @@ class Stigma (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_shame_stigma = models.CharField(
         verbose_name=_("I would be ashamed if someone in my family had HIV."),
@@ -28,7 +28,7 @@ class Stigma (BaseScheduledVisitModel):
         choices=AGREE_STRONGLY,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     saliva_stigma = models.CharField(
         verbose_name=_("I fear that I could contract HIV if I come into contact"
@@ -37,7 +37,7 @@ class Stigma (BaseScheduledVisitModel):
         choices=AGREE_STRONGLY,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     teacher_stigma = models.CharField(
         verbose_name=_("I think that if a teacher is living with HIV but"
@@ -46,7 +46,7 @@ class Stigma (BaseScheduledVisitModel):
         choices=AGREE_STRONGLY,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     children_stigma = models.CharField(
         verbose_name=_("Children living with HIV should be able to attend school"
@@ -55,7 +55,7 @@ class Stigma (BaseScheduledVisitModel):
         choices=AGREE_STRONGLY,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

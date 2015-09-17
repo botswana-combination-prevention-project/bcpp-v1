@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_DWTA, YES_NO, VERBALHIVRESULT_CHOICE
+from bhp066.apps.bcpp.choices import YES_NO_DWTA, YES_NO, VERBALHIVRESULT_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

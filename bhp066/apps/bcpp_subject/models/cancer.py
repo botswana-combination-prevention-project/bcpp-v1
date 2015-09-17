@@ -5,7 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import DXCANCER_CHOICE
+from bhp066.apps.bcpp.choices import DXCANCER_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

@@ -1,10 +1,9 @@
 from django import forms
-from django.conf import settings
 
 from edc.base.form.forms import BaseModelForm
 from edc.map.classes import site_mappers
 
-from ..models import Plot, PlotLog, PlotLogEntry
+from ..models import Plot, PlotLog
 
 
 class PlotForm(BaseModelForm):
@@ -60,7 +59,7 @@ class PlotForm(BaseModelForm):
                                     forms.ValidationError)
 
         # Check for plot log entry completion before allowing plot confirmation
-        if (cleaned_data.get('gps_degrees_s') and 
+        if (cleaned_data.get('gps_degrees_s') and
                 cleaned_data.get('gps_minutes_s') and
                 cleaned_data.get('gps_degrees_e') and
                 cleaned_data.get('gps_minutes_e')):

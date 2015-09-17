@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from edc.map.classes.controller import site_mappers
 
 from ..choices import REFERRAL_CODES
-
 from ..utils import next_clinic_date
 
 

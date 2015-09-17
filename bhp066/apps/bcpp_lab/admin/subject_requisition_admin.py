@@ -3,7 +3,7 @@ from django.contrib import admin
 from edc.export.actions import export_as_csv_action
 from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
 
-from apps.bcpp_subject.models import SubjectVisit
+from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..actions import print_requisition_label
 from ..filters import PocViralLoadRequsitions

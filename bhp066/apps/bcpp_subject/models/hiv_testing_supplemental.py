@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_UNSURE
+from bhp066.apps.bcpp.choices import YES_NO_UNSURE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -19,7 +19,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
         choices=YES_NO_UNSURE,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     arvs_hiv_test = models.CharField(
         verbose_name=_("Do you believe that treatment for HIV with "
@@ -30,7 +30,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
         blank=True,
         choices=YES_NO_UNSURE,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

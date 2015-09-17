@@ -1,8 +1,10 @@
 from django.contrib import admin
-from ..models import Pima
-from ..forms import PimaForm
-from .subject_visit_model_admin import SubjectVisitModelAdmin
+
 from ..filters import Cd4ThreshHoldFilter
+from ..forms import PimaForm
+from ..models import Pima
+
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class PimaAdmin(SubjectVisitModelAdmin):
@@ -16,7 +18,7 @@ class PimaAdmin(SubjectVisitModelAdmin):
         'pima_id',
         'cd4_value',
         'cd4_datetime',
-        )
+    )
     list_filter = ('subject_visit', 'cd4_datetime', 'pima_id', Cd4ThreshHoldFilter,)
     list_display = ('subject_visit', 'cd4_datetime', 'cd4_value', 'pima_id')
     radio_fields = {

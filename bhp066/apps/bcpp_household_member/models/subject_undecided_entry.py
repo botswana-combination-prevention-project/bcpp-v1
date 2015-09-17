@@ -2,7 +2,7 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from ..choices import UNDECIDED_REASON
 from ..managers import SubjectUndecidedEntryManager

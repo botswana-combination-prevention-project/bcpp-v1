@@ -4,7 +4,7 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_household.classes import PlotIdentifier
 
 
 class SubjectUndecidedEntryManager(models.Manager):

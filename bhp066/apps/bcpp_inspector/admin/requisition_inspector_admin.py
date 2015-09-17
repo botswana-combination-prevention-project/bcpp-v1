@@ -1,7 +1,9 @@
 from django.contrib import admin
+
 from edc.device.inspector.admin import BaseInspectorAdmin
-from ..models import SubjectRequisitionInspector
+
 from ..actions import set_inspectors_as_confirmed
+from ..models import SubjectRequisitionInspector
 
 
 class RequisitionInspectorAdmin(BaseInspectorAdmin):

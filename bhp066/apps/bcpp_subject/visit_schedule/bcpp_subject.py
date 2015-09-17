@@ -8,8 +8,9 @@ from edc.subject.visit_schedule.classes import (VisitScheduleConfiguration, site
                                                 EntryTuple, MembershipFormTuple, ScheduleGroupTuple,
                                                 RequisitionPanelTuple)
 
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+
 from ..models import SubjectConsent
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 
 class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
@@ -21,13 +22,13 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
     # (name, model, visible)
     membership_forms = OrderedDict({
         'bcpp-survey': MembershipFormTuple('bcpp-survey', SubjectConsent, True),
-        })
+    })
 
     # schedule groups
     # (name, membership_form_name, grouping_key, comment)
     schedule_groups = OrderedDict({
         'group-1': ScheduleGroupTuple('group-1', 'bcpp-survey', None, None),
-        })
+    })
 
     # visit_schedule
     # see edc.subject.visit_schedule.models.visit_defintion
@@ -58,7 +59,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                                       NOT_REQUIRED, NOT_ADDITIONAL),
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB',
                                       NOT_REQUIRED, NOT_ADDITIONAL)
-                ),
+            ),
             'entries': [
                 #  order app_label model_name default_entry_status additional
                 EntryTuple(10L, u'bcpp_subject', u'subjectlocator', REQUIRED, NOT_ADDITIONAL),
@@ -97,7 +98,6 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(360L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(370L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(380L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
-#                 EntryTuple(390L, u'bcpp_subject', u'pimavl', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(400L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(410L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]},
@@ -127,7 +127,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                                       NOT_REQUIRED, NOT_ADDITIONAL),
                 RequisitionPanelTuple(30L, u'bcpp_lab', u'subjectrequisition', 'ELISA', 'TEST', 'WB',
                                       NOT_REQUIRED, NOT_ADDITIONAL)
-                ),
+            ),
             'entries': [
                 #  order app_label model_name default_entry_status additional
                 EntryTuple(10L, u'bcpp_subject', u'residencymobility', REQUIRED, NOT_ADDITIONAL),
@@ -165,7 +165,6 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(330L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(340L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(350L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
-#                 EntryTuple(360L, u'bcpp_subject', u'pimavl', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(370L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(380L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]}

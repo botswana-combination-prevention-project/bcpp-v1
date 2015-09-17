@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import WHYNOHIVTESTING_CHOICE
+from bhp066.apps.bcpp.choices import WHYNOHIVTESTING_CHOICE
 
 from .hiv_testing_supplemental import HivTestingSupplemental
 
@@ -20,7 +20,7 @@ class HivUntested (HivTestingSupplemental):
         null=True,
         choices=WHYNOHIVTESTING_CHOICE,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

@@ -1,7 +1,4 @@
-import csv
 from optparse import make_option
-from datetime import datetime
-import os
 
 from django.db.models import get_model
 from django.core.management.base import BaseCommand
@@ -18,12 +15,13 @@ class Command(BaseCommand):
     help = 'Export mapper data as a wiki table.'
     option_list = BaseCommand.option_list
     option_list += (
-        make_option('--wiki',
+        make_option(
+            '--wiki',
             action='store_true',
             dest='wiki',
             default=False,
             help=('Format output for mediawiki.')),
-        )
+    )
 
     def handle(self, *args, **options):
         if options['wiki']:

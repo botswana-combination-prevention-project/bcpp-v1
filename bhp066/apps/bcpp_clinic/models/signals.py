@@ -4,14 +4,14 @@ from datetime import datetime
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from apps.bcpp_household_member.constants import NOT_ELIGIBLE, CLINIC_RBD
+from bhp066.apps.bcpp_household_member.constants import NOT_ELIGIBLE, CLINIC_RBD
 
 from .clinic_consent import ClinicConsent
 from .clinic_eligibility import ClinicEligibility
 from .clinic_enrollment_loss import ClinicEnrollmentLoss
 from .clinic_refusal import ClinicRefusal
 from .clinic_refusal_history import ClinicRefusalHistory
-from apps.bcpp_clinic.models.clinic_household_member import ClinicHouseholdMember
+from .clinic_household_member import ClinicHouseholdMember
 
 
 @receiver(post_save, weak=False, dispatch_uid="clinic_eligibility_on_post_save")

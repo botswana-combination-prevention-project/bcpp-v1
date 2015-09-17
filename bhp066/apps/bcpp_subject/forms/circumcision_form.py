@@ -1,9 +1,9 @@
 from django import forms
 
+from ..constants import ANNUAL
 from ..models import Circumcision, Uncircumcised, Circumcised
 
 from .base_subject_model_form import BaseSubjectModelForm
-from apps.bcpp_subject.constants import ANNUAL
 
 
 class CircumcisionForm (BaseSubjectModelForm):
@@ -11,7 +11,7 @@ class CircumcisionForm (BaseSubjectModelForm):
     optional_labels = {
         ANNUAL: {'circumcised': (
             'Have you been circumcised since we last spoke with you?'),
-            }
+        }
     }
 
     class Meta:

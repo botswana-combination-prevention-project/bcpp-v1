@@ -8,9 +8,8 @@ from edc.audit.audit_trail import AuditTrail
 from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
-
 from ..choices import HOUSEHOLD_REFUSAL
+from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure

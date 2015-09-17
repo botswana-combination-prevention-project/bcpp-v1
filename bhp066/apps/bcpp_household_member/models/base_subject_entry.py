@@ -7,7 +7,7 @@ from edc.core.crypto_fields.fields import EncryptedCharField
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 from .base_member_status_model import BaseMemberStatusModel
 

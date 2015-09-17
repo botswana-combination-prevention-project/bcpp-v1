@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.utils import OperationalError
+
 from edc.core.identifier.classes import BaseIdentifier
 
 

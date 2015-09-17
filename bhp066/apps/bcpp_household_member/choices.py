@@ -23,7 +23,7 @@ FEMALE_RELATIONS = [
     ('daughter-in-law', 'Daughter-in-law'),
     ('sister-in-law', 'Sister-in-law'),
     ('housemaid', 'Housemaid'),
-    ]
+]
 
 ANY_RELATIONS = [
     ('partner', 'Partner'),
@@ -33,7 +33,7 @@ ANY_RELATIONS = [
     ('friend', 'Friend'),
     ('helper', 'Helper'),
     ('employee', 'Employee'),
-    ]
+]
 MALE_RELATIONS = [
     ('husband', 'Husband'),
     ('son', 'Son'),
@@ -48,7 +48,7 @@ MALE_RELATIONS = [
     ('father-in-law', 'Father-in-law'),
     ('son-in-law', 'Son-in-law'),
     ('brother-in-law', 'Brother in-law'),
-    ]
+]
 
 
 relations = FEMALE_RELATIONS + MALE_RELATIONS + ANY_RELATIONS
