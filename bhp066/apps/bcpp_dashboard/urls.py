@@ -1,8 +1,8 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
-from apps.bcpp_dashboard.classes import SubjectDashboard, HouseholdDashboard, ClinicDashboard
-from apps.bcpp_dashboard.views import ParticipationView
+from .classes import SubjectDashboard, HouseholdDashboard, ClinicDashboard
+from .views import ParticipationView
 
 urlpatterns = []
 
