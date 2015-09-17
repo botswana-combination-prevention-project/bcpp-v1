@@ -10,6 +10,7 @@ from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
+from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 from bhp066.apps.bcpp_household.models import Plot
@@ -20,7 +21,8 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, BaseDispatchSyncUuidModel):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator,
+                     TimePointStatusMixin, BaseDispatchSyncUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
