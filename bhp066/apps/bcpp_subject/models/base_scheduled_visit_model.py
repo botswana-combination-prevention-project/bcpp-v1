@@ -2,10 +2,11 @@ from datetime import datetime
 
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.data_manager.models import TimePointStatusMixin
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc_consent.models import RequiresConsentMixin
 
@@ -17,8 +18,9 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
 
+
 class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
-                              TimePointStatusMixin, BaseDispatchSyncUuidModel):
+                              TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 

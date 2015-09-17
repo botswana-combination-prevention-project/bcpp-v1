@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.base.model.validators import eligible_if_yes
 # from edc.subject.registration.models import BaseRegisteredSubjectModel

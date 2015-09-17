@@ -7,3 +7,6 @@ class ClinicOffStudyMixin(OffStudyMixin):
 
     def get_off_study_cls(self):
         return ClinicOffStudy
+
+    class Meta:
+        abstract = True

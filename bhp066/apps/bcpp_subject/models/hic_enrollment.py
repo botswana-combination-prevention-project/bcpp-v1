@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 

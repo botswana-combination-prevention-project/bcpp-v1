@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import get_model
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 
 from bhp066.apps.bcpp_household.models import BaseRepresentativeEligibility
 from bhp066.apps.bcpp_household.models import HouseholdStructure

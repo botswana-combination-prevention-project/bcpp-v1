@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.constants import CLOSED, OPEN, NEW
 from edc.device.sync.models import BaseSyncUuidModel
 

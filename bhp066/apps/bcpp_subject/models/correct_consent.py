@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 from edc.base.model.validators import (datetime_not_future, datetime_not_before_study_start,
                                        datetime_is_after_consent)
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER_UNDETERMINED
 from edc.choices.common import YES_NO, YES

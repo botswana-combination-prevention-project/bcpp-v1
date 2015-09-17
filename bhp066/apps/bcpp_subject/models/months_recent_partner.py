@@ -1,4 +1,4 @@
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.constants import NOT_APPLICABLE
 
 from django.db import models

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.subject.locator.models import BaseLocator
 from edc.choices.common import YES_NO
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber

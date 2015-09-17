@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import Max
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_is_future, date_is_future
 from edc.constants import NOT_APPLICABLE
 from edc.export.managers import ExportHistoryManager
@@ -28,7 +28,7 @@ REFERRAL_CLINIC_TYPES = (
 )
 
 
-class SubjectReferral(BaseScheduledVisitModel, ExportTrackingFieldsMixin):
+class SubjectReferral(ExportTrackingFieldsMixin, BaseScheduledVisitModel):
     """A model completed by the user to indicate a referral to care."""
 
     subject_referred = models.CharField(

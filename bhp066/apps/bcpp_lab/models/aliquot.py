@@ -2,6 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 
 from lis.specimen.lab_aliquot.models import BaseAliquot
+from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_subject.models import SubjectVisit
 
@@ -12,7 +13,7 @@ from .aliquot_type import AliquotType
 from .receive import Receive
 
 
-class Aliquot(BaseAliquot):
+class Aliquot(BaseAliquot, BaseSyncUuidModel):
 
     receive = models.ForeignKey(
         Receive,

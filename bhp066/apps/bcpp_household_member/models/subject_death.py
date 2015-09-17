@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.choices.common import DEATH_RELATIONSIP_TO_STUDY
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import date_not_before_study_start, date_not_future

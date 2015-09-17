@@ -1,6 +1,6 @@
 from django import forms
 
-from edc.subject.consent.forms import BaseSubjectConsentForm
+from edc_consent.forms import BaseSubjectConsentForm
 
 from ..models import ClinicConsent, ClinicEligibility
 
