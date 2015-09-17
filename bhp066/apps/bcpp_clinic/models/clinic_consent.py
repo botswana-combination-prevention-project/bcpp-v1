@@ -5,8 +5,8 @@ from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA, YES_NO_UNKNOWN
 from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
-from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
-from edc.subject.consent.mixins.bw import IdentityFieldsMixin
+from edc_consent.models.fields import ReviewFieldsMixin
+from edc_consent.models.fields.bw import IdentityFieldsMixin
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .clinic_consent_history import ClinicConsentHistory
@@ -90,18 +90,9 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
     class Meta:
         abstract = True
 
-# add Mixin fields to abstract class
-for field in IdentityFieldsMixin._meta.fields:
-    if field.name not in [fld.name for fld in BaseClinicConsent._meta.fields]:
-        field.contribute_to_class(BaseClinicConsent, field.name)
-
-for field in ReviewAndUnderstandingFieldsMixin._meta.fields:
-    if field.name not in [fld.name for fld in BaseClinicConsent._meta.fields]:
-        field.contribute_to_class(BaseClinicConsent, field.name)
-
 
 # declare concrete class
-class ClinicConsent(BaseClinicConsent):
+class ClinicConsent(ReviewFieldsMixin, IdentityFieldsMixin, BaseClinicConsent):
     """A model completed by the user to capture the ICF."""
     lab_identifier = models.CharField(
         verbose_name=("lab allocated identifier"),
