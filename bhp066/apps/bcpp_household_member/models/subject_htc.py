@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from edc.device.device.classes import Device
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.choices import YES_NO, YES_NO_NA
 from edc.core.bhp_string.classes import StringHelper
 from edc.constants import NOT_APPLICABLE

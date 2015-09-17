@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model, get_models, get_app, ForeignKey
-from edc.base.model.models import BaseListModel
+from edc_base.model.models import BaseListModel
 from django.db import transaction
 from edc.device.dispatch.classes import DispatchController
 from edc.device.dispatch.exceptions import DispatchError

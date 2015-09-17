@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import get_model
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 
 from ..managers import RepresentativeEligibilityManager
 

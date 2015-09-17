@@ -64,7 +64,7 @@ urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls
 
 urlpatterns += patterns(
     '',
-    (r'^section/analytics/', include('apps.bcpp_analytics.urls', namespace="analytics")),
+    (r'^section/analytics/', include('bhp066.apps.bcpp_analytics.urls', namespace="analytics")),
 )
 
 urlpatterns += patterns(
@@ -89,7 +89,7 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
-    url(r'^audit_trail/', include('edc.audit.urls'), name="audit_trail_url_name"),
+    url(r'^audit_trail/', include('edc_audit.urls'), name="audit_trail_url_name"),
 )
 
 urlpatterns += patterns(

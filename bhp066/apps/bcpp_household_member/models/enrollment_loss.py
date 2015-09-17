@@ -1,6 +1,7 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.base.model.validators import dob_not_future
 
@@ -13,7 +14,7 @@ from ..managers import EnrollmentLossManager
 from .household_member import HouseholdMember
 
 
-class EnrollmentLoss(BaseDispatchSyncUuidModel):
+class EnrollmentLoss(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A system model auto created that captures the reason for a present BHS eligible member
     who passes BHS eligibility but is not participating in the BHS."""
     household_member = models.OneToOneField(HouseholdMember)

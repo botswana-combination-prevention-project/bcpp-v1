@@ -6,7 +6,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA, BLOCK_CONTINUE
@@ -24,7 +25,7 @@ from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 from .household_member import HouseholdMember
 
 
-class EnrollmentChecklist(BaseDispatchSyncUuidModel):
+class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
     household_member = models.OneToOneField(HouseholdMember)

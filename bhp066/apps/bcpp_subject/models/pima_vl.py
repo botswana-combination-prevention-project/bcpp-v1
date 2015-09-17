@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 
 from django.core.validators import MinValueValidator, RegexValidator
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
@@ -15,6 +15,7 @@ from edc_quota.client.models import QuotaMixin, QuotaManager
 from edc_consent.models import RequiresConsentMixin
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
 from bhp066.apps.bcpp_household.models import Plot
@@ -26,7 +27,8 @@ from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin, BaseDispatchSyncUuidModel):
+class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin,
+              BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
 

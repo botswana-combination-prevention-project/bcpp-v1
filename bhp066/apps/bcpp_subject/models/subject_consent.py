@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc.constants import NOT_APPLICABLE

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from apps.bcpp_list.models import ReferredFor, ReferredTo
 from .base_scheduled_model import BaseScheduledModel
 

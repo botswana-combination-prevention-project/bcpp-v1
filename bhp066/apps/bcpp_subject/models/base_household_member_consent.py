@@ -7,12 +7,13 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject
 from edc_consent.models import BaseConsent
+from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseDispatchSyncUuidModel):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 

@@ -11,7 +11,8 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.base.model.fields import OtherCharField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc.constants import NOT_APPLICABLE, ALIVE, DEAD
@@ -35,7 +36,7 @@ from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DE
 from ..managers import HouseholdMemberManager
 
 
-class HouseholdMember(BaseDispatchSyncUuidModel):
+class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to represent an enumerated household member."""
     household_structure = models.ForeignKey(HouseholdStructure, null=True, blank=False)
 

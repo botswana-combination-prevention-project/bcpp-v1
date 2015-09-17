@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.fields import InitialsField
 from edc.choices.common import YES_NO
 from edc.entry_meta_data.managers import EntryMetaDataManager

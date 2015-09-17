@@ -1,5 +1,5 @@
 from django.db.models import get_model
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.subject.off_study.models import BaseOffStudy
 
 

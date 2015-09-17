@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.template.defaultfilters import slugify
 
-from edc.base.model.models import BaseUuidModel
+from edc_base.model.models import BaseUuidModel
 
 from ..managers import SurveyManager
 

@@ -7,7 +7,8 @@ from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError, transaction, DatabaseError
 from django.utils.translation import ugettext as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc.core.crypto_fields.fields import (
     EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
@@ -29,7 +30,7 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(BaseDispatchSyncUuidModel):
+class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user (and initially by the system) to represent a Plot
     in the community."""
     plot_identifier = models.CharField(

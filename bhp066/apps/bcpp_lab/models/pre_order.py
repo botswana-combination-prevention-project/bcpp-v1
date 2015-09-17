@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_subject.constants import NEW, PENDING, POC_VIRAL_LOAD

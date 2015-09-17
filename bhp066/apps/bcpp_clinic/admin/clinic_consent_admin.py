@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.subject.consent.admin import BaseConsentModelAdmin
+from edc_consent.admin import BaseConsentModelAdmin
 
 from ..forms import ClinicConsentForm
 from ..models import ClinicConsent

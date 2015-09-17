@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 

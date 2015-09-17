@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 
-from bhp066.apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE,
-                               FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE)
+from bhp066.apps.bcpp.choices import (
+    YES_NO_DWTA, YES_NO_UNSURE, REASONCIRC_CHOICE,
+    FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE)
 
 from .base_circumcision import BaseCircumcision
 
