@@ -3,7 +3,7 @@ from django.db import models
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from ..classes import PlotIdentifier
 
 
 class PlotManager(models.Manager):
@@ -15,8 +15,8 @@ class PlotManager(models.Manager):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
             community = site_mappers.current_mapper.map_area
             if PlotIdentifier.get_notebook_plot_lists():
-                return super(PlotManager, self).get_queryset().filter(community=community,
-                                                    plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
+                return super(PlotManager, self).get_queryset().filter(
+                    community=community, plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
             else:
                 return super(PlotManager, self).get_queryset().filter(community=community)
         return super(PlotManager, self).get_queryset()

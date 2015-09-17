@@ -4,7 +4,7 @@ import os
 
 from django.core.management.base import BaseCommand
 
-from apps.bcpp_household.models import Plot, Household
+from bhp066.apps.bcpp_household.models import Plot, Household
 
 
 class Command(BaseCommand):

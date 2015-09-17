@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.base.modeladmin.admin import BaseModelAdmin
 
-from apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from ..forms import EnrollmentChecklistForm
 from ..models import EnrollmentChecklist, HouseholdMember
@@ -33,7 +33,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "household_residency",
         "literacy",
         "guardian",
-        )
+    )
 
     list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', )
 

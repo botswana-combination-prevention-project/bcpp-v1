@@ -1,8 +1,9 @@
 from django.contrib import admin
 from edc.base.modeladmin.admin import BaseModelAdmin
-from apps.bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith, NeighbourhoodProblems, CircumcisionBenefits,
-                                   FamilyPlanning, MedicalCareAccess, PartnerResidency, HeartDisease, Diagnoses, Religion,
-                                   EthnicGroups, StiIllnesses, ResidentMostLikely)
+from bhp066.apps.bcpp_list.models import (
+    ElectricalAppliances, TransportMode, LiveWith, NeighbourhoodProblems, CircumcisionBenefits,
+    FamilyPlanning, MedicalCareAccess, PartnerResidency, HeartDisease, Diagnoses, Religion,
+    EthnicGroups, StiIllnesses, ResidentMostLikely)
 
 
 class ElectricalAppliancesAdmin(BaseModelAdmin):

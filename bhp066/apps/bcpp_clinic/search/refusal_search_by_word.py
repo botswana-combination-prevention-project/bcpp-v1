@@ -12,7 +12,5 @@ class RefusalSearchByWord(BaseSearchByWord):
 
     def contribute_to_context(self, context):
         context = super(BaseSearchByWord, self).contribute_to_context(context)
-        context.update({
-            'refusal_dashboard_url': 'refusal_dashboard_url'},
-             clinic_refusal_meta=ClinicRefusal._meta,)
+        context.update({'refusal_dashboard_url': 'refusal_dashboard_url'}, clinic_refusal_meta=ClinicRefusal._meta,)
         return context

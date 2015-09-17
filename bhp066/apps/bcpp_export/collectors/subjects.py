@@ -1,5 +1,5 @@
-from apps.bcpp_clinic.models import ClinicConsent
-from apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_clinic.models import ClinicConsent
+from bhp066.apps.bcpp_subject.models import SubjectConsent
 
 from ..classes import Subject
 

@@ -9,7 +9,6 @@ class BaseHouseholdMemberForm(BaseModelForm):
     def clean(self):
 
         cleaned_data = super(BaseHouseholdMemberForm, self).clean()
-        # check if dispatched
         household_structure = cleaned_data.get('household_structure', None)
         if household_structure:
             if household_structure.is_dispatched_as_item():

@@ -27,7 +27,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         help_text="",
         blank=True,
         null=True,
-        )
+    )
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
@@ -35,7 +35,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
                        " individual (including next of kin) with whom the study team can get"
                        " in contact with?"),
         help_text="",
-        )
+    )
 
     alt_contact_name = EncryptedCharField(
         max_length=35,
@@ -43,7 +43,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         help_text="include first name and surname",
         blank=True,
         null=True,
-        )
+    )
 
     alt_contact_rel = EncryptedCharField(
         max_length=35,
@@ -51,7 +51,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         blank=True,
         null=True,
         help_text="",
-        )
+    )
     alt_contact_cell = EncryptedCharField(
         max_length=8,
         verbose_name=_("Cell number"),
@@ -59,7 +59,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     other_alt_contact_cell = EncryptedCharField(
         max_length=8,
@@ -68,7 +68,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     alt_contact_tel = EncryptedCharField(
         max_length=8,
@@ -77,7 +77,7 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     export_history = ExportHistoryManager()
 

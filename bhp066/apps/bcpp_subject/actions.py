@@ -4,16 +4,16 @@ from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.contrib import messages
 
-from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
+from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
 from edc.export.classes import ExportAsCsv
 
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_subject.choices import REFERRAL_CODES
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.exceptions import SurveyValueError
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.exceptions import SurveyValueError
 
+from .choices import REFERRAL_CODES
 from .models import SubjectReferral, CallLog, SubjectLocator
 from .utils import update_referrals_for_hic, update_call_list, add_to_call_list
 

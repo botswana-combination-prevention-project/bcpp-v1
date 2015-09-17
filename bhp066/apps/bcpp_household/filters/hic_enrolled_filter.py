@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
-from apps.bcpp_household.models.household import Household
+
+from ..models import Household
 
 
 class HicEnrolledFilter(SimpleListFilter):
@@ -14,8 +15,8 @@ class HicEnrolledFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         HicEnrollment = models.get_model('bcpp_subject', 'HicEnrollment')
-        Household = models.get_model('bcpp_household', 'Household')
-        Plot = models.get_model('bcpp_household', 'Plot')
+        # Household = models.get_model('bcpp_household', 'Household')
+        # Plot = models.get_model('bcpp_household', 'Plot')
         not_enrolled = []
         enrolled = []
         if isinstance(queryset.all()[0], Household):

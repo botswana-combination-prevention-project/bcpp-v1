@@ -2,12 +2,11 @@ from django.contrib import admin
 
 from edc.export.actions import export_as_csv_action
 from edc.base.modeladmin.admin import BaseModelAdmin
-
 from lis.labeling.actions import print_aliquot_label
 
 from ..actions import create_order
-from ..models import Aliquot
 from ..filters import AliquotCommunityFilter
+from ..models import Aliquot
 
 
 class AliquotAdmin(BaseModelAdmin):

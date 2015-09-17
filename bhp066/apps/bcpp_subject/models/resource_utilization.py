@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_REFUSED
+from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -19,7 +19,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
                        " Not including any visits for which you were hospitalized. "),
         max_length=17,
         choices=YES_NO_REFUSED,
-        )
+    )
     hospitalized = models.IntegerField(
         verbose_name=_("In the last 3 months, how many times were you admitted to hospital or"
                        " other types of inpatient care and stayed one or more nights? This could be"
@@ -27,7 +27,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
         max_length=2,
         null=True,
         help_text="",
-        )
+    )
     money_spent = models.DecimalField(
         verbose_name=_("In the last 3 months, how much money in total have you spent on "
                        "medicines for yourself?"),
@@ -37,7 +37,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(1000000000)],
         help_text="",
-        )
+    )
     medical_cover = models.CharField(
         verbose_name=_("Were any of these costs for medicines or special foods covered"
                        " by anyone else, such as your medical aid or employer? "),
@@ -46,7 +46,7 @@ class ResourceUtilization (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

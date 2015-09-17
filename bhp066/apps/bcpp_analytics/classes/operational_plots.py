@@ -3,9 +3,10 @@ import datetime
 from django.db.models import Count
 from edc.device.dispatch.models import DispatchContainerRegister
 
-from apps.bcpp_household.constants import (CONFIRMED, UNCONFIRMED, INACCESSIBLE, NON_RESIDENTIAL,
-                                           RESIDENTIAL_NOT_HABITABLE, RESIDENTIAL_HABITABLE)
-from apps.bcpp_household.models import Plot, PlotLogEntry, HouseholdStructure
+from bhp066.apps.bcpp_household.constants import (
+    CONFIRMED, UNCONFIRMED, INACCESSIBLE, NON_RESIDENTIAL,
+    RESIDENTIAL_NOT_HABITABLE, RESIDENTIAL_HABITABLE)
+from bhp066.apps.bcpp_household.models import Plot, PlotLogEntry, HouseholdStructure
 
 from .base_operational_report import BaseOperationalReport
 

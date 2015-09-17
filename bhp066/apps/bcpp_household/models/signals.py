@@ -1,9 +1,12 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..classes import HouseholdIdentifier
+from ..constants import (ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
+                         REFUSED_ENUMERATION, INACCESSIBLE, SEASONALLY_NEARLY_ALWAYS_OCCUPIED,
+                         UNKNOWN_OCCUPIED)
 
 from .household import Household
 from .household_refusal import HouseholdRefusal
@@ -14,10 +17,6 @@ from .household_structure import HouseholdStructure
 from .increase_plot_radius import IncreasePlotRadius
 from .plot import Plot
 from .plot_log import PlotLogEntry
-
-from ..constants import (ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                         REFUSED_ENUMERATION, INACCESSIBLE, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, 
-                         UNKNOWN_OCCUPIED)
 
 
 @receiver(post_save, weak=False, dispatch_uid="household_on_post_save")
@@ -151,8 +150,7 @@ def household_log_entry_on_post_save(sender, instance, raw, created, using, **kw
             # update enumeration attempts and failed enumeration attempts
             if (not instance.household_log.household_structure.enumerated):
                 enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(
-                    household_log__household_structure=instance.household_log.household_structure,
-                    ).count()
+                    household_log__household_structure=instance.household_log.household_structure).count()
                 failed_enumeration_attempts = HouseholdLogEntry.objects.using(using).filter(
                     household_log__household_structure=instance.household_log.household_structure,
                     household_status__in=[ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,

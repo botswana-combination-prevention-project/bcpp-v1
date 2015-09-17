@@ -20,7 +20,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
         max_length=7,
         choices=YES_NO_UNKNOWN,
         help_text="",
-        )
+    )
 
     legal_marriage = models.CharField(
         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
@@ -30,7 +30,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
         blank=False,
         default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.",
-        )
+    )
 
     marriage_certificate = models.CharField(
         verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
@@ -40,7 +40,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
         blank=False,
         default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.",
-        )
+    )
 
     marriage_certificate_no = models.CharField(
         verbose_name=("What is the marriage certificate number?"),
@@ -48,7 +48,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
         null=True,
         blank=True,
         help_text="e.g. 000/YYYY",
-        )
+    )
 
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
@@ -68,7 +68,7 @@ class BaseClinicConsent(ClinicOffStudyMixin, BaseHouseholdMemberConsent):
         null=True,
         blank=False,
         help_text="If no, INELIGIBLE",
-        )
+    )
 
     community = models.CharField(max_length=25, editable=False)
 
@@ -109,7 +109,7 @@ class ClinicConsent(BaseClinicConsent):
         null=True,
         blank=True,
         help_text="if known."
-        )
+    )
 
     htc_identifier = models.CharField(
         verbose_name=("HTC Identifier"),
@@ -117,7 +117,7 @@ class ClinicConsent(BaseClinicConsent):
         null=True,
         blank=True,
         help_text="if known."
-        )
+    )
 
     pims_identifier = models.CharField(
         verbose_name=("PIMS identifier"),
@@ -125,7 +125,7 @@ class ClinicConsent(BaseClinicConsent):
         null=True,
         blank=True,
         help_text="if known."
-        )
+    )
 
     history = AuditTrail()
 

@@ -20,4 +20,4 @@ def return_households(request, **kwargs):
     return render(request, 'household_return.html', {
         'producer': container_register.producer,
         'dispatched_households': dispatched_households,
-        })
+    })

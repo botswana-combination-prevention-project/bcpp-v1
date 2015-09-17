@@ -56,7 +56,7 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
         'hic',
         'user_modified',
         'hostname_modified',
-        )
+    )
     search_fields = (
         'household_structure__household__plot__plot_identifier',
         'household_structure__household__household_identifier',
@@ -65,7 +65,7 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
         'id',)
     radio_fields = {
         'survey': admin.VERTICAL,
-        }
+    }
     readonly_fields = ('household_structure', 'survey', )
 
 admin.site.register(HouseholdWorkList, HouseholdWorkListAdmin)

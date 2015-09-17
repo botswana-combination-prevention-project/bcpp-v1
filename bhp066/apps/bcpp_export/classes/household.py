@@ -1,8 +1,10 @@
-from apps.bcpp_household.models import (HouseholdStructure, HouseholdLogEntry, HouseholdRefusal,
-                                        HouseholdAssessment, Household as HouseholdModel)
-from apps.bcpp_household.choices import HH_STATUS
-from apps.bcpp_household.constants import (NEARLY_ALWAYS_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, 
-                                           UNKNOWN_OCCUPIED)
+from bhp066.apps.bcpp_household.models import (
+    HouseholdStructure, HouseholdLogEntry, HouseholdRefusal,
+    HouseholdAssessment, Household as HouseholdModel)
+from bhp066.apps.bcpp_household.choices import HH_STATUS
+from bhp066.apps.bcpp_household.constants import (
+    NEARLY_ALWAYS_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, 
+    UNKNOWN_OCCUPIED)
 
 from .base import Base
 from .plot import Plot

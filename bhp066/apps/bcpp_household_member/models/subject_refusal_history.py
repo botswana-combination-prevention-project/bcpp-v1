@@ -7,8 +7,8 @@ from edc.base.model.fields import OtherCharField
 
 from edc.base.model.models import BaseUuidModel
 
-from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import SubjectRefusalHistoryManager
 

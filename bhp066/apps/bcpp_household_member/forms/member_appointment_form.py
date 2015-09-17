@@ -1,7 +1,3 @@
-from django import forms
-from datetime import date
-from dateutil.relativedelta import relativedelta
-
 from edc.base.form.forms import BaseModelForm
 
 from ..models import MemberAppointment

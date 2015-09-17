@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_REFUSED
+from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 
 from ..choices import NO_MEDICALCARE_REASON, HEALTH_CARE_PLACE, CARE_REGULARITY, DOCTOR_VISITS
 
@@ -20,7 +20,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
-        )
+    )
     reason_no_care = models.CharField(
         verbose_name=_("If you have never received HIV related medical/clinical care, why not? "),
         max_length=115,
@@ -28,7 +28,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         blank=True,
         choices=NO_MEDICALCARE_REASON,
         help_text="",
-        )
+    )
     place_care_received = models.CharField(
         verbose_name=_("Where do you receive most of your HIV related health care? "),
         max_length=40,
@@ -37,7 +37,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         blank=False,
         choices=HEALTH_CARE_PLACE,
         help_text="",
-        )
+    )
     care_regularity = models.CharField(
         verbose_name=_("In the past 3 months, how many times did you have clinic visits to see a health care worker,"
                        " a nurse, or doctor? "),
@@ -47,7 +47,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         blank=False,
         default='0 times',
         help_text="Do not include medicine re-fill visits.",
-        )
+    )
     doctor_visits = models.CharField(
         verbose_name=_("In the last 3 months, how often did someone take you to the doctor? "),
         max_length=32,
@@ -56,7 +56,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         blank=False,
         default='never',
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

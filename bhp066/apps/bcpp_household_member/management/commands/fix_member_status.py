@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db.models import get_model
-from apps.bcpp_household_member.constants import ANNUAL, BHS
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bhp066.apps.bcpp_household_member.constants import ANNUAL, BHS
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 
 class Command(BaseCommand):

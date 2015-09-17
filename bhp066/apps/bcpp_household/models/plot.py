@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -21,8 +21,6 @@ from ..classes import PlotIdentifier
 from ..constants import CONFIRMED, UNCONFIRMED, RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL
 from ..managers import PlotManager
 from ..exceptions import AlreadyReplaced
-
-from .household_identifier_history import HouseholdIdentifierHistory
 
 
 def is_valid_community(self, value):
@@ -330,7 +328,7 @@ class Plot(BaseDispatchSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         if instance.pk:
-            for i in range(0, count):
+            for _ in range(0, count):
                 Household = models.get_model('bcpp_household', 'Household')
                 Household.objects.create(**{
                     'plot': instance,
@@ -378,8 +376,8 @@ class Plot(BaseDispatchSyncUuidModel):
             household can be deleted. """
             allowed_to_delete = []
             for hh in Household.objects.using(using).filter(plot=instance):
-                if HouseholdLogEntry.objects.filter(household_log__household_structure__household=hh).exists()\
-                    or hh in allowed_to_delete:
+                if (HouseholdLogEntry.objects.filter(
+                        household_log__household_structure__household=hh).exists() or hh in allowed_to_delete):
                     continue
                 allowed_to_delete.append(hh)
             return allowed_to_delete
@@ -387,8 +385,8 @@ class Plot(BaseDispatchSyncUuidModel):
         def delete_confirmed_household(instance, existing_no):
             """ Deletes required number of households. """
             def validate_number_to_delete(instance, existing_no):
-                if existing_no in [0, 1] or instance.household_count == existing_no or instance.household_count >\
-                    existing_no or instance.household_count == 0:
+                if (existing_no in [0, 1] or instance.household_count == existing_no or
+                        instance.household_count > existing_no or instance.household_count == 0):
                     return False
                 else:
                     if household_valid_to_delete(instance):
@@ -415,13 +413,12 @@ class Plot(BaseDispatchSyncUuidModel):
                         return False
                 except IntegrityError:
                     return False
-                except  DatabaseError:
+                except DatabaseError:
                     return False
 
             def delete_household(instance, existing_no):
                 try:
-                    delete_no = validate_number_to_delete(instance, existing_no)\
-                                                if validate_number_to_delete(instance, existing_no) else 0
+                    delete_no = validate_number_to_delete(instance, existing_no) if validate_number_to_delete(instance, existing_no) else 0
                     if not delete_no == 0:
                         deletes = household_valid_to_delete(instance)[:delete_no]
                         hh = HouseholdStructure.objects.filter(household__in=deletes)
@@ -436,7 +433,7 @@ class Plot(BaseDispatchSyncUuidModel):
                         return False
                 except IntegrityError:
                     return False
-                except  DatabaseError:
+                except DatabaseError:
                     return False
             if instance.status in [RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
                 return delete_households_for_non_residential(instance, existing_no)
@@ -475,7 +472,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def validate_plot_accessible(self):
-        if self.plot_log_entry and (self.plot_inaccessible == False) and self.plot_log_entry.log_status == ACCESSIBLE:
+        if self.plot_log_entry and (self.plot_inaccessible is False) and self.plot_log_entry.log_status == ACCESSIBLE:
             return True
         return False
 
@@ -503,7 +500,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return False
 
     def get_contained_households(self):
-        from apps.bcpp_household.models import Household
+        from bhp066.apps.bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 
@@ -645,8 +642,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def plot_log_entry(self):
         PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
         try:
-            return  PlotLogEntry.objects.filter(
-                                plot_log__plot__id=self.id).latest('report_datetime')
+            return PlotLogEntry.objects.filter(plot_log__plot__id=self.id).latest('report_datetime')
         except PlotLogEntry.DoesNotExist:
             print "PlotLogEntry.DoesNotExist"
 

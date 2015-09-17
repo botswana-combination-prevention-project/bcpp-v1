@@ -7,7 +7,7 @@ from edc.base.model.validators import date_not_future, date_not_before_study_sta
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..managers import BaseClinicHouseholdMemberManager
 

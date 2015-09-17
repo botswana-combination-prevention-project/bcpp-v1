@@ -1,4 +1,4 @@
-from apps.bcpp_household.models import Plot as PlotModel
+from bhp066.apps.bcpp_household.models import Plot as PlotModel
 
 from ..classes import Plot
 

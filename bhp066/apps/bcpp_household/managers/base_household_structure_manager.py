@@ -3,7 +3,7 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from ..classes import PlotIdentifier
 
 
 class BaseHouseholdStructureManager(models.Manager):

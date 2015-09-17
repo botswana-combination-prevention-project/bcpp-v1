@@ -2,8 +2,8 @@ from django.contrib import admin
 
 from edc.subject.appointment.admin import BaseAppointmentModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_lab.models import SubjectRequisition
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_lab.models import SubjectRequisition
 
 from ..forms import SubjectVisitForm
 from ..models import SubjectVisit
@@ -31,21 +31,21 @@ class SubjectVisitAdmin(BaseAppointmentModelAdmin):
         'household_member__household_structure__household__community',
         'appointment__appt_status',
         'appointment__visit_definition__code',
-        )
+    )
 
     search_fields = (
         'appointment__registered_subject__subject_identifier',
         'appointment__registered_subject__registration_identifier',
         'appointment__registered_subject__first_name',
         'appointment__registered_subject__identity',
-        )
+    )
 
     fields = (
         'household_member',
         "appointment",
         "report_datetime",
         "comments"
-        )
+    )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

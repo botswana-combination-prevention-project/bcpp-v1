@@ -4,7 +4,7 @@ from django.conf import settings
 from edc.map.classes import site_mappers
 from edc.subject.consent.forms import BaseConsentedModelForm
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
 

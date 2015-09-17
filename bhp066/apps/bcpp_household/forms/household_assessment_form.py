@@ -1,5 +1,5 @@
 from django import forms
-# from django.conf import settings
+
 from edc.base.form.forms import BaseModelForm
 
 from ..models import HouseholdAssessment

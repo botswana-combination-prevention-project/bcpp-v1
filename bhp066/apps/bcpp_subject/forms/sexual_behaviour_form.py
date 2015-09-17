@@ -1,5 +1,4 @@
 from django import forms
-from django.forms.util import ErrorList
 
 from ..models import SexualBehaviour
 
@@ -21,9 +20,8 @@ class SexualBehaviourForm (BaseSubjectModelForm):
             'more_sex': (
                 'Since we spoke with you at our last visit, did you have sex with '
                 'somebody living outside of the community? '),
-            }
         }
-    }
+    }}
 
     def clean(self):
         cleaned_data = super(SexualBehaviourForm, self).clean()
@@ -60,8 +58,7 @@ class SexualBehaviourForm (BaseSubjectModelForm):
                 'drink alcohol before sex last time?')
 
         if cleaned_data.get('last_year_partners') > cleaned_data.get('lifetime_sex_partners'):
-            raise forms.ValidationError('Number of partners in the past 12months CANNOT '
-                           -             'exceed number of life time partners')
+            raise forms.ValidationError('Number of partners in the past 12months CANNOT exceed number of life time partners')
         return cleaned_data
 
     def validate_no_sex(self, field, cleaned_data):

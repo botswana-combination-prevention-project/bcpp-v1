@@ -8,8 +8,8 @@ from edc.subject.entry.models import LabEntry, Entry
 from edc.constants import NO
 from edc.map.classes import site_mappers
 
-from apps.bcpp_clinic.models import ClinicVisit
-from apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_clinic.models import ClinicVisit
+from bhp066.apps.bcpp.choices import COMMUNITIES
 
 from ..managers import ClinicRequisitionManager
 
@@ -84,18 +84,20 @@ class ClinicRequisition(BaseRequisition):
                                                                    lab_entry=lab_entry,
                                                                    registered_subject=self.clinic_visit.appointment.registered_subject)
         if requisition_meta_data:
-            requisition_meta_data = RequisitionMetaData.objects.get(appointment=self.clinic_visit.appointment,
-                                                                   lab_entry=lab_entry,
-                                                                   registered_subject=self.clinic_visit.appointment.registered_subject)
+            requisition_meta_data = RequisitionMetaData.objects.get(
+                appointment=self.clinic_visit.appointment,
+                lab_entry=lab_entry,
+                registered_subject=self.clinic_visit.appointment.registered_subject)
             if requisition_meta_data.entry_status == 'KEYED':
                 entry = Entry.objects.get(model_name='clinicvlresult', visit_definition_id=self.clinic_visit.appointment.visit_definition_id)
                 scheduled_meta_data = ScheduledEntryMetaData.objects.filter(appointment=self.clinic_visit.appointment,
                                                                             entry=entry,
                                                                             registered_subject=self.clinic_visit.appointment.registered_subject)
                 if not scheduled_meta_data:
-                    scheduled_meta_data = ScheduledEntryMetaData.objects.create(appointment=self.clinic_visit.appointment,
-                                                                            entry=entry,
-                                                                            registered_subject=self.clinic_visit.appointment.registered_subject)
+                    scheduled_meta_data = ScheduledEntryMetaData.objects.create(
+                        appointment=self.clinic_visit.appointment,
+                        entry=entry,
+                        registered_subject=self.clinic_visit.appointment.registered_subject)
                 else:
                     scheduled_meta_data = scheduled_meta_data[0]
                 scheduled_meta_data.entry_status = 'NEW'
@@ -104,13 +106,15 @@ class ClinicRequisition(BaseRequisition):
 
     def requisition_not_drawn(self):
             requisition = LabEntry.objects.get(requisition_panel__name='Clinic Viral Load', app_label='bcpp_lab', model_name='clinicrequisition')
-            requisition_meta = RequisitionMetaData.objects.filter(appointment=self.clinic_visit.appointment,
-                                                   lab_entry=requisition,
-                                                   registered_subject=self.clinic_visit.appointment.registered_subject)
+            requisition_meta = RequisitionMetaData.objects.filter(
+                appointment=self.clinic_visit.appointment,
+                lab_entry=requisition,
+                registered_subject=self.clinic_visit.appointment.registered_subject)
             if requisition_meta:
-                requisition_meta = RequisitionMetaData.objects.get(appointment=self.clinic_visit.appointment,
-                                                       lab_entry=requisition,
-                                                       registered_subject=self.clinic_visit.appointment.registered_subject)
+                requisition_meta = RequisitionMetaData.objects.get(
+                    appointment=self.clinic_visit.appointment,
+                    lab_entry=requisition,
+                    registered_subject=self.clinic_visit.appointment.registered_subject)
                 if requisition_meta.entry_status == 'KEYED':
                     if self.is_drawn == NO:
                         get_scheduled_form = 'clinicvlresult'

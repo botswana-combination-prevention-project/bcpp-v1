@@ -32,7 +32,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'exported',
         'exported_datetime',
         'in_clinic_flag',
-        ]
+    ]
 
     list_filter = ['exported', 'in_clinic_flag', SubjectReferralIsReferredListFilter, SubjectCommunityListFilter, 'referral_code', 'report_datetime', 'referral_appt_date', 'exported_datetime', 'hostname_created']
 
@@ -43,13 +43,13 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
         'scheduled_appt_date',
         'referral_appt_comment',
         'comment'
-        )
+    )
 
     radio_fields = {
         "referral_code": admin.VERTICAL,
         "subject_referred": admin.VERTICAL,
         "referral_appt_comment": admin.VERTICAL,
-        }
+    }
 
     def get_actions(self, request):
         actions = super(SubjectReferralAdmin, self).get_actions(request)
@@ -69,7 +69,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
                      'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
                      })
-                ),
+            ),
             'export_as_csv_action',
             'Export Referrals to CSV')
         actions['export_referrals_for_cdc_action'] = (
@@ -101,7 +101,7 @@ class SubjectReferralAdmin(SubjectVisitModelAdmin):
                      'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
                      'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
                      })
-                ),
+            ),
             'export_referrals_for_cdc_action',
             'Export Referrals in CDC format (Manual)')
         return actions

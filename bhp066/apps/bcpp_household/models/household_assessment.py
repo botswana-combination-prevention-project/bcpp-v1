@@ -2,13 +2,13 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc.audit.audit_trail import AuditTrail
-from edc.choices import YES_NO, YES_NO_DONT_KNOW
+from edc.choices import YES_NO_DONT_KNOW
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_household.managers import HouseholdAssessmentManager
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from ..managers import HouseholdAssessmentManager
+from ..exceptions import AlreadyReplaced
 
-from ..choices import INELIGIBLE_REASON, RESIDENT_LAST_SEEN
+from ..choices import RESIDENT_LAST_SEEN
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
@@ -20,13 +20,13 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
     household_structure = models.OneToOneField(HouseholdStructure)
 
     potential_eligibles = models.CharField(
-        verbose_name=('Research Assistant: From speaking with the respondent, is at least one' 
+        verbose_name=('Research Assistant: From speaking with the respondent, is at least one'
                       'member of this plot potentially eligible?'),
         choices=YES_NO_DONT_KNOW,
         max_length=25,
         null=True,
         editable=True,
-        )
+    )
 
     eligibles_last_seen_home = models.CharField(
         verbose_name=('When was a resident last seen in this household?'),
@@ -35,7 +35,7 @@ class HouseholdAssessment(BaseDispatchSyncUuidModel):
         null=True,
         blank=True,
         editable=True,
-        )
+    )
 
     def __unicode__(self):
         return unicode(self.household_structure)

@@ -1,6 +1,5 @@
 import os
 
-import numpy as np
 import pandas as pd
 from collections import OrderedDict
 
@@ -24,23 +23,23 @@ class VariableCounts(object):
         self.df_plots = pd.read_csv(
             os.path.expanduser(
                 '/Users/erikvw/Documents/bcpp/research_database/csv/20150328/Plot_20150328163229.csv'
-                ), delimiter='|')
+            ), delimiter='|')
         self.df_households = pd.read_csv(
             os.path.expanduser(
                 '/Users/erikvw/Documents/bcpp/research_database/csv/20150328/Household_20150328155653.csv'
-                ), delimiter='|')
+            ), delimiter='|')
         self.df_members = pd.read_csv(
             os.path.expanduser(
                 '/Users/erikvw/Documents/bcpp/research_database/csv/20150328/Member_20150328155720.csv'
-                ), delimiter='|', low_memory=False)
+            ), delimiter='|', low_memory=False)
         self.df_htcs = pd.read_csv(
             os.path.expanduser(
                 '/Users/erikvw/Documents/bcpp/research_database/csv/20150328/Htc_20150328163321.csv'
-                ), delimiter='|')
+            ), delimiter='|')
         self.df_subjects = pd.read_csv(
             os.path.expanduser(
                 '/Users/erikvw/Documents/bcpp/research_database/csv/20150328/Subject_20150328155721.csv'
-                ), delimiter='|')
+            ), delimiter='|')
 
     def update_results(self, survey_abbrev):
         self.survey_abbrev = survey_abbrev
@@ -67,15 +66,13 @@ class VariableCounts(object):
 
     def plots_confirmed(self):
         items = self.df_plots[
-            (self.df_plots['confirmed'] == 'confirmed')
-            ].groupby(['community']).size().to_dict()
+            (self.df_plots['confirmed'] == 'confirmed')].groupby(['community']).size().to_dict()
         return [items[c] for c in self.communities]
 
     def plots_enrolled(self):
         items = self.df_plots[
             (self.df_plots['confirmed'] == 'confirmed') &
-            (self.df_plots['enrolled'] == 'Yes')
-            ].groupby(['community']).size().to_dict()
+            (self.df_plots['enrolled'] == 'Yes')].groupby(['community']).size().to_dict()
         return [items[c] for c in self.communities]
 
     def households(self):
@@ -85,13 +82,13 @@ class VariableCounts(object):
     def households_enumerated(self):
         items = self.df_households[
             (self.df_households['enumerated_{}'.format(self.survey_abbrev)] == 'Yes')
-            ].groupby(['community']).size().to_dict()
+        ].groupby(['community']).size().to_dict()
         return [items[c] for c in self.communities]
 
     def households_enrolled(self):
         items = self.df_households[
             (self.df_households['enrolled_{}'.format(self.survey_abbrev)] == 'Yes')
-            ].groupby(['community']).size().to_dict()
+        ].groupby(['community']).size().to_dict()
         return [items[c] for c in self.communities]
 
     def subjects_enrolled(self):
@@ -100,7 +97,7 @@ class VariableCounts(object):
             (self.df_subjects['consent_datetime'].notnull()) &
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper())
-            ].groupby(['community']).size().to_dict()
+        ].groupby(['community']).size().to_dict()
         return [items[c] for c in self.communities]
 
     def subjects_on_art(self):
@@ -109,7 +106,7 @@ class VariableCounts(object):
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper()) &
             (self.df_subjects['on_art_{}'.format(self.survey_abbrev)] == 'Yes')
-            ].groupby(['community']).size()
+        ].groupby(['community']).size()
         return [items[c] for c in self.communities]
 
     def subjects_ever_taken_arv(self):
@@ -118,7 +115,7 @@ class VariableCounts(object):
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper()) &
             (self.df_subjects['ever_taken_arv_{}'.format(self.survey_abbrev)] == 'Yes')
-            ].groupby(['community']).size()
+        ].groupby(['community']).size()
         return [items[c] for c in self.communities]
 
     def subjects_recorded_hiv_result(self):
@@ -127,7 +124,7 @@ class VariableCounts(object):
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper()) &
             (self.df_subjects['recorded_hiv_result_{}'.format(self.survey_abbrev)] == 'POS')
-            ].groupby(['community']).size()
+        ].groupby(['community']).size()
         return [items[c] for c in self.communities]
 
     def subjects_verbal_hiv_result(self):
@@ -136,7 +133,7 @@ class VariableCounts(object):
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper()) &
             (self.df_subjects['verbal_hiv_result_{}'.format(self.survey_abbrev)] == 'POS')
-            ].groupby(['community']).size()
+        ].groupby(['community']).size()
         return [items.get(c, 'None') for c in self.communities]
 
     def subjects_todays_hiv_result(self):
@@ -145,7 +142,7 @@ class VariableCounts(object):
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper()) &
             (self.df_subjects['todays_hiv_result_{}'.format(self.survey_abbrev)] == 'POS')
-            ].groupby(['community']).size()
+        ].groupby(['community']).size()
         return [items.get(c, 'None') for c in self.communities]
 
     def subjects_hiv_pos_result(self):
@@ -154,5 +151,5 @@ class VariableCounts(object):
             (self.df_subjects['location'] == 'household') &
             (self.df_subjects['survey_consented'] == self.survey_abbrev.upper()) &
             (self.df_subjects['hiv_result_{}'.format(self.survey_abbrev)] == 'POS')
-            ].groupby(['community']).size()
+        ].groupby(['community']).size()
         return [items.get(c, 'None') for c in self.communities]

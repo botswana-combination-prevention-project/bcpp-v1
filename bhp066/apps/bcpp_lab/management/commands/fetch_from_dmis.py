@@ -2,7 +2,7 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 
-from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
+from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
 from ...classes import Dmis
 

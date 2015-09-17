@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from ..actions import process_dispatch, update_replaceables, process_dispatch_notebook_plot_list
 from ..filters import ReplacesFilter, ReplacedByFilter, DispatchedReplacesFilter
-#from ..filters import HicEnrolledFilter
 from ..forms import PlotForm
 from ..models import Plot
 

@@ -1,6 +1,6 @@
 from copy import copy
 
-from datetime import datetime, date
+from datetime import datetime
 
 from django.db.models import get_model
 

@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import YES_NO_UNSURE
+from bhp066.apps.bcpp.choices import YES_NO_UNSURE
 
 from .base_pregnancy import BasePregnancy
 
@@ -17,7 +17,7 @@ class NonPregnancy (BasePregnancy):
         max_length=25,
         choices=YES_NO_UNSURE,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

@@ -1,4 +1,4 @@
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..classes import Member
 

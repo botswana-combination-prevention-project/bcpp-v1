@@ -28,7 +28,7 @@ class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
         "weeks_out",
         "days_not_worked",
         "days_inactivite",
-        )
+    )
     radio_fields = {
         "employed": admin.VERTICAL,
         "occupation": admin.VERTICAL,
@@ -38,6 +38,6 @@ class LabourMarketWagesAdmin(SubjectVisitModelAdmin):
         "other_occupation": admin.VERTICAL,
         "govt_grant": admin.VERTICAL,
         "weeks_out": admin.VERTICAL,
-        }
+    }
 
 admin.site.register(LabourMarketWages, LabourMarketWagesAdmin)

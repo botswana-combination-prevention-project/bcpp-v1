@@ -13,10 +13,7 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
     optional_attrs = {ANNUAL: {
         'label': {
             'has_tested': (
-                'Since we last visited you have you been tested for HIV?'),
-            }
-        }
-    }
+                'Since we last visited you have you been tested for HIV?'), }}}
 
     def clean(self):
 

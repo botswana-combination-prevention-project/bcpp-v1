@@ -29,6 +29,6 @@ def replacement_index(request, **kwargs):
             'producers': producers,
             'producer': Producer,
             'replaceable': Replaceable,
-            },
+        },
         context_instance=RequestContext(request)
     )

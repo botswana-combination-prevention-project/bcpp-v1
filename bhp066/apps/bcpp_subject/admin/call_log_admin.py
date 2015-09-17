@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.base.modeladmin.admin import BaseModelAdmin, BaseStackedInline
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import CallLogForm, CallLogEntryForm
 from ..models import CallLog, CallLogEntry

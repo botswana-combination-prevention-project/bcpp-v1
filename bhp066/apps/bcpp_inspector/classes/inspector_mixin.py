@@ -24,4 +24,4 @@ class InspectorMixin(object):
                 device_id=device.device_id,
                 app_name=self._meta.app_label,
                 model_name=self._meta.object_name
-                )
+            )

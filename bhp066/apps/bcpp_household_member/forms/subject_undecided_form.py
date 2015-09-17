@@ -1,4 +1,5 @@
 from ..models import SubjectUndecided, SubjectUndecidedEntry
+
 from .base_membership_form import BaseMembershipForm
 
 

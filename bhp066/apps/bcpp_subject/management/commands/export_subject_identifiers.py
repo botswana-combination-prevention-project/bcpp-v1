@@ -4,8 +4,8 @@ import csv
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
 
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 
 class Command(BaseCommand):
@@ -32,8 +32,8 @@ class Command(BaseCommand):
             for hm in HouseholdMember.objects.filter(
                     household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG,
                     registered_subject__subject_identifier__startswith='066',
-                    household_structure__household__plot__community__in=communities,
-                    ).order_by('registered_subject__subject_identifier'):
+                    household_structure__household__plot__community__in=communities).order_by(
+                        'registered_subject__subject_identifier'):
                 n += 1
                 try:
                     # hm.registered_subject attributes should equal subject_consent
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                         household_member=hm,
                         subject_identifier=hm.registered_subject.subject_identifier,
                         subject_identifier_aka=hm.registered_subject.subject_identifier_aka,
-                        )
+                    )
                 except SubjectConsent.DoesNotExist:
                     raise CommandError('Inconsistent identifiers between SubjectConsent and '
                                        'RegisteredSubject. Got {}.'.format(hm.registered_subject))
@@ -50,5 +50,5 @@ class Command(BaseCommand):
                      hm.household_structure.household.plot.community,
                      hm.registered_subject.subject_identifier_aka,
                      hm.registered_subject.dm_comment]
-                    )
+                )
         print 'Exported {} identifiers to {}'.format(n, filename)

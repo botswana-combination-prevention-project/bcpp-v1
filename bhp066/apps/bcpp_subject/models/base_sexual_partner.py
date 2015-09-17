@@ -2,15 +2,15 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from edc.constants import NOT_APPLICABLE
-from edc.base.model.fields import OtherCharField
 from edc.map.classes import site_mappers
 
 
-from apps.bcpp.choices import (YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,
-                               LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, COMMUNITY_NA,
-                               FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE,
-                               FIRSTCONDOMFREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
-from apps.bcpp_list.models import PartnerResidency
+from bhp066.apps.bcpp.choices import (
+    YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,
+    LASTSEX_CHOICE, FIRSTRELATIONSHIP_CHOICE, COMMUNITY_NA,
+    FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE,
+    FIRSTCONDOMFREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
+from bhp066.apps.bcpp_list.models import PartnerResidency
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

@@ -3,7 +3,7 @@ import pprint
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from config.inspect_settings import settings_list
+from bhp066.config.inspect_settings import settings_list
 
 
 class Command(BaseCommand):
@@ -17,4 +17,3 @@ class Command(BaseCommand):
         for item in settings_list:
             x = {item: getattr(settings, item)}
             pp.pprint(x)
-            #print '{0} = {1}'.format(item, x)

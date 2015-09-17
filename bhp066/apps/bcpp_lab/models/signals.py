@@ -5,10 +5,10 @@ from django.dispatch import receiver
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from apps.bcpp_subject.classes import func_poc_vl
-from apps.bcpp_subject.constants import COMPLETE, VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
+from bhp066.apps.bcpp_subject.classes import func_poc_vl
+from bhp066.apps.bcpp_subject.constants import COMPLETE, VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
 
-from ..models import ClinicRequisition, SubjectRequisition, PreOrder, Panel, Order
+from ..models import ClinicRequisition, SubjectRequisition, PreOrder, Panel
 
 
 @receiver(post_save, weak=False, dispatch_uid="clinic_requisition_on_post_save")

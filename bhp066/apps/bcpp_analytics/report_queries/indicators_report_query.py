@@ -1,6 +1,6 @@
+from .data_row import DataRow
 from .household_member_report_query import HouseholdMemberReportQuery
 from .report_query import TwoColumnReportQuery
-from .data_row import DataRow
 
 
 class IndicatorsReportQuery(TwoColumnReportQuery):

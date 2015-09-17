@@ -1,6 +1,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
-from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
+
+from ..constants import CONFIRMED, UNCONFIRMED
 
 
 class ActionFilter(SimpleListFilter):

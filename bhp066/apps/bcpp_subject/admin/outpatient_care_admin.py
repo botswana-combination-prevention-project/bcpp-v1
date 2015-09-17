@@ -25,7 +25,7 @@ class OutpatientCareAdmin(SubjectVisitModelAdmin):
         "transport_expense",
         "cost_cover",
         "waiting_hours",
-        )
+    )
     radio_fields = {
         "govt_health_care": admin.VERTICAL,
         "dept_care": admin.VERTICAL,
@@ -36,5 +36,5 @@ class OutpatientCareAdmin(SubjectVisitModelAdmin):
         "travel_time": admin.VERTICAL,
         "cost_cover": admin.VERTICAL,
         "waiting_hours": admin.VERTICAL,
-        }
+    }
 admin.site.register(OutpatientCare, OutpatientCareAdmin)

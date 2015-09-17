@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO_NA
 
-from apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
+from bhp066.apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 
 from ..choices import YES_NO_RECORD_REFUSAL
 
@@ -18,7 +18,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
-        )
+    )
 
     when_hiv_test = models.CharField(
         verbose_name=_("When was the last [most recent]"
@@ -28,7 +28,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         blank=True,
         choices=WHENHIVTEST_CHOICE,
         help_text="(verbal response)",
-        )
+    )
 
     # this field triggers HivTestReview
     has_record = models.CharField(
@@ -39,7 +39,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         blank=True,
         choices=YES_NO_RECORD_REFUSAL,
         help_text="if no card available for viewing, proceed to next question",
-        )
+    )
 
     # used by admin_supplemental fields for HIV status condition??
     verbal_hiv_result = models.CharField(
@@ -49,7 +49,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         blank=True,
         choices=VERBALHIVRESULT_CHOICE,
         help_text="(verbal response)",
-        )
+    )
 
     # this field triggers HivResultDocumentation
     other_record = models.CharField(
@@ -60,7 +60,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
         choices=YES_NO_NA,
         default=YES_NO_NA[2][0],
         help_text="This documentation refers to: PMTCT prescription, ART, CD4 count record, lab result for.. etc",
-        )
+    )
 
     history = AuditTrail()
 

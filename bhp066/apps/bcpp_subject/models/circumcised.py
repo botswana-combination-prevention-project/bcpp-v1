@@ -3,12 +3,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from apps.bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
+
+from bhp066.apps.bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
+
 from .base_circumcision import BaseCircumcision
 
 
 class Circumcised (BaseCircumcision):
-    #new field on T1
     circ_date = models.DateField(
         verbose_name=_('When were you circumcised?'),
         null=True,
@@ -28,7 +29,7 @@ class Circumcised (BaseCircumcision):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     where_circ = models.CharField(
         verbose_name=_("Where were you circumcised?"),

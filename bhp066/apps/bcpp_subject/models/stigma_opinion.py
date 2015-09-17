@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc.audit.audit_trail import AuditTrail
 
-from apps.bcpp.choices import AGREE_STRONGLY
+from bhp066.apps.bcpp.choices import AGREE_STRONGLY
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -19,7 +19,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     gossip_community_stigma = models.CharField(
         verbose_name=_("People talk badly about people living with or thought"
@@ -28,7 +28,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     respect_community_stigma = models.CharField(
         verbose_name=_("People living with or thought to be living with HIV"
@@ -37,7 +37,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_verbal_stigma = models.CharField(
         verbose_name=_("People living with or thought to be living with HIV"
@@ -46,7 +46,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_phyical_stigma = models.CharField(
         verbose_name=_("People living with or thought to be living with"
@@ -55,7 +55,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     enacted_family_stigma = models.CharField(
         verbose_name=_("People living with or thought to be living with"
@@ -65,7 +65,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     fear_stigma = models.CharField(
         verbose_name=_("People living with HIV are less able to financially"
@@ -74,7 +74,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         null=True,
         choices=AGREE_STRONGLY,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

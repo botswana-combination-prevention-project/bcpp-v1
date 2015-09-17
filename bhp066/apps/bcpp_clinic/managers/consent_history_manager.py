@@ -25,9 +25,7 @@ class ConsentHistoryManager(BaseConsentHistoryManager):
             consent_model_name=consent_inst._meta.object_name,
             consent_pk=consent_inst.pk,
             defaults=updated_values
-            )
+        )
         if not created:
             inst.consent_datetime = consent_inst.consent_datetime
-#             inst.consent_datetime = consent_inst.survey
-#             inst.consent_datetime = consent_inst.household_member
             inst.save(using=using)

@@ -6,7 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from edc.map.classes import Mapper
 from edc.map.choices import ICONS, OTHER_ICONS
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import Plot
 

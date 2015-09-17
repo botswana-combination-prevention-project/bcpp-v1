@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
-from apps.bcpp_survey.models import Survey
+
+from ..models import Survey
 
 
 def date_in_survey(value):

@@ -3,31 +3,31 @@ from django.core.urlresolvers import reverse
 
 from lis.specimen.lab_aliquot.models import BaseAliquot
 
-from apps.bcpp_subject.models import SubjectVisit
+from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..managers import AliquotManager
 
 from .aliquot_condition import AliquotCondition
 from .aliquot_type import AliquotType
 from .receive import Receive
-from .subject_requisition import SubjectRequisition
 
 
 class Aliquot(BaseAliquot):
 
-    receive = models.ForeignKey(Receive,
+    receive = models.ForeignKey(
+        Receive,
         editable=False)
 
-    aliquot_type = models.ForeignKey(AliquotType,
+    aliquot_type = models.ForeignKey(
+        AliquotType,
         verbose_name="Aliquot Type",
         null=True)
 
-    aliquot_condition = models.ForeignKey(AliquotCondition,
+    aliquot_condition = models.ForeignKey(
+        AliquotCondition,
         verbose_name="Aliquot Condition",
         null=True,
         blank=True)
-
-    # community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
     objects = AliquotManager()
 

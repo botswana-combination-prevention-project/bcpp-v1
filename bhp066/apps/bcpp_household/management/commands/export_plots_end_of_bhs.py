@@ -6,12 +6,10 @@ from datetime import datetime
 from django.db.models import Q
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.bcpp_survey.models import Survey
-
-from apps.bcpp_household.choices import (NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
-                                         RESIDENTIAL_HABITABLE)
-from apps.bcpp_household.helpers.replacement_helper import ReplacementHelper
-from apps.bcpp_household.models import Plot, HouseholdStructure, HouseholdLogEntry
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.choices import (NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE, RESIDENTIAL_HABITABLE)
+from bhp066.apps.bcpp_household.helpers.replacement_helper import ReplacementHelper
+from bhp066.apps.bcpp_household.models import Plot, HouseholdStructure, HouseholdLogEntry
 
 from ...choices import INACCESSIBLE
 
@@ -42,8 +40,7 @@ class Command(BaseCommand):
         if not plots.count() == Plot.objects.filter(
                 community=community_name, selected__isnull=False).exclude(Q(bhs=True) | Q(htc=True)).count():
             raise CommandError((
-                'Expected all plots not flagged as BHS or HTC to be from the pool of 25%. Got {} != {}'
-                ).format(
+                'Expected all plots not flagged as BHS or HTC to be from the pool of 25%. Got {} != {}').format(
                     plots.count(),
                     Plot.objects.filter(
                         community=community_name, selected__isnull=False).exclude(Q(bhs=True) | Q(htc=True)).count()))
@@ -100,16 +97,14 @@ class Command(BaseCommand):
                                     if not replacement_helper.household_replacement_reason:
                                         replacement_reason = ''.join(
                                             [log.household_status for log in HouseholdLogEntry.objects.filter(
-                                                household_log__household_structure=household_structure
-                                                ).order_by('created')][-1:]
-                                            ) or '-'
+                                                household_log__household_structure=household_structure).order_by('created')][-1:]) or '-'
                                         if replacement_reason == 'eligible_representative_present':
                                             replacement_reason = 'eligible_representative_present-no_bhs_eligibles'
                                     status.append(
                                         'htc {}'.format(
                                             (replacement_helper.household_replacement_reason or replacement_reason
                                              ).replace(' ', '_'))
-                                        )
+                                    )
                     else:
                         raise TypeError('Unexpected plot status')
                 if status:

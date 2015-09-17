@@ -7,14 +7,13 @@ from django.utils.translation import ugettext_lazy as _
 from edc.base.model.fields import OtherCharField
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.subject.consent.classes import ConsentHelper
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from ..managers import GrantManager
 from ..choices import GRANT_TYPE
+from ..managers import GrantManager
 
 from .labour_market_wages import LabourMarketWages
 from .subject_off_study_mixin import SubjectOffStudyMixin
@@ -38,14 +37,14 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel):
         max_length=2,
         null=True,
         blank=True,
-        )
+    )
     grant_type = models.CharField(
         verbose_name=_("Grant name"),
         choices=GRANT_TYPE,
         max_length=50,
         null=True,
         blank=True,
-        )
+    )
     other_grant = OtherCharField()
 
     history = AuditTrail()
@@ -67,10 +66,6 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel):
 
     def get_report_datetime(self):
         return self.report_datetime
-
-    def get_consent_helper_cls(self):
-        """Returns an instance of the default ConsentHelper."""
-        return ConsentHelper
 
     def get_versioned_field_names(self, version_number):
         """Returns a list of field names under version control by version number.

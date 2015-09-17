@@ -1,12 +1,12 @@
+from datetime import datetime
+
 from django import forms
 from django.forms.util import ErrorList
-from datetime import datetime, timedelta
 
 from edc.base.form.forms import BaseModelForm
 
-from ..models import PlotLog, PlotLogEntry
-
 from ..constants import INACCESSIBLE, CONFIRMED, ACCESSIBLE
+from ..models import PlotLog, PlotLogEntry
 
 
 class PlotLogForm(BaseModelForm):
@@ -40,10 +40,11 @@ class PlotLogEntryForm(BaseModelForm):
             if cleaned_data.get('reason_other'):
                 self._errors['reason_other'] = ErrorList([u'This field is not required.'])
                 raise forms.ValidationError('Other reason is not required if plot is accessible.')
-        if PlotLogEntry.objects.filter(created__year=datetime.today().year,
-                                                 created__month=datetime.today().month,
-                                                        created__day=datetime.today().day,
-                                                            plot_log__plot=plot_log.plot):
+        if PlotLogEntry.objects.filter(
+                created__year=datetime.today().year,
+                created__month=datetime.today().month,
+                created__day=datetime.today().day,
+                plot_log__plot=plot_log.plot):
             if not self.instance.id:
                 raise forms.ValidationError('The plot log entry has been added already.')
 

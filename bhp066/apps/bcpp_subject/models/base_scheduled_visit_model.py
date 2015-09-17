@@ -1,28 +1,24 @@
 from datetime import datetime
 
 from django.db import models
-from django.conf import settings
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
-if 'edc.device.dispatch' in settings.INSTALLED_APPS:
-    from edc.device.dispatch.models import BaseDispatchSyncUuidModel as BaseSyncUuidModel
-else:
-    from edc.device.sync.models import BaseSyncUuidModel
-#from edc.subject.consent.models import BaseConsentedUuidModel
 from edc_consent.models import RequiresConsentMixin
-from edc.data_manager.models import TimepointStatusMixin
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 from ..managers import ScheduledModelManager
+
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
-# from ..constants import RBD, FULL, Questionnaires, HTC
 
 
-class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin, TimepointStatusMixin, BaseSyncUuidModel):
+class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
+                              TimePointStatusMixin, BaseDispatchSyncUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
@@ -35,7 +31,6 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin, Timepo
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-#         auto_now=False,
         default=datetime.now,  # By passing datetime.now without the parentheses, you are passing the actual function, which will be called each time a record is added ref: http://stackoverflow.com/questions/2771676/django-default-datetime-now-problem
         help_text=('If reporting today, use today\'s date/time, otherwise use '
                    'the date/time this information was reported.'))

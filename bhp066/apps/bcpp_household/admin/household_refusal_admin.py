@@ -19,9 +19,7 @@ class HouseholdRefusalAdmin(BaseModelAdmin):
         'reason_other',
         'comment')
 
-    radio_fields = {
-        'reason': admin.VERTICAL,
-        }
+    radio_fields = {'reason': admin.VERTICAL}
 
     list_display = ('household_structure', 'report_datetime', 'created')
 

@@ -13,7 +13,7 @@ class ParticipationAdmin(SubjectVisitModelAdmin):
         "subject_visit",
         "full",
         "participation_type",
-        )
+    )
     list_display = ('subject_visit', 'full', 'participation_type')
     list_filter = ('subject_visit', 'full', 'participation_type')
     radio_fields = {
