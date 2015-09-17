@@ -1,5 +1,5 @@
 import re
-
+import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -18,7 +18,6 @@ from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, V
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_variables.models import StudySite
 # from edc.subject.consent.exceptions import ConsentError
-# from edc.subject.consent.classes import ConsentedSubjectIdentifier
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
@@ -103,6 +102,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def save(self, *args, **kwargs):
         # From old edc BaseConsent
+        self.insert_dummy_identifier()
         if not self.id:
             self._save_new_consent(kwargs.get('using', None))
         # From old edc BaseSubject
@@ -206,6 +206,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         return subject_identifier
 
     def _save_new_consent(self, using=None, **kwargs):
+        from ..classes import ConsentedSubjectIdentifier
         """ Creates or gets a subject identifier.
 
         ..note:: registered subject is updated/created on edc.subject signal.
@@ -302,6 +303,41 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 #             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
 #                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
 #             self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
+
+    def insert_dummy_identifier(self):
+        """Inserts a random uuid as a dummy identifier for a new instance.
+
+        Model uses subject_identifier_as_pk as a natural key for
+        serialization/deserialization. Value must not change once set."""
+
+        # set to uuid if new and not specified
+        if not self.id:
+            subject_identifier_as_pk = str(uuid.uuid4())
+            self.subject_identifier_as_pk = subject_identifier_as_pk  # this will never change
+            if not self.subject_identifier:
+                # this will be changed when allocated a subject_identifier on consent
+                self.subject_identifier = subject_identifier_as_pk
+        # never allow subject_identifier as None
+        if not self.subject_identifier:
+            raise ConsentError('Subject Identifier may not be left blank.')
+        # never allow subject_identifier_as_pk as None
+        if not self.subject_identifier_as_pk:
+            raise ConsentError('Attribute subject_identifier_as_pk on model '
+                               '{0} may not be left blank. Expected to be set '
+                               'to a uuid already.'.format(self._meta.object_name))
+
+    def _get_user_provided_subject_identifier(self):
+        """Return a user provided subject_identifier.
+
+        Do not override."""
+        if self.get_user_provided_subject_identifier_attrname() in dir(self):
+            return getattr(self, self.get_user_provided_subject_identifier_attrname())
+        else:
+            return None
+
+    def get_user_provided_subject_identifier_attrname(self):
+        """Override to return the attribute name of the user provided subject_identifier."""
+        return None
 
     def include_for_dispatch(self):
         return True
