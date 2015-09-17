@@ -6,11 +6,10 @@ from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalF
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 
+from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdManager
 
 from .plot import Plot
-
-from ..exceptions import AlreadyReplaced
 
 
 class Household(BaseDispatchSyncUuidModel):

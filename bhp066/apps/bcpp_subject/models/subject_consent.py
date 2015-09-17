@@ -1,5 +1,5 @@
 import re
-from uuid import uuid4
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -12,22 +12,18 @@ from edc.choices.common import YES_NO, YES_NO_NA
 from edc.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
 from edc.core.bhp_common.utils import formatted_age
-#from edc.subject.consent.mixins import ReviewAndUnderstandingFieldsMixin
-#from edc.subject.consent.mixins.bw import IdentityFieldsMixin
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
                                        SampleCollectionFieldsMixin)
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_variables.models import StudySite
-from edc.subject.consent.exceptions import ConsentError
-from edc.core.identifier.exceptions import IdentifierError
-from edc.subject.consent.classes import ConsentedSubjectIdentifier
+# from edc.subject.consent.exceptions import ConsentError
+# from edc.subject.consent.classes import ConsentedSubjectIdentifier
 
-
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
-from apps.bcpp_household_member.models import EnrollmentChecklist
-from apps.bcpp_household_member.exceptions import MemberStatusError
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
+from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
+from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 
 from ..managers import SubjectConsentManager
 
@@ -37,27 +33,21 @@ from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-
-# Note below: Mixin fields are added after the abstract class, BaseSubjectConsent, and before
-# the concrete class, SubjectConsent, using the field.contribute_to_class method.
-# Do it this way so both South and AuditTrail are happy.
-
-
-# declare abstract base class
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
-    study_site = models.ForeignKey(StudySite,
+    study_site = models.ForeignKey(
+        StudySite,
         verbose_name='Site',
         null=True,
         help_text="This refers to the site or 'clinic area' where the subject is being consented."
-        )
+    )
 
     citizen = models.CharField(
         verbose_name="Are you a Botswana citizen? ",
         max_length=3,
         choices=YES_NO,
         help_text="",
-        )
+    )
 
     legal_marriage = models.CharField(
         verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
@@ -67,7 +57,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         blank=False,
         default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.",
-        )
+    )
 
     marriage_certificate = models.CharField(
         verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
@@ -77,7 +67,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         blank=False,
         default=NOT_APPLICABLE,
         help_text="If 'NO' participant will not be enrolled.",
-        )
+    )
 
     marriage_certificate_no = models.CharField(
         verbose_name=("What is the marriage certificate number?"),
@@ -85,7 +75,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         null=True,
         blank=True,
         help_text="e.g. 000/YYYY",
-        )
+    )
 
     is_minor = models.CharField(
         verbose_name=("Is subject a minor?"),
@@ -106,14 +96,11 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         blank=False,
         # default='Yes',
         help_text="If no, INELIGIBLE",
-        )
+    )
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
-    # see additional mixin fields below
-
     def save(self, *args, **kwargs):
-        using = kwargs.get('using')
         # From old edc BaseConsent
         if not self.id:
             self._save_new_consent(kwargs.get('using', None))
@@ -322,7 +309,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         abstract = True
 
 
-# declare concrete class
 class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
                      VulnerabilityFieldsMixin, BaseSubjectConsent):
 

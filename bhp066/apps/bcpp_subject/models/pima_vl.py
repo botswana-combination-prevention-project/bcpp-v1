@@ -1,28 +1,27 @@
-from datetime import date, datetime
+from datetime import datetime
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, RegexValidator
 
-from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import datetime_not_future
-from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-
+from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
+from edc.core.crypto_fields.fields import EncryptedTextField
+from edc.subject.consent.models import BaseConsentedUuidModel
 from edc_quota.client.models import QuotaMixin, QuotaManager
 
-from edc.subject.consent.models import BaseConsentedUuidModel
+from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_lab.models import PreOrder
 
-from apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
-from apps.bcpp_household.models import Plot
-
-from .subject_off_study_mixin import SubjectOffStudyMixin
 from ..managers import PimaVlManager
+
 from .subject_visit import SubjectVisit
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
 class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
@@ -136,7 +135,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
     pre_order.allow_tags = True
 
     def pre_order_instance(self):
-        from apps.bcpp_lab.models import PreOrder
+        # from apps.bcpp_lab.models import PreOrder
         return PreOrder.objects.filter(subject_visit=self.subject_visit)
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):

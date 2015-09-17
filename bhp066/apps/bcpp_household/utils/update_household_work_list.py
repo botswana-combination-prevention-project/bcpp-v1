@@ -4,8 +4,8 @@ from django.db import models
 
 from edc.constants import DONE, IN_PROGRESS
 
-from apps.bcpp_household_member.models import MemberAppointment, HouseholdMember
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import MemberAppointment, HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import HouseholdStructure, HouseholdWorkList, HouseholdLogEntry
 
@@ -37,8 +37,7 @@ def update_household_work_list(label=None, household_structure=None):
             status = 'unscheduled'
         if HicEnrollment.objects.filter(
                 subject_visit__household_member__household_structure__household=household_structure.household,
-                subject_visit__household_member__household_structure__survey__datetime_start__lt=survey_datetime_start,
-                ).count() > 0:
+                subject_visit__household_member__household_structure__survey__datetime_start__lt=survey_datetime_start).count() > 0:
             enrolled_type = 'hic'
         else:
             enrolled_type = 'bhs'
@@ -86,6 +85,6 @@ def update_household_work_list(label=None, household_structure=None):
                 members=member_count,
                 hic=hic_count,
                 bhs=bhs_count,
-                )
+            )
             created += 1
     return created, updated

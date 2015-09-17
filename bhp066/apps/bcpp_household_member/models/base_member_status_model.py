@@ -1,13 +1,11 @@
-from datetime import datetime
-
 from django.db import models
 
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.models import Plot
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import BaseMemberStatusManager
 

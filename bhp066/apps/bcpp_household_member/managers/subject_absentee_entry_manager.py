@@ -4,7 +4,7 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_household.classes import PlotIdentifier
 
 
 class SubjectAbsenteeEntryManager(models.Manager):
@@ -22,8 +22,8 @@ class SubjectAbsenteeEntryManager(models.Manager):
             if PlotIdentifier.get_notebook_plot_lists():
                 return super(SubjectAbsenteeEntryManager, self).get_queryset().filter(
                     subject_absentee__household_member__household_structure__household__plot__community=community,
-                     subject_absentee__household_member__household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists()
-                    )
+                    subject_absentee__household_member__household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists()
+                )
             else:
                 return super(SubjectAbsenteeEntryManager, self).get_queryset().filter(
                     subject_absentee__household_member__household_structure__household__plot__community=community)

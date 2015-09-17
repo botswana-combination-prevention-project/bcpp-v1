@@ -9,10 +9,10 @@ from edc.base.model.validators import datetime_not_before_study_start, datetime_
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_list.models import ElectricalAppliances, TransportMode
-from apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_list.models import ElectricalAppliances, TransportMode
+from bhp066.apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
 from ..managers import HouseholdInfoManager
 
@@ -24,7 +24,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     from the Head of Household."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
-    household_member = models.OneToOneField(HouseholdMember,
+    household_member = models.OneToOneField(
+        HouseholdMember,
         help_text=_('Important: The household member must verbally consent before completing this questionnaire.'))
 
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False)

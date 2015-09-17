@@ -7,7 +7,7 @@ from collections import namedtuple
 
 from django.conf import settings
 
-from config.celery import app
+from bhp066.config.celery import app
 
 
 ReceivedTuple = namedtuple(

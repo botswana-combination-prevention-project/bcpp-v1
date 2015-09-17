@@ -1,9 +1,7 @@
-from django.conf import settings
-from django.db.models import get_model
 from edc.subject.appointment.models import Appointment
 from edc.constants import POS, NEG, IND
-from edc.map.classes import site_mappers
-from apps.bcpp_subject.constants import BASELINE_CODES
+
+from ..constants import BASELINE_CODES
 from ..models import SubjectVisit, Circumcised, HicEnrollment
 from ..classes import SubjectStatusHelper
 
@@ -66,18 +64,15 @@ def func_rbd_ahs(visit_instance):
 def func_require_pima(visit_instance):
     """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
     if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
-#         print '*********************IN 1'
         return True
     # Hiv+ve at enrollment, art naive at enrollment
     elif art_naive_at_enrollment(visit_instance):
-#         print '*********************IN 2'
         return True
     # Hiv -ve at enrollment, now changed to Hiv +ve
     elif sero_converter(visit_instance) and func_art_naive(visit_instance):
-#         print '*********************IN 3'
         return True
-#     print '*********************IN 4'
     return False
+
 
 def func_known_pos(visit_instance):
     """Returns True if participant is NOT a newly diagnosed POS as determined
@@ -226,8 +221,10 @@ def func_baseline_rbd_drawn(visit_instance):
 def func_baseline_pima_keyed(visit_instance):
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).pima_instance
 
+
 def func_baseline_hiv_care_adherance_keyed(visit_instance):
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).hiv_care_adherence_instance
+
 
 def func_not_required(visit_instance):
     """Returns True (always)."""
@@ -301,12 +298,12 @@ def art_naive_at_enrollment(visit_instance):
 def sero_converter(visit_instance):
     """ previously NEG and currently POS """
     return True if (func_hiv_negative_today(func_previous_visit_instance(visit_instance)) and
-        func_hiv_positive_today(visit_instance)) else False
+                    func_hiv_positive_today(visit_instance)) else False
 
 
 def func_rbd(visit_instance):
     """Returns True or False to indicate a participant should be offered an rbd."""
-    #if pos at bhs then return true
+    # if pos at bhs then return true
     if func_hiv_positive_today(visit_instance) and not func_baseline_rbd_drawn(visit_instance):
         return True
     return False

@@ -1,10 +1,10 @@
-from datetime import date, datetime, timedelta, time
+from datetime import datetime, time
 
 from django.core.exceptions import ValidationError
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 def date_in_survey(value):

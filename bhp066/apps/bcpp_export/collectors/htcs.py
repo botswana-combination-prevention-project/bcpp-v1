@@ -1,4 +1,4 @@
-from apps.bcpp_household_member.models import SubjectHtc
+from bhp066.apps.bcpp_household_member.models import SubjectHtc
 
 from ..classes import Htc
 

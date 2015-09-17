@@ -18,17 +18,17 @@ class ClinicVlResult(BaseClinicVisitModel):
     clinician_initials = InitialsField(
         verbose_name='Clinician initial',
         default='--',
-        )
+    )
 
     collection_datetime = models.DateTimeField(
         verbose_name='The datetime sample was drawn',
         help_text='',
-        )
+    )
 
     assay_date = models.DateField(
         verbose_name='Assay date',
         help_text='',
-        )
+    )
 
     result_value = models.IntegerField(
         verbose_name="Result Value",
@@ -39,17 +39,17 @@ class ClinicVlResult(BaseClinicVisitModel):
         max_length=250,
         blank=True,
         null=True
-        )
+    )
 
     validation_date = models.DateField(
         verbose_name='Date result was validated',
         help_text='',
-        )
+    )
 
     validated_by = EncryptedCharField(
         max_length=35,
         verbose_name="Validated by",
-        )
+    )
 
     history = AuditTrail()
 

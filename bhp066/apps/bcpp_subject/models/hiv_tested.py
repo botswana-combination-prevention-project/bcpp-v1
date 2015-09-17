@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import WHEREHIVTEST_CHOICE, WHYHIVTEST_CHOICE
+from bhp066.apps.bcpp.choices import WHEREHIVTEST_CHOICE, WHYHIVTEST_CHOICE
 
 from .hiv_testing_supplemental import HivTestingSupplemental
 
@@ -18,7 +18,7 @@ class HivTested (HivTestingSupplemental):
         max_length=2,
         null=True,
         help_text="supplemental",
-        )
+    )
 
     where_hiv_test = models.CharField(
         verbose_name=_("Where were you tested for HIV, the last"
@@ -26,7 +26,7 @@ class HivTested (HivTestingSupplemental):
         max_length=85,
         choices=WHEREHIVTEST_CHOICE,
         help_text="",
-        )
+    )
     where_hiv_test_other = OtherCharField()
 
     why_hiv_test = models.CharField(
@@ -37,7 +37,7 @@ class HivTested (HivTestingSupplemental):
         null=True,
         choices=WHYHIVTEST_CHOICE,
         help_text="supplemental",
-        )
+    )
 
     history = AuditTrail()
 

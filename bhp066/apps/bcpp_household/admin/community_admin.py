@@ -1,6 +1,8 @@
 from django.contrib import admin
+
 from edc.base.modeladmin.admin import BaseModelAdmin
-from apps.bcpp_household.models import Community
+
+from ..models import Community
 
 
 class CommunityAdmin(BaseModelAdmin):

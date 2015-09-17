@@ -6,12 +6,12 @@ from edc.base.model.validators import datetime_not_before_study_start, datetime_
 from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_survey.validators import date_in_survey
-
-from .plot import Plot
+from bhp066.apps.bcpp_survey.validators import date_in_survey
 
 from ..choices import PLOT_LOG_STATUS, INACCESSIBILITY_REASONS
 from ..managers import PlotLogManager, PlotLogEntryManager
+
+from .plot import Plot
 
 
 class PlotLog(BaseDispatchSyncUuidModel):

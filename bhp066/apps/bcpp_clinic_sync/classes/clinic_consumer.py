@@ -1,4 +1,5 @@
 from edc.device.sync.classes import Consumer
+
 from .clinic_signal_manager import ClinicSignalManager
 
 

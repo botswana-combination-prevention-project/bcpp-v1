@@ -1,14 +1,13 @@
 from copy import deepcopy
 
 from django.conf import settings
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 from edc.device.device.classes import Device
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..search import SubjectSearchByWord
 
@@ -30,7 +29,7 @@ class SectionSubjectView(BaseSectionView):
             'current_community': str(site_mappers.current_mapper()),
             'mapper_name': site_mappers.current_mapper.map_area,
             'subject_dashboard_url': self.dashboard_url_name,
-            })
+        })
         context.update()
         return context
 

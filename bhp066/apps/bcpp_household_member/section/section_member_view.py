@@ -3,8 +3,8 @@ from django.conf import settings
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.constants import CONFIRMED
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.constants import CONFIRMED
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..search import MemberSearchByWord
 
@@ -27,7 +27,7 @@ class SectionMemberView(BaseSectionView):
             'current_community': str(site_mappers.current_mapper()),
             'mapper_name': site_mappers.current_mapper.map_area,
             'CONFIRMED': CONFIRMED,
-            })
+        })
         return context
 
 site_sections.register(SectionMemberView)

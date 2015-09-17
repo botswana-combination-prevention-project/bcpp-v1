@@ -3,9 +3,9 @@ import datetime
 import threading
 from django.db.models import Count
 
-from apps.bcpp_household.models import (HouseholdStructure, Household, HouseholdAssessment, HouseholdLogEntry)
-from apps.bcpp_household.helpers import ReplacementHelper
-from apps.bcpp_household.constants import REFUSED_ENUMERATION, ELIGIBLE_REPRESENTATIVE_ABSENT
+from bhp066.apps.bcpp_household.models import (HouseholdStructure, Household, HouseholdAssessment, HouseholdLogEntry)
+from bhp066.apps.bcpp_household.helpers import ReplacementHelper
+from bhp066.apps.bcpp_household.constants import REFUSED_ENUMERATION, ELIGIBLE_REPRESENTATIVE_ABSENT
 
 from .base_operational_report import BaseOperationalReport
 

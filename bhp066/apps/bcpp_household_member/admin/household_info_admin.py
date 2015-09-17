@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.base.modeladmin.admin import BaseModelAdmin
 
-from apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from ..forms import HouseholdInfoForm
 from ..models import HouseholdInfo, HouseholdMember
@@ -30,18 +30,18 @@ class HouseholdInfoAdmin(BaseModelAdmin):
         "sheep_owned",
         "cattle_owned",
         "smaller_meals",
-        )
+    )
     radio_fields = {
         "flooring_type": admin.VERTICAL,
         "water_source": admin.VERTICAL,
         "energy_source": admin.VERTICAL,
         "toilet_facility": admin.VERTICAL,
         "smaller_meals": admin.VERTICAL,
-        }
+    }
     filter_horizontal = (
         "electrical_appliances",
         "transport_mode",
-        )
+    )
     list_filter = ('report_datetime', 'household_member__household_structure__household__community')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

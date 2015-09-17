@@ -34,13 +34,13 @@ def get_producer_status(producer=None, check_online=True):
                 producer_online = True
                 # No exception occurred, only now you can search for outgoing transactions in producer.
                 outgoing_transactions = TransactionHelper().outgoing_transactions(
-                hostname, producer.name, raise_exception=True)
+                    hostname, producer.name, raise_exception=True)
             except socket.timeout:
                 error_message = (
-                'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(hostname, producer.producer_ip))
+                    'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(hostname, producer.producer_ip))
             except socket.error:
                 error_message = (
-                'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(hostname, producer.producer_ip, str(socket.error)))
+                    'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(hostname, producer.producer_ip, str(socket.error)))
             finally:
                 s.close()
         else:

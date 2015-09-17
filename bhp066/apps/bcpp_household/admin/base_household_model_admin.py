@@ -6,4 +6,4 @@ class BaseHouseholdModelAdmin(BaseModelAdmin):
 
     actions = [export_as_csv_action(
         "Export as csv", fields=[], exclude=['id', ]
-        )]
+    )]

@@ -4,8 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
-from apps.bcpp_list.models import MedicalCareAccess
+from bhp066.apps.bcpp.choices import AGREE_STRONGLY, WHEREACCESS_CHOICE
+from bhp066.apps.bcpp_list.models import MedicalCareAccess
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 

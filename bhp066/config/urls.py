@@ -19,7 +19,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
@@ -57,7 +57,7 @@ urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls
 
 urlpatterns += patterns('',
     url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME),
-    additional_requisition, name="add_requisition"),
+        additional_requisition, name="add_requisition"),
 )
 
 urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))

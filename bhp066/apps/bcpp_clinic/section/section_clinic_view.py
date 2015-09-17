@@ -3,11 +3,10 @@ from datetime import date
 from edc.device.device.classes import device
 from edc.map.classes import site_mappers
 
-from apps.bcpp_survey.models import Survey
-
-from ..search import ClinicSearchByWord
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import ClinicEligibility, DailyLog
+from ..search import ClinicSearchByWord
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 
@@ -33,7 +32,7 @@ class SectionClinicView(BaseSectionView):
             'current_community': str(site_mappers.get_current_mapper()()),
             'daily_log': daily_log,
             'subject_dashboard_url': self.dashboard_url_name,
-            })
+        })
         return context
 
 # only include section for CPC or the central server

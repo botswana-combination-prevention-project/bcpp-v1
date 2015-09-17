@@ -11,7 +11,7 @@ from edc.constants import CLOSED, OPEN, NEW
 from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
+from bhp066.apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
 
 from ..choices import REFERRAL_CODES
 from ..managers import CallListManager

@@ -9,7 +9,8 @@ from .aliquot_type import AliquotType
 
 class AliquotProfile(BaseProfile):
 
-    aliquot_type = models.ForeignKey(AliquotType,
+    aliquot_type = models.ForeignKey(
+        AliquotType,
         verbose_name='Source aliquot type')
 
     objects = ProfileManager()

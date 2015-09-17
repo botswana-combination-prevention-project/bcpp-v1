@@ -19,8 +19,7 @@ class DemographicsAdmin(SubjectVisitModelAdmin):
         'marital_status',
         'num_wives',
         'husband_wives',
-        'live_with',
-        ]
+        'live_with']
 
     annual_fields = [f for f in baseline_fields if f not in ['religion', 'religion_other', 'ethnic', 'ethnic_other']]
 

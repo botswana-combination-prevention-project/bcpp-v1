@@ -19,7 +19,7 @@ class SectionAdministrationView(BaseSectionView):
             'plot_meta': ModelMeta('bcpp_household', 'plot'),
             'household_meta': ModelMeta('bcpp_household', 'household'),
             'subjectconsent_meta': ModelMeta('bcpp_subject', 'subjectconsent'),
-            })
+        })
         return context
 
 site_sections.register(SectionAdministrationView, replaces='administration')

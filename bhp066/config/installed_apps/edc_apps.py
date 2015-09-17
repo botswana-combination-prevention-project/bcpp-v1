@@ -52,7 +52,7 @@ EDC_APPS = (
     'edc.subject.rule_groups',
     'edc.subject.actg',
     'edc.subject.entry',
-    'edc.subject.consent',
+    # 'edc.subject.consent',
     'edc.subject.contact',
     'edc.subject.locator',
     'edc.subject.subject_summary',

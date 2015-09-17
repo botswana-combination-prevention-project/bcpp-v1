@@ -3,9 +3,10 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.classes.enumeration_helper import EnumerationHelper
-from apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
+
+from ..classes import PlotIdentifier
 
 
 class HouseholdStructureManager(models.Manager):

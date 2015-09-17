@@ -1,4 +1,4 @@
-from config.celery import app as celery_app
+from bhp066.config.celery import app as celery_app
 
 from ..models import HicEnrollment, SubjectReferral
 

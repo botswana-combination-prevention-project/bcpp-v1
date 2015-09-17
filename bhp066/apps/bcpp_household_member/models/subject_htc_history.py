@@ -8,7 +8,7 @@ from edc.choices import YES_NO
 
 from edc.base.model.models import BaseUuidModel
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from .household_member import HouseholdMember
 

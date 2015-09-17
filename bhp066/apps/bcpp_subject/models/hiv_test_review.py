@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
 
-from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
+from bhp066.apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -18,7 +18,7 @@ class HivTestReview (BaseScheduledVisitModel):
         verbose_name=_("What was the recorded date of the last HIV test?"),
         validators=[date_not_future],
         help_text="Obtain this information from the card the participant presents to you.",
-        )
+    )
 
     recorded_hiv_result = models.CharField(
         verbose_name=_("What was the recorded HIV test result?"),
@@ -26,7 +26,7 @@ class HivTestReview (BaseScheduledVisitModel):
         choices=RECORDEDHIVRESULT_CHOICE,
         help_text=_("If the participant and written record differ, the result"
                     " from the written record should be recorded."),
-        )
+    )
 
     history = AuditTrail()
 

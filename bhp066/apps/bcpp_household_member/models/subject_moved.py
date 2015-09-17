@@ -5,7 +5,7 @@ from edc.audit.audit_trail import AuditTrail
 from edc.choices import YES_NO_UNKNOWN
 from edc.core.crypto_fields.fields import EncryptedTextField
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -19,7 +19,7 @@ class SubjectMoved(BaseMemberStatusModel):
         null=True,
         blank=False,
         help_text=""
-        )
+    )
 
     moved_community = models.CharField(
         max_length=7,
@@ -28,7 +28,7 @@ class SubjectMoved(BaseMemberStatusModel):
         null=True,
         blank=False,
         help_text=""
-        )
+    )
 
     new_community = models.CharField(
         max_length=50,
@@ -36,7 +36,7 @@ class SubjectMoved(BaseMemberStatusModel):
         null=True,
         blank=True,
         help_text="If moved out of the community, provide a new community name or \'UNKNOWN\'"
-        )
+    )
 
     update_locator = models.CharField(
         max_length=7,
@@ -46,14 +46,14 @@ class SubjectMoved(BaseMemberStatusModel):
         blank=False,
         help_text=('If YES, please enter the changed information '
                    'the locator form')
-        )
+    )
 
     comment = EncryptedTextField(
         verbose_name=_("Comment"),
         max_length=250,
         blank=True,
         help_text=('')
-        )
+    )
 
     history = AuditTrail()
 

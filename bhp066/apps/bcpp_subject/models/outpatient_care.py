@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.fields import OtherCharField
 
-from apps.bcpp.choices import YES_NO_REFUSED
+from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 
 from ..choices import CARE_FACILITIES, CARE_REASON, TRAVEL_HOURS
 
@@ -22,7 +22,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
-        )
+    )
     dept_care = models.CharField(
         verbose_name=_("In the last 3 months, did you seek care at a Hospital Outpatient Department,"
                        " including Govt, private and church/mission hospitals? Not including any visits"
@@ -30,19 +30,19 @@ class OutpatientCare (BaseScheduledVisitModel):
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
-        )
+    )
     prvt_care = models.CharField(
         verbose_name=_("In the last 3 months, did you seek care from a Private Doctor? "),
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
-        )
+    )
     trad_care = models.CharField(
         verbose_name=_("In the last 3 months, did you seek care from a Traditional or Faith Healer? "),
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
-        )
+    )
     care_visits = models.IntegerField(
         verbose_name=_("In the last 3 months, how many total outpatient visits have"
                        " you to all of the above places? "),
@@ -50,7 +50,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="Note:If participant does not want to answer, leave blank.",
-        )
+    )
     facility_visited = models.CharField(
         verbose_name=_("For the most recent outpatient medical care visit in the past 3 months, which"
                        " type of facility did you visit? "),
@@ -58,7 +58,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         choices=CARE_FACILITIES,
         default='No visit in past 3 months',
         help_text="if 'NOT Government Primary Health Clinic/Post' go to question Q9. ",
-        )
+    )
 
     specific_clinic = models.CharField(
         verbose_name=_("For this most recent visit to a Government Primary Health Clinic/Post, "
@@ -67,7 +67,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="Note:If participant does not want to answer, leave blank",
-        )
+    )
     care_reason = models.CharField(
         verbose_name=_("For this most recent medical care visit, what was the primary reason you sought care? "),
         max_length=95,
@@ -76,7 +76,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         blank=False,
         default='None',
         help_text="",
-        )
+    )
     care_reason_other = OtherCharField()
 
     outpatient_expense = models.DecimalField(
@@ -87,7 +87,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="If participant has not paid anything for outpatient medical care, please enter 0.00",
-        )
+    )
     travel_time = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, how long did it take you to get"
                        " to the clinic? "),
@@ -97,7 +97,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         blank=False,
         default='None',
         help_text="",
-        )
+    )
     transport_expense = models.DecimalField(
         verbose_name=_("For this most recent outpatient medical care visit, how much did you have"
                        " to pay for transport, food and accommodation? [include cost for fuel if using"
@@ -107,7 +107,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="If participant has not paid anything for outpatient medical care, please enter 0.00",
-        )
+    )
     cost_cover = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, were any of these costs"
                        " by covered by anyone else, such as your medical aid or employer? "),
@@ -116,7 +116,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
     waiting_hours = models.CharField(
         verbose_name=_("For this most recent outpatient medical care visit, how long did you have"
                        " to wait before you were seen, from when you arrived at the facility? "),
@@ -126,7 +126,7 @@ class OutpatientCare (BaseScheduledVisitModel):
         blank=False,
         default='None',
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

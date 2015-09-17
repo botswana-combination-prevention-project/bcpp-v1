@@ -27,7 +27,7 @@ class Questionnaire(BaseClinicVisitModel):
         max_length=35,
         choices=REGISTRATION_TYPES,
         help_text="",
-        )
+    )
 
     registration_type_other = OtherCharField()
 
@@ -36,14 +36,14 @@ class Questionnaire(BaseClinicVisitModel):
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
-        )
+    )
 
     knows_last_cd4 = models.CharField(
         verbose_name=_("Do you know the value of your last 'CD4' result?"),
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
-        )
+    )
 
     cd4_count = models.DecimalField(
         verbose_name=_("What is the value of your last 'CD4' test?"),
@@ -53,7 +53,7 @@ class Questionnaire(BaseClinicVisitModel):
         null=True,
         blank=True,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

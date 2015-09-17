@@ -6,7 +6,7 @@ from edc.lab.lab_clinic_api.models import Panel
 from edc.subject.entry.models import LabEntry, Entry
 from edc.subject.visit_tracking.models import BaseVisitTracking
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
@@ -23,7 +23,7 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         max_length=25,
         blank=True,
         null=True,
-        )
+    )
 
     history = AuditTrail()
 
@@ -31,8 +31,6 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         self.info_source = 'subject'
         self.reason = 'clinic RBD'
         self.appointment.appt_type = 'clinic'
-        #self.get_requisition()
-        #self.ccc_masa_visit_reason_forms()
         super(ClinicVisit, self).save(*args, **kwargs)
 
     def __unicode__(self):

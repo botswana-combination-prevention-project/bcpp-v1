@@ -4,12 +4,13 @@ from edc.audit.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.base.model.validators import dob_not_future
 
-from apps.bcpp_household_member.constants import NOT_ELIGIBLE
-from apps.bcpp_household_member.exceptions import MemberStatusError
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+
+from ..constants import NOT_ELIGIBLE
+from ..exceptions import MemberStatusError
+from ..managers import EnrollmentLossManager
 
 from .household_member import HouseholdMember
-from ..managers import EnrollmentLossManager
 
 
 class EnrollmentLoss(BaseDispatchSyncUuidModel):

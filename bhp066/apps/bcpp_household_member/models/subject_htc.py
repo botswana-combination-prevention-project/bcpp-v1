@@ -7,11 +7,11 @@ from edc.choices import YES_NO, YES_NO_NA
 from edc.core.bhp_string.classes import StringHelper
 from edc.constants import NOT_APPLICABLE
 
-from apps.bcpp_household_member.constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
-from apps.bcpp_household_member.exceptions import MemberStatusError
-from apps.bcpp.choices import HIV_RESULT
+from bhp066.apps.bcpp.choices import HIV_RESULT
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from ..constants import HTC, HTC_ELIGIBLE, REFUSED_HTC
+from ..exceptions import MemberStatusError
 
 from .base_member_status_model import BaseMemberStatusModel
 

@@ -1,18 +1,17 @@
 from django import forms
 from django.forms.util import ErrorList
 
-from edc.constants import DEAD, NO, UNKNOWN, YES
+from edc.constants import DEAD, NO, YES
 
-from ..models import HouseholdMember, EnrollmentChecklist, HouseholdInfo
+from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
+from ..models import HouseholdMember, EnrollmentChecklist
 
 from .base_household_member_form import BaseHouseholdMemberForm
-from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
 
 
 class HouseholdMemberForm(BaseHouseholdMemberForm):
     def clean(self):
         cleaned_data = super(HouseholdMemberForm, self).clean()
-        #if cleaned_data.get('household_structure') 
         self.instance.check_eligible_representative_filled(
             cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
         if cleaned_data.get('relation') == 'Head' and not cleaned_data.get('age_in_years') >= 18:
@@ -28,13 +27,9 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
                         [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
 
         if cleaned_data.get('survival_status') == DEAD:
-            #if not cleaned_data.get('relation') == UNKNOWN:
-            #    self._errors["info_status"] = ErrorList([u"Please, select unknown."])
-
             if not cleaned_data.get('present_today') == NO:
                 self._errors["present_today"] = ErrorList([u"Please, select No."])
-
-            if  cleaned_data.get('study_resident') == NO or cleaned_data.get('study_resident') == YES:
+            if cleaned_data.get('study_resident') == NO or cleaned_data.get('study_resident') == YES:
                 self._errors["study_resident"] = ErrorList([u"Please, select don't want to answer "])
 
         if cleaned_data.get('gender') == 'F':

@@ -9,13 +9,14 @@ from edc.subject.registration.models import RegisteredSubject
 
 class BaseClinicRegisteredSubjectModel(BaseSyncUuidModel):
 
-    registration_datetime = models.DateTimeField("Registration date/time",
+    registration_datetime = models.DateTimeField(
+        verbose_name="Registration date/time",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
         default=datetime.today(),)
 
-    #This is updated by a post save signal
+    # This is updated by a post save signal
     registered_subject = models.ForeignKey(RegisteredSubject, editable=False, null=True,)
 
     objects = RegisteredSubjectManager()

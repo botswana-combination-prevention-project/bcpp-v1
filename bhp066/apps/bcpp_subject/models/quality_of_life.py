@@ -18,31 +18,31 @@ class QualityOfLife (BaseScheduledVisitModel):
         max_length=45,
         choices=MOBILITY,
         help_text="",
-        )
+    )
     self_care = models.CharField(
         verbose_name=_("Self-Care"),
         max_length=65,
         choices=SELF_CARE,
         help_text="",
-        )
+    )
     activities = models.CharField(
         verbose_name=_("Usual Activities (e.g. work, study, housework, family or leisure activities)"),
         max_length=50,
         choices=ACTIVITIES,
         help_text="",
-        )
+    )
     pain = models.CharField(
         verbose_name=_("Pain / Discomfort "),
         max_length=35,
         choices=PAIN,
         help_text="",
-        )
+    )
     anxiety = models.CharField(
         verbose_name=_("Anxiety / Depression "),
         max_length=40,
         choices=ANXIETY,
         help_text="",
-        )
+    )
     health_today = models.IntegerField(
         verbose_name=_("We would like to know how good or bad your health is TODAY. "
                        "This scale is numbered from 0 to 100. 100 means the 'best' health"
@@ -54,7 +54,7 @@ class QualityOfLife (BaseScheduledVisitModel):
         blank=True,
         help_text=("Note:Interviewer, please record corresponding number in the boxes."
                    " If participant does not want to answer, leave blank"),
-        )
+    )
 
     history = AuditTrail()
 

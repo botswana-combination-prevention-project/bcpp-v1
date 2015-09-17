@@ -14,7 +14,7 @@ class OtsePlotMapper(BasePlotMapper):
 
     map_area = 'otse'
     map_code = '14'
-    pair = 2    
+    pair = 2
     regions = SECTIONS
     sections = SUB_SECTIONS
 

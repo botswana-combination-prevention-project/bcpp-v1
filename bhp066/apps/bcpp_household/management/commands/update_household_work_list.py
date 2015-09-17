@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.bcpp_household.utils.update_household_work_list import update_household_work_list
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.utils import update_household_work_list
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class Command(BaseCommand):

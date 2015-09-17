@@ -1,11 +1,10 @@
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from apps.bcpp_household.models import Plot
-from apps.bcpp_survey.models import Survey
 from collections import OrderedDict
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from django.conf import settings
-from django.db import models
-from django.contrib.contenttypes.models import ContentType
+
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_survey.models import Survey
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -15,16 +14,9 @@ from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
 
-# from edc_quota.client.models import Quota
-# from edc_quota.controller.models import ControllerQuota
-# from edc_quota.controller.models import Client
-# from edc_quota.client import QuotaMixin
-
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
-from django.utils import timezone
-from edc.device.device.classes.device import Device
 
 try:
     from config.labels import aliquot_label
@@ -41,7 +33,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
         self.search_limit_setup()
-        #self.create_quota()
 
     global_configuration = {
         'dashboard':
@@ -87,7 +78,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'Botswana Day Holiday': date(2015, 10, 1),
         'Christmas Day': date(2015, 12, 25),
         'Boxing Day': date(2015, 12, 26),
-        }
+    }
 
     consent_catalogue_list = [
         {'name': BASELINE_SURVEY_SLUG,
@@ -104,7 +95,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
          'start_datetime': study_start_datetime,
          'end_datetime': study_end_datetime,
          'add_for_app': 'bcpp_clinic'},
-        ]
+    ]
 
     survey_setup = {
         BASELINE_SURVEY_SLUG:
@@ -218,8 +209,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                    '^FO300,112^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
                                    '^FO300,132^A0N,25,20^FDAPPT: ${referral_appt_datetime}^FS\n'
                                    '^FO300,152^A0N,25,20^FDCLINIC: ${referral_clinic}^FS\n'
-                                   '^XZ')), False),
-                          ]
+                                   '^XZ')), False)]
                       }
 
     export_plan_setup = {

@@ -8,4 +8,4 @@ class SurveyForm(forms.Form):
         label="Survey: ",
         initial=None,
         help_text="",
-        )
+    )

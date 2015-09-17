@@ -10,10 +10,10 @@ from edc.map.classes import site_mappers
 from edc.subject.consent.forms import BaseSubjectConsentForm
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp.choices import GENDER_UNDETERMINED
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.models import HouseholdInfo
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bhp066.apps.bcpp.choices import GENDER_UNDETERMINED
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdInfo
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 from ..models import SubjectConsent
 
@@ -115,8 +115,8 @@ class SubjectConsentForm(BaseBcppConsentForm):
     def household_info(self, cleaned_data):
         try:
             household_member = cleaned_data.get("household_member")
-            if (household_member.relation == 'Head' 
-                and household_member.household_structure.survey.survey_slug == BASELINE_SURVEY_SLUG):
+            if (household_member.relation == 'Head' and
+                    household_member.household_structure.survey.survey_slug == BASELINE_SURVEY_SLUG):
                 HouseholdInfo.objects.get(household_member=household_member)
         except HouseholdInfo.DoesNotExist:
             raise forms.ValidationError('Complete householdinfo before consenting head of household')

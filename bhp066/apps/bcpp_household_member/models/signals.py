@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from edc.constants import ALIVE
 
-from apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from .base_member_status_model import BaseMemberStatusModel
 from .enrollment_checklist import EnrollmentChecklist
@@ -146,7 +146,7 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
                             registered_subject=instance.registered_subject,
                             household_member=instance,
                             survey=household_structure.survey,
-                            )
+                        )
                 # create subject undecided if member_status == UNDECIDED otherwise delete the entries
                 if instance.undecided:
                     try:
@@ -157,7 +157,7 @@ def household_member_on_post_save(sender, instance, raw, created, using, **kwarg
                             registered_subject=instance.registered_subject,
                             household_member=instance,
                             survey=household_structure.survey,
-                            )
+                        )
                 # update household structure
                 if not household_structure.enumerated:
                     household_structure.enumerated = True
@@ -202,7 +202,7 @@ def subject_member_status_form_on_post_save(sender, instance, raw, created, usin
             instance.household_member.save(using=using, update_fields=[
                 'reported', 'undecided', 'absent', 'refused', 'enrollment_loss_completed',
                 'enrollment_checklist_completed', 'htc', 'refused_htc', 'eligible_htc'
-                ])
+            ])
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_absentee_entry_on_post_save')

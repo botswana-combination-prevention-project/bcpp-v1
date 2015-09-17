@@ -14,7 +14,8 @@ class Panel(BasePanel):
 
     test_code = models.ManyToManyField(TestCode, null=True, blank=True, related_name='+')
 
-    aliquot_type = models.ManyToManyField(AliquotType,
+    aliquot_type = models.ManyToManyField(
+        AliquotType,
         help_text='Choose all that apply',)
 
     panel_type = models.CharField(max_length=15, choices=PANEL_TYPE, default='TEST')

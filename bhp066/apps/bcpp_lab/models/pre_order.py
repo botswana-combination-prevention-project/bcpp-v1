@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 from edc.audit.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_subject.constants import NEW, PENDING, VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
-from apps.bcpp_subject.models import SubjectVisit
+from bhp066.apps.bcpp_subject.constants import NEW, PENDING, POC_VIRAL_LOAD
+from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..models import Aliquot, Panel
 from ..managers import PreOrderManager
@@ -56,7 +56,7 @@ class PreOrder(BaseSyncUuidModel):
                 raise ValidationError('Aliquot identifier "{}" does not exist'.format(self.aliquot_identifier))
             if self._meta.model.objects.filter(aliquot_identifier=self.aliquot_identifier).exclude(id=self.id).exists():
                 # If i can get another preorder instance which is not me, then i know i am trying to re-use
-                # an aliquot identifier, which is wrong. 
+                # an aliquot identifier, which is wrong.
                 # NOTE: Its being done this way instead of puttting unique=True in the aliquot_identifier field
                 # definition because the field is nullable.
                 raise ValidationError('You are attempting to re-use aliquout identifier "{}". This is not allowed.'.
