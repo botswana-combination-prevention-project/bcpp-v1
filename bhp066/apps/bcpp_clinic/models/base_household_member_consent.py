@@ -4,7 +4,7 @@ from django.db import models
 
 from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc.subject.consent.models import BaseConsent
+from edc_consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
