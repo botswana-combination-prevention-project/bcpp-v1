@@ -11,8 +11,10 @@ from edc.base.model.fields import OtherCharField
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 from edc.core.crypto_fields.fields import EncryptedTextField
-from edc.subject.consent.models import BaseConsentedUuidModel
 from edc_quota.client.models import QuotaMixin, QuotaManager
+from edc_consent.models import RequiresConsentMixin
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
 
 from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
 from bhp066.apps.bcpp_household.models import Plot
@@ -24,7 +26,9 @@ from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
+class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin, BaseDispatchSyncUuidModel):
+
+    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 

@@ -4,7 +4,8 @@ from django.db import models
 
 from edc.audit.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.subject.consent.models import BaseConsentedUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
+from edc_consent.models import RequiresConsentMixin
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 from .clinic_visit import ClinicVisit
@@ -12,7 +13,7 @@ from .clinic_visit import ClinicVisit
 from ..managers import ClinicModelManager
 
 
-class BaseClinicVisitModel(ClinicOffStudyMixin, BaseConsentedUuidModel):
+class BaseClinicVisitModel(ClinicOffStudyMixin, RequiresConsentMixin, BaseSyncUuidModel):
 
     """ Base model for all clinic scheduled models (adds key to :class:`ClinicVisit`). """
 
