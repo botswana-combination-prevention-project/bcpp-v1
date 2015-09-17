@@ -113,25 +113,25 @@ def update_or_create_registered_subject_on_post_save(sender, instance, raw, crea
 #                         **instance.registered_subject_options)
 
 
-@receiver(post_save, weak=False, dispatch_uid='update_consent_history')
-def update_consent_history(sender, instance, raw, created, using, **kwargs):
-    """Updates the consent history model with this instance if such model exists."""
-    if not raw:
-        # if isinstance(instance, BaseSubjectConsent):
-        try:
-            instance.update_consent_history(created, using)
-        except AttributeError:
-            pass
-
-
-@receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
-def delete_consent_history(sender, instance, using, **kwargs):
-    """Updates the consent history model with this instance if such model exists."""
-    # if isinstance(instance, BaseSubjectConsent):
-    try:
-        instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
-    except AttributeError:
-        pass
+# @receiver(post_save, weak=False, dispatch_uid='update_consent_history')
+# def update_consent_history(sender, instance, raw, created, using, **kwargs):
+#     """Updates the consent history model with this instance if such model exists."""
+#     if not raw:
+#         # if isinstance(instance, BaseSubjectConsent):
+#         try:
+#             instance.update_consent_history(created, using)
+#         except AttributeError:
+#             pass
+# 
+# 
+# @receiver(post_delete, weak=False, dispatch_uid='delete_consent_history')
+# def delete_consent_history(sender, instance, using, **kwargs):
+#     """Updates the consent history model with this instance if such model exists."""
+#     # if isinstance(instance, BaseSubjectConsent):
+#     try:
+#         instance.delete_consent_history(instance._meta.app_label, instance._meta.object_name, instance.pk, using)
+#     except AttributeError:
+#         pass
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
