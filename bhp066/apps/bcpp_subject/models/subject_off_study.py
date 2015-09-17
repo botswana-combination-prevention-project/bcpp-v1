@@ -1,8 +1,9 @@
 from edc.audit.audit_trail import AuditTrail
 from edc.subject.off_study.models import BaseOffStudy
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 
-class SubjectOffStudy(BaseOffStudy):
+class SubjectOffStudy(BaseOffStudy, BaseDispatchSyncUuidModel):
 
     history = AuditTrail()
 
