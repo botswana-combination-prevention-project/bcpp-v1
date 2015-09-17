@@ -4,3 +4,7 @@ class OldConsentValueError(Exception):
 
 class DeniedPermissionPimaVLError(Exception):
     pass
+
+
+class ConsentError(Exception):
+    pass
