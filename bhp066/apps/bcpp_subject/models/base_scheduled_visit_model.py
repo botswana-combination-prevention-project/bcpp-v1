@@ -18,13 +18,12 @@ from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
 
-
 class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
                               TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
-    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+    CONSENT_MODEL = None
 
     subject_visit = models.OneToOneField(SubjectVisit)
 
@@ -42,6 +41,10 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
     history = AuditTrail()
 
     entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
+
+    def save(self, *args, **kwargs):
+        self.CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+        super(BaseScheduledVisitModel, self).save(*args, **kwargs)
 
     def natural_key(self):
         return self.get_visit().natural_key()
