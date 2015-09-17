@@ -31,6 +31,7 @@ from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
+from ..exceptions import ConsentError
 
 
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
@@ -287,20 +288,20 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                     return False
         return True
 
-    def update_consent_history(self, created, using):
-        from edc.subject.consent.models import BaseConsentHistory
-        """Updates the consent history model for this consent instance if there is a consent history model."""
-        if self.get_consent_history_model():
-            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-            self.get_consent_history_model().objects.update_consent_history(self, created, using)
-
-    def delete_consent_history(self, app_label, model_name, pk, using):
-        from edc.subject.consent.models import BaseConsentHistory
-        if self.get_consent_history_model():
-            if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-                raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-            self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
+#     def update_consent_history(self, created, using):
+#         from edc.subject.consent.models import BaseConsentHistory
+#         """Updates the consent history model for this consent instance if there is a consent history model."""
+#         if self.get_consent_history_model():
+#             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
+#                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
+#             self.get_consent_history_model().objects.update_consent_history(self, created, using)
+# 
+#     def delete_consent_history(self, app_label, model_name, pk, using):
+#         from edc.subject.consent.models import BaseConsentHistory
+#         if self.get_consent_history_model():
+#             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
+#                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
+#             self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
 
     def include_for_dispatch(self):
         return True
@@ -328,9 +329,6 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
         if self.household_member.member_status != expected_member_status:
             raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                 expected_member_status, self.household_member.member_status, self.household_member))
-        if self.confirm_identity:
-            if self.identity != self.confirm_identity:
-                raise ValueError('Attribute \'identity\' must match attribute \'confirm_identity\'. Catch this error on the form')
         self.is_minor = 'Yes' if self.minor else 'No'
         self.matches_enrollment_checklist(self, self.household_member)
         self.matches_hic_enrollment(self, self.household_member)
