@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.subject.consent.admin import BaseConsentModelAdmin
+from edc_consent.admin import BaseConsentModelAdmin
 from edc.subject.registration.models import RegisteredSubject
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember

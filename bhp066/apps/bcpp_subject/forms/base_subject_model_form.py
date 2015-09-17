@@ -2,14 +2,13 @@ from django import forms
 from django.conf import settings
 
 from edc.map.classes import site_mappers
-from edc.subject.consent.forms import BaseConsentedModelForm
 
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
 
 
-class BaseSubjectModelForm(BaseConsentedModelForm):
+class BaseSubjectModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BaseSubjectModelForm, self).__init__(*args, **kwargs)
