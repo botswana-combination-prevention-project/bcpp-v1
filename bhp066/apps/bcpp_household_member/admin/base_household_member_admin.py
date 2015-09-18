@@ -1,4 +1,4 @@
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 
 from bhp066.apps.bcpp_survey.models import Survey
 
