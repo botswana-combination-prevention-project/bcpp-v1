@@ -171,8 +171,8 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
          }
     )
 
-if site_mappers.current_mapper().intervention is False:
-    if site_mappers.current_mapper().current_survey_in_settings != BASELINE_SURVEY_SLUG:
+if site_mappers.get_current_mapper().intervention is False:
+    if site_mappers.get_current_mapper().current_survey_in_settings != BASELINE_SURVEY_SLUG:
         for item in BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries'):
             if item.model_name in ['tbsymptoms']:
                 BcppSubjectVisitSchedule.visit_definitions.get('T0').get('entries').remove(item)
@@ -181,7 +181,7 @@ if site_mappers.current_mapper().intervention is False:
         if item.model_name in ['tbsymptoms', 'hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)
 
-if site_mappers.current_mapper().intervention is True:
+if site_mappers.get_current_mapper().intervention is True:
     for item in BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries'):
         if item.model_name in ['hivuntested']:
             BcppSubjectVisitSchedule.visit_definitions.get('T1').get('entries').remove(item)

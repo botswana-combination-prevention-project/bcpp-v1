@@ -43,7 +43,7 @@ class BaseSubjectModelForm(forms.ModelForm):
         current community OR does nothing,"""
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-                configured_community = site_mappers.current_mapper().map_area
+                configured_community = site_mappers.get_current_mapper().map_area
                 community = cleaned_data.get(
                     'subject_visit').household_member.household_structure.household.plot.community
                 if community != configured_community:

@@ -29,7 +29,7 @@ class SectionClinicView(BaseSectionView):
         current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.get_current_mapper()()),
+            'current_community': str(site_mappers.get_current_mapper()),
             'daily_log': daily_log,
             'subject_dashboard_url': self.dashboard_url_name,
         })

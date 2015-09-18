@@ -27,8 +27,8 @@ class SectionHouseholdView(BaseSectionView):
             current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.current_mapper()),
-            'mapper_name': site_mappers.current_mapper.map_area,
+            'current_community': str(site_mappers.get_current_mapper()),
+            'mapper_name': site_mappers.get_current_mapper().map_area,
             'CONFIRMED': CONFIRMED})
         return context
 

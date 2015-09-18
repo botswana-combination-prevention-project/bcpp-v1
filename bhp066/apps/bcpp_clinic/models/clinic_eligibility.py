@@ -265,7 +265,7 @@ class ClinicEligibility (BaseSyncUuidModel):
             clinic_household_member = ClinicHouseholdMember.objects.get(pk=self.household_member.pk)
         except (ClinicHouseholdMember.DoesNotExist, AttributeError):
             household_structure = HouseholdStructure.objects.get(
-                household__plot=site_mappers.current_mapper().clinic_plot,
+                household__plot=site_mappers.get_current_mapper().clinic_plot,
                 survey=Survey.objects.current_survey())
             clinic_household_member = ClinicHouseholdMember.objects.create(
                 household_structure=household_structure,
