@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
-from .base_page import BasePage
+from .base_page import BaseModelAdminPage
 
 
-class HouseholdMemberPage(BasePage):
+class HouseholdMemberPage(BaseModelAdminPage):
     first_name = (By.ID, 'id_first_name')
     initials = (By.ID, 'id_initials')
     gender = (By.ID, 'id_gender')
@@ -58,9 +58,6 @@ class HouseholdMemberPage(BasePage):
 
     def select_head(self):
         self.browser.find_element(*HouseholdMemberPage.relation_head).click()
-
-    def click_save(self):
-        self.browser.find_element(*HouseholdMemberPage.save_button).click()
 
     def fill_householdmember(self, first_name, initials, gender, age_in_years,
                              inability_to_participate, present_today, relation, study_resident):
