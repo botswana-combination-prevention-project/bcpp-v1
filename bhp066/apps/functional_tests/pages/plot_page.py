@@ -4,6 +4,10 @@ from .base_page import BasePage
 
 class PlotPage(BasePage):
     plot_status = (By.ID, 'id_status')
+    non_res = (By.ID, 'id_status_0')
+    res_non_habit = (By.ID, 'id_status_1')
+    res_habit = (By.ID, 'id_status_2')
+    inaccessible = (By.ID, 'id_status_3')
     gps_deg_south = (By.ID, 'id_gps_degrees_s')
     gps_min_south = (By.ID, 'ID_gps_minutes_s')
     gps_deg_east = (By.ID, 'id_gps_degree_e')
@@ -33,6 +37,10 @@ class PlotPage(BasePage):
         minsouthElement = self.browser.find_element(*PlotPage.gps_min_east)
         minsouthElement.send_keys(gps_min_east)
 
+    def set_household_count(self, household_count):
+        HouseholdElement = self.browser.find_element(*PlotPage.household_count)
+        HouseholdElement.send_keys(household_count)
+
     def click_save_button(self):
         self.browser.find_element(*PlotPage.save_button).click()
 
@@ -42,4 +50,5 @@ class PlotPage(BasePage):
         self.set_min_south(gps_min_south)
         self.set_deg_east(gps_deg_east)
         self.set_min_east(gps_min_east)
+        self.set_household_count(household_count)
         self.click_save_button()
