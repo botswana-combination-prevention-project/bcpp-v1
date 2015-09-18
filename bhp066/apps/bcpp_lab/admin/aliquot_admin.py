@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from edc.export.actions import export_as_csv_action
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 from lis.labeling.actions import print_aliquot_label
 
 from ..actions import create_order
