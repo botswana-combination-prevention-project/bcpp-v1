@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.util import ErrorList
 
-from edc.constants import DEAD, NO, YES
+from edc_constants.constants import DEAD, NO, YES
 
 from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
 from ..models import HouseholdMember, EnrollmentChecklist

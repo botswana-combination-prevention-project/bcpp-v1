@@ -3,7 +3,7 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.test import SimpleTestCase
 
-from apps.bcpp_household.utils import ClinicDaysTuple
+from bhp066.apps.bcpp_household.utils import ClinicDaysTuple
 
 from ..utils import next_clinic_date
 

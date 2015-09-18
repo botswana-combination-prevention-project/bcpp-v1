@@ -12,22 +12,22 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household_member.classes  import EnumerationHelper
-from apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory, CorrectConsentFactory, HicEnrollmentFactory, SubjectVisitFactory, ResidencyMobilityFactory, SubjectLocatorFactory
-from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory
-from apps.bcpp_household_member.models import EnrollmentChecklist, HouseholdMember
-from apps.bcpp_subject.models import SubjectConsent
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_lab.models import Panel, AliquotType
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
-from apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
+from bhp066.apps.bcpp_household_member.classes  import EnumerationHelper
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, CorrectConsentFactory, HicEnrollmentFactory, SubjectVisitFactory, ResidencyMobilityFactory, SubjectLocatorFactory
+from bhp066.apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory
+from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist, HouseholdMember
+from bhp066.apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp_lab.models import Panel, AliquotType
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
                                            ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
                                            NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
                                            RESIDENTIAL_HABITABLE)

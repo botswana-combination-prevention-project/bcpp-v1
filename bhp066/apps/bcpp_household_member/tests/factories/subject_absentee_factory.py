@@ -4,7 +4,7 @@ from datetime import datetime
 
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ...models import SubjectAbsentee
 

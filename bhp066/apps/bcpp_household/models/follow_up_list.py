@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.constants import CLOSED, OPEN, NEW
+from edc_constants.constants import CLOSED, OPEN, NEW
 from edc.device.sync.models import BaseSyncUuidModel
 
 from ..models import HouseholdStructure
