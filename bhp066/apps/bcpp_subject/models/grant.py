@@ -4,10 +4,9 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from edc.base.model.fields import OtherCharField
-from edc_base.model.models import BaseUuidModel
+from edc_base.model.fields import OtherCharField
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 

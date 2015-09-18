@@ -2,8 +2,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import date_not_future
-from edc.base.model.fields import OtherCharField
+from edc_base.model.validators import date_not_future
+from edc_base.model.fields import OtherCharField
 
 from bhp066.apps.bcpp.choices import DXCANCER_CHOICE
 

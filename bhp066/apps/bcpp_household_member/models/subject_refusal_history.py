@@ -3,8 +3,7 @@ from datetime import datetime
 from django.db import models
 from django_extensions.db.fields import UUIDField
 
-from edc.base.model.fields import OtherCharField
-
+from edc_base.model.fields import OtherCharField
 from edc_base.model.models import BaseUuidModel
 
 from bhp066.apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE

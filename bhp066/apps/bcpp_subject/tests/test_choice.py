@@ -5,7 +5,7 @@ from django.db.models import get_model
 from django.test import TestCase
 from django.utils import translation
 
-from edc.base.model.models import BaseModel
+from edc_base.model.models import BaseModel
 
 from .. import choices
 from .. import models

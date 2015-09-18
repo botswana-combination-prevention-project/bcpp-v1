@@ -12,17 +12,16 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
-from edc.base.model.fields import OtherCharField
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc.constants import NOT_APPLICABLE, ALIVE, DEAD
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
-from edc.core.crypto_fields.utils import mask_encrypted
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes.controller import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import FirstnameField, mask_encrypted
+from edc_base.model.fields import OtherCharField
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.models import Plot
@@ -43,7 +42,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     registered_subject = models.ForeignKey(RegisteredSubject, null=True, editable=False)
 
-    first_name = EncryptedFirstnameField(
+    first_name = FirstnameField(
         verbose_name='First name',
         validators=[RegexValidator("^[A-Z]{1,250}$",
                                    ("Ensure first name is only CAPS and "

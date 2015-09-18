@@ -1,16 +1,19 @@
 from datetime import datetime
 
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
 
 from ..managers import OrderManager
-from django.core.urlresolvers import reverse
 
 
 class Order(BaseSyncUuidModel):
 
     order_datetime = models.DateTimeField(default=datetime.today())
+
+    history = AuditTrail()
 
     objects = OrderManager()
 

@@ -1,13 +1,13 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
 from edc.constants import YES, NO
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
-from edc.device.sync.models import BaseSyncUuidModel
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc_base.audit_trail import AuditTrail
 
 
 from bhp066.apps.bcpp.choices import COMMUNITIES

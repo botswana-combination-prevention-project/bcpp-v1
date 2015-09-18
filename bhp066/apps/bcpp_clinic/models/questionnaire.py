@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
+from edc_base.model.fields import OtherCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
 
 from edc.choices import YES_NO_DWTA

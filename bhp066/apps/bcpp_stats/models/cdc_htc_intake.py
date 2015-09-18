@@ -1,7 +1,6 @@
 from django.db import models
 
-from edc.core.crypto_fields.fields import EncryptedIdentityField
-
+from edc_base.encrypted_fields import IdentityField
 from .base_cdc import BaseCdc
 
 
@@ -30,7 +29,7 @@ class CdcHtcIntake(BaseCdc):
     mc_no_interest_reason = models.CharField(max_length=50, null=True)
     mc_phone_contact_permission = models.IntegerField(null=True)
     MC_tent_appointment_Date = models.DateField(null=True)
-    omang_pass_nbr = EncryptedIdentityField(max_length=78, null=True)
+    omang_pass_nbr = IdentityField(max_length=78, null=True)
     # omang_nbr = EncryptedIdentityField(max_length=25, null=True)
     part_time_resident = models.IntegerField(null=True)
     permanent_resident_ind = models.IntegerField(null=True)

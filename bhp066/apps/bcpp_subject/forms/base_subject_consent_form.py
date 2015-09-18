@@ -5,7 +5,6 @@ from edc.core.bhp_variables.models import StudySpecific
 from edc.core.bhp_variables.choices import GENDER_OF_CONSENT
 from edc.core.bhp_common.utils import formatted_age
 from edc.base.form.forms import BaseModelForm
-from edc.core.crypto_fields.fields import BaseEncryptedField
 
 
 class BaseSubjectConsentForm(BaseModelForm):
@@ -22,8 +21,10 @@ class BaseSubjectConsentForm(BaseModelForm):
         # cannot be decrypted, so call a custom field method validate_with_cleaned_data()
         # to validate.
         for field in self._meta.model._meta.fields:
-            if isinstance(field, BaseEncryptedField):
+            try:
                 field.validate_with_cleaned_data(field.attname, cleaned_data)
+            except AttributeError:
+                pass
 
         """
         check 1st and last letters of initials match subjects name

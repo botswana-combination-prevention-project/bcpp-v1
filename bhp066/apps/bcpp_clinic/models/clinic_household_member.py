@@ -1,4 +1,4 @@
-from edc.core.crypto_fields.utils import mask_encrypted
+from edc_base.encrypted_fields import mask_encrypted
 
 from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD
 from bhp066.apps.bcpp_household_member.models import HouseholdMember

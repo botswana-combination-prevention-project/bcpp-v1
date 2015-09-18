@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
+from edc_base.model.fields import OtherCharField
 
 from bhp066.apps.bcpp.choices import MARITALSTATUS_CHOICE
 from bhp066.apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
