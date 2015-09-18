@@ -9,7 +9,7 @@ db.sqlite3
 etc/*
 # C extensions
 *.so
-
+bhp066/user-*
 bhp066/db-sqlite3
 
 # Distribution / packaging
