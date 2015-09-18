@@ -1,4 +1,5 @@
 import uuid
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -883,7 +884,9 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         """ Checks whether the household is saved for the current survey"""
         if settings.DEVICE_ID not in settings.SERVER_DEVICE_ID_LIST:
             if self.household_structure.survey != Survey.objects.current_survey():
-                raise ImproperlyConfigured('Your device is configured to create household_member for {0}'.format(Survey.objects.current_survey()))
+                raise ImproperlyConfigured(
+                    'Your device is configured to create household_member for {0}'.format(
+                        Survey.objects.current_survey()))
 
     updated.allow_tags = True
 

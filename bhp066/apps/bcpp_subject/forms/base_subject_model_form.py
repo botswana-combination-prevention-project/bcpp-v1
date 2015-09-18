@@ -7,8 +7,10 @@ from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
 
+from .base_model_form import BaseModelForm
 
-class BaseSubjectModelForm(forms.ModelForm):
+
+class BaseSubjectModelForm(BaseModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BaseSubjectModelForm, self).__init__(*args, **kwargs)
