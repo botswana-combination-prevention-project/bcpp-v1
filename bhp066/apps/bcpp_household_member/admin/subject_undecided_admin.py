@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
+from edc_base.modeladmin.admin import BaseModelAdmin, BaseTabularInline
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
