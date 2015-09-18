@@ -18,7 +18,7 @@ class PlotResultPage(BasePage):
         self.browser.find_element(*PlotResultPage.plot_link).click()
 
     def click_household(self):
-        self.browser.find_element(*PlotResultPage.plot_link).click()
+        self.browser.find_element(*PlotResultPage.household).click()
 
     def get_plot(self, plot_id):
         self.set_plot_id(plot_id)
