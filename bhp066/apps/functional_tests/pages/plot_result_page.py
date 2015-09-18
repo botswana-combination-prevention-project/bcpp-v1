@@ -7,7 +7,7 @@ class PlotResultPage(BasePage):
     plot_id = "?"
     plot_link = (By.LINK_TEXT, plot_id)
 
-    def click_addnewentry(self, keyword):
+    def click_addnewentry(self):
         self.browser.find_element(*PlotResultPage.add_new_entry).click()
 
     def set_plot_id(self, plot_id):
