@@ -1,21 +1,20 @@
 import os
-import sys
-import socket
 
 from unipath import Path
 
-from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
-from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
-                            PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
-                            LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
-                            FILTERED_DEFAULT_SEARCH)
-from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
-from .device import (CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
-                     VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
-from .lab import LAB_IMPORT_DMIS_DATA_SOURCE
-from .mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER,
-                            EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
-from .middleman import MIDDLE_MAN_LIST
+from config.installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
+from config.bcpp_settings import (
+    APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
+    PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
+    LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
+    FILTERED_DEFAULT_SEARCH)
+from config.databases import TESTING_SQLITE
+from config.device import (
+    CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
+    VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
+from config.lab import LAB_IMPORT_DMIS_DATA_SOURCE
+from config.mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
+from config.middleman import MIDDLE_MAN_LIST
 
 
 DEBUG = True  # Note: should be False for collectstatic
@@ -29,10 +28,13 @@ APP_NAME = APP_NAME
 
 # PATHS
 DIRNAME = os.path.dirname(os.path.abspath(__file__))  # needed??
-SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(3)  # e.g. /home/django/source
+BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
+GIT_DIR = BASE_DIR.ancestor(1)
+
+SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source
 EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
-PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source/bhp066_project
-PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project/bhp066
+PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project
+PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))  # e.g. /home/django/source/bhp066_project/bhp066
 APP_DIR = PROJECT_DIR.child('apps').child(APP_NAME)  # e.g. /home/django/source/bhp066_project/bhp066/apps/bcpp
 ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
 TEMPLATE_DIRS = (
@@ -48,43 +50,14 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
-# edc.crytpo_fields encryption keys
-# developers should set by catching their hostname instead of setting explicitly
-if socket.gethostname() == 'mac.local':
-    KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
-elif socket.gethostname() == 'ckgathi':
-    KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
-elif socket.gethostname() == 'One-2.local':
-    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-elif socket.gethostname() == 'silverapple':
-    KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
-elif socket.gethostname() == 'bcpp-tsetsiba':
-    KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
-else:
-    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
-    KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
+KEY_PATH = BASE_DIR
 
 MANAGERS = ADMINS
 
 # DATABASES
 CONN_MAX_AGE = 15
-testing_db_name = 'sqlite'
-if 'test' in sys.argv:
-    # make tests faster
-    SOUTH_TESTS_MIGRATE = False
-    if testing_db_name == 'sqlite':
-        DATABASES = TESTING_SQLITE
-    else:
-        DATABASES = TESTING_MYSQL
-else:
-    DATABASES = PRODUCTION_MYSQL
+DATABASES = TESTING_SQLITE
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#         'LOCATION': '127.0.0.1:11211',
-#     }
-# }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', 'bhpserver']
@@ -297,8 +270,3 @@ LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_
 # with multiple plots but you want default filter(?) to show current community instances.
 # Central Server in BHP must always be set to FALSE.
 FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
-
-# MIN_AGE_OF_CONSENT = 16
-# MAX_AGE_OF_CONSENT = 64
-# AGE_IS_ADULT = 18
-# GENDER_OF_CONSENT = ['M', 'F']
