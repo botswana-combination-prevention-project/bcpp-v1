@@ -1,6 +1,4 @@
 import os
-import sys
-import socket
 
 from unipath import Path
 
@@ -10,7 +8,7 @@ from config.bcpp_settings import (
     PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
     LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
     FILTERED_DEFAULT_SEARCH)
-from config.databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
+from config.databases import TESTING_SQLITE
 from config.device import (
     CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
     VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
@@ -52,44 +50,14 @@ STATICFILES_DIRS = ()
 CONFIG_DIR = PROJECT_DIR.child('config')
 MAP_DIR = STATIC_ROOT.child('img')
 
-# edc.crytpo_fields encryption keys
-# developers should set by catching their hostname instead of setting explicitly
-if socket.gethostname() == 'mac.local':
-    KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
-elif socket.gethostname() == 'ckgathi':
-    KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
-elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.local':
-    KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
-elif socket.gethostname() == 'silverapple':
-    KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
-elif socket.gethostname() == 'bcpp-tsetsiba':
-    KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
-else:
-    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
-    KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
+KEY_PATH = BASE_DIR
 
 MANAGERS = ADMINS
 
 # DATABASES
 CONN_MAX_AGE = 15
-testing_db_name = 'sqlite'
-if 'test' in sys.argv:
-    # make tests faster
-    SOUTH_TESTS_MIGRATE = False
-    KEY_PATH = BASE_DIR
-    if testing_db_name == 'sqlite':
-        DATABASES = TESTING_SQLITE
-    else:
-        DATABASES = TESTING_MYSQL
-else:
-    DATABASES = PRODUCTION_MYSQL
+DATABASES = TESTING_SQLITE
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-#         'LOCATION': '127.0.0.1:11211',
-#     }
-# }
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', 'bhpserver']
