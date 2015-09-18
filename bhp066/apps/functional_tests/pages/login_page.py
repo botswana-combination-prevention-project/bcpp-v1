@@ -5,7 +5,7 @@ from .base_page import BasePage
 class LoginPage(BasePage):
     username = (By.ID, 'id_username')
     password = (By.ID, 'id_password')
-    login_button = (By.XPATH, 'login')
+    login_button = (By.XPATH, "//div[@class='submit-row']/input")
     login_error = (By.ID, 'login_message')
 
     def set_username(self, username):
