@@ -9,10 +9,10 @@ from edc.subject.consent.models import ConsentCatalogue
 
 from ..app_configuration.classes import BcppAppConfiguration
 
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from edc_quota.client.models import Quota
 from edc_quota.controller.models import ControllerQuota
-from apps.bcpp_subject.models import PimaVl
+from bhp066.apps.bcpp_subject.models import PimaVl
 
 
 class BcppAppConfigurationTests(TestCase):

@@ -6,7 +6,7 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 from bhp066.apps.bcpp_subject.classes import func_poc_vl
-from bhp066.apps.bcpp_subject.constants import COMPLETE, VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
+from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
 
 from ..models import ClinicRequisition, SubjectRequisition, PreOrder, Panel
 
@@ -49,10 +49,3 @@ def create_requisition_preorder_on_post_save(sender, instance, raw, created, usi
                             pass
                         else:
                             raise integrity_error
-
-
-@receiver(post_save, weak=False, dispatch_uid="create_order_on_pre_save")
-def create_order_on_pre_save(sender, instance, raw, created, using, **kwargs):
-    if not kwargs.get('raw', False):
-        if isinstance(instance, PreOrder) and instance.status == COMPLETE:
-            pass

@@ -1,6 +1,6 @@
 import re
 
-from edc.constants import NOT_APPLICABLE, POS
+from edc_constants.constants import NOT_APPLICABLE, POS
 
 from bhp066.apps.bcpp_clinic.models import ClinicConsent, Questionnaire, ClinicVlResult
 from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD

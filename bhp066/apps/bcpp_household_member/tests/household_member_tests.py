@@ -4,11 +4,11 @@ from django.forms import ValidationError
 from django.core.exceptions import ImproperlyConfigured
 
 from edc.map.classes import Mapper, site_mappers
-from apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory, RepresentativeEligibilityFactory
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_household.models import household_structure_on_post_save
-#from apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory, RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_household.models import household_structure_on_post_save
+#from bhp066.apps.bcpp_subject.models import SubjectConsent
 from .factories import SubjectAbsenteeEntryFactory
 
 from ..models import SubjectAbsentee
@@ -33,9 +33,9 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 
 class TestPlotMapper(Mapper):

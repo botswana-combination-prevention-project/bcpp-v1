@@ -8,7 +8,7 @@ from django.db import models
 
 from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA, BLOCK_CONTINUE
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.audit_trail import AuditTrail

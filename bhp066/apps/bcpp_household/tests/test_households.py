@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
                       PlotIdentifierHistory)
