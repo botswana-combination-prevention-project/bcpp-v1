@@ -27,6 +27,7 @@ EDC_APPS = (
     'edc.dashboard.base',
     'edc.dashboard.search',
     'edc.dashboard.section',
+    'edc.dashboard.subject',
 
     'edc.export',
     'edc.import',
@@ -53,7 +54,6 @@ EDC_APPS = (
     'edc.subject.appointment_helper',
     'edc.subject.visit_schedule',
     'edc.subject.visit_tracking',
-    'edc.subject.appointment',
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
     'edc.notification',
@@ -64,6 +64,9 @@ EDC_APPS = (
     'edc.lab.lab_profile',
     'getresults_identifier',
     'edc_quota',
+    'edc_consent',
+    'edc_base',
+
     'edc_audit',
     'edc_constants',
 )
