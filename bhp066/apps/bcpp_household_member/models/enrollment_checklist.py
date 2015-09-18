@@ -6,19 +6,19 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
-from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER
 from edc.choices.common import YES_NO, YES_NO_NA, BLOCK_CONTINUE
 from edc.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_base.model.validators import dob_not_future
+from edc_consent.validators import ConsentAgeValidator
 
 from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
 from ..managers import EnrollmentChecklistManager
-
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
@@ -51,8 +51,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         verbose_name="Date of birth",
         validators=[
             dob_not_future,
-            MinConsentAge,
-            MaxConsentAge],
+            ConsentAgeValidator(16, 64)],
         null=True,
         blank=False,
         help_text="Format is YYYY-MM-DD. (Data will not be saved)")
