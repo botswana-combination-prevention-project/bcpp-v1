@@ -91,9 +91,9 @@ class ClinicEligibilityTests(TestCase):
         self.source_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey1)
         self.target_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey2)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.source_household_structure)
-        self.study_site = StudySite.objects.get(site_code=site_mappers.current_mapper().map_code)
-        self.intervention = site_mappers.current_mapper().intervention
-        site_mappers.current_mapper().verify_survey_dates()
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
+        self.intervention = site_mappers.get_current_mapper().intervention
+        site_mappers.get_current_mapper().verify_survey_dates()
 
         # add members to source
         HouseholdMemberFactory(household_structure=self.source_household_structure)

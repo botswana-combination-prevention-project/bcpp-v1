@@ -25,8 +25,8 @@ class SectionPlotView(BaseSectionView):
             current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.current_mapper()),
-            'mapper_name': site_mappers.current_mapper.map_area,
+            'current_community': str(site_mappers.get_current_mapper()),
+            'mapper_name': site_mappers.get_current_mapper().map_area,
             'gps_search_form': GpsSearchForm(initial={'radius': 100}),
             'use_gps_to_target_verification': settings.VERIFY_GPS,
             'search_term': kwargs.get('search_term'),

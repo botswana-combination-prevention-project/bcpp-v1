@@ -25,7 +25,7 @@ class HouseholdStructureManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.current_mapper.map_area
+            community = site_mappers.get_current_mapper().map_area
             if PlotIdentifier.get_notebook_plot_lists():
                 return super(HouseholdStructureManager, self).get_queryset().filter(
                     household__plot__community=community,

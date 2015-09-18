@@ -102,7 +102,7 @@ class SubjectConsentForm(BaseBcppConsentForm):
         household_member = cleaned_data.get("household_member")
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-                configured_community = site_mappers.current_mapper().map_area
+                configured_community = site_mappers.get_current_mapper().map_area
                 community = household_member.household_structure.household.plot.community
                 if community != configured_community:
                     raise forms.ValidationError(

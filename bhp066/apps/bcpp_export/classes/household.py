@@ -3,8 +3,8 @@ from bhp066.apps.bcpp_household.models import (
     HouseholdAssessment, Household as HouseholdModel)
 from bhp066.apps.bcpp_household.choices import HH_STATUS
 from bhp066.apps.bcpp_household.constants import (
-    NEARLY_ALWAYS_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, 
-    UNKNOWN_OCCUPIED)
+    SEASONALLY_NEARLY_ALWAYS_OCCUPIED,
+    UNKNOWN_OCCUPIED, RARELY_NEVER_OCCUPIED)
 
 from .base import Base
 from .plot import Plot
@@ -58,8 +58,7 @@ class Household(Base):
             ('confirmed_date', 'confirmed_date'),
             ('plot_identifier', 'plot_identifier'),
             ('status', 'plot_status'),
-            ('log_status', 'plot_log_status'),
-            ]
+            ('log_status', 'plot_log_status')]
         for attr in attrs:
             setattr(self, attr[1], getattr(self.plot, attr[0]))
 
@@ -115,8 +114,7 @@ class Household(Base):
                 ('enumeration_attempts', 'enumeration_attempts'),
                 ('eligible_members', 'eligible_members'),
                 ('refused_enumeration', 'refused_enumeration'),
-                ('failed_enumeration', 'failed_enumeration'),
-                ]
+                ('failed_enumeration', 'failed_enumeration')]
             self.denormalize(
                 attr_suffix, fieldattrs,
                 instance=self.household_structures.get(survey_abbrev))
@@ -176,8 +174,7 @@ class Household(Base):
                 ('last_seen_home', 'assessment_last_seen'),
                 ('member_count', 'assessment_count'),
                 ('eligibles', 'assessment_eligible'),
-                ('ineligible_reason', 'assessment_ineligible_reason'),
-                ]
+                ('ineligible_reason', 'assessment_ineligible_reason')]
             self.denormalize(
                 attr_suffix, fieldattrs,
                 lookup_model=HouseholdAssessment,

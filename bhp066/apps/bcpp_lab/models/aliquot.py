@@ -34,7 +34,6 @@ class Aliquot(BaseAliquot, BaseSyncUuidModel):
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.receive.registered_subject.subject_identifier
-        # self.community = site_mappers.current_mapper().map_area
         super(Aliquot, self).save(*args, **kwargs)
 
     @property
@@ -42,7 +41,6 @@ class Aliquot(BaseAliquot, BaseSyncUuidModel):
         return self.aliquot_identifier[:-4]
 
     def get_visit_model(self):
-        # from bhp066.apps.bcpp_subject.models import SubjectVisit
         return SubjectVisit
 
     @property
