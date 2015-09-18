@@ -3,12 +3,12 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import Max
 
-from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_is_future, date_is_future
-from edc.constants import NOT_APPLICABLE
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.map.classes import site_mappers
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.validators import datetime_is_future, date_is_future
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..choices import REFERRAL_CODES, REFERRAL_APPT_COMMENTS
 from ..classes import SubjectReferralHelper

@@ -2,7 +2,7 @@ from datetime import date
 
 from django.db import models
 
-from edc.constants import DONE, IN_PROGRESS
+from edc_constants.constants import DONE, IN_PROGRESS
 
 from bhp066.apps.bcpp_household_member.models import MemberAppointment, HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey

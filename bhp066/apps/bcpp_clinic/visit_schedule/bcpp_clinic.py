@@ -2,7 +2,7 @@ from ..models import ClinicVisit, ClinicConsent
 
 from collections import OrderedDict
 
-from edc.constants import REQUIRED, NOT_ADDITIONAL, ADDITIONAL, NOT_REQUIRED
+from edc_constants.constants import REQUIRED, NOT_ADDITIONAL, ADDITIONAL, NOT_REQUIRED
 from edc.subject.visit_schedule.classes import VisitScheduleConfiguration, site_visit_schedules, EntryTuple, MembershipFormTuple, ScheduleGroupTuple, RequisitionPanelTuple
 
 

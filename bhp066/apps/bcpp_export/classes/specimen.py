@@ -6,7 +6,7 @@ from dateutil.parser import parse
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 
-from edc.constants import YES
+from edc_constants.constants import YES
 
 from bhp066.apps.bcpp_lab.models import Receive, Aliquot as AliquotModel
 

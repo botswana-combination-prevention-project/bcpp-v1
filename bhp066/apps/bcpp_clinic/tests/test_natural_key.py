@@ -11,14 +11,14 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.registration.models import RegisteredSubject
 from edc.map.classes import Mapper, site_mappers
 
-from apps.bcpp_clinic.tests.factories import ClinicEligibilityFactory, ClinicEnrollmentLossFactory
-from apps.bcpp_clinic.tests.factories import (ClinicConsentFactory, ClinicVisitFactory,
+from bhp066.apps.bcpp_clinic.tests.factories import ClinicEligibilityFactory, ClinicEnrollmentLossFactory
+from bhp066.apps.bcpp_clinic.tests.factories import (ClinicConsentFactory, ClinicVisitFactory,
                                              ClinicLocatorFactory, QuestionnaireFactory)
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
-from apps.bcpp_clinic.models import ClinicEnrollmentLoss
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_clinic.visit_schedule import BcppClinicVisitSchedule
-from apps.bcpp_lab.lab_profiles import ClinicSubjectProfile
+from bhp066.apps.bcpp_clinic.models import ClinicEnrollmentLoss
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_clinic.visit_schedule import BcppClinicVisitSchedule
+from bhp066.apps.bcpp_lab.lab_profiles import ClinicSubjectProfile
 
 
 class TestNaturalKey(TestCase):

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from apps.bcpp.choices import YES_NO
+from bhp066.apps.bcpp.choices import YES_NO
 from ..choices import PARTNER_HIV_STATUS
 from .base_scheduled_model import BaseScheduledModel
 

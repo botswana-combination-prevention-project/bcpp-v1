@@ -1,6 +1,6 @@
 from django import forms
 
-from edc.constants import YES, NO
+from edc_constants.constants import YES, NO
 
 from ..models import SubjectMoved
 
