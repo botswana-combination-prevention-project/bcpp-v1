@@ -6,10 +6,10 @@ from django.core.exceptions import ValidationError
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
 
 from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
                       PlotIdentifierHistory)

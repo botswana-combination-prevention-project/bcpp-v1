@@ -9,13 +9,13 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_household.models import HouseholdStructure, Household
-from apps.bcpp_household.tests.factories import HouseholdStructureFactory, PlotFactory, HouseholdFactory
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_household.models import HouseholdStructure, Household
+from bhp066.apps.bcpp_household.tests.factories import HouseholdStructureFactory, PlotFactory, HouseholdFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from .factories import HouseholdMemberFactory
 

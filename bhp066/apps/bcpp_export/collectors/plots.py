@@ -12,7 +12,7 @@ class Plots(BaseCollector):
     For example::
         from edc.map.classes import site_mappers
 
-        from apps.bcpp_export.collectors import Plots
+        from bhp066.apps.bcpp_export.collectors import Plots
 
         site_mappers.autodiscover()
         plots = Plots(isoformat=True, floor_datetime=True)

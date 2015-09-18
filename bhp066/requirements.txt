@@ -1,5 +1,10 @@
 pytz
 edc-quota
+edc-consent
+edc-base
+edc-constants
+edc-audit
+django-revision
 Django==1.6.7
 Fabric==1.9.0
 GitPython==0.3.2.RC1

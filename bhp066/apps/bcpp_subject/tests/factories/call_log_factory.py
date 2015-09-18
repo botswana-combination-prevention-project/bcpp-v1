@@ -1,7 +1,7 @@
 import factory
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 from ...models import CallLog
 
 

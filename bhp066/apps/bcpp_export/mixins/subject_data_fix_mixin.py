@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from edc.constants import YES, NO
+from edc_constants.constants import YES, NO
 
 from bhp066.apps.bcpp_household_member.constants import BHS, CLINIC_RBD, ANNUAL
 from bhp066.apps.bcpp_household_member.classes import HouseholdMemberHelper

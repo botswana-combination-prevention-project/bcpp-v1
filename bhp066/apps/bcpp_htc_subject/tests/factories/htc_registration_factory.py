@@ -4,7 +4,7 @@ from edc.core.bhp_variables.tests.factories import StudySiteFactory
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 
 from ...models import HtcRegistration
 

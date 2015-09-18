@@ -1,6 +1,6 @@
 from django.contrib import admin
 from edc.subject.appointment.admin import BaseAppointmentModelAdmin
-from apps.bcpp_lab.models import SubjectRequisition
+from bhp066.apps.bcpp_lab.models import SubjectRequisition
 from ..models import HtcSubjectVisit
 from ..forms import HtcVisitForm
 

@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from edc_base.audit_trail import AuditTrail
 from edc.choices.common import YES_NO
 
-from apps.bcpp_subject.models import BaseHouseholdMemberConsent
+from bhp066.apps.bcpp_subject.models import BaseHouseholdMemberConsent
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 

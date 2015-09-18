@@ -1,29 +1,24 @@
 from __future__ import print_function
 
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-
-from django import forms
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.db.models import get_model
 
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.map.classes import Mapper, site_mappers
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_survey.tests.factories import SurveyFactory
-from apps.bcpp_subject.models import SubjectVisit
-from apps.bcpp_subject.tests.factories import SubjectVisitFactory
-from apps.bcpp.choices import (YES_NO_DWTA, ALCOHOL_SEX, COMMUNITY_NA, FREQ_IN_YEAR, SEXDAYS_CHOICE, LASTSEX_CHOICE, YES_NO_UNSURE,
-                                AGE_RANGES, FIRSTRELATIONSHIP_CHOICE, YES_NO_UNSURE_DWTA, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE)
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_subject.models import SubjectVisit
+from bhp066.apps.bcpp_subject.tests.factories import SubjectVisitFactory
+from bhp066.apps.bcpp.choices import (
+    YES_NO_DWTA, ALCOHOL_SEX, FREQ_IN_YEAR, SEXDAYS_CHOICE, LASTSEX_CHOICE, YES_NO_UNSURE,
+    AGE_RANGES, FIRSTRELATIONSHIP_CHOICE, YES_NO_UNSURE_DWTA, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE)
 
-from ..forms import SubjectConsentForm, SexualBehaviourForm, MonthsRecentPartnerForm
-
-from .factories import SubjectConsentFactory
+from ..forms import SexualBehaviourForm, MonthsRecentPartnerForm
 
 
 class TestPlotMapper(Mapper):
@@ -67,7 +62,7 @@ class TestSexualBehaviourForm(TestCase):
 
     def test_is_ecc_on_recent_partner(self):
         """  (Recent Partner 12 months, Second Partner 12 months, Third Partner 12 months) If outside community or
-              farm outside this community ask: Does this sexual partner live in any of the following communities?  
+              farm outside this community ask: Does this sexual partner live in any of the following communities?
               if response is a ecc community then derived value should assign ecc
         """
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
@@ -99,7 +94,7 @@ class TestSexualBehaviourForm(TestCase):
 
     def test_is_cpc_on_recent_partner(self):
         """  (Recent Partner 12 months, Second Partner 12 months, Third Partner 12 months) If outside community or
-          farm outside this community ask: Does this sexual partner live in any of the following communities?  
+          farm outside this community ask: Does this sexual partner live in any of the following communities?
           if response is a cpc community then derived value should assign cpc"""
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
         first_partner_communities = [PartnerResidency.objects.get(name__in=['In this community', 'Farm within this community', 'Cattle post within this community'])]
@@ -163,7 +158,7 @@ class TestSexualBehaviourForm(TestCase):
     def test_derived_on_other(self):
         """  (Recent Partner 12 months, Second Partner 12 months, Third Partner 12 months) If outside community or
               farm outside this community ask: Does this sexual partner live in any of the following communities?
-              if response is a other community then derived value should assign OTHER. 
+              if response is a other community then derived value should assign OTHER.
         """
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
         first_partner_communities = [PartnerResidency.objects.get(name='In this community'), PartnerResidency.objects.get(name='Outside community')]

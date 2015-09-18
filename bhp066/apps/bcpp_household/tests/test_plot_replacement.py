@@ -14,22 +14,22 @@ from edc.device.sync.utils import load_producer_db_settings, update_producer_fro
 from edc.device.sync.tests.factories import ProducerFactory
 from edc.device.dispatch.models.dispatch_item_register import DispatchItemRegister
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
-from apps.bcpp_dispatch.classes import BcppDispatchController
-from apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
+from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp_dispatch.classes import BcppDispatchController
+from bhp066.apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
                                            ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
                                            NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
                                            RESIDENTIAL_HABITABLE)
-from apps.bcpp_household.helpers import ReplacementHelper
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, Plot
-from apps.bcpp_household_member.constants import REFUSED, ABSENT, BHS_SCREEN
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.models import SubjectAbsentee
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.helpers import ReplacementHelper
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, Plot
+from bhp066.apps.bcpp_household_member.constants import REFUSED, ABSENT, BHS_SCREEN
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import SubjectAbsentee
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..constants import (RARELY_NEVER_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED, 
                         FIVE_PERCENT)

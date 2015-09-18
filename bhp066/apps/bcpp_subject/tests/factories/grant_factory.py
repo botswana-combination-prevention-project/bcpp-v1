@@ -4,7 +4,7 @@ from datetime import datetime
 
 from edc.base.model.tests.factories import BaseUuidModelFactory
 
-from apps.bcpp_subject.tests.factories import LabourMarketWagesFactory
+from bhp066.apps.bcpp_subject.tests.factories import LabourMarketWagesFactory
 
 from ...models import Grant
 

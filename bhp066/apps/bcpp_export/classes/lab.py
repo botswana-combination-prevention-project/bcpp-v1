@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
 
-from edc.constants import YES
+from edc_constants.constants import YES
 
 from bhp066.apps.bcpp_lab.models import SubjectRequisition, Receive
 
