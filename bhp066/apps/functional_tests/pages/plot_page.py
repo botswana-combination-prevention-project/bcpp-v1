@@ -4,6 +4,10 @@ from .base_page import BasePage
 
 class PlotPage(BasePage):
     plot_status = (By.ID, 'id_status')
+    non_res = (By.ID, 'id_status_0')
+    res_non_habit = (By.ID, 'id_status_1')
+    res_habit = (By.ID, 'id_status_2')
+    inaccessible = (By.ID, 'id_status_3')
     gps_deg_south = (By.ID, 'id_gps_degrees_s')
     gps_min_south = (By.ID, 'ID_gps_minutes_s')
     gps_deg_east = (By.ID, 'id_gps_degree_e')
