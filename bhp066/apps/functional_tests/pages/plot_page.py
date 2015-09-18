@@ -37,6 +37,10 @@ class PlotPage(BasePage):
         minsouthElement = self.browser.find_element(*PlotPage.gps_min_east)
         minsouthElement.send_keys(gps_min_east)
 
+    def set_household_count(self, household_count):
+        HouseholdElement = self.browser.find_element(*PlotPage.household_count)
+        HouseholdElement.send_keys(household_count)
+
     def click_save_button(self):
         self.browser.find_element(*PlotPage.save_button).click()
 
@@ -46,4 +50,5 @@ class PlotPage(BasePage):
         self.set_min_south(gps_min_south)
         self.set_deg_east(gps_deg_east)
         self.set_min_east(gps_min_east)
+        self.set_household_count(household_count)
         self.click_save_button()
