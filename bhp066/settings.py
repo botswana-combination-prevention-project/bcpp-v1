@@ -58,7 +58,7 @@ if socket.gethostname() == 'mac.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
-elif socket.gethostname() == 'One-2.local':
+elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.local':
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 elif socket.gethostname() == 'silverapple':
     KEY_PATH = '/Users/melissa/Documents/git/source/bhp066_project/bhp066/keys'
@@ -82,13 +82,6 @@ if 'test' in sys.argv:
         DATABASES = TESTING_MYSQL
 else:
     DATABASES = PRODUCTION_MYSQL
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 # CACHES = {
 #     'default': {
