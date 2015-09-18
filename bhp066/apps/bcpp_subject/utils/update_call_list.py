@@ -3,7 +3,7 @@ from django.db.models import get_model
 from bhp066.config.celery import app
 
 from edc.map.exceptions import MapperError
-from edc.constants import NEW
+from edc_constants.constants import NEW, YES
 
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_household.models import HouseholdStructure
@@ -39,11 +39,11 @@ def update_call_list(community, survey_slug, label, verbose=False):
         try:
             SubjectLocator.objects.get(
                 subject_visit__household_member=subject_consent.household_member,
-                may_follow_up='Yes')
+                may_follow_up=YES)
             try:
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=subject_consent.household_member,
-                    hic_permission='Yes')
+                    hic_permission=YES)
                 options.update(
                     hic=True,
                     hic_datetime=hic_enrollment.report_datetime

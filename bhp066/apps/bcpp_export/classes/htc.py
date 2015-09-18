@@ -1,4 +1,4 @@
-from edc.constants import NO
+from edc_constants.constants import NO
 
 from bhp066.apps.bcpp_household_member.models import SubjectHtc
 

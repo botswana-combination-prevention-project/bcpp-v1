@@ -7,17 +7,17 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers, Mapper
 
-from apps.bcpp_household.helpers import ReplacementHelper
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
-from apps.bcpp_household_member.constants import REFUSED, ABSENT
-from apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
+from bhp066.apps.bcpp_household.helpers import ReplacementHelper
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
+from bhp066.apps.bcpp_household_member.constants import REFUSED, ABSENT
+from bhp066.apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
 
 from .factories import HouseholdFactory
 from .factories import PlotFactory

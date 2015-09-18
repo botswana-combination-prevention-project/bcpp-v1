@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 
-from edc.constants import ALIVE
+from edc_constants.constants import ALIVE
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 

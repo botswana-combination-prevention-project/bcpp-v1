@@ -61,7 +61,7 @@ elif socket.gethostname() == 'silverapple':
 elif socket.gethostname() == 'bcpp-tsetsiba':
     KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
 else:
-    #KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
+    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS
@@ -298,7 +298,7 @@ LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_
 # Central Server in BHP must always be set to FALSE.
 FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
 
-MIN_AGE_OF_CONSENT = 16
-MAX_AGE_OF_CONSENT = 64
-AGE_IS_ADULT = 18
-GENDER_OF_CONSENT = ['M', 'F']
+# MIN_AGE_OF_CONSENT = 16
+# MAX_AGE_OF_CONSENT = 64
+# AGE_IS_ADULT = 18
+# GENDER_OF_CONSENT = ['M', 'F']

@@ -11,8 +11,8 @@
 # from edc.subject.registration.models import RegisteredSubject
 # 
 # from .factories import (ClinicEligibilityFactory, ClinicEnrollmentLossFactory)
-# from apps.bcpp_clinic.visit_schedule import BcppClinicVisitSchedule
-# from apps.bcpp_clinic.lab_profiles import ClinicSubjectProfile
+# from bhp066.apps.bcpp_clinic.visit_schedule import BcppClinicVisitSchedule
+# from bhp066.apps.bcpp_clinic.lab_profiles import ClinicSubjectProfile
 # 
 # 
 # class EligibilityNaturalKeyTests(TestCase):

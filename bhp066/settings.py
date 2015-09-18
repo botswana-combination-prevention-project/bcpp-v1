@@ -65,7 +65,7 @@ elif socket.gethostname() == 'silverapple':
 elif socket.gethostname() == 'bcpp-tsetsiba':
     KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
 else:
-    #KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
+    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS

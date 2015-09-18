@@ -1,19 +1,16 @@
 from datetime import datetime
 
-from edc.lab.lab_requisition.actions import flag_as_received
-from edc.lab.lab_profile.classes import site_lab_profiles
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
-from edc.lab.lab_profile.classes import site_lab_profiles
-
-from apps.bcpp_lab.models import AliquotType, Panel
-from apps.bcpp_subject.tests import BaseRuleGroupTestSetup
-from apps.bcpp_subject.tests.factories import SubjectLocatorFactory
-from apps.bcpp_subject.models import HivCareAdherence
-from apps.bcpp_subject.constants import NEW, CLOSED
-
-from ..models import Aliquot, Receive, PreOrder, SubjectRequisition, AliquotProfile, Order
-from .factories import SubjectRequisitionFactory, ProcessingFactory
 from django.core.exceptions import ValidationError
+
+from edc_constants.constants import NEW, POS, NEG, CLOSED, YES, NO
+from edc.lab.lab_profile.classes import site_lab_profiles
+
+from bhp066.apps.bcpp_lab.models import AliquotType, Panel
+from bhp066.apps.bcpp_subject.models import HivCareAdherence
+from bhp066.apps.bcpp_subject.tests import BaseRuleGroupTestSetup
+from ..models import Aliquot, Receive, PreOrder, SubjectRequisition, AliquotProfile
+
+from .factories import SubjectRequisitionFactory, ProcessingFactory
 
 
 class TestOrder(BaseRuleGroupTestSetup):
@@ -34,11 +31,11 @@ class TestOrder(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='Yes',
-            on_arv='Yes',
-            arv_evidence='No',  # this is the rule field
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=NO,  # this is the rule field
         )
         self.assertEqual(PreOrder.objects.all().count(), 1)
         self.assertEqual(PreOrder.objects.first().status, NEW)
@@ -54,14 +51,14 @@ class TestOrder(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
         )
         SubjectRequisitionFactory(
-            subject_visit=self.subject_visit_male_T0, 
+            subject_visit=self.subject_visit_male_T0,
             panel=viral_load_panel,
             aliquot_type=aliquot_type,
             site=self.study_site
@@ -81,7 +78,7 @@ class TestOrder(BaseRuleGroupTestSetup):
         requisition.is_receive_datetime = datetime.now()
         requisition.save()
         lab_profile = site_lab_profiles.get('SubjectRequisition')
-        receive = lab_profile().receive(SubjectRequisition.objects.get(panel__name='Microtube'))
+        lab_profile().receive(SubjectRequisition.objects.get(panel__name='Microtube'))
         self.assertEqual(Receive.objects.all().count(), 1)
         self.assertEqual(Aliquot.objects.all().count(), 1)
         ProcessingFactory(aliquot=Aliquot.objects.first(), profile=AliquotProfile.objects.get(name='Microtube'))
@@ -89,7 +86,7 @@ class TestOrder(BaseRuleGroupTestSetup):
         pre_order.aliquot_identifier = Aliquot.objects.get(aliquot_type__alpha_code='PL').aliquot_identifier
         pre_order.save()
         self.assertEqual(PreOrder.objects.first().status, CLOSED)
-        pre_order.aliquot_identifier = Aliquot.objects.get(aliquot_type__alpha_code='PL').aliquot_identifier+'x'
+        pre_order.aliquot_identifier = Aliquot.objects.get(aliquot_type__alpha_code='PL').aliquot_identifier + 'x'
         with self.assertRaises(ValidationError):
             pre_order.save()
 
@@ -117,11 +114,11 @@ class TestOrder(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
         )
         SubjectRequisitionFactory(
             subject_visit=self.subject_visit_male_T0,
@@ -159,7 +156,7 @@ class TestOrder(BaseRuleGroupTestSetup):
 
         # Process the female's Aliquots.
         lab_profile = site_lab_profiles.get('SubjectRequisition')
-        receive = lab_profile().receive(SubjectRequisition.objects.get(subject_visit=self.subject_visit_female_T0, panel__name='Microtube'))
+        lab_profile().receive(SubjectRequisition.objects.get(subject_visit=self.subject_visit_female_T0, panel__name='Microtube'))
         self.assertEqual(Receive.objects.all().count(), 1)
         self.assertEqual(Aliquot.objects.all().count(), 1)
         ProcessingFactory(aliquot=Aliquot.objects.first(), profile=AliquotProfile.objects.get(name='Microtube'))

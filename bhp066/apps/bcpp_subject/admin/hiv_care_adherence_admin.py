@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
-from edc.constants import POS
+from edc_constants.constants import POS
 
 from bhp066.apps.bcpp_survey.models import Survey
 

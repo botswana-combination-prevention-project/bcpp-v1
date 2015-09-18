@@ -3,10 +3,10 @@ from datetime import datetime
 from edc.lab.lab_requisition.actions import flag_as_received
 from edc.lab.lab_profile.classes import site_lab_profiles
 
-from apps.bcpp_lab.models import AliquotType, Panel, Receive
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_subject.tests.base_scheduled_model_test_case import BaseScheduledModelTestCase
-from apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
+from bhp066.apps.bcpp_lab.models import AliquotType, Panel, Receive
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp_subject.tests.base_scheduled_model_test_case import BaseScheduledModelTestCase
+from bhp066.apps.bcpp_subject.tests.factories.subject_locator_factory import SubjectLocatorFactory
 
 from ..models import Aliquot
 

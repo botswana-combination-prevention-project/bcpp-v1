@@ -7,16 +7,16 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_variables.models import StudySite
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.tests.factories import (HouseholdMemberFactory, EnrollmentChecklistFactory)
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.tests.factories import (HouseholdMemberFactory, EnrollmentChecklistFactory)
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 from ..constants import BHS, BHS_ELIGIBLE, BHS_SCREEN
 
@@ -33,7 +33,7 @@ class BaseTestMember(TestCase):
 
     def setUp(self):
 
-        from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+        from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 
         self.household_structure = None
         self.registered_subject = None
@@ -85,7 +85,7 @@ class BaseTestMember(TestCase):
             part_time_resident='Yes')
         household_member = HouseholdMember.objects.get(pk=enrollment_checklist.household_member.pk)
         self.assertEquals(household_member.member_status, BHS_ELIGIBLE)
-        from apps.bcpp_subject.tests.factories import SubjectConsentFactory
+        from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
         subject_consent = SubjectConsentFactory(
             household_member=household_member,
             registered_subject=household_member.registered_subject,

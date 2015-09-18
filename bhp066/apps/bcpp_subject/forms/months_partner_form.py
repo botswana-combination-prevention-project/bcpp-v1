@@ -1,6 +1,6 @@
 from django import forms
 
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
 from bhp066.apps.bcpp.choices import FIRSTPARTNERHIV_CHOICE, YES_NO_UNSURE
 

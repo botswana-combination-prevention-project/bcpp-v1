@@ -1,6 +1,6 @@
 from django.db.models import Count
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 
 class SummaryReport(object):
