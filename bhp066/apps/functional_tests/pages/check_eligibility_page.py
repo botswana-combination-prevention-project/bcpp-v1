@@ -73,8 +73,10 @@ class CheckEligibilityPage(BaseModelAdminPage):
         citizen_element.send_keys(citizen)
 
     def select_citizen_yes(self):
-        self.browser.find_element(*CheckEligibilityPage.citizen_yes)
-        self.browser.find_element(*CheckEligibilityPage.citizen_no)
+        self.browser.find_element(*CheckEligibilityPage.citizen_yes).click()
+
+    def select_citizen_no(self):
+        self.browser.find_element(*CheckEligibilityPage.citizen_no).click()
 
     def set_legal_marriage(self, legal_marriage):
         legal_marriage_element = self.browser.find_element(*CheckEligibilityPage.legal_marriage)
