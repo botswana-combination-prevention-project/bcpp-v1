@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
-from .base_page import BasePage
+from .base_page import BaseModelAdminPage
 
 
-class PlotLogEntryPage(BasePage):
+class PlotLogEntryPage(BaseModelAdminPage):
     report_date = (By.ID, 'report_datetime_0')
     report_time = (By.ID, 'report_datetime_1')
     plot_status = (By.ID, 'id_log_status')
@@ -35,9 +35,6 @@ class PlotLogEntryPage(BasePage):
 
     def click_now(self):
         self.browser.find_element(*PlotLogEntryPage.now).click()
-
-    def click_save_button(self):
-        self.browser.find_element(*PlotLogEntryPage.save_button).click()
 
     def fill_plot_log_entry(self, date=None, time=None, plot_status=None):
         if not date:
