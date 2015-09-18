@@ -6,6 +6,8 @@ class PlotLogEntryPage(BasePage):
     report_date = (By.ID, 'report_datetime_0')
     report_time = (By.ID, 'report_datetime_1')
     plot_status = (By.ID, 'id_log_status_0')
+    today = (By.XPATH, '')
+    now = (By.XPATH, '')
     save_button = (By.XPATH, "//form[*/text()='Save']")
 
     def set_report_date(self, date):
@@ -19,6 +21,9 @@ class PlotLogEntryPage(BasePage):
     def set_plot_status(self, plot_status):
         plotElement = self.browser.find_element(*PlotLogEntryPage.plot_status)
         plotElement.send_keys(plot_status)
+
+    def click_today(self):
+        self.browser.find_element(*PlotLogEntryPage.today).click()
 
     def click_save_button(self):
         self.browser.find_element(*PlotLogEntryPage.save_button).click()
