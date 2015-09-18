@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 
 
 from ..actions import update_household_work_list_action, show_plot_on_map
