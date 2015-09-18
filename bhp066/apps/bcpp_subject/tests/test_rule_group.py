@@ -1786,7 +1786,6 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
 
 #     def test_poc_viral_load_mobile_household(self):
-# #         settings.PIMA_VL_LIMIT = 10
 #         ra_group = Group.objects.create(name=FIELD_RESEARCH_ASSISTANT_GROUP)
 #         clinic_ra_group = Group.objects.create(name=CLINIC_RESEARCH_ASSISTANT)
 #         ra_user = User.objects.create_user('ra_user', 'ra_user@bhp.org.bw')

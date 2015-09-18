@@ -15,7 +15,7 @@ class PimaVlManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.current_mapper.map_area
+            community = site_mappers.get_current_mapper().map_area
             if PlotIdentifier.get_notebook_plot_lists():
                 return super(PimaVlManager, self).get_queryset().filter(
                     subject_visit__household_member__household_structure__household__plot__community=community,

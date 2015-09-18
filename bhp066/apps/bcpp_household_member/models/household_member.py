@@ -844,7 +844,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def is_bhs(self):
         """Returns True if the member was survey as part of the BHS."""
         return self.household_structure.household.plot.plot_identifier != \
-            site_mappers.get_current_mapper()().clinic_plot.plot_identifier
+            site_mappers.get_current_mapper().clinic_plot.plot_identifier
 
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found,

@@ -154,9 +154,9 @@ class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         help_text=('datetime that household is enrolled. '
                    'Updated by Household_structure post_save.'))
 
-    objects = HouseholdManager()
-
     history = AuditTrail()
+
+    objects = HouseholdManager()
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
@@ -185,7 +185,7 @@ class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         return self.community
 
     def __unicode__(self):
-        if site_mappers.current_mapper().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
+        if site_mappers.get_current_mapper().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
             return self.plot.description
         return self.household_identifier
 
