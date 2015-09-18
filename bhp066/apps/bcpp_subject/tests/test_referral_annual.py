@@ -22,7 +22,7 @@ class TestReferralAnnual(BaseScheduledModelTestCase):
     def tests_hiv_result4a(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
         from ..classes import SubjectStatusHelper
-        site_mappers.current_mapper.intervention = True
+        site_mappers.get_current_mapper().intervention = True
         print Survey.objects.current_survey()
         self.startup()
         today_date = date.today()
@@ -47,7 +47,7 @@ class TestReferralAnnual(BaseScheduledModelTestCase):
     def tests_hiv_result4b(self):
         """Other record confirms a verbal positive as evidence of HIV infection not on ART."""
         from ..classes import SubjectStatusHelper
-        site_mappers.current_mapper.intervention = False
+        site_mappers.get_current_mapper().intervention = False
         print Survey.objects.current_survey()
         self.startup()
         today_date = date.today()
