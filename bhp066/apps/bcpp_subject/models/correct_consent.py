@@ -9,11 +9,11 @@ from django.core.urlresolvers import reverse
 from edc.base.model.validators import (datetime_not_future, datetime_not_before_study_start,
                                        datetime_is_after_consent)
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
 from edc.choices.common import GENDER_UNDETERMINED
 from edc.choices.common import YES_NO, YES
 from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_consent.validators import ConsentAgeValidator
 
 from ..managers import CorrectConsentManager
 
@@ -75,19 +75,13 @@ class CorrectConsent(BaseSyncUuidModel):
         verbose_name=_("Old Date of birth"),
         null=True,
         blank=True,
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge],
+        validators=[ConsentAgeValidator(16, 64)],
         help_text=_("Format is YYYY-MM-DD"),
     )
 
     new_dob = models.DateField(
         verbose_name=_("New Date of birth"),
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge],
+        validators=[ConsentAgeValidator(16, 64)],
         null=True,
         blank=True,
         help_text=_("Format is YYYY-MM-DD"),
