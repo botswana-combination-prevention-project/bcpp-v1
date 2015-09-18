@@ -34,7 +34,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
         self.search_limit_setup()
-        self.update_or_create_consent_version()
+        self.update_or_create_consent_type()
 
     global_configuration = {
         'dashboard':
@@ -82,23 +82,6 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'Boxing Day': date(2015, 12, 26),
     }
 
-    consent_catalogue_list = [
-        {'name': BASELINE_SURVEY_SLUG,
-         'content_type_map': 'subjectconsent',
-         'consent_type': 'study',
-         'version': 1,
-         'start_datetime': study_start_datetime,
-         'end_datetime': study_end_datetime,
-         'add_for_app': 'bcpp_subject'},
-        {'name': 'bcpp-clinic',
-         'content_type_map': 'clinicconsent',
-         'consent_type': 'study',
-         'version': 1,
-         'start_datetime': study_start_datetime,
-         'end_datetime': study_end_datetime,
-         'add_for_app': 'bcpp_clinic'},
-    ]
-
     survey_setup = {
         BASELINE_SURVEY_SLUG:
             {'survey_name': 'BCPP Year 1',
@@ -123,12 +106,12 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'chronological_order': 3},
     }
 
-    consent_version_setup = {
-        'app_label': "bcpp_subject",
-        'model_name': "SubjectConsent",
+    consent_type_setup = {
+        'app_label': 'bcpp_subject',
+        'model_name': 'subjectconsent',
         'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
         'end_datetime': datetime(2015, 12, 1, 0, 0, 0),
-        'version': 4,
+        'version': '4',
     }
 
     lab_clinic_api_setup = {
@@ -407,19 +390,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
             except Survey.DoesNotExist:
                 Survey.objects.create(**survey_values)
 
-    def update_or_create_consent_version(self):
-        version = self.consent_version_setup['version']
-        app_label = self.consent_version_setup['app_label']
-        model_name = self.consent_version_setup['model_name']
+    def update_or_create_consent_type(self):
         try:
-            consent_type = ConsentType.objects.get(version=version, app_label=app_label, model_name=model_name)
-            consent_type.app_label = self.consent_version_setup['app_label']
-            consent_type.model_name = self.consent_version_setup['model_name']
-            consent_type.start_datetime = self.consent_version_setup['start_datetime']
-            consent_type.end_datetime = self.consent_version_setup['end_datetime']
+            consent_type = ConsentType.objects.get(
+                version=self.consent_type_setup.get('version'),
+                app_label=self.consent_type_setup.get('app_label'),
+                model_name=self.consent_type_setup.get('model_name'))
+            consent_type.start_datetime = self.consent_type_setup.get('start_datetime')
+            consent_type.end_datetime = self.consent_type_setup.get('end_datetime')
             consent_type.save()
         except ConsentType.DoesNotExist:
-            ConsentType.objects.create(**self.consent_version_setup)
+            ConsentType.objects.create(**self.consent_type_setup)
 
     def search_limit_setup(self):
         if str(device) == '99':
