@@ -42,7 +42,7 @@ class Aliquot(BaseAliquot, BaseSyncUuidModel):
         return self.aliquot_identifier[:-4]
 
     def get_visit_model(self):
-        # from apps.bcpp_subject.models import SubjectVisit
+        # from bhp066.apps.bcpp_subject.models import SubjectVisit
         return SubjectVisit
 
     @property

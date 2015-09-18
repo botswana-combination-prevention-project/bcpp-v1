@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
 
-from edc.constants import NEG, YES, NO
+from edc_constants.constants import NEG, YES, NO
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 

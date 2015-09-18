@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django.db.models import get_model
 
-from edc.constants import YES
+from edc_constants.constants import YES
 
 from bhp066.apps.bcpp_household_member.constants import BHS, BHS_SCREEN
 from bhp066.apps.bcpp_household.models.representative_eligibility import RepresentativeEligibility

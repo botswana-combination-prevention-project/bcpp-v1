@@ -1,5 +1,5 @@
 from edc.subject.appointment.models import Appointment
-from edc.constants import POS, NEG, IND
+from edc_constants.constants import POS, NEG, IND
 
 from ..constants import BASELINE_CODES
 from ..models import SubjectVisit, Circumcised, HicEnrollment

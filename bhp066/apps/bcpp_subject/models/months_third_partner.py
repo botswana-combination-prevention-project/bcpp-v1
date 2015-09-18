@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc_base.audit_trail import AuditTrail
 
 from .base_sexual_partner import BaseSexualPartner

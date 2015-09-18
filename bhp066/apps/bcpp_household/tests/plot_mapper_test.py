@@ -7,9 +7,9 @@ from django.test import TestCase
 from edc.map.classes import site_mappers, Mapper
 from edc.map.exceptions import MapperError
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ..forms import PlotForm
 from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, Plot

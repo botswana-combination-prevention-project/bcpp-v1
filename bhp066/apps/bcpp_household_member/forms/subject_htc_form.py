@@ -3,7 +3,7 @@ from django import forms
 from ..models import SubjectHtc
 
 from edc.base.form.forms import BaseModelForm
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
 
 class SubjectHtcForm(BaseModelForm):

@@ -1,6 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
+from edc_constants.constants import NEW
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.lab.lab_clinic_api.models import Panel
 from edc.subject.entry.models import LabEntry, Entry
@@ -76,7 +77,7 @@ class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, 
                                     registered_subject=self.registered_subject)
                             else:
                                 requisition_meta_data = requisition_meta_data[0]
-                            requisition_meta_data.entry_status = 'NEW'
+                            requisition_meta_data.entry_status = NEW
                             requisition_meta_data.save()
 
     def ccc_masa_visit_reason_forms(self):
@@ -98,7 +99,7 @@ class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, 
                         registered_subject=self.registered_subject)
                 else:
                     scheduled_meta_data = scheduled_meta_data[0]
-                scheduled_meta_data.entry_status = 'NEW'
+                scheduled_meta_data.entry_status = NEW
                 scheduled_meta_data.save()
                 return scheduled_meta_data
 

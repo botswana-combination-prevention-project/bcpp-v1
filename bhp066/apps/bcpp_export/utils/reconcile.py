@@ -9,7 +9,7 @@ from bhp066.apps.bcpp_clinic.models import ClinicConsent
 class Reconcile(object):
     """Reconcile specimens between Lab and EDC clinic
 
-    from apps.bcpp_export.utils.reconcile import Reconcile
+    from bhp066.apps.bcpp_export.utils.reconcile import Reconcile
     r = Reconcile()
     r.missing_in_lab  # found in LIS but not in EDC
     """

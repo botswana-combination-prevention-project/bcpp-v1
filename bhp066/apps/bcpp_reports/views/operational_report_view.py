@@ -7,13 +7,13 @@ from django.db.models import Q
 
 from edc.core.bhp_birt_reports.classes import OperationalReportUtilities
 
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
-from apps.bcpp_household_member.constants import ABSENT, UNDECIDED, REFUSED, HTC, BHS
-from apps.bcpp_household.models import Plot
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
-from apps.bcpp_subject.models import HivResult
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_household.constants import CONFIRMED, UNCONFIRMED
+from bhp066.apps.bcpp_household_member.constants import ABSENT, UNDECIDED, REFUSED, HTC, BHS
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
+from bhp066.apps.bcpp_subject.models import HivResult
 
 
 @login_required
