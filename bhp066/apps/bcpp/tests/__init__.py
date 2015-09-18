@@ -1,1 +1,1 @@
-from app_configuration_tests import BcppAppConfigurationTests
+from .test_app_configuration import BcppAppConfigurationTests
