@@ -19,7 +19,7 @@ from .household_member import HouseholdMember
 class Member(Base):
     """
     For example::
-        from apps.bcpp_export.helpers import Subject, Plot as PlotCls, Member
+        from bhp066.apps.bcpp_export.helpers import Subject, Plot as PlotCls, Member
         data_errors = []
         members = []
         for household_member in HouseholdMember.objects.filter(

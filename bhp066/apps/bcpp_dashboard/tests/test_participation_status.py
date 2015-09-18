@@ -11,15 +11,15 @@ from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment_helper.models import prepare_appointments_on_post_save
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_household.models import HouseholdStructure, Household
-from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
-from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory, HouseholdMemberFactory
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.models import SubjectConsent
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_household.models import HouseholdStructure, Household
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
+from bhp066.apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory, HouseholdMemberFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..views.participation import update_member_status
 

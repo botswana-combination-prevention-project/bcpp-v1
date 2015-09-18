@@ -4,7 +4,7 @@ from datetime import datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.core.bhp_variables.tests.factories import StudySiteFactory
 
-from apps.bcpp_subject.tests.factories import SubjectVisitFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectVisitFactory
 
 from ..factories import PanelFactory
 from ..factories import AliquotTypeFactory

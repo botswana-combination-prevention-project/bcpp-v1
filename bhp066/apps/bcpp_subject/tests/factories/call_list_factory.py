@@ -1,7 +1,7 @@
 import factory
 from datetime import date, datetime
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from ...models import CallList
 
 

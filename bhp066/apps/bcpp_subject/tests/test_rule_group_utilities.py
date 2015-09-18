@@ -1,15 +1,15 @@
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
-from .base_rule_group_test_setup import BaseRuleGroupTestSetup
+from edc_constants.constants import YES, NO
+
 from ..models import HivCareAdherence
 from ..classes.rule_group_utilities import *
+
+from .base_rule_group_test_setup import BaseRuleGroupTestSetup
 
 
 class TestRuleGroupUtilities(BaseRuleGroupTestSetup):
 
     def test_art_naive_bhs(self):
         # previously on art at bhs and currently on art at ahs, no vl
-        from ..classes import SubjectStatusHelper
-        from ..models import SubjectVisit
 
         def func_previous_visit_instance(visit_instance):
             """ Returns subject_visit 1 year from the current """
@@ -49,12 +49,12 @@ class TestRuleGroupUtilities(BaseRuleGroupTestSetup):
             HivCareAdherence.objects.create(
                 subject_visit=self.subject_visit_male_T0,
                 first_positive=None,
-                medical_care='Yes',
-                ever_recommended_arv='Yes',
-                ever_taken_arv='Yes',
-                on_arv='Yes',
-                arv_evidence='Yes',  # this is the rule field
-                )
+                medical_care=YES,
+                ever_recommended_arv=YES,
+                ever_taken_arv=YES,
+                on_arv=YES,
+                arv_evidence=YES,  # this is the rule field
+            )
 
             self.assertEqual(True, func_on_art(self.subject_visit_male_T0))
 
@@ -65,12 +65,12 @@ class TestRuleGroupUtilities(BaseRuleGroupTestSetup):
             HivCareAdherence.objects.create(
                 subject_visit=self.subject_visit_male,
                 first_positive=None,
-                medical_care='No',
-                ever_recommended_arv='No',
-                ever_taken_arv='No',
-                on_arv='No',
-                arv_evidence='No',  # this is the rule field
-                )
+                medical_care=NO,
+                ever_recommended_arv=NO,
+                ever_taken_arv=NO,
+                on_arv=NO,
+                arv_evidence=NO,  # this is the rule field
+            )
 
             self.assertEqual(True, func_on_art(func_previous_visit_instance(self.subject_visit_male)))
 
@@ -79,9 +79,6 @@ class TestRuleGroupUtilities(BaseRuleGroupTestSetup):
     def test_art_naive_ahs(self):
         # What is the objective of this test??, it does not satisfy the test title.
         # previously on art at bhs and currently on art at ahs, no vl
-        from edc.subject.appointment.models import Appointment
-        from ..classes import SubjectStatusHelper
-        from ..models import SubjectVisit
 
         def func_previous_visit_instance(visit_instance):
             """ Returns subject_visit 1 year from the current """

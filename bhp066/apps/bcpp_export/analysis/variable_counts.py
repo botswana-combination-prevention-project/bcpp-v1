@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 class VariableCounts(object):
     """
-        from apps.bcpp_export.analysis import VariableCounts
+        from bhp066.apps.bcpp_export.analysis import VariableCounts
         vc = VariableCounts()
         vc.update_results('y1')
         for k,v in vc.results.iteritems():

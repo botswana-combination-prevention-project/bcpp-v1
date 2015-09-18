@@ -65,4 +65,5 @@ EDC_APPS = (
     'getresults_identifier',
     'edc_quota',
     'edc_audit',
+    'edc_constants',
 )

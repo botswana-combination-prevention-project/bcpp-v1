@@ -2,10 +2,10 @@ from datetime import datetime
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 
-from apps.bcpp_lab.models import AliquotType, Panel
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_subject.tests.base_scheduled_model_test_case import BaseScheduledModelTestCase
-from apps.bcpp_subject.tests.factories import SubjectLocatorFactory, SubjectReferralFactory
+from bhp066.apps.bcpp_lab.models import AliquotType, Panel
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp_subject.tests.base_scheduled_model_test_case import BaseScheduledModelTestCase
+from bhp066.apps.bcpp_subject.tests.factories import SubjectLocatorFactory, SubjectReferralFactory
 
 
 from ..models import Aliquot, PackingListItem

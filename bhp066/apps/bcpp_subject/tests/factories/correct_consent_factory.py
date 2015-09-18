@@ -1,7 +1,7 @@
 import factory
 from datetime import datetime, date
 from edc.base.model.tests.factories import BaseUuidModelFactory
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from ...models import CorrectConsent
 
 

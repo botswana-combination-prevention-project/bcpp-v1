@@ -12,7 +12,7 @@ from edc_base.encrypted_fields import IdentityField
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
 from edc.base.model.validators import dob_not_future
 from edc.choices.common import YES_NO_UNKNOWN, GENDER, YES_NO_NA, YES_NO
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc_base.encrypted_fields import FirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
