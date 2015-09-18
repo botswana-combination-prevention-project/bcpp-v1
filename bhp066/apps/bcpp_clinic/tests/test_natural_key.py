@@ -3,7 +3,7 @@ from django.db.models import get_app, get_models
 from django.test import TestCase
 
 from edc.lab.lab_profile.classes import site_lab_profiles
-from edc.core.crypto_fields.classes import FieldCryptor
+from edc_base.encrypted_fields import FieldCryptor
 from edc.device.sync.classes import SerializeToTransaction
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker

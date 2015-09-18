@@ -4,9 +4,11 @@ from edc_base.audit_trail import AuditTrail
 from edc.subject.locator.models import BaseLocator
 from edc.choices.common import YES_NO
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
-from edc.core.crypto_fields.fields import EncryptedCharField
-from apps.bcpp_household.models  import Household
-from apps.bcpp_subject.managers import ScheduledModelManager
+from edc_base.encrypted_fields import EncryptedCharField
+
+from bhp066.apps.bcpp_household.models import Household
+from bhp066.apps.bcpp_subject.managers import ScheduledModelManager
+
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .htc_subject_visit import HtcSubjectVisit
 

@@ -6,9 +6,10 @@ from edc.lab.lab_clinic_reference.classes import ClinicReferenceFlag, ClinicGrad
 from lis.specimen.lab_result_item.models import BaseResultItem
 
 from .result import Result
+from edc.device.sync.models.base_sync_uuid_model import BaseSyncUuidModel
 
 
-class ResultItem(BaseResultItem):
+class ResultItem(BaseResultItem, BaseSyncUuidModel):
     """Stores each result item in a result in one-to-many relation with :class:`Result`."""
     test_code = models.ForeignKey(TestCode, related_name='+')
 

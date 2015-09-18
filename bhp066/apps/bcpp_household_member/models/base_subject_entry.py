@@ -1,12 +1,11 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import date_not_before_study_start, date_not_future
-from edc.device.sync.models import BaseSyncUuidModel
-from edc.core.crypto_fields.fields import EncryptedCharField
-from edc.core.crypto_fields.fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.encrypted_fields import EncryptedCharField, EncryptedTextField
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import date_not_before_study_start, date_not_future
 
 from bhp066.apps.bcpp_household.models import Plot
 

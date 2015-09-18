@@ -4,14 +4,14 @@ from .aliquot_processing import AliquotProcessing
 from .aliquot_profile import AliquotProfile
 from .aliquot_profile_item import AliquotProfileItem
 from .aliquot_type import AliquotType
-from .panel import Panel
 from .clinic_requisition import ClinicRequisition
 from .order import Order
 from .order_identifier_history import OrderIdentifierHistory
 from .order_item import OrderItem
-from .pre_order import PreOrder
 from .packing_list import PackingList
 from .packing_list_item import PackingListItem
+from .panel import Panel
+from .pre_order import PreOrder
 from .receive import Receive
 from .result import Result
 from .result_item import ResultItem

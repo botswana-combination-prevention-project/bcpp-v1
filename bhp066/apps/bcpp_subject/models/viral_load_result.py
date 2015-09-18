@@ -1,10 +1,9 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
 from edc.core.bhp_variables.models import StudySite
-from edc.base.model.fields import InitialsField
-from edc.core.crypto_fields.fields import EncryptedTextField
-from edc.core.crypto_fields.fields import EncryptedCharField
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import EncryptedTextField, EncryptedCharField
+from edc_base.model.fields import InitialsField
 
 from ..managers import ViralLoadResultManager
 

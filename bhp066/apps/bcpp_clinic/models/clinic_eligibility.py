@@ -7,13 +7,13 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields import IdentityTypeField
-from edc.base.model.fields.local.bw import EncryptedOmangField
+from edc_base.encrypted_fields import IdentityTypeField
+from edc_base.encrypted_fields import IdentityField
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
 from edc.base.model.validators import dob_not_future
 from edc.choices.common import YES_NO_UNKNOWN, GENDER, YES_NO_NA, YES_NO
 from edc.constants import NOT_APPLICABLE
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
+from edc_base.encrypted_fields import FirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
@@ -52,7 +52,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text='Date and time of collection'
     )
 
-    first_name = EncryptedFirstnameField(
+    first_name = FirstnameField(
         verbose_name='First name',
         validators=[RegexValidator("^[A-Z]{1,250}$", "Ensure first name is in CAPS and "
                                    "does not contain any spaces or numbers")],
@@ -99,7 +99,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text=_('Allow Omang, Passport number, driver\'s license number or Omang receipt number. '
                     'If \'NO\' participant will not be enrolled.'))
 
-    identity = EncryptedOmangField(
+    identity = IdentityField(
         verbose_name=_("Identity number (OMANG, etc)"),
         unique=True,
         null=True,

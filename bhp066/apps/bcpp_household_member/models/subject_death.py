@@ -1,10 +1,10 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
 from edc.choices.common import DEATH_RELATIONSIP_TO_STUDY
-from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import date_not_before_study_start, date_not_future
 from edc.subject.adverse_event.models import DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import date_not_before_study_start, date_not_future
 
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 

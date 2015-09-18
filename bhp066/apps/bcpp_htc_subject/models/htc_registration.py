@@ -1,15 +1,15 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields.local.bw import EncryptedOmangField
-from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
+from edc_base.encrypted_fields import IdentityField
+from edc_base.model.validators import (datetime_not_before_study_start, datetime_not_future)
 from edc.choices.common import YES_NO, YES_NO_DONT_KNOW
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_subject.choices import COUNSELING_SITE
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_subject.choices import COUNSELING_SITE
 
 
 class HtcRegistration (BaseAppointmentMixin):
@@ -45,7 +45,7 @@ class HtcRegistration (BaseAppointmentMixin):
         help_text="",
         )
 
-    omang = EncryptedOmangField(
+    omang = IdentityField(
         verbose_name="Identity number (OMANG, etc)",
         unique=True,
         help_text="Use Omang, Passport number, driver's license number or Omang receipt number"

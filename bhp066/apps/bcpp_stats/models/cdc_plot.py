@@ -1,7 +1,5 @@
 from django.db import models
 
-# from edc.core.crypto_fields.fields import EncryptedIdentityField
-
 from .base_cdc import BaseCdc
 
 

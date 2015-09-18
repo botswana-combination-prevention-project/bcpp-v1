@@ -2,11 +2,10 @@ from optparse import make_option
 
 from django.db.models import get_model
 from django.core.management.base import BaseCommand
+from django_revision import site_revision
+from django.core.exceptions import ImproperlyConfigured
 
 from edc.map.classes import site_mappers
-
-from edc.base.model.fields.helpers.revision import site_revision
-from django.core.exceptions import ImproperlyConfigured
 
 
 class Command(BaseCommand):

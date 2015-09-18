@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 from django.test import TestCase, SimpleTestCase
 from django.core import serializers
-from edc.core.crypto_fields.classes import FieldCryptor
+from edc_base.encrypted_fields import FieldCryptor
 from django.db.models import get_app, get_models
 
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -10,19 +10,19 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.device.sync.classes import SerializeToTransaction
 from edc.map.classes import site_mappers
 
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import Household, HouseholdStructure, HouseholdLog, HouseholdRefusal
 from .factories import (PlotFactory, PlotLogEntryFactory, HouseholdLogEntryFactory, HouseholdRefusalFactory,
-                        PlotLogFactory, HouseholdLogFactory, HouseholdAssessmentFactory)
+                        PlotLogFactory, HouseholdAssessmentFactory)
 
 
 class TestNaturalKeys(SimpleTestCase):
 
     def startup(self):
-        from apps.bcpp.app_configuration.classes import BcppAppConfiguration
+        from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:

@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
 from edc.choices.common import YES_NO
-from edc.core.crypto_fields.fields import EncryptedCharField
+from edc_base.encrypted_fields import EncryptedCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin

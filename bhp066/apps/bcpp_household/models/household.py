@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
-from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
+from edc_base.encrypted_fields import EncryptedTextField, EncryptedDecimalField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 

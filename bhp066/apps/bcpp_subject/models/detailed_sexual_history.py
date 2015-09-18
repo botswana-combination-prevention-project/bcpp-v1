@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from edc.base.model.fields import OtherCharField
+from edc_base.model.fields import OtherCharField
 from edc.choices.common import GENDER, POS_NEG_UNKNOWN
 
 from bhp066.apps.bcpp.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW

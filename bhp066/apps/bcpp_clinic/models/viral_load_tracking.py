@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields import InitialsField
+from edc_base.model.fields import InitialsField
 from edc.choices.common import YES_NO
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.lab.lab_requisition.choices import REASON_NOT_DRAWN
