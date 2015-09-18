@@ -42,7 +42,7 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'status': admin.VERTICAL,
         'time_of_week': admin.VERTICAL,
         'time_of_day': admin.VERTICAL,
-        }
+    }
     actions = [process_dispatch, update_replaceables, process_dispatch_notebook_plot_list]
 
 admin.site.register(Plot, PlotAdmin)
