@@ -5,7 +5,7 @@ from .base_page import BasePage
 class HouseholdLogEntryPage(BasePage):
 
     report_date = (By.ID, 'id_report_datetime')
-    today = (By.XPATH, "//form[@id='plotlogentry_form']/descendant::a[text()='Today']")
+    today = (By.XPATH, "//form[@id='householdlogentry_form']/descendant::a[text()='Today']")
     household_status = (By.ID, 'id_household_status')
     eligible_present = (By.ID, 'id_household_status_0')
     eligible_absent = (By.ID, 'id_household_status_1')
