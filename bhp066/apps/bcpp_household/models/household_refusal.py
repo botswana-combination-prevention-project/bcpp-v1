@@ -6,7 +6,7 @@ from django_extensions.db.fields import UUIDField
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
+from edc_base.encrypted_fields import EncryptedTextField, EncryptedCharField
 from edc.device.sync.models import BaseSyncUuidModel
 
 from ..choices import HOUSEHOLD_REFUSAL

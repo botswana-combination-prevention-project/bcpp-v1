@@ -6,16 +6,16 @@ from django.core.urlresolvers import reverse
 
 from django.core.validators import MinValueValidator, RegexValidator
 
-from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
-from edc.core.crypto_fields.fields import EncryptedTextField
-from edc_quota.client.models import QuotaMixin, QuotaManager
-from edc_consent.models import RequiresConsentMixin
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import EncryptedTextField
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_consent.models import RequiresConsentMixin
+from edc_quota.client.models import QuotaMixin, QuotaManager
 
 from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
 from bhp066.apps.bcpp_household.models import Plot

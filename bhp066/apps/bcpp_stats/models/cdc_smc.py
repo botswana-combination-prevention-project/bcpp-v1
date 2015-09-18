@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.core.crypto_fields.fields import EncryptedIdentityField
+from edc_base.encrypted_fields import IdentityField
 
 from .base_cdc import BaseCdc
 
@@ -19,12 +19,12 @@ class CdcSmc(BaseCdc):
     Source_System_Name = models.CharField(max_length=25, null=True)
     UniqueKey = models.IntegerField(null=True)
     identity_type = models.CharField(max_length=25, null=True)
-    identity_value = EncryptedIdentityField(null=True)
+    identity_value = IdentityField(null=True)
     mcFCCommt = models.CharField(max_length=50, null=True)
     mcFCsmc = models.IntegerField(null=True)
     mcVstInfoCommty = models.IntegerField(null=True)
-    mcVstIDtypeOM = EncryptedIdentityField(null=True)
-    mcVstIDtypePBC = EncryptedIdentityField(null=True)
+    mcVstIDtypeOM = IdentityField(null=True)
+    mcVstIDtypePBC = IdentityField(null=True)
     mcVstInfoAge = models.IntegerField(null=True)
     mcVstInfoApptdt = models.DateField(null=True)
     mcVstInfoDOB = models.DateField(null=True)

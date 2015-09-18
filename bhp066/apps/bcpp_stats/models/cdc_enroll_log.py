@@ -1,7 +1,6 @@
 from django.db import models
 
-from edc.core.crypto_fields.fields import EncryptedIdentityField
-
+from edc_base.encrypted_fields import IdentityField
 from .base_cdc import BaseCdc
 
 
@@ -17,7 +16,7 @@ class CdcEnrollLog(BaseCdc):
     study_name = models.CharField(max_length=25, null=True)
 
     enrolldt = models.DateField(null=True)
-    omang = EncryptedIdentityField(null=True)
+    omang = IdentityField(null=True)
     partid = models.CharField(max_length=25, null=True, help_text='Participant Identifier, e.g. BHS subject_identifier, HTC, etc')
 
     date_created = models.DateField(null=True)

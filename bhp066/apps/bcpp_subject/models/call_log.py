@@ -4,10 +4,9 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
-
-from edc.core.crypto_fields.fields import EncryptedTextField
-from edc.base.model.validators import date_is_future
+from edc_base.model.fields import OtherCharField
+from edc_base.encrypted_fields import EncryptedTextField
+from edc_base.model.validators import date_is_future
 from edc.choices import YES_NO_UNKNOWN, TIME_OF_DAY, TIME_OF_WEEK, ALIVE_DEAD_UNKNOWN, YES_NO
 from edc.constants import YES, NO, DEAD
 from edc.device.sync.models import BaseSyncUuidModel

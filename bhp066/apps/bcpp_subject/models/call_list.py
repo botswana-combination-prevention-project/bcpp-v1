@@ -8,7 +8,7 @@ from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc.choices.common import GENDER
 from edc.constants import CLOSED, OPEN, NEW
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
+from edc_base.encrypted_fields import FirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
@@ -45,7 +45,7 @@ class CallList (BaseSyncUuidModel):
         max_length=50,
         editable=False)
 
-    first_name = EncryptedFirstnameField(
+    first_name = FirstnameField(
         verbose_name='First name',
         editable=False,
         )

@@ -1,9 +1,8 @@
 EDC_APPS = (
-    'edc.apps.admin_supplemental_fields',
     'edc.apps.app_configuration',
     # 'edc.base.admin',
-    'edc.base.form',
-    'edc.base.model',
+    # 'edc.base.form',
+    # 'edc.base.model',
 
     'edc.core.identifier',
     'edc.core.crypto_fields',
@@ -76,9 +75,5 @@ EDC_APPS = (
     'edc.lab.lab_profile',
     'getresults_identifier',
     'edc_quota',
-#     'edc_quota.client',
-#     'edc_quota.controller',
-#     'edc_quota.override',
-
     'edc_audit',
 )
