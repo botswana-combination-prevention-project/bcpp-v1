@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.constants import NO
+from edc_constants.constants import NO, NEW, NOT_REQUIRED, KEYED
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
@@ -81,20 +81,26 @@ class ClinicRequisition(BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuid
 
     def change_metadata_status_on_post_save(self, **kwargs):
         """Changes the viralloadresult metadata status to NEW only if VL requisition is KEYED."""
-        lab_entry = LabEntry.objects.get(requisition_panel__name='Clinic Viral Load', app_label='bcpp_lab', model_name='clinicrequisition')
-        requisition_meta_data = RequisitionMetaData.objects.filter(appointment=self.clinic_visit.appointment,
-                                                                   lab_entry=lab_entry,
-                                                                   registered_subject=self.clinic_visit.appointment.registered_subject)
+        lab_entry = LabEntry.objects.get(
+            requisition_panel__name='Clinic Viral Load',
+            app_label='bcpp_lab', model_name='clinicrequisition')
+        requisition_meta_data = RequisitionMetaData.objects.filter(
+            appointment=self.clinic_visit.appointment,
+            lab_entry=lab_entry,
+            registered_subject=self.clinic_visit.appointment.registered_subject)
         if requisition_meta_data:
             requisition_meta_data = RequisitionMetaData.objects.get(
                 appointment=self.clinic_visit.appointment,
                 lab_entry=lab_entry,
                 registered_subject=self.clinic_visit.appointment.registered_subject)
-            if requisition_meta_data.entry_status == 'KEYED':
-                entry = Entry.objects.get(model_name='clinicvlresult', visit_definition_id=self.clinic_visit.appointment.visit_definition_id)
-                scheduled_meta_data = ScheduledEntryMetaData.objects.filter(appointment=self.clinic_visit.appointment,
-                                                                            entry=entry,
-                                                                            registered_subject=self.clinic_visit.appointment.registered_subject)
+            if requisition_meta_data.entry_status == KEYED:
+                entry = Entry.objects.get(
+                    model_name='clinicvlresult',
+                    visit_definition_id=self.clinic_visit.appointment.visit_definition_id)
+                scheduled_meta_data = ScheduledEntryMetaData.objects.filter(
+                    appointment=self.clinic_visit.appointment,
+                    entry=entry,
+                    registered_subject=self.clinic_visit.appointment.registered_subject)
                 if not scheduled_meta_data:
                     scheduled_meta_data = ScheduledEntryMetaData.objects.create(
                         appointment=self.clinic_visit.appointment,
@@ -102,12 +108,13 @@ class ClinicRequisition(BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuid
                         registered_subject=self.clinic_visit.appointment.registered_subject)
                 else:
                     scheduled_meta_data = scheduled_meta_data[0]
-                scheduled_meta_data.entry_status = 'NEW'
+                scheduled_meta_data.entry_status = NEW
                 scheduled_meta_data.save()
                 return scheduled_meta_data
 
     def requisition_not_drawn(self):
-            requisition = LabEntry.objects.get(requisition_panel__name='Clinic Viral Load', app_label='bcpp_lab', model_name='clinicrequisition')
+            requisition = LabEntry.objects.get(
+                requisition_panel__name='Clinic Viral Load', app_label='bcpp_lab', model_name='clinicrequisition')
             requisition_meta = RequisitionMetaData.objects.filter(
                 appointment=self.clinic_visit.appointment,
                 lab_entry=requisition,
@@ -117,17 +124,19 @@ class ClinicRequisition(BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuid
                     appointment=self.clinic_visit.appointment,
                     lab_entry=requisition,
                     registered_subject=self.clinic_visit.appointment.registered_subject)
-                if requisition_meta.entry_status == 'KEYED':
+                if requisition_meta.entry_status == KEYED:
                     if self.is_drawn == NO:
                         get_scheduled_form = 'clinicvlresult'
-                        scheduled_entry = Entry.objects.filter(model_name=get_scheduled_form,
-                                                               visit_definition_id=self.clinic_visit.appointment.visit_definition_id)
-                        scheduled_meta = ScheduledEntryMetaData.objects.filter(appointment=self.clinic_visit.appointment,
-                                                                               entry=scheduled_entry,
-                                                                               registered_subject=self.clinic_visit.appointment.registered_subject)
+                        scheduled_entry = Entry.objects.filter(
+                            model_name=get_scheduled_form,
+                            visit_definition_id=self.clinic_visit.appointment.visit_definition_id)
+                        scheduled_meta = ScheduledEntryMetaData.objects.filter(
+                            appointment=self.clinic_visit.appointment,
+                            entry=scheduled_entry,
+                            registered_subject=self.clinic_visit.appointment.registered_subject)
                         for metadata in scheduled_meta:
-                            if metadata.entry_status == 'NEW':
-                                metadata.entry_status = 'NOT_REQUIRED'
+                            if metadata.entry_status == NEW:
+                                metadata.entry_status = NOT_REQUIRED
                                 metadata.save()
 
     class Meta:

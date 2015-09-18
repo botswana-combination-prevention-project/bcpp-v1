@@ -13,7 +13,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
-from edc.constants import NOT_APPLICABLE, ALIVE, DEAD
+from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes.controller import site_mappers

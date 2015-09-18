@@ -10,10 +10,10 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class ExportPlotToValidateTest(TestCase):

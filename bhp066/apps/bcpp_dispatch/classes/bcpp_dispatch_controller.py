@@ -226,7 +226,7 @@ class BcppDispatchController(DispatchController):
                 self.dispatch_user_items_as_json(member_status, user_container)
 
     def get_member_status_models(self, app_label):
-        # from apps.bcpp_household_member.models import BaseMemberStatusModel
+        # from bhp066.apps.bcpp_household_member.models import BaseMemberStatusModel
         return self._get_models_by_base('bcpp_household_member', BaseMemberStatusModel)
 
     def get_inlines(self, app_name):

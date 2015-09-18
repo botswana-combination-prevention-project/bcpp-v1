@@ -1,18 +1,16 @@
-from django.db.models.signals import post_save, post_delete
-# from django.db import models
+from django.db.models.signals import post_save
 
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
 from edc_base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.data_manager.models import TimePointStatus
-from edc.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD
+from edc_constants.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD, COMPLETE, PENDING
 
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 from bhp066.apps.bcpp_subject.constants import BASELINE_CODES
-from bhp066.apps.bcpp_lab.models import PreOrder
 
-from ..constants import COMPLETE, PENDING, POC_VIRAL_LOAD
+from ..constants import POC_VIRAL_LOAD
 from ..classes import SubjectReferralHelper, CallHelper
 from ..models import (SubjectReferral, SubjectVisit, CallLogEntry, CallList,
                       PimaVl, SubjectConsent)
@@ -38,7 +36,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
             if update_fields != sorted((['is_verified', 'is_verified_datetime'] +
                                         BASE_MODEL_UPDATE_FIELDS +
                                         BASE_UUID_MODEL_UPDATE_FIELDS)):
-                instance.post_save_update_registered_subject(using)# (called in base)
+                instance.post_save_update_registered_subject(using)
                 instance.household_member.is_consented = True
                 instance.household_member.absent = False
                 instance.household_member.undecided = False
@@ -198,13 +196,15 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
 @receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')
 def update_pocvl_preorder_status_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
-        # from apps.bcpp_lab.models import PreOrder
-        if (isinstance(instance, PimaVl) and PreOrder.objects.filter(
-                subject_visit=instance.subject_visit, panel__name=POC_VIRAL_LOAD, status=PENDING).exists()):
-            pre_order = PreOrder.objects.get(
-                subject_visit=instance.subject_visit,
-                panel__name=POC_VIRAL_LOAD,
-                status=PENDING
-            )
-            pre_order.status = COMPLETE
-            pre_order.save(update_fields=['status'])
+        if isinstance(instance, PimaVl):
+            from bhp066.apps.bcpp_lab.models import PreOrder
+            try:
+                pre_order = PreOrder.objects.get(
+                    subject_visit=instance.subject_visit,
+                    panel__name=POC_VIRAL_LOAD,
+                    status=PENDING
+                )
+                pre_order.status = COMPLETE
+                pre_order.save(update_fields=['status'])
+            except PreOrder.DoesNotExist:
+                pass

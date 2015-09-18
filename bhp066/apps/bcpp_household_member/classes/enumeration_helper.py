@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from edc.constants import UNKNOWN
+from edc_constants.constants import UNKNOWN
 
 from ..exceptions import SurveyValueError, HouseholdStructureNotEnrolled
 

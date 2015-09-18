@@ -2,7 +2,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 from django.db.models import get_model
-from django.test import TestCase, TransactionTestCase, SimpleTestCase
+from django.test import TestCase
 
 from edc.map.classes import site_mappers
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -12,18 +12,17 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-# from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, SubjectVisitFactory
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 
 class BaseScheduledModelTestCase(TestCase):
@@ -177,4 +176,3 @@ class BaseScheduledModelTestCase(TestCase):
             report_datetime=datetime.today(),
             appointment=appointment_male_annual,
             household_member=self.household_member_male_annual)
-

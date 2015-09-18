@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.db.models import get_model
 
-from edc.constants import POS, NEG
+from edc_constants.constants import POS, NEG
 
 from ..constants import BASELINE_CODES
 from ..utils import convert_to_nullboolean
