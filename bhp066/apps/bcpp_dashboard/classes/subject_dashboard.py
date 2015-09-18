@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.utils import timezone
 from django.template.loader import render_to_string
 
 from edc.subject.appointment.models import Appointment
@@ -47,6 +48,12 @@ class SubjectDashboard(BaseSubjectDashboard):
             membership_form_extra_url_context = '&household_member={0}'.format(self.consent.household_member.pk)
         except AttributeError:
             membership_form_extra_url_context = '&household_member={0}'.format(self.household_member.pk)
+        valid_subject_consent_for_period = SubjectConsent.consent.valid_consent_for_period(
+            self.subject_identifier, timezone.now())
+        if valid_subject_consent_for_period:
+            self.context.get('keyed_membership_forms').append(valid_subject_consent_for_period)
+        else:
+            self.context.get('unkeyed_membership_forms').append(valid_subject_consent_for_period)
         self.context.update(
             home='bcpp',
             search_name='subject',
@@ -60,6 +67,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             membership_form_extra_url_context=membership_form_extra_url_context,
+            valid_subject_consent_for_period=valid_subject_consent_for_period
         )
         return self.context
 
