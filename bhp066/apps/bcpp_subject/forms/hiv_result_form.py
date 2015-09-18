@@ -1,6 +1,6 @@
 from django import forms
 
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..models import HivResult
 

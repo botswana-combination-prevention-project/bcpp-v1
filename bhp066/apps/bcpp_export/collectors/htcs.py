@@ -10,7 +10,7 @@ class Htcs(BaseCollector):
     """Exports helper.household instances to CSV.
 
     For example::
-        from apps.bcpp_export.collectors import Members
+        from bhp066.apps.bcpp_export.collectors import Members
 
         htcs = Htcs(isoformat=True, floor_datetime=True)
         htcs.export_by_community()

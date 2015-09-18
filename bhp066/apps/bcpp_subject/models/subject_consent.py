@@ -3,13 +3,13 @@ import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers
 from edc.core.bhp_common.utils import formatted_age
 from edc_consent.models.fields.bw import IdentityFieldsMixin
@@ -17,7 +17,6 @@ from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, V
                                        SampleCollectionFieldsMixin)
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.core.bhp_variables.models import StudySite
-# from edc.subject.consent.exceptions import ConsentError
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
@@ -296,7 +295,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 #             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
 #                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
 #             self.get_consent_history_model().objects.update_consent_history(self, created, using)
-# 
+#
 #     def delete_consent_history(self, app_label, model_name, pk, using):
 #         from edc.subject.consent.models import BaseConsentHistory
 #         if self.get_consent_history_model():

@@ -4,10 +4,11 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_constants.constants import NEW, PENDING
 
-from bhp066.apps.bcpp_subject.constants import NEW, PENDING, POC_VIRAL_LOAD
+from bhp066.apps.bcpp_subject.constants import POC_VIRAL_LOAD
 from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..models import Aliquot, Panel
