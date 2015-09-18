@@ -1,9 +1,5 @@
 EDC_APPS = (
     'edc.apps.app_configuration',
-    # 'edc.base.admin',
-    # 'edc.base.form',
-    # 'edc.base.model',
-
     'edc.core.identifier',
     'edc.core.crypto_fields',
     'edc.core.model_data_inspector',
@@ -23,16 +19,13 @@ EDC_APPS = (
     'edc.core.bhp_using',
     'edc.core.bhp_export_data',
     'edc.core.bhp_birt_reports',
-
     'edc.device.inspector',
     'edc.device.dispatch',
     'edc.device.netbook',
     'edc.device.device',
     'edc.device.sync',
-
     'edc.dashboard.base',
     'edc.dashboard.search',
-    'edc.dashboard.subject',
     'edc.dashboard.section',
 
     'edc.export',
@@ -51,7 +44,6 @@ EDC_APPS = (
     'edc.subject.rule_groups',
     'edc.subject.actg',
     'edc.subject.entry',
-    # 'edc.subject.consent',
     'edc.subject.contact',
     'edc.subject.locator',
     'edc.subject.subject_summary',
@@ -62,12 +54,9 @@ EDC_APPS = (
     'edc.subject.visit_schedule',
     'edc.subject.visit_tracking',
     'edc.subject.appointment',
-    'edc.subject.subject',
     'edc.subject.subject_config',
     'edc.subject.adverse_event',
-
     'edc.notification',
-
     'edc.lab.lab_clinic_api',
     'edc.lab.lab_clinic_reference',
     'edc.lab.lab_requisition',
