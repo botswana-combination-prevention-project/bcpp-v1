@@ -43,14 +43,14 @@ class SubjectConsentPage(BaseModelAdminPage):
         language_element.send_keys(language)
 
     def select_en_language(self):
-        self.browser.find_element(*SubjectConsentPage.en_language)
+        self.browser.find_element(*SubjectConsentPage.en_language).click()
 
     def set_is_literate(self, is_literate):
         language_element = self.browser.find_element(*SubjectConsentPage.is_literate)
         language_element.send_keys(is_literate)
 
     def select_literate(self):
-        self.browser.find_element(*SubjectConsentPage.literate)
+        self.browser.find_element(*SubjectConsentPage.literate).click()
 
     def set_consent_date(self, consent_date):
         consentdate_element = self.browser.find_element(*SubjectConsentPage.consent_date)
