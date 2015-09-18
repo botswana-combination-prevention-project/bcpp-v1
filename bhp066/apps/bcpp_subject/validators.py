@@ -13,7 +13,7 @@ def date_in_survey(value):
     else:
         value_datetime = datetime.combine(value, time.min)
         current_survey = Survey.objects.current_survey(report_datetime=value_datetime)
-        mapper = site_mappers.current_mapper()
+        mapper = site_mappers.get_current_mapper()
         start_date = mapper.survey_dates.get(current_survey.survey_slug).start_date
         end_date = mapper.survey_dates.get(current_survey.survey_slug).end_date
         if value < start_date or value > end_date:

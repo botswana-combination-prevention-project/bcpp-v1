@@ -77,7 +77,7 @@ class TestReferral(BaseScheduledModelTestCase):
         return subject_referral
 
     def set_intervention(self, value):
-        site_mappers.current_mapper.intervention = value
+        site_mappers.get_current_mapper().intervention = value
 
     def tests_referred_smc1(self):
         """if NEG and male and NOT circumcised, refer for SMC in Y1 intervention
@@ -965,7 +965,7 @@ class TestReferral(BaseScheduledModelTestCase):
             report_datetime=self.subject_visit_female.report_datetime)
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result=POS, hiv_test_date=last_year_date)
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv=YES, arv_evidence=YES)
-        if site_mappers.current_mapper().current_survey_slug == BASELINE_SURVEY_SLUG:
+        if site_mappers.get_current_mapper().current_survey_slug == BASELINE_SURVEY_SLUG:
             TbSymptomsFactory(subject_visit=self.subject_visit_female)
             PimaFactory(subject_visit=self.subject_visit_female, cd4_value=500, report_datetime=report_datetime, cd4_datetime=self.subject_visit_female.report_datetime)
         panel = Panel.objects.get(name='Viral Load')
@@ -973,7 +973,7 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
-            referral_clinic=site_mappers.current_mapper().map_area,
+            referral_clinic=site_mappers.get_current_mapper().map_area,
         )
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
@@ -995,14 +995,14 @@ class TestReferral(BaseScheduledModelTestCase):
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
-            'referral_clinic': site_mappers.current_mapper().map_area,
+            'referral_clinic': site_mappers.get_current_mapper().map_area,
             'referral_code': 'MASA-CC',
             'tb_symptoms': 'cough, cough_blood, night_sweat',
             'urgent_referral': False,
             'verbal_hiv_result': None,
             'vl_sample_drawn': True,
             'vl_sample_drawn_datetime': self.subject_visit_female.report_datetime}
-        if site_mappers.current_mapper().current_survey_slug != BASELINE_SURVEY_SLUG:
+        if site_mappers.get_current_mapper().current_survey_slug != BASELINE_SURVEY_SLUG:
             del expected['cd4_result']
             del expected['cd4_result_datetime']
             del expected['tb_symptoms']
@@ -1033,7 +1033,7 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
-            referral_clinic=site_mappers.current_mapper().map_area)
+            referral_clinic=site_mappers.get_current_mapper().map_area)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
             'arv_documentation': True,
@@ -1054,7 +1054,7 @@ class TestReferral(BaseScheduledModelTestCase):
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
-            'referral_clinic': site_mappers.current_mapper().map_area,
+            'referral_clinic': site_mappers.get_current_mapper().map_area,
             'referral_code': 'MASA-CC',
             'tb_symptoms': 'cough, cough_blood, night_sweat',
             'urgent_referral': False,
@@ -1082,7 +1082,7 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
-            referral_clinic=site_mappers.current_mapper().map_area)
+            referral_clinic=site_mappers.get_current_mapper().map_area)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
             'arv_documentation': True,
@@ -1103,7 +1103,7 @@ class TestReferral(BaseScheduledModelTestCase):
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
-            'referral_clinic': site_mappers.current_mapper().map_area,
+            'referral_clinic': site_mappers.get_current_mapper().map_area,
             'referral_code': 'MASA-DF',
             'tb_symptoms': '',
             'urgent_referral': True,
@@ -1132,7 +1132,7 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime,
-            referral_clinic=site_mappers.current_mapper().map_area)
+            referral_clinic=site_mappers.get_current_mapper().map_area)
         subject_referral_helper = SubjectReferralHelper(subject_referral)
         expected = {
             'arv_documentation': True,
@@ -1153,7 +1153,7 @@ class TestReferral(BaseScheduledModelTestCase):
             'on_art': True,
             'permanent_resident': None,
             'pregnant': None,
-            'referral_clinic': site_mappers.current_mapper().map_area,
+            'referral_clinic': site_mappers.get_current_mapper().map_area,
             'referral_code': 'MASA-DF',
             'tb_symptoms': '',
             'urgent_referral': True,  # because this is a defaulter

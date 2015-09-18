@@ -352,7 +352,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             * plot identifier community prefix is the same as the site code.
         """
         try:
-            map_code = site_mappers.current_mapper().map_code
+            map_code = site_mappers.get_current_mapper().map_code
         except AttributeError:
             map_code = '00'
         if self.confirm_site_code_in_settings:  # default is True, set to False for tests
@@ -360,7 +360,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
                                            'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
         try:
-            map_area = site_mappers.current_mapper().map_area
+            map_area = site_mappers.get_current_mapper().map_area
         except AttributeError:
             map_area = 'BHP'
         if self.confirm_community_in_settings:  # default is True, set to False for tests
