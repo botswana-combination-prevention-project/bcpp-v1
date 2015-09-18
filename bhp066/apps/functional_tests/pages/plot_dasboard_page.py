@@ -3,8 +3,8 @@ from .base_page import BasePage
 
 
 class PlotDashboardPage(BasePage):
-    composition = (By.XPATH, "//tr[@class='row1']/td/form/input[@value='Composition']")
+    composition = (By.XPATH, "(//form[@id='householdlogentry_form']//descendant::a[text()='Today'])[1]")
 
     def click_composition(self, plot_status):
-        compositionElement = self.browser.find_element(*HouseholdDashboardPage.composition)
+        compositionElement = self.browser.find_element(*PlotDashboardPage.composition)
         compositionElement.send_keys(plot_status)
