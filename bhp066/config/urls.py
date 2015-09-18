@@ -87,10 +87,10 @@ urlpatterns += patterns(
     (r'^reports/', include('edc.core.bhp_birt_reports.urls')),
 )
 
-urlpatterns += patterns(
-    '',
-    url(r'^audit_trail/', include('edc_audit.urls'), name="audit_trail_url_name"),
-)
+# urlpatterns += patterns(
+#     '',
+#     url(r'^audit_trail/', include('edc_audit.urls'), name="audit_trail_url_name"),
+# )
 
 urlpatterns += patterns(
     '',
