@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
-from .base_page import BasePage
+from .base_page import BaseModelAdminPage
 
 
-class PlotPage(BasePage):
+class PlotPage(BaseModelAdminPage):
     plot_status = (By.ID, 'id_status')
     non_res = (By.ID, 'id_status_0')
     res_non_habit = (By.ID, 'id_status_1')
@@ -15,7 +15,6 @@ class PlotPage(BasePage):
     household_count = (By.ID, 'id_household_count')
     time_of_week = (By.ID, 'id_time_of_week')
     time_of_day = (By.ID, 'id_time_of_day')
-    save_button = (By.NAME, "_save")
 
     def set_plot_status(self, plot_status):
         plotElement = self.browser.find_element(*PlotPage.plot_status)
@@ -40,9 +39,6 @@ class PlotPage(BasePage):
     def set_household_count(self, household_count):
         HouseholdElement = self.browser.find_element(*PlotPage.household_count)
         HouseholdElement.send_keys(household_count)
-
-    def click_save_button(self):
-        self.browser.find_element(*PlotPage.save_button).click()
 
     def fill_plot_change(self, plot_status, gps_deg_south, gps_min_south, gps_deg_east, gps_min_east, household_count):
         self.set_plot_status(plot_status)
