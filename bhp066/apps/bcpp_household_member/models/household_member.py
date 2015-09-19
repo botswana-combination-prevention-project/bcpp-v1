@@ -807,13 +807,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def get_subject_identifier(self):
         """ Uses the hsm internal_identifier to locate the subject identifier in
         registered_subject OR return the hsm.id"""
-        if RegisteredSubject.objects.filter(registration_identifier=self.internal_identifier):
+        try:
             registered_subject = RegisteredSubject.objects.get(
                 registration_identifier=self.internal_identifier)
             subject_identifier = registered_subject.subject_identifier
             if not subject_identifier:
                 subject_identifier = registered_subject.registration_identifier
-        else:
+        except RegisteredSubject.DoesNotExist:
             # this should not be an option as all hsm's have a registered_subject instance
             subject_identifier = self.id
         return subject_identifier
