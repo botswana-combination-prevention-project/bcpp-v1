@@ -23,7 +23,7 @@ from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 
-from ..managers import SubjectConsentManager
+from ..managers import SubjectConsentManager, SubjectReConsentManager
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
@@ -374,3 +374,22 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
         app_label = 'bcpp_subject'
         unique_together = (('subject_identifier', 'survey', 'version'), ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
+
+
+class SubjectReConsent(SubjectConsent):
+
+    objects = SubjectReConsentManager()
+
+    def dispatch_container_lookup(self, using=None):
+        return (models.get_model('bcpp_household', 'Plot'),
+                'household_member__household_structure__household__plot__plot_identifier')
+
+    def save(self, *args, **kwargs):
+
+        # TODO
+        # validate the consents are the same.
+        # pull and use registered subject, subjects identifier, household member of the current year.
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    class Meta:
+        proxy = True
