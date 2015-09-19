@@ -1,7 +1,7 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
-from edc.core.bhp_variables.choices import GENDER_OF_CONSENT
+
 from edc.core.bhp_common.utils import formatted_age
 from edc.base.form.forms import BaseModelForm
 
