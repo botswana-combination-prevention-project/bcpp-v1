@@ -23,12 +23,13 @@ from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 
-from ..managers import SubjectConsentManager, SubjectReConsentManager
+from ..managers import SubjectConsentManager
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
+
 from ..exceptions import ConsentError
 
 
@@ -377,8 +378,6 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
 
 class SubjectReConsent(SubjectConsent):
-
-    objects = SubjectReConsentManager()
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
