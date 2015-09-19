@@ -62,8 +62,7 @@ class SubjectDashboard(BaseSubjectDashboard):
         if latest_subject_consent and not SubjectConsent.consent.valid_consent_for_period(
                 self.subject_identifier, timezone.now()):
             consent_type = ConsentType.objects.last()
-            SubjectConsent._meta.verbose_name = '{} V{}'.format(
-                SubjectConsent._meta.verbose_name, consent_type.version)
+            SubjectConsent._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
             self.context.get('unkeyed_membership_forms').append(SubjectConsent)
         self.context.update(
             home='bcpp',
