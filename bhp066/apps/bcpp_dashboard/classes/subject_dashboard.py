@@ -59,7 +59,7 @@ class SubjectDashboard(BaseSubjectDashboard):
                 continue
             else:
                 self.context.get('keyed_membership_forms').append(subject_consent)
-        if latest_subject_consent and not SubjectConsent.objects.valid_consent_for_period(
+        if latest_subject_consent and not SubjectConsent.consent.valid_consent_for_period(
                 self.subject_identifier, timezone.now()):
             consent_type = ConsentType.objects.last()
             SubjectConsent._meta.verbose_name = '{} V{}'.format(
