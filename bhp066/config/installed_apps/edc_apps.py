@@ -47,6 +47,7 @@ EDC_APPS = (
     'edc.subject.entry',
     'edc.subject.contact',
     'edc.subject.locator',
+    'edc.subject.subject',
     'edc.subject.subject_summary',
     'edc.subject.off_study',
     'edc.subject.registration',
