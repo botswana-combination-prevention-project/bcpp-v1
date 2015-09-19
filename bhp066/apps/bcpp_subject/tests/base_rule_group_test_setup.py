@@ -29,7 +29,7 @@ from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
-    community = 'otse'
+    community = 'letlhakeng'
 
     def setUp(self):
         try:
@@ -46,7 +46,7 @@ class BaseRuleGroupTestSetup(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        self.study_site = StudySite.objects.get(site_code='14')
+        self.study_site = StudySite.objects.get(site_code='15')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
@@ -87,8 +87,8 @@ class BaseRuleGroupTestSetup(TestCase):
             guardian=NO,
             initials=self.household_member_male_T0.initials,
             part_time_resident=YES)
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, confirm_identity='101129811', identity='101129811', study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, confirm_identity='101119811', identity='101119811', study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
 
         enumeration_helper = EnumerationHelper(self.household_structure.household, survey, next_survey)
         self.household_member_female = enumeration_helper.create_member_on_target(self.household_member_female_T0)
