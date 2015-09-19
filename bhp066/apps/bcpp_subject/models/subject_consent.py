@@ -357,6 +357,8 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
             expected_member_status = BHS_ELIGIBLE
         else:
             expected_member_status = BHS
+        if self.__class__.objects.filter(subject_identifier=self.subject_identifier).last():
+            expected_member_status = BHS
         if self.household_member.member_status != expected_member_status:
             raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                 expected_member_status, self.household_member.member_status, self.household_member))
@@ -370,20 +372,3 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
         app_label = 'bcpp_subject'
         unique_together = (('subject_identifier', 'survey', 'version'), ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
-
-
-class SubjectReConsent(SubjectConsent):
-
-    def dispatch_container_lookup(self, using=None):
-        return (models.get_model('bcpp_household', 'Plot'),
-                'household_member__household_structure__household__plot__plot_identifier')
-
-    def save(self, *args, **kwargs):
-
-        # TODO
-        # validate the consents are the same.
-        # pull and use registered subject, subjects identifier, household member of the current year.
-        super(BaseSubjectConsent, self).save(*args, **kwargs)
-
-    class Meta:
-        proxy = True
