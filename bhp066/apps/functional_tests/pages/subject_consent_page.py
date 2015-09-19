@@ -14,6 +14,8 @@ class SubjectConsentPage(BaseModelAdminPage):
     consent_date = (By.ID, 'id_consent_datetime_0')
     consent_time = (By.ID, 'id_consent_datetime_1')
     gender = (By.ID, 'id_gender')
+    male = (By.ID, 'id_gender_0')
+    female = (By.ID, 'id_gender_1')
     dob = (By.ID, 'id_dob')
     is_dob_estimated = (By.ID, 'id_is_dob_estimated')
     citizen = (By.ID, 'id_citizen')
