@@ -88,13 +88,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2015, 12, 30, 23, 59, 0),
+             'datetime_end': datetime(2015, 8, 1, 23, 59, 0),
              'chronological_order': 1},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2016, 1, 1, 0, 0, 0),
+             'datetime_start': datetime(2015, 8, 2, 0, 0, 0),
              'datetime_end': datetime(2016, 11, 19, 23, 59, 0),
              'chronological_order': 2},
         'bcpp-year-3':
@@ -106,13 +106,36 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'chronological_order': 3},
     }
 
-    consent_type_setup = {
-        'app_label': 'bcpp_subject',
-        'model_name': 'subjectconsent',
-        'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
-        'end_datetime': datetime(2015, 12, 1, 0, 0, 0),
-        'version': '4',
-    }
+    consent_type_setup = [
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
+            'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'version': '4',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2015, 5, 1, 0, 0, 0),
+            'end_datetime': datetime(2015, 9, 15, 23, 59, 0),
+            'version': '3',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2014, 4, 10, 0, 0, 0),
+            'end_datetime': datetime(2015, 4, 30, 23, 59, 0),
+            'version': '2',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2013, 10, 30, 0, 0, 0),
+            'end_datetime': datetime(2014, 4, 9, 23, 59, 0),
+            'version': '1',
+        }
+    ]
 
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
@@ -391,16 +414,17 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 Survey.objects.create(**survey_values)
 
     def update_or_create_consent_type(self):
-        try:
-            consent_type = ConsentType.objects.get(
-                version=self.consent_type_setup.get('version'),
-                app_label=self.consent_type_setup.get('app_label'),
-                model_name=self.consent_type_setup.get('model_name'))
-            consent_type.start_datetime = self.consent_type_setup.get('start_datetime')
-            consent_type.end_datetime = self.consent_type_setup.get('end_datetime')
-            consent_type.save()
-        except ConsentType.DoesNotExist:
-            ConsentType.objects.create(**self.consent_type_setup)
+        for type in self.consent_type_setup:
+            try:
+                consent_type = ConsentType.objects.get(
+                    version=type.get('version'),
+                    app_label=type.get('app_label'),
+                    model_name=type.get('model_name'))
+                consent_type.start_datetime = type.get('start_datetime')
+                consent_type.end_datetime = type.get('end_datetime')
+                consent_type.save()
+            except ConsentType.DoesNotExist:
+                ConsentType.objects.create(**type)
 
     def search_limit_setup(self):
         if str(device) == '99':
