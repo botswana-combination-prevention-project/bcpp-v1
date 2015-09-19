@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 class BasePage(object):
     def __init__(self, browser):
         self.browser = browser
+        self.url = "http://localhost:8000"
 
 
 class BaseModelAdminPage(BasePage):
