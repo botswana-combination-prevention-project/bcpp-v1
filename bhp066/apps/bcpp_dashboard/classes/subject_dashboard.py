@@ -44,6 +44,7 @@ class SubjectDashboard(BaseSubjectDashboard):
         # self.appointment_code = kwargs.get('visit_code')
 
     def get_context_data(self, **kwargs):
+        self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
         latest_subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_identifier).last()
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
         try:
