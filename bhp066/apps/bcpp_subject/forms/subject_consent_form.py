@@ -5,7 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import AdminRadioSelect, AdminRadioFieldRenderer
 
-from edc.core.bhp_variables.models import StudySpecific
+# from edc.core.bhp_variables.models import StudySpecific
 from edc.map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
 
@@ -29,13 +29,17 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
 
     def clean(self):
         cleaned_data = super(BaseBcppConsentForm, self).clean()
-
-        household_member = cleaned_data.get("household_member")
-
+#         try:
+#             instance = self.instance
+#         except AttributeError:
+#             instance = self.model(**cleaned_data)
+        household_member = cleaned_data.get("household_member", '')
         if not household_member:
             raise forms.ValidationError("Please select the household member.")
 
-        self.study_specifics_checks(cleaned_data.get('dob'))
+        self.instance.consented_for_period_or_raise(exception_cls=forms.ValidationError)
+
+        # self.study_specifics_checks(cleaned_data.get('dob'))  (handled using a validator)
 
         # check for duplicate identity
         if RegisteredSubject.objects.filter(identity=cleaned_data.get('identity')).exists():
@@ -62,31 +66,33 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
     def age(self, dob):
         return relativedelta(date.today(), dob).years
 
-    def study_specifics_checks(self, dob):
-        age_settings = StudySpecific.objects.all()[0]
-        age = relativedelta(date.today(), dob).years
-        if age < age_settings.minimum_age_of_consent:
-            raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(age))
-        if age > age_settings.maximum_age_of_consent:
-            raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(age))
+#     def study_specifics_checks(self, dob):
+#         age_settings = StudySpecific.objects.all()[0]
+#         age = relativedelta(date.today(), dob).years
+#         if age < age_settings.minimum_age_of_consent:
+#             raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(age))
+#         if age > age_settings.maximum_age_of_consent:
+#             raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(age))
 
 
 class SubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
         cleaned_data = super(SubjectConsentForm, self).clean()
-        self.limit_edit_to_current_community(cleaned_data)
-        self.limit_edit_to_current_survey(cleaned_data)
-        self.household_info(cleaned_data)
+        household_member = cleaned_data.get("household_member")
+        self.limit_edit_to_current_community(household_member)
+        self.limit_edit_to_current_survey(household_member)
+        self.household_info(household_member)
         options = cleaned_data
         if 'consent_datetime' not in cleaned_data:
             options.update({'consent_datetime': self.instance.consent_datetime})
-        self.instance.matches_enrollment_checklist(SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
-        self.instance.matches_hic_enrollment(SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
+        self.instance.matches_enrollment_checklist(
+            SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
+        self.instance.matches_hic_enrollment(
+            SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
         return cleaned_data
 
-    def limit_edit_to_current_survey(self, cleaned_data):
-        household_member = cleaned_data.get("household_member")
+    def limit_edit_to_current_survey(self, household_member):
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_SURVEY:
                 current_survey = Survey.objects.current_survey()
@@ -96,10 +102,8 @@ class SubjectConsentForm(BaseBcppConsentForm):
                                                 ).format(current_survey)
         except AttributeError:
             pass
-        return cleaned_data
 
-    def limit_edit_to_current_community(self, cleaned_data):
-        household_member = cleaned_data.get("household_member")
+    def limit_edit_to_current_community(self, household_member):
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
                 configured_community = site_mappers.get_current_mapper().map_area
@@ -112,15 +116,14 @@ class SubjectConsentForm(BaseBcppConsentForm):
         except AttributeError:
             pass
 
-    def household_info(self, cleaned_data):
+    def household_info(self, household_member):
         try:
-            household_member = cleaned_data.get("household_member")
             if (household_member.relation == 'Head' and
                     household_member.household_structure.survey.survey_slug == BASELINE_SURVEY_SLUG):
                 HouseholdInfo.objects.get(household_member=household_member)
         except HouseholdInfo.DoesNotExist:
-            raise forms.ValidationError('Complete householdinfo before consenting head of household')
-        return cleaned_data
+            raise forms.ValidationError(
+                'Complete \'{}\' before consenting head of household'.format(HouseholdInfo._meta.verbose_name))
 
     class Meta:
         model = SubjectConsent
