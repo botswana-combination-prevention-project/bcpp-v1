@@ -77,19 +77,10 @@ class BaseSubjectConsentForm(BaseModelForm):
 
         # check for gender of consent
         if cleaned_data.get('gender'):
-            gender_of_consent = self._meta.model.Constants.GENDER_OF_CONSENT
-            if gender_of_consent == 'MF':
-                allowed = ('MF', 'Male and Female')
-                entry = ('value', cleaned_data.get('gender'))
-            else:
-                for lst in GENDER_OF_CONSENT:
-                    if lst[0] == gender_of_consent:
-                        allowed = lst
-                for lst in GENDER_OF_CONSENT:
-                    if lst[0] == cleaned_data.get('gender'):
-                        entry = lst
-            if cleaned_data.get('gender') != allowed[0] and allowed[0] != 'MF':
-                raise forms.ValidationError(u'Gender of consent is %s. You entered %s.' % (allowed[1], entry[1]))
+            if cleaned_data.get('gender') not in self._meta.Constants.GENDER_OF_CONSENT:
+                raise forms.ValidationError(
+                    'Expected gender to be one of {}. Got {}.'.format(
+                        self._meta.model.Constants.GENDER_OF_CONSENT, cleaned_data.get('gender')))
         # confirm attr identity and confirm_identity match
         if cleaned_data.get('identity') and cleaned_data.get('confirm_identity'):
             if cleaned_data.get('identity') != cleaned_data.get('confirm_identity'):
