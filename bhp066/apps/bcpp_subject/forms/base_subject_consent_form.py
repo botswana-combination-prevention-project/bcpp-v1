@@ -50,12 +50,12 @@ class BaseSubjectConsentForm(BaseModelForm):
 
         if cleaned_data.get('dob', None):
             rdelta = relativedelta(consent_datetime, cleaned_data.get('dob'))
-            if rdelta.years < self.model.MIN_AGE_OF_CONSENT:
+            if rdelta.years < self._meta.model.MIN_AGE_OF_CONSENT:
                 raise forms.ValidationError(u'Subject\'s age is %s. Subject is not eligible for consent.' % (formatted_age(cleaned_data.get('dob'), date.today())))
             # check if guardian name is required
             # guardian name is required if subject is a minor but the field may not be on the form
             # if the study does not have minors.
-            if rdelta.years < self.model.AGE_IS_ADULT:
+            if rdelta.years < self._meta.model.AGE_IS_ADULT:
                 if "guardian_name" not in cleaned_data.keys():
                     raise forms.ValidationError('Subject is a minor. "guardian_name" is required but missing from the form. Please add this field to the form.')
                 elif not cleaned_data.get("guardian_name", None):
@@ -64,7 +64,7 @@ class BaseSubjectConsentForm(BaseModelForm):
                 #    raise forms.ValidationError('Invalid format for guardian name. Expected format \'FIRSTNAME, LASTNAME\'.')
                 else:
                     pass
-            if rdelta.years >= self.model.AGE_IS_ADULT and "guardian_name" in cleaned_data.keys():
+            if rdelta.years >= self._meta.model.AGE_IS_ADULT and "guardian_name" in cleaned_data.keys():
                 if not cleaned_data.get("guardian_name", None) == '':
                     raise forms.ValidationError(u'Subject\'s age is %s. Subject is an adult. Guardian\'s name is NOT required.' % (formatted_age(cleaned_data.get('dob'), date.today())))
         # if consent model has a ConsentAge method that returns an ordered range of ages as list
@@ -77,7 +77,7 @@ class BaseSubjectConsentForm(BaseModelForm):
 
         # check for gender of consent
         if cleaned_data.get('gender'):
-            gender_of_consent = self.model.GENDER_OF_CONSENT
+            gender_of_consent = self._meta.model.GENDER_OF_CONSENT
             if gender_of_consent == 'MF':
                 allowed = ('MF', 'Male and Female')
                 entry = ('value', cleaned_data.get('gender'))
