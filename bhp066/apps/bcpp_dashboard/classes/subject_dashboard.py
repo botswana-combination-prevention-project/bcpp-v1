@@ -53,7 +53,7 @@ class SubjectDashboard(BaseSubjectDashboard):
         except AttributeError:
             membership_form_extra_url_context = '&household_member={0}'.format(self.household_member.pk)
 
-        if latest_subject_consent and not SubjectConsent.consent.valid_consent_for_period(
+        if not SubjectConsent.consent.valid_consent_for_period(
                 self.subject_identifier, timezone.now()):
             unkeyed = self.context.get('unkeyed_membership_forms')
             try:
