@@ -9,3 +9,4 @@ from .pima_vl_manager import PimaVlManager
 from .call_log_manager import CallLogManager, CallLogEntryManager
 from .call_list_manager import CallListManager
 from .subject_consent_manager import SubjectConsentManager
+from .subject_re_consent_manager import SubjectReConsentManager
