@@ -55,9 +55,9 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
     def get_report_datetime(self):
         return self.get_visit().report_datetime
 
-    @property
-    def subject_identifier(self):
-        return self.get_visit().get_subject_identifier()
+#     @property
+#     def subject_identifier(self):
+#         return self.get_visit().get_subject_identifier()
 
     def get_subject_identifier(self):
         return self.get_visit().get_subject_identifier()
