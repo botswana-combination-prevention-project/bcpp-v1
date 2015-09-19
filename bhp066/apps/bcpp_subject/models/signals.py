@@ -82,17 +82,17 @@ def update_or_create_registered_subject_on_post_save(sender, instance, raw, crea
 
     Sender instance is a Consent"""
     if not raw:
-        # if isinstance(instance, (BaseSubjectConsent, )):
-        try:
-            # if instance.registered_subject:
-            # has attr and is set to an instance of registered subject -- update
-            for field_name, value in instance.registered_subject_options.iteritems():
-                setattr(instance.registered_subject, field_name, value)
-            # RULE: subject identifier is ONLY allocated by a consent:
-            instance.registered_subject.subject_identifier = instance.subject_identifier
-            instance.registered_subject.save(using=using)
-        except AttributeError:
-            pass
+        if isinstance(instance, (SubjectConsent, )):
+            try:
+                # if instance.registered_subject:
+                # has attr and is set to an instance of registered subject -- update
+                for field_name, value in instance.registered_subject_options.iteritems():
+                    setattr(instance.registered_subject, field_name, value)
+                # RULE: subject identifier is ONLY allocated by a consent:
+                instance.registered_subject.subject_identifier = instance.subject_identifier
+                instance.registered_subject.save(using=using)
+            except AttributeError:
+                pass
 
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
