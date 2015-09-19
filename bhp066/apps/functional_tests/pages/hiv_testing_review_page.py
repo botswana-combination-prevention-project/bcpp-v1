@@ -24,7 +24,7 @@ class HivTestingReviewPage(BaseModelAdminPage):
         other_record_element = self.browser.find_element(*HivTestingReviewPage.other_record)
         other_record_element.send_keys(other_record)
 
-    def fill_hiv_testing_history(self, report_date, report_time, has_tested, other_record):
+    def fill_hiv_testing_review(self, report_date, report_time, has_tested, other_record):
         self.set_report_date(report_date)
         self.set_report_time(report_time)
         self.set_has_tested(has_tested)
