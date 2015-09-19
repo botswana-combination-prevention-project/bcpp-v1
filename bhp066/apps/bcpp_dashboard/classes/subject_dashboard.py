@@ -5,8 +5,9 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 
 from edc.subject.appointment.models import Appointment
-from edc.subject.appointment_helper.exceptions import AppointmentCreateError
 from edc.subject.appointment_helper.classes import AppointmentHelper
+from edc.subject.appointment_helper.exceptions import AppointmentCreateError
+from edc_consent.models.consent_type import ConsentType
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_subject.models import (
@@ -50,12 +51,19 @@ class SubjectDashboard(BaseSubjectDashboard):
                 latest_subject_consent.household_member.pk)
         except AttributeError:
             membership_form_extra_url_context = '&household_member={0}'.format(self.household_member.pk)
-        valid_subject_consent_for_period = SubjectConsent.consent.valid_consent_for_period(
-            self.subject_identifier, timezone.now())
-        if valid_subject_consent_for_period:
-            self.context.get('keyed_membership_forms').append(valid_subject_consent_for_period)
-        else:
-            self.context.get('unkeyed_membership_forms').append(SubjectConsent)  # need to also show the version!!
+
+        first_subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_identifier).first()
+        for subject_consent in SubjectConsent.objects.filter(subject_identifier=self.subject_identifier):
+            if subject_consent == first_subject_consent:
+                continue
+            else:
+                self.context.get('keyed_membership_forms').append(subject_consent)
+        if latest_subject_consent and not SubjectConsent.objects.valid_consent_for_period(
+                self.subject_identifier, timezone.now()):
+            consent_type = ConsentType.objects.last()
+            SubjectConsent._meta.verbose_name = '{} V{}'.format(
+                SubjectConsent._meta.verbose_name, consent_type.version)
+            self.context.get('unkeyed_membership_forms').append(SubjectConsent)
         self.context.update(
             home='bcpp',
             search_name='subject',
@@ -68,8 +76,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             elisa_hiv_result=self.elisa_hiv_result,
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
-            membership_form_extra_url_context=membership_form_extra_url_context,
-            valid_subject_consent_for_period=valid_subject_consent_for_period)
+            membership_form_extra_url_context=membership_form_extra_url_context)
         return self.context
 
     @property

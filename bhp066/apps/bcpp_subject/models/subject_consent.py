@@ -348,9 +348,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
                      VulnerabilityFieldsMixin, BaseSubjectConsent):
 
-    history = AuditTrail()
-
     objects = SubjectConsentManager()
+
+    history = AuditTrail()
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
