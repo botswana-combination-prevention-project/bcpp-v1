@@ -166,9 +166,9 @@ class CorrectConsent(BaseSyncUuidModel):
         help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
     )
 
-    history = AuditTrail()
-
     objects = CorrectConsentManager()
+
+    history = AuditTrail()
 
     def __unicode__(self):
         return unicode(self.subject_consent)
