@@ -29,6 +29,7 @@ from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
+
 from ..exceptions import ConsentError
 
 
@@ -348,9 +349,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
                      VulnerabilityFieldsMixin, BaseSubjectConsent):
 
-    history = AuditTrail()
-
     objects = SubjectConsentManager()
+
+    history = AuditTrail()
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
@@ -374,3 +375,20 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
         app_label = 'bcpp_subject'
         unique_together = (('subject_identifier', 'survey', 'version'), ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
+
+
+class SubjectReConsent(SubjectConsent):
+
+    def dispatch_container_lookup(self, using=None):
+        return (models.get_model('bcpp_household', 'Plot'),
+                'household_member__household_structure__household__plot__plot_identifier')
+
+    def save(self, *args, **kwargs):
+
+        # TODO
+        # validate the consents are the same.
+        # pull and use registered subject, subjects identifier, household member of the current year.
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    class Meta:
+        proxy = True
