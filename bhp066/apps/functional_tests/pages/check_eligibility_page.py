@@ -4,7 +4,7 @@ from .base_page import BaseModelAdminPage
 
 class CheckEligibilityPage(BaseModelAdminPage):
     report_date = (By.ID, 'id_report_datetime_0')
-    report_time = (By.ID, 'id_report_datetime_0')
+    report_time = (By.ID, 'id_report_datetime_1')
     report_today = (By.XPATH, "(//form[@id='enrollmentchecklist_form']//descendant::a[text()='Today'])[1]")
     report_now = (By.XPATH, " (//form[@id='enrollmentchecklist_form']//descendant::a[text()='Now'])[1]")
     initials = (By.ID, 'id_initials')

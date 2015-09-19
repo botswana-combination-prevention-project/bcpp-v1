@@ -24,7 +24,7 @@ class DemographicsPage(BaseModelAdminPage):
         live_with_element = self.browser.find_element(*DemographicsPage.live_with)
         live_with_element.send_keys(live_with)
 
-    def fill_demographic(self, religion, ethnic, marital_status, live_with):
+    def fill_demographics(self, religion, ethnic, marital_status, live_with):
         self.set_religion(religion)
         self.set_ethnic(ethnic)
         self.set_marital_status(marital_status)
