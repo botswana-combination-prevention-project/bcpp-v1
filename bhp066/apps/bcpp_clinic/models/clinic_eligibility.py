@@ -207,9 +207,9 @@ class ClinicEligibility (BaseSyncUuidModel):
                    'Always null for non-clinic members.'),
     )
 
-    history = AuditTrail()
-
     objects = BaseClinicHouseholdMemberManager()
+
+    history = AuditTrail()
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
