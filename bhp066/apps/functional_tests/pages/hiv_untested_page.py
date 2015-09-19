@@ -24,7 +24,7 @@ class HivUntestedPage(BaseModelAdminPage):
         why_no_hiv_test_element = self.browser.find_element(*HivUntestedPage.why_no_hiv_test)
         why_no_hiv_test_element.send_keys(why_no_hiv_test)
 
-    def fill_hiv_testing_history(self, report_date, report_time, have_pills, why_no_hiv_test):
+    def fill_hiv_untested(self, report_date, report_time, have_pills, why_no_hiv_test):
         self.set_report_date(report_date)
         self.set_report_time(report_time)
         self.set_have_pills(have_pills)
