@@ -28,7 +28,7 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseDispatch
         help_text='one registered subject will be related to one household member for each survey')
 
     def __unicode__(self):
-        return '{0} ({1})'.format(self.subject_identifier, self.survey)
+        return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
 
     def get_registration_datetime(self):
         return self.consent_datetime
