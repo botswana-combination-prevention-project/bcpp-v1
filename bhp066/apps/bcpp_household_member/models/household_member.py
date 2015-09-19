@@ -599,8 +599,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         """Returns True if the member was consented in a previous survey."""
         consented_in_previous_survey = False
         try:
-            if self.household_structure.survey.datetime_start > self.consent.survey.datetime_start:
-                consented_in_previous_survey = True
+            for consent in self.consents:
+                if self.household_structure.survey.datetime_start > consent.survey.datetime_start:
+                    consented_in_previous_survey = True
+                    break
         except AttributeError:
             pass
         return consented_in_previous_survey
@@ -830,16 +832,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         return hiv_history
 
     @property
-    def consent(self):
+    def consents(self):
         """ Returns the subject_consent instance or None."""
         SubjectConsent = models.get_model('bcpp_subject', 'subjectconsent')
-        subject_consent = None
-        try:
-            subject_consent = SubjectConsent.objects.get(
-                household_member__internal_identifier=self.internal_identifier)
-        except SubjectConsent.DoesNotExist:
-            pass
-        return subject_consent
+        return SubjectConsent.objects.filter(
+            household_member__internal_identifier=self.internal_identifier)
 
     @property
     def is_bhs(self):
