@@ -23,12 +23,13 @@ from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 
-from ..managers import SubjectConsentManager, SubjectReConsentManager
+from ..managers import SubjectConsentManager
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
 from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
+
 from ..exceptions import ConsentError
 
 
@@ -211,10 +212,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         ..note:: registered subject is updated/created on edc.subject signal.
 
         Also, calls user method :func:`save_new_consent`"""
-        try:
-            registered_subject = getattr(self, 'registered_subject')
-        except AttributeError:
-            registered_subject = None
         self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
         re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
         dummy = self.subject_identifier
@@ -227,11 +224,10 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                     self.subject_identifier = dummy
             # try to get from registered_subject (was created  using signal in edc.subject)
             if re_pk.match(self.subject_identifier):
-                if registered_subject:
-                    if registered_subject.subject_identifier:
-                        # check for  registered subject key and if it already has
-                        # a subject_identifier (e.g for subjects re-consenting)
-                        self.subject_identifier = self.registered_subject.subject_identifier
+                try:
+                    self.subject_identifier = self.registered_subject.subject_identifier
+                except AttributeError:
+                    pass
             # create a subject identifier, if not already done
             if re_pk.match(self.subject_identifier):
                 consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.get_site_code(), using=using)
@@ -348,9 +344,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
                      VulnerabilityFieldsMixin, BaseSubjectConsent):
 
-    history = AuditTrail()
-
     objects = SubjectConsentManager()
+
+    history = AuditTrail()
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
@@ -377,8 +373,6 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
 
 class SubjectReConsent(SubjectConsent):
-
-    objects = SubjectReConsentManager()
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),

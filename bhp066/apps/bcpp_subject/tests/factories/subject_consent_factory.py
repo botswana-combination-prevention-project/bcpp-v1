@@ -23,8 +23,6 @@ class SubjectConsentFactory(BaseConsentFactory):
     consent_datetime = datetime.today()
     may_store_samples = (('Yes', 'Yes'), ('No', 'No'))[0][0]
     is_literate = (('Yes', 'Yes'), ('No', 'No'))[0][0]
-    consent_version_on_entry = 1
-    consent_version_recent = 1
     citizen = 'Yes'
     is_verified = False
     identity = factory.Sequence(lambda n: 'identity{0}'.format(n))
