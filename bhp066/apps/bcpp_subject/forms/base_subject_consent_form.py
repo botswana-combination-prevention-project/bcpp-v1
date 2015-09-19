@@ -77,7 +77,7 @@ class BaseSubjectConsentForm(BaseModelForm):
 
         # check for gender of consent
         if cleaned_data.get('gender'):
-            if cleaned_data.get('gender') not in self._meta.Constants.GENDER_OF_CONSENT:
+            if cleaned_data.get('gender') not in self._meta.model.Constants.GENDER_OF_CONSENT:
                 raise forms.ValidationError(
                     'Expected gender to be one of {}. Got {}.'.format(
                         self._meta.model.Constants.GENDER_OF_CONSENT, cleaned_data.get('gender')))
