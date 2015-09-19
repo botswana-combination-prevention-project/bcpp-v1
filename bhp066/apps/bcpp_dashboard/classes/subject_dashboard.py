@@ -79,14 +79,14 @@ class SubjectDashboard(BaseSubjectDashboard):
             membership_form_extra_url_context=membership_form_extra_url_context)
         return self.context
 
-    @property
-    def consent(self):
-        """Returns to the subject consent instance or None."""
-        try:
-            subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
-        except SubjectConsent.DoesNotExist:
-            subject_consent = None
-        return subject_consent
+#     @property
+#     def consent(self):
+#         """Returns to the subject consent instance or None."""
+#         try:
+#             subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
+#         except SubjectConsent.DoesNotExist:
+#             subject_consent = None
+#         return subject_consent
 
     @property
     def appointments(self):
