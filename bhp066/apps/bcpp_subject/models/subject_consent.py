@@ -357,8 +357,10 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
             expected_member_status = BHS_ELIGIBLE
         else:
             expected_member_status = BHS
-        if self.__class__.objects.filter(subject_identifier=self.subject_identifier).last():
+        subject_identifier = self.household_member.get_subject_identifier()
+        if self.__class__.objects.filter(subject_identifier=subject_identifier).last():
             expected_member_status = BHS
+            self.subject_identifier = subject_identifier
         if self.household_member.member_status != expected_member_status:
             raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                 expected_member_status, self.household_member.member_status, self.household_member))
