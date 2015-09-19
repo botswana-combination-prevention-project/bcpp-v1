@@ -58,11 +58,12 @@ class SubjectDashboard(BaseSubjectDashboard):
             unkeyed = self.context.get('unkeyed_membership_forms')
             try:
                 index = unkeyed.index(SubjectConsent)
-                consent_type = ConsentType.objects.last()
-                unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
-                self.context['unkeyed_membership_forms'] = unkeyed
             except ValueError:
-                pass
+                unkeyed.append(SubjectConsent)
+                index = unkeyed.index(SubjectConsent)
+            consent_type = ConsentType.objects.last()
+            unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+            self.context['unkeyed_membership_forms'] = unkeyed
         self.context.update(
             home='bcpp',
             search_name='subject',
