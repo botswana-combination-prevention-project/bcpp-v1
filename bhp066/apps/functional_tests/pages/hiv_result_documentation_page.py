@@ -24,7 +24,7 @@ class HivResultDocumentationPage(BaseModelAdminPage):
         result_doc_type_element = self.browser.find_element(*HivResultDocumentationPage.result_doc_type)
         result_doc_type_element.send_keys(result_doc_type)
 
-    def fill_hiv_testing_history(self, report_date, report_time, result_date, result_doc_type):
+    def fill_hiv_result_documentation(self, report_date, report_time, result_date, result_doc_type):
         self.set_report_date(report_date)
         self.set_report_time(report_time)
         self.result_date(result_date)
