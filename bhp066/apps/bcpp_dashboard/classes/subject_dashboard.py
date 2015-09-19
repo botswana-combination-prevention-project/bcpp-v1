@@ -44,8 +44,11 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     def get_context_data(self, **kwargs):
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
+        latest_subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_identifier).last()
+        self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
         try:
-            membership_form_extra_url_context = '&household_member={0}'.format(self.consent.household_member.pk)
+            membership_form_extra_url_context = '&household_member={0}'.format(
+                latest_subject_consent.household_member.pk)
         except AttributeError:
             membership_form_extra_url_context = '&household_member={0}'.format(self.household_member.pk)
         valid_subject_consent_for_period = SubjectConsent.consent.valid_consent_for_period(
@@ -53,22 +56,21 @@ class SubjectDashboard(BaseSubjectDashboard):
         if valid_subject_consent_for_period:
             self.context.get('keyed_membership_forms').append(valid_subject_consent_for_period)
         else:
-            self.context.get('unkeyed_membership_forms').append(valid_subject_consent_for_period)
+            self.context.get('unkeyed_membership_forms').append(SubjectConsent)  # need to also show the version!!
         self.context.update(
             home='bcpp',
             search_name='subject',
             household_dashboard_url=self.household_dashboard_url,
             title='Research Subject Dashboard',
-            subject_consent=self.consent,
-            correct_consent=self.correct_consent,
+            subject_consent=latest_subject_consent,
+            correct_consent=self.correct_consent(latest_subject_consent),
             subject_referral=self.subject_referral,
             last_subject_referral=self.last_subject_referral,
             elisa_hiv_result=self.elisa_hiv_result,
             hiv_result=self.hiv_result,
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             membership_form_extra_url_context=membership_form_extra_url_context,
-            valid_subject_consent_for_period=valid_subject_consent_for_period
-        )
+            valid_subject_consent_for_period=valid_subject_consent_for_period)
         return self.context
 
     @property
@@ -206,11 +208,10 @@ class SubjectDashboard(BaseSubjectDashboard):
             elisa_hiv_result = None
         return elisa_hiv_result
 
-    @property
-    def correct_consent(self):
+    def correct_consent(self, subject_consent):
         """Returns to the subject consent, if it has been completed."""
         try:
-            correct_consent = CorrectConsent.objects.get(subject_consent=self.consent)
+            correct_consent = CorrectConsent.objects.get(subject_consent=subject_consent)
         except CorrectConsent.DoesNotExist:
             correct_consent = None
         return correct_consent
