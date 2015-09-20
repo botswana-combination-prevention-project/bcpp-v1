@@ -28,7 +28,7 @@ class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         choices=HOUSEHOLD_REFUSAL)
 
     reason_other = EncryptedCharField(
-        verbose_name=_('If Other, specify'),
+        verbose_name='If Other, specify',
         max_length=100,
         blank=True,
         null=True)

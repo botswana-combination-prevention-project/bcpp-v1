@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.choices import YES_NO_UNKNOWN
@@ -49,7 +48,7 @@ class SubjectMoved(BaseMemberStatusModel):
     )
 
     comment = EncryptedTextField(
-        verbose_name=_("Comment"),
+        verbose_name="Comment",
         max_length=250,
         blank=True,
         help_text=('')
