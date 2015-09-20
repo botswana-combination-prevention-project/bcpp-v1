@@ -228,8 +228,8 @@ DAJAXICE_MEDIA_PREFIX = "dajaxice"
 # edc.subject.registered_subject
 SUBJECT_APP_LIST = ['bcpp_subject', 'bcpp_clinic']
 SUBJECT_TYPES = ['subject', 'clinic']
-MAX_SUBJECTS = {'subject': 9999,
-                'clinic': 9999}
+MAX_SUBJECTS = {'subject': 99999,
+                'clinic': 99999}
 
 # edc.device.dispatch
 DISPATCH_APP_LABELS = ['bcpp_subject', 'bcpp_household', 'bcpp_household_member',
