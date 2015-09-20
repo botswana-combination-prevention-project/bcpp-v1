@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.choices import YES_NO_NA
@@ -14,15 +13,15 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class HivTestingHistory (BaseScheduledVisitModel):
 
     has_tested = models.CharField(
-        verbose_name=_("Have you ever been tested for HIV before?"),
+        verbose_name="Have you ever been tested for HIV before?",
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
     )
 
     when_hiv_test = models.CharField(
-        verbose_name=_("When was the last [most recent]"
-                       " time you were tested for HIV?"),
+        verbose_name="When was the last [most recent]"
+                     " time you were tested for HIV?",
         max_length=25,
         null=True,
         blank=True,
@@ -32,8 +31,8 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     # this field triggers HivTestReview
     has_record = models.CharField(
-        verbose_name=_("Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
-                       " other] available to review?"),
+        verbose_name="Is a record of last [most recent] HIV test [OPD card, Tebelopele,"
+                     " other] available to review?",
         max_length=45,
         null=True,
         blank=True,
@@ -43,7 +42,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     # used by admin_supplemental fields for HIV status condition??
     verbal_hiv_result = models.CharField(
-        verbose_name=_("Please tell me the results of your last [most recent] HIV test?"),
+        verbose_name="Please tell me the results of your last [most recent] HIV test?",
         max_length=30,
         null=True,
         blank=True,
@@ -53,7 +52,7 @@ class HivTestingHistory (BaseScheduledVisitModel):
 
     # this field triggers HivResultDocumentation
     other_record = models.CharField(
-        verbose_name=_("Do you have any other available documentation of positive HIV status?"),
+        verbose_name="Do you have any other available documentation of positive HIV status?",
         max_length=3,
         null=True,
         blank=False,

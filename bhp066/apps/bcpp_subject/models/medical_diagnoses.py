@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 
@@ -15,14 +14,14 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
 
     diagnoses = models.ManyToManyField(
         Diagnoses,
-        verbose_name=_("Do you recall or is there a record of having any of the"
-                       " following serious illnesses?"),
+        verbose_name="Do you recall or is there a record of having any of the"
+                     " following serious illnesses?",
         help_text="tick all that apply",
     )
 
     heart_attack_record = models.CharField(
-        verbose_name=_("Is a record (OPD card, discharge summary) of a heart disease or stroke"
-                       " diagnosis available to review?"),
+        verbose_name="Is a record (OPD card, discharge summary) of a heart disease or stroke"
+                     " diagnosis available to review?",
         max_length=25,
         null=True,
         blank=True,
@@ -31,8 +30,8 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
     )
 
     cancer_record = models.CharField(
-        verbose_name=_("Is a record (OPD card, discharge summary) of a cancer diagnosis"
-                       " available to review?"),
+        verbose_name="Is a record (OPD card, discharge summary) of a cancer diagnosis"
+                     " available to review?",
         max_length=25,
         null=True,
         blank=True,
@@ -41,8 +40,8 @@ class MedicalDiagnoses (BaseScheduledVisitModel):
     )
 
     tb_record = models.CharField(
-        verbose_name=_("Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
-                       " infection available to review?"),
+        verbose_name="Is a record (OPD card, discharge summary, TB card) of a tuberculosis"
+                     " infection available to review?",
         max_length=25,
         null=True,
         blank=True,

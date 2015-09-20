@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 
@@ -11,15 +10,15 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 class SubstanceUse (BaseScheduledVisitModel):
 
     alcohol = models.CharField(
-        verbose_name=_("In the past month, how often did you consume alcohol?"),
+        verbose_name="In the past month, how often did you consume alcohol?",
         max_length=25,
         choices=ALCOHOL_CHOICE,
         help_text="If participant does not know exactly, ask to give a best guess.",
     )
 
     smoke = models.CharField(
-        verbose_name=_("Do you currently smoke any tobacco products, such as"
-                       " cigarettes, cigars, or pipes?"),
+        verbose_name="Do you currently smoke any tobacco products, such as"
+                       " cigarettes, cigars, or pipes?",
         max_length=25,
         choices=YES_NO_DWTA,
         help_text="",
