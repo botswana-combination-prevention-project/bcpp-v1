@@ -78,9 +78,10 @@ class HouseholdLogEntryPage(BaseModelAdminPage):
     def select_other_source(self):
         return self.browser.find_element(*HouseholdLogEntryPage.other_source)
 
-    def fill_household_entry(self, report_date=None, household_status):
+    def fill_household_entry(self, household_status, report_date=None):
         if not report_date:
-            self.set_report_date(report_date)
+            self.select_today
         else:
-            self.select_today()
+            self.set_report_date(report_date)
+        self.set_household_status(household_status)
         self.click_save()
