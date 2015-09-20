@@ -1,4 +1,3 @@
-from django.utils.translation import ugettext as _
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
@@ -61,14 +60,14 @@ class PlotLogEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         choices=PLOT_LOG_STATUS)
 
     reason = models.CharField(
-        verbose_name=_('If inaccessible, please indicate the reason.'),
+        verbose_name='If inaccessible, please indicate the reason.',
         max_length=25,
         blank=True,
         null=True,
         choices=INACCESSIBILITY_REASONS)
 
     reason_other = models.CharField(
-        verbose_name=_('If Other, specify'),
+        verbose_name='If Other, specify',
         max_length=100,
         blank=True,
         null=True)

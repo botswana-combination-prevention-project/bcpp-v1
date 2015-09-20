@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -25,7 +24,7 @@ class ReplacementHistory(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     replacement_reason = models.CharField(
         verbose_name='Reason for replacement',
         max_length=100,
-        help_text=_("Reasons could be absentees, refusals, e.t.c"),
+        help_text="Reasons could be absentees, refusals, e.t.c",
     )
 
     history = AuditTrail()
