@@ -24,9 +24,11 @@ class PlotLogEntryPage(BaseModelAdminPage):
         plotElement = self.browser.find_element(*PlotLogEntryPage.plot_status)
         plotElement.send_keys(plot_status)
 
+    @property
     def select_accessible(self):
         self.browser.find_element(*PlotLogEntryPage.accessible).click()
 
+    @property
     def select_inaccessible(self):
         self.browser.find_element(*PlotLogEntryPage.inaccessible).click()
 
