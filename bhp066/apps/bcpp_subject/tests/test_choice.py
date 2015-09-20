@@ -25,7 +25,7 @@ class TestChoice(TestCase):
                 translator = translation.trans_real.translation(language[0])
                 dct = {}
                 for choice in [item for item in dir(choices) if not item.startswith('_')]:
-                    c = getattr(import_module('apps.bcpp_subject.choices'), choice)
+                    c = getattr(import_module('bhp066.apps.bcpp_subject.choices'), choice)
                     for tpl in c:
                         if dct.get(choice):
                             text = translator.ugettext(tpl[0])
@@ -40,7 +40,7 @@ class TestChoice(TestCase):
                         if issubclass(m, BaseModel):
                             for field in m._meta.fields:
                                 for choice in [item for item in dir(choices) if not item.startswith('_')]:
-                                    c = getattr(import_module('apps.bcpp_subject.choices'), choice)
+                                    c = getattr(import_module('bhp066.apps.bcpp_subject.choices'), choice)
                                     if field.choices == c:
                                         self.assertTrue(dct.get(choice)[MAX_LENGTH] <= field.max_length, msg='{0}.{1} max_length={2} but {3} max length is {4} '.format(m._meta.object_name, field.name, field.max_length, choice, dct.get(choice)[TEXT]))
         if not found:

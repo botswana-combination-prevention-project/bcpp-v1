@@ -118,23 +118,27 @@ class BaseScheduledModelTestCase(TestCase):
         # print self.household_member_male.member_status
 
         subject_consent_female = SubjectConsentFactory(
-            consent_datetime=datetime.today() + relativedelta(years=-1),
+            consent_datetime=datetime.today(),
             household_member=self.household_member_female,
             gender='F',
             dob=enrollment_female.dob,
             first_name='SUE',
             last_name='W',
             citizen='Yes',
+            confirm_identity='101129811',
+            identity='101129811',
             initials=enrollment_female.initials,
             study_site=self.study_site)
         subject_consent_male = SubjectConsentFactory(
-            consent_datetime=datetime.today() + relativedelta(years=-1),
+            consent_datetime=datetime.today(),
             household_member=self.household_member_male,
             gender='M',
             dob=enrollment_male.dob,
             first_name='ERIK',
             last_name='W',
             citizen='Yes',
+            confirm_identity='101119811',
+            identity='101119811',
             initials=enrollment_male.initials,
             study_site=self.study_site)
 
@@ -143,11 +147,11 @@ class BaseScheduledModelTestCase(TestCase):
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
         appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__time_point=0)
         self.subject_visit_female = SubjectVisitFactory(
-            report_datetime=datetime.today() + relativedelta(years=-1),
+            report_datetime=datetime.today(),
             appointment=appointment_female, household_member=self.household_member_female)
         appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__time_point=0)
         self.subject_visit_male = SubjectVisitFactory(
-            report_datetime=datetime.today() + relativedelta(years=-1),
+            report_datetime=datetime.today(),
             appointment=appointment_male, household_member=self.household_member_male)
 
     def create_annual(self, household):
