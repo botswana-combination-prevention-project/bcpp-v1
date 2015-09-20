@@ -165,7 +165,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
         try:
-            subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_visit.appointment.registered_subject.subject_identifier)
+            subject_consent = SubjectConsent.objects.get(household_member=self.subject_visit.household_member)
             if ((subject_consent.citizen.lower() == 'yes') or (
                     subject_consent.legal_marriage.lower() == 'yes' and
                     subject_consent.marriage_certificate.lower() == 'yes')):

@@ -15,7 +15,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    household_member = models.ForeignKey(HouseholdMember, help_text='')
+    household_member = models.OneToOneField(HouseholdMember, help_text='')
 
     is_signed = models.BooleanField(default=False)
 
