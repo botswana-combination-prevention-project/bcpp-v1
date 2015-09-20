@@ -599,8 +599,10 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         """Returns True if the member was consented in a previous survey."""
         consented_in_previous_survey = False
         try:
-            if self.household_structure.survey.datetime_start > self.consent.survey.datetime_start:
-                consented_in_previous_survey = True
+            for consent in self.consents:
+                if self.household_structure.survey.datetime_start > consent.survey.datetime_start:
+                    consented_in_previous_survey = True
+                    break
         except AttributeError:
             pass
         return consented_in_previous_survey
@@ -807,13 +809,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def get_subject_identifier(self):
         """ Uses the hsm internal_identifier to locate the subject identifier in
         registered_subject OR return the hsm.id"""
-        if RegisteredSubject.objects.filter(registration_identifier=self.internal_identifier):
+        try:
             registered_subject = RegisteredSubject.objects.get(
                 registration_identifier=self.internal_identifier)
             subject_identifier = registered_subject.subject_identifier
             if not subject_identifier:
                 subject_identifier = registered_subject.registration_identifier
-        else:
+        except RegisteredSubject.DoesNotExist:
             # this should not be an option as all hsm's have a registered_subject instance
             subject_identifier = self.id
         return subject_identifier
@@ -830,16 +832,11 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         return hiv_history
 
     @property
-    def consent(self):
+    def consents(self):
         """ Returns the subject_consent instance or None."""
         SubjectConsent = models.get_model('bcpp_subject', 'subjectconsent')
-        subject_consent = None
-        try:
-            subject_consent = SubjectConsent.objects.get(
-                household_member__internal_identifier=self.internal_identifier)
-        except SubjectConsent.DoesNotExist:
-            pass
-        return subject_consent
+        return SubjectConsent.objects.filter(
+            household_member__internal_identifier=self.internal_identifier)
 
     @property
     def is_bhs(self):
