@@ -18,6 +18,7 @@ from .factories import (
     PimaFactory, HivTestReviewFactory, HivTestingHistoryFactory, TbSymptomsFactory,
     HivResultDocumentationFactory)
 from edc.subject.appointment.models import Appointment
+from edc.subject.registration.models import RegisteredSubject
 from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryMetaData
 from edc_constants.constants import POS, NEG, NOT_REQUIRED, REQUIRED, NOT_APPLICABLE, YES, NO
 from edc.export.models.export_transaction import ExportTransaction
@@ -30,8 +31,8 @@ from bhp066.apps.bcpp_subject.models import HivCareAdherence, HivTestingHistory,
 
 class TestReferral(BaseScheduledModelTestCase):
 
-    community = 'lerala'
-    site_code = '21'
+    community = 'letlhakeng'
+    site_code = '15'
 
     def startup(self):
         super(TestReferral, self).startup()
@@ -76,22 +77,23 @@ class TestReferral(BaseScheduledModelTestCase):
             report_datetime=report_datetime)
         return subject_referral
 
-    def set_intervention(self, value):
-        site_mappers.get_current_mapper().intervention = value
+    @property
+    def get_intervention(self):
+        return site_mappers.get_current_mapper().intervention
 
     def tests_referred_smc1(self):
         """if NEG and male and NOT circumcised, refer for SMC in Y1 intervention
         and also refer in Y2 intervention"""
-        self.set_intervention(True)
-        subject_referral = self.referral_smc1()
-        self.assertIn('SMC-NEG', subject_referral.referral_code)
+        if self.get_intervention:
+            subject_referral = self.referral_smc1()
+            self.assertIn('SMC-NEG', subject_referral.referral_code)
 
     def tests_referred_smc1a(self):
         """if NEG and male and NOT circumcised, refer for SMC in Y1 non-intervention
         and do not refer in Y2 non-intervention"""
-        self.set_intervention(False)
-        subject_referral = self.referral_smc1()
-        self.assertEqual('', subject_referral.referral_code)
+        if self.get_intervention:
+            subject_referral = self.referral_smc1()
+            self.assertEqual('', subject_referral.referral_code)
 
     def referral_smc2(self):
         self.startup()
@@ -113,15 +115,15 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc2(self):
         """if NEG and male and circumcised, do not refer for SMC, both Y1 and Y2 intervention"""
-        self.set_intervention(True)
-        subject_referral = self.referral_smc2()
-        self.assertNotIn('SMC', subject_referral.referral_code)
+        if self.get_intervention:
+            subject_referral = self.referral_smc2()
+            self.assertNotIn('SMC', subject_referral.referral_code)
 
     def tests_referred_smc2a(self):
         """if NEG and male and circumcised, do not refer for SMC, both Y1 and Y2 non-intervention"""
-        self.set_intervention(False)
-        subject_referral = self.referral_smc2()
-        self.assertNotIn('SMC', subject_referral.referral_code)
+        if self.get_intervention:
+            subject_referral = self.referral_smc2()
+            self.assertNotIn('SMC', subject_referral.referral_code)
 
     def tests_circumsised_y2_not_smc(self):
         """if NEG and male and not circumcised in Y1, then refer for SMC in Y1.
@@ -231,15 +233,15 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_referred_smc5(self):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
-        self.set_intervention(True)
-        subject_referral = self.referral_smc5()
-        self.assertEqual('SMC?UNK', subject_referral.referral_code)
+        if self.get_intervention:
+            subject_referral = self.referral_smc5()
+            self.assertEqual('SMC?UNK', subject_referral.referral_code)
 
     def tests_referred_smc5a(self):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
-        self.set_intervention(False)
-        subject_referral = self.referral_smc5()
-        self.assertEqual('', subject_referral.referral_code)
+        if self.get_intervention:
+            subject_referral = self.referral_smc5()
+            self.assertEqual('', subject_referral.referral_code)
 
     def tests_referred_smc6(self):
         """if UNKNOWN HIV status and male and unknown circ status, refer for SMC"""
@@ -406,16 +408,16 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result=POS, hiv_test_date=date.today())
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_female, cd4_value=501, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertIn('POS#-HI', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS#-HI', subject_referral.referral_code)
+        if self.get_intervention:
+            self.assertIn('POS#-HI', subject_referral.referral_code)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS#-HI', subject_referral.referral_code)
 
     def tests_referred2(self):
         """if known POS, low PIMA CD4 and art unknown, """
@@ -424,16 +426,18 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_female, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_female, recorded_hiv_result=POS)
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_female, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_female,
             report_datetime=report_datetime)
-        self.assertIn('POS#-LO', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS#-HI', subject_referral.referral_code)
+        if self.get_intervention:
+            self.assertTrue(site_mappers.get_current_mapper().intervention)
+            self.assertIn('POS#-LO', subject_referral.referral_code)
+        else:
+            self.assertFalse(site_mappers.get_current_mapper().intervention)
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS#-HI', subject_referral.referral_code)
 
     def tests_referred3(self):
         """if known NEG but not tested today, high PIMA CD4 and art unknown, female"""
@@ -455,16 +459,16 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS, hiv_result_datetime=datetime.today())
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=501, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('POS!-HI', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS!-HI', subject_referral.referral_code)
+        if self.get_intervention:
+            self.assertIn('POS!-HI', subject_referral.referral_code)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS!-HI', subject_referral.referral_code)
 
     def tests_referred5(self):
         """if new POS, low PIMA CD4 and art unknown, """
@@ -473,22 +477,22 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS, hiv_result_datetime=datetime.today())
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('POS!-LO', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS!-HI', subject_referral.referral_code)
-        pima = Pima.objects.all()[0]
-        pima.cd4_value = 349
-        pima.save()
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS!-LO', subject_referral.referral_code)
+        if self.get_intervention:
+            self.assertIn('POS!-LO', subject_referral.referral_code)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS!-HI', subject_referral.referral_code)
+            pima = Pima.objects.all()[0]
+            pima.cd4_value = 349
+            pima.save()
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS!-LO', subject_referral.referral_code)
 
     def tests_referred_urgent1(self):
         """if existing POS, low PIMA CD4 and art unknown, urgent referral"""
@@ -497,18 +501,18 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result=POS)
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        subject_referral_helper = SubjectReferralHelper(subject_referral)
-        self.assertTrue(subject_referral_helper.urgent_referral)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        subject_referral_helper = SubjectReferralHelper(subject_referral)
-        self.assertFalse(subject_referral_helper.urgent_referral)
+        if self.get_intervention:
+            subject_referral_helper = SubjectReferralHelper(subject_referral)
+            self.assertTrue(subject_referral_helper.urgent_referral)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            subject_referral_helper = SubjectReferralHelper(subject_referral)
+            self.assertFalse(subject_referral_helper.urgent_referral)
 
     def tests_referred_urgent2(self):
         """if existing POS, low PIMA CD4 and art no, urgent referral"""
@@ -517,19 +521,19 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivTestReviewFactory(subject_visit=self.subject_visit_male, recorded_hiv_result=POS)
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         HivCareAdherenceFactory(subject_visit=self.subject_visit_female, on_arv=NO)
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        subject_referral_helper = SubjectReferralHelper(subject_referral)
-        self.assertTrue(subject_referral_helper.urgent_referral)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        subject_referral_helper = SubjectReferralHelper(subject_referral)
-        self.assertFalse(subject_referral_helper.urgent_referral)
+        if self.get_intervention:
+            subject_referral_helper = SubjectReferralHelper(subject_referral)
+            self.assertTrue(subject_referral_helper.urgent_referral)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            subject_referral_helper = SubjectReferralHelper(subject_referral)
+            self.assertFalse(subject_referral_helper.urgent_referral)
 
     def tests_referred_urgent3(self):
         """if new POS, low PIMA CD4 and art unknown, urgent referral"""
@@ -538,18 +542,18 @@ class TestReferral(BaseScheduledModelTestCase):
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS, hiv_result_datetime=datetime.today())
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        subject_referral_helper = SubjectReferralHelper(subject_referral)
-        self.assertTrue(subject_referral_helper.urgent_referral)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        subject_referral_helper = SubjectReferralHelper(subject_referral)
-        self.assertFalse(subject_referral_helper.urgent_referral)
+        if self.get_intervention:
+            subject_referral_helper = SubjectReferralHelper(subject_referral)
+            self.assertTrue(subject_referral_helper.urgent_referral)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            subject_referral_helper = SubjectReferralHelper(subject_referral)
+            self.assertFalse(subject_referral_helper.urgent_referral)
 
     def tests_referred_ccc3(self):
         """if new pos, high PIMA CD4 and not on art, """
@@ -559,16 +563,16 @@ class TestReferral(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS)
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv=NO)
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=501, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('POS!-HI', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS!-HI', subject_referral.referral_code)
+        if self.get_intervention:
+            self.assertIn('POS!-HI', subject_referral.referral_code)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS!-HI', subject_referral.referral_code)
 
     def tests_referred_masa1(self):
         """if new pos, low PIMA CD4 and not on art, """
@@ -578,22 +582,22 @@ class TestReferral(BaseScheduledModelTestCase):
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS)
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv=NO)
-        self.set_intervention(True)
         PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
-        self.assertIn('POS!-LO', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS!-HI', subject_referral.referral_code)
-        pima = Pima.objects.all()[0]
-        pima.cd4_value = 349
-        pima.save()
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS!-LO', subject_referral.referral_code)
+        if self.get_intervention:
+            self.assertIn('POS!-LO', subject_referral.referral_code)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS!-HI', subject_referral.referral_code)
+            pima = Pima.objects.all()[0]
+            pima.cd4_value = 349
+            pima.save()
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS!-LO', subject_referral.referral_code)
 
     def tests_referred_verbal1(self):
         """"""
@@ -837,16 +841,16 @@ class TestReferral(BaseScheduledModelTestCase):
         HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result=POS, other_record=YES)
         HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS)
         HivCareAdherenceFactory(subject_visit=self.subject_visit_male, on_arv=NO)
-        self.set_intervention(True)
-        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
-        subject_referral = SubjectReferralFactory(
-            subject_visit=self.subject_visit_male,
-            report_datetime=report_datetime)
-        self.assertIn('POS#-LO', subject_referral.referral_code)
-        self.set_intervention(False)
-        subject_referral = SubjectReferral.objects.all()[0]
-        subject_referral.save()
-        self.assertIn('POS#-HI', subject_referral.referral_code)
+        if self.get_intervention:
+            PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
+            subject_referral = SubjectReferralFactory(
+                subject_visit=self.subject_visit_male,
+                report_datetime=report_datetime)
+            self.assertIn('POS#-LO', subject_referral.referral_code)
+        else:
+            subject_referral = SubjectReferral.objects.all()[0]
+            subject_referral.save()
+            self.assertIn('POS#-HI', subject_referral.referral_code)
 
     def tests_referred_verbal4(self):
         """"""
@@ -1313,7 +1317,9 @@ class TestReferral(BaseScheduledModelTestCase):
 
     def tests_correctness_of_citizen_field(self):
         """Asserts that a citizen field is populated correctly following enrollment_checklist value."""
+        self.assertEqual(RegisteredSubject.objects.all().count(), 0)
         self.startup()
+        self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=self.household_member_male.internal_identifier).count(), 1)
         report_datetime = datetime.today()
         panel = Panel.objects.get(name='Microtube')
         SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
@@ -1330,6 +1336,8 @@ class TestReferral(BaseScheduledModelTestCase):
             age_in_years=30, study_resident=YES, relation='brother',
             inability_to_participate=NOT_APPLICABLE)
 
+        self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
+
         non_citizen_enrollment_male = EnrollmentChecklistFactory(
             household_member=non_citizen_household_member_male,
             initials=non_citizen_household_member_male.initials,
@@ -1341,8 +1349,10 @@ class TestReferral(BaseScheduledModelTestCase):
             legal_marriage=YES,
             marriage_certificate=YES)
 
+        self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
+
         non_citizen_subject_consent_male = SubjectConsentFactory(
-            consent_datetime=datetime.today() + relativedelta(years=-1),
+            consent_datetime=datetime.today(),
             household_member=non_citizen_household_member_male,
             gender='M',
             dob=non_citizen_enrollment_male.dob,
@@ -1351,13 +1361,17 @@ class TestReferral(BaseScheduledModelTestCase):
             citizen=NO,
             initials=non_citizen_enrollment_male.initials,
             legal_marriage=YES,
+            confirm_identity='101119811',
+            identity='101119811',
             marriage_certificate=YES,
             marriage_certificate_no='9999776',
             study_site=self.study_site)
 
+        self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier), 1)
+
         non_citizen_appointment_male = Appointment.objects.get(registered_subject=non_citizen_subject_consent_male.registered_subject,
                                                                visit_definition__time_point=0)
-
+        self.assertEqual(RegisteredSubject.objects.filter(registration_identifier=non_citizen_household_member_male.internal_identifier).count(), 1)
         non_citizen_subject_visit_male = SubjectVisitFactory(
             report_datetime=datetime.today() + relativedelta(years=-1),
             appointment=non_citizen_appointment_male, household_member=non_citizen_household_member_male)

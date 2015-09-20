@@ -18,3 +18,4 @@ class HouseholdMemberFactory(BaseUuidModelFactory):
     study_resident = 'Yes'
     target = 20
     inability_to_participate = 'N/A'
+    
