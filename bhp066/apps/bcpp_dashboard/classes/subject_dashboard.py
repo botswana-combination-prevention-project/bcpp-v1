@@ -53,17 +53,17 @@ class SubjectDashboard(BaseSubjectDashboard):
         except AttributeError:
             membership_form_extra_url_context = '&household_member={0}'.format(self.household_member.pk)
 
-        first_subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_identifier).first()
-        for subject_consent in SubjectConsent.objects.filter(subject_identifier=self.subject_identifier):
-            if subject_consent == first_subject_consent:
-                continue
-            else:
-                self.context.get('keyed_membership_forms').append(subject_consent)
-        if latest_subject_consent and not SubjectConsent.consent.valid_consent_for_period(
+        if not SubjectConsent.consent.valid_consent_for_period(
                 self.subject_identifier, timezone.now()):
+            unkeyed = self.context.get('unkeyed_membership_forms')
+            try:
+                index = unkeyed.index(SubjectConsent)
+            except ValueError:
+                unkeyed.append(SubjectConsent)
+                index = unkeyed.index(SubjectConsent)
             consent_type = ConsentType.objects.last()
-            SubjectConsent._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
-            self.context.get('unkeyed_membership_forms').append(SubjectConsent)
+            unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+            self.context['unkeyed_membership_forms'] = unkeyed
         self.context.update(
             home='bcpp',
             search_name='subject',
@@ -79,14 +79,14 @@ class SubjectDashboard(BaseSubjectDashboard):
             membership_form_extra_url_context=membership_form_extra_url_context)
         return self.context
 
-    @property
-    def consent(self):
-        """Returns to the subject consent instance or None."""
-        try:
-            subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
-        except SubjectConsent.DoesNotExist:
-            subject_consent = None
-        return subject_consent
+#     @property
+#     def consent(self):
+#         """Returns to the subject consent instance or None."""
+#         try:
+#             subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
+#         except SubjectConsent.DoesNotExist:
+#             subject_consent = None
+#         return subject_consent
 
     @property
     def appointments(self):

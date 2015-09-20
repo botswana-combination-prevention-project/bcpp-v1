@@ -37,8 +37,6 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         if not household_member:
             raise forms.ValidationError("Please select the household member.")
 
-        self.instance.consented_for_period_or_raise(exception_cls=forms.ValidationError)
-
         # self.study_specifics_checks(cleaned_data.get('dob'))  (handled using a validator)
 
         # check for duplicate identity
