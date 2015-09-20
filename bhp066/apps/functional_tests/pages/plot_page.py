@@ -24,24 +24,23 @@ class PlotPage(BaseModelAdminPage):
     evening = (By.ID, 'id_time_of_day_3')
 
     def set_plot_status(self, plot_status):
-        plotElement = self.browser.find_element(*PlotPage.plot_status)
-        plotElement.send_keys(plot_status)
+        plot_status.click()
 
     @property
     def select_non_residential(self):
-        self.browser.find_element(*PlotPage.non_residential).click()
+        return self.browser.find_element(*PlotPage.non_residential)
 
     @property
     def select_res_non_habit(self):
-        self.browser.find_element(*PlotPage.res_non_habit).click()
+        return self.browser.find_element(*PlotPage.res_non_habit)
 
     @property
     def select_res_habit(self):
-        self.browser.find_element(*PlotPage.res_habit).click()
+        return self.browser.find_element(*PlotPage.res_habit)
 
     @property
     def select_inaccessible(self):
-        self.browser.find_element(*PlotPage.inaccessible).click()
+        return self.browser.find_element(*PlotPage.inaccessible)
 
     def set_deg_south(self, gps_deg_south):
         degsouthElement = self.browser.find_element(*PlotPage.gps_deg_south)
