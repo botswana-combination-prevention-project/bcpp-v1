@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
-from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import IdentityTypeField
@@ -81,11 +80,11 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text='Complete if DOB is not provided, otherwise leave BLANK.')
 
     guardian = models.CharField(
-        verbose_name=_("If minor, is there a guardian available? "),
+        verbose_name="If minor, is there a guardian available? ",
         max_length=10,
         choices=YES_NO_NA,
-        help_text=_("If a minor age 16 and 17, ensure a guardian is available otherwise"
-                    " participant will not be enrolled."))
+        help_text="If a minor age 16 and 17, ensure a guardian is available otherwise"
+                  " participant will not be enrolled.")
 
     gender = models.CharField(
         verbose_name='Gender',
@@ -93,14 +92,14 @@ class ClinicEligibility (BaseSyncUuidModel):
         choices=GENDER)
 
     has_identity = models.CharField(
-        verbose_name=_("[Interviewer] Has the subject presented a valid OMANG or other identity document?"),
+        verbose_name="[Interviewer] Has the subject presented a valid OMANG or other identity document?",
         max_length=10,
         choices=YES_NO,
-        help_text=_('Allow Omang, Passport number, driver\'s license number or Omang receipt number. '
-                    'If \'NO\' participant will not be enrolled.'))
+        help_text='Allow Omang, Passport number, driver\'s license number or Omang receipt number. '
+                  'If \'NO\' participant will not be enrolled.')
 
     identity = IdentityField(
-        verbose_name=_("Identity number (OMANG, etc)"),
+        verbose_name="Identity number (OMANG, etc)",
         unique=True,
         null=True,
         blank=True,
@@ -117,11 +116,11 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text="")
 
     legal_marriage = models.CharField(
-        verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
+        verbose_name="If not a citizen, are you legally married to a Botswana Citizen?",
         max_length=3,
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
-        help_text=_("If 'NO' participant is not eligible."))
+        help_text="If 'NO' participant is not eligible.")
 
     marriage_certificate = models.CharField(
         verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
@@ -131,8 +130,8 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text="If 'NO' participant is not eligible.")
 
     part_time_resident = models.CharField(
-        verbose_name=_("In the past 12 months, have you typically spent 3 or"
-                       " more nights per month in this community? "),
+        verbose_name="In the past 12 months, have you typically spent 3 or"
+                     " more nights per month in this community? ",
         max_length=7,
         choices=YES_NO_UNKNOWN,
         help_text=(
@@ -144,15 +143,15 @@ class ClinicEligibility (BaseSyncUuidModel):
     )
 
     literacy = models.CharField(
-        verbose_name=_("Is the participant LITERATE?, or if ILLITERATE, is there a"
-                       "  LITERATE witness available "),
+        verbose_name="Is the participant LITERATE?, or if ILLITERATE, is there a"
+                     "  LITERATE witness available ",
         max_length=7,
         choices=YES_NO_UNKNOWN,
-        help_text=_("If participate is illiterate, confirm there is a literate"
-                    "witness available otherwise participant is not eligible."))
+        help_text="If participate is illiterate, confirm there is a literate"
+                  "witness available otherwise participant is not eligible.")
 
     inability_to_participate = models.CharField(
-        verbose_name=_("Do any of the following reasons apply to the participant?"),
+        verbose_name="Do any of the following reasons apply to the participant?",
         max_length=17,
         choices=INABILITY_TO_PARTICIPATE_REASON,
         help_text=("Participant can only participate if NONE is selected. "
@@ -161,7 +160,7 @@ class ClinicEligibility (BaseSyncUuidModel):
     )
 
     hiv_status = models.CharField(
-        verbose_name=_("Please tell me your current HIV status?"),
+        verbose_name="Please tell me your current HIV status?",
         max_length=30,
         choices=VERBALHIVRESULT_CHOICE,
         help_text='If not HIV(+) participant is not elgiible.'
