@@ -20,8 +20,32 @@ class CheckEligibilityPage(BaseModelAdminPage):
     citizen_yes = (By.ID, 'id_citizen_0')
     citizen_no = (By.ID, 'id_citizen_1')
     legal_marriage = (By.ID, 'id_legal_marriage')
-    confirm_participation = (By.ID, 'confirm_participation')
+    legal_marriage_yes = (By.ID, 'id_legal_marriage_0')
+    legal_marriage_no = (By.ID, 'id_legal_marriage_1')
+    legal_marriage_na = (By.ID, 'id_legal_marriage_2')
     study_participation = (By.ID, 'id_study_participation')
+    study_participation_yes = (By.ID, 'id_study_participation_0')
+    study_participation_no = (By.ID, 'id_study_participation_1')
+    confirm_participation = (By.ID, 'confirm_participation')
+    confirm_participation_yes = (By.ID, 'confirm_participation_0')
+    confirm_participation_no = (By.ID, 'confirm_participation_1')
+    confirm_participation_na = (By.ID, 'confirm_participation_2')
+    marriage_certificate = (By.ID, 'id_marriage_certificate')
+    marriage_certificate_yes = (By.ID, 'id_marriage_certificate_0')
+    marriage_certificate_no = (By.ID, 'id_marriage_certificate_1')
+    part_time_resident = (By.ID, 'id_part_time_resident')
+    part_time_resident_yes = (By.ID, 'id_part_time_resident_0')
+    part_time_resident_no = (By.ID, 'id_part_time_resident_1')
+    household_residency = (By.ID, 'id_household_residency')
+    household_residency_yes = (By.ID, 'id_household_residency_yes')
+    household_residency_no = (By.ID, 'id_household_residency_no')
+    literacy = (By.ID, 'id_literacy')
+    literacy_yes = (By.ID, 'id_literacy_0')
+    literacy_no = (By.ID, 'id_literacy_1')
+    guardian = (By.ID, 'id_guardian')
+    guardian_yes = (By.ID, 'id_guardian_yes')
+    guardian_no = (By.ID, 'id_guardian_no')
+    guardian_na = (By.ID, 'id_guardian_na')
 
     def set_report_date(self, report_date):
         date_element = self.browser.find_element(*CheckEligibilityPage.report_date)
@@ -49,49 +73,143 @@ class CheckEligibilityPage(BaseModelAdminPage):
         self.browser.find_element(*CheckEligibilityPage.dob_today).click()
 
     def set_gender(self, gender):
-        gender_element = self.browser.find_element(*CheckEligibilityPage.gender)
-        gender_element.send_keys(gender)
+        gender.click()
 
+    @property
     def select_male(self):
-        self.browser.find_element(*CheckEligibilityPage.male).click()
+        return self.browser.find_element(*CheckEligibilityPage.male)
 
+    @property
     def select_female(self):
-        self.browser.find_element(*CheckEligibilityPage.female).click()
+        return self.browser.find_element(*CheckEligibilityPage.female)
 
     def set_has_identity(self, has_identity):
-        has_identity_element = self.browser.find_element(*CheckEligibilityPage.has_identity)
-        has_identity_element.send_keys(has_identity)
+        has_identity.click()
 
+    @property
     def select_identity_yes(self):
-        self.browser.find_element(*CheckEligibilityPage.identity_yes).click()
+        return self.browser.find_element(*CheckEligibilityPage.identity_yes)
 
+    @property
     def select_identity_no(self):
-        self.browser.find_element(*CheckEligibilityPage.identity_no).click()
+        return self.browser.find_element(*CheckEligibilityPage.identity_no)
 
     def set_citizen(self, citizen):
-        citizen_element = self.browser.find_element(*CheckEligibilityPage.citizen)
-        citizen_element.send_keys(citizen)
+        citizen.click()
 
+    @property
     def select_citizen_yes(self):
-        self.browser.find_element(*CheckEligibilityPage.citizen_yes).click()
+        return self.browser.find_element(*CheckEligibilityPage.citizen_yes)
 
+    @property
     def select_citizen_no(self):
-        self.browser.find_element(*CheckEligibilityPage.citizen_no).click()
+        return self.browser.find_element(*CheckEligibilityPage.citizen_no)
 
     def set_legal_marriage(self, legal_marriage):
-        legal_marriage_element = self.browser.find_element(*CheckEligibilityPage.legal_marriage)
-        legal_marriage_element.send_keys(legal_marriage)
+        legal_marriage.click()
 
-    def set_confirm_participation(self, confirm_participation):
-        confirm_participation_element = self.browser.find_element(*CheckEligibilityPage.confirm_participation)
-        confirm_participation_element.send_keys(confirm_participation)
+    @property
+    def select_legal_marriage_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.legal_marriage_yes)
+
+    @property
+    def select_legal_marriage_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.legal_marriage_no)
+
+    @property
+    def select_legal_marriage_na(self):
+        return self.browser.find_element(*CheckEligibilityPage.legal_marriage_na)
 
     def set_study_participation(self, study_participation):
-        study_participation_element = self.browser.find_element(*CheckEligibilityPage.study_participation)
-        study_participation_element.send_keys(study_participation)
+        study_participation.click()
+
+    @property
+    def select_study_participation_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.study_participation_yes)
+
+    @property
+    def select_study_participation_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.study_participation_no)
+
+    def set_confirm_participation(self, confirm_participation):
+        confirm_participation.click()
+
+    @property
+    def select_confirm_participation_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.confirm_participation_yes)
+
+    @property
+    def select_confirm_participation_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.confirm_participation_no)
+
+    @property
+    def select_confirm_participation_na(self):
+        return self.browser.find_element(*CheckEligibilityPage.confirm_participation_na)
+
+    def set_marriage_certificate(self, marriage_certificate):
+        marriage_certificate.click()
+
+    @property
+    def select_marriage_certificate_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.marriage_certificate_yes)
+
+    @property
+    def select_marriage_certificate_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.marriage_certificate_no)
+
+    def set_part_time_resident(self, part_time_resident):
+        part_time_resident.click()
+
+    @property
+    def select_part_time_resident_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.part_time_resident_yes)
+
+    @property
+    def select_part_time_resident_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.part_time_resident_no)
+
+    def set_household_residency(self, household_residency):
+        household_residency.click()
+
+    @property
+    def select_household_residencyt_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.household_residency_yes)
+
+    @property
+    def select_household_residency_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.household_residency_no)
+
+    def set_literacy(self, literacy):
+        literacy.click()
+
+    @property
+    def select_literacy_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.literacy_yes)
+
+    @property
+    def select_literacy_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.literacy_no)
+
+    def set_guardian(self, guardian):
+        guardian.click()
+
+    @property
+    def select_guardian_yes(self):
+        return self.browser.find_element(*CheckEligibilityPage.guardian)
+
+    @property
+    def select_guardian_no(self):
+        return self.browser.find_element(*CheckEligibilityPage.guardian)
+
+    @property
+    def select_guardian_na(self):
+        return self.browser.find_element(*CheckEligibilityPage.guardian)
 
     def fill_check_eligibilty(self, report_date, report_time, dob, initials, gender, has_identity,
-                              citizen, legal_marriage, confirm_participation, study_participation):
+                              citizen, legal_marriage=select_legal_marriage_na, confirm_participation,
+                              study_participation, confirm_participation=select_confirm_participation_na,
+                              marriage_certificate, part_time_resident, household_residency, literacy,
+                              guardian=select_guardian_na):
         self.set_report_date(report_date)
         self.set_report_time(report_time)
         if not dob:
@@ -103,6 +221,11 @@ class CheckEligibilityPage(BaseModelAdminPage):
         self.set_has_identity(has_identity)
         self.set_citizen(citizen)
         self.set_legal_marriage(legal_marriage)
-        self.set_confirm_participation(confirm_participation)
         self.set_study_participation(study_participation)
+        self.set_confirm_participation(confirm_participation)
+        self.set_marriage_certificate(marriage_certificate)
+        self.set_part_time_resident(part_time_resident)
+        self.household_residency(household_residency)
+        self.literacy(literacy)
+        self.guardian(guardian)
         self.click_save_button()
