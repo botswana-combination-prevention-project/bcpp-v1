@@ -157,6 +157,10 @@ class CheckEligibilityPage(BaseModelAdminPage):
     def select_marriage_certificate_no(self):
         return self.browser.find_element(*CheckEligibilityPage.marriage_certificate_no)
 
+    @property
+    def select_marriage_certificate_na(self):
+        return self.browser.find_element(*CheckEligibilityPage.marriage_certificate_na)
+
     def set_part_time_resident(self, part_time_resident):
         part_time_resident.click()
 
