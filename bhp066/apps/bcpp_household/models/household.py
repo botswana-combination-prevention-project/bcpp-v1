@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
@@ -22,7 +21,7 @@ class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         verbose_name='Household Identifier',
         max_length=25,
         unique=True,
-        help_text=_("Household identifier"),
+        help_text="Household identifier",
         null=True,
         editable=False)
 
@@ -124,7 +123,7 @@ class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     comment = EncryptedTextField(
         max_length=250,
-        help_text=_("You may provide a comment here or leave BLANK."),
+        help_text="You may provide a comment here or leave BLANK.",
         blank=True,
         null=True)
 
