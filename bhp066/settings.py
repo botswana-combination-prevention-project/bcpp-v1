@@ -76,7 +76,7 @@ testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
-    KEY_PATH = BASE_DIR
+    #KEY_PATH = BASE_DIR
     if testing_db_name == 'sqlite':
         DATABASES = TESTING_SQLITE
     else:
