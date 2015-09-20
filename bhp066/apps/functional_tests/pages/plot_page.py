@@ -4,7 +4,7 @@ from .base_page import BaseModelAdminPage
 
 class PlotPage(BaseModelAdminPage):
     plot_status = (By.ID, 'id_status')
-    non_res = (By.ID, 'id_status_0')
+    non_residential = (By.ID, 'id_status_0')
     res_non_habit = (By.ID, 'id_status_1')
     res_habit = (By.ID, 'id_status_2')
     inaccessible = (By.ID, 'id_status_3')
@@ -19,6 +19,22 @@ class PlotPage(BaseModelAdminPage):
     def set_plot_status(self, plot_status):
         plotElement = self.browser.find_element(*PlotPage.plot_status)
         plotElement.send_keys(plot_status)
+
+    @property
+    def select_non_residential(self):
+        self.browser.find_element(*PlotPage.non_residential).click()
+
+    @property
+    def select_res_non_habit(self):
+        self.browser.find_element(*PlotPage.res_non_habit).click()
+
+    @property
+    def select_res_habit(self):
+        self.browser.find_element(*PlotPage.res_habit).click()
+
+    @property
+    def select_inaccessible(self):
+        self.browser.find_element(*PlotPage.inaccessible).click()
 
     def set_deg_south(self, gps_deg_south):
         degsouthElement = self.browser.find_element(*PlotPage.gps_deg_south)
