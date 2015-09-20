@@ -3,7 +3,6 @@ from dateutil.relativedelta import relativedelta
 from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
 from edc.base.model.validators import (datetime_not_future, datetime_not_before_study_start,
@@ -72,19 +71,19 @@ class CorrectConsent(BaseSyncUuidModel):
     )
 
     old_dob = models.DateField(
-        verbose_name=_("Old Date of birth"),
+        verbose_name="Old Date of birth",
         null=True,
         blank=True,
         validators=[ConsentAgeValidator(16, 64)],
-        help_text=_("Format is YYYY-MM-DD"),
+        help_text="Format is YYYY-MM-DD",
     )
 
     new_dob = models.DateField(
-        verbose_name=_("New Date of birth"),
+        verbose_name="New Date of birth",
         validators=[ConsentAgeValidator(16, 64)],
         null=True,
         blank=True,
-        help_text=_("Format is YYYY-MM-DD"),
+        help_text="Format is YYYY-MM-DD",
     )
 
     old_gender = models.CharField(
@@ -117,7 +116,7 @@ class CorrectConsent(BaseSyncUuidModel):
     )
 
     old_may_store_samples = models.CharField(
-        verbose_name=_("Old Sample storage"),
+        verbose_name="Old Sample storage",
         max_length=3,
         blank=True,
         null=True,
@@ -125,7 +124,7 @@ class CorrectConsent(BaseSyncUuidModel):
     )
 
     new_may_store_samples = models.CharField(
-        verbose_name=_("New Sample storage"),
+        verbose_name="New Sample storage",
         max_length=3,
         blank=True,
         null=True,
@@ -149,21 +148,21 @@ class CorrectConsent(BaseSyncUuidModel):
     )
 
     old_witness_name = LastnameField(
-        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+        verbose_name="Witness\'s Last and first name (illiterates only)",
         validators=[
             RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        help_text='Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma',
     )
 
     new_witness_name = LastnameField(
-        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+        verbose_name="Witness\'s Last and first name (illiterates only)",
         validators=[
             RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
+        help_text='Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma',
     )
 
     objects = CorrectConsentManager()

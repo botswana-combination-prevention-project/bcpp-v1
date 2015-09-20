@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.model.fields import OtherCharField
 from edc_base.audit_trail import AuditTrail
@@ -34,13 +33,13 @@ class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         default=datetime.today())
 
     grant_number = models.IntegerField(
-        verbose_name=_("How many of each type of grant do you receive?"),
+        verbose_name="How many of each type of grant do you receive?",
         max_length=2,
         null=True,
         blank=True,
     )
     grant_type = models.CharField(
-        verbose_name=_("Grant name"),
+        verbose_name="Grant name",
         choices=GRANT_TYPE,
         max_length=50,
         null=True,
