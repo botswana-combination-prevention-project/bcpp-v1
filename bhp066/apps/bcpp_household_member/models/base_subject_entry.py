@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
@@ -23,11 +22,11 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     reason_other = OtherCharField()
 
     next_appt_datetime = models.DateTimeField(
-        verbose_name=_("Follow-up appointment"),
-        help_text=_("The date and time to meet with the subject"))
+        verbose_name="Follow-up appointment",
+        help_text="The date and time to meet with the subject")
 
     next_appt_datetime_source = models.CharField(
-        verbose_name=_("Appointment date suggested by?"),
+        verbose_name="Appointment date suggested by?",
         max_length=25,
         choices=NEXT_APPOINTMENT_SOURCE,
         help_text='')
@@ -35,8 +34,8 @@ class BaseSubjectEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     contact_details = EncryptedCharField(
         null=True,
         blank=True,
-        help_text=_('Information that can be used to contact someone, '
-                    'preferrably the subject, to confirm the appointment'))
+        help_text='Information that can be used to contact someone, '
+                  'preferrably the subject, to confirm the appointment')
 
     comment = EncryptedTextField(
         verbose_name="Comments",
