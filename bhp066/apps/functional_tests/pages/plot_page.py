@@ -10,7 +10,7 @@ class PlotPage(BaseModelAdminPage):
     inaccessible = (By.ID, 'id_status_3')
     gps_deg_south = (By.ID, 'id_gps_degrees_s')
     gps_min_south = (By.ID, 'id_gps_minutes_s')
-    gps_deg_east = (By.ID, 'id_gps_degree_e')
+    gps_deg_east = (By.ID, 'id_gps_degrees_e')
     gps_min_east = (By.ID, 'id_gps_minutes_e')
     household_count = (By.ID, 'id_household_count')
     time_of_week = (By.ID, 'id_time_of_week')
