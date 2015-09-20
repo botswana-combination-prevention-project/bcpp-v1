@@ -11,6 +11,7 @@ class HouseholdLogEntryPage(BaseModelAdminPage):
     eligible_absent = (By.ID, 'id_household_status_1')
     no_household_info = (By.ID, 'id_household_statu_2')
     refused_enum = (By.ID, 'id_household_status_3')
+    next_appt_datetime = (By.ID, 'id_next_appt_datetime')
 
     def set_report_date(self, report_date):
         dateElement = self.browser.find_element(*HouseholdLogEntryPage.report_date).click()
