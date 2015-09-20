@@ -5,7 +5,8 @@ from .base_selinium_test import BaseSeleniumTest
 from .pages import (
     SearchPage, PlotResultPage, PlotLogEntryPage, PlotPage, PlotDashboardPage,
     HouseholdDashboardPage, HouseholdLogEntryPage, HouseholdMemberPage,
-    CheckEligibilityPage, SubjectDasbhoardPage, SubjectConsentPage, HomePage
+    SubjectDasbhoardPage, HomePage, CheckEligibilityPage, #, SubjectConsentPage
+    RepresentativeEligibilityPage, HouseholdHeadEligibilityPage, HouseholdHeadInfoPage
 )
 
 
@@ -21,33 +22,36 @@ class TestSearchPlotSeleniumTest(BaseSeleniumTest):
         self.household_member_pg = HouseholdMemberPage
         self.check_eligibility = CheckEligibilityPage
         self.subject_dashboard_pg = SubjectDasbhoardPage
-        self.subject_consent_pg = SubjectConsentPage
+        #self.subject_consent_pg = SubjectConsentPage
 
     def test_home(self):
         self.home_pg = HomePage(self.browser)
         self.login()
-        time.sleep(1)
-        self.home_pg.click_plot()
-        time.sleep(1)
+        self.assertEqual('http://localhost:8000/bcpp/section/', self.browser.current_url)
 
     def test_search_plot(self):
-        self.home_pg = HomePage(self.browser)
-        self.login()
-        time.sleep(1)
-        self.home_pg.click_plot()
-        time.sleep(1)
+        self.test_home()
+        HomePage(self.browser).click_plot()
         self.search_page = SearchPage(self.browser)
-        self.search_page.search('390112-08')
+        self.search_page.search('390161-02')
+        self.assertTrue(self.search_page.is_search_table_visible)
 
     def test_plot_log_entry_link(self):
         self.test_search_plot()
         self.plot_result_page = PlotResultPage(self.browser)
         self.plot_result_page.click_addnewentry()
+        self.assertIn('http://localhost:8000/admin/bcpp_household/plotlogentry/', self.browser.current_url)
 
-    def test_add_plot_log_entry(self):
+    def add_plot_log_entry(self):
         self.test_plot_log_entry_link()
         self.plot_log_entry_pg = PlotLogEntryPage(self.browser)
         self.plot_log_entry_pg.fill_plot_log_entry(plot_status=self.plot_log_entry_pg.select_accessible)
+
+    def test_add_plot_log_entry(self):
+        self.add_plot_log_entry()
+        self.search_page = SearchPage(self.browser)
+        self.search_page.search('390161-02')
+        self.assertIn('accessible', PlotResultPage(self.browser).plot_log_entry_link_elem().text)
 
     def test_plot_link(self):
         self.test_search_plot()
@@ -78,6 +82,74 @@ class TestSearchPlotSeleniumTest(BaseSeleniumTest):
         self.test_add_household_log_link()
         self.household_log_entry_page = HouseholdLogEntryPage(self.browser)
         self.household_log_entry_page.fill_household_entry(self.household_log_entry_page.select_eligible_present)
+
+    def test_representative_checklist_link(self):
+        self.test_households_composition_link()
+        self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+        if self.household_dashboard_page.click_fill_representative:
+            self.assertIn('http://localhost:8000/admin/bcpp_household/representativeeligibility/add/', self.browser.current_url)
+
+    def test_fill_representative_checklist(self):
+        self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+        if self.household_dashboard_page.click_fill_representative:
+            self.test_representative_checklist_link()
+            self.r_check_pg = RepresentativeEligibilityPage(self.browser)
+            self.r_check_pg.fill_representative_eligibility(
+                self.r_check_pg.select_aged_over_18_yes, self.r_check_pg.select_household_residency_yes, self.r_check_pg.select_verbal_script_yes
+            )
+        self.assertFalse(
+            HouseholdDashboardPage(self.browser).is_fill_representative_link_visible
+        )
+
+    def test_add_another_household_member(self):
+        self.test_add_another_household_member_link()
+        hhm = HouseholdMemberPage(self.browser)
+        hhm.fill_householdmember(
+            'FIRE', 'FD', hhm.select_male, 25, hhm.select_present_today_yes, hhm.select_can_participate, 
+            hhm.select_study_resident_yes, hhm.select_head
+        )
+
+    def test_add_another_household_member_link(self):
+        self.test_households_composition_link()
+        self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+        self.household_dashboard_page.click_add_householdmember()
+        self.assertIn('http://localhost:8000/admin/bcpp_household_member/householdmember/add/', self.browser.current_url)
+
+    def test_hod_eligibility_checklist_link(self):
+        self.test_households_composition_link()
+        self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+        if self.household_dashboard_page.click_hod_eligibility_checklist_link:
+            self.assertIn('http://localhost:8000/admin/bcpp_household_member/householdheadeligibility/add/', self.browser.current_url)
+        self.assertIn('http://localhost:8000/bcpp/dashboard/household/household_structure/', self.browser.current_url)
+
+    def test_add_hod_eligibility_checklist(self):
+        self.test_hod_eligibility_checklist_link()
+        self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+        if self.household_dashboard_page.click_hod_eligibility_checklist_link:
+            hod = HouseholdHeadEligibilityPage(self.browser)
+            hod.fill_representative_eligibility(hod.select_aged_over_18_yes, hod.select_household_residency_yes, hod.select_verbal_script_yes)
+        self.assertTrue(self.household_dashboard_page.click_household_info_link_visible)
+
+    def test_household_info_link(self):
+        self.test_hod_eligibility_checklist_link()
+        self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+        self.assertTrue(self.household_dashboard_page.click_household_info_link)
+
+    def test_add_household_head_info(self):
+        self.test_household_info_link()
+        hhi = HouseholdHeadInfoPage(self.browser)
+        #hhi.fill_household_info(hhi.select_, water_source, toilet_facility, smaller_meals, report_date, report_time)
+
+    def test_check_eligibility(self):
+        pass
+
+#     def test_representative_checklist_link(self):
+#         self.test_households_composition_link()
+#         self.test_households_composition_link()
+#         self.household_dashboard_page = HouseholdDashboardPage(self.browser)
+#         self.household_dashboard_page.click_fill_representative()
+#         self.assertIn('http://localhost:8000/admin/bcpp_household/representativeeligibility/add/', self.browser.current_url)
+#         time.sleep(5)
 
 
 #     def test_search_plot1(self):

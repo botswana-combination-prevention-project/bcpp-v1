@@ -209,16 +209,18 @@ class CheckEligibilityPage(BaseModelAdminPage):
     def select_guardian_na(self):
         return self.browser.find_element(*CheckEligibilityPage.guardian)
 
-    def fill_check_eligibilty(self, report_date, report_time, dob, initials, gender, has_identity,
-                              citizen, legal_marriage=select_legal_marriage_na, confirm_participation,
-                              study_participation, confirm_participation=select_confirm_participation_na,
-                              marriage_certificate, part_time_resident, household_residency, literacy,
-                              guardian=select_guardian_na):
-        self.set_report_date(report_date)
-        self.set_report_time(report_time)
+    def fill_check_eligibilty(
+            self, dob, initials, gender, has_identity,
+            citizen, study_participation, marriage_certificate, part_time_resident,
+            household_residency, literacy, guardian=select_guardian_na, confirm_participation=select_confirm_participation_na,
+            legal_marriage=select_legal_marriage_na):
+
+        self.click_report_today()
+        self.click_report_now()
         if not dob:
             self.click_dob_today()
         else:
+            dob = '1990-09-20'
             self.set_dob(dob)
         self.set_initials(initials)
         self.set_gender(gender)
