@@ -21,16 +21,15 @@ class PlotLogEntryPage(BaseModelAdminPage):
         dateElement.send_keys(time)
 
     def set_plot_status(self, plot_status):
-        plotElement = self.browser.find_element(*PlotLogEntryPage.plot_status)
-        plotElement.send_keys(plot_status)
+        plot_status.click()
 
     @property
     def select_accessible(self):
-        self.browser.find_element(*PlotLogEntryPage.accessible).click()
+        return self.browser.find_element(*PlotLogEntryPage.accessible)
 
     @property
     def select_inaccessible(self):
-        self.browser.find_element(*PlotLogEntryPage.inaccessible).click()
+        return self.browser.find_element(*PlotLogEntryPage.inaccessible)
 
     def click_today(self):
         self.browser.find_element(*PlotLogEntryPage.today).click()
@@ -47,8 +46,5 @@ class PlotLogEntryPage(BaseModelAdminPage):
             self.click_now()
         else:
             self.set_report_time(time)
-        if not plot_status:
-            self.set_plot_status(plot_status)
-        else:
-            self.select_accessible()
+        self.set_plot_status(plot_status)
         self.click_save_button()
