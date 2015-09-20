@@ -10,6 +10,9 @@ from .plot_log_entry_page import PlotLogEntryPage
 from .plot_page import PlotPage
 from .plot_result_page import PlotResultPage
 from .search_page import SearchPage
-from .subject_consent_page import SubjectConsentPage
+#from .subject_consent_page import SubjectConsentPage
 from .subject_dashboard_page import SubjectDasbhoardPage
 from .subject_visit_page import SubjectVisitPage
+from .representative_eligibility_page import RepresentativeEligibilityPage
+from .household_head_eligibility_page import HouseholdHeadEligibilityPage
+from .household_info_page import HouseholdHeadInfoPage
