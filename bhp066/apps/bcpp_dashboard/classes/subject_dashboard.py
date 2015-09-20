@@ -10,6 +10,7 @@ from edc.subject.appointment_helper.exceptions import AppointmentCreateError
 from edc_consent.models.consent_type import ConsentType
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_subject.models import (
     SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
     CorrectConsent, ElisaHivResult, HivResult)
@@ -63,6 +64,11 @@ class SubjectDashboard(BaseSubjectDashboard):
                 index = unkeyed.index(SubjectConsent)
             consent_type = ConsentType.objects.last()
             unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+            if unkeyed:
+                consenting_member = HouseholdMember.objects.get(internal_identifier=self.household_member.internal_identifier,
+                                                                household_structure__survey=Survey.objects.current_survey())
+                unkeyed_consent_context = '&household_member={0}'.format(consenting_member.pk)
+                self.context['unkeyed_consent_context'] = unkeyed_consent_context
             self.context['unkeyed_membership_forms'] = unkeyed
         self.context.update(
             home='bcpp',
