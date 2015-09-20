@@ -7,6 +7,7 @@ class PlotResultPage(BasePage):
     plot_id = "?"
     plot_link = (By.XPATH, '//div/table/tbody/tr[1]/td[1]/a')
     household = (By.XPATH, "//div[@class='results']/table/tbody/tr[1]/td[4]/descendant::input[@value='1 Household']")
+    plot_log_entry_link = (By.XPATH, "//table/tbody/tr[1]/td[6]/ol/a[1]/li")
 
     def click_addnewentry(self):
         self.browser.find_element(*PlotResultPage.add_new_entry).click()
@@ -23,3 +24,6 @@ class PlotResultPage(BasePage):
     def get_plot(self, plot_id):
         self.set_plot_id(plot_id)
         self.click_plotlink()
+
+    def plot_log_entry_link_elem(self):
+        return self.browser.find_element(*PlotResultPage.plot_log_entry_link)
