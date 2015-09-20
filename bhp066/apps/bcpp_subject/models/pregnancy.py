@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
@@ -14,7 +13,7 @@ class Pregnancy (BasePregnancy):
     """A model completed by the user for pregnant participants."""
 
     anc_reg = models.CharField(
-        verbose_name=_("Have you registered for antenatal care?"),
+        verbose_name="Have you registered for antenatal care?",
         max_length=55,
         null=True,
         blank=True,
@@ -23,7 +22,7 @@ class Pregnancy (BasePregnancy):
     )
 
     lnmp = models.DateField(
-        verbose_name=_("When was the first day of your last normal menstrual period?"),
+        verbose_name="When was the first day of your last normal menstrual period?",
         validators=[date_not_future],
         help_text="",
     )

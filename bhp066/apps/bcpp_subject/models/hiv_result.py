@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future
@@ -16,21 +15,21 @@ from .hic_enrollment import HicEnrollment
 class HivResult (BaseScheduledVisitModel):
 
     hiv_result = models.CharField(
-        verbose_name=_("Today\'s HIV test result"),
+        verbose_name="Today\'s HIV test result",
         max_length=50,
         choices=HIV_RESULT,
         help_text="If participant declined HIV testing, please select a reason below.",
     )
 
     hiv_result_datetime = models.DateTimeField(
-        verbose_name=_("Today\'s HIV test result date and time"),
+        verbose_name="Today\'s HIV test result date and time",
         null=True,
         blank=True,
         validators=[datetime_not_future],
     )
 
     blood_draw_type = models.CharField(
-        verbose_name=_("What type of blood was used for the test"),
+        verbose_name="What type of blood was used for the test",
         max_length=15,
         choices=(('capillary', 'Capillary'), ('venous', 'Venous'), (NOT_APPLICABLE, 'Not applicable')),
         default=NOT_APPLICABLE,
@@ -38,21 +37,21 @@ class HivResult (BaseScheduledVisitModel):
     )
 
     insufficient_vol = models.CharField(
-        verbose_name=_('If capillary, is the volume less than 350uL?'),
+        verbose_name='If capillary, is the volume less than 350uL?',
         max_length=15,
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
-        help_text=_('Note: if capillary blood and less than 350uL, an additional venous blood draw is required')
+        help_text='Note: if capillary blood and less than 350uL, an additional venous blood draw is required'
     )
 
     why_not_tested = models.CharField(
-        verbose_name=_("What was the main reason why you did not want HIV testing"
-                       " as part of today's visit?"),
+        verbose_name="What was the main reason why you did not want HIV testing"
+                     " as part of today's visit?",
         max_length=65,
         null=True,
         blank=True,
         choices=WHYNOHIVTESTING_CHOICE,
-        help_text=_("Note: Only asked of individuals declining HIV testing during this visit."),
+        help_text="Note: Only asked of individuals declining HIV testing during this visit.",
     )
 
     history = AuditTrail()

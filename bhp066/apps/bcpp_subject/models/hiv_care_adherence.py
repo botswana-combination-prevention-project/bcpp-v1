@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
@@ -17,7 +16,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # filled by is hiv care adherence data already in the system
     first_positive = models.DateField(
-        verbose_name=_("When was your first positive HIV test result?"),
+        verbose_name="When was your first positive HIV test result?",
         validators=[date_not_future],
         null=True,
         blank=True,
@@ -27,9 +26,9 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # longitudinal, terminal value = YES
     medical_care = models.CharField(
-        verbose_name=_("Have you ever received HIV-related medical or clinical"
-                       " care, for such things as a CD4 count (masole), IDCC/ PMTCT"
-                       " registration, additional clinic-based counseling?"),
+        verbose_name="Have you ever received HIV-related medical or clinical"
+                     " care, for such things as a CD4 count (masole), IDCC/ PMTCT"
+                     " registration, additional clinic-based counseling?",
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
@@ -39,8 +38,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # longitudinal, always BLANK
     no_medical_care = models.CharField(
-        verbose_name=_("What is the main reason you have not received HIV-related"
-                       " medical or clinical care?"),
+        verbose_name="What is the main reason you have not received HIV-related"
+                     " medical or clinical care?",
         max_length=70,
         null=True,
         blank=True,
@@ -51,10 +50,10 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # longitudinal, YES if terminal value of medical_care  = YES
     ever_recommended_arv = models.CharField(
-        verbose_name=_("Have you ever been recommended by a doctor/nurse or other healthcare "
-                       "worker to start antiretroviral therapy (ARVs), a combination of medicines "
-                       "to treat your HIV infection? [common medicines include: combivir, truvada, "
-                       "atripla, nevirapine]"),
+        verbose_name="Have you ever been recommended by a doctor/nurse or other healthcare "
+                     "worker to start antiretroviral therapy (ARVs), a combination of medicines "
+                     "to treat your HIV infection? [common medicines include: combivir, truvada, "
+                     "atripla, nevirapine]",
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
@@ -64,9 +63,9 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # longitudinal, YES if terminal value of first_arv  = YES
     ever_taken_arv = models.CharField(
-        verbose_name=_("Have you ever taken any antiretroviral therapy (ARVs) for your HIV infection?"
-                       " [For women: Do not include treatment that you took during pregnancy to protect "
-                       "your baby from HIV]"),
+        verbose_name="Have you ever taken any antiretroviral therapy (ARVs) for your HIV infection?"
+                     " [For women: Do not include treatment that you took during pregnancy to protect "
+                     "your baby from HIV]",
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
@@ -76,7 +75,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # longitudinal, BLANK if terminal value of first_arv  = YES
     why_no_arv = models.CharField(
-        verbose_name=_("What was the main reason why you have not started ARVs?"),
+        verbose_name="What was the main reason why you have not started ARVs?",
         max_length=75,
         null=True,
         blank=True,
@@ -87,7 +86,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # longitudinal, DATE if terminal value date is provided
     first_arv = models.DateField(
-        verbose_name=_("When did you first start taking antiretroviral therapy (ARVs)?"),  # Q10 populate if possible
+        verbose_name="When did you first start taking antiretroviral therapy (ARVs)?",  # Q10 populate if possible
         validators=[date_not_future],
         null=True,
         blank=True,
@@ -97,7 +96,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
 
     # --------------------all
     on_arv = models.CharField(
-        verbose_name=_("Are you currently taking antiretroviral therapy (ARVs)?"),
+        verbose_name="Are you currently taking antiretroviral therapy (ARVs)?",
         max_length=25,
         choices=YES_NO_DWTA,
         null=True,
@@ -106,7 +105,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     )
 
     clinic_receiving_from = models.CharField(
-        verbose_name=_('Which clinic facility are you already receiving therapy from?'),
+        verbose_name='Which clinic facility are you already receiving therapy from?',
         default=None,
         null=True,
         blank=True,
@@ -115,7 +114,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     )
 
     next_appointment_date = models.DateField(
-        verbose_name=_("When is your next appointment at this facility?"),
+        verbose_name="When is your next appointment at this facility?",
         default=None,
         null=True,
         blank=True,
@@ -123,7 +122,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     )
 
     arv_stop_date = models.DateField(
-        verbose_name=_("When did you stop taking ARV\'s?"),
+        verbose_name="When did you stop taking ARV\'s?",
         validators=[date_not_future],  # Q15
         null=True,
         blank=True,
@@ -131,7 +130,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     )
 
     arv_stop = models.CharField(
-        verbose_name=_("What was the main reason why you stopped taking ARVs?"),
+        verbose_name="What was the main reason why you stopped taking ARVs?",
         max_length=80,
         choices=WHYARVSTOP_CHOICE,
         null=True,
@@ -142,8 +141,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
     arv_stop_other = OtherCharField()
 
     adherence_4_day = models.CharField(
-        verbose_name=_("During the past 4 days, on how many days have you missed taking all your"
-                       " doses of antiretroviral therapy (ART)?"),
+        verbose_name="During the past 4 days, on how many days have you missed taking all your"
+                     " doses of antiretroviral therapy (ART)?",
         max_length=25,
         choices=ADHERENCE4DAY_CHOICE,
         null=True,
@@ -152,8 +151,8 @@ class HivCareAdherence (BaseScheduledVisitModel):
     )
 
     adherence_4_wk = models.CharField(
-        verbose_name=_("Thinking about the past 4 weeks, on average, how would you rate your "
-                       "ability to take all your medications as prescribed?"),
+        verbose_name="Thinking about the past 4 weeks, on average, how would you rate your "
+                     "ability to take all your medications as prescribed?",
         max_length=25,
         null=True,
         blank=True,
@@ -162,7 +161,7 @@ class HivCareAdherence (BaseScheduledVisitModel):
     )
 
     arv_evidence = models.CharField(
-        verbose_name=_("Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?"),
+        verbose_name="Is there evidence [OPD card, tablets, masa number] that the participant is on therapy?",
         choices=YES_NO,  # Q17
         null=True,
         blank=True,

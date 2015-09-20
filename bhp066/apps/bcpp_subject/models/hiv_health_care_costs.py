@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 
@@ -16,13 +15,13 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
     participant about obtaining medical or clinical care related to HIV."""
 
     hiv_medical_care = models.CharField(
-        verbose_name=_("Have you ever received HIV related medical/clinical care? "),
+        verbose_name="Have you ever received HIV related medical/clinical care? ",
         max_length=17,
         choices=YES_NO_REFUSED,
         help_text="",
     )
     reason_no_care = models.CharField(
-        verbose_name=_("If you have never received HIV related medical/clinical care, why not? "),
+        verbose_name="If you have never received HIV related medical/clinical care, why not? ",
         max_length=115,
         null=True,
         blank=True,
@@ -30,7 +29,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         help_text="",
     )
     place_care_received = models.CharField(
-        verbose_name=_("Where do you receive most of your HIV related health care? "),
+        verbose_name="Where do you receive most of your HIV related health care? ",
         max_length=40,
         default='None',
         null=True,
@@ -39,8 +38,8 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         help_text="",
     )
     care_regularity = models.CharField(
-        verbose_name=_("In the past 3 months, how many times did you have clinic visits to see a health care worker,"
-                       " a nurse, or doctor? "),
+        verbose_name="In the past 3 months, how many times did you have clinic visits to see a health care worker,"
+                     " a nurse, or doctor? ",
         max_length=20,
         choices=CARE_REGULARITY,
         null=True,
@@ -49,7 +48,7 @@ class HivHealthCareCosts (BaseScheduledVisitModel):
         help_text="Do not include medicine re-fill visits.",
     )
     doctor_visits = models.CharField(
-        verbose_name=_("In the last 3 months, how often did someone take you to the doctor? "),
+        verbose_name="In the last 3 months, how often did someone take you to the doctor? ",
         max_length=32,
         choices=DOCTOR_VISITS,
         null=True,
