@@ -90,7 +90,7 @@ class CheckEligibilityPage(BaseModelAdminPage):
         study_participation_element = self.browser.find_element(*CheckEligibilityPage.study_participation)
         study_participation_element.send_keys(study_participation)
 
-    def fill_check_eligibilty(self, report_date=None, report_time=None, dob=None, initials, gender, has_identity,
+    def fill_check_eligibilty(self, report_date, report_time, dob, initials, gender, has_identity,
                               citizen, legal_marriage, confirm_participation, study_participation):
         self.set_report_date(report_date)
         self.set_report_time(report_time)
