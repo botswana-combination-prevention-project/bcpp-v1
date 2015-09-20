@@ -311,6 +311,8 @@ class ClinicEligibility (BaseSyncUuidModel):
                     subject_consent.identity))
         except SubjectConsent.DoesNotExist:
             pass
+        except SubjectConsent.MultipleObjectsReturned:
+            pass
         return None
 
     def passes_enrollment_criteria(self):
