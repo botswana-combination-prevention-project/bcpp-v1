@@ -84,4 +84,4 @@ class HouseholdLogEntryPage(BaseModelAdminPage):
         else:
             self.set_report_date(report_date)
         self.set_household_status(household_status)
-        self.click_save()
+        self.click_save_button()
