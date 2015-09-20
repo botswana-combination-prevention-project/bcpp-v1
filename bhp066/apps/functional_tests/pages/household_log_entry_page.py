@@ -25,19 +25,19 @@ class HouseholdLogEntryPage(BaseModelAdminPage):
 
     @property
     def select_eligible_present(self):
-        self.browser.find_element(*HouseholdLogEntryPage.eligible_present)
+        return self.browser.find_element(*HouseholdLogEntryPage.eligible_present)
 
     @property
     def select_eeligible_absent(self):
-        self.browser.find_element(*HouseholdLogEntryPage.eligible_absent)
+        return self.browser.find_element(*HouseholdLogEntryPage.eligible_absent)
 
     @property
     def select_no_household_info(self):
-        self.browser.find_element(*HouseholdLogEntryPage.no_household_info)
+        return self.browser.find_element(*HouseholdLogEntryPage.no_household_info)
 
     @property
     def select_refused_enum(self):
-        self.browser.find_element(*HouseholdLogEntryPage.refused_enum)
+        return self.browser.find_element(*HouseholdLogEntryPage.refused_enum)
 
     def set_report_date(self, report_date):
         dateElement = self.browser.find_element(*HouseholdLogEntryPage.report_date)
@@ -53,7 +53,7 @@ class HouseholdLogEntryPage(BaseModelAdminPage):
 
     @property
     def select_today(self):
-        self.browser.find_element(*HouseholdLogEntryPage.today).click()
+        return self.browser.find_element(*HouseholdLogEntryPage.today).click()
 
     def next_appt_datetime_source(self, next_source):
         next_source.click()
