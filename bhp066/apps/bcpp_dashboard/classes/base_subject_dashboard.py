@@ -18,7 +18,7 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
             title=self.dashboard_name,
             household_dashboard_url='household_dashboard_url',
             household_member=self.household_member,
-            subject_consent=self.consent,
+            # subject_consent=self.consent,
             household=self.household,
             survey=self.survey,
             household_members=self.household_members,
