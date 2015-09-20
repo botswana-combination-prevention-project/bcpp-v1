@@ -130,4 +130,4 @@ class HouseholdMemberPage(BaseModelAdminPage):
         self.set_inability_to_participate(inability_to_participate)
         self.set_study_resident(study_resident)
         self.set_relation(relation)
-        self.click_save()
+        self.click_save_button()
