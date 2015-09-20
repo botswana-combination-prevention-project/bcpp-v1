@@ -1,16 +1,16 @@
 import time
-
+ 
 from .base_selinium_test import BaseSeleniumTest
-
+ 
 from .pages import (
     SearchPage, PlotResultPage, PlotLogEntryPage, PlotPage, PlotDashboardPage,
     HouseholdDashboardPage, HouseholdLogEntryPage, HouseholdMemberPage,
     CheckEligibilityPage, SubjectDasbhoardPage, SubjectConsentPage
 )
-
-
+ 
+ 
 class TestSearchPlotSeleniumTest(BaseSeleniumTest):
-
+ 
     def setUp(self):
         self.search_page = SearchPage
         self.plot_result_page = PlotResultPage
@@ -23,7 +23,7 @@ class TestSearchPlotSeleniumTest(BaseSeleniumTest):
         self.check_eligibility = CheckEligibilityPage
         self.subject_dashboard_pg = SubjectDasbhoardPage
         self.subject_consent_pg = SubjectConsentPage
-
+ 
     def test_search_plot(self):
         self.login()
         time.sleep(1)

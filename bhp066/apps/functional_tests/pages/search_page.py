@@ -4,7 +4,7 @@ from .base_page import BasePage
 
 class SearchPage(BasePage):
     keyword = (By.ID, 'id_search_term')
-    search_button = (By.XPATH, "//input[*/text()='Search']")
+    search_button = (By.XPATH, "//input[@type='submit' and @value='Search']")
 
     def set_keyword(self, keyword):
         keywordElement = self.browser.find_element(*SearchPage.keyword)
