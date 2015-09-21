@@ -7,7 +7,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
 
-from .base_model_form import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 
 class BaseSubjectModelForm(BaseModelForm):

@@ -3,7 +3,7 @@ from datetime import datetime
 from django import forms
 from django.forms.util import ErrorList
 
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..constants import INACCESSIBLE, CONFIRMED, ACCESSIBLE
 from ..models import PlotLog, PlotLogEntry
