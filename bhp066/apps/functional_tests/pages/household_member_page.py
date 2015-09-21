@@ -41,11 +41,11 @@ class HouseholdMemberPage(BaseModelAdminPage):
         gender.click()
 
     @property
-    def select_male(self, male):
+    def select_male(self):
         return self.browser.find_element(*HouseholdMemberPage.male)
 
     @property
-    def select_female(self, female):
+    def select_female(self):
         return self.browser.find_element(*HouseholdMemberPage.female)
 
     def set_age_in_years(self, age_in_years):
@@ -56,11 +56,11 @@ class HouseholdMemberPage(BaseModelAdminPage):
         present_today.click()
 
     @property
-    def select_present_today_yes(self, present_today_yes):
+    def select_present_today_yes(self):
         return self.browser.find_element(*HouseholdMemberPage.present_today_yes)
 
     @property
-    def select_present_today_no(self, present_today_no):
+    def select_present_today_no(self):
         return self.browser.find_element(*HouseholdMemberPage.present_today_no)
 
     def set_inability_to_participate(self, inability_to_participate):
@@ -68,27 +68,27 @@ class HouseholdMemberPage(BaseModelAdminPage):
 
     @property
     def select_can_participate(self):
-        self.browser.find_element(*HouseholdMemberPage.can_participate)
+        return self.browser.find_element(*HouseholdMemberPage.can_participate)
 
     @property
     def select_mental_incapacity(self):
-        self.browser.find_element(*HouseholdMemberPage.mental_incapacity)
+        return self.browser.find_element(*HouseholdMemberPage.mental_incapacity)
 
     @property
     def select_deaf_mute(self):
-        self.browser.find_element(*HouseholdMemberPage.deaf_mute)
+        return self.browser.find_element(*HouseholdMemberPage.deaf_mute)
 
     @property
     def select_too_sick(self):
-        self.browser.find_element(*HouseholdMemberPage.too_sick)
+        return self.browser.find_element(*HouseholdMemberPage.too_sick)
 
     @property
     def select_incarcerated(self):
-        self.browser.find_element(*HouseholdMemberPage.incarcerated)
+        return self.browser.find_element(*HouseholdMemberPage.incarcerated)
 
     @property
     def select_other_specify(self):
-        self.browser.find_element(*HouseholdMemberPage.other_specify)
+        return self.browser.find_element(*HouseholdMemberPage.other_specify)
 
     def set_study_resident(self, study_resident):
         study_resident.click()
@@ -126,7 +126,7 @@ class HouseholdMemberPage(BaseModelAdminPage):
         self.set_initials(initials)
         self.set_gender(gender)
         self.set_age_in_years(age_in_years)
-        self.present_today(present_today)
+        self.set_present_today(present_today)
         self.set_inability_to_participate(inability_to_participate)
         self.set_study_resident(study_resident)
         self.set_relation(relation)

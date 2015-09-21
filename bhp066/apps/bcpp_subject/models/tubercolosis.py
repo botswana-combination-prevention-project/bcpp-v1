@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
@@ -16,13 +15,13 @@ class Tubercolosis (BaseScheduledVisitModel):
     Tuberculosis in the past 12 months."""
 
     date_tb = models.DateField(
-        verbose_name=_("Date of the diagnosis of tuberculosis:"),
+        verbose_name="Date of the diagnosis of tuberculosis:",
         validators=[date_not_future],
         help_text="",
     )
 
     dx_tb = models.CharField(
-        verbose_name=_("[Interviewer:]What is the tuberculosis diagnosis as recorded?"),
+        verbose_name="[Interviewer:]What is the tuberculosis diagnosis as recorded?",
         max_length=50,
         choices=DXTB_CHOICE,
         help_text="",

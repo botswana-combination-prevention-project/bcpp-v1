@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 
@@ -14,8 +13,8 @@ class HivUntested (HivTestingSupplemental):
     branch off from Q18 - HIV testing History"""
 
     why_no_hiv_test = models.CharField(
-        verbose_name=_("If you were not tested for HIV in the 12 months prior"
-                       " to today, what is the main reason why not?"),
+        verbose_name="If you were not tested for HIV in the 12 months prior"
+                     " to today, what is the main reason why not?",
         max_length=55,
         null=True,
         choices=WHYNOHIVTESTING_CHOICE,
