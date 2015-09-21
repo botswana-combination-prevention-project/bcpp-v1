@@ -23,12 +23,13 @@ from ..managers import PimaVlManager
 
 from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
+from .subject_consent import SubjectConsent
 
 
 class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin,
               BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+    CONSENT_MODEL = SubjectConsent
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 

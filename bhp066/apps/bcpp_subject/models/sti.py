@@ -7,12 +7,15 @@ from edc_base.model.validators import date_not_future
 from bhp066.apps.bcpp_list.models import StiIllnesses
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Sti (BaseScheduledVisitModel):
 
     """A model completed by the user to record any potentially
     HIV-related illness in the past 12 months."""
+
+    CONSENT_MODEL = SubjectConsent
 
     sti_dx = models.ManyToManyField(
         StiIllnesses,

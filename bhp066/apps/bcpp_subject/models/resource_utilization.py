@@ -6,12 +6,15 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class ResourceUtilization (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information about participants
     use of resources to obtain medical care."""
+
+    CONSENT_MODEL = SubjectConsent
 
     out_patient = models.CharField(
         verbose_name="In the last 3 months, have you sought outpatient medical care for yourself?"

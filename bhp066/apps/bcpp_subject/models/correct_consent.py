@@ -24,6 +24,8 @@ class CorrectConsent(BaseSyncUuidModel):
 
     """A model linked to the subject consent to record corrections."""
 
+    CONSENT_MODEL = SubjectConsent
+
     subject_consent = models.OneToOneField(SubjectConsent)
 
     report_datetime = models.DateTimeField(

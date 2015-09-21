@@ -6,9 +6,13 @@ from edc_base.model.fields import OtherCharField
 from bhp066.apps.bcpp.choices import PLACE_CIRC, WHYCIRC_CHOICE, TIME_UNIT_CHOICE
 
 from .base_circumcision import BaseCircumcision
+from .subject_consent import SubjectConsent
 
 
 class Circumcised (BaseCircumcision):
+
+    CONSENT_MODEL = SubjectConsent
+
     circ_date = models.DateField(
         verbose_name='When were you circumcised?',
         null=True,

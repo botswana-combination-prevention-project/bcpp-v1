@@ -9,10 +9,13 @@ from bhp066.apps.bcpp.choices import (
     ADHERENCE4WK_CHOICE, NO_MEDICAL_CARE, WHYARVSTOP_CHOICE)
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivCareAdherence (BaseScheduledVisitModel):
     """A model completed by the user on the participant's access to and adherence to HIV care."""
+
+    CONSENT_MODEL = SubjectConsent
 
     # filled by is hiv care adherence data already in the system
     first_positive = models.DateField(

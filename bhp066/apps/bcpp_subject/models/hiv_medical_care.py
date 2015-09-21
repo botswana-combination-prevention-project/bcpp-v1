@@ -6,9 +6,12 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import LOWESTCD4_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivMedicalCare (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     first_hiv_care_pos = models.DateField(
         verbose_name="When did you first receive HIV-related medical care "

@@ -7,9 +7,12 @@ from bhp066.apps.bcpp.choices import COMMUNITYENGAGEMENT_CHOICE, VOTEENGAGEMENT_
 from bhp066.apps.bcpp_list.models import NeighbourhoodProblems
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class CommunityEngagement (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     community_engagement = models.CharField(
         verbose_name="How active are you in community activities such as"

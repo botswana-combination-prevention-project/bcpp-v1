@@ -8,11 +8,13 @@ from bhp066.apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 from ..choices import HIV_DOC_TYPE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivResultDocumentation (BaseScheduledVisitModel):
 
     """"""
+    CONSENT_MODEL = SubjectConsent
 
     # base on question from hiv test history
     result_date = models.DateField(

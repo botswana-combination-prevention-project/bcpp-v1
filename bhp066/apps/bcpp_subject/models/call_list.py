@@ -12,11 +12,14 @@ from edc_constants.constants import CLOSED, OPEN, NEW
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
 
+from .subject_consent import SubjectConsent
 from ..choices import REFERRAL_CODES
 from ..managers import CallListManager
 
 
 class CallList (BaseSyncUuidModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     household_member = models.ForeignKey(HouseholdMember)
 

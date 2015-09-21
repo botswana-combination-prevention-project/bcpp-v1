@@ -5,9 +5,12 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import YES_NO_DWTA, YES_NO, VERBALHIVRESULT_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class ClinicQuestionnaire (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     know_hiv_status = models.CharField(
         verbose_name="Do you know your current HIV status?",

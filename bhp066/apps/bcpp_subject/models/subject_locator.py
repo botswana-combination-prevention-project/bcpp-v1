@@ -20,12 +20,15 @@ from ..managers import SubjectLocatorManager
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
+from .subject_consent import SubjectConsent
 
 
 class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, TimePointStatusMixin,
                      BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
+
+    CONSENT_MODEL = SubjectConsent
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 

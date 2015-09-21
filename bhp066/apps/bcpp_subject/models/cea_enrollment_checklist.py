@@ -10,11 +10,14 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from bhp066.apps.bcpp.choices import YES_NO, YES_NO_REFUSED
 
 from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
+from .subject_consent import SubjectConsent
 
 
 class CeaEnrollmentChecklist (BaseDispatchSyncUuidModel):
 
     """CE003"""
+
+    CONSENT_MODEL = SubjectConsent
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date/Time",
