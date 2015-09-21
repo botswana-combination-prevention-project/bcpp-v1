@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
@@ -32,7 +31,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     alt_contact_cell_number = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Cell number (alternate)"),
+        verbose_name="Cell number (alternate)",
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
@@ -41,15 +40,15 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name=_("If we are unable to contact the person indicated above, is there another"
-                       " individual (including next of kin) with whom the study team can get"
-                       " in contact with?"),
+        verbose_name="If we are unable to contact the person indicated above, is there another"
+                     " individual (including next of kin) with whom the study team can get"
+                     " in contact with?",
         help_text="",
     )
 
     alt_contact_name = EncryptedCharField(
         max_length=35,
-        verbose_name=_("Full Name of the responsible person"),
+        verbose_name="Full Name of the responsible person",
         help_text="include first name and surname",
         blank=True,
         null=True,
@@ -57,14 +56,14 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     alt_contact_rel = EncryptedCharField(
         max_length=35,
-        verbose_name=_("Relationship to participant"),
+        verbose_name="Relationship to participant",
         blank=True,
         null=True,
         help_text="",
     )
     alt_contact_cell = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Cell number"),
+        verbose_name="Cell number",
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
@@ -73,7 +72,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     other_alt_contact_cell = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Cell number (alternate)"),
+        verbose_name="Cell number (alternate)",
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
@@ -82,7 +81,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     alt_contact_tel = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Telephone number"),
+        verbose_name="Telephone number",
         validators=[BWTelephoneNumber, ],
         help_text="",
         blank=True,

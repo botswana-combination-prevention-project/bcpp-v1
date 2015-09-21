@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 
@@ -16,7 +15,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     "respondents with known HIV infection. SKIP for respondents without known HIV infection. """
 
     internalize_stigma = models.CharField(
-        verbose_name=_("I think less of myself."),
+        verbose_name="I think less of myself.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -24,7 +23,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     )
 
     internalized_stigma = models.CharField(
-        verbose_name=_("I have felt ashamed because of having HIV."),
+        verbose_name="I have felt ashamed because of having HIV.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -32,8 +31,8 @@ class PositiveParticipant (BaseScheduledVisitModel):
     )
 
     friend_stigma = models.CharField(
-        verbose_name=_("I fear that if I disclosed my HIV status to my"
-                       " friends, they would lose respect for me."),
+        verbose_name="I fear that if I disclosed my HIV status to my"
+                     " friends, they would lose respect for me.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -41,8 +40,8 @@ class PositiveParticipant (BaseScheduledVisitModel):
     )
 
     family_stigma = models.CharField(
-        verbose_name=_("I fear that if I disclosed my HIV status to my family,"
-                       " they would exclude me from usual family activities."),
+        verbose_name="I fear that if I disclosed my HIV status to my family,"
+                     " they would exclude me from usual family activities.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -50,7 +49,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     )
 
     enacted_talk_stigma = models.CharField(
-        verbose_name=_("People have talked badly about me."),
+        verbose_name="People have talked badly about me.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -58,7 +57,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     )
 
     enacted_respect_stigma = models.CharField(
-        verbose_name=_("I have lost respect or standing in the community."),
+        verbose_name="I have lost respect or standing in the community.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
@@ -66,7 +65,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
     )
 
     enacted_jobs_tigma = models.CharField(
-        verbose_name=_("I have lost a job because of having HIV."),
+        verbose_name="I have lost a job because of having HIV.",
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,

@@ -5,6 +5,8 @@ from .base_page import BaseModelAdminPage
 class RepresentativeEligibilityPage(BaseModelAdminPage):
     report_date = (By.ID, 'id_report_datetime_0')
     report_time = (By.ID, 'id_report_datetime_0')
+    report_today = (By.XPATH, "(//form[@id='representativeeligibility_form']//descendant::a[text()='Today'])[1]")
+    report_now = (By.XPATH, " (//form[@id='representativeeligibility_form']//descendant::a[text()='Now'])[1]")
     aged_over_18 = (By.ID, 'id_aged_over_18')
     aged_over_18_yes = (By.ID, 'id_aged_over_18_0')
     aged_over_18_no = (By.ID, 'id_aged_over_18_1')
@@ -15,9 +17,14 @@ class RepresentativeEligibilityPage(BaseModelAdminPage):
     verbal_script_yes = (By.ID, 'id_verbal_script_0')
     verbal_script_no = (By.ID, 'id_verbal_script_1')
 
+    def click_report_today(self):
+        self.browser.find_element(*RepresentativeEligibilityPage.report_today).click()
+
+    def click_report_now(self):
+        self.browser.find_element(*RepresentativeEligibilityPage.report_now).click()
+
     def set_report_date(self, report_date):
-        date_element = self.browser.find_element(*RepresentativeEligibilityPage.report_date)
-        date_element.send_keys(report_date)
+        self.browser.find_element(*RepresentativeEligibilityPage.report_time).send_keys(report_date)
 
     def set_report_time(self, report_time):
         time_element = self.browser.find_element(*RepresentativeEligibilityPage.report_time)
@@ -56,11 +63,19 @@ class RepresentativeEligibilityPage(BaseModelAdminPage):
     def select_verbal_script_no(self):
         return self.browser.find_element(*RepresentativeEligibilityPage.verbal_script_no)
 
-    def fill_representative_eligibility(self, report_date, report_time, aged_over_18, household_residency,
-                                        verbal_script):
-        self.set_report_date(report_date)
-        self.set_report_time(report_time)
+    def fill_representative_eligibility(self, aged_over_18, household_residency, verbal_script, report_date=None, report_time=None,
+                                        ):
+        if not report_date:
+            self.click_report_today()
+        else:
+            self.set_report_date(report_date)
+
+        if not report_time:
+            self.click_report_now()
+        else:
+            self.set_report_time(report_time)
+
         self.set_aged_over_18(aged_over_18)
-        self.household_residency(household_residency)
-        self.verbal_script(verbal_script)
+        self.set_household_residency(household_residency)
+        self.set_verbal_script(verbal_script)
         self.click_save_button()
