@@ -11,7 +11,6 @@ def split_weekdays(days, base_datetime):
     day is MO, then FRI, then TH working backwards.
     """
     wk = [MO, TU, WE, TH, FR, SA, SU]
-    reversed = []
     weekdays = [day.weekday for day in days]
     weekdays.append(base_datetime.weekday())
     weekdays.sort()

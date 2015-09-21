@@ -59,7 +59,7 @@ def call_participant(modeladmin, request, queryset):
             survey=Survey.objects.current_survey(datetime.today()),
             label=call_list.label,
             locator_information=SubjectLocator.objects.previous(household_member).formatted_locator_information
-            )
+        )
     change_url = ('{}?household_member={}&next={}&q={}').format(
         reverse("admin:bcpp_subject_calllog_change", args=(call_log.pk, )),
         call_log.household_member.pk,
@@ -109,7 +109,7 @@ def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manua
 
     """
     def export(modeladmin, request, queryset):
-        referral_code_list = [key for key, value in REFERRAL_CODES if not key == 'pending']
+        referral_code_list = [key for key, _ in REFERRAL_CODES if not key == 'pending']
         queryset = queryset.filter(
             referral_code__in=referral_code_list, in_clinic_flag=False)
         export_as_csv = ExportAsCsv(
@@ -139,7 +139,7 @@ def export_locator_for_cdc_action(description="Export Locator for CDC (Manual)",
 
     def export(modeladmin, request, queryset):
         """Filter locator for those referred and data not yet seen in clinic (in_clinic_flag=False)."""
-        referral_code_list = [key for key, value in REFERRAL_CODES if not key == 'pending']
+        referral_code_list = [key for key, _ in REFERRAL_CODES if not key == 'pending']
         referred_subject_identifiers = [dct.get('subject_visit__subject_identifier')
                                         for dct in SubjectReferral.objects.values(
                                             'subject_visit__subject_identifier').filter(
