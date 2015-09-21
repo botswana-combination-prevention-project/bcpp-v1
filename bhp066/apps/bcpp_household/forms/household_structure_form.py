@@ -2,7 +2,7 @@ from datetime import datetime
 from django import forms
 from django.conf import settings
 
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import HouseholdStructure
 

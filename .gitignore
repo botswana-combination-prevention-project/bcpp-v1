@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 .pydevproject
 .project
+bhp066/.DS_Store
+.DS_Store
 .settings
 test-*
 db.sqlite3

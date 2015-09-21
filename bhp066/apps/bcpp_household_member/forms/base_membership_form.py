@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import get_model
 
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 
 class BaseMembershipForm(BaseModelForm):
