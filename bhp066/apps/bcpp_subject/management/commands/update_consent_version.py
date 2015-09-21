@@ -45,5 +45,8 @@ class Command(BaseCommand):
             if not fix:
                 print ".....dry run, not saving {}".format(consent)
             else:
-                consent.save(update_fields=['version'])
-                print ".....persisted {}".format(consent)
+                try:
+                    consent.save(update_fields=['version'])
+                    print ".....persisted {} successfully :-)".format(consent)
+                except Exception as e:
+                    print ".....an error occured in persissting {} :-(. {}".format(consent, e)
