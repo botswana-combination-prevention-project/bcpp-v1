@@ -4,10 +4,13 @@ from edc_constants.constants import NOT_APPLICABLE
 from django.db import models
 
 from .base_sexual_partner import BaseSexualPartner
+from .subject_consent import SubjectConsent
 
 
 class MonthsRecentPartner (BaseSexualPartner):
     """A model completed by the user on the participant's recent sexual behaviour."""
+
+    CONSENT_MODEL = SubjectConsent
 
     first_partner_arm = models.CharField(
         max_length=20,

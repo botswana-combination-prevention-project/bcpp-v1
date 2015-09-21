@@ -7,12 +7,15 @@ from edc_base.model.validators import date_not_future
 from bhp066.apps.bcpp.choices import DXTB_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Tubercolosis (BaseScheduledVisitModel):
 
     """A model completed by the user to record any diagnosis of
     Tuberculosis in the past 12 months."""
+
+    CONSENT_MODEL = SubjectConsent
 
     date_tb = models.DateField(
         verbose_name="Date of the diagnosis of tuberculosis:",

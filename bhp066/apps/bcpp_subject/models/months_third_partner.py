@@ -4,10 +4,13 @@ from edc_constants.constants import NOT_APPLICABLE
 from edc_base.audit_trail import AuditTrail
 
 from .base_sexual_partner import BaseSexualPartner
+from .subject_consent import SubjectConsent
 
 
 class MonthsThirdPartner (BaseSexualPartner):
     """A model completed by the user on the participant's recent sexual behaviour."""
+
+    CONSENTMODEL = SubjectConsent
 
     third_partner_arm = models.CharField(
         max_length=20,

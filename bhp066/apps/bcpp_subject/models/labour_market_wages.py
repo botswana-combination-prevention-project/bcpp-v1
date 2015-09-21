@@ -9,12 +9,15 @@ from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 from ..choices import EMPLOYMENT_INFO, OCCUPATION, MONTHLY_INCOME, SALARY, HOUSEHOLD_INCOME, OTHER_OCCUPATION
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class LabourMarketWages (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information about
     the participants experience in the labour market."""
+
+    CONSENT_MODEL = SubjectConsent
 
     employed = models.CharField(
         verbose_name="Are you currently employed? ",

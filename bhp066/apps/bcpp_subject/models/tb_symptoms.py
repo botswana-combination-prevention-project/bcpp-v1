@@ -7,9 +7,12 @@ from bhp066.apps.bcpp.choices import YES_NO
 from ..managers import TbSymptomsManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class TbSymptoms (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     cough = models.CharField(
         verbose_name="Does the participant currently have a COUGH that has lasted for more than 2 weeks?",
