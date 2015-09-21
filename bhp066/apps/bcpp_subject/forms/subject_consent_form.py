@@ -84,10 +84,13 @@ class SubjectConsentForm(BaseBcppConsentForm):
         options = cleaned_data
         if 'consent_datetime' not in cleaned_data:
             options.update({'consent_datetime': self.instance.consent_datetime})
-        self.instance.matches_enrollment_checklist(
-            SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
-        self.instance.matches_hic_enrollment(
-            SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
+        if not SubjectConsent.objects.filter(
+                household_member__internal_identifier=cleaned_data.get('household_member').internal_identifier).exclude(
+                household_member=cleaned_data.get('household_member')).exists():
+            self.instance.matches_enrollment_checklist(
+                SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
+            self.instance.matches_hic_enrollment(
+                SubjectConsent(**options), cleaned_data.get('household_member'), forms.ValidationError)
         return cleaned_data
 
     def limit_edit_to_current_survey(self, household_member):
