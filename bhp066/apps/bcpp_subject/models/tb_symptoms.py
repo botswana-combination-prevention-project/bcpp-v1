@@ -56,9 +56,9 @@ class TbSymptoms (BaseScheduledVisitModel):
         help_text="",
     )
 
-    history = AuditTrail()
-
     objects = TbSymptomsManager()
+
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'
