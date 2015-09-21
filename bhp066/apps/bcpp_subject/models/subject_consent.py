@@ -353,20 +353,29 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            expected_member_status = BHS_ELIGIBLE
+        # Any consent exists other than myself
+        consents = self.__class__.objects.filter(
+                    household_member__internal_identifier=self.household_member.internal_identifier).exclude(
+                    household_member=self.household_member)
+        if not consents.exists():
+            #Run the following validations only if its the first consent for an individual. Not Reconsent.
+            if not self.id:
+                expected_member_status = BHS_ELIGIBLE
+            else:
+                expected_member_status = BHS
+            subject_identifier = self.household_member.get_subject_identifier()
+            if self.__class__.objects.filter(subject_identifier=subject_identifier).last():
+                expected_member_status = BHS
+                self.subject_identifier = subject_identifier
+            if self.household_member.member_status != expected_member_status:
+                raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
+                    expected_member_status, self.household_member.member_status, self.household_member))
+            self.is_minor = 'Yes' if self.minor else 'No'
+            self.matches_enrollment_checklist(self, self.household_member)
+            self.matches_hic_enrollment(self, self.household_member)
         else:
-            expected_member_status = BHS
-        subject_identifier = self.household_member.get_subject_identifier()
-        if self.__class__.objects.filter(subject_identifier=subject_identifier).last():
-            expected_member_status = BHS
-            self.subject_identifier = subject_identifier
-        if self.household_member.member_status != expected_member_status:
-            raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
-                expected_member_status, self.household_member.member_status, self.household_member))
-        self.is_minor = 'Yes' if self.minor else 'No'
-        self.matches_enrollment_checklist(self, self.household_member)
-        self.matches_hic_enrollment(self, self.household_member)
+            self.registered_subject = consents[0].registered_subject
+            self.subject_identifier = consents[0].subject_identifier
         self.community = self.household_member.household_structure.household.plot.community
         super(SubjectConsent, self).save(*args, **kwargs)
 
