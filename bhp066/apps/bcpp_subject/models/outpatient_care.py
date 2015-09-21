@@ -8,12 +8,15 @@ from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 from ..choices import CARE_FACILITIES, CARE_REASON, TRAVEL_HOURS
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class OutpatientCare (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information about any
     outpatient care obtained by the participant."""
+
+    CONSENT_MODEL = SubjectConsent
 
     govt_health_care = models.CharField(
         verbose_name="In the last 3 months, did you seek care at a Government Primary"

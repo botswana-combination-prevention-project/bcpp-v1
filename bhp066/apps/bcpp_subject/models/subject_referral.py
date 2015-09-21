@@ -17,6 +17,7 @@ from ..managers import ScheduledModelManager
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .tb_symptoms import TbSymptoms
 from .subject_locator import SubjectLocator
+from .subject_consent import SubjectConsent
 
 site_mappers.autodiscover()
 
@@ -30,6 +31,8 @@ REFERRAL_CLINIC_TYPES = (
 
 class SubjectReferral(ExportTrackingFieldsMixin, BaseScheduledVisitModel):
     """A model completed by the user to indicate a referral to care."""
+
+    CONSENT_MODEL = SubjectConsent
 
     subject_referred = models.CharField(
         max_length=10,

@@ -7,12 +7,15 @@ from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 from ..choices import NO_MEDICALCARE_REASON, HEALTH_CARE_PLACE, CARE_REGULARITY, DOCTOR_VISITS
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivHealthCareCosts (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information from the
     participant about obtaining medical or clinical care related to HIV."""
+
+    CONSENT_MODEL = SubjectConsent
 
     hiv_medical_care = models.CharField(
         verbose_name="Have you ever received HIV related medical/clinical care? ",

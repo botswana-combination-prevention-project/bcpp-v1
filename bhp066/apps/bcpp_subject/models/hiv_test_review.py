@@ -7,11 +7,14 @@ from edc.base.model.validators import date_not_future
 from bhp066.apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivTestReview (BaseScheduledVisitModel):
 
     """Complete this form if HivTestingHistory.has_record."""
+
+    CONSENT_MODEL = SubjectConsent
 
     hiv_test_date = models.DateField(
         verbose_name="What was the recorded date of the last HIV test?",

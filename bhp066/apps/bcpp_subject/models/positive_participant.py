@@ -5,6 +5,7 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import AGREE_STRONGLY
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class PositiveParticipant (BaseScheduledVisitModel):
@@ -13,6 +14,8 @@ class PositiveParticipant (BaseScheduledVisitModel):
 
     """Interviewer Note: The following supplemental questions are only asked for"
     "respondents with known HIV infection. SKIP for respondents without known HIV infection. """
+
+    CONSENT_MODEL = SubjectConsent
 
     internalize_stigma = models.CharField(
         verbose_name="I think less of myself.",

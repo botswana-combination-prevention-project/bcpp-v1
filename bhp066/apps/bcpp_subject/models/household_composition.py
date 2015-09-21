@@ -12,9 +12,12 @@ from bhp066.apps.bcpp.choices import YES_NO
 from ..choices import RELATION
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HouseholdComposition (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     physical_add = EncryptedCharField(
         verbose_name="Description of physical address: ",

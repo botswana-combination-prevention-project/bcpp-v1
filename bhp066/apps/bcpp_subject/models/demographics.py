@@ -7,9 +7,12 @@ from bhp066.apps.bcpp.choices import MARITALSTATUS_CHOICE
 from bhp066.apps.bcpp_list.models import LiveWith, Religion, EthnicGroups
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Demographics (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     religion = models.ManyToManyField(
         Religion,

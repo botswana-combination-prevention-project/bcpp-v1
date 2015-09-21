@@ -6,11 +6,14 @@ from edc_base.model.fields import OtherCharField
 from bhp066.apps.bcpp.choices import WHEREHIVTEST_CHOICE, WHYHIVTEST_CHOICE
 
 from .hiv_testing_supplemental import HivTestingSupplemental
+from .subject_consent import SubjectConsent
 
 
 class HivTested (HivTestingSupplemental):
 
     """CS002- for those who have tested for HIV. Its branch off from Q18 - HIV testing History"""
+
+    CONSENT_MODEL = SubjectConsent
 
     num_hiv_tests = models.IntegerField(
         verbose_name="How many times before today have you had an HIV test?",
