@@ -1,4 +1,4 @@
-from edc.constants import COMPLETE, INCOMPLETE
+from edc_constants.constants import COMPLETE, INCOMPLETE
 
 from .constants import (ELIGIBLE_REPRESENTATIVE_PRESENT, ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
                         REFUSED_ENUMERATION, RESIDENTIAL_HABITABLE, RARELY_NEVER_OCCUPIED,
@@ -11,7 +11,7 @@ HOUSEHOLD_LOG_STATUS = (
     (ELIGIBLE_REPRESENTATIVE_ABSENT, 'Eligible Representative Absent'),
     (NO_HOUSEHOLD_INFORMANT, 'No Household Informant'),
     (REFUSED_ENUMERATION, 'Refused Enumeration'),
-    )
+)
 
 # as used by HSPH
 HH_STATUS = (
@@ -25,7 +25,7 @@ HH_STATUS = (
     ('not_enum_hh_refused', 'not_enum_hh_refused'),
     ('enumerated_not_enrolled', 'enumerated_not_enrolled'),
     ('enrolled', 'enrolled'),
-    )
+)
 
 HOUSEHOLD_REFUSAL = (
     ('not_interested', 'Not Interested'),
@@ -80,7 +80,7 @@ PLOT_STATUS = (
     (RESIDENTIAL_NOT_HABITABLE, 'residential, not-habitable'),
     (RESIDENTIAL_HABITABLE, 'residential, habitable'),
     (INACCESSIBLE, 'Inaccessible'),
-    )
+)
 
 PLOT_LOG_STATUS = (
     (ACCESSIBLE, 'Accessible'),
@@ -95,7 +95,7 @@ NOT_ENUMERATED_REASONS = (
 HOUSEHOLD_COMPLETION_STATUS = (
     (COMPLETE, 'Complete'),
     (INCOMPLETE, 'Incomplete'),
-    )
+)
 
 
 STATUS = (
@@ -135,14 +135,14 @@ INELIGIBLE_REASON = (
     ('non_citizen', 'Non-Citizen(s)'),
     ('age_ineligible', 'Not of eligible age'),
     ('other', 'Other'),
-    )
+)
 
 RESIDENT_LAST_SEEN = (
     (SEASONALLY_NEARLY_ALWAYS_OCCUPIED, (
         'spent at least 4 weeks in household over the course of the past year')
      ),  # replace
-    (RARELY_NEVER_OCCUPIED, 'pent less than 4 weeks in the household  over the course of the' 
-    'past year, or never occupied over the course of the past year'),  # NOT replaced
+    (RARELY_NEVER_OCCUPIED, 'pent less than 4 weeks in the household  over the course of the'
+     'past year, or never occupied over the course of the past year'),  # NOT replaced
     (UNKNOWN_OCCUPIED, 'Don\'t know'),  # replaced
 )
 

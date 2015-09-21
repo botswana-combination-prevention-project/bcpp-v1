@@ -2,8 +2,9 @@ from django.contrib import admin
 
 from edc.subject.appointment.models import Appointment
 
-from .subject_status_helper import SubjectStatusHelper
 from ..models import SubjectVisit
+
+from .subject_status_helper import SubjectStatusHelper
 
 
 class HivCareAdherenceHelper(object):
@@ -29,7 +30,8 @@ class HivCareAdherenceHelper(object):
         'adherence_4_day',
         'adherence_4_wk']
 
-    annual_radio_fields = {"arv_stop": admin.VERTICAL,
+    annual_radio_fields = {
+        "arv_stop": admin.VERTICAL,
         "adherence_4_day": admin.VERTICAL,
         "adherence_4_wk": admin.VERTICAL,
         "arv_evidence": admin.VERTICAL}

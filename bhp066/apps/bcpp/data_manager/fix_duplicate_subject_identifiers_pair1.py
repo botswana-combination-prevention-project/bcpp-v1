@@ -1,6 +1,6 @@
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_subject.models import SubjectConsent
 
 
 def fix_duplicate_subject_identifiers_pair1(run=False):

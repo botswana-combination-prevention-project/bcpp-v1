@@ -19,7 +19,7 @@ class PackingListAdmin(BasePackingListAdmin):
 
     def get_form_post(self, form, request, obj=None, **kwargs):
             form = super(PackingListAdmin, self).get_form_post(form, request, obj, **kwargs)
-            form.base_fields['community'].initial = site_mappers.current_mapper.map_area
+            form.base_fields['community'].initial = site_mappers.get_current_mapper().map_area
             return form
 
 admin.site.register(PackingList, PackingListAdmin)

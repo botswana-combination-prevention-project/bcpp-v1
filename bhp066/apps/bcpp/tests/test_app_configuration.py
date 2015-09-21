@@ -9,10 +9,11 @@ from edc.subject.consent.models import ConsentCatalogue
 
 from ..app_configuration.classes import BcppAppConfiguration
 
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from edc_quota.client.models import Quota
 from edc_quota.controller.models import ControllerQuota
-from apps.bcpp_subject.models import PimaVl
+from bhp066.apps.bcpp_subject.models import PimaVl
+from edc_consent.models import ConsentType
 
 
 class BcppAppConfigurationTests(TestCase):
@@ -27,12 +28,12 @@ class BcppAppConfigurationTests(TestCase):
         self.assertEqual(0, StudySpecific.objects.count())
         BcppAppConfiguration().update_or_create_study_variables()
         self.assertEqual(1, StudySpecific.objects.count())
-
+ 
     def test_consent_catalogue_configuration(self):
         self.assertEqual(0, ConsentCatalogue.objects.count())
         BcppAppConfiguration().update_or_create_consent_catalogue()
         self.assertEqual(1, ConsentCatalogue.objects.count())
-
+ 
     def test_create_quota(self):
         settings.DEVICE_ID = 34
         BcppAppConfiguration().create_quota()
@@ -48,3 +49,9 @@ class BcppAppConfigurationTests(TestCase):
             app_label=PimaVl._meta.app_label,
             model_name=PimaVl._meta.model_name,
         ).count(), 1)
+
+    def test_create_consent_version(self):
+        """Test creation of a consent type."""
+
+        BcppAppConfiguration().update_or_create_consent_version()
+        self.assertEqual(ConsentType.objects.all().count(), 1)

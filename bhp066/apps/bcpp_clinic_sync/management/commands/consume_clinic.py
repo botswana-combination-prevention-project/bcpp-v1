@@ -1,5 +1,6 @@
 from edc.device.sync.management.commands.consume import Command as BaseCommand
-from ...classes import ClinicBcppConsumer
+
+from bhp066.apps.bcpp_clinic_sync.classes import ClinicBcppConsumer
 
 
 class Command(BaseCommand):

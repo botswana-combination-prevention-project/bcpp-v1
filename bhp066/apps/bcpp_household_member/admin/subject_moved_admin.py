@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import SubjectMovedForm
 from ..models import SubjectMoved
@@ -27,7 +27,7 @@ class SubjectMovedAdmin(BaseRegisteredSubjectModelAdmin):
         'moved_community',
         'new_community',
         'update_locator',
-        )
+    )
     search_fields = [
         'household_member__first_name',
         'household_member__household_structure__household__household_identifier']
@@ -36,7 +36,7 @@ class SubjectMovedAdmin(BaseRegisteredSubjectModelAdmin):
         "moved_household": admin.VERTICAL,
         "moved_community": admin.VERTICAL,
         "update_locator": admin.VERTICAL,
-        }
+    }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

@@ -19,7 +19,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 
 site_lab_profiles.autodiscover()
 dajaxice_autodiscover()
@@ -34,7 +34,7 @@ site_sections.autodiscover()
 site_sections.update_section_lists()
 admin.autodiscover()
 
-site_mappers.current_mapper().verify_survey_dates()
+site_mappers.get_current_mapper().verify_survey_dates()
 
 for model in get_models():
     try:
@@ -57,14 +57,14 @@ urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls
 
 urlpatterns += patterns('',
     url(r'^{app_name}/dashboard/visit/add_requisition/'.format(app_name=APP_NAME),
-    additional_requisition, name="add_requisition"),
+        additional_requisition, name="add_requisition"),
 )
 
 urlpatterns += patterns('edc_quota', url(r'^edc_quota/', include('edc_quota.urls')))
 
 urlpatterns += patterns(
     '',
-    (r'^section/analytics/', include('apps.bcpp_analytics.urls', namespace="analytics")),
+    (r'^section/analytics/', include('bhp066.apps.bcpp_analytics.urls', namespace="analytics")),
 )
 
 urlpatterns += patterns(
@@ -87,10 +87,10 @@ urlpatterns += patterns(
     (r'^reports/', include('edc.core.bhp_birt_reports.urls')),
 )
 
-urlpatterns += patterns(
-    '',
-    url(r'^audit_trail/', include('edc.audit.urls'), name="audit_trail_url_name"),
-)
+# urlpatterns += patterns(
+#     '',
+#     url(r'^audit_trail/', include('edc_audit.urls'), name="audit_trail_url_name"),
+# )
 
 urlpatterns += patterns(
     '',
@@ -101,7 +101,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     '',
     url(r'^{app_name}/dashboard/'.format(app_name=APP_NAME),
-        include('apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
+        include('bhp066.apps.{app_name}_dashboard.urls'.format(app_name=APP_NAME))),
 )
 
 urlpatterns += patterns(
@@ -113,9 +113,9 @@ urlpatterns += patterns(
 
 urlpatterns += patterns(
     '',
-    url(r'^dispatch/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_dispatch.urls')),
-    url(r'^bcpp_household/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_household.urls')),
-    url(r'^bcpp_subject/{app_name}/'.format(app_name=APP_NAME), include('apps.bcpp_subject.urls')),
+    url(r'^dispatch/{app_name}/'.format(app_name=APP_NAME), include('bhp066.apps.bcpp_dispatch.urls')),
+    url(r'^bcpp_household/{app_name}/'.format(app_name=APP_NAME), include('bhp066.apps.bcpp_household.urls')),
+    url(r'^bcpp_subject/{app_name}/'.format(app_name=APP_NAME), include('bhp066.apps.bcpp_subject.urls')),
 )
 
 urlpatterns += patterns(

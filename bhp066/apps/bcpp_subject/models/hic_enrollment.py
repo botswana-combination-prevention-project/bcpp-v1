@@ -1,87 +1,84 @@
 from dateutil.relativedelta import relativedelta
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
-from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
+from edc_consent.validators import ConsentAgeValidator
 
-from apps.bcpp.choices import YES_NO
+from bhp066.apps.bcpp.choices import YES_NO
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+
 
 class HicEnrollment (BaseScheduledVisitModel):
 
     hic_permission = models.CharField(
-        verbose_name=_('Is it okay for the project to visit you every year for '
-                       'the next three years for further questions and testing?'),
+        verbose_name='Is it okay for the project to visit you every year for '
+                     'the next three years for further questions and testing?',
         max_length=25,
         choices=YES_NO,
-        help_text=_('If \'No\', subject is not eligible.')
-        )
+        help_text='If \'No\', subject is not eligible.'
+    )
 
     permanent_resident = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text=_('From Residency and Mobility. Eligible if Yes.')
-        )
+        help_text='From Residency and Mobility. Eligible if Yes.'
+    )
 
     intend_residency = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text=_('From Residency and Mobility. Eligible if No.')
-        )
+        help_text='From Residency and Mobility. Eligible if No.'
+    )
 
     hiv_status_today = models.CharField(
         max_length=50,
-        help_text=_("From Today's HIV Result. Eligible if Negative."),
-        )
+        help_text="From Today's HIV Result. Eligible if Negative.",
+    )
 
     dob = models.DateField(
-        verbose_name=_("Date of birth"),
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge,
-            ],
+        verbose_name="Date of birth",
+        validators=[ConsentAgeValidator(16, 64)],
         default=None,
         # editable=False,
-        help_text=_("Format is YYYY-MM-DD. From Subject Consent."),
-        )
+        help_text="Format is YYYY-MM-DD. From Subject Consent.",
+    )
 
     household_residency = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text=_('Is Participant a Household Member. Eligible if Yes.')
-        )
+        help_text='Is Participant a Household Member. Eligible if Yes.'
+    )
 
     citizen_or_spouse = models.NullBooleanField(
         default=None,
         # editable=False,
-        help_text=_('From Subject Consent. Is participant a citizen, or married to citizen '
-                    'with a valid marriage certificate?'),
-        )
+        help_text='From Subject Consent. Is participant a citizen, or married to citizen '
+                  'with a valid marriage certificate?',
+    )
 
     locator_information = models.NullBooleanField(
         default=None,
         null=True,
         blank=True,
-        help_text=_('From Subject Locator. Is the locator form filled and all '
-                    'necessary contact information collected?'),
-        )
+        help_text='From Subject Locator. Is the locator form filled and all '
+                  'necessary contact information collected?',
+    )
 
-    consent_datetime = models.DateTimeField("Consent date and time",
+    consent_datetime = models.DateTimeField(
+        verbose_name="Consent date and time",
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
         # editable=False,
-        help_text=_("From Subject Consent.")
-        )
+        help_text="From Subject Consent."
+    )
 
     history = AuditTrail()
 
@@ -134,8 +131,8 @@ class HicEnrollment (BaseScheduledVisitModel):
         hiv_result = HivResult.objects.filter(subject_visit=self.subject_visit)
         elisa_result = ElisaHivResult.objects.filter(subject_visit=self.subject_visit)
         if hiv_result.exists():
-            if (hiv_result[0].hiv_result.lower() == 'neg' or
-                (elisa_result.exists() and elisa_result[0].hiv_result.lower() == 'neg')):
+            if (hiv_result[0].hiv_result.lower() == 'neg' or (
+                    elisa_result.exists() and elisa_result[0].hiv_result.lower() == 'neg')):
                 return 'NEG'
             else:
                 raise exception_cls('Please review \'hiv_result\' in Today\'s Hiv Result form or in Elisa Hiv Result'
@@ -167,7 +164,7 @@ class HicEnrollment (BaseScheduledVisitModel):
         exception_cls = exception_cls or ValidationError
         from ..models import SubjectConsent
         try:
-            subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_visit.appointment.registered_subject.subject_identifier)
+            subject_consent = SubjectConsent.objects.get(household_member=self.subject_visit.household_member)
             if ((subject_consent.citizen.lower() == 'yes') or (
                     subject_consent.legal_marriage.lower() == 'yes' and
                     subject_consent.marriage_certificate.lower() == 'yes')):
@@ -179,7 +176,7 @@ class HicEnrollment (BaseScheduledVisitModel):
                                         subject_consent.citizen.lower(),
                                         subject_consent.legal_marriage.lower(),
                                         subject_consent.marriage_certificate.lower()
-                                        ))
+                                    ))
         except SubjectConsent.DoesNotExist:
             raise exception_cls('Please fill SubjectConsent form before proceeding with this one.')
 

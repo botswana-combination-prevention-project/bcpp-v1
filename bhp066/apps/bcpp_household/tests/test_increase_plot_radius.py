@@ -11,13 +11,13 @@ from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_dashboard.classes import HouseholdDashboard
-from apps.bcpp_dashboard.tests.dashboard_tests import setup_dashboard
-from apps.bcpp_household.models import HouseholdStructure, Household
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_dashboard.classes import HouseholdDashboard
+from bhp066.apps.bcpp_dashboard.tests.dashboard_tests import setup_dashboard
+from bhp066.apps.bcpp_household.models import HouseholdStructure, Household
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectConsent
 

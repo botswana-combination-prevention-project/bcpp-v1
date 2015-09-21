@@ -9,7 +9,7 @@ class SurveyForm(forms.Form):
         label="Survey ",
         initial=None,
         help_text="",
-        )
+    )
 
     def cleaned_data(self):
         raise forms.ValidationError('This form cannot be edited. See app_configuration instead.')

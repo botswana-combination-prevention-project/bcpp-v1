@@ -1,6 +1,8 @@
 from django.contrib import admin
+
 from ..models import Pregnancy
 from ..forms import PregnancyForm
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

@@ -21,7 +21,8 @@ def next_clinic_date(community_clinic_days, base_datetime=None, allow_same_day=N
                 clinic_dates.append(base_datetime + relativedelta(weekday=DAY(+1)))
         if not clinic_dates:
             clinic_dates.append(base_datetime + relativedelta(days=1, weekday=DAY(+1)))
-        next_clinic_datetime = datetime(min(clinic_dates).year, min(clinic_dates).month, min(clinic_dates).day, 7, 30, 0)
+        next_clinic_datetime = datetime(
+            min(clinic_dates).year, min(clinic_dates).month, min(clinic_dates).day, 7, 30, 0)
         if subtract and next_clinic_datetime != base_datetime:
             # work back to a clinic day, e.g the nearest clinic day within two weeks
             days = list(community_clinic_days.days)

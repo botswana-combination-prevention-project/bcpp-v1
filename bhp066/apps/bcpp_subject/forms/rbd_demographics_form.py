@@ -16,7 +16,7 @@ class RbdDemographicsForm (BaseSubjectModelForm):
         if cleaned_data.get('marital_status', None) != 'Married' and cleaned_data.get('husband_wives', None):
             raise forms.ValidationError('If participant is not married, the number of wives is not required')
 
-        #validating if married
+        # validating if married
         if cleaned_data.get('marital_status') == 'Married':
             husband_wives = cleaned_data.get('husband_wives', 0)
             num_wives = cleaned_data.get('num_wives', 0)

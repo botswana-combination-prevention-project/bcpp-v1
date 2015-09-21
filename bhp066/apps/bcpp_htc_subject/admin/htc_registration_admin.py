@@ -1,7 +1,7 @@
 from django.contrib import admin
 from bhp_base_admin.admin import BaseModelAdmin
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from ..models import HtcRegistration
 from ..forms import HtcRegistrationForm
 

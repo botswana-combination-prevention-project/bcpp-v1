@@ -1,7 +1,4 @@
-from edc.map.classes import site_mappers
-from edc.constants import DEAD
-
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from edc_constants.constants import DEAD
 
 from ..constants import (BHS, BHS_ELIGIBLE, BHS_SCREEN, REFUSED, NOT_ELIGIBLE,
                          HTC_ELIGIBLE, REFUSED_HTC, HTC, ABSENT, UNDECIDED, BHS_LOSS,
@@ -30,8 +27,7 @@ class HouseholdMemberHelper(object):
         elif self.household_member.eligible_subject:
             member_status = BHS_ELIGIBLE
         elif ((self.household_member.undecided or self.household_member.absent or
-               self.household_member.refused)
-              and selected_member_status == BHS_SCREEN):
+               self.household_member.refused) and selected_member_status == BHS_SCREEN):
             member_status = BHS_SCREEN
         elif ((self.household_member.absent or selected_member_status == ABSENT) and
               self.household_member.eligible_member):
@@ -48,8 +44,8 @@ class HouseholdMemberHelper(object):
         elif (self.household_member.refused and self.household_member.eligible_htc and
               not self.household_member.htc and not self.household_member.refused_htc):
             member_status = HTC_ELIGIBLE
-        elif (not self.household_member.eligible_member and not self.household_member.eligible_htc
-              and not self.household_member.survival_status == DEAD):
+        elif (not self.household_member.eligible_member and not self.household_member.eligible_htc and
+              not self.household_member.survival_status == DEAD):
             member_status = NOT_ELIGIBLE
         elif (not self.household_member.eligible_subject and
               self.household_member.enrollment_checklist_completed and
@@ -59,11 +55,11 @@ class HouseholdMemberHelper(object):
             member_status = HTC
         elif self.household_member.refused_htc:
             member_status = REFUSED_HTC
-        elif (not self.household_member.eligible_member and not self.household_member.eligible_subject
-                and self.household_member.eligible_htc):
+        elif (not self.household_member.eligible_member and not self.household_member.eligible_subject and
+              self.household_member.eligible_htc):
             member_status = HTC_ELIGIBLE  # e.g over 64yrs or just not eligible for BHS
-        elif (self.household_member.eligible_member and not self.household_member.eligible_subject
-              and self.household_member.eligible_htc):
+        elif (self.household_member.eligible_member and not self.household_member.eligible_subject and
+              self.household_member.eligible_htc):
             member_status = HTC_ELIGIBLE  # e.g failed enrollment
         elif self.household_member.eligible_member:
             member_status = BHS_SCREEN  # new household_member instance
@@ -95,7 +91,7 @@ class HouseholdMemberHelper(object):
                         else:
                             options = [HTC_ELIGIBLE, BHS_SCREEN]
             elif self.household_member.eligible_member:
-                options = [ABSENT, BHS_SCREEN, BHS_ELIGIBLE, BHS, UNDECIDED, REFUSED, BHS_LOSS, HTC, 
+                options = [ABSENT, BHS_SCREEN, BHS_ELIGIBLE, BHS, UNDECIDED, REFUSED, BHS_LOSS, HTC,
                            HTC_ELIGIBLE, DECEASED]
                 if self.household_member.eligible_subject:
                         options.remove(BHS_LOSS)

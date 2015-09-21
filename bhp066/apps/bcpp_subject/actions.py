@@ -4,16 +4,16 @@ from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.contrib import messages
 
-from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
+from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
 from edc.export.classes import ExportAsCsv
 
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_subject.choices import REFERRAL_CODES
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.exceptions import SurveyValueError
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.exceptions import SurveyValueError
 
+from .choices import REFERRAL_CODES
 from .models import SubjectReferral, CallLog, SubjectLocator
 from .utils import update_referrals_for_hic, update_call_list, add_to_call_list
 
@@ -59,7 +59,7 @@ def call_participant(modeladmin, request, queryset):
             survey=Survey.objects.current_survey(datetime.today()),
             label=call_list.label,
             locator_information=SubjectLocator.objects.previous(household_member).formatted_locator_information
-            )
+        )
     change_url = ('{}?household_member={}&next={}&q={}').format(
         reverse("admin:bcpp_subject_calllog_change", args=(call_log.pk, )),
         call_log.household_member.pk,
@@ -109,7 +109,7 @@ def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manua
 
     """
     def export(modeladmin, request, queryset):
-        referral_code_list = [key for key, value in REFERRAL_CODES if not key == 'pending']
+        referral_code_list = [key for key, _ in REFERRAL_CODES if not key == 'pending']
         queryset = queryset.filter(
             referral_code__in=referral_code_list, in_clinic_flag=False)
         export_as_csv = ExportAsCsv(
@@ -139,7 +139,7 @@ def export_locator_for_cdc_action(description="Export Locator for CDC (Manual)",
 
     def export(modeladmin, request, queryset):
         """Filter locator for those referred and data not yet seen in clinic (in_clinic_flag=False)."""
-        referral_code_list = [key for key, value in REFERRAL_CODES if not key == 'pending']
+        referral_code_list = [key for key, _ in REFERRAL_CODES if not key == 'pending']
         referred_subject_identifiers = [dct.get('subject_visit__subject_identifier')
                                         for dct in SubjectReferral.objects.values(
                                             'subject_visit__subject_identifier').filter(

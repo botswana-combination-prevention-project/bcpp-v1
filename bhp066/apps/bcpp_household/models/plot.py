@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -7,9 +7,10 @@ from django.core.validators import MaxValueValidator
 from django.db import models, IntegrityError, transaction, DatabaseError
 from django.utils.translation import ugettext as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
-from edc.core.crypto_fields.fields import (
+from edc_base.encrypted_fields import (
     EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
@@ -22,8 +23,6 @@ from ..constants import CONFIRMED, UNCONFIRMED, RESIDENTIAL_NOT_HABITABLE, NON_R
 from ..managers import PlotManager
 from ..exceptions import AlreadyReplaced
 
-from .household_identifier_history import HouseholdIdentifierHistory
-
 
 def is_valid_community(self, value):
         """Validates the community string against a list of site_mappers map_areas."""
@@ -31,14 +30,14 @@ def is_valid_community(self, value):
             raise ValidationError(u'{0} is not a valid community name.'.format(value))
 
 
-class Plot(BaseDispatchSyncUuidModel):
+class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user (and initially by the system) to represent a Plot
     in the community."""
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
         max_length=25,
         unique=True,
-        help_text=_("Plot identifier"),
+        help_text="Plot identifier",
         editable=False,
         db_index=True)
 
@@ -256,12 +255,12 @@ class Plot(BaseDispatchSyncUuidModel):
         editable=False,
         help_text='Updated by replacement helper')
 
-    objects = PlotManager()
-
     history = AuditTrail()
 
+    objects = PlotManager()
+
     def __unicode__(self):
-        if site_mappers.get_current_mapper()().clinic_plot_identifier == self.plot_identifier:
+        if site_mappers.get_current_mapper().clinic_plot_identifier == self.plot_identifier:
             return 'BCPP-CLINIC'
         else:
             return self.plot_identifier
@@ -272,7 +271,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
         update_fields = kwargs.get('update_fields')
-        if not self.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
+        if not self.plot_identifier == site_mappers.get_current_mapper().clinic_plot_identifier:
             self.allow_enrollment(using, update_fields=update_fields)
         if self.replaced_by and update_fields != ['replaced_by', 'htc']:
             raise AlreadyReplaced('Plot {0} is no longer part of BHS. It has been replaced '
@@ -330,7 +329,7 @@ class Plot(BaseDispatchSyncUuidModel):
         instance = instance or self
         using = using or 'default'
         if instance.pk:
-            for i in range(0, count):
+            for _ in range(0, count):
                 Household = models.get_model('bcpp_household', 'Household')
                 Household.objects.create(**{
                     'plot': instance,
@@ -351,7 +350,7 @@ class Plot(BaseDispatchSyncUuidModel):
         update_fields = update_fields or []
         exception_cls = exception_cls or ValidationError
         if using == 'default':  # do not check on remote systems
-            mapper_instance = site_mappers.get_current_mapper()()
+            mapper_instance = site_mappers.get_current_mapper()
             if plot_instance.id:
                 if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
@@ -378,8 +377,8 @@ class Plot(BaseDispatchSyncUuidModel):
             household can be deleted. """
             allowed_to_delete = []
             for hh in Household.objects.using(using).filter(plot=instance):
-                if HouseholdLogEntry.objects.filter(household_log__household_structure__household=hh).exists()\
-                    or hh in allowed_to_delete:
+                if (HouseholdLogEntry.objects.filter(
+                        household_log__household_structure__household=hh).exists() or hh in allowed_to_delete):
                     continue
                 allowed_to_delete.append(hh)
             return allowed_to_delete
@@ -387,8 +386,8 @@ class Plot(BaseDispatchSyncUuidModel):
         def delete_confirmed_household(instance, existing_no):
             """ Deletes required number of households. """
             def validate_number_to_delete(instance, existing_no):
-                if existing_no in [0, 1] or instance.household_count == existing_no or instance.household_count >\
-                    existing_no or instance.household_count == 0:
+                if (existing_no in [0, 1] or instance.household_count == existing_no or
+                        instance.household_count > existing_no or instance.household_count == 0):
                     return False
                 else:
                     if household_valid_to_delete(instance):
@@ -415,13 +414,12 @@ class Plot(BaseDispatchSyncUuidModel):
                         return False
                 except IntegrityError:
                     return False
-                except  DatabaseError:
+                except DatabaseError:
                     return False
 
             def delete_household(instance, existing_no):
                 try:
-                    delete_no = validate_number_to_delete(instance, existing_no)\
-                                                if validate_number_to_delete(instance, existing_no) else 0
+                    delete_no = validate_number_to_delete(instance, existing_no) if validate_number_to_delete(instance, existing_no) else 0
                     if not delete_no == 0:
                         deletes = household_valid_to_delete(instance)[:delete_no]
                         hh = HouseholdStructure.objects.filter(household__in=deletes)
@@ -436,7 +434,7 @@ class Plot(BaseDispatchSyncUuidModel):
                         return False
                 except IntegrityError:
                     return False
-                except  DatabaseError:
+                except DatabaseError:
                     return False
             if instance.status in [RESIDENTIAL_NOT_HABITABLE, NON_RESIDENTIAL]:
                 return delete_households_for_non_residential(instance, existing_no)
@@ -465,7 +463,8 @@ class Plot(BaseDispatchSyncUuidModel):
         instance.create_household(instance.household_count - existing_household_count, using=using)
         instance.safe_delete_households(existing_household_count, using=using)
         with transaction.atomic():
-            return Household.objects.using(using).filter(plot__pk=instance.pk).count()
+            count = Household.objects.using(using).filter(plot__pk=instance.pk).count()
+        return count
 
     def get_action(self):
         retval = UNCONFIRMED
@@ -475,7 +474,7 @@ class Plot(BaseDispatchSyncUuidModel):
 
     @property
     def validate_plot_accessible(self):
-        if self.plot_log_entry and (self.plot_inaccessible == False) and self.plot_log_entry.log_status == ACCESSIBLE:
+        if self.plot_log_entry and (self.plot_inaccessible is False) and self.plot_log_entry.log_status == ACCESSIBLE:
             return True
         return False
 
@@ -503,7 +502,7 @@ class Plot(BaseDispatchSyncUuidModel):
         return False
 
     def get_contained_households(self):
-        from apps.bcpp_household.models import Household
+        from bhp066.apps.bcpp_household.models import Household
         households = Household.objects.filter(plot__plot_identifier=self.plot_identifier)
         return households
 
@@ -624,12 +623,12 @@ class Plot(BaseDispatchSyncUuidModel):
         except AttributeError:
             pass
         if verify_plot_community_with_current_mapper:
-            if community != site_mappers.current_mapper.map_area:
+            if community != site_mappers.get_current_mapper().map_area:
                 raise exception_cls(
                     'Plot community does not correspond with the current mapper '
                     'community of \'{}\'. Got \'{}\'. '
                     'See settings.VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER'.format(
-                        site_mappers.current_mapper.map_area, community))
+                        site_mappers.get_current_mapper().map_area, community))
 
     @property
     def plot_log(self):
@@ -645,8 +644,7 @@ class Plot(BaseDispatchSyncUuidModel):
     def plot_log_entry(self):
         PlotLogEntry = models.get_model('bcpp_household', 'plotlogentry')
         try:
-            return  PlotLogEntry.objects.filter(
-                                plot_log__plot__id=self.id).latest('report_datetime')
+            return PlotLogEntry.objects.filter(plot_log__plot__id=self.id).latest('report_datetime')
         except PlotLogEntry.DoesNotExist:
             print "PlotLogEntry.DoesNotExist"
 

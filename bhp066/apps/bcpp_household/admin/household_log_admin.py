@@ -1,7 +1,9 @@
 from django.contrib import admin
-from edc.base.modeladmin.admin import BaseModelAdmin
-from apps.bcpp_household.models import HouseholdLogEntry, HouseholdLog
-from apps.bcpp_household.forms import HouseholdLogForm, HouseholdLogEntryForm
+
+from edc_base.modeladmin.admin import BaseModelAdmin
+
+from ..models import HouseholdLogEntry, HouseholdLog
+from ..forms import HouseholdLogForm, HouseholdLogEntryForm
 
 
 class HouseholdLogEntryAdmin(BaseModelAdmin):
@@ -16,7 +18,7 @@ class HouseholdLogEntryAdmin(BaseModelAdmin):
     radio_fields = {
         "next_appt_datetime_source": admin.VERTICAL,
         "household_status": admin.VERTICAL,
-        }
+    }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_log":

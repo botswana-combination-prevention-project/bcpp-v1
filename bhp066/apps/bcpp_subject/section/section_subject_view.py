@@ -1,14 +1,13 @@
 from copy import deepcopy
 
 from django.conf import settings
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 from edc.device.device.classes import Device
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..search import SubjectSearchByWord
 
@@ -27,10 +26,10 @@ class SectionSubjectView(BaseSectionView):
             current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.current_mapper()),
-            'mapper_name': site_mappers.current_mapper.map_area,
+            'current_community': str(site_mappers.get_current_mapper()),
+            'mapper_name': site_mappers.get_current_mapper().map_area,
             'subject_dashboard_url': self.dashboard_url_name,
-            })
+        })
         context.update()
         return context
 
@@ -45,9 +44,11 @@ class SectionSubjectView(BaseSectionView):
         """
         if Device().is_central_server:
             _search_result = []
-            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and settings.FILTERED_DEFAULT_SEARCH):
+            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and
+                    settings.FILTERED_DEFAULT_SEARCH):
                 for subject_consent in search_result:
-                    for household_member in HouseholdMember.objects.filter(registered_subject=subject_consent.household_member.registered_subject):
+                    for household_member in HouseholdMember.objects.filter(
+                            registered_subject=subject_consent.household_member.registered_subject):
                         if [survey for survey in Survey.objects.all() if survey == household_member.household_structure.survey]:
                             subject_consent.household_member = household_member
                             subject_consent.survey = household_member.household_structure.survey
@@ -56,7 +57,8 @@ class SectionSubjectView(BaseSectionView):
         else:
             _search_result = []
             for subject_consent in search_result:
-                for household_member in HouseholdMember.objects.filter(registered_subject=subject_consent.household_member.registered_subject):
+                for household_member in HouseholdMember.objects.filter(
+                        registered_subject=subject_consent.household_member.registered_subject):
                     if household_member.household_structure.survey.survey_slug == settings.CURRENT_SURVEY:
                         subject_consent.household_member = household_member
                         subject_consent.survey = household_member.household_structure.survey

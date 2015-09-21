@@ -3,9 +3,10 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.classes.enumeration_helper import EnumerationHelper
-from apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
+
+from ..classes import PlotIdentifier
 
 
 class HouseholdStructureManager(models.Manager):
@@ -24,7 +25,7 @@ class HouseholdStructureManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.current_mapper.map_area
+            community = site_mappers.get_current_mapper().map_area
             if PlotIdentifier.get_notebook_plot_lists():
                 return super(HouseholdStructureManager, self).get_queryset().filter(
                     household__plot__community=community,

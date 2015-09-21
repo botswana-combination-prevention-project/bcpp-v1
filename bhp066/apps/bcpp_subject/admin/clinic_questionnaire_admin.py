@@ -1,10 +1,9 @@
 from django.contrib import admin
-from django.utils.translation import ugettext as _
 
-from apps.bcpp_subject.forms import ClinicQuestionnaireForm
+from ..forms import ClinicQuestionnaireForm
+from ..models import ClinicQuestionnaire
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
-from ..models import ClinicQuestionnaire
 
 
 class ClinicQuestionnaireAdmin(SubjectVisitModelAdmin):

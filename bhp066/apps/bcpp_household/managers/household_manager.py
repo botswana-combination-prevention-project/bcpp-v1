@@ -3,7 +3,7 @@ from django.db import models
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from ..classes import PlotIdentifier
 
 
 class HouseholdManager(models.Manager):
@@ -13,10 +13,11 @@ class HouseholdManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.current_mapper.map_area
+            community = site_mappers.get_current_mapper().map_area
             if PlotIdentifier.get_notebook_plot_lists():
-                return super(HouseholdManager, self).get_queryset().filter(plot__community=community,
-                                                    plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
+                return super(HouseholdManager, self).get_queryset().filter(
+                    plot__community=community,
+                    plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
             else:
                 return super(HouseholdManager, self).get_queryset().filter(plot__community=community)
         return super(HouseholdManager, self).get_queryset()

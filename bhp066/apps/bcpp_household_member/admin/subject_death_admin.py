@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import SubjectDeathForm
 from ..models import SubjectDeath
@@ -39,7 +39,7 @@ class SubjectDeathAdmin(BaseRegisteredSubjectModelAdmin):
         "death_cause_category": admin.VERTICAL,
         "primary_medical_care_giver": admin.VERTICAL,
         "relationship_death_study": admin.VERTICAL
-        }
+    }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

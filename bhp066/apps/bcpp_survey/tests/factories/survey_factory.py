@@ -1,6 +1,9 @@
 import factory
+
 from datetime import datetime, timedelta
+
 from edc.base.model.tests.factories import BaseUuidModelFactory
+
 from ...models import Survey
 
 

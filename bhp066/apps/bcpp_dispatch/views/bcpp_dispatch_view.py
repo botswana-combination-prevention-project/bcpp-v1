@@ -7,8 +7,8 @@ from edc.device.sync.exceptions import ProducerError
 
 from edc.device.sync.utils import load_producer_db_settings
 
-from apps.bcpp_dispatch.classes import BcppDispatchController
-from apps.bcpp_dispatch.forms import BcppDispatchForm
+from ..classes import BcppDispatchController
+from ..forms import BcppDispatchForm
 
 
 @login_required

@@ -1,11 +1,11 @@
 import collections
 import datetime
-from django.contrib.auth.models import User
-from apps.bcpp.choices import COMMUNITIES, NOT_APPLICABLE
-from apps.bcpp_household_member.constants import ABSENT, UNDECIDED, HTC_ELIGIBLE, HTC, REFUSED_HTC
-from apps.bcpp_subject.models import (PositiveParticipant, HivResult, ElisaHivResult, HicEnrollment, SubjectConsent,
-                                      SubjectReferral)
-from apps.bcpp_household_member.models import HouseholdMember, EnrollmentLoss, SubjectRefusal
+
+from bhp066.apps.bcpp.choices import NOT_APPLICABLE
+from bhp066.apps.bcpp_household_member.constants import ABSENT, UNDECIDED, HTC_ELIGIBLE, REFUSED_HTC
+from bhp066.apps.bcpp_subject.models import (
+    PositiveParticipant, HivResult, ElisaHivResult, HicEnrollment, SubjectConsent, SubjectReferral)
+from bhp066.apps.bcpp_household_member.models import HouseholdMember, EnrollmentLoss, SubjectRefusal
 
 from .base_operational_report import BaseOperationalReport
 
@@ -22,10 +22,11 @@ class OperationalMember(BaseOperationalReport):
             self.survey = ''
 
         self.date_to += datetime.timedelta(days=1)
-        member = HouseholdMember.objects.filter(household_structure__household__plot__community__icontains=self.community,
-                                             modified__gte=self.date_from, modified__lte=self.date_to,
-                                             user_modified__icontains=self.ra_username,
-                                             household_structure__survey__survey_slug__icontains=self.survey)
+        member = HouseholdMember.objects.filter(
+            household_structure__household__plot__community__icontains=self.community,
+            modified__gte=self.date_from, modified__lte=self.date_to,
+            user_modified__icontains=self.ra_username,
+            household_structure__survey__survey_slug__icontains=self.survey)
         self.data_dict['1. Total household members'] = member.count()
         age_eligible_members = member.filter(eligible_member=True).count()
         self.data_dict['2. Total age eligible members'] = age_eligible_members

@@ -1,7 +1,7 @@
 from edc.dashboard.subject.classes import RegisteredSubjectDashboard
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 
 class BaseSubjectDashboard(RegisteredSubjectDashboard):
@@ -18,14 +18,14 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
             title=self.dashboard_name,
             household_dashboard_url='household_dashboard_url',
             household_member=self.household_member,
-            subject_consent=self.consent,
+            # subject_consent=self.consent,
             household=self.household,
             survey=self.survey,
             household_members=self.household_members,
             household_structure=self.household_member.household_structure,
             membership_form_category=self.membership_form_category,
             extra_url_context='&household_member={0}'.format(self.household_member.pk),
-            )
+        )
         return self.context
 
     @property
@@ -75,5 +75,5 @@ class BaseSubjectDashboard(RegisteredSubjectDashboard):
     @property
     def household_members(self):
         return HouseholdMember.objects.filter(
-            household_structure=self.household_member.household_structure
-            ).order_by('household_structure', 'first_name')
+            household_structure=self.household_member.household_structure).order_by(
+                'household_structure', 'first_name')

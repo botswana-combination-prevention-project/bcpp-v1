@@ -1,4 +1,5 @@
 from django import forms
+
 from ..models import HivHealthCareCosts
 
 from .base_subject_model_form import BaseSubjectModelForm
@@ -37,4 +38,3 @@ class HivHealthCareCostsForm (BaseSubjectModelForm):
 
     class Meta:
         model = HivHealthCareCosts
-

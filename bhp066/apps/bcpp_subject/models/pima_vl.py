@@ -1,31 +1,34 @@
-from datetime import date, datetime
+from datetime import datetime
 from django.db import models
 
-from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
-from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, RegexValidator
 
-from edc.core.crypto_fields.fields import EncryptedTextField
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import datetime_not_future
 from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import EncryptedTextField
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_consent.models import RequiresConsentMixin
 from edc_quota.client.models import QuotaMixin, QuotaManager
 
-from edc.subject.consent.models import BaseConsentedUuidModel
+from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
+from bhp066.apps.bcpp_household.models import Plot
 
-from apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
-from apps.bcpp_household.models import Plot
-
-from .subject_off_study_mixin import SubjectOffStudyMixin
 from ..managers import PimaVlManager
+
 from .subject_visit import SubjectVisit
+from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
+class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin,
+              BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+
+    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
 
     subject_visit = models.ForeignKey(SubjectVisit, null=True)
 
@@ -39,21 +42,21 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
                    'the date/time this information was reported.'))
 
     poc_vl_type = models.CharField(
-        verbose_name=_("Type mobile or household setting"),
+        verbose_name="Type mobile or household setting",
         choices=PIMA_SETTING_VL,
         max_length=150,
         default=PIMA_SETTING_VL[0][0],
     )
 
     poc_vl_today = models.CharField(
-        verbose_name=_("Was a POC viral load done today?"),
+        verbose_name="Was a POC viral load done today?",
         choices=YES_NO,
         max_length=3,
         help_text="",
     )
 
     poc_vl_today_other = models.CharField(
-        verbose_name=_("If no POC viral load today, please explain why"),
+        verbose_name="If no POC viral load today, please explain why",
         max_length=50,
         choices=PIMA,
         null=True,
@@ -63,7 +66,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
     poc_today_vl_other_other = OtherCharField()
 
     pima_id = models.CharField(
-        verbose_name=_("POC viral load machine ID?"),
+        verbose_name="POC viral load machine ID?",
         max_length=9,
         validators=[RegexValidator(regex='\d+', message='POC viral load ID must be a two digit number.')],
         null=True,
@@ -71,37 +74,37 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
         help_text="type this id directly from the machine as labeled")
 
     poc_vl_datetime = models.DateTimeField(
-        verbose_name=_("POC viral load Date and time"),
+        verbose_name="POC viral load Date and time",
         validators=[datetime_not_future],
         null=True,
         blank=True,
     )
 
     vl_value_quatifier = models.CharField(
-        verbose_name=_("Select a quatifier for the value of the result"),
+        verbose_name="Select a quatifier for the value of the result",
         choices=QUANTIFIER,
         max_length=20,
     )
 
     poc_vl_value = models.DecimalField(
-        verbose_name=_("POC viral load count"),
+        verbose_name="POC viral load count",
         null=True,
         blank=True,
-        max_digits=6,
+        max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0)],
         help_text="",
     )
 
     time_of_test = models.DateTimeField(
-        verbose_name=_("Test Date and time"),
+        verbose_name="Test Date and time",
         validators=[datetime_not_future],
         null=True,
         blank=True,
     )
 
     time_of_result = models.DateTimeField(
-        verbose_name=_("Result Date and time"),
+        verbose_name="Result Date and time",
         validators=[datetime_not_future],
         help_text="Time it takes to obtain viral load result.",
         null=True,
@@ -109,13 +112,13 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
     )
 
     easy_of_use = models.CharField(
-        verbose_name=_("Easy of user by field operator?"),
+        verbose_name="Easy of user by field operator?",
         max_length=200,
         choices=EASY_OF_USE,
     )
 
     stability = EncryptedTextField(
-        verbose_name=_("Stability"),
+        verbose_name="Stability",
         max_length=250,
         null=True,
         blank=True,
@@ -128,16 +131,9 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, BaseConsentedUuidModel):
     objects = PimaVlManager()
 
     def pre_order(self):
-        if self.pre_order_instance:
-            url = reverse('admin:bcpp_lab_preorder_changelist')
-            return '<a href="{0}?q={1}">pre_orders</a>'.format(url, self.subject_visit.subject_identifier)
-        else:
-            return None
+        url = reverse('admin:bcpp_lab_preorder_changelist')
+        return '<a href="{0}?q={1}">pre_orders</a>'.format(url, self.subject_visit.subject_identifier)
     pre_order.allow_tags = True
-
-    def pre_order_instance(self):
-        from apps.bcpp_lab.models import PreOrder
-        return PreOrder.objects.filter(subject_visit=self.subject_visit)
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         return True

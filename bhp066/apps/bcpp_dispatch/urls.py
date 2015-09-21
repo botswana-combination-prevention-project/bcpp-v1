@@ -19,4 +19,4 @@ urlpatterns = patterns('',
     url(r'^sync/', bcpp_sync, name='sync_index_url'),
     url(r'^load_producer_databases/$', load_producer_databases, name='load_producer_databases_url'),
     url(r'^', bcpp_dispatch_view, name='bcpp_dispatch_url'),
-    )
+)

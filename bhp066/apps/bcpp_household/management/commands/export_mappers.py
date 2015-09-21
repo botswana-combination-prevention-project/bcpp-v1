@@ -1,15 +1,11 @@
-import csv
 from optparse import make_option
-from datetime import datetime
-import os
 
 from django.db.models import get_model
 from django.core.management.base import BaseCommand
+from django_revision import site_revision
+from django.core.exceptions import ImproperlyConfigured
 
 from edc.map.classes import site_mappers
-
-from edc.base.model.fields.helpers.revision import site_revision
-from django.core.exceptions import ImproperlyConfigured
 
 
 class Command(BaseCommand):
@@ -18,12 +14,13 @@ class Command(BaseCommand):
     help = 'Export mapper data as a wiki table.'
     option_list = BaseCommand.option_list
     option_list += (
-        make_option('--wiki',
+        make_option(
+            '--wiki',
             action='store_true',
             dest='wiki',
             default=False,
             help=('Format output for mediawiki.')),
-        )
+    )
 
     def handle(self, *args, **options):
         if options['wiki']:
@@ -48,7 +45,7 @@ class Command(BaseCommand):
                 current_survey, current_survey.datetime_start, current_survey.datetime_end)
         except ImproperlyConfigured as err_message:
             print 'Survey configuration is invalid. Got {}'.format(err_message.message)
-        print 'Current Mapper: {}'.format(str(site_mappers.current_mapper()))
+        print 'Current Mapper: {}'.format(str(site_mappers.get_current_mapper()))
         print('\nBHP066 Edc {} ({})\n'.format(site_revision.tag, site_revision.branch))
 
     def format_for_wiki(self):

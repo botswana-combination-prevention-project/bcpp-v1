@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..forms import SubjectRefusalForm
 from ..models import SubjectRefusal

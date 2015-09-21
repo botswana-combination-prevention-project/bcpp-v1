@@ -1,13 +1,14 @@
 from django.db.models import get_model
 
-from config.celery import app
+from bhp066.config.celery import app
 
 from edc.map.exceptions import MapperError
-from edc.constants import NEW
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
+from edc_constants.constants import NEW, YES
+
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 
 
 @app.task
@@ -30,7 +31,7 @@ def update_call_list(community, survey_slug, label, verbose=False):
                            community=community)
     options = {}
     n = 0
-    #total = SubjectConsent.objects.all().count()
+    # total = SubjectConsent.objects.all().count()
     total = SubjectConsent.objects.filter(**consent_options).count()
     print 'Pulled {} consents for village {}.'.format(total, community.upper())
     for subject_consent in SubjectConsent.objects.filter(**consent_options).order_by('subject_identifier'):
@@ -38,27 +39,27 @@ def update_call_list(community, survey_slug, label, verbose=False):
         try:
             SubjectLocator.objects.get(
                 subject_visit__household_member=subject_consent.household_member,
-                may_follow_up='Yes')
+                may_follow_up=YES)
             try:
                 hic_enrollment = HicEnrollment.objects.get(
                     subject_visit__household_member=subject_consent.household_member,
-                    hic_permission='Yes')
+                    hic_permission=YES)
                 options.update(
                     hic=True,
                     hic_datetime=hic_enrollment.report_datetime
-                    )
+                )
             except HicEnrollment.DoesNotExist:
                 options.update(
                     hic=False,
                     hic_datetime=None,
-                    )
+                )
             try:
                 subject_referral = SubjectReferral.objects.get(
                     subject_visit__household_member=subject_consent.household_member)
                 options.update(
                     referral_code=subject_referral.referral_code,
                     referral_appt_date=subject_referral.referral_appt_date,
-                    )
+                )
             except SubjectReferral.DoesNotExist:
                 pass
             household = subject_consent.household_member.household_structure.household
@@ -89,7 +90,7 @@ def update_call_list(community, survey_slug, label, verbose=False):
                 label=label,
                 hostname_created=subject_consent.hostname_created,
                 user_created=subject_consent.user_created,
-                )
+            )
             try:
                 call_list = CallList.objects.get(household_member=target_household_member, label=label)
                 if verbose:

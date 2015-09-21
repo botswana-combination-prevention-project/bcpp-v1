@@ -1,11 +1,10 @@
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from apps.bcpp_household.models import Plot
-from apps.bcpp_survey.models import Survey
 from collections import OrderedDict
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from django.conf import settings
-from django.db import models
-from django.contrib.contenttypes.models import ContentType
+
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_survey.models import Survey
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -14,17 +13,11 @@ from edc.device.device.classes import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
-
-# from edc_quota.client.models import Quota
-# from edc_quota.controller.models import ControllerQuota
-# from edc_quota.controller.models import Client
-# from edc_quota.client import QuotaMixin
+from edc_consent.models import ConsentType
 
 from lis.labeling.classes import LabelPrinterTuple, ZplTemplateTuple, ClientTuple
 from lis.specimen.lab_aliquot_list.classes import AliquotTypeTuple
 from lis.specimen.lab_panel.classes import PanelTuple
-from django.utils import timezone
-from edc.device.device.classes.device import Device
 
 try:
     from config.labels import aliquot_label
@@ -41,7 +34,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         super(BcppAppConfiguration, self).prepare()
         self.update_or_create_survey()
         self.search_limit_setup()
-        #self.create_quota()
+        self.update_or_create_consent_type()
 
     global_configuration = {
         'dashboard':
@@ -87,24 +80,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         'Botswana Day Holiday': date(2015, 10, 1),
         'Christmas Day': date(2015, 12, 25),
         'Boxing Day': date(2015, 12, 26),
-        }
-
-    consent_catalogue_list = [
-        {'name': BASELINE_SURVEY_SLUG,
-         'content_type_map': 'subjectconsent',
-         'consent_type': 'study',
-         'version': 1,
-         'start_datetime': study_start_datetime,
-         'end_datetime': study_end_datetime,
-         'add_for_app': 'bcpp_subject'},
-        {'name': 'bcpp-clinic',
-         'content_type_map': 'clinicconsent',
-         'consent_type': 'study',
-         'version': 1,
-         'start_datetime': study_start_datetime,
-         'end_datetime': study_end_datetime,
-         'add_for_app': 'bcpp_clinic'},
-        ]
+    }
 
     survey_setup = {
         BASELINE_SURVEY_SLUG:
@@ -112,13 +88,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2015, 12, 30, 23, 59, 0),
+             'datetime_end': datetime(2015, 8, 1, 23, 59, 0),
              'chronological_order': 1},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2016, 1, 1, 0, 0, 0),
+             'datetime_start': datetime(2015, 8, 2, 0, 0, 0),
              'datetime_end': datetime(2016, 11, 19, 23, 59, 0),
              'chronological_order': 2},
         'bcpp-year-3':
@@ -129,6 +105,37 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'datetime_end': datetime(2017, 10, 29, 23, 59, 0),
              'chronological_order': 3},
     }
+
+    consent_type_setup = [
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
+            'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'version': '4',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2015, 5, 1, 0, 0, 0),
+            'end_datetime': datetime(2015, 9, 15, 23, 59, 0),
+            'version': '3',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2014, 4, 10, 0, 0, 0),
+            'end_datetime': datetime(2015, 4, 30, 23, 59, 0),
+            'version': '2',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
+            'start_datetime': datetime(2013, 10, 30, 0, 0, 0),
+            'end_datetime': datetime(2014, 4, 9, 23, 59, 0),
+            'version': '1',
+        }
+    ]
 
     lab_clinic_api_setup = {
         'panel': [PanelTuple('Research Blood Draw', 'TEST', 'WB'),
@@ -218,8 +225,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                                    '^FO300,112^A0N,20,20^FDDOB: ${dob} ${gender}^FS\n'
                                    '^FO300,132^A0N,25,20^FDAPPT: ${referral_appt_datetime}^FS\n'
                                    '^FO300,152^A0N,25,20^FDCLINIC: ${referral_clinic}^FS\n'
-                                   '^XZ')), False),
-                          ]
+                                   '^XZ')), False)]
                       }
 
     export_plan_setup = {
@@ -362,7 +368,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             * plot identifier community prefix is the same as the site code.
         """
         try:
-            map_code = site_mappers.current_mapper().map_code
+            map_code = site_mappers.get_current_mapper().map_code
         except AttributeError:
             map_code = '00'
         if self.confirm_site_code_in_settings:  # default is True, set to False for tests
@@ -370,7 +376,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 raise ImproperlyConfigured('Community code \'{}\' returned by mapper does not equal '
                                            'settings.SITE_CODE \'{}\'.'.format(map_code, settings.SITE_CODE))
         try:
-            map_area = site_mappers.current_mapper().map_area
+            map_area = site_mappers.get_current_mapper().map_area
         except AttributeError:
             map_area = 'BHP'
         if self.confirm_community_in_settings:  # default is True, set to False for tests
@@ -406,6 +412,19 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 survey.save()
             except Survey.DoesNotExist:
                 Survey.objects.create(**survey_values)
+
+    def update_or_create_consent_type(self):
+        for type in self.consent_type_setup:
+            try:
+                consent_type = ConsentType.objects.get(
+                    version=type.get('version'),
+                    app_label=type.get('app_label'),
+                    model_name=type.get('model_name'))
+                consent_type.start_datetime = type.get('start_datetime')
+                consent_type.end_datetime = type.get('end_datetime')
+                consent_type.save()
+            except ConsentType.DoesNotExist:
+                ConsentType.objects.create(**type)
 
     def search_limit_setup(self):
         if str(device) == '99':

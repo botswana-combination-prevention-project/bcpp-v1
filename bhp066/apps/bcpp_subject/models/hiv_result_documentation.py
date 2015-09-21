@@ -1,10 +1,9 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import date_not_future
 
-from apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
+from bhp066.apps.bcpp.choices import RECORDEDHIVRESULT_CHOICE
 
 from ..choices import HIV_DOC_TYPE
 
@@ -17,28 +16,28 @@ class HivResultDocumentation (BaseScheduledVisitModel):
 
     # base on question from hiv test history
     result_date = models.DateField(
-        verbose_name=_('What is the recorded date of this previous HIV test (or of the '
-                       'document that provides supporting evidence of HIV infection)?'),
+        verbose_name='What is the recorded date of this previous HIV test (or of the '
+                     'document that provides supporting evidence of HIV infection)?',
         validators=[date_not_future],
         help_text="",
-        )
+    )
 
     result_recorded = models.CharField(
-        verbose_name=_('What is the recorded HIV status indicated by this additional document?'),
+        verbose_name='What is the recorded HIV status indicated by this additional document?',
         max_length=30,
         choices=RECORDEDHIVRESULT_CHOICE,  # this is always POSITIVE!!
         default='POS',
         help_text=('value should always be POS as the rule group only shows this form '
                    'if verbal_hiv_result is POS and have indirect documentation.'),
         editable=False,
-        )
+    )
 
     result_doc_type = models.CharField(
-        verbose_name=_("What is the type of document used?"),
+        verbose_name="What is the type of document used?",
         max_length=35,
         choices=HIV_DOC_TYPE,
         help_text="",
-        )
+    )
 
     history = AuditTrail()
 

@@ -2,8 +2,8 @@ from django import forms
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from edc.base.form.forms import BaseModelForm
-from edc.constants import NOT_APPLICABLE
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..models import EnrollmentChecklist
 
@@ -31,7 +31,7 @@ class EnrollmentChecklistForm(BaseModelForm):
 
         if cleaned_data.get('study_participation') == 'No':
             if not cleaned_data.get('confirm_participation') == NOT_APPLICABLE:
-                raise forms.ValidationError('Confirmation on study participation is not required.' 
+                raise forms.ValidationError('Confirmation on study participation is not required.'
                                             'The question is not applicable')
 
         if cleaned_data.get('study_participation') == 'Yes':

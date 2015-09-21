@@ -2,7 +2,7 @@ import os
 
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 
 def create_plots(plot_list, community_name, selected=None):
@@ -66,7 +66,7 @@ class Command(BaseCommand):
             plots_5_list = plots_5.readlines()
             plots_5_list.pop(0)
 
-            #Create plots
+            # Create plots
             create_plots(plots_75_list, community_name)
             create_plots(plots_20_list, community_name, 1)
             create_plots(plots_5_list, community_name, 2)

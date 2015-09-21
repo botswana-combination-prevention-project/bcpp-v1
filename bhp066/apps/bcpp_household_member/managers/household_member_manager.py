@@ -4,7 +4,7 @@ from django.db.models import get_model
 
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_household.classes import PlotIdentifier
 
 
 class HouseholdMemberManager(models.Manager):
@@ -18,12 +18,12 @@ class HouseholdMemberManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            community = site_mappers.current_mapper.map_area
+            community = site_mappers.get_current_mapper().map_area
             if PlotIdentifier.get_notebook_plot_lists():
                 return super(HouseholdMemberManager, self).get_queryset().filter(
                     household_structure__household__plot__community=community,
                     household_structure__household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists(),
-                    )
+                )
             else:
                 return super(HouseholdMemberManager, self).get_queryset().filter(household_structure__household__plot__community=community,)
         return super(HouseholdMemberManager, self).get_queryset()

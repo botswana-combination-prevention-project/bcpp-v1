@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
 
-from apps.bcpp_household_member.constants import ANNUAL
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
+from bhp066.apps.bcpp_household_member.constants import ANNUAL
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 
 class Command(BaseCommand):

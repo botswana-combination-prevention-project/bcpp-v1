@@ -1,3 +1,4 @@
+
 class TwoColumnReportQuery(object):
     def __init__(self, community, start_date, end_date, **kwargs):
         self.community = community

@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.contrib import messages
 from django.contrib import admin
 from django.core.mail import EmailMessage
@@ -8,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import get_model
 from django.http import HttpResponseRedirect
 
-from config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
+from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
 from .utils.update_increaseplotradius import update_increaseplotradius
 from .utils.update_replaceables import update_replaceables

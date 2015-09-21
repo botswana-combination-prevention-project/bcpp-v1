@@ -2,11 +2,11 @@ from datetime import datetime
 
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..managers import BaseClinicHouseholdMemberManager
 
@@ -23,13 +23,13 @@ class ClinicEnrollmentLoss(BaseSyncUuidModel):
         verbose_name="Report Date and Time",
         default=datetime.today(),
         help_text='Date and time of report.'
-        )
+    )
 
     reason = models.TextField(
         verbose_name='Reason not eligible',
         max_length=500,
         help_text='A list of reasons delimited by \';\'. From clinic_eligibility.loss_reason.'
-        )
+    )
 
     community = models.CharField(max_length=25, editable=False)
 

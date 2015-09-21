@@ -1,12 +1,12 @@
+
 from datetime import timedelta
 
 from django.core.exceptions import MultipleObjectsReturned
+from django.db import models
 from django.db.models import get_model
 
-from edc.subject.consent.managers import BaseConsentHistoryManager
 
-
-class ConsentHistoryManager(BaseConsentHistoryManager):
+class ConsentHistoryManager(models.Manager):
 
     def get_by_natural_key(self, consent_datetime, survey_name, subject_identifier_as_pk):
         margin = timedelta(minutes=5)
@@ -43,3 +43,7 @@ class ConsentHistoryManager(BaseConsentHistoryManager):
                 survey=consent_inst.survey,
                 household_member=consent_inst.household_member,
                 consent_datetime=consent_inst.consent_datetime)
+
+    def delete_consent_history(self, app_label, model_name, pk, using):
+        super(ConsentHistoryManager, self).filter(
+            consent_app_label=app_label, consent_model_name=model_name, consent_pk=pk).delete()

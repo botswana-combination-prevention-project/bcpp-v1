@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from config.celery import app as celery_app
+from bhp066.config.celery import app as celery_app
 
 from ..helpers import ReplacementHelper
 from ..models import Replaceable, Household, Plot

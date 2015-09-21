@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.base.modeladmin.admin import BaseModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..actions import call_participant, update_call_list_action
 from ..forms import CallListForm
@@ -20,10 +20,8 @@ class CallListAdmin(BaseModelAdmin):
         'label',
         'call_status',
         'call_outcome',
-        )
-    radio_fields = {
-        'call_status': admin.VERTICAL,
-        }
+    )
+    radio_fields = {'call_status': admin.VERTICAL}
 
     list_display = (
         "subject_identifier",
@@ -46,7 +44,7 @@ class CallListAdmin(BaseModelAdmin):
         "consent_datetime",
         'hostname_created',
         'user_created',
-        )
+    )
     list_filter = (
         'community',
         'label',
@@ -60,20 +58,19 @@ class CallListAdmin(BaseModelAdmin):
         'referral_code',
         'hostname_created',
         'user_created',
-        )
+    )
 
     readonly_fields = (
         "subject_identifier",
         'call_attempts',
         'household_member',
-        )
+    )
 
     search_fields = ('subject_identifier',
                      'first_name',
                      'initials',
                      'household_member__household_structure__pk',
-                     'household_member__household_structure__household__household_identifier',
-                     )
+                     'household_member__household_structure__household__household_identifier')
 
     actions = [call_participant, update_call_list_action]
 

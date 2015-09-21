@@ -11,7 +11,7 @@ class AliquotProcessingManager(models.Manager):
 
     def get_queryset(self):
         if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-            code = site_mappers.current_mapper.map_code
+            code = site_mappers.get_current_mapper().map_code
             return super(AliquotProcessingManager, self).get_queryset().filter(
                 aliquot__aliquot_identifier__startswith='066{}'.format(code))
         return super(AliquotProcessingManager, self).get_queryset()

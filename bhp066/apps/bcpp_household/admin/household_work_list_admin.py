@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 
 
 from ..actions import update_household_work_list_action, show_plot_on_map
@@ -56,7 +56,7 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
         'hic',
         'user_modified',
         'hostname_modified',
-        )
+    )
     search_fields = (
         'household_structure__household__plot__plot_identifier',
         'household_structure__household__household_identifier',
@@ -65,7 +65,7 @@ class HouseholdWorkListAdmin(BaseModelAdmin):
         'id',)
     radio_fields = {
         'survey': admin.VERTICAL,
-        }
+    }
     readonly_fields = ('household_structure', 'survey', )
 
 admin.site.register(HouseholdWorkList, HouseholdWorkListAdmin)

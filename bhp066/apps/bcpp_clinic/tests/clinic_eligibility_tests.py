@@ -1,5 +1,3 @@
-import pprint
-
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from uuid import uuid4
@@ -9,25 +7,22 @@ from django.core.exceptions import ValidationError
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.subject.registration.models import RegisteredSubject
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory, SubjectRefusalFactory
-from apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
+from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
-from apps.bcpp_household_member.models import EnrollmentLoss
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 from edc.map.classes import site_mappers
 
 from ..models import ClinicEligibility
@@ -96,9 +91,9 @@ class ClinicEligibilityTests(TestCase):
         self.source_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey1)
         self.target_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey2)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.source_household_structure)
-        self.study_site = StudySite.objects.get(site_code=site_mappers.current_mapper().map_code)
-        self.intervention = site_mappers.current_mapper().intervention
-        site_mappers.current_mapper().verify_survey_dates()
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
+        self.intervention = site_mappers.get_current_mapper().intervention
+        site_mappers.get_current_mapper().verify_survey_dates()
 
         # add members to source
         HouseholdMemberFactory(household_structure=self.source_household_structure)
@@ -118,8 +113,7 @@ class ClinicEligibilityTests(TestCase):
             guardian=NOT_APPLICABLE,
             part_time_resident='Yes',
             citizen='Yes')
-
-        subject_consent_female = SubjectConsentFactory(
+        SubjectConsentFactory(
             household_member=self.household_member_female,
             gender='F',
             dob=enrollment_female.dob,
@@ -140,7 +134,7 @@ class ClinicEligibilityTests(TestCase):
             age_in_years=50,
             identity=None,
             identity_type='OMANG',
-            )
+        )
         clinic_eligibility.save()
         self.assertIsInstance(clinic_eligibility.additional_key, uuid4().__class__)
         self.assertEquals(clinic_eligibility.additional_key, clinic_eligibility.household_member.additional_key)
@@ -156,12 +150,12 @@ class ClinicEligibilityTests(TestCase):
             identity='111121112',
             identity_type='OMANG',
             gender='F',
-            )
+        )
         clinic_eligibility.save()
 
         clinic_eligibility = ClinicEligibility.objects.get(pk=clinic_eligibility.pk)
 
-        clinic_consent_female = ClinicConsentFactory(
+        ClinicConsentFactory(
             household_member=clinic_eligibility.household_member,
             gender='F',
             dob=clinic_eligibility.dob,
@@ -181,7 +175,7 @@ class ClinicEligibilityTests(TestCase):
             identity='111121112',
             identity_type='OMANG',
             gender='F',
-            )
+        )
         self.assertRaises(ValidationError, clinic_eligibility.save)
 
     def test_additional_key3(self):
@@ -194,7 +188,7 @@ class ClinicEligibilityTests(TestCase):
             identity='111121111',
             identity_type='OMANG',
             gender='F',
-            )
+        )
         self.assertRaises(ValidationError, clinic_eligibility.save)
 
     def test_additional_key4(self):
@@ -208,7 +202,7 @@ class ClinicEligibilityTests(TestCase):
             dob=date(1964, 5, 27),
             identity='111111134',
             identity_type='OMANG',
-            )
+        )
         clinic_eligibility.save()
         self.assertEquals(clinic_eligibility.additional_key, None)
         self.assertEquals(clinic_eligibility.additional_key, clinic_eligibility.household_member.additional_key)
@@ -222,7 +216,7 @@ class ClinicEligibilityTests(TestCase):
             dob=date(1964, 5, 27),
             identity=None,
             identity_type='OMANG',
-            )
+        )
         clinic_eligibility.save()
         self.assertIsInstance(clinic_eligibility.additional_key, uuid4().__class__)
         self.assertEquals(clinic_eligibility.additional_key, clinic_eligibility.household_member.additional_key)
@@ -236,7 +230,7 @@ class ClinicEligibilityTests(TestCase):
             dob=date(1964, 5, 27),
             identity='111111134',
             identity_type='OMANG',
-            )
+        )
         self.assertRaises(ValidationError, clinic_eligibility.save)
 
         # add with different OMANG, all other values the same, should succeed
@@ -247,7 +241,7 @@ class ClinicEligibilityTests(TestCase):
             dob=date(1964, 5, 27),
             identity='111111112',
             identity_type='OMANG',
-            )
+        )
         self.assertIsNone(clinic_eligibility.save())
         # specified identity so additional_key must be None
         self.assertEquals(clinic_eligibility.additional_key, None)

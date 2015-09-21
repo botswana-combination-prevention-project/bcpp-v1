@@ -4,9 +4,9 @@ from django.conf import settings
 from edc.dashboard.search.classes import BaseSearchByWord
 from edc.device.device.classes import Device
 
+from ..constants import (CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE,
+                         NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE)
 from ..models import Plot
-from apps.bcpp_household.constants import (CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE,
-                                           NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE)
 
 
 class PlotSearchByWord(BaseSearchByWord):
@@ -28,7 +28,7 @@ class PlotSearchByWord(BaseSearchByWord):
             Q(plot_identifier__icontains=self.search_value) |
             Q(description__icontains=self.search_value) |
             Q(cso_number__icontains=self.search_value)
-            )
+        )
         return qset
 
     def qset_by_filter_keyword(self):

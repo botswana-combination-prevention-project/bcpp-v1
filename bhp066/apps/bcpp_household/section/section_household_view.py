@@ -4,12 +4,10 @@ from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
 from edc.device.device.classes import Device
 
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.constants import CONFIRMED
+from bhp066.apps.bcpp_survey.models import Survey
 
+from ..constants import CONFIRMED
 from ..search import HouseholdSearchByWord
-
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 
 site_mappers.autodiscover()
@@ -29,8 +27,8 @@ class SectionHouseholdView(BaseSectionView):
             current_survey = Survey.objects.current_survey()
         context.update({
             'current_survey': current_survey,
-            'current_community': str(site_mappers.current_mapper()),
-            'mapper_name': site_mappers.current_mapper.map_area,
+            'current_community': str(site_mappers.get_current_mapper()),
+            'mapper_name': site_mappers.get_current_mapper().map_area,
             'CONFIRMED': CONFIRMED})
         return context
 

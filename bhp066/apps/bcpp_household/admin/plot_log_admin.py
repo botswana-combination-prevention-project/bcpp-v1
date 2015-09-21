@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from edc.base.modeladmin.admin import BaseModelAdmin
-from apps.bcpp_household.models import PlotLogEntry, PlotLog
-from apps.bcpp_household.forms import PlotLogForm, PlotLogEntryForm
+
+from edc_base.modeladmin.admin import BaseModelAdmin
+
+from ..models import PlotLogEntry, PlotLog
+from ..forms import PlotLogForm, PlotLogEntryForm
 
 
 class PlotLogEntryAdmin(BaseModelAdmin):
@@ -15,8 +17,8 @@ class PlotLogEntryAdmin(BaseModelAdmin):
     list_filter = ('log_status', 'report_datetime', 'plot_log__plot__community', 'log_status')
     search_fields = ('log_status', 'plot_log__plot__community', 'plot_log__plot__plot_identifier')
     radio_fields = {
-    'reason': admin.VERTICAL,
-    'log_status': admin.VERTICAL
+        'reason': admin.VERTICAL,
+        'log_status': admin.VERTICAL
     }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

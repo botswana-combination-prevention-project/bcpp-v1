@@ -1,5 +1,5 @@
-from apps.bcpp_household.constants import CONFIRMED
-from apps.bcpp_household.models.household import Household
+from bhp066.apps.bcpp_household.constants import CONFIRMED
+from bhp066.apps.bcpp_household.models.household import Household
 
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery

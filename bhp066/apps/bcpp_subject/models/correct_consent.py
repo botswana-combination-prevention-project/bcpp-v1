@@ -3,18 +3,16 @@ from dateutil.relativedelta import relativedelta
 from django.core.validators import RegexValidator
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
 from edc.base.model.validators import (datetime_not_future, datetime_not_before_study_start,
                                        datetime_is_after_consent)
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import dob_not_future, MinConsentAge, MaxConsentAge
+from edc_base.audit_trail import AuditTrail
 from edc.choices.common import GENDER_UNDETERMINED
 from edc.choices.common import YES_NO, YES
-from edc.core.crypto_fields.fields import EncryptedFirstnameField, EncryptedCharField
-from edc.core.crypto_fields.fields import EncryptedLastnameField
+from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_consent.validators import ConsentAgeValidator
 
 from ..managers import CorrectConsentManager
 
@@ -34,28 +32,27 @@ class CorrectConsent(BaseSyncUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_is_after_consent,
-            datetime_not_future,
-            ],
-        )
+            datetime_not_future],
+    )
 
-    old_first_name = EncryptedFirstnameField(
-            null=True,
-            blank=True,
-            )
-
-    new_first_name = EncryptedFirstnameField(
+    old_first_name = FirstnameField(
         null=True,
         blank=True,
-        )
+    )
 
-    old_last_name = EncryptedLastnameField(
-            null=True,
-            blank=True,
-            )
-    new_last_name = EncryptedLastnameField(
+    new_first_name = FirstnameField(
         null=True,
         blank=True,
-        )
+    )
+
+    old_last_name = LastnameField(
+        null=True,
+        blank=True,
+    )
+    new_last_name = LastnameField(
+        null=True,
+        blank=True,
+    )
 
     old_initials = EncryptedCharField(
         blank=True,
@@ -63,7 +60,7 @@ class CorrectConsent(BaseSyncUuidModel):
         validators=[RegexValidator(
             regex=r'^[A-Z]{2,3}$',
             message='Ensure initials consist of letters only in upper case, no spaces.'), ],
-        )
+    )
 
     new_initials = EncryptedCharField(
         validators=[RegexValidator(
@@ -71,31 +68,23 @@ class CorrectConsent(BaseSyncUuidModel):
             message='Ensure initials consist of letters only in upper case, no spaces.'), ],
         null=True,
         blank=True,
-        )
+    )
 
     old_dob = models.DateField(
-        verbose_name=_("Old Date of birth"),
+        verbose_name="Old Date of birth",
         null=True,
         blank=True,
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge,
-            ],
-        help_text=_("Format is YYYY-MM-DD"),
-        )
+        validators=[ConsentAgeValidator(16, 64)],
+        help_text="Format is YYYY-MM-DD",
+    )
 
     new_dob = models.DateField(
-        verbose_name=_("New Date of birth"),
-        validators=[
-            dob_not_future,
-            MinConsentAge,
-            MaxConsentAge,
-            ],
+        verbose_name="New Date of birth",
+        validators=[ConsentAgeValidator(16, 64)],
         null=True,
         blank=True,
-        help_text=_("Format is YYYY-MM-DD"),
-        )
+        help_text="Format is YYYY-MM-DD",
+    )
 
     old_gender = models.CharField(
         choices=GENDER_UNDETERMINED,
@@ -108,41 +97,39 @@ class CorrectConsent(BaseSyncUuidModel):
         max_length=1,
         null=True,
         blank=True,
-        )
+    )
 
-    old_guardian_name = EncryptedLastnameField(
+    old_guardian_name = LastnameField(
         validators=[
             RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is '
-                           '\'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
-            ],
+                           '\'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        )
+    )
 
-    new_guardian_name = EncryptedLastnameField(
+    new_guardian_name = LastnameField(
         validators=[
             RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. '
-                           'All uppercase separated by a comma'),
-            ],
+                           'All uppercase separated by a comma')],
         blank=True,
         null=True,
-        )
+    )
 
     old_may_store_samples = models.CharField(
-        verbose_name=_("Old Sample storage"),
+        verbose_name="Old Sample storage",
         max_length=3,
         blank=True,
         null=True,
         choices=YES_NO,
-        )
+    )
 
     new_may_store_samples = models.CharField(
-        verbose_name=_("New Sample storage"),
+        verbose_name="New Sample storage",
         max_length=3,
         blank=True,
         null=True,
         choices=YES_NO,
-        )
+    )
 
     old_is_literate = models.CharField(
         verbose_name="(Old) Is the participant LITERATE?",
@@ -150,7 +137,7 @@ class CorrectConsent(BaseSyncUuidModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        )
+    )
 
     new_is_literate = models.CharField(
         verbose_name="(New) Is the participant LITERATE?",
@@ -158,31 +145,29 @@ class CorrectConsent(BaseSyncUuidModel):
         blank=True,
         null=True,
         choices=YES_NO,
-        )
+    )
 
-    old_witness_name = EncryptedLastnameField(
-        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+    old_witness_name = LastnameField(
+        verbose_name="Witness\'s Last and first name (illiterates only)",
         validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
-            ],
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
-        )
+        help_text='Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma',
+    )
 
-    new_witness_name = EncryptedLastnameField(
-        verbose_name=_("Witness\'s Last and first name (illiterates only)"),
+    new_witness_name = LastnameField(
+        verbose_name="Witness\'s Last and first name (illiterates only)",
         validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
-            ],
+            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text=_('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma'),
-        )
-
-    history = AuditTrail()
+        help_text='Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma',
+    )
 
     objects = CorrectConsentManager()
+
+    history = AuditTrail()
 
     def __unicode__(self):
         return unicode(self.subject_consent)
@@ -196,7 +181,6 @@ class CorrectConsent(BaseSyncUuidModel):
         return self.subject_consent.natural_key()
 
     def update_household_member_and_enrollment_checklist(self):
-        #household member updates
         household_member = self.subject_consent.household_member
         enrollment_checklist = household_member.enrollment_checklist
         hic_enrollment = None

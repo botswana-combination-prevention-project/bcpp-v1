@@ -1,8 +1,6 @@
-from edc.subject.appointment.models import Appointment
-
-from apps.bcpp_clinic.models import ClinicConsent, ClinicVisit, ClinicSubjectLocator, ClinicEligibility
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_lab.models import ClinicRequisition, PackingList
+from bhp066.apps.bcpp_clinic.models import ClinicConsent, ClinicVisit, ClinicSubjectLocator, ClinicEligibility
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_lab.models import ClinicRequisition, PackingList
 
 from .base_subject_dashboard import BaseSubjectDashboard
 
@@ -15,8 +13,7 @@ class ClinicDashboard(BaseSubjectDashboard):
     urlpattern_view = 'apps.bcpp_dashboard.views'
     template_name = 'clinic_dashboard.html'
     urlpatterns = [
-        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'
-        ] + BaseSubjectDashboard.urlpatterns
+        BaseSubjectDashboard.urlpatterns[0][:-1] + '(?P<appointment_code>{appointment_code})/$'] + BaseSubjectDashboard.urlpatterns
     urlpattern_options = dict(
         BaseSubjectDashboard.urlpattern_options,
         dashboard_model=BaseSubjectDashboard.urlpattern_options['dashboard_model'] + '|clinic_eligibility',
@@ -47,7 +44,7 @@ class ClinicDashboard(BaseSubjectDashboard):
             subject_consent=self.consent,
             clinic_consent=self.consent,
             household_member=self.household_member,
-            )
+        )
         return self.context
 
     @property

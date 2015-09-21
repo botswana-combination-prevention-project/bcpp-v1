@@ -1,17 +1,20 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc_constants.constants import NEW
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
 from edc.lab.lab_clinic_api.models import Panel
 from edc.subject.entry.models import LabEntry, Entry
 from edc.subject.visit_tracking.models import BaseVisitTracking
+from edc_consent.models import RequiresConsentMixin
+from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 
 
-class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
+class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, BaseSyncUuidModel):
     """A model completed by the user to indicate track the actual appointment or visit.
 
     The model captures actual report date, time and location (home, clinic, etc)."""
@@ -23,7 +26,7 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         max_length=25,
         blank=True,
         null=True,
-        )
+    )
 
     history = AuditTrail()
 
@@ -31,8 +34,6 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
         self.info_source = 'subject'
         self.reason = 'clinic RBD'
         self.appointment.appt_type = 'clinic'
-        #self.get_requisition()
-        #self.ccc_masa_visit_reason_forms()
         super(ClinicVisit, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -76,7 +77,7 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
                                     registered_subject=self.registered_subject)
                             else:
                                 requisition_meta_data = requisition_meta_data[0]
-                            requisition_meta_data.entry_status = 'NEW'
+                            requisition_meta_data.entry_status = NEW
                             requisition_meta_data.save()
 
     def ccc_masa_visit_reason_forms(self):
@@ -98,7 +99,7 @@ class ClinicVisit(ClinicOffStudyMixin, BaseVisitTracking):
                         registered_subject=self.registered_subject)
                 else:
                     scheduled_meta_data = scheduled_meta_data[0]
-                scheduled_meta_data.entry_status = 'NEW'
+                scheduled_meta_data.entry_status = NEW
                 scheduled_meta_data.save()
                 return scheduled_meta_data
 
