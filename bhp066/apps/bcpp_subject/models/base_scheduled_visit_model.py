@@ -16,7 +16,6 @@ from ..managers import ScheduledModelManager
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
-from .subject_consent import SubjectConsent
 
 
 class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
@@ -24,7 +23,7 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
-    CONSENT_MODEL = SubjectConsent
+    CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
 
     subject_visit = models.OneToOneField(SubjectVisit)
 
