@@ -8,9 +8,12 @@ from bhp066.apps.bcpp.choices import (
     FUTUREREASONSSMC_CHOICE, AWAREFREE_CHOICE)
 
 from .base_circumcision import BaseCircumcision
+from .subject_consent import SubjectConsent
 
 
 class Uncircumcised (BaseCircumcision):
+
+    CONSENT_MODEL = SubjectConsent
 
     reason_circ = models.CharField(
         verbose_name="What is the main reason that you have not yet been circumcised?",

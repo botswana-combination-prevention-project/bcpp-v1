@@ -8,11 +8,14 @@ from bhp066.apps.bcpp.choices import YES_NO, YES_NO_UNSURE
 from bhp066.apps.bcpp_list.models import FamilyPlanning
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class ReproductiveHealth (BaseScheduledVisitModel):
 
     """A model completed by the user on the participant's reproductive health."""
+
+    CONSENT_MODEL = SubjectConsent
 
     number_children = models.IntegerField(
         verbose_name="How many children have you given birth to? Please include any"

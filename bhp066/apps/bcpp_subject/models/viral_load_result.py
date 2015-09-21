@@ -8,9 +8,12 @@ from edc_base.model.fields import InitialsField
 from ..managers import ViralLoadResultManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class ViralLoadResult(BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     sample_id = models.CharField(
         verbose_name='Aliquot Identifier',

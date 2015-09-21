@@ -5,9 +5,12 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import YES_NO_DWTA, ALCOHOL_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class SubstanceUse (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     alcohol = models.CharField(
         verbose_name="In the past month, how often did you consume alcohol?",

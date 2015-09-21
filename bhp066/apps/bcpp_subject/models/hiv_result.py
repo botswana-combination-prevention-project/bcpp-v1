@@ -10,9 +10,12 @@ from bhp066.apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
+from .subject_consent import SubjectConsent
 
 
 class HivResult (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     hiv_result = models.CharField(
         verbose_name="Today\'s HIV test result",

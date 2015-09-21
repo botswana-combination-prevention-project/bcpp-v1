@@ -7,11 +7,14 @@ from bhp066.apps.bcpp.choices import YES_NO_REFUSED
 from ..choices import CARE_REASON, TRAVEL_HOURS
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HospitalAdmission (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information about hospital admissions"""
+
+    CONSENT_MODEL = SubjectConsent
 
     admission_nights = models.IntegerField(
         verbose_name="How many total nights did you spend in the hospital in the past 3 months? ",

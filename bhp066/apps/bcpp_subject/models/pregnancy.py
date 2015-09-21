@@ -6,11 +6,14 @@ from edc.base.model.validators import date_not_future
 from bhp066.apps.bcpp.choices import ANCREG_CHOICE
 
 from .base_pregnancy import BasePregnancy
+from .subject_consent import SubjectConsent
 
 
 class Pregnancy (BasePregnancy):
 
     """A model completed by the user for pregnant participants."""
+
+    CONSENT_MODEL = SubjectConsent
 
     anc_reg = models.CharField(
         verbose_name="Have you registered for antenatal care?",

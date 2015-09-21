@@ -7,11 +7,14 @@ from edc.base.model.validators import datetime_not_future
 from bhp066.apps.bcpp.choices import YES_NO
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Cd4History (BaseScheduledVisitModel):
 
     """CS002 - used to collect participant CD4 History"""
+
+    CONSENT_MODEL = SubjectConsent
 
     record_available = models.CharField(
         verbose_name="Is record of last CD4 count available?",

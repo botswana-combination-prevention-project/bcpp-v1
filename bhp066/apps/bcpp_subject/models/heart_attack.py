@@ -7,11 +7,14 @@ from edc_base.model.validators import date_not_future
 from bhp066.apps.bcpp_list.models import HeartDisease
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HeartAttack (BaseScheduledVisitModel):
 
     """A model completed by the user to record any heart conditions in the past 12 months."""
+
+    CONSENT_MODEL = SubjectConsent
 
     date_heart_attack = models.DateField(
         verbose_name="Date of the heart disease or stroke diagnosis:",
