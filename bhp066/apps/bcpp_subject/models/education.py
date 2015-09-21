@@ -6,11 +6,14 @@ from bhp066.apps.bcpp.choices import YES_NO, EDUCATION_CHOICE
 from ..choices import MONTHLY_INCOME, JOB_TYPE, REASON_UNEMPLOYED, JOB_DESCRIPTION
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Education (BaseScheduledVisitModel):
 
     """CS002"""
+
+    CONSENT_MODEL = SubjectConsent
 
     education = models.CharField(
         verbose_name="What is your highest level of education attainment?",

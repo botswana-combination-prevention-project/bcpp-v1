@@ -5,11 +5,14 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import YES_NO_UNSURE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivTestingSupplemental (BaseScheduledVisitModel):
 
     """CS002 - BaseClass"""
+
+    CONSENT_MODEL = SubjectConsent
 
     hiv_pills = models.CharField(
         verbose_name="Have you ever heard about treatment for"

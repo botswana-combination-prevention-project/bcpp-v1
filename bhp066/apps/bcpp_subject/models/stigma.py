@@ -4,11 +4,14 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import AGREE_STRONGLY
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Stigma (BaseScheduledVisitModel):
 
     """CS002"""
+
+    CONSENT_MODEL = SubjectConsent
 
     anticipate_stigma = models.CharField(
         verbose_name="Would you be, or have you ever been,"

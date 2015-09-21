@@ -5,9 +5,12 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import YES_NO_UNSURE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Circumcision (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     circumcised = models.CharField(
         verbose_name="Are you circumcised?",
