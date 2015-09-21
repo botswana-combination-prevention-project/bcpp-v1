@@ -1,7 +1,7 @@
 from django.db.models import Max
 from django.forms import ValidationError
 
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..constants import ELIGIBLE_REPRESENTATIVE_ABSENT
 from ..models import RepresentativeEligibility, HouseholdLogEntry

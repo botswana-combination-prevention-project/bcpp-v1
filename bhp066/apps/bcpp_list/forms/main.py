@@ -1,4 +1,4 @@
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from bhp066.apps.bcpp_list.models import (
     ElectricalAppliances, TransportMode, LiveWith,
     NeighbourhoodProblems, CircumcisionBenefits,

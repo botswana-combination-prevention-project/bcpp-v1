@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 
 from edc.core.bhp_common.utils import formatted_age
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 
 class BaseSubjectConsentForm(BaseModelForm):
