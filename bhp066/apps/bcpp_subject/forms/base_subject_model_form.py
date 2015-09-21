@@ -23,7 +23,10 @@ class BaseSubjectModelForm(BaseModelForm):
         cleaned_data = super(BaseSubjectModelForm, self).clean()
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
-        self.instance.consented_for_period_or_raise(exception_cls=forms.ValidationError)
+        subject_visit = cleaned_data.get('subject_visit')
+        self.instance.consented_for_period_or_raise(
+            subject_identifier=subject_visit.subject_identifier,
+            exception_cls=forms.ValidationError)
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):
