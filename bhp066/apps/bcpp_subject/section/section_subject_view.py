@@ -44,9 +44,11 @@ class SectionSubjectView(BaseSectionView):
         """
         if Device().is_central_server:
             _search_result = []
-            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and settings.FILTERED_DEFAULT_SEARCH):
+            if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and
+                    settings.FILTERED_DEFAULT_SEARCH):
                 for subject_consent in search_result:
-                    for household_member in HouseholdMember.objects.filter(registered_subject=subject_consent.household_member.registered_subject):
+                    for household_member in HouseholdMember.objects.filter(
+                            registered_subject=subject_consent.household_member.registered_subject):
                         if [survey for survey in Survey.objects.all() if survey == household_member.household_structure.survey]:
                             subject_consent.household_member = household_member
                             subject_consent.survey = household_member.household_structure.survey
@@ -55,7 +57,8 @@ class SectionSubjectView(BaseSectionView):
         else:
             _search_result = []
             for subject_consent in search_result:
-                for household_member in HouseholdMember.objects.filter(registered_subject=subject_consent.household_member.registered_subject):
+                for household_member in HouseholdMember.objects.filter(
+                        registered_subject=subject_consent.household_member.registered_subject):
                     if household_member.household_structure.survey.survey_slug == settings.CURRENT_SURVEY:
                         subject_consent.household_member = household_member
                         subject_consent.survey = household_member.household_structure.survey
