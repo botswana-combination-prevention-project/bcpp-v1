@@ -1,4 +1,3 @@
-from datetime import datetime
 from optparse import make_option
 
 from django.core.exceptions import MultipleObjectsReturned, ValidationError
@@ -6,11 +5,11 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django.db.models import get_model
 
-from edc.constants import YES
+from edc_constants.constants import YES
 
-from apps.bcpp_household_member.constants import BHS, BHS_ELIGIBLE, BHS_SCREEN
-from apps.bcpp_household.models.representative_eligibility import RepresentativeEligibility
-from apps.bcpp_household_member.models.enrollment_checklist import EnrollmentChecklist
+from bhp066.apps.bcpp_household_member.constants import BHS, BHS_SCREEN
+from bhp066.apps.bcpp_household.models.representative_eligibility import RepresentativeEligibility
+from bhp066.apps.bcpp_household_member.models.enrollment_checklist import EnrollmentChecklist
 
 
 class Command(BaseCommand):
@@ -19,19 +18,21 @@ class Command(BaseCommand):
     help = 'For Pair 1 data. Create EnrollmentChecklists and set household_structure enrolled and add Representative Eligibility'
 
     option_list = BaseCommand.option_list + (
-        make_option('--representative-eligibility',
+        make_option(
+            '--representative-eligibility',
             action='store_true',
             dest='representative-eligibility',
             default=False,
             help=('Auto-create missing RepresentativeEligibility.')),
-         )
+    )
     option_list += (
-        make_option('--enrollment-checklist',
+        make_option(
+            '--enrollment-checklist',
             action='store_true',
             dest='enrollment-checklist',
             default=False,
             help=('Auto-create missing Enrollment Checklist.')),
-        )
+    )
 
     def handle(self, *args, **options):
         if options['representative-eligibility']:
@@ -60,8 +61,8 @@ class Command(BaseCommand):
         n = 0
         print 'auto-creating RepresentativeEligibility'
         subject_consents = SubjectConsent.objects.filter(
-            household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']
-            ).order_by('subject_identifier')
+            household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']).order_by(
+                'subject_identifier')
         consent_count = subject_consents.count()
         print 'Found {} consents from ranaka, digawana'.format(consent_count)
         print 'Updating'
@@ -85,8 +86,8 @@ class Command(BaseCommand):
         SubjectConsent = get_model('bcpp_subject', 'SubjectConsent')
         print 'Auto create enrollment checklist if required and save consent to flag household_structure as enrolled'
         subject_consents = SubjectConsent.objects.filter(
-            household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']
-            ).order_by('subject_identifier')
+            household_member__household_structure__household__plot__community__in=['ranaka', 'digawana']).order_by(
+                'subject_identifier')
         consent_count = subject_consents.count()
         consents, enrollments = 0, 0
         print 'Found {} consents from ranaka, digawana'.format(consent_count)

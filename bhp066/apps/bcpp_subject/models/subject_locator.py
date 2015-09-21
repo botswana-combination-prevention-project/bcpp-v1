@@ -1,25 +1,29 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
 from edc.choices.common import YES_NO
-from edc.core.crypto_fields.fields import EncryptedCharField
+from edc_base.encrypted_fields import EncryptedCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
-from ..managers import ScheduledModelManager, SubjectLocatorManager
+
+from ..managers import SubjectLocatorManager
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, TimePointStatusMixin,
+                     BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
@@ -27,62 +31,62 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
 
     alt_contact_cell_number = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Cell number (alternate)"),
+        verbose_name="Cell number (alternate)",
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
         null=True,
-        )
+    )
     has_alt_contact = models.CharField(
         max_length=25,
         choices=YES_NO,
-        verbose_name=_("If we are unable to contact the person indicated above, is there another"
-                       " individual (including next of kin) with whom the study team can get"
-                       " in contact with?"),
+        verbose_name="If we are unable to contact the person indicated above, is there another"
+                     " individual (including next of kin) with whom the study team can get"
+                     " in contact with?",
         help_text="",
-        )
+    )
 
     alt_contact_name = EncryptedCharField(
         max_length=35,
-        verbose_name=_("Full Name of the responsible person"),
+        verbose_name="Full Name of the responsible person",
         help_text="include first name and surname",
         blank=True,
         null=True,
-        )
+    )
 
     alt_contact_rel = EncryptedCharField(
         max_length=35,
-        verbose_name=_("Relationship to participant"),
+        verbose_name="Relationship to participant",
         blank=True,
         null=True,
         help_text="",
-        )
+    )
     alt_contact_cell = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Cell number"),
+        verbose_name="Cell number",
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     other_alt_contact_cell = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Cell number (alternate)"),
+        verbose_name="Cell number (alternate)",
         validators=[BWCellNumber, ],
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     alt_contact_tel = EncryptedCharField(
         max_length=8,
-        verbose_name=_("Telephone number"),
+        verbose_name="Telephone number",
         validators=[BWTelephoneNumber, ],
         help_text="",
         blank=True,
         null=True,
-        )
+    )
 
     export_history = ExportHistoryManager()
 
@@ -154,7 +158,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
                     subject_cell='{} (primary)'.format(self.subject_cell) if self.subject_cell else '(none)',
                     alt_subject_cell=self.subject_cell_alt,
                     subject_phone=self.subject_phone or '(none)', alt_subject_phone=self.subject_phone_alt
-                    )
+            )
             if self.may_call_work == 'Yes':
                 info = (
                     '{info}\n Work Contacts:\n'
@@ -175,7 +179,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
                         contact_rel=self.contact_rel or '(relation?)',
                         contact_cell=self.contact_cell or '(----)',
                         contact_phone=self.contact_phone or '(----)'
-                        )
+                )
             if info:
                 info = ('{info}'
                         'Physical Address:\n{physical_address}').format(

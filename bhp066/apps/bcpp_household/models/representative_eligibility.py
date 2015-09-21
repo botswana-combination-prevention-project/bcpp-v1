@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import get_model
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 
 from ..managers import RepresentativeEligibilityManager
 
@@ -20,7 +20,7 @@ class RepresentativeEligibility(BaseRepresentativeEligibility):
         editable=False,
         help_text=('This form is autofilled for non-BHS surveys using information from a'
                    'member consented in a previous survey. See HouseholdMemberHelper')
-        )
+    )
 
     auto_fill_member_id = models.CharField(
         max_length=50,

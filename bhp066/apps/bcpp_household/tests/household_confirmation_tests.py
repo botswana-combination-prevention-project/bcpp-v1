@@ -4,8 +4,8 @@
 # 
 # from edc.map.classes import site_mappers
 # 
-# from apps.bcpp_household.models import Household
-# from apps.bcpp_survey.tests.factories import SurveyFactory
+# from bhp066.apps.bcpp_household.models import Household
+# from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 # 
 # from .factories import PlotFactory
 # 

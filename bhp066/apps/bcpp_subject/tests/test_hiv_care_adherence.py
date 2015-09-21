@@ -3,9 +3,9 @@ from datetime import datetime
 from .factories import HivCareAdherenceFactory
 from .base_scheduled_model_test_case import BaseScheduledModelTestCase
 
-from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, HicEnrollmentFactory, SubjectLocatorFactory,ResidencyMobilityFactory,
+from bhp066.apps.bcpp_subject.tests.factories import (SubjectVisitFactory, HicEnrollmentFactory, SubjectLocatorFactory,ResidencyMobilityFactory,
                                                HivResultFactory)
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class TestHivCareAdherence(BaseScheduledModelTestCase):

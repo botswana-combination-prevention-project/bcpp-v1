@@ -55,24 +55,20 @@ form small {
 	font-size: 88%;
 }
 </style>
-<script>
-	function validate_input_override_key(){
-		return False;
-	}
-</script>
+
 <form action="#" method="post">
 <div>
 	<fieldset>
-	<legend>Generate Confirmation Code </legend>
-    <label for="override">Override Key: </label>
-    <input id="override_key" type="text" name="override_key" value="{{ override_key }}">
+	<legend>Override Code</legend>
+    <label for="override">Override Request Code: </label>
+    <input id="override_request" type="text" name="override_request" value="{{ override_request }}">
     <input type="submit" value="Generate">
     <br>
     </fieldset>
     <fieldset>
     <legend>Result </legend>
-	<p>{% if confirmation_code %}
-			<span style="margin-left:auto; margin-right:auto;"> Confirmation Code:<strong style="color:red;">{{confirmation_code}} </strong></span>
+	<p>{% if override_code %}
+			<span style="margin-left:auto; margin-right:auto;"> Override Code:<strong style="color:red;">{{override_code}} </strong></span>
 		{%else%}
 			<p>_</p>
 		{%endif%}</p>

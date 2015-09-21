@@ -8,7 +8,7 @@ from .installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, L
 from .bcpp_settings import (APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
                             PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
                             LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
-                            FILTERED_DEFAULT_SEARCH)
+                            FILTERED_DEFAULT_SEARCH, STUDY_OPEN_DATETIME)
 from .databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
 from .device import (CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, VERIFY_GPS,
                      VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
@@ -61,7 +61,7 @@ elif socket.gethostname() == 'silverapple':
 elif socket.gethostname() == 'bcpp-tsetsiba':
     KEY_PATH = '/Users/tsetsiba/source/bhp066_project/bhp066/keys'
 else:
-    #KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
+    # KEY_PATH = PROJECT_DIR.child('keys')  # DONT DELETE ME!!, just comment out
     KEY_PATH = '/Volumes/keys'  # DONT DELETE ME!!, just comment out
 
 MANAGERS = ADMINS
@@ -177,10 +177,10 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.contrib.messages.context_processors.messages",
                                )
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'bhp066.config.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'bhp066.config.wsgi.application'
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + EDC_APPS + LIS_APPS + LOCAL_APPS  # + ('django_nose', )
 
@@ -297,3 +297,5 @@ LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_
 # with multiple plots but you want default filter(?) to show current community instances.
 # Central Server in BHP must always be set to FALSE.
 FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
+
+STUDY_OPEN_DATETIME = STUDY_OPEN_DATETIME

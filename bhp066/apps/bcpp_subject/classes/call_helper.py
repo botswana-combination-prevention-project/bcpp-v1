@@ -1,5 +1,5 @@
-from apps.bcpp_household_member.models import MemberAppointment
-from apps.bcpp_household.utils.update_household_work_list import update_household_work_list
+from bhp066.apps.bcpp_household_member.models import MemberAppointment
+from bhp066.apps.bcpp_household.utils.update_household_work_list import update_household_work_list
 
 
 class CallHelper(object):
@@ -28,7 +28,7 @@ class CallHelper(object):
                 self._member_appointment = MemberAppointment.objects.get(
                     household_member=self.call_log_entry.call_log.household_member,
                     label=self.call_log_entry.call_log.label,
-                    )
+                )
                 self._member_appointment.appt_date = self.call_log_entry.appt_date
                 self._member_appointment.appt_status = 'new'
                 self._member_appointment.time_of_day = self.call_log_entry.time_of_day
@@ -46,7 +46,7 @@ class CallHelper(object):
                     is_confirmed=True,
                     user_created=self.call_log_entry.user_created,
                     user_modified=self.call_log_entry.user_modified,
-                    )
+                )
         return self._member_appointment
 
     @property

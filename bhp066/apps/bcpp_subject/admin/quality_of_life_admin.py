@@ -19,14 +19,14 @@ class QualityOfLifeAdmin(SubjectVisitModelAdmin):
         "pain",
         "anxiety",
         "health_today",
-        )
+    )
     radio_fields = {
         "mobility": admin.VERTICAL,
         "self_care": admin.VERTICAL,
         "activities": admin.VERTICAL,
         "pain": admin.VERTICAL,
         "anxiety": admin.VERTICAL,
-        }
+    }
     instructions = [(
         "Note to Interviewer: In this section, read the heading (question) and then each of the "
         "5 possible responses for each question. Do not read -Do not want to answer-, but record "

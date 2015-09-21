@@ -100,4 +100,4 @@ class PackingListHelper(object):
                 packing_list_item.packing_list.timestamp,
                 item_datetime,
                 panel_name,
-                ))
+            ))

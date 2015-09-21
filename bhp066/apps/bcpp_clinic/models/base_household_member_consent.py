@@ -4,11 +4,11 @@ from django.db import models
 
 from edc.core.identifier.exceptions import IdentifierError
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc.subject.consent.models import BaseConsent
+from edc_consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
@@ -17,9 +17,10 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     is_signed = models.BooleanField(default=False)
 
-    survey = models.ForeignKey(Survey, editable=False, null=True)  # this updates from household_member in save()
+    survey = models.ForeignKey(Survey, editable=False, null=True)
 
-    registered_subject = models.ForeignKey(RegisteredSubject,  # this also updates from household_member in save()
+    registered_subject = models.ForeignKey(
+        RegisteredSubject,
         editable=False,
         null=True,
         help_text='one registered subject will be related to one household member for each survey')
@@ -32,7 +33,6 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            identity=self.identity
             self.registered_subject = RegisteredSubject.objects.get(identity=self.identity)
             self.household_member = HouseholdMember.objects.get(registered_subject=self.registered_subject)
             self.survey = self.household_member.household_structure.survey

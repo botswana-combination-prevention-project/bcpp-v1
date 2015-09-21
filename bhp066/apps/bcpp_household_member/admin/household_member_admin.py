@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseTabularInline
+from edc_base.modeladmin.admin import BaseTabularInline
 from edc.export.actions import export_as_csv_action
 
-from apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from ..forms import HouseholdMemberForm
 from ..models import HouseholdMember
@@ -50,7 +50,7 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
         "present_today": admin.VERTICAL,
         "inability_to_participate": admin.VERTICAL,
         "study_resident": admin.VERTICAL,
-        }
+    }
 
     list_display = ('first_name', 'initials',
                     'household_structure',

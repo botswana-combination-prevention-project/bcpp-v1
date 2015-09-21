@@ -1,14 +1,16 @@
 import collections
 import datetime
 
-from edc.constants import DONE, INCOMPLETE, IN_PROGRESS, NO, NEW
+from edc_constants.constants import DONE, INCOMPLETE, IN_PROGRESS, NO, NEW
+
 from edc.entry_meta_data.models.scheduled_entry_meta_data import ScheduledEntryMetaData
 from edc.subject.appointment.models import Appointment
 from edc.subject.entry.models import Entry
 
+from bhp066.apps.bcpp_clinic.models import ClinicConsent
+from bhp066.apps.bcpp_clinic.models.clinic_eligibility import ClinicEligibility
+
 from .base_operational_report import BaseOperationalReport
-from apps.bcpp_clinic.models import ClinicConsent
-from apps.bcpp_clinic.models.clinic_eligibility import ClinicEligibility
 
 
 class OperationalVisits(BaseOperationalReport):

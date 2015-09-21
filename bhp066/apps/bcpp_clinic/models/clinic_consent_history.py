@@ -1,19 +1,16 @@
 from django.db import models
 
-from edc.subject.consent.models import BaseConsentHistory
-
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_subject.managers import ConsentHistoryManager
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 
-class ClinicConsentHistory(BaseConsentHistory):
+class ClinicConsentHistory(models.Model):
 
     survey = models.ForeignKey(Survey)
 
     household_member = models.ForeignKey(HouseholdMember)
 
-    objects = ConsentHistoryManager()
+    objects = models.Manager()
 
     def natural_key(self):
         if not self.registered_subject:
@@ -25,4 +22,3 @@ class ClinicConsentHistory(BaseConsentHistory):
         app_label = 'bcpp_clinic'
         verbose_name = 'Clinic Consent History'
         verbose_name_plural = 'Clinic Consent History'
-

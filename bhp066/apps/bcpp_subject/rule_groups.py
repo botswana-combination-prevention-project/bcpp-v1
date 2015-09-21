@@ -1,13 +1,26 @@
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import (RuleGroup, site_rule_groups, ScheduledDataRule,
                                              Logic, RequisitionRule)
-from .constants import PIMA_VL_TYPE, CENTRAL_SERVER
 
-from .models import (ResourceUtilization, HivTestingHistory,
-                     SexualBehaviour, HivCareAdherence, Circumcision,
-                     HivTestReview, ReproductiveHealth, MedicalDiagnoses,
-                     HivResult, HivResultDocumentation, ElisaHivResult)
-from .classes.rule_group_utilities import *
+from .classes.rule_group_utilities import (
+    func_should_not_show_circumsition,
+    is_gender_male,
+    func_known_pos_in_prev_year,
+    func_require_pima,
+    func_show_microtube,
+    func_vl,
+    func_rbd,
+    func_no_verbal_hiv_result,
+    func_todays_hiv_result_required,
+    evaluate_ever_had_sex_for_female,
+    func_show_hic_enrollment,
+    func_hiv_indeterminate_today,
+    func_hiv_positive_today)
+from .models import (
+    ResourceUtilization, HivTestingHistory,
+    SexualBehaviour, HivCareAdherence, Circumcision,
+    HivTestReview, ReproductiveHealth, MedicalDiagnoses,
+    HivResult, HivResultDocumentation, ElisaHivResult, SubjectVisit)
 
 
 class RegisteredSubjectRuleGroup(RuleGroup):

@@ -1,7 +1,4 @@
-import os
-import csv
-
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from edc.subject.appointment_helper.classes import AppointmentHelper
 from edc.subject.registration.models import RegisteredSubject

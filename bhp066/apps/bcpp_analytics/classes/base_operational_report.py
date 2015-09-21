@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from edc.core.bhp_birt_reports.classes import OperationalReportUtilities
 
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class BaseOperationalReport():
@@ -46,13 +46,13 @@ class BaseOperationalReport():
         communities = []
         if (self.previous_community.find('----') == -1) and (not self.previous_community == ''):  # Passing filtered results
             # communities = [community[0].lower() for community in  COMMUNITIES]
-            for community in  COMMUNITIES:
+            for community in COMMUNITIES:
                 if community[0].lower() != self.previous_community:
                     communities.append(community[0])
             communities.insert(0, self.previous_community)
             communities.insert(1, '---------')
         else:
-            communities = [community[0].lower() for community in  COMMUNITIES]
+            communities = [community[0].lower() for community in COMMUNITIES]
             communities.insert(0, '---------')
         self.communities = communities
         ra_usernames = []

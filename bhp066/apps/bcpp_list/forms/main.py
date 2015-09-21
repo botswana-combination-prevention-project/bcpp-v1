@@ -1,9 +1,10 @@
-from edc.base.form.forms import BaseModelForm
-from apps.bcpp_list.models import (ElectricalAppliances, TransportMode, LiveWith,
-                                   NeighbourhoodProblems, CircumcisionBenefits,
-                                   FamilyPlanning, MedicalCareAccess, PartnerResidency,
-                                   HeartDisease, Diagnoses, Religion, EthnicGroups,
-                                   StiIllnesses, ResidentMostLikely)
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from bhp066.apps.bcpp_list.models import (
+    ElectricalAppliances, TransportMode, LiveWith,
+    NeighbourhoodProblems, CircumcisionBenefits,
+    FamilyPlanning, MedicalCareAccess, PartnerResidency,
+    HeartDisease, Diagnoses, Religion, EthnicGroups,
+    StiIllnesses, ResidentMostLikely)
 
 
 class ElectricalAppliancesForm (BaseModelForm):
@@ -40,7 +41,6 @@ class LiveWithForm (BaseModelForm):
         model = LiveWith
 
 
-#NeighbourhoodProblems
 class NeighbourhoodProblemsForm (BaseModelForm):
 
     def clean(self):
@@ -52,7 +52,6 @@ class NeighbourhoodProblemsForm (BaseModelForm):
         model = NeighbourhoodProblems
 
 
-#CircumcisionBenefits
 class CircumcisionBenefitsForm (BaseModelForm):
 
     def clean(self):
@@ -64,7 +63,6 @@ class CircumcisionBenefitsForm (BaseModelForm):
         model = CircumcisionBenefits
 
 
-#FamilyPlanning
 class FamilyPlanningForm (BaseModelForm):
 
     def clean(self):
@@ -76,7 +74,6 @@ class FamilyPlanningForm (BaseModelForm):
         model = FamilyPlanning
 
 
-#MedicalCareAccess
 class MedicalCareAccessForm (BaseModelForm):
 
     def clean(self):

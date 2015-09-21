@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from .subject_visit_model_admin import SubjectVisitModelAdmin
 from ..models import PimaVl
 from ..forms import PimaVlForm
+
+from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 class PimaVlAdmin(SubjectVisitModelAdmin):

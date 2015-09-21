@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from edc.subject.registration.admin import BaseRegisteredSubjectModelAdmin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..models import SubjectHtc
 
@@ -28,7 +28,7 @@ class SubjectHtcAdmin(BaseRegisteredSubjectModelAdmin):
         "offered": admin.VERTICAL,
         "accepted": admin.VERTICAL,
         "referred": admin.VERTICAL,
-        }
+    }
 
     list_display = ('household_member', 'tracking_identifier', 'report_datetime', 'offered', 'accepted', 'referred')
 

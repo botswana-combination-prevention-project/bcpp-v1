@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.core.crypto_fields.fields import EncryptedIdentityField
+from edc_base.encrypted_fields import IdentityField
 
 from .base_cdc import BaseCdc
 
@@ -18,7 +18,7 @@ class CdcEtcEnrollLog(BaseCdc):
 
     enrolldt = models.DateField()
     partid = models.CharField(max_length=25, null=True)
-    omang = EncryptedIdentityField(null=True)
+    omang = IdentityField(null=True)
 
     class Meta:
         app_label = 'bcpp_stats'

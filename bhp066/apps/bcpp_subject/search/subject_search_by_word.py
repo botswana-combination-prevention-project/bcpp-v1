@@ -15,6 +15,8 @@ class SubjectSearchByWord(BaseSearchByWord):
     @property
     def qset(self):
         qset = self.qset_for_consent
-        qset.add(Q(household_member__household_structure__household__household_identifier__icontains=self.search_value), Q.OR)
-        qset.add(Q(household_member__household_structure__household__plot__plot_identifier__icontains=self.search_value), Q.OR)
+        qset.add(Q(household_member__household_structure__household__household_identifier__icontains=self.search_value),
+                 Q.OR)
+        qset.add(Q(household_member__household_structure__household__plot__plot_identifier__icontains=self.search_value),
+                 Q.OR)
         return qset

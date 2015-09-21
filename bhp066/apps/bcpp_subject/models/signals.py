@@ -1,26 +1,19 @@
 from django.db.models.signals import post_save
-from django.db import DatabaseError
 
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
-from edc.base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
-from edc.subject.appointment.models import Appointment
+from edc_base.model.constants import BASE_MODEL_UPDATE_FIELDS, BASE_UUID_MODEL_UPDATE_FIELDS
 from edc.data_manager.models import TimePointStatus
-from edc.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD
+from edc_constants.constants import CLOSED, OPEN, YES, NO, ALIVE, DEAD, COMPLETE, PENDING
 
-from apps.bcpp_household_member.exceptions import MemberStatusError
-from apps.bcpp_household_member.models import MemberAppointment
+from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
+from bhp066.apps.bcpp_subject.constants import BASELINE_CODES
 
-from .subject_consent import SubjectConsent
-
-from ..constants import COMPLETE, PENDING, POC_VIRAL_LOAD
+from ..constants import POC_VIRAL_LOAD
 from ..classes import SubjectReferralHelper, CallHelper
-
-from ..models import SubjectReferral, SubjectVisit, CallLogEntry, CallList, HivCareAdherence, PimaVl
-
-from apps.bcpp.choices import YES_NO_DWTA
-from apps.bcpp_subject.constants import BASELINE_CODES
+from ..models import (SubjectReferral, SubjectVisit, CallLogEntry, CallList,
+                      PimaVl, SubjectConsent)
 
 
 @receiver(post_save, weak=False, dispatch_uid='subject_consent_on_post_save')
@@ -43,7 +36,7 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
             if update_fields != sorted((['is_verified', 'is_verified_datetime'] +
                                         BASE_MODEL_UPDATE_FIELDS +
                                         BASE_UUID_MODEL_UPDATE_FIELDS)):
-                # instance.post_save_update_registered_subject(using) (called in base)
+                instance.post_save_update_registered_subject(using)
                 instance.household_member.is_consented = True
                 instance.household_member.absent = False
                 instance.household_member.undecided = False
@@ -75,13 +68,32 @@ def subject_consent_on_post_save(sender, instance, raw, created, using, update_f
                     household_members = instance.household_member.__class__.objects.filter(
                         household_structure__household__plot=instance.household_member.household_structure.household.plot,
                         household_structure__survey=instance.household_member.household_structure.survey,
-                        household_structure__household__replaced_by__isnull=True
-                        ).exclude(is_consented=True)  # This includes instance.household_member
+                        household_structure__household__replaced_by__isnull=True).exclude(is_consented=True)
                     for household_member in household_members:
                         try:
                             household_member.save(update_fields=['member_status'])
                         except MemberStatusError:
                             pass
+
+
+@receiver(post_save, weak=False, dispatch_uid='update_or_create_registered_subject_on_post_save')
+def update_or_create_registered_subject_on_post_save(sender, instance, raw, created, using, **kwargs):
+    """Updates or creates an instance of RegisteredSubject on the sender instance.
+
+    Sender instance is a Consent"""
+    if not raw:
+        if isinstance(instance, (SubjectConsent, )):
+            try:
+                # if instance.registered_subject:
+                # has attr and is set to an instance of registered subject -- update
+                for field_name, value in instance.registered_subject_options.iteritems():
+                    setattr(instance.registered_subject, field_name, value)
+                # RULE: subject identifier is ONLY allocated by a consent:
+                instance.registered_subject.subject_identifier = instance.subject_identifier
+                instance.registered_subject.save(using=using)
+            except AttributeError:
+                pass
+
 
 @receiver(post_save, weak=False, dispatch_uid='update_subject_referral_on_post_save')
 def update_subject_referral_on_post_save(sender, instance, raw, created, using, **kwargs):
@@ -133,7 +145,7 @@ def time_point_status_on_post_save(sender, instance, raw, created, using, **kwar
                             subject_visit=subject_visit,
                             subject_referred='No',
                             comment='(Partial participation. Auto generated when time point closed.)'
-                            )
+                        )
                     except ValidationError:
                         # TODO: TimePointStatus form should catch this error instead
                         # of hiding it like this
@@ -184,9 +196,8 @@ def call_log_entry_on_post_save(sender, instance, raw, created, using, **kwargs)
 @receiver(post_save, weak=False, dispatch_uid='update_pocvl_preorder_status_post_save')
 def update_pocvl_preorder_status_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
-        from apps.bcpp_lab.models import PreOrder
-        if (isinstance(instance, PimaVl) and
-            PreOrder.objects.filter(subject_visit=instance.subject_visit, panel__name=POC_VIRAL_LOAD, status=PENDING).exists()):
+        if isinstance(instance, PimaVl):
+            from bhp066.apps.bcpp_lab.models import PreOrder
             try:
                 pre_order = PreOrder.objects.get(
                     subject_visit=instance.subject_visit,
@@ -195,5 +206,5 @@ def update_pocvl_preorder_status_post_save(sender, instance, raw, created, using
                 )
                 pre_order.status = COMPLETE
                 pre_order.save(update_fields=['status'])
-            except PreOrder.DoesNotExist as e:
-                raise e
+            except PreOrder.DoesNotExist:
+                pass

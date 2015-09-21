@@ -4,7 +4,7 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR
 from django.test import TestCase
 
 from ..classes import SubjectReferralApptHelper
-from apps.bcpp_household.utils.clinic_days_tuple import ClinicDaysTuple
+from bhp066.apps.bcpp_household.utils.clinic_days_tuple import ClinicDaysTuple
 
 CLINIC_DAYS = {
     '96': {'IDCC': ClinicDaysTuple((MO, ), None),

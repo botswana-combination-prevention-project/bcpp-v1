@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from ..models import TbSymptoms
-
 from ..forms import TbSymptomsForm
+from ..models import TbSymptoms
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 

@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from ..models import RecentPartner, SecondPartner, ThirdPartner
-
 from ..forms import RecentPartnerForm, SecondPartnerForm, ThirdPartnerForm
+from ..models import RecentPartner, SecondPartner, ThirdPartner
 
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin

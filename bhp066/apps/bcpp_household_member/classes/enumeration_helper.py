@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from edc.constants import UNKNOWN
+from edc_constants.constants import UNKNOWN
 
 from ..exceptions import SurveyValueError, HouseholdStructureNotEnrolled
 
@@ -158,7 +158,7 @@ class EnumerationHelper(object):
             hostname_modified=source_household_member.hostname_modified,  # carried over to help with logistics
             user_created=source_household_member.user_created,  # carried over to help with logistics
             user_modified=source_household_member.user_modified,  # carried over to help with logistics
-            )
+        )
         try:
             new_household_member = HouseholdMember.objects.create(**options)
             if source_household_member.is_consented:

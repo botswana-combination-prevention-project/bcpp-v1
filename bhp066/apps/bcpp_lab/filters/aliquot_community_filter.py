@@ -1,11 +1,10 @@
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from collections import OrderedDict
 
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
-from apps.bcpp.choices import YES_NO
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
+from bhp066.apps.bcpp.choices import YES_NO
 
 from ..models import SubjectRequisition, Receive, PreOrder
 
@@ -37,12 +36,16 @@ class PocViralLoadRequsitions(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() and self.value() == 'Yes':
-            result = queryset.filter(panel__name=VIRAL_LOAD, 
-                            subject_visit__in=[pre.subject_visit for pre in PreOrder.objects.filter(panel__name=POC_VIRAL_LOAD)])
+            result = queryset.filter(
+                panel__name=VIRAL_LOAD,
+                subject_visit__in=[pre.subject_visit for pre in PreOrder.objects.filter(panel__name=POC_VIRAL_LOAD)])
             return result
         elif self.value() and self.value() == 'No':
-            result = queryset.filter(~Q(panel__name=VIRAL_LOAD) &
-                            ~Q(subject_visit__in=[pre.subject_visit for pre in PreOrder.objects.filter(panel__name=POC_VIRAL_LOAD)]))
+            result = queryset.filter(
+                ~Q(panel__name=VIRAL_LOAD) & ~Q(
+                    subject_visit__in=[pre.subject_visit for pre in PreOrder.objects.filter(
+                        panel__name=POC_VIRAL_LOAD)])
+            )
             return result
         else:
             return queryset

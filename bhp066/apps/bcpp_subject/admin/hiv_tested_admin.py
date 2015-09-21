@@ -1,8 +1,5 @@
 from django.contrib import admin
 
-from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
-from edc.apps.admin_supplemental_fields.classes import SupplementalFields
-
 from ..forms import HivTestedForm
 from ..models import HivTested
 
@@ -10,14 +7,9 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
 # HIV testing and history [HT]: 10% in pretest, 9% in BHS and all follow-up
-class HivTestedAdmin(SubjectVisitModelAdmin, SupplementalModelAdminMixin):
+class HivTestedAdmin(SubjectVisitModelAdmin):
 
     form = HivTestedForm
-    supplemental_fields = SupplementalFields(
-        ('num_hiv_tests',
-         'why_hiv_test',
-         'hiv_pills',
-         'arvs_hiv_test'), p=0.09, group='HT', grouping_field='subject_visit')
     baseline_fields = [
         "subject_visit",
         'num_hiv_tests',

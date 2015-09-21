@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.core.crypto_fields.fields import EncryptedIdentityField
+from edc_base.encrypted_fields import IdentityField
 
 from .base_cdc import BaseCdc
 
@@ -13,10 +13,10 @@ class CdcSmcDigawana(BaseCdc):
     Contact3_Made = models.CharField(max_length=25, null=True)
     SMC_Followup_UID = models.IntegerField(null=True)
     Source_System_Name = models.CharField(max_length=25, null=True)
-    identity_value = EncryptedIdentityField(null=True)
+    identity_value = IdentityField(null=True)
     identity_type = models.CharField(max_length=25, null=True)
-    mcVstIDtypeOM = EncryptedIdentityField(null=True)
-    mcVstIDtypePBC = EncryptedIdentityField(null=True)
+    mcVstIDtypeOM = IdentityField(null=True)
+    mcVstIDtypePBC = IdentityField(null=True)
     mcVstInfoApptdt = models.DateField(null=True)
     mcVstInfoDOB = models.DateField(null=True)
     mcVstInfoDOBnoAge = models.IntegerField(null=True)

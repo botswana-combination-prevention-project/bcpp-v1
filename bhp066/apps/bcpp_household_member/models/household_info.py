@@ -1,40 +1,41 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import get_model
-from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 
-from apps.bcpp_household.exceptions import AlreadyReplaced
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_list.models import ElectricalAppliances, TransportMode
-from apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_list.models import ElectricalAppliances, TransportMode
+from bhp066.apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
 
 from ..managers import HouseholdInfoManager
 
 from .household_member import HouseholdMember
 
 
-class HouseholdInfo(BaseDispatchSyncUuidModel):
+class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user that captures household economic status
     from the Head of Household."""
     household_structure = models.OneToOneField(HouseholdStructure)
 
-    household_member = models.OneToOneField(HouseholdMember,
-        help_text=_('Important: The household member must verbally consent before completing this questionnaire.'))
+    household_member = models.OneToOneField(
+        HouseholdMember,
+        help_text='Important: The household member must verbally consent before completing this questionnaire.')
 
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False)
 
     report_datetime = models.DateTimeField(
-        verbose_name=_("Report Date/Time"),
+        verbose_name="Report Date/Time",
         validators=[datetime_not_before_study_start, datetime_not_future])
 
     flooring_type = models.CharField(
-        verbose_name=_("What is the main type of flooring for this household?"),
+        verbose_name="What is the main type of flooring for this household?",
         max_length=25,
         choices=FLOORING_TYPE,
         help_text="")
@@ -42,8 +43,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     flooring_type_other = OtherCharField()
 
     living_rooms = models.IntegerField(
-        verbose_name=_("How many living rooms are there in this household unit"
-                       " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? "),
+        verbose_name="How many living rooms are there in this household unit"
+                     " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? ",
         max_length=2,
         null=True,
         blank=True,
@@ -51,7 +52,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
                    " want to answer, leave blank"))
 
     water_source = models.CharField(
-        verbose_name=_("What is the main source of drinking water for this household? "),
+        verbose_name="What is the main source of drinking water for this household? ",
         max_length=35,
         choices=WATER_SOURCE,
         help_text="")
@@ -59,7 +60,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     water_source_other = OtherCharField()
 
     energy_source = models.CharField(
-        verbose_name=_("What is the main source of energy used for cooking? "),
+        verbose_name="What is the main source of energy used for cooking? ",
         max_length=35,
         choices=ENERGY_SOURCE,
         help_text="")
@@ -67,7 +68,7 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
     energy_source_other = OtherCharField()
 
     toilet_facility = models.CharField(
-        verbose_name=_("What is the main toilet facility used in this household? "),
+        verbose_name="What is the main toilet facility used in this household? ",
         max_length=35,
         choices=TOILET_FACILITY,
         help_text="")
@@ -76,8 +77,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
 
     electrical_appliances = models.ManyToManyField(
         ElectricalAppliances,
-        verbose_name=_("Does any member of this household have any of the following that are"
-                       " currently working? (check all that apply)."),
+        verbose_name="Does any member of this household have any of the following that are"
+                     " currently working? (check all that apply).",
         null=True,
         blank=True,
         help_text=("Note: Please read each response to the participant and check all that apply. "
@@ -85,16 +86,16 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
 
     transport_mode = models.ManyToManyField(
         TransportMode,
-        verbose_name=_("Does any member of this household (excluding visitors) own any of the"
-                       " following forms of transport in working condition? (check all that apply)."),
+        verbose_name="Does any member of this household (excluding visitors) own any of the"
+                     " following forms of transport in working condition? (check all that apply).",
         null=True,
         blank=True,
         help_text=("Note: Please read each response to the participant and check all that apply. "
                    "If participant does not want to answer, leave blank."))
 
     goats_owned = models.IntegerField(
-        verbose_name=_("How many goats are owned by the members of this household?"
-                       " [If unsure of exact number, give your best guess] "),
+        verbose_name="How many goats are owned by the members of this household?"
+                     " [If unsure of exact number, give your best guess] ",
         max_length=3,
         null=True,
         blank=True,
@@ -102,8 +103,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
                    " or helping estimate. If resident does not want to answer, leave blank."))
 
     sheep_owned = models.IntegerField(
-        verbose_name=_("How many sheep are owned by the members of this household?"
-                       " [If unsure of exact number, give your best guess] "),
+        verbose_name="How many sheep are owned by the members of this household?"
+                     " [If unsure of exact number, give your best guess] ",
         max_length=3,
         null=True,
         blank=True,
@@ -111,8 +112,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
                    " or helping estimate. If resident does not want to answer, leave blank."))
 
     cattle_owned = models.IntegerField(
-        verbose_name=_("How many head of cattle (cows and bulls) are owned by the members"
-                       " of this household? [If unsure of exact number, give your best guess] "),
+        verbose_name="How many head of cattle (cows and bulls) are owned by the members"
+                     " of this household? [If unsure of exact number, give your best guess] ",
         max_length=3,
         null=True,
         blank=True,
@@ -120,8 +121,8 @@ class HouseholdInfo(BaseDispatchSyncUuidModel):
                    " or helping estimate. If resident does not want to answer, leave blank."))
 
     smaller_meals = models.CharField(
-        verbose_name=_("In the past 4 weeks, did you or any household member have to eat a"
-                       " smaller meal than you felt you needed because there was not enough food? "),
+        verbose_name="In the past 4 weeks, did you or any household member have to eat a"
+                     " smaller meal than you felt you needed because there was not enough food? ",
         max_length=25,
         choices=SMALLER_MEALS,
         help_text="")

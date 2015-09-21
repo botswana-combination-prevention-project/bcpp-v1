@@ -2,23 +2,28 @@ from datetime import datetime
 
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
-from edc.subject.consent.models import BaseConsentedUuidModel
+from edc_consent.models import RequiresConsentMixin
 
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 from ..managers import ScheduledModelManager
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_visit import SubjectVisit
-# from ..constants import RBD, FULL, Questionnaires, HTC
 
 
-class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
+class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
+                              TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
+
+    CONSENT_MODEL = None
 
     subject_visit = models.OneToOneField(SubjectVisit)
 
@@ -27,7 +32,6 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-#         auto_now=False,
         default=datetime.now,  # By passing datetime.now without the parentheses, you are passing the actual function, which will be called each time a record is added ref: http://stackoverflow.com/questions/2771676/django-default-datetime-now-problem
         help_text=('If reporting today, use today\'s date/time, otherwise use '
                    'the date/time this information was reported.'))
@@ -38,6 +42,10 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     entry_meta_data_manager = EntryMetaDataManager(SubjectVisit)
 
+    def save(self, *args, **kwargs):
+        self.CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+        super(BaseScheduledVisitModel, self).save(*args, **kwargs)
+
     def natural_key(self):
         return self.get_visit().natural_key()
 
@@ -46,6 +54,10 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, BaseConsentedUuidModel):
 
     def get_report_datetime(self):
         return self.get_visit().report_datetime
+
+#     @property
+#     def subject_identifier(self):
+#         return self.get_visit().get_subject_identifier()
 
     def get_subject_identifier(self):
         return self.get_visit().get_subject_identifier()

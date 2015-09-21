@@ -1,21 +1,16 @@
 from django import forms
 from django.forms.util import ErrorList
-from ..models import LabourMarketWages, Grant, SubjectLocator
-from .base_subject_model_form import BaseSubjectModelForm
 
 from ..choices import MONTHLY_INCOME, HOUSEHOLD_INCOME
+from ..models import LabourMarketWages, Grant, SubjectLocator
+
+from .base_subject_model_form import BaseSubjectModelForm
 
 
 class LabourMarketWagesForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(LabourMarketWagesForm, self).clean()
-#         grant = self.cleaned_data.get('grant')
-# #         # if yes, answer next question
-#         if cleaned_data.get('govt_grant') == 'Yes':
-#             if not grant:
-#                 raise forms.ValidationError('You are to answer questions about Grant')
-#         #return cleaned_data
         try:
             subject_locator = SubjectLocator.objects.get(subject_visit=cleaned_data.get('employed'))
             if subject_locator.may_call_work == 'Yes' and cleaned_data.get('employed') == 'not working':
@@ -31,8 +26,7 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
             for response in employed_none:
                 if cleaned_data.get(response) == 'None':
                     self._errors[response] = ErrorList[(u'The field cannot be none')]
-                    raise forms.ValidationError(
-                    'If participant is employed. The response cannot be None')
+                    raise forms.ValidationError('If participant is employed. The response cannot be None')
 
         monthly_answer = 0
         for i in range(len(MONTHLY_INCOME)):
@@ -45,8 +39,7 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
                 household_answer = j
                 break
         if monthly_answer > household_answer:
-            raise forms.ValidationError(
-                    'Amount in household cannot be less than monthly income')
+            raise forms.ValidationError('Amount in household cannot be less than monthly income')
 
         return cleaned_data
 

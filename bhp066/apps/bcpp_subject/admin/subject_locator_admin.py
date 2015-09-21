@@ -84,7 +84,7 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
                      'plot_identifier': self.visit_model_foreign_key + \
                      '__household_member__household_structure__household__plot__plot_identifier',
                      })
-                ),
+            ),
             'export_locator_for_cdc_action',
             "Export Locator in CDC format (Manual)")
         return actions

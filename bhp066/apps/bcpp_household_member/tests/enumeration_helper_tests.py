@@ -9,20 +9,20 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.visit_schedule.classes import site_visit_schedules
 
-from apps.bcpp.app_configuration.classes import bcpp_app_configuration
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_household.tests.factories import PlotFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
+from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
 
 from ..constants import ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC_ELIGIBLE, NOT_ELIGIBLE, REFUSED, UNDECIDED, ANNUAL
 from ..exceptions import HouseholdStructureNotEnrolled
@@ -92,8 +92,8 @@ class EnumerationHelperTests(TestCase):
         self.source_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey1)
         self.target_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey2)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.source_household_structure)
-        self.study_site = StudySite.objects.get(site_code=site_mappers.current_mapper().map_code)
-        self.intervention = site_mappers.current_mapper().intervention
+        self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
+        self.intervention = site_mappers.get_current_mapper().intervention
 
         # add members to source
         HouseholdMemberFactory(household_structure=self.source_household_structure)
@@ -111,7 +111,7 @@ class EnumerationHelperTests(TestCase):
             guardian='No',
             initials=household_member.initials,
             part_time_resident='Yes')
-        from apps.bcpp_subject.tests.factories import SubjectConsentFactory
+        from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
         self.subject_consent = SubjectConsentFactory(
             household_member=enrollment_checklist.household_member,
             first_name="ERIK",

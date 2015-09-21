@@ -1,13 +1,11 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
-from edc.base.model.validators import date_not_future, date_not_before_study_start
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import date_not_future, date_not_before_study_start
 
-from apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
-
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from bhp066.apps.bcpp.choices import WHYNOPARTICIPATE_CHOICE
+from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .base_member_status_model import BaseMemberStatusModel
 
@@ -16,14 +14,14 @@ class SubjectRefusal (BaseMemberStatusModel):
     """A model completed by the user that captures reasons for a
     potentially eligible household member refusing participating in BHS."""
     refusal_date = models.DateField(
-        verbose_name=_("Date subject refused participation"),
+        verbose_name="Date subject refused participation",
         validators=[date_not_before_study_start, date_not_future],
         help_text="Date format is YYYY-MM-DD")
 
     reason = models.CharField(
-        verbose_name=_("We respect your decision to decline. It would help us"
-                       " improve the study if you could tell us the main reason"
-                       " you do not want to participate in this study?"),
+        verbose_name="We respect your decision to decline. It would help us"
+                     " improve the study if you could tell us the main reason"
+                     " you do not want to participate in this study?",
         max_length=50,
         choices=WHYNOPARTICIPATE_CHOICE,
         help_text="")
@@ -31,20 +29,20 @@ class SubjectRefusal (BaseMemberStatusModel):
     reason_other = OtherCharField()
 
     subject_refusal_status = models.CharField(
-        verbose_name=_("Refusal status"),
+        verbose_name="Refusal status",
         max_length=100,
-        help_text=_("Change the refusal status from 'refused' to 'no longer refusing' if and"
-                    " when the subject changes their mind"),
+        help_text="Change the refusal status from 'refused' to 'no longer refusing' if and"
+                  " when the subject changes their mind",
         default='REFUSED',
         editable=False)
 
     comment = models.CharField(
-        verbose_name=_("Comment"),
+        verbose_name="Comment",
         max_length=250,
         null=True,
         blank=True,
-        help_text=_('IMPORTANT: Do not include any names or other personally identifying '
-                    'information in this comment'))
+        help_text='IMPORTANT: Do not include any names or other personally identifying '
+                  'information in this comment')
 
     history = AuditTrail()
 

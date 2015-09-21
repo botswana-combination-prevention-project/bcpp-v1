@@ -1,32 +1,34 @@
 import re
+
 from django.db import models
 
 from edc.core.identifier.exceptions import IdentifierError
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc.subject.consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
-from edc.subject.visit_schedule.models import VisitDefinition, ScheduleGroup
+from edc_consent.models import BaseConsent
+from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_subject.constants import BASELINE_CODES
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    household_member = models.ForeignKey(HouseholdMember, help_text='')
+    household_member = models.OneToOneField(HouseholdMember, help_text='')
 
     is_signed = models.BooleanField(default=False)
 
     survey = models.ForeignKey(Survey, editable=False)  # this updates from household_member in save()
 
-    registered_subject = models.ForeignKey(RegisteredSubject,  # this also updates from household_member in save()
+    registered_subject = models.ForeignKey(
+        RegisteredSubject,  # this also updates from household_member in save()
         editable=False,
         null=True,
         help_text='one registered subject will be related to one household member for each survey')
 
     def __unicode__(self):
-        return '{0} ({1})'.format(self.subject_identifier, self.survey)
+        return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
 
     def get_registration_datetime(self):
         return self.consent_datetime
@@ -36,21 +38,6 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
             self.survey = self.household_member.household_structure.survey
             self.registered_subject = self.household_member.registered_subject
         super(BaseHouseholdMemberConsent, self).save(*args, **kwargs)
-
-#     def get_visit_definitions_from_instance(self):
-#         """Returns a subset of visit definitions for appointment helper to only create
-#         one appointment per household_member.
-#  
-#         This consent only triggers creation of first appointment, T0.
-#  
-#         See class SubjectDasboard for the method that creates subsequent appointments.
-#  
-#         This is used by the edc.subject.appointment.AppointmentHelper on a post-save signal.
-#         """
-#         model_name = self._meta.object_name.lower()
-#         schedule_group = ScheduleGroup.objects.get(membership_form__content_type_map__model=model_name)
-#         visit_definitions = VisitDefinition.objects.filter(schedule_group=schedule_group, code__in=BASELINE_CODES)
-#         return visit_definitions
 
     def _check_if_duplicate_subject_identifier(self, using):
         """Checks if the subject identifier is in use, for new and existing instances.

@@ -1,5 +1,5 @@
-from edc.audit.audit_trail import AuditTrail
-from edc.constants import NOT_APPLICABLE
+from edc_base.audit_trail import AuditTrail
+from edc_constants.constants import NOT_APPLICABLE
 
 from django.db import models
 
@@ -13,7 +13,7 @@ class MonthsRecentPartner (BaseSexualPartner):
         max_length=20,
         null=True,
         blank=True,
-                )
+    )
     history = AuditTrail()
 
     def save(self, *args, **kwargs):

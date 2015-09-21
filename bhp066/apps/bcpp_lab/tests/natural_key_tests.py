@@ -5,23 +5,23 @@ from django.test import TestCase
 
 from edc.core.bhp_variables.models import StudySite
 from edc.lab.lab_profile.classes import site_lab_profiles
-from edc.core.crypto_fields.classes import FieldCryptor
+from edc_base.encrypted_fields import FieldCryptor
 from edc.device.sync.classes import SerializeToTransaction
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.appointment.models import Appointment
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp_subject.tests.factories import (SubjectConsentFactory, SubjectVisitFactory)
-from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory, HouseholdMemberFactory
-from apps.bcpp_lab.tests.factories import (SubjectRequisitionFactory, ProcessingFactory, PackingListFactory)
-from apps.bcpp_lab.models import Aliquot, Panel, AliquotProfile, PackingListItem, AliquotType, Receive
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.tests.factories import (SubjectConsentFactory, SubjectVisitFactory)
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory, HouseholdMemberFactory
+from bhp066.apps.bcpp_lab.tests.factories import (SubjectRequisitionFactory, ProcessingFactory, PackingListFactory)
+from bhp066.apps.bcpp_lab.models import Aliquot, Panel, AliquotProfile, PackingListItem, AliquotType, Receive
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 
 
 class NaturalKeyTests(TestCase):

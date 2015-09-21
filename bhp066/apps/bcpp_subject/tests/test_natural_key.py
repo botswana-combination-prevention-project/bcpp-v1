@@ -20,19 +20,19 @@ from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.subject.entry.models import Entry
 from edc.subject.appointment.models import Appointment
 
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_lab.models import Panel, AliquotType
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_household.models import Household, HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory,
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_lab.models import Panel, AliquotType
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from bhp066.apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory,
                                                SubjectReferralFactory, CallLogEntryFactory,
                                                CallListFactory)
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class TestNaturalKey(TestCase):

@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.conf import settings
-from edc.constants import POS
+from edc_constants.constants import POS
+
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..classes import SubjectStatusHelper
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
-
-from apps.bcpp_survey.models import Survey
 
 
 class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
@@ -67,13 +67,13 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'on_arv',
         'arv_evidence',
         'ever_taken_arv',
-        )
+    )
 
     list_filter = (
         'on_arv',
         'arv_evidence',
         'ever_taken_arv',
-        )
+    )
 
     @property
     def annual_fields(self):

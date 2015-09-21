@@ -6,7 +6,7 @@ from django.test import TestCase
  
 from edc.map.exceptions import MapperError
 
-from apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ..choices import (PLOT_STATUS, SELECTED, INACCESSIBLE, ACCESSIBLE)
 from ..constants import CONFIRMED, UNCONFIRMED
@@ -19,23 +19,9 @@ from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegistere
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-
-
-# class TestPlotMapper(Mapper):
-#     map_area = 'test_community'
-#     map_code = '999'
-#     regions = []
-#     sections = []
-#     landmarks = []
-#     gps_center_lat = -25.011111
-#     gps_center_lon = 25.741111
-#     radius = 5.5
-#     location_boundary = ()
-#
-# site_mappers.register(TestPlotMapper)
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 
 class PlotTests(TestCase):

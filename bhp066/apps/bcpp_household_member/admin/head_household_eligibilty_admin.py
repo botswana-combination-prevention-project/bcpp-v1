@@ -1,9 +1,9 @@
 from django.db.models import Q
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 
-from apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from ..models import HouseholdHeadEligibility, HouseholdMember
 from ..forms import HouseholdHeadEligibilityForm

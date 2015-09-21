@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from config.celery import app
+from bhp066.config.celery import app
 
 from .helpers import PackingListHelper
 

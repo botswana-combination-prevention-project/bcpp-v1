@@ -1,11 +1,13 @@
 from datetime import datetime
 
+from django.db import models
+
 from edc.device.device.classes import Device
 
 from ..models import SubjectRequisitionInspector
 
 
-class InspectorMixin(object):
+class InspectorMixin(models.Model):
 
     def save_to_inspector(self, fields, instance_pk, using):
         if SubjectRequisitionInspector.objects.using(using).filter(subject_identifier=fields.get('subject_identifier'), requisition_identifier=fields.get('requisition_identifier')).count() == 0:
@@ -24,4 +26,7 @@ class InspectorMixin(object):
                 device_id=device.device_id,
                 app_name=self._meta.app_label,
                 model_name=self._meta.object_name
-                )
+            )
+
+    class Meta:
+        abstract = True

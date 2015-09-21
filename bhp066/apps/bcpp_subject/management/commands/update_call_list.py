@@ -1,10 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import get_model
 
-from apps.bcpp.choices import COMMUNITIES
-
-from apps.bcpp_subject.utils import update_call_list
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_subject.utils import update_call_list
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class Command(BaseCommand):

@@ -16,7 +16,7 @@ from edc.device.sync.utils import getproducerbyaddr
 
 from ..exceptions import ReplacementError
 from ..helpers import ReplacementHelper
-from ..models import Plot, NotebookPlotList
+from ..models import Plot
 
 
 @login_required
@@ -69,4 +69,4 @@ def replace_household_plot(request):
     return render_to_response(
         template, {},
         context_instance=RequestContext(request)
-        )
+    )

@@ -1,36 +1,35 @@
 from datetime import datetime, date
 from django.test import TestCase
 from dateutil.relativedelta import relativedelta
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
+from edc_constants.constants import NEW, NOT_REQUIRED, KEYED, YES, NO
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.map.classes import Mapper, site_mappers
 from edc.subject.appointment.models import Appointment
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
-from apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from apps.bcpp_household_member.classes  import EnumerationHelper
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
+from bhp066.apps.bcpp_survey.models import Survey
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_lab.models import AliquotType, Panel
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_subject.models import HivResult
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_lab.models import AliquotType, Panel
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_subject.models import HivResult
 
 from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
-    community = 'otse'
+    community = 'letlhakeng'
 
     def setUp(self):
         try:
@@ -47,7 +46,7 @@ class BaseRuleGroupTestSetup(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        self.study_site = StudySite.objects.get(site_code='14')
+        self.study_site = StudySite.objects.get(site_code='15')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
@@ -75,21 +74,21 @@ class BaseRuleGroupTestSetup(TestCase):
         EnrollmentChecklistFactory(
             household_member=self.household_member_female_T0,
             gender='F',
-            citizen='Yes',
+            citizen=YES,
             dob=female_dob,
-            guardian='No',
+            guardian=NO,
             initials=self.household_member_female_T0.initials,
-            part_time_resident='Yes')
+            part_time_resident=YES)
         EnrollmentChecklistFactory(
             household_member=self.household_member_male_T0,
             gender='M',
-            citizen='Yes',
+            citizen=YES,
             dob=male_dob,
-            guardian='No',
+            guardian=NO,
             initials=self.household_member_male_T0.initials,
-            part_time_resident='Yes')
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
+            part_time_resident=YES)
+        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, confirm_identity='101129811', identity='101129811', study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
+        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, confirm_identity='101119811', identity='101119811', study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
 
         enumeration_helper = EnumerationHelper(self.household_structure.household, survey, next_survey)
         self.household_member_female = enumeration_helper.create_member_on_target(self.household_member_female_T0)
@@ -176,7 +175,6 @@ class BaseRuleGroupTestSetup(TestCase):
         self.subject_visit_male.delete()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male).count(), 0)
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
-        #self.check_male_registered_subject_rule_groups(self.subject_visit_male)
         return self.subject_visit_male
 
     def hiv_result(self, status, subject_visit):
@@ -187,9 +185,9 @@ class BaseRuleGroupTestSetup(TestCase):
         SubjectRequisitionFactory(subject_visit=subject_visit, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
 
         self._hiv_result = HivResult.objects.create(
-             subject_visit=subject_visit,
-             hiv_result=status,
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
+            subject_visit=subject_visit,
+            hiv_result=status,
+            report_datetime=datetime.today(),
+            insufficient_vol=NO
+        )
         return self._hiv_result

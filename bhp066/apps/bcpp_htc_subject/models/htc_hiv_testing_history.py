@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
-from edc.audit.audit_trail import AuditTrail
-from apps.bcpp.choices import YES_NO
+from edc_base.audit_trail import AuditTrail
+from bhp066.apps.bcpp.choices import YES_NO
 from ..choices import TESTING_CENTRE, YES_NO_DECLINED
 from .base_scheduled_model import BaseScheduledModel
 

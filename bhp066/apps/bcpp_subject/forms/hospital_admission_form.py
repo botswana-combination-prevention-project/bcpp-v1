@@ -1,5 +1,7 @@
 from django import forms
+
 from ..models import HospitalAdmission
+
 from .base_subject_model_form import BaseSubjectModelForm
 
 
@@ -8,14 +10,11 @@ class HospitalAdmissionForm (BaseSubjectModelForm):
     def clean(self):
         cleaned_data = super(HospitalAdmissionForm, self).clean()
         # if zero, don't answer next questions
-        #self.validate_cleaned_data('reason_hospitalized', cleaned_data)
         self.validate_cleaned_data('facility_hospitalized', cleaned_data)
         self.validate_cleaned_data('nights_hospitalized', cleaned_data)
         self.validate_cleaned_data('healthcare_expense', cleaned_data)
-        #self.validate_cleaned_data('travel_hours', cleaned_data)
-        #self.validate_cleaned_data('hospitalization_costs', cleaned_data)
 
-        #if zero nights and not NONE
+        # if zero nights and not NONE
         if cleaned_data.get('admission_nights') == 0 and cleaned_data.get('reason_hospitalized') != 'None':
             raise forms.ValidationError(
                 'If hospitalization is ZERO then response to reason hospitalized should be NONE?')

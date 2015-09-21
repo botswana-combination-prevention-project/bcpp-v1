@@ -1,42 +1,41 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 from django.core.exceptions import ValidationError
 
 from django_extensions.db.fields import UUIDField
 
-from edc.audit.audit_trail import AuditTrail
-from edc.core.crypto_fields.fields import EncryptedTextField, EncryptedCharField
+from edc_base.audit_trail import AuditTrail
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-
-from apps.bcpp_household.exceptions import AlreadyReplaced
+from edc_base.encrypted_fields import EncryptedTextField, EncryptedCharField
+from edc.device.sync.models import BaseSyncUuidModel
 
 from ..choices import HOUSEHOLD_REFUSAL
+from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdRefusalManager, HouseholdRefusalHistoryManager
 
 from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class BaseHouseholdRefusal(BaseDispatchSyncUuidModel):
+class BaseHouseholdRefusal(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     household_structure = models.OneToOneField(HouseholdStructure)
 
     report_datetime = models.DateTimeField()
 
     reason = models.CharField(
-        verbose_name=_('Please indicate the reason the household cannot be enumerated'),
+        verbose_name='Please indicate the reason the household cannot be enumerated',
         max_length=25,
         choices=HOUSEHOLD_REFUSAL)
 
     reason_other = EncryptedCharField(
-        verbose_name=_('If Other, specify'),
+        verbose_name='If Other, specify',
         max_length=100,
         blank=True,
         null=True)
 
     comment = EncryptedTextField(
         max_length=250,
-        help_text=_("You may provide a comment here or leave BLANK."),
+        help_text="You may provide a comment here or leave BLANK.",
         blank=True,
         null=True)
 

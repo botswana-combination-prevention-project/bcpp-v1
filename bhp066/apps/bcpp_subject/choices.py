@@ -56,14 +56,14 @@ VISIT_INFO_SOURCE = [
     ('subject', '1. Subject'),
     ('other_member', '2. Other household member'),
     ('OTHER', '9. Other'),
-    ]
+]
 
 VISIT_REASON = [
     ('consent', '1. Consent and Survey with subject'),
     ('absent', '2. Absentee'),
     ('undecided', '3. Undecided (with subject)'),
     ('refuse', '4. Refusal (with subject)'),
-    ]
+]
 
 
 VISIT_UNSCHEDULED_REASON = (
@@ -477,7 +477,7 @@ REFERRAL_REASONS = (
     ('receive', _('Referred to receive HIV result in clinic')),
     ('test', _('Referred to test in clinic')),
     ('protocol', _('Referred as per protocol')),
-    )
+)
 
 RELATION = (
     ('spouse', _('spouse')),
@@ -496,7 +496,7 @@ YES_NO_RECORD_REFUSAL = (
     ('No', _('No')),
     ('Don\'t want to answer', _('Don\'t want to answer')),
     ('record refusal', _('Participant does not want to provide record')),
-    )
+)
 
 STI_DX = (
     ('wasting', 'Severe weight loss (wasting) - more than 10% of body weight'),
@@ -506,7 +506,7 @@ STI_DX = (
     ('PCP', 'PCP (Pneumocystis pneumonia)'),
     ('herpes', 'Herpes infection for more than one month'),
     ('OTHER', 'Other'),
-    )
+)
 
 CHOICES_FROM_BCPPLIST = (
     ('Improved hygiene', _('Improved hygiene')),
@@ -563,11 +563,11 @@ CHOICES_FROM_BCPPLIST = (
     ('Motorcycle/scooter', _('Motorcycle/scooter')),
     ('Donkey or cow cart', _('Donkey or cow cart')),
     ('Donkey/horses', _('Donkey/horses')),
-    )
+)
 
 COUNSELING_SITE = (
     ('IN_HOME', 'In home'),
     ('MOBILE', 'Mobile Unit'),
     ('TENT', 'Tent'),
     ('CLINIC', 'Clinic'),
-    )
+)

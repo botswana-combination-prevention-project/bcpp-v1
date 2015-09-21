@@ -26,7 +26,7 @@ def create_plot_log(request):
                 request, messages.ERROR,
                 str(validation_error).replace(
                     'This plot', 'Plot {}'.format(plot.plot_identifier))
-                )
+            )
             instance = None
     if instance:
         url = plot.log_entry_form_urls
