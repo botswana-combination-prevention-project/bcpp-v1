@@ -2,7 +2,6 @@ from dateutil.relativedelta import relativedelta
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc.choices.common import GENDER
 from edc.device.sync.models import BaseSyncUuidModel
@@ -64,7 +63,7 @@ class CallList (BaseSyncUuidModel):
     )
 
     age_in_years = models.IntegerField(
-        verbose_name=_('Age in years'),
+        verbose_name='Age in years',
         null=True,
         editable=False,
     )
@@ -76,7 +75,7 @@ class CallList (BaseSyncUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        help_text=_("From Subject Consent.")
+        help_text="From Subject Consent."
     )
 
     referral_code = models.CharField(
@@ -94,7 +93,7 @@ class CallList (BaseSyncUuidModel):
             datetime_not_before_study_start,
             datetime_not_future, ],
         null=True,
-        help_text=_("From Subject Consent.")
+        help_text="From Subject Consent."
     )
 
     hic = models.BooleanField(default=False)
@@ -105,7 +104,7 @@ class CallList (BaseSyncUuidModel):
             datetime_not_before_study_start,
             datetime_not_future, ],
         null=True,
-        help_text=_("From HIC Enrollment.report_datetime.")
+        help_text="From HIC Enrollment.report_datetime."
     )
 
     call_attempts = models.IntegerField(

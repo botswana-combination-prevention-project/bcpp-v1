@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from edc.device.device.classes import Device
 from edc_base.audit_trail import AuditTrail
@@ -25,37 +24,37 @@ class SubjectHtc(BaseMemberStatusModel):
     """A model completed by the user that captures HTC information for a household member
     not participating in BHS."""
     tracking_identifier = models.CharField(
-        verbose_name=_("HTC tracking identifier"),
+        verbose_name="HTC tracking identifier",
         max_length=50,
         null=True,
         blank=True,
         help_text='Transcribe this tracking identifier onto the paper HTC Intake form.')
 
     offered = models.CharField(
-        verbose_name=_("Was the subject offered HTC"),
+        verbose_name="Was the subject offered HTC",
         max_length=10,
         choices=YES_NO)
 
     accepted = models.CharField(
-        verbose_name=_("Did the subject accept HTC"),
+        verbose_name="Did the subject accept HTC",
         max_length=25,
         choices=YES_NO)
 
     refusal_reason = models.CharField(
-        verbose_name=_("If the subject did not accept HTC, please explain"),
+        verbose_name="If the subject did not accept HTC, please explain",
         max_length=50,
         null=True,
         blank=True,
         help_text='Required if subject did not accepted HTC')
 
     referred = models.CharField(
-        verbose_name=_("Was the subject referred"),
+        verbose_name="Was the subject referred",
         max_length=10,
         choices=YES_NO_NA,
         help_text='Required if subject accepted HTC')
 
     referral_clinic = models.CharField(
-        verbose_name=_("If referred, which clinic"),
+        verbose_name="If referred, which clinic",
         max_length=25,
         blank=True,
         null=True,

@@ -37,7 +37,7 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         verbose_name='Plot Identifier',
         max_length=25,
         unique=True,
-        help_text=_("Plot identifier"),
+        help_text="Plot identifier",
         editable=False,
         db_index=True)
 
