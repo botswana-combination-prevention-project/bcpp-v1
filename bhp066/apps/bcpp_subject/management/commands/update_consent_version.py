@@ -41,7 +41,7 @@ class Command(BaseCommand):
             consent_type = ConsentType.objects.get_by_consent_datetime(
                 consent.__class__, consent.consent_datetime
             )
-            print ".....{}/{}, {}, will become version {}".format(count, consents.total(), consent, consent_type.version)
+            print ".....{}/{}, {}, will become version {}".format(count, consents.count(), consent, consent_type.version)
             if not fix:
                 print ".....dry run, not saving {}".format(consent)
             else:
