@@ -1,6 +1,6 @@
 from django import forms
 
-from edc.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE
 
 from ..constants import ANNUAL
 from ..models import HivTestingHistory
@@ -13,10 +13,7 @@ class HivTestingHistoryForm (BaseSubjectModelForm):
     optional_attrs = {ANNUAL: {
         'label': {
             'has_tested': (
-                'Since we last visited you have you been tested for HIV?'),
-            }
-        }
-    }
+                'Since we last visited you have you been tested for HIV?'), }}}
 
     def clean(self):
 

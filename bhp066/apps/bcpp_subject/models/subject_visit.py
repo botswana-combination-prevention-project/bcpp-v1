@@ -1,16 +1,22 @@
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.visit_tracking.models import BaseVisitTracking
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
+from edc_consent.models import RequiresConsentMixin
 
-from apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..choices import VISIT_UNSCHEDULED_REASON
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
+class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,
+                   BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+
+    CONSENT_MODEL = None
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -20,11 +26,13 @@ class SubjectVisit(SubjectOffStudyMixin, BaseVisitTracking):
         blank=True,
         null=True,
         choices=VISIT_UNSCHEDULED_REASON,
-        )
+    )
 
     history = AuditTrail(True)
 
     def save(self, *args, **kwargs):
+        self.CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
+        self.subject_identifier = self.household_member.registered_subject.subject_identifier
         self.info_source = 'subject'
         self.reason = 'consent'
         super(SubjectVisit, self).save(*args, **kwargs)

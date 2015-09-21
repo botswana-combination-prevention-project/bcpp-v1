@@ -2,8 +2,9 @@ from collections import OrderedDict
 from django.db.models import Count
 from django.db.models import Q
 
-from apps.bcpp_household_member.models.household_member import HouseholdMember
-from apps.bcpp_subject.models.subject_consent import SubjectConsent
+from bhp066.apps.bcpp_household_member.models.household_member import HouseholdMember
+from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
+
 from .household_report_query import HouseholdReportQuery
 from .data_row import DataRow
 from .report_query import TwoColumnReportQuery

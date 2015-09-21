@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db import models
 from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc.subject.consent.models import BaseConsentedUuidModel
-from apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 from ..managers import ScheduledModelManager
 from .htc_subject_visit import HtcSubjectVisit
 

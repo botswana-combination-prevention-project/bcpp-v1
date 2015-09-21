@@ -1,17 +1,9 @@
-from uuid import uuid4
+from edc_base.encrypted_fields import mask_encrypted
 
-from django.db.models import get_model
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
+from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
-from edc.core.crypto_fields.utils import mask_encrypted
-from edc.map.classes import site_mappers
-
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household_member.constants import CLINIC_RBD
-from apps.bcpp_household_member.models import HouseholdMember
-
-from apps.bcpp_clinic.managers import ClinicHouseholdMemberManager
+from ..managers import ClinicHouseholdMemberManager
 
 
 class ClinicHouseholdMember(HouseholdMember):

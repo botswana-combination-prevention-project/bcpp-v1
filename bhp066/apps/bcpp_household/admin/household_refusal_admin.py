@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 
 from ..forms import HouseholdRefusalForm
 from ..models import HouseholdRefusal, HouseholdStructure
@@ -19,9 +19,7 @@ class HouseholdRefusalAdmin(BaseModelAdmin):
         'reason_other',
         'comment')
 
-    radio_fields = {
-        'reason': admin.VERTICAL,
-        }
+    radio_fields = {'reason': admin.VERTICAL}
 
     list_display = ('household_structure', 'report_datetime', 'created')
 

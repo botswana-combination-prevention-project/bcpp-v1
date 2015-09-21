@@ -13,17 +13,17 @@ from django.views.decorators.http import require_GET
 from edc.core.bhp_birt_reports.classes import OperationalReportUtilities
 from edc.device.sync.models import Producer
 
-from apps.bcpp.choices import COMMUNITIES
-from apps.bcpp_household.constants import (NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION,
-                                           CONFIRMED, UNCONFIRMED)
-from apps.bcpp_subject.constants import DECLINED, NOT_PERFORMED
-from apps.bcpp_household.helpers import ReplacementHelper
-from apps.bcpp_household.models import Plot
-from apps.bcpp_household_member.constants import (ABSENT, BHS, HTC, REFUSED, UNDECIDED)
-from apps.bcpp_household_member.models import HouseholdMember, SubjectRefusal, SubjectRefusalHistory
-from apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
-from apps.bcpp_subject.models import HivResult, HicEnrollment
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from bhp066.apps.bcpp_household.constants import (
+    NO_HOUSEHOLD_INFORMANT, REFUSED_ENUMERATION,
+    CONFIRMED, UNCONFIRMED)
+from bhp066.apps.bcpp_subject.constants import DECLINED, NOT_PERFORMED
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household_member.constants import (ABSENT, BHS, HTC, UNDECIDED)
+from bhp066.apps.bcpp_household_member.models import HouseholdMember, SubjectRefusal
+from bhp066.apps.bcpp_household_member.models import SubjectAbsenteeEntry, SubjectUndecidedEntry
+from bhp066.apps.bcpp_subject.models import HivResult, HicEnrollment
+from bhp066.apps.bcpp_survey.models import Survey
 
 from .classes import (OperationalPlots, OperationalHousehold, OperationalMember,
                       OperationalSpecimen, OperationalAnnual, OperationalRbd, OperationalVisits)

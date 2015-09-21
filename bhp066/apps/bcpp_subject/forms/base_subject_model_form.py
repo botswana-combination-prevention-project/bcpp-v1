@@ -2,14 +2,15 @@ from django import forms
 from django.conf import settings
 
 from edc.map.classes import site_mappers
-from edc.subject.consent.forms import BaseConsentedModelForm
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
 
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
-class BaseSubjectModelForm(BaseConsentedModelForm):
+
+class BaseSubjectModelForm(BaseModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BaseSubjectModelForm, self).__init__(*args, **kwargs)
@@ -22,6 +23,7 @@ class BaseSubjectModelForm(BaseConsentedModelForm):
         cleaned_data = super(BaseSubjectModelForm, self).clean()
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
+        self.instance.consented_for_period_or_raise(exception_cls=forms.ValidationError)
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):
@@ -44,7 +46,7 @@ class BaseSubjectModelForm(BaseConsentedModelForm):
         current community OR does nothing,"""
         try:
             if settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY:
-                configured_community = site_mappers.current_mapper().map_area
+                configured_community = site_mappers.get_current_mapper().map_area
                 community = cleaned_data.get(
                     'subject_visit').household_member.household_structure.household.plot.community
                 if community != configured_community:

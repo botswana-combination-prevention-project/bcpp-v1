@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.conf import settings
 from django.conf.urls import url
 from django.core.exceptions import MultipleObjectsReturned
@@ -9,15 +7,15 @@ from django.template.loader import render_to_string
 
 from edc.dashboard.base.classes import Dashboard
 
-from apps.bcpp_household.exceptions import AlreadyEnumerated
-from apps.bcpp_household.models import (Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog,
-                                        HouseholdAssessment, HouseholdRefusal, RepresentativeEligibility)
-from apps.bcpp_household.helpers import ReplacementHelper
-from apps.bcpp_household.models.household_work_list import HouseholdWorkList
-from apps.bcpp_household_member.constants import NOT_ELIGIBLE, REFUSED_HTC
-from apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
-from apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.exceptions import AlreadyEnumerated
+from bhp066.apps.bcpp_household.models import (
+    Household, HouseholdStructure, HouseholdLogEntry, HouseholdLog, HouseholdAssessment,
+    HouseholdRefusal, RepresentativeEligibility)
+from bhp066.apps.bcpp_household.helpers import ReplacementHelper
+from bhp066.apps.bcpp_household.models.household_work_list import HouseholdWorkList
+from bhp066.apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
+from bhp066.apps.bcpp_household_member.models import HouseholdHeadEligibility, HouseholdMember, HouseholdInfo
+from bhp066.apps.bcpp_survey.models import Survey
 
 from collections import namedtuple
 
@@ -88,7 +86,7 @@ class HouseholdDashboard(Dashboard):
             subject_dashboard_url='subject_dashboard_url',
             household_dashboard_url=self.dashboard_url_name,
             work_list=self.work_list,
-            )
+        )
         return self.context
 
     @property
@@ -141,8 +139,8 @@ class HouseholdDashboard(Dashboard):
     def lastest_household_log_entry_household_status(self):
         try:
             report_datetime = HouseholdLogEntry.objects.filter(
-                household_log__household_structure=self.household_structure
-                ).aggregate(Max('report_datetime')).get('report_datetime__max')
+                household_log__household_structure=self.household_structure).aggregate(
+                    Max('report_datetime')).get('report_datetime__max')
             lastest_household_log_entry = HouseholdLogEntry.objects.get(
                 household_log__household_structure=self.household_structure,
                 report_datetime=report_datetime)
@@ -267,8 +265,7 @@ class HouseholdDashboard(Dashboard):
                 # previous survey is not erolled
                 pass
             self._household_members = HouseholdMember.objects.filter(
-                household_structure=self.household_structure,
-                ).order_by('first_name')
+                household_structure=self.household_structure).order_by('first_name')
         return self._household_members
 
     @property

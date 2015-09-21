@@ -1,11 +1,10 @@
 from optparse import make_option
 
-from django.db.models import get_model
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from edc.device.dispatch.models import DispatchItemRegister
 
-from apps.bcpp_household.models import Plot, Household
+from bhp066.apps.bcpp_household.models import Plot, Household
 
 
 class Command(BaseCommand):
@@ -28,13 +27,9 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help=('Check all plots marked as replacing other plots are dispatched')),
-        )
+    )
 
     def handle(self, *args, **options):
-#         if len(args) == 0 or len(args) == 1:
-#             pass
-#         else:
-#             raise CommandError('Command expecting One or Zero arguments. One being --producer <producer_name>')
         if options['all_twenty']:
             self.all_20pcnt_dispatched()
         elif options['all_replacing']:
@@ -75,11 +70,12 @@ class Command(BaseCommand):
                     else:
                         replaced = replaced
                     replaced_item = DispatchItemRegister.objects.get(item_pk=replaced.id)
-                    print 'Plot identifier={}, in 5% which Replaces \'{}\' is NOT DISPATCHED. {} is in producer {}'.format(
-                                                                                                     plt.plot_identifier,
-                                                                                                     plt.replaces,
-                                                                                                     plt.plot_identifier,
-                                                                                                     replaced_item.producer.name)
+                    print ('Plot identifier={}, in 5% which Replaces \'{}\' is NOT DISPATCHED. {} '
+                           'is in producer {}').format(
+                               plt.plot_identifier,
+                               plt.replaces,
+                               plt.plot_identifier,
+                               replaced_item.producer.name)
         print 'Total in 5%={}, Total Replacing Not Dispatched={}'.format(five_pcnt.count(), count)
         print 'DONE'
         print '================================='

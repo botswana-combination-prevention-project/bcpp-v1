@@ -1,8 +1,8 @@
 from django.contrib import admin
 
+from ..filters import HivResultFilter
 from ..forms import HivResultForm
 from ..models import HivResult
-from ..filters import HivResultFilter
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 

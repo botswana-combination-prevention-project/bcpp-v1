@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseModelAdmin
+from edc_base.modeladmin.admin import BaseModelAdmin
 
 from ..forms import ClinicEligibilityForm
 from ..models import ClinicEligibility, ClinicHouseholdMember
@@ -14,7 +14,6 @@ class ClinicEligibilityAdmin(BaseModelAdmin):
                     'Eligibility status of the subject. After entering the required items, click SAVE.']
 
     fields = (
-        #'household_member',
         'report_datetime',
         'first_name',
         'initials',
@@ -32,7 +31,7 @@ class ClinicEligibilityAdmin(BaseModelAdmin):
         "guardian",
         'inability_to_participate',
         "hiv_status",
-        )
+    )
 
     list_display = ('household_member', 'report_datetime', 'gender', 'is_eligible', 'is_consented', 'is_refused')
 
@@ -50,13 +49,13 @@ class ClinicEligibilityAdmin(BaseModelAdmin):
         "guardian": admin.VERTICAL,
         "inability_to_participate": admin.VERTICAL,
         "hiv_status": admin.VERTICAL,
-        }
+    }
 
     search_fields = (
         'household_member',
         'first_name',
         'initials',
-        )
+    )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":

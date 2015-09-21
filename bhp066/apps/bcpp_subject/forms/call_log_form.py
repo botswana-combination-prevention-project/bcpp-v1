@@ -1,7 +1,7 @@
 from django import forms
 
-from edc.base.form.forms import BaseModelForm
-from edc.constants import ALIVE, DEAD, NO, YES, UNKNOWN
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from edc_constants.constants import ALIVE, DEAD, NO, YES, UNKNOWN
 
 from ..models import CallLog, CallLogEntry
 

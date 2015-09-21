@@ -1,10 +1,11 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..choices import HOUSEHOLD_LOG_STATUS
 from ..managers import HouseholdWorkListManager
@@ -13,7 +14,7 @@ from .household_structure import HouseholdStructure
 from .plot import Plot
 
 
-class HouseholdWorkList(BaseDispatchSyncUuidModel):
+class HouseholdWorkList(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """A system model that links a household to its household members
     for a given survey year and helps track the enrollment status, enumeration
@@ -21,13 +22,14 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
 
     household_structure = models.ForeignKey(HouseholdStructure)
 
-    survey = models.ForeignKey(Survey,
+    survey = models.ForeignKey(
+        Survey,
         editable=False)
 
     label = models.CharField(
         max_length=25,
         help_text="label to group, e.g. T1 prep"
-        )
+    )
 
     visit_date = models.DateField(
         editable=False)
@@ -40,24 +42,24 @@ class HouseholdWorkList(BaseDispatchSyncUuidModel):
             ('unscheduled', 'Unscheduled'),
             ('incomplete', 'Incomplete'),
             ('done', 'Done'),
-            ),
+        ),
         editable=False
-        )
+    )
 
     appt_count = models.IntegerField(
         default=0,
         editable=False,
         help_text='Number of currently scheduled appointments, including missed.'
-        )
+    )
 
     enrolled_type = models.CharField(
         choices=(
             ('hic', 'HIC/BHS'),
             ('bhs', 'BHS Only')
-            ),
+        ),
         max_length=3,
         editable=False
-        )
+    )
 
     note = models.CharField("Note", max_length=250, blank=True)
 

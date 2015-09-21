@@ -3,8 +3,8 @@ from django.db.models import Max
 
 from edc.device.sync.models import Producer
 
-from ...models import Replaceable
-from ...utils import get_producer_status
+from bhp066.apps.bcpp_household.models import Replaceable
+from bhp066.apps.bcpp_household.utils import get_producer_status
 
 
 class Command(BaseCommand):

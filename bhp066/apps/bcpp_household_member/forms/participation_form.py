@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.widgets import Select
-from apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_PARTICIPATION
+
+from bhp066.apps.bcpp_household_member.choices import HOUSEHOLD_MEMBER_PARTICIPATION
 
 
 class ParticipationForm(forms.Form):
@@ -12,7 +13,7 @@ class ParticipationForm(forms.Form):
         required=False,
         choices=HOUSEHOLD_MEMBER_PARTICIPATION,
         widget=Select(attrs={'onchange': 'this.form.submit();'})
-        )
+    )
     household_member = forms.CharField(widget=forms.HiddenInput())
     dashboard_type = forms.CharField(widget=forms.HiddenInput())
     dashboard_id = forms.CharField(widget=forms.HiddenInput())

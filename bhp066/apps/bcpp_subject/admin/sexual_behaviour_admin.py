@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from ..models import SexualBehaviour
 from ..forms import SexualBehaviourForm
+from ..models import SexualBehaviour
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 

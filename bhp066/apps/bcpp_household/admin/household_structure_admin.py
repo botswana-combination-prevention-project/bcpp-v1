@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from apps.bcpp_household.actions import export_as_kml_hs
-from apps.bcpp_household.forms import HouseholdStructureForm
-from apps.bcpp_household.models import HouseholdStructure
+from ..actions import export_as_kml_hs
+from ..forms import HouseholdStructureForm
+from ..models import HouseholdStructure
 
 from .base_household_model_admin import BaseHouseholdModelAdmin
 
@@ -43,14 +43,14 @@ class HouseholdStructureAdmin(BaseHouseholdModelAdmin):
         'user_modified',
         'hostname_modified',
         'failed_enumeration_attempts',
-        )
+    )
     search_fields = (
         'household__household_identifier',
         'household__id',
         'id',)
     radio_fields = {
         'survey': admin.VERTICAL,
-        }
+    }
     readonly_fields = ('survey', )
     list_per_page = 15
 admin.site.register(HouseholdStructure, HouseholdStructureAdmin)

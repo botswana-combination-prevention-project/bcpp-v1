@@ -1,4 +1,4 @@
-from edc.base.model.models import BaseListModel
+from edc_base.model.models import BaseListModel
 
 
 class FamilyPlanning (BaseListModel):

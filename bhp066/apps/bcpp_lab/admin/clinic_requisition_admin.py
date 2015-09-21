@@ -3,7 +3,7 @@ from django.contrib import admin
 from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
 from edc.export.actions import export_as_csv_action
 
-from apps.bcpp_clinic.models import ClinicVisit
+from bhp066.apps.bcpp_clinic.models import ClinicVisit
 
 from ..actions import print_requisition_label
 from ..models import ClinicRequisition, Panel

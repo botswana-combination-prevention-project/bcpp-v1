@@ -1,4 +1,4 @@
-from edc.base.model.models import BaseListModel
+from edc_base.model.models import BaseListModel
 
 
 class Religion (BaseListModel):
@@ -8,4 +8,3 @@ class Religion (BaseListModel):
         app_label = "bcpp_list"
         verbose_name = "Religion"
         verbose_name_plural = "Religion"
-        

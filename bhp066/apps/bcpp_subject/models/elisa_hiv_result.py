@@ -1,11 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.base.model.validators import datetime_not_future
 
-from apps.bcpp.choices import ELISA_HIV_RESULT
+from bhp066.apps.bcpp.choices import ELISA_HIV_RESULT
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
@@ -14,17 +13,17 @@ from .hic_enrollment import HicEnrollment
 class ElisaHivResult (BaseScheduledVisitModel):
 
     hiv_result = models.CharField(
-        verbose_name=_("HIV test result from the Elisa"),
+        verbose_name="HIV test result from the Elisa",
         max_length=50,
         choices=ELISA_HIV_RESULT,
-        )
+    )
 
     hiv_result_datetime = models.DateTimeField(
-        verbose_name=_("HIV test result from the Elisa date and time"),
+        verbose_name="HIV test result from the Elisa date and time",
         null=True,
         blank=True,
         validators=[datetime_not_future],
-        )
+    )
 
     history = AuditTrail()
 

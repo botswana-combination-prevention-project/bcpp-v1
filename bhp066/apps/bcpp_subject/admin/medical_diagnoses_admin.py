@@ -16,7 +16,7 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
         'heart_attack_record',
         'cancer_record',
         'tb_record',
-        )
+    )
     radio_fields = {
         "heart_attack_record": admin.VERTICAL,
         "cancer_record": admin.VERTICAL,

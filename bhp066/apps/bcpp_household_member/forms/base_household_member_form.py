@@ -1,6 +1,6 @@
 from django import forms
 
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from edc.core.bhp_common.utils import check_initials_field
 
 
@@ -9,7 +9,6 @@ class BaseHouseholdMemberForm(BaseModelForm):
     def clean(self):
 
         cleaned_data = super(BaseHouseholdMemberForm, self).clean()
-        # check if dispatched
         household_structure = cleaned_data.get('household_structure', None)
         if household_structure:
             if household_structure.is_dispatched_as_item():

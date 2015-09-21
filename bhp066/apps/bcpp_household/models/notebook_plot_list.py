@@ -1,18 +1,16 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
-from .plot import Plot
 
-
-class NotebookPlotList(BaseDispatchSyncUuidModel):
+class NotebookPlotList(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     plot_identifier = models.CharField(
         verbose_name='Plot Identifier',
         max_length=25,
         unique=True,
-        help_text=_("Plot identifier"),
+        help_text="Plot identifier",
         editable=True,)
 
     def natural_key(self):

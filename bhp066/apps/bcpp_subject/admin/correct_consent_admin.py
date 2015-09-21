@@ -31,7 +31,7 @@ class CorrectConsentAdmin(BaseModelAdmin):
         'new_is_literate',
         'new_witness_name',
         'old_witness_name',
-        )
+    )
 
     list_display = ('subject_consent', 'report_datetime')
 
@@ -46,7 +46,7 @@ class CorrectConsentAdmin(BaseModelAdmin):
         'new_is_literate': admin.VERTICAL,
         'old_may_store_samples': admin.VERTICAL,
         'new_may_store_samples': admin.VERTICAL,
-        }
+    }
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "subject_consent":

@@ -5,23 +5,23 @@ from django.db.models import signals
 from django.core import serializers
 from django.db.models import get_app, get_models
 
-from edc.core.crypto_fields.classes import FieldCryptor
+from edc_base.encrypted_fields import FieldCryptor
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.device.sync.classes import SerializeToTransaction
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp.app_configuration.classes import BcppAppConfiguration
-from apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from apps.bcpp_survey.models import Survey
-from apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory, PlotFactory
-from apps.bcpp_household.models import household_on_post_save, household_structure_on_post_save, Household
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory, PlotFactory
+from bhp066.apps.bcpp_household.models import household_on_post_save, household_structure_on_post_save, Household
 from .factories import (HouseholdMemberFactory, EnrollmentChecklistFactory, HouseholdInfoFactory, SubjectMovedFactory, SubjectAbsenteeEntryFactory,
                         SubjectUndecidedEntryFactory, SubjectAbsenteeFactory, SubjectUndecidedFactory, EnrollmentLossFactory,
                         HeadHouseholdEligibilityFactory, SubjectHtcFactory)
-from apps.bcpp_household_member.models import EnrollmentLoss, SubjectRefusalHistory, SubjectRefusal, EnrollmentChecklist
+from bhp066.apps.bcpp_household_member.models import EnrollmentLoss, SubjectRefusalHistory, SubjectRefusal, EnrollmentChecklist
 
 
 class NaturalKeyTests(TestCase):
@@ -53,7 +53,7 @@ class NaturalKeyTests(TestCase):
 
     def test_p3(self):
         survey = Survey.objects.all()[0]
-        from apps.bcpp_household.models import HouseholdStructure
+        from bhp066.apps.bcpp_household.models import HouseholdStructure
         plot = PlotFactory(community='test_community6', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         signals.post_save.disconnect(household_on_post_save, weak=False, dispatch_uid="post_save_on_household")

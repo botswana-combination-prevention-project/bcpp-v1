@@ -3,16 +3,16 @@ from datetime import datetime
 from django.core.validators import RegexValidator
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.fields import OtherCharField
-from edc.core.crypto_fields.fields import EncryptedTextField
-from edc.base.model.validators import date_is_future
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.fields import OtherCharField
+from edc_base.encrypted_fields import EncryptedTextField
+from edc_base.model.validators import date_is_future
 from edc.choices import YES_NO_UNKNOWN, TIME_OF_DAY, TIME_OF_WEEK, ALIVE_DEAD_UNKNOWN, YES_NO
-from edc.constants import YES, NO, DEAD
+from edc_constants.constants import YES, NO, DEAD
 from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models.survey import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models.survey import Survey
 
 from ..choices import APPT_LOCATIONS, APPT_GRADING, CONTACT_TYPE
 from ..managers import CallLogEntryManager, CallLogManager
@@ -39,8 +39,7 @@ class CallLog (BaseSyncUuidModel):
         max_length=25,
         null=True,
         editable=False,
-        help_text="from call list"
-        )
+        help_text="from call list")
 
     history = AuditTrail()
 
@@ -104,7 +103,7 @@ class CallLogEntry (BaseSyncUuidModel):
         max_length=10,
         choices=ALIVE_DEAD_UNKNOWN,
         help_text=""
-        )
+    )
 
     update_locator = models.CharField(
         max_length=7,
@@ -114,7 +113,7 @@ class CallLogEntry (BaseSyncUuidModel):
         blank=True,
         help_text=('If YES, please enter the changed information '
                    'in the box above entitled (2) Locator information')
-        )
+    )
 
     moved_community = models.CharField(
         max_length=7,
@@ -123,7 +122,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     new_community = models.CharField(
         max_length=50,
@@ -131,7 +130,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text="If moved out of the community, provide a new community name or \'UNKNOWN\'"
-        )
+    )
 
     moved_household = models.CharField(
         max_length=7,
@@ -140,7 +139,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     available = models.CharField(
         max_length=7,
@@ -149,7 +148,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     time_of_week = models.CharField(
         verbose_name='Time of week when participant will be available',
@@ -158,7 +157,7 @@ class CallLogEntry (BaseSyncUuidModel):
         blank=True,
         null=True,
         help_text=""
-        )
+    )
 
     time_of_day = models.CharField(
         verbose_name='Time of day when participant will be available',
@@ -167,7 +166,7 @@ class CallLogEntry (BaseSyncUuidModel):
         blank=True,
         null=True,
         help_text=""
-        )
+    )
 
     appt = models.CharField(
         verbose_name='Is the participant willing to schedule an appointment',
@@ -176,7 +175,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     appt_date = models.DateField(
         verbose_name="Appointment Date",
@@ -184,7 +183,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text="This can only come from the participant."
-        )
+    )
 
     appt_grading = models.CharField(
         verbose_name='Is this appointment...',
@@ -193,7 +192,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     appt_location = models.CharField(
         verbose_name='Appointment location',
@@ -202,7 +201,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     appt_location_other = OtherCharField(
         verbose_name='Appointment location',
@@ -210,7 +209,7 @@ class CallLogEntry (BaseSyncUuidModel):
         null=True,
         blank=True,
         help_text=""
-        )
+    )
 
     call_again = models.CharField(
         verbose_name='Call the participant again?',
@@ -218,7 +217,7 @@ class CallLogEntry (BaseSyncUuidModel):
         choices=YES_NO,
         default=YES,
         help_text=''
-        )
+    )
 
     history = AuditTrail()
 
@@ -236,7 +235,7 @@ class CallLogEntry (BaseSyncUuidModel):
             self.call_log.household_member.first_name,
             self.call_log.household_member.initials,
             self.call_log.household_member.age_in_years,
-            )
+        )
 
     def natural_key(self):
         return self.call_log.natural_key() + (self.call_datetime, )

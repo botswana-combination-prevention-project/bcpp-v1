@@ -14,11 +14,11 @@ class ElisaHivResultAdmin (SubjectVisitModelAdmin):
         'subject_visit',
         'hiv_result',
         'hiv_result_datetime',
-        )
+    )
 
     list_filter = (HivResultFilter,)
 
     radio_fields = {
         "hiv_result": admin.VERTICAL,
-        }
+    }
 admin.site.register(ElisaHivResult, ElisaHivResultAdmin)

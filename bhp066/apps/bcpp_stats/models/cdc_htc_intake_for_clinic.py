@@ -1,14 +1,13 @@
 from django.db import models
 
-from edc.core.crypto_fields.fields import EncryptedIdentityField
-
+from edc_base.encrypted_fields import IdentityField
 from .base_cdc import BaseCdc
 
 
 class CdcHtcIntakeForClinic(BaseCdc):
 
     community_name = models.IntegerField(null=True)
-    omang_nbr = EncryptedIdentityField(null=True)
+    omang_nbr = IdentityField(null=True)
     pregnant_ind = models.IntegerField(null=True)
     prior_hiv_result = models.IntegerField(null=True)
     prior_hiv_test_date = models.DateField(null=True)

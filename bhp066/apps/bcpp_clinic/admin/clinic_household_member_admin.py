@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from apps.bcpp_household.models import HouseholdStructure
-
-from apps.bcpp_household_member.admin.base_household_member_admin import BaseHouseholdMemberAdmin
+from bhp066.apps.bcpp_household_member.admin.base_household_member_admin import BaseHouseholdMemberAdmin
 
 from ..models import ClinicHouseholdMember
 

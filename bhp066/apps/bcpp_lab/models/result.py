@@ -4,9 +4,10 @@ from django.core.urlresolvers import reverse
 from lis.specimen.lab_result.models import BaseResult
 
 from .order_item import OrderItem
+from edc.device.sync.models import BaseSyncUuidModel
 
 
-class Result(BaseResult):
+class Result(BaseResult, BaseSyncUuidModel):
     """Stores result information in a one-to-many relation with :class:`ResultItem`."""
     order_item = models.ForeignKey(OrderItem)
 

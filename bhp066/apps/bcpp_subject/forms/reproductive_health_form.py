@@ -10,16 +10,13 @@ class ReproductiveHealthForm (BaseSubjectModelForm):
 
     optional_attrs = {ANNUAL: {
         'label': {'family_planning': (
-            'Since we spoke with you at our last visit, have you used any methods to prevent pregnancy?'),
-            }
-        }
-    }
+            'Since we spoke with you at our last visit, have you used any methods to prevent pregnancy?')}}}
 
     def clean(self):
         cleaned_data = super(ReproductiveHealthForm, self).clean()
         if ((cleaned_data.get('when_pregnant') and cleaned_data.get('when_pregnant') == 'No') and
-            (cleaned_data.get('gestational_weeks') or (cleaned_data.get('pregnancy_hiv_tested') != 'N/A'
-             or cleaned_data.get('pregnancy_hiv_retested') != 'N/A'))):
+            (cleaned_data.get('gestational_weeks') or (cleaned_data.get('pregnancy_hiv_tested') != 'N/A' or
+                                                       cleaned_data.get('pregnancy_hiv_retested') != 'N/A'))):
             raise forms.ValidationError(
                 'If participant did not get pregnant since last interview, then do not provide answers for \
                 questions from "At about what gestational age (in weeks) did you start arv\'s during this (or your last) pregnancy?"')

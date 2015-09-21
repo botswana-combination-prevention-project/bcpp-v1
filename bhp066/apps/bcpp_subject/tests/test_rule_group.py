@@ -1,17 +1,16 @@
 from datetime import datetime, timedelta
 
-from edc.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
-from edc.subject.registration.models import RegisteredSubject
+from edc_constants.constants import NEW, NOT_REQUIRED, KEYED, REQUIRED, POS, NEG, YES, NO
 from edc_quota.client.models import Quota
 
-from apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from apps.bcpp_lab.models import Panel, AliquotType
+from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
+from bhp066.apps.bcpp_lab.models import Panel, AliquotType
 
 from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, ElisaHivResult,
                       Circumcision, Circumcised, HicEnrollment, SubjectLocator)
-from .factories import  (SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory, HivTestingHistoryFactory,
-                        SubjectLocatorFactory, PimaVlFactory)
+from .factories import (SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory, HivTestingHistoryFactory,
+                        SubjectLocatorFactory)
 from .base_rule_group_test_setup import BaseRuleGroupTestSetup
 
 
@@ -45,12 +44,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='Yes',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=YES,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
         # said they have taken ARV so not required
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
@@ -81,12 +80,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_female_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='Yes',
-            arv_evidence='Yes',
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=YES,
+            arv_evidence=YES,
+        )
 
         # on art so no need for CD4
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
@@ -119,12 +118,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='Yes',
-            arv_evidence='No',
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=YES,
+            arv_evidence=NO,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
@@ -144,12 +143,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
 
@@ -179,8 +178,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         hiv_test_review = HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='NEG',
-            )
+            recorded_hiv_result=NEG,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
@@ -218,8 +217,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
@@ -255,9 +254,9 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='NEG',
-            )
-        #hiv_care_adherence.save()
+            recorded_hiv_result=NEG,
+        )
+        # hiv_care_adherence.save()
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_care_adherence_options).count(), 1)
@@ -285,8 +284,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='NEG',
-            )
+            recorded_hiv_result=NEG,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
@@ -314,8 +313,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
@@ -383,7 +382,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_tested_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_untested_options).count(), 1)
 
-        hiv_testing_history.has_tested = 'No'
+        hiv_testing_history.has_tested = NO
         hiv_testing_history.save()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_untested_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_tested_options).count(), 1)
@@ -454,8 +453,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
@@ -463,19 +462,19 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         care_adherance = HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='Yes',
-            arv_evidence='No',
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=YES,
+            arv_evidence=NO,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
 
-        care_adherance.on_arv = 'No'
+        care_adherance.on_arv = NO
         care_adherance.save()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pima_options).count(), 1)
 
@@ -487,12 +486,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='No',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=NO,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         hiv_care_adherence_options = {}
         hiv_care_adherence_options.update(
@@ -500,7 +499,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             entry__model_name='hivcareadherence',
             appointment=self.subject_visit_male_T0.appointment)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(
+            entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
     def test_known_pos_on_art_with_doc_requires_cd4_only(self):
         """If previous result is POS on art with doc evidence, do not run HIV or CD4.
@@ -537,8 +537,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
@@ -546,12 +546,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='Yes',
-            arv_evidence='Yes',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
@@ -595,8 +595,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_care_adherence_options).count(), 1)
 
@@ -604,12 +604,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='Yes',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=YES,  # this is the rule field
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **hiv_care_adherence_options).count(), 1)
@@ -658,8 +658,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='NEG',
-            )
+            recorded_hiv_result=NEG,
+        )
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **elisa_hiv_result_options).count(), 1)
 
@@ -673,20 +673,20 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 #              subject_visit=self.subject_visit_male_T0,
 #              hiv_result='IND',
 #              report_datetime=datetime.today(),
-#              insufficient_vol='No'
-#             )
+#              insufficient_vol=NO
+#     )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **elisa_hiv_result_options).count(), 1)
 
         elisa_panel = Panel.objects.get(name='ELISA')
         aliquot_type = AliquotType.objects.all()[0]
         site = self.study_site
-        elisa = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=elisa_panel, aliquot_type=aliquot_type, site=site)
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=elisa_panel, aliquot_type=aliquot_type, site=site)
         ElisaHivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='POS',
-             hiv_result_datetime=datetime.today(),
-            )
+            subject_visit=self.subject_visit_male_T0,
+            hiv_result=POS,
+            hiv_result_datetime=datetime.today(),
+        )
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **elisa_hiv_result_options).count(), 1)
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
@@ -718,9 +718,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **uncircumcised_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
 
-        circumcition = CircumcisionFactory(subject_visit=self.subject_visit_male_T0,
-                                            circumcised='Yes'
-                                            )
+        circumcition = CircumcisionFactory(subject_visit=self.subject_visit_male_T0, circumcised=YES)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
@@ -728,12 +726,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self._hiv_result = self.hiv_result(NEG, self.subject_visit_male_T0)
 
-        #Enforce that entering an HivResult does not affect Circumcition Meta Data.
+        # Enforce that entering an HivResult does not affect Circumcition Meta Data.
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
 
-        circumcition.circumcised = 'No'
+        circumcition.circumcised = NO
         circumcition.save()
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **circumsition_options).count(), 1)
@@ -770,14 +768,14 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         Circumcision.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            circumcised='Yes'
-            )
+            circumcised=YES
+        )
 
         Circumcised.objects.create(
             subject_visit=self.subject_visit_male_T0,
             where_circ='Lobatse',
             why_circ='not_sure'
-            )
+        )
 
         self.subject_visit_male.delete()
         # Create circumsided dude's year 1 visit
@@ -864,16 +862,15 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission='Yes',
+            hic_permission=YES,
             permanent_resident=True,
             intend_residency=True,
-            hiv_status_today='NEG',
-            dob=datetime(1990,01,01),
+            hiv_status_today=NEG,
+            dob=datetime(1990, 01, 01),
             household_residency=True,
             citizen_or_spouse=True,
             locator_information=True,
-            consent_datetime=datetime.today()
-           )
+            consent_datetime=datetime.today())
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
 
@@ -904,38 +901,37 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission='Yes',
+            hic_permission=YES,
             permanent_resident=True,
             intend_residency=True,
-            hiv_status_today='NEG',
+            hiv_status_today=NEG,
             dob=datetime(1990, 01, 01),
             household_residency=True,
             citizen_or_spouse=True,
             locator_information=True,
-            consent_datetime=datetime.today()
-           )
+            consent_datetime=datetime.today())
 
         self.subject_visit_male.delete()
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **microtube_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
-        #Make participant known positive in year 1, microtube and hiv result should remain required
+        # Make participant known positive in year 1, microtube and hiv result should remain required
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **microtube_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
@@ -957,16 +953,15 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission='Yes',
+            hic_permission=YES,
             permanent_resident=True,
             intend_residency=True,
-            hiv_status_today='NEG',
+            hiv_status_today=NEG,
             dob=datetime(1990, 01, 01),
             household_residency=True,
             citizen_or_spouse=True,
             locator_information=True,
-            consent_datetime=datetime.today()
-           )
+            consent_datetime=datetime.today())
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1009,18 +1004,18 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
@@ -1035,18 +1030,18 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
@@ -1062,45 +1057,45 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
         # known pos
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
 #         quota = Quota.objects.create(
 #             app_label='bcpp_subject',
 #             model_name='PimaVl',
 #             target=2,
 #             expires_datetime=datetime.now() + timedelta(days=1)
-#         )
+#     )
         self.assertEqual(Quota.objects.all().count(), 1)
 #         PimaVlFactory(subject_visit=self.subject_visit_male_T0)
-# 
+#
 #         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **pima_vl_options).count(), 1)
 
     def test_hiv_pos_and_art_naive_pimavl_ahs(self):
         """HIV Positive not on ART at T0, Should offer POC VL at BHS
            HIV Positive not on ART at T1 Should not offer POC VL AHS"""
 
-        #Takes care of T0 environment
+        # Takes care of T0 environment
         self.hiv_pos_and_art_naive_pimavl_bhs()
 
         self.subject_visit_male = self.annual_subject_visit
@@ -1113,28 +1108,28 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
 
@@ -1160,16 +1155,15 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission='Yes',
+            hic_permission=YES,
             permanent_resident=True,
             intend_residency=True,
-            hiv_status_today='NEG',
+            hiv_status_today=NEG,
             dob=datetime(1990, 01, 01),
             household_residency=True,
             citizen_or_spouse=True,
             locator_information=True,
-            consent_datetime=datetime.today()
-           )
+            consent_datetime=datetime.today())
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1198,16 +1192,15 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission='No',
+            hic_permission=NO,
             permanent_resident=True,
             intend_residency=True,
-            hiv_status_today='NEG',
+            hiv_status_today=NEG,
             dob=datetime(1990, 01, 01),
             household_residency=True,
             citizen_or_spouse=True,
             locator_information=True,
-            consent_datetime=datetime.today()
-           )
+            consent_datetime=datetime.today())
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1235,29 +1228,29 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
 
     def hiv_pos_nd_art_naive_at_bhs(self):
@@ -1288,18 +1281,18 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
         aliquot_type = AliquotType.objects.all()[0]
@@ -1311,12 +1304,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=KEYED, **research_blood_draw_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
@@ -1354,12 +1347,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
             first_positive=None,
-            medical_care='Yes',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=YES,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **research_blood_draw_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
@@ -1380,31 +1373,31 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='Yes',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=YES,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
-        #self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pimavl_options).count(), 1)
+        # self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pimavl_options).count(), 1)
 
         aliquot_type = AliquotType.objects.all()[0]
         site = self.study_site
@@ -1437,18 +1430,18 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
             first_positive=None,
-            medical_care='Yes',
-            ever_recommended_arv='Yes',
-            ever_taken_arv='Yes',
-            on_arv='Yes',
-            arv_evidence='Yes',  # this is the rule field
-            )
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
         #
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **research_blood_draw_options).count(), 1)
-        #self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pimavl_options).count(), 1)
+        # self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pimavl_options).count(), 1)
 
     def test_hiv_pos_nd_not_on_art_at_bhs(self):
         """HIV Positive not on ART at T0, Should offer POC CD4, RBD and VL.
@@ -1482,29 +1475,29 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
@@ -1545,30 +1538,30 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **hiv_car_adherence_options).count(), 1)
         # ART naive at the time of enrollment, in this case T0.
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
@@ -1598,29 +1591,29 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male_T0,
-            has_tested='Yes',
+            has_tested=YES,
             when_hiv_test='1 to 5 months ago',
-            has_record='Yes',
-            verbal_hiv_result='POS',
-            other_record='No'
-            )
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
 
         HivTestReview.objects.create(
             subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result='POS',
-            )
+            recorded_hiv_result=POS,
+        )
 
         # add HivCarAdherence,
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='No',
-            ever_recommended_arv='No',
-            ever_taken_arv='No',
-            on_arv='No',
-            arv_evidence='No',  # this is the rule field
-            )
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,  # this is the rule field
+        )
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1633,12 +1626,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male,
             first_positive=None,
-            medical_care='Yes',
-            ever_recommended_arv='Yes',
-            ever_taken_arv='Yes',
-            on_arv='Yes',
-            arv_evidence='Yes',  # this is the rule field
-            )
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )
 
         viral_load_options = {}
         viral_load_options.update(
@@ -1688,12 +1681,12 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HivCareAdherence.objects.create(
             subject_visit=self.subject_visit_male_T0,
             first_positive=None,
-            medical_care='Yes',
-            ever_recommended_arv='Yes',
-            ever_taken_arv='Yes',
-            on_arv='Yes',
-            arv_evidence='Yes',  # this is the rule field
-            )
+            medical_care=YES,
+            ever_recommended_arv=YES,
+            ever_taken_arv=YES,
+            on_arv=YES,
+            arv_evidence=YES,  # this is the rule field
+        )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pima_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pimavl_options).count(), 1)
@@ -1746,16 +1739,16 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission='Yes',
+            hic_permission=YES,
             permanent_resident=True,
             intend_residency=True,
-            hiv_status_today='NEG',
+            hiv_status_today=NEG,
             dob=datetime(1990, 01, 01),
             household_residency=True,
             citizen_or_spouse=True,
             locator_information=True,
             consent_datetime=datetime.today()
-           )
+        )
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1788,13 +1781,11 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.hiv_result(POS, self.subject_visit_male)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_options).count(), 1)
-        #self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pimavl_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
 
 #     def test_poc_viral_load_mobile_household(self):
-# #         settings.PIMA_VL_LIMIT = 10
 #         ra_group = Group.objects.create(name=FIELD_RESEARCH_ASSISTANT_GROUP)
 #         clinic_ra_group = Group.objects.create(name=CLINIC_RESEARCH_ASSISTANT)
 #         ra_user = User.objects.create_user('ra_user', 'ra_user@bhp.org.bw')
@@ -1812,7 +1803,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 #             registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
 #             appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='T1')
 #             subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
-#             self.hiv_result('POS', subject_visit)
+#             self.hiv_result(POS, subject_visit)
 #             poc_vl = PimaVlFactory(subject_visit=subject_visit)
 #             self.assertRaises(DeniedPermissionPimaVLError, lambda: poc_vl.valid_user(ra_user))
 #             self.assertTrue(poc_vl.valid_user(clinic_ra_user))
@@ -1826,7 +1817,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 #         registered_subject = RegisteredSubject.objects.get(subject_identifier=subject_consent.subject_identifier)
 #         appointment = Appointment.objects.get(registered_subject=registered_subject, visit_definition__code='T1')
 #         subject_visit = SubjectVisitFactory(appointment=appointment, household_member=hm)
-#         self.hiv_result('POS', subject_visit)
+#         self.hiv_result(POS, subject_visit)
 #         print '{}/{}'.format(count, 5)
 #         poc_vl = PimaVlFactory(subject_visit=subject_visit)
 #         self.assertRaises(DeniedPermissionPimaVLError, lambda: poc_vl.valid_user(clinic_ra_user))

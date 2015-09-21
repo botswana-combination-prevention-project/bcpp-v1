@@ -1,5 +1,4 @@
 import socket
-import re
 
 from datetime import datetime
 
@@ -13,8 +12,8 @@ from edc.device.sync.models import Producer
 from edc.device.sync.utils import load_producer_db_settings
 from edc.device.sync.exceptions import PendingTransactionError
 
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..constants import (RESIDENTIAL_HABITABLE, NON_RESIDENTIAL,
                          RESIDENTIAL_NOT_HABITABLE, FIVE_PERCENT,
@@ -379,8 +378,8 @@ class ReplacementHelper(object):
         """Returns True if all eligible members are absent
         after 3 attempts."""
         eligible_members = HouseholdMember.objects.using('default').filter(
-                    household_structure=self.household_structure,
-                    eligible_member=True)
+            household_structure=self.household_structure,
+            eligible_member=True)
         # If eligible members are consented the household is not replaceable
         if eligible_members:
             for member in eligible_members:
@@ -405,12 +404,12 @@ class ReplacementHelper(object):
         Information comes from the last HouseholdLog entry for a household that has
         not been enumerated and has been visited at least 3 times"""
         eligible_representative_absent = False
-        if (not self.household_structure.enumerated
-                and self.household_structure.failed_enumeration_attempts >= VISIT_ATTEMPTS):
+        if (not self.household_structure.enumerated and
+                self.household_structure.failed_enumeration_attempts >= VISIT_ATTEMPTS):
             try:
                 report_datetime = HouseholdLogEntry.objects.using('default').filter(
-                    household_log__household_structure=self.household_structure
-                    ).aggregate(Max('report_datetime')).get('report_datetime__max')
+                    household_log__household_structure=self.household_structure).aggregate(
+                        Max('report_datetime')).get('report_datetime__max')
                 HouseholdLogEntry.objects.using('default').get(
                     household_log__household_structure=self.household_structure,
                     report_datetime=report_datetime,
@@ -419,7 +418,6 @@ class ReplacementHelper(object):
             except HouseholdLogEntry.DoesNotExist:
                 pass
         return eligible_representative_absent
-
 
     @property
     def isreplaceable_household(self):

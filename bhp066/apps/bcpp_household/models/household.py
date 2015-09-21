@@ -1,19 +1,18 @@
 from django.db import models
-from django.utils.translation import ugettext as _
 
-from edc.audit.audit_trail import AuditTrail
-from edc.core.crypto_fields.fields import (EncryptedTextField, EncryptedDecimalField)
+from edc_base.audit_trail import AuditTrail
+from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.encrypted_fields import EncryptedTextField, EncryptedDecimalField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.map.classes import site_mappers
 
+from ..exceptions import AlreadyReplaced
 from ..managers import HouseholdManager
 
 from .plot import Plot
 
-from ..exceptions import AlreadyReplaced
 
-
-class Household(BaseDispatchSyncUuidModel):
+class Household(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A system model that represents the household asset. See also HouseholdStructure."""
 
     plot = models.ForeignKey(Plot, null=True)
@@ -22,7 +21,7 @@ class Household(BaseDispatchSyncUuidModel):
         verbose_name='Household Identifier',
         max_length=25,
         unique=True,
-        help_text=_("Household identifier"),
+        help_text="Household identifier",
         null=True,
         editable=False)
 
@@ -124,7 +123,7 @@ class Household(BaseDispatchSyncUuidModel):
 
     comment = EncryptedTextField(
         max_length=250,
-        help_text=_("You may provide a comment here or leave BLANK."),
+        help_text="You may provide a comment here or leave BLANK.",
         blank=True,
         null=True)
 
@@ -154,9 +153,9 @@ class Household(BaseDispatchSyncUuidModel):
         help_text=('datetime that household is enrolled. '
                    'Updated by Household_structure post_save.'))
 
-    objects = HouseholdManager()
-
     history = AuditTrail()
+
+    objects = HouseholdManager()
 
     def save(self, *args, **kwargs):
         using = kwargs.get('using')
@@ -185,7 +184,7 @@ class Household(BaseDispatchSyncUuidModel):
         return self.community
 
     def __unicode__(self):
-        if site_mappers.current_mapper().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
+        if site_mappers.get_current_mapper().clinic_plot_identifier[0:6] == self.household_identifier[0:6]:
             return self.plot.description
         return self.household_identifier
 

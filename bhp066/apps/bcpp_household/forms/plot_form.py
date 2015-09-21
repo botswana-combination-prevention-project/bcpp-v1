@@ -1,10 +1,9 @@
 from django import forms
-from django.conf import settings
 
-from edc.base.form.forms import BaseModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from edc.map.classes import site_mappers
 
-from ..models import Plot, PlotLog, PlotLogEntry
+from ..models import Plot, PlotLog
 
 
 class PlotForm(BaseModelForm):
@@ -12,7 +11,7 @@ class PlotForm(BaseModelForm):
     def clean(self):
         cleaned_data = self.cleaned_data
 
-        if self.instance.plot_identifier == site_mappers.get_current_mapper()().clinic_plot_identifier:
+        if self.instance.plot_identifier == site_mappers.get_current_mapper().clinic_plot_identifier:
             raise forms.ValidationError('Plot is a special plot that represents the BCPP Clinic. '
                                         'It may not be edited by a user.')
         try:
@@ -60,7 +59,7 @@ class PlotForm(BaseModelForm):
                                     forms.ValidationError)
 
         # Check for plot log entry completion before allowing plot confirmation
-        if (cleaned_data.get('gps_degrees_s') and 
+        if (cleaned_data.get('gps_degrees_s') and
                 cleaned_data.get('gps_minutes_s') and
                 cleaned_data.get('gps_degrees_e') and
                 cleaned_data.get('gps_minutes_e')):

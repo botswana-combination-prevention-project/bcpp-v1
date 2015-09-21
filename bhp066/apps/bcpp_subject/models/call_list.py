@@ -2,16 +2,15 @@ from dateutil.relativedelta import relativedelta
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc.choices.common import GENDER
-from edc.constants import CLOSED, OPEN, NEW
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import FirstnameField
+from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
+from edc_constants.constants import CLOSED, OPEN, NEW
 
-from apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
+from bhp066.apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
 
 from ..choices import REFERRAL_CODES
 from ..managers import CallListManager
@@ -31,7 +30,7 @@ class CallList (BaseSyncUuidModel):
         null=True,
         editable=False,
         help_text='last call datetime updated by call log entry',
-        )
+    )
 
     app_label = models.CharField(
         max_length=25,
@@ -45,29 +44,29 @@ class CallList (BaseSyncUuidModel):
         max_length=50,
         editable=False)
 
-    first_name = EncryptedFirstnameField(
+    first_name = FirstnameField(
         verbose_name='First name',
         editable=False,
-        )
+    )
 
     initials = models.CharField(
         verbose_name='Initials',
         max_length=3,
         editable=False,
-        )
+    )
 
     gender = models.CharField(
         verbose_name='Gender',
         max_length=1,
         choices=GENDER,
         editable=False,
-        )
+    )
 
     age_in_years = models.IntegerField(
-        verbose_name=_('Age in years'),
+        verbose_name='Age in years',
         null=True,
         editable=False,
-        )
+    )
 
     bhs = models.BooleanField(default=False)
 
@@ -76,8 +75,8 @@ class CallList (BaseSyncUuidModel):
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        help_text=_("From Subject Consent.")
-        )
+        help_text="From Subject Consent."
+    )
 
     referral_code = models.CharField(
         verbose_name='Referral Code',
@@ -86,7 +85,7 @@ class CallList (BaseSyncUuidModel):
         editable=False,
         null=True,
         help_text="updated from subject referral"
-        )
+    )
 
     referral_appt_date = models.DateTimeField(
         verbose_name="Referral date and time",
@@ -94,8 +93,8 @@ class CallList (BaseSyncUuidModel):
             datetime_not_before_study_start,
             datetime_not_future, ],
         null=True,
-        help_text=_("From Subject Consent.")
-        )
+        help_text="From Subject Consent."
+    )
 
     hic = models.BooleanField(default=False)
 
@@ -105,8 +104,8 @@ class CallList (BaseSyncUuidModel):
             datetime_not_before_study_start,
             datetime_not_future, ],
         null=True,
-        help_text=_("From HIC Enrollment.report_datetime.")
-        )
+        help_text="From HIC Enrollment.report_datetime."
+    )
 
     call_attempts = models.IntegerField(
         default=0)
@@ -114,7 +113,7 @@ class CallList (BaseSyncUuidModel):
     call_outcome = models.TextField(
         max_length=150,
         null=True,
-        )
+    )
 
     call_status = models.CharField(
         max_length=15,
@@ -122,15 +121,15 @@ class CallList (BaseSyncUuidModel):
             (NEW, 'New'),
             (OPEN, 'Open'),
             (CLOSED, 'Closed'),
-            ),
+        ),
         default=NEW,
-        )
+    )
 
     label = models.CharField(
         max_length=25,
         null=True,
         help_text="label to group reasons for contact, e.g. T1 preparation"
-        )
+    )
 
     member_appointment = models.ForeignKey(MemberAppointment, null=True, editable=False)
 
@@ -145,7 +144,7 @@ class CallList (BaseSyncUuidModel):
             self.household_member.initials,
             self.household_member.household_structure.survey,
             self.label,
-            )
+        )
 
     def age(self):
         return relativedelta(self.consent_datetime.date(), self.dob).years
@@ -156,7 +155,7 @@ class CallList (BaseSyncUuidModel):
             'dashboard_type': 'household',
             'dashboard_model': 'household_structure',
             'dashboard_id': self.household_member.household_structure.pk
-            })
+        })
         return '<a href="{}">{}</A>'.format(
             url, self.household_member.household_structure.household.household_identifier)
     composition.allow_tags = True

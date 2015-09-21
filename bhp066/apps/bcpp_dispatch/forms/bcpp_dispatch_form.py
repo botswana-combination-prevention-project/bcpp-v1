@@ -1,6 +1,8 @@
 from django import forms
+
 from edc.device.dispatch.forms import DispatchForm
-from apps.bcpp_survey.models import Survey
+
+from bhp066.apps.bcpp_survey.models import Survey
 
 
 class BcppDispatchForm(DispatchForm):

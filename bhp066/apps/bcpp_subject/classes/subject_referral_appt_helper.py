@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from edc.map.classes.controller import site_mappers
 
 from ..choices import REFERRAL_CODES
-
 from ..utils import next_clinic_date
 
 
@@ -42,7 +41,7 @@ class SubjectReferralApptHelper(object):
         try:
             self.clinic_days = community_clinic_days.get(self.referral_clinic_type)
         except AttributeError:
-            self.clinic_days = site_mappers.current_mapper().current_clinic_days.get(self.referral_clinic_type)
+            self.clinic_days = site_mappers.get_current_mapper().current_clinic_days.get(self.referral_clinic_type)
 
     def __repr__(self):
         return 'SubjectReferralApptHelper({0.referral_code!r})'.format(self)

@@ -1,18 +1,25 @@
 from django.db import models
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.subject.registration.models import RegisteredSubject
+from edc.device.sync.models import BaseSyncUuidModel
 
-from edc.subject.consent.models import BaseConsentHistory
-
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import ConsentHistoryManager
 
 
-class SubjectConsentHistory(BaseConsentHistory):
+class SubjectConsentHistory(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     survey = models.ForeignKey(Survey)
 
     household_member = models.ForeignKey(HouseholdMember)
+
+    registered_subject = models.ForeignKey(RegisteredSubject)
+    consent_datetime = models.DateTimeField()
+    consent_pk = models.CharField(max_length=50)
+    consent_app_label = models.CharField(max_length=50)
+    consent_model_name = models.CharField(max_length=50)
 
     objects = ConsentHistoryManager()
 

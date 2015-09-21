@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 
 from .aliquot import Aliquot
@@ -18,20 +18,21 @@ class OrderItem(BaseSyncUuidModel):
 
     aliquot = models.ForeignKey(Aliquot)
 
-    panel = models.ForeignKey(Panel,
+    panel = models.ForeignKey(
+        Panel,
         null=True,
         blank=False,
-        )
+    )
 
     order_identifier = models.CharField(
         max_length=25,
         null=True,
         help_text='',
-        )
+    )
 
     order_datetime = models.DateTimeField(
         default=datetime.today()
-        )
+    )
 
     subject_identifier = models.CharField(
         max_length=50,

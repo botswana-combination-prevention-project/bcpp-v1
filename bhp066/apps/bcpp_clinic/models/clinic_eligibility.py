@@ -4,55 +4,54 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
-from django.utils.translation import ugettext as _
 
-from edc.audit.audit_trail import AuditTrail
-from edc.base.model.fields import IdentityTypeField
-from edc.base.model.fields.local.bw import EncryptedOmangField
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import IdentityTypeField
+from edc_base.encrypted_fields import IdentityField
 from edc.base.model.validators import (datetime_not_before_study_start, datetime_not_future)
 from edc.base.model.validators import dob_not_future
 from edc.choices.common import YES_NO_UNKNOWN, GENDER, YES_NO_NA, YES_NO
-from edc.constants import NOT_APPLICABLE
-from edc.core.crypto_fields.fields import EncryptedFirstnameField
+from edc_constants.constants import NOT_APPLICABLE
+from edc_base.encrypted_fields import FirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
 
-from apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
-from apps.bcpp_clinic.models.clinic_refusal import ClinicRefusal
-from apps.bcpp_household.models import HouseholdStructure
-from apps.bcpp_household_member.constants import CLINIC_RBD
-from apps.bcpp_household_member.models import HouseholdMember
-from apps.bcpp_subject.models import SubjectConsent
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
+from bhp066.apps.bcpp_household.models import HouseholdStructure
+from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
+from bhp066.apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import BaseClinicHouseholdMemberManager
 
 from .clinic_consent import ClinicConsent
 from .clinic_enrollment_loss import ClinicEnrollmentLoss
 from .clinic_household_member import ClinicHouseholdMember
+from .clinic_refusal import ClinicRefusal
 
 
 class ClinicEligibility (BaseSyncUuidModel):
     """A model completed by the user that confirms and saves eligibility
     information for potential participant."""
 
-    household_member = models.OneToOneField(HouseholdMember,
+    household_member = models.OneToOneField(
+        HouseholdMember,
         null=True,
         blank=True,
         help_text='Created automatically and associated with the clinic plot.'
-        )
+    )
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
         validators=[
             datetime_not_before_study_start,
-            datetime_not_future,
-            ],
+            datetime_not_future],
         help_text='Date and time of collection'
-        )
+    )
 
-    first_name = EncryptedFirstnameField(
+    first_name = FirstnameField(
         verbose_name='First name',
         validators=[RegexValidator("^[A-Z]{1,250}$", "Ensure first name is in CAPS and "
                                    "does not contain any spaces or numbers")],
@@ -81,11 +80,11 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text='Complete if DOB is not provided, otherwise leave BLANK.')
 
     guardian = models.CharField(
-        verbose_name=_("If minor, is there a guardian available? "),
+        verbose_name="If minor, is there a guardian available? ",
         max_length=10,
         choices=YES_NO_NA,
-        help_text=_("If a minor age 16 and 17, ensure a guardian is available otherwise"
-                    " participant will not be enrolled."))
+        help_text="If a minor age 16 and 17, ensure a guardian is available otherwise"
+                  " participant will not be enrolled.")
 
     gender = models.CharField(
         verbose_name='Gender',
@@ -93,19 +92,19 @@ class ClinicEligibility (BaseSyncUuidModel):
         choices=GENDER)
 
     has_identity = models.CharField(
-        verbose_name=_("[Interviewer] Has the subject presented a valid OMANG or other identity document?"),
+        verbose_name="[Interviewer] Has the subject presented a valid OMANG or other identity document?",
         max_length=10,
         choices=YES_NO,
-        help_text=_('Allow Omang, Passport number, driver\'s license number or Omang receipt number. '
-                    'If \'NO\' participant will not be enrolled.'))
+        help_text='Allow Omang, Passport number, driver\'s license number or Omang receipt number. '
+                  'If \'NO\' participant will not be enrolled.')
 
-    identity = EncryptedOmangField(
-        verbose_name=_("Identity number (OMANG, etc)"),
+    identity = IdentityField(
+        verbose_name="Identity number (OMANG, etc)",
         unique=True,
         null=True,
         blank=True,
         help_text=("Use Omang, Passport number, driver's license number or Omang receipt number")
-        )
+    )
 
     identity_type = IdentityTypeField(
         null=True)
@@ -117,11 +116,11 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text="")
 
     legal_marriage = models.CharField(
-        verbose_name=_("If not a citizen, are you legally married to a Botswana Citizen?"),
+        verbose_name="If not a citizen, are you legally married to a Botswana Citizen?",
         max_length=3,
         choices=YES_NO_NA,
         default=NOT_APPLICABLE,
-        help_text=_("If 'NO' participant is not eligible."))
+        help_text="If 'NO' participant is not eligible.")
 
     marriage_certificate = models.CharField(
         verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
@@ -131,8 +130,8 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text="If 'NO' participant is not eligible.")
 
     part_time_resident = models.CharField(
-        verbose_name=_("In the past 12 months, have you typically spent 3 or"
-                       " more nights per month in this community? "),
+        verbose_name="In the past 12 months, have you typically spent 3 or"
+                     " more nights per month in this community? ",
         max_length=7,
         choices=YES_NO_UNKNOWN,
         help_text=(
@@ -141,31 +140,31 @@ class ClinicEligibility (BaseSyncUuidModel):
             "since moving in has the participant typically "
             "spent more than 3 nights per month in this community. "
             "If 'NO (or don't want to answer)' STOP. Participant is not eligible."),
-        )
+    )
 
     literacy = models.CharField(
-        verbose_name=_("Is the participant LITERATE?, or if ILLITERATE, is there a"
-                       "  LITERATE witness available "),
+        verbose_name="Is the participant LITERATE?, or if ILLITERATE, is there a"
+                     "  LITERATE witness available ",
         max_length=7,
         choices=YES_NO_UNKNOWN,
-        help_text=_("If participate is illiterate, confirm there is a literate"
-                    "witness available otherwise participant is not eligible."))
+        help_text="If participate is illiterate, confirm there is a literate"
+                  "witness available otherwise participant is not eligible.")
 
     inability_to_participate = models.CharField(
-        verbose_name=_("Do any of the following reasons apply to the participant?"),
+        verbose_name="Do any of the following reasons apply to the participant?",
         max_length=17,
         choices=INABILITY_TO_PARTICIPATE_REASON,
         help_text=("Participant can only participate if NONE is selected. "
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
-        )
+    )
 
     hiv_status = models.CharField(
-        verbose_name=_("Please tell me your current HIV status?"),
+        verbose_name="Please tell me your current HIV status?",
         max_length=30,
         choices=VERBALHIVRESULT_CHOICE,
         help_text='If not HIV(+) participant is not elgiible.'
-        )
+    )
 
     age_in_years = models.IntegerField(editable=False)
 
@@ -192,7 +191,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         editable=False,
         null=True,
         help_text='filled from clinic_consent'
-        )
+    )
 
     community = models.CharField(max_length=25, editable=False)
 
@@ -205,11 +204,11 @@ class ClinicEligibility (BaseSyncUuidModel):
         help_text=('A uuid to be added to clinic members to bypass the '
                    'unique constraint for firstname, initials, household_structure. '
                    'Always null for non-clinic members.'),
-        )
-
-    history = AuditTrail()
+    )
 
     objects = BaseClinicHouseholdMemberManager()
+
+    history = AuditTrail()
 
     def save(self, *args, **kwargs):
         update_fields = kwargs.get('update_fields', [])
@@ -265,7 +264,7 @@ class ClinicEligibility (BaseSyncUuidModel):
             clinic_household_member = ClinicHouseholdMember.objects.get(pk=self.household_member.pk)
         except (ClinicHouseholdMember.DoesNotExist, AttributeError):
             household_structure = HouseholdStructure.objects.get(
-                household__plot=site_mappers.current_mapper().clinic_plot,
+                household__plot=site_mappers.get_current_mapper().clinic_plot,
                 survey=Survey.objects.current_survey())
             clinic_household_member = ClinicHouseholdMember.objects.create(
                 household_structure=household_structure,
@@ -282,7 +281,7 @@ class ClinicEligibility (BaseSyncUuidModel):
                 eligible_member=True,
                 eligible_subject=True,
                 additional_key=self.additional_key,
-                )
+            )
         if not self.household_member:
             # only set if self.household_member was None
             self.household_member = clinic_household_member
@@ -310,6 +309,8 @@ class ClinicEligibility (BaseSyncUuidModel):
                     subject_consent.modified,
                     subject_consent.identity))
         except SubjectConsent.DoesNotExist:
+            pass
+        except SubjectConsent.MultipleObjectsReturned:
             pass
         return None
 

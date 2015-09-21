@@ -1,19 +1,20 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.audit.audit_trail import AuditTrail
+from edc_base.audit_trail import AuditTrail
 from edc.choices import TIME_OF_DAY, TIME_OF_WEEK
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment.choices import APPT_STATUS
+from edc.device.sync.models import BaseSyncUuidModel
 
-from apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import MemberAppointmentManager
 
 from .household_member import HouseholdMember
 
 
-class MemberAppointment(BaseDispatchSyncUuidModel):
+class MemberAppointment(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -32,7 +33,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
     label = models.CharField(
         max_length=25,
         help_text="label to group, e.g. T1 prep"
-        )
+    )
 
     time_of_week = models.CharField(
         verbose_name='Time of week when participant will be available',
@@ -41,7 +42,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
         blank=True,
         null=True,
         help_text=""
-        )
+    )
 
     time_of_day = models.CharField(
         verbose_name='Time of day when participant will be available',
@@ -50,7 +51,7 @@ class MemberAppointment(BaseDispatchSyncUuidModel):
         blank=True,
         null=True,
         help_text=""
-        )
+    )
 
     is_confirmed = models.BooleanField(default=False)
 

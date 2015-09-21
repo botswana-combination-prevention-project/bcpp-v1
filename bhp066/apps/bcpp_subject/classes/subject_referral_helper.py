@@ -3,19 +3,18 @@ from collections import namedtuple
 
 from django.db.models import get_model
 
-from edc.constants import NOT_REQUIRED, KEYED
+from edc.data_manager.models import TimePointStatus
 from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.map.classes import site_mappers
-from edc.data_manager.models import TimePointStatus
-from edc.constants import CLOSED, POS, NEG
+from edc_constants.constants import NOT_REQUIRED, KEYED, CLOSED, POS, NEG
 
-from apps.bcpp_household_member.models import EnrollmentChecklist
-from apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
-from apps.bcpp_subject.constants import ANNUAL_CODES
+from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
+from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 from ..choices import REFERRAL_CODES
-from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
+from ..constants import ANNUAL_CODES
 from ..constants import BASELINE_CODES
+from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
 from ..utils import convert_to_nullboolean
 
 from .subject_status_helper import SubjectStatusHelper
@@ -50,14 +49,14 @@ class SubjectReferralHelper(object):
             'reproductive_health': ReproductiveHealth,
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
-            })
+        })
         self.models[self.ANNUAL].update({
             'subject_locator': SubjectLocator,
             'circumcision': Circumcision,
             'reproductive_health': ReproductiveHealth,
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
-            })
+        })
         self.models[self.BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
         self.models[self.ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
         self.previous_subject_referrals = []
@@ -292,15 +291,12 @@ class SubjectReferralHelper(object):
                 circumcised = None
                 if self.previous_subject_referrals:
                     # save current visit
-#                     current_subject_referral = copy(self.subject_referral)
                     previous_subject_referrals = copy(self.previous_subject_referrals)
                     for subject_referral in previous_subject_referrals:
                         # check for CIRCUMCISED result from previous data
-#                         self.subject_referral = subject_referral
                         circumcised = subject_referral.circumcised
                         if circumcised:
                             break
-#                     self.subject_referral = current_subject_referral
                 if not circumcised:
                     try:
                         circumcision_instance = self.models[self.timepoint_key].get(
@@ -315,8 +311,8 @@ class SubjectReferralHelper(object):
     def citizen(self):
         citizen = None
         try:
-            citizen = (self.enrollment_checklist_instance.citizen == 'Yes'
-                       and self.subject_consent_instance.identity is not None)
+            citizen = (self.enrollment_checklist_instance.citizen == 'Yes' and
+                       self.subject_consent_instance.identity is not None)
         except AttributeError:
             citizen = None
         return citizen
@@ -344,7 +340,7 @@ class SubjectReferralHelper(object):
     def part_time_resident(self):
         """Returns True if part_time_resident as stated on enrollment_checklist."""
         try:
-            #Note: Reading the question in EnrollmentChecklist, you should interpret in the following way,
+            # Note: Reading the question in EnrollmentChecklist, you should interpret in the following way,
             # Yes => not part_time_resident, No => part_time_resident.
             part_time_resident = not convert_to_nullboolean(self.enrollment_checklist_instance.part_time_resident)
         except AttributeError:
@@ -415,7 +411,7 @@ class SubjectReferralHelper(object):
             self.referral_code,
             base_date=self.subject_referral.report_datetime,
             scheduled_appt_date=self.subject_referral.scheduled_appt_date,
-            )
+        )
 
     @property
     def referral_appt_datetime(self):

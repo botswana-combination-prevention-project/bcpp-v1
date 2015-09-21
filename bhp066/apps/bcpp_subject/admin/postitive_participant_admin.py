@@ -1,9 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-# from edc.apps.admin_supplemental_fields.admin import SupplementalModelAdminMixin
-# from edc.apps.admin_supplemental_fields.classes import SupplementalFields
-
 from ..forms import PositiveParticipantForm
 from ..models import PositiveParticipant
 
@@ -13,14 +10,6 @@ from .subject_visit_model_admin import SubjectVisitModelAdmin
 class PositiveParticipantAdmin(SubjectVisitModelAdmin):
 
     form = PositiveParticipantForm
-#     supplemental_fields = SupplementalFields(
-#         ('internalize_stigma',
-#          'internalized_stigma',
-#          'friend_stigma',
-#          'family_stigma',
-#          'enacted_talk_stigma',
-#          'enacted_respect_stigma',
-#          'enacted_jobs_tigma'), p=0.18, group='PP', grouping_field='subject_visit')
     fields = (
         "subject_visit",
         'internalize_stigma',
