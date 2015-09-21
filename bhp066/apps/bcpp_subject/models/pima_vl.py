@@ -81,7 +81,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
     )
 
     vl_value_quatifier = models.CharField(
-        verbose_name="Select a quatifier for the value of the result",
+        verbose_name="Select a quantifier for the value of the result",
         choices=QUANTIFIER,
         max_length=20,
     )
@@ -124,11 +124,11 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
         blank=True,
         help_text="Comment")
 
+    objects = PimaVlManager()
+
     history = AuditTrail()
 
     quota = QuotaManager()
-
-    objects = PimaVlManager()
 
     def pre_order(self):
         url = reverse('admin:bcpp_lab_preorder_changelist')
