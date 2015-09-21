@@ -5,12 +5,14 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import WHYNOHIVTESTING_CHOICE
 
 from .hiv_testing_supplemental import HivTestingSupplemental
-
+from .subject_consent import SubjectConsent
 
 class HivUntested (HivTestingSupplemental):
 
     """CS002- for those who have NOT tested for HIV. Its
     branch off from Q18 - HIV testing History"""
+
+    CONSENT_MODEL = SubjectConsent
 
     why_no_hiv_test = models.CharField(
         verbose_name="If you were not tested for HIV in the 12 months prior"

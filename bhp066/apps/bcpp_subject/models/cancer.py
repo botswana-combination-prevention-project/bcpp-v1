@@ -7,11 +7,14 @@ from edc_base.model.fields import OtherCharField
 from bhp066.apps.bcpp.choices import DXCANCER_CHOICE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Cancer (BaseScheduledVisitModel):
 
     """A model completed by the user to record any diagnosis of cancer in the past 12 months."""
+
+    CONSENT_MODEL = SubjectConsent
 
     date_cancer = models.DateField(
         verbose_name="Date of the diagnosis of cancer:",

@@ -9,11 +9,14 @@ from bhp066.apps.bcpp.choices import YES_NO, LENGTHRESIDENCE_CHOICE, NIGHTSAWAY_
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
+from .subject_consent import SubjectConsent
 
 
 class ResidencyMobility (BaseScheduledVisitModel):
 
     """A model completed by the user on the residency status of the participant."""
+
+    CONSENT_MODEL = SubjectConsent
 
     length_residence = models.CharField(
         verbose_name='How long have you lived in this community?',

@@ -8,9 +8,12 @@ from bhp066.apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVR
 from ..choices import YES_NO_RECORD_REFUSAL
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class HivTestingHistory (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     has_tested = models.CharField(
         verbose_name="Have you ever been tested for HIV before?",

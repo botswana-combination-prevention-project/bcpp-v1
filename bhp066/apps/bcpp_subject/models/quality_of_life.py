@@ -6,11 +6,14 @@ from edc_base.audit_trail import AuditTrail
 from ..choices import MOBILITY, SELF_CARE, ACTIVITIES, PAIN, ANXIETY
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class QualityOfLife (BaseScheduledVisitModel):
 
     """A model completed by the user to capture information about QOL"""
+
+    CONSENT_MODEL =SubjectConsent
 
     mobility = models.CharField(
         verbose_name="Mobility",

@@ -1,6 +1,7 @@
 from dateutil.relativedelta import relativedelta
 
 from django.db import models
+from django.db.models import get_model
 from django.core.exceptions import ValidationError
 
 from edc_base.audit_trail import AuditTrail
@@ -13,6 +14,8 @@ from .base_scheduled_visit_model import BaseScheduledVisitModel
 
 
 class HicEnrollment (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = get_model("bcpp_subject", "SubjectConsent")
 
     hic_permission = models.CharField(
         verbose_name='Is it okay for the project to visit you every year for '

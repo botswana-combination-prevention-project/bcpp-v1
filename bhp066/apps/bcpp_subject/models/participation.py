@@ -6,9 +6,12 @@ from edc.choices import YES_NO
 from bhp066.apps.bcpp.choices import PARTIAL_PARTICIPATION_TYPE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Participation (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     full = models.CharField(
         verbose_name='Has the participant agreed to fully participate in BHS',

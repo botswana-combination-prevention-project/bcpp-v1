@@ -8,9 +8,12 @@ from bhp066.apps.bcpp.choices import ELISA_HIV_RESULT
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .hic_enrollment import HicEnrollment
+from .subject_consent import SubjectConsent
 
 
 class ElisaHivResult (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     hiv_result = models.CharField(
         verbose_name="HIV test result from the Elisa",

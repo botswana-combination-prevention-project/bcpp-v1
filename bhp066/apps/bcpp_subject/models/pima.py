@@ -8,9 +8,12 @@ from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import datetime_not_future
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class Pima (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     pima_today = models.CharField(
         verbose_name="Was a PIMA CD4 done today?",

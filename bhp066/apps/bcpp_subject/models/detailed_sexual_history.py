@@ -8,9 +8,12 @@ from bhp066.apps.bcpp.choices import YES_NO_REFUSED, YES_NO_DONT_KNOW
 from ..choices import RELATIONSHIP_TYPE, MAIN_PARTNER_RESIDENCY, SEX_REGULARITY, INTERCOURSE_TYPE
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
+from .subject_consent import SubjectConsent
 
 
 class DetailedSexualHistory (BaseScheduledVisitModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     rel_type = models.CharField(
         verbose_name="What type of relationship do you have with this person?",

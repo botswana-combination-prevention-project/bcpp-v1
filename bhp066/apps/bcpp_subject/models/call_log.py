@@ -19,9 +19,12 @@ from ..managers import CallLogEntryManager, CallLogManager
 from ..validators import date_in_survey
 
 from .subject_locator import SubjectLocator
+from .subject_consent import SubjectConsent
 
 
 class CallLog (BaseSyncUuidModel):
+
+    CONSENT_MODEL = SubjectConsent
 
     household_member = models.ForeignKey(HouseholdMember)
 
