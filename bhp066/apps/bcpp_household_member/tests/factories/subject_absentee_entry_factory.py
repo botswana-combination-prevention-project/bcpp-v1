@@ -2,14 +2,12 @@ import factory
 
 from datetime import datetime, date, timedelta
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import SubjectAbsenteeEntry
 
 from .subject_absentee_factory import SubjectAbsenteeFactory
 
 
-class SubjectAbsenteeEntryFactory(BaseUuidModelFactory):
+class SubjectAbsenteeEntryFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectAbsenteeEntry

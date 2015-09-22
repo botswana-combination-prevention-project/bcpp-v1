@@ -5,6 +5,7 @@ from edc_constants.constants import NO, NEW, NOT_REQUIRED, KEYED
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
+from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
 from edc.subject.entry.models import LabEntry, Entry
@@ -29,9 +30,11 @@ class ClinicRequisition(BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuid
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
+    objects = ClinicRequisitionManager()
+
     history = AuditTrail()
 
-    entry_meta_data_manager = ClinicRequisitionManager(ClinicVisit)
+    entry_meta_data_manager = RequisitionMetaDataManager(ClinicVisit)
 
     def save(self, *args, **kwargs):
         self.community = self.get_visit().household_member.household_structure.household.plot.community

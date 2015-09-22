@@ -1,10 +1,11 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
+from datetime import datetime
+
 from ...models import Education
 
 
-class EducationFactory(BaseUuidModelFactory):
+class EducationFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Education
 
     report_datetime = datetime.today()

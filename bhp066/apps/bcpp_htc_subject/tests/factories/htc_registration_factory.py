@@ -2,14 +2,13 @@ import factory
 from datetime import datetime
 from edc.core.bhp_variables.tests.factories import StudySiteFactory
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
-from edc.base.model.tests.factories import BaseUuidModelFactory
 
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 
 from ...models import HtcRegistration
 
 
-class HtcRegistrationFactory(BaseUuidModelFactory):
+class HtcRegistrationFactory(factory.DjangoModelFactory):
     FACTORY_FOR = HtcRegistration
 
     subject_identifier = factory.Sequence(lambda n: 'subject_identifier{0}'.format(n))
