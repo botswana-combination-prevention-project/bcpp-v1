@@ -89,21 +89,21 @@ class SubjectLocatorPage(BaseModelAdminPage):
     def set_has_alt_contact(self, has_alt_contact):
         has_alt_contact.click()
 
-    def fill_subject_locator(self, home_visit_permission, may_follow_up,
-                             may_sms_follow_up, may_call_work, may_contact_someone, has_alt_contact, report_date=None, report_time=None, date_signed=None):
+    def fill_subject_locator(self, home_visit_permission, may_follow_up, may_sms_follow_up, may_call_work,
+                             may_contact_someone, has_alt_contact, report_date=None, report_time=None,
+                             date_signed=None):
         if not report_date:
-            self.select_today()
+            self.select_today
         else:
             self.set_report_date(report_date)
         if not report_time:
-            self.select_now()
+            self.select_now
         else:
             self.set_report_time(report_time)
         if not date_signed:
-            self.select_date_signed_today()
+            self.select_date_signed_today
         else:
             self.set_date_signed(date_signed)
-
         self.set_home_visit_permission(home_visit_permission)
         self.set_may_follow_up(may_follow_up)
         self.set_may_sms_follow_up(may_sms_follow_up)
