@@ -4,10 +4,9 @@ from django import forms
 from django.db.models import OneToOneField, ForeignKey, get_model
 from django.db.models.query import QuerySet
 
-from edc.subject.visit_tracking.models import BaseVisitTracking
 from edc.device.device.classes import Device
-
-from edc.base.form.classes import LogicCheck
+from edc.subject.visit_tracking.models import BaseVisitTracking
+from edc_base.form.classes import LogicCheck
 
 
 class BaseModelForm(forms.ModelForm):
@@ -83,7 +82,7 @@ class BaseModelForm(forms.ModelForm):
                         'dataset for a \'{}\' that is currently dispatched to {}.'.format(
                             model_instance.dispatch_container_lookup()[0]._meta.verbose_name,
                             model_instance.user_container_instance.dispatched_container_item.producer.name
-                            )
+                        )
                     )
         except AttributeError:
             pass

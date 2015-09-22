@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from edc_base.audit_trail import AuditTrail
 from edc.subject.locator.models import BaseLocator
 from edc.choices.common import YES_NO
-from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
+from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc_base.encrypted_fields import EncryptedCharField
 
 from bhp066.apps.bcpp_household.models import Household

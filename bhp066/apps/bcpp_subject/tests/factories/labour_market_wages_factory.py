@@ -1,11 +1,13 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
+from datetime import datetime
+
 from ...models import LabourMarketWages
+
 from .subject_visit_factory import SubjectVisitFactory
 
 
-class LabourMarketWagesFactory(BaseUuidModelFactory):
+class LabourMarketWagesFactory(factory.DjangoModelFactory):
     FACTORY_FOR = LabourMarketWages
     subject_visit = factory.SubFactory(SubjectVisitFactory)
     report_datetime = datetime.today()
