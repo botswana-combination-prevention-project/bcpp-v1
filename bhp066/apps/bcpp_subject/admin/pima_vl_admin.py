@@ -29,6 +29,7 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
     radio_fields = {
         'poc_vl_today': admin.VERTICAL,
         'poc_vl_today_other': admin.VERTICAL,
+        'vl_value_quatifier': admin.VERTICAL,
         'easy_of_use': admin.VERTICAL}
 
 admin.site.register(PimaVl, PimaVlAdmin)

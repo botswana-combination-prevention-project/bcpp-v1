@@ -1,6 +1,8 @@
 from django import forms
 from django.forms.util import ErrorList
 
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
+
 from ..choices import MONTHLY_INCOME, HOUSEHOLD_INCOME
 from ..models import LabourMarketWages, Grant, SubjectLocator
 
@@ -47,7 +49,7 @@ class LabourMarketWagesForm (BaseSubjectModelForm):
         model = LabourMarketWages
 
 
-class GrantForm (BaseSubjectModelForm):
+class GrantForm (BaseModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data

@@ -2,14 +2,12 @@ import factory
 
 from datetime import datetime, date
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import EnrollmentChecklist
 
 from .household_member_factory import HouseholdMemberFactory
 
 
-class EnrollmentChecklistFactory(BaseUuidModelFactory):
+class EnrollmentChecklistFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = EnrollmentChecklist

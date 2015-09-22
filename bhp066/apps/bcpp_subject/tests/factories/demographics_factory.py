@@ -1,10 +1,11 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
+from datetime import datetime
+
 from ...models import Demographics
 
 
-class DemographicsFactory(BaseUuidModelFactory):
+class DemographicsFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Demographics
 
     report_datetime = datetime.today()
