@@ -1,9 +1,9 @@
 from .detailed_sexual_history_page import DetailedSexualHistoryPage
 
 
-class RecentPartnerPage(DetailedSexualHistoryPage):
+class SecondPartnerPage(DetailedSexualHistoryPage):
 
-    def fill_recent_partner(self, report_date, report_time, first_partner_live, sex_partner_community,
+    def fill_second_partner(self, report_date, report_time, first_partner_live, sex_partner_community,
                             past_year_sex_freq, third_last_sex, first_first_sex, first_sex_current,
                             first_relationship, first_exchange, concurrent, goods_exchange, first_sex_freq,
                             first_partner_hiv, partner_hiv_test, first_disclose, first_condom_freq, first_partner_cp):
