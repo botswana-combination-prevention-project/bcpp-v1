@@ -1,10 +1,11 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
+from datetime import datetime
+
 from ...models import Pima
 
 
-class PimaFactory(BaseUuidModelFactory):
+class PimaFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Pima
 
     report_datetime = datetime.today()
