@@ -13,9 +13,9 @@ class Order(BaseSyncUuidModel):
 
     order_datetime = models.DateTimeField(default=datetime.today())
 
-    history = AuditTrail()
-
     objects = OrderManager()
+
+    history = AuditTrail()
 
     def natural_key(self):
         return (self.order_datetime, )

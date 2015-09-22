@@ -1,13 +1,11 @@
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import PlotIdentifierHistory
 
 # from .household import HouseholdFactory
 
 
-class PlotIdentifierHistoryFactory(BaseUuidModelFactory):
+class PlotIdentifierHistoryFactory(factory.DjangoModelFactory):
     class Meta:
         model = PlotIdentifierHistory
 

@@ -2,14 +2,12 @@ import factory
 
 from datetime import datetime, timedelta
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import SubjectUndecidedEntry
 
 from .subject_undecided_factory import SubjectUndecidedFactory
 
 
-class SubjectUndecidedEntryFactory(BaseUuidModelFactory):
+class SubjectUndecidedEntryFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectUndecidedEntry

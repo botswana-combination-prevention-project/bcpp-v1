@@ -1,11 +1,12 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
+from datetime import datetime
+
 from ..factories import CallLogFactory
 from ...models import CallLogEntry
 
 
-class CallLogEntryFactory(BaseUuidModelFactory):
+class CallLogEntryFactory(factory.DjangoModelFactory):
     FACTORY_FOR = CallLogEntry
 
     call_log = factory.SubFactory(CallLogFactory)

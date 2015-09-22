@@ -1,10 +1,9 @@
 import factory
 from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from ...models import Tubercolosis
 
 
-class TubercolosisFactory(BaseUuidModelFactory):
+class TubercolosisFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Tubercolosis
 
     report_datetime = datetime.today()

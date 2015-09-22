@@ -1,11 +1,10 @@
 from datetime import datetime
 import factory
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from ...models import AliquotProfile
 from .aliquot_type_factory import AliquotTypeFactory
 
 
-class ProfileFactory(BaseUuidModelFactory):
+class ProfileFactory(factory.DjangoModelFactory):
     FACTORY_FOR = AliquotProfile
 
     aliquot_type = factory.SubFactory(AliquotTypeFactory)

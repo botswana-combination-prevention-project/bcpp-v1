@@ -39,9 +39,9 @@ class OrderItem(BaseSyncUuidModel):
         null=True,
         help_text="non-user helper field to simplify search and filtering")
 
-    history = AuditTrail()
-
     objects = OrderItemManager()
+
+    history = AuditTrail()
 
     def save(self, *args, **kwargs):
         self.subject_identifier = self.aliquot.receive.registered_subject.subject_identifier
