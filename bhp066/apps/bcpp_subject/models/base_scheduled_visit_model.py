@@ -23,8 +23,6 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
 
     """ Base model for all scheduled models (adds key to :class:`SubjectVisit`). """
 
-    # CONSENT_MODEL = models.get_model('bcpp_subject', 'SubjectConsent')
-
     subject_visit = models.OneToOneField(SubjectVisit)
 
     report_datetime = models.DateTimeField(
