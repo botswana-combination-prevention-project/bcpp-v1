@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_future
+from edc_base.model.validators import datetime_not_future
 
 from bhp066.apps.bcpp.choices import YES_NO
 

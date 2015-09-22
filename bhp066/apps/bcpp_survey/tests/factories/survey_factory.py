@@ -2,12 +2,10 @@ import factory
 
 from datetime import datetime, timedelta
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import Survey
 
 
-class SurveyFactory(BaseUuidModelFactory):
+class SurveyFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Survey
 
     survey_name = factory.Sequence(lambda n: 'YEAR {0}'.format(n))

@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import eligible_if_yes
+from edc_base.model.validators import eligible_if_yes
 from edc.choices.common import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 from edc.map.classes import site_mappers

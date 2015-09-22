@@ -1,13 +1,11 @@
 import factory
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import Household
 
 from .plot_factory import PlotFactory
 
 
-class HouseholdFactory(BaseUuidModelFactory):
+class HouseholdFactory(factory.DjangoModelFactory):
     class Meta:
         model = Household
 

@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
-from edc.base.model.validators import date_not_future, date_not_before_study_start
+from edc_base.model.validators import date_not_future, date_not_before_study_start
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 

@@ -2,7 +2,6 @@ import factory
 
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.subject.adverse_event.tests.factories import (DeathCauseCategoryFactory, DeathCauseInfoFactory, 
                                                        DeathMedicalResponsibilityFactory)
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
@@ -12,7 +11,7 @@ from ...models import SubjectDeath
 from .household_member_factory import HouseholdMemberFactory
 
 
-class SubjectDeathFactory(BaseUuidModelFactory):
+class SubjectDeathFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectDeath

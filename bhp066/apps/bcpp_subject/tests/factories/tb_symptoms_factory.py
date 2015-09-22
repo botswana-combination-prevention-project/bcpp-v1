@@ -1,11 +1,11 @@
-from datetime import datetime
+import factory
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
+from datetime import datetime
 
 from ...models import TbSymptoms
 
 
-class TbSymptomsFactory(BaseUuidModelFactory):
+class TbSymptomsFactory(factory.DjangoModelFactory):
     FACTORY_FOR = TbSymptoms
 
     report_datetime = datetime.today()
