@@ -398,11 +398,8 @@ class SubjectReferralHelper(object):
     @property
     def subject_consent_instance(self):
         if not self._subject_consent_instance:
-            try:
-                self._subject_consent_instance = self.models[self.timepoint_key].get('subject_consent').objects.get(
-                    household_member__internal_identifier=self.household_member.internal_identifier)
-            except self.models[self.timepoint_key].get('subject_consent').DoesNotExist:
-                self._subject_consent_instance = None
+            self._subject_consent_instance = self.subject_referral.CONSENT_MODEL.object.valid_consent_for_period(
+                self.subject_identifier(), self.subject_referral.report_datetime)
         return self._subject_consent_instance
 
     @property
