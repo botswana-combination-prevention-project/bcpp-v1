@@ -23,7 +23,9 @@ class BaseSubjectModelForm(BaseModelForm):
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
         subject_visit = cleaned_data.get('subject_visit')
+        report_datetime = cleaned_data.get('report_datetime')
         self.instance.consented_for_period_or_raise(
+            report_datetime=report_datetime,
             subject_identifier=subject_visit.subject_identifier,
             exception_cls=forms.ValidationError)
         return cleaned_data
