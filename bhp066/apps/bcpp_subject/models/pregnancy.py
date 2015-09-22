@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import date_not_future
+from edc_base.model.validators import date_not_future
 
 from bhp066.apps.bcpp.choices import ANCREG_CHOICE
 

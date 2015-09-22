@@ -5,7 +5,7 @@ from django.db.models import get_model
 from django.core.exceptions import ValidationError
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import datetime_not_future, datetime_not_before_study_start
+from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc_consent.validators import ConsentAgeValidator
 
 from bhp066.apps.bcpp.choices import YES_NO

@@ -44,9 +44,9 @@ class PreOrder(BaseSyncUuidModel):
         help_text=""
     )
 
-    history = AuditTrail()
-
     objects = PreOrderManager()
+
+    history = AuditTrail()
 
     def save(self, *args, **kwargs):
         if self.aliquot_identifier:

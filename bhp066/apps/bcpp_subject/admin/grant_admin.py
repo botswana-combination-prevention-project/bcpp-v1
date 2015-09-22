@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from edc.base.modeladmin.admin import BaseTabularInline, BaseModelAdmin
+from edc_base.modeladmin.admin import BaseTabularInline, BaseModelAdmin
 
 from ..forms import GrantForm
 from ..models import LabourMarketWages, Grant

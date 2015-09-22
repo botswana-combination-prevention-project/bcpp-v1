@@ -3,7 +3,7 @@ from datetime import date
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import date_not_before_study_start, date_not_future
+from edc_base.model.validators import date_not_before_study_start, date_not_future
 from edc_base.model.models import BaseUuidModel
 from edc_base.encrypted_fields import EncryptedTextField
 from edc.device.sync.models import BaseSyncUuidModel
