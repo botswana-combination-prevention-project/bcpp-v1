@@ -2,14 +2,12 @@ import factory
 
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import RepresentativeEligibility
 
 from .household_structure_factory import HouseholdStructureFactory
 
 
-class RepresentativeEligibilityFactory(BaseUuidModelFactory):
+class RepresentativeEligibilityFactory(factory.DjangoModelFactory):
     class Meta:
         model = RepresentativeEligibility
 
