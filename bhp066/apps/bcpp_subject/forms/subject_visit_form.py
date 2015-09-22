@@ -1,11 +1,19 @@
 from django import forms
 
-#from edc.subject.consent.forms import BaseConsentedModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import SubjectVisit
 
 
-class SubjectVisitForm (forms.ModelForm):
+class SubjectVisitForm (BaseModelForm):
+
+    def clean(self):
+        cleaned_data = super(SubjectVisitForm, self).clean()
+        subject_identifier = cleaned_data.get('household_member').get_subject_identifier()
+        self.instance.consented_for_period_or_raise(
+            subject_identifier=subject_identifier,
+            exception_cls=forms.ValidationError)
+        return cleaned_data
 
     class Meta:
         model = SubjectVisit
