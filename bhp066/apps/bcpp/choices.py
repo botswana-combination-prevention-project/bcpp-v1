@@ -145,7 +145,7 @@ COMMUNITIES = (
     ('Ramokgonami', _('Ramokgonami')),
     ('Ranaka', _('Ranaka')),
     ('Sebina', _('Sebina')),
-    ('Sefare', _('Sefare')),
+    ('Sefhare', _('Sefhare')),
     ('Sefophe', _('Sefophe')),
     ('Shakawe', _('Shakawe')),
     ('Shoshong', _('Shoshong')),
