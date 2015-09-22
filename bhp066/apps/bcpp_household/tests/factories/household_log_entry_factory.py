@@ -2,14 +2,12 @@ import factory
 
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import HouseholdLogEntry
 
 from .household_log_factory import HouseholdLogFactory
 
 
-class HouseholdLogEntryFactory(BaseUuidModelFactory):
+class HouseholdLogEntryFactory(factory.DjangoModelFactory):
     class Meta:
         model = HouseholdLogEntry
 

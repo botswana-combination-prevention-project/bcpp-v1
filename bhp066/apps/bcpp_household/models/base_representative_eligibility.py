@@ -1,7 +1,7 @@
 from django.db import models
 
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
-from edc.base.model.validators import eligible_if_yes
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_base.model.validators import eligible_if_yes
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.choices.common import YES_NO
 

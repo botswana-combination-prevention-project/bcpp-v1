@@ -2,7 +2,7 @@ from django.db import models
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
-from edc.base.model.validators import datetime_not_before_study_start, datetime_not_future
+from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_base.encrypted_fields import EncryptedTextField
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 

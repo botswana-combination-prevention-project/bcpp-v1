@@ -1,11 +1,11 @@
+import factory
+
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
-from ...models import SubjectReferral
+from bhp066.apps.bcpp_subject.models import SubjectReferral
 
 
-class SubjectReferralFactory(BaseUuidModelFactory):
+class SubjectReferralFactory(factory.DjangoModelFactory):
     FACTORY_FOR = SubjectReferral
 
     report_datetime = datetime.today()

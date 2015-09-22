@@ -1,11 +1,12 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+from datetime import datetime
+
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
+
 from ...models import CallList
 
 
-class CallListFactory(BaseUuidModelFactory):
+class CallListFactory(factory.DjangoModelFactory):
     FACTORY_FOR = CallList
 
     household_member = factory.SubFactory(HouseholdMemberFactory)

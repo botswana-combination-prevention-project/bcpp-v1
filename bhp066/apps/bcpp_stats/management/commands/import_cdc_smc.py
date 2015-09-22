@@ -4,10 +4,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.exceptions import ValidationError
-# from edc.core.crypto_fields.classes import FieldCryptor
+
 from ...models import CdcSmc
-from edc.base.model.validators.dob import dob_not_future
 
 
 class Command(BaseCommand):

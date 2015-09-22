@@ -2,14 +2,12 @@ import factory
 
 from datetime import date, datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import SubjectRefusal
 
 from .household_member_factory import HouseholdMemberFactory
 
 
-class SubjectRefusalFactory(BaseUuidModelFactory):
+class SubjectRefusalFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectRefusal
