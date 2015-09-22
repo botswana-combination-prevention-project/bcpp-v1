@@ -138,7 +138,7 @@ class TestSearchPlotSeleniumTest(BaseSeleniumTest):
     def test_add_household_head_info(self):
         self.test_household_info_link()
         hhi = HouseholdHeadInfoPage(self.browser)
-        #hhi.fill_household_info(hhi.select_, water_source, toilet_facility, smaller_meals, report_date, report_time)
+        hhi.fill_household_info(self, flooring_type, water_source, toilet_facility, smaller_meals, report_date=None, report_time=None)
 
     def test_check_eligibility(self):
         pass
