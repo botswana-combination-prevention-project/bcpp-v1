@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
+from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc.choices.common import YES_NO
 from edc_base.encrypted_fields import EncryptedCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
@@ -125,12 +125,10 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
         return self.subject_visit
 
     def get_subject_identifier(self):
-        if self.get_visit():
+        try:
             return self.get_visit().get_subject_identifier()
-        return None
-
-    def get_report_datetime(self):
-        return self.created
+        except AttributeError:
+            return self.registered_subject.subject_identifier
 
     @property
     def ready_to_export_transaction(self):

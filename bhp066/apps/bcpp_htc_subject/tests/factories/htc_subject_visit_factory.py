@@ -2,14 +2,12 @@ import factory
 from datetime import datetime
 
 from edc.subject.appointment.tests.factories import AppointmentFactory
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 
 from ...models import HtcSubjectVisit
 
 
-class HtcSubjectVisitFactory(BaseUuidModelFactory):
+class HtcSubjectVisitFactory(factory.DjangoModelFactory):
     FACTORY_FOR = HtcSubjectVisit
 
     appointment = factory.SubFactory(AppointmentFactory)

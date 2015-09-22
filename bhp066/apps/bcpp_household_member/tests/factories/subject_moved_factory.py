@@ -2,7 +2,6 @@ import factory
 
 from datetime import date, datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
@@ -12,7 +11,7 @@ from ...models import SubjectMoved
 from .household_member_factory import HouseholdMemberFactory
 
 
-class SubjectMovedFactory(BaseUuidModelFactory):
+class SubjectMovedFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectMoved

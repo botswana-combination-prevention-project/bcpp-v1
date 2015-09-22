@@ -28,6 +28,7 @@ class BaseSubjectModelForm(BaseModelForm):
             report_datetime=report_datetime,
             subject_identifier=subject_visit.subject_identifier,
             exception_cls=forms.ValidationError)
+
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):

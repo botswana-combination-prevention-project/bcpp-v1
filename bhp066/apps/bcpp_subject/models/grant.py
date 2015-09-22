@@ -17,14 +17,11 @@ from ..managers import GrantManager
 
 from .labour_market_wages import LabourMarketWages
 from .subject_off_study_mixin import SubjectOffStudyMixin
-from .subject_consent import SubjectConsent
 
 
 class Grant(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """Inline for labour_market_wages."""
-
-    CONSENT_MODEL = SubjectConsent
 
     labour_market_wages = models.ForeignKey(LabourMarketWages)
 
