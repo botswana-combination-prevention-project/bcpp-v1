@@ -2,14 +2,12 @@ import factory
 
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from bhp066.apps.bcpp_subject.tests.factories import LabourMarketWagesFactory
 
 from ...models import Grant
 
 
-class GrantFactory(BaseUuidModelFactory):
+class GrantFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Grant
 
     report_datetime = datetime.today()

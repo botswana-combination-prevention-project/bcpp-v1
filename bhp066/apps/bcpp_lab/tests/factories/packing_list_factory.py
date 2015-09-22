@@ -1,10 +1,9 @@
 from datetime import datetime
 import factory
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from ...models import PackingList
 
 
-class PackingListFactory(BaseUuidModelFactory):
+class PackingListFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PackingList
 
     list_datetime = datetime.today()

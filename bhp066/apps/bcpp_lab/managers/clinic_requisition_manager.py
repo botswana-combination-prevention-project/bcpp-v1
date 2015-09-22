@@ -1,12 +1,10 @@
+from django.db import models
 from django.conf import settings
 
 from edc.map.classes import site_mappers
 
 
-from edc.entry_meta_data.managers import RequisitionMetaDataManager
-
-
-class ClinicRequisitionManager(RequisitionMetaDataManager):
+class ClinicRequisitionManager(models.Manager):
 
     def get_by_natural_key(self, requisition_identifier):
         return self.get(requisition_identifier=requisition_identifier)

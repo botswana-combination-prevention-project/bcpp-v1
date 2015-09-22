@@ -1,10 +1,11 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
+
+from datetime import datetime
+
 from ...models import MonthsRecentPartner
 
 
-class MonthsRecentPartnerFactory(BaseUuidModelFactory):
+class MonthsRecentPartnerFactory(factory.DjangoModelFactory):
     FACTORY_FOR = MonthsRecentPartner
 
     report_datetime = datetime.today()

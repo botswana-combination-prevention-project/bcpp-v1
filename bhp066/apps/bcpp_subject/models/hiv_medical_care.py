@@ -1,5 +1,5 @@
 from django.db import models
-from edc.base.model.validators import date_not_future
+from edc_base.model.validators import date_not_future
 
 from edc_base.audit_trail import AuditTrail
 
