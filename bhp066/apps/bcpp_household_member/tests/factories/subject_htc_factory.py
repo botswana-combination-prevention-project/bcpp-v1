@@ -1,16 +1,13 @@
-from datetime import datetime
-
 import factory
-from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
+from datetime import datetime
 
 from ...models import SubjectHtc
 
 from .household_member_factory import HouseholdMemberFactory
 
 
-class SubjectHtcFactory(BaseUuidModelFactory):
+class SubjectHtcFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectHtc

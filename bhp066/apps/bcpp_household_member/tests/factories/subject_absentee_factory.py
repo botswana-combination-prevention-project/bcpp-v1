@@ -2,8 +2,6 @@ import factory
 
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ...models import SubjectAbsentee
@@ -11,7 +9,7 @@ from ...models import SubjectAbsentee
 from .household_member_factory import HouseholdMemberFactory
 
 
-class SubjectAbsenteeFactory(BaseUuidModelFactory):
+class SubjectAbsenteeFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = SubjectAbsentee

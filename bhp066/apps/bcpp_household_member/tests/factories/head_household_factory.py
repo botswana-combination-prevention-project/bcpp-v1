@@ -2,8 +2,6 @@ import factory
 
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from bhp066.apps.bcpp_household.tests.factories import HouseholdStructureFactory
 
 from ...models import HouseholdHeadEligibility
@@ -11,7 +9,7 @@ from ...models import HouseholdHeadEligibility
 from .household_member_factory import HouseholdMemberFactory
 
 
-class HeadHouseholdEligibilityFactory(BaseUuidModelFactory):
+class HeadHouseholdEligibilityFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = HouseholdHeadEligibility

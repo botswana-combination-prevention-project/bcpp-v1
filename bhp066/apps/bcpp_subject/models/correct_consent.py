@@ -5,7 +5,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
-from edc.base.model.validators import (datetime_not_future, datetime_not_before_study_start,
+from edc_base.model.validators import (datetime_not_future, datetime_not_before_study_start,
                                        datetime_is_after_consent)
 from edc_base.audit_trail import AuditTrail
 from edc.choices.common import GENDER_UNDETERMINED

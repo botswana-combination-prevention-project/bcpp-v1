@@ -1,7 +1,5 @@
 import factory
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
 from ...models import HouseholdStructure
@@ -9,7 +7,7 @@ from ...models import HouseholdStructure
 from .household_factory import HouseholdFactory
 
 
-class HouseholdStructureFactory(BaseUuidModelFactory):
+class HouseholdStructureFactory(factory.DjangoModelFactory):
     class Meta:
         model = HouseholdStructure
 
