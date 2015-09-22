@@ -4,7 +4,7 @@ from .base_selinium_test import BaseSeleniumTest
 from .pages import SubjectDasbhoardPage, SubjectLocatorPage
 
 
-class TestSubjectVisitModels(BaseSeleniumTest):
+class TestSubjectVisits(BaseSeleniumTest):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -25,7 +25,7 @@ class TestSubjectVisitModels(BaseSeleniumTest):
         self.test_subject_locator_link()
         locator = SubjectLocatorPage(self.browser)
         locator.fill_subject_locator(
-            locator.home_visit_permission_yes, locator.may_follow_up_yes,
-            locator.may_sms_follow_up_yes, locator.may_call_work_yes, locator.may_contact_someone_yes,
-            locator.has_alt_contact_yes
+            locator.select_home_visit_permission_yes, locator.select_may_follow_up_yes,
+            locator.select_may_sms_follow_up_yes, locator.select_may_call_work_yes,
+            locator.select_may_contact_someone_yes, locator.select_has_alt_contact_yes
         )
