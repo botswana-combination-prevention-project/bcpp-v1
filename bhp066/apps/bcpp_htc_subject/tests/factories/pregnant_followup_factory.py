@@ -1,14 +1,12 @@
 import factory
 from datetime import date, datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import PregnantFollowup
 
 from .htc_subject_visit_factory import HtcSubjectVisitFactory
 
 
-class PregnantFollowupFactory(BaseUuidModelFactory):
+class PregnantFollowupFactory(factory.DjangoModelFactory):
     FACTORY_FOR = PregnantFollowup
 
     htc_subject_visit = factory.SubFactory(HtcSubjectVisitFactory)

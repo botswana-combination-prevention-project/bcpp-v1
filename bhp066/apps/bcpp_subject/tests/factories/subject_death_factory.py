@@ -1,13 +1,14 @@
 import factory
-from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
-from ...models import SubjectDeath
+from datetime import date
+
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from edc.subject.adverse_event.tests.factories import DeathCauseInfoFactory
 from edc.subject.adverse_event.tests.factories import DeathCauseCategoryFactory
 
+from bhp066.apps.bcpp_subject.models import SubjectDeath
 
-class SubjectDeathFactory(BaseUuidModelFactory):
+
+class SubjectDeathFactory(factory.DjangoModelFactory):
     FACTORY_FOR = SubjectDeath
 
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
