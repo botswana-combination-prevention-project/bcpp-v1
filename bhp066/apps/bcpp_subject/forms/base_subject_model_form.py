@@ -3,11 +3,10 @@ from django.conf import settings
 
 from edc.map.classes import site_mappers
 
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
-
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 
 class BaseSubjectModelForm(BaseModelForm):
@@ -24,9 +23,12 @@ class BaseSubjectModelForm(BaseModelForm):
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
         subject_visit = cleaned_data.get('subject_visit')
+        report_datetime = cleaned_data.get('report_datetime')
         self.instance.consented_for_period_or_raise(
+            report_datetime=report_datetime,
             subject_identifier=subject_visit.subject_identifier,
             exception_cls=forms.ValidationError)
+
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):

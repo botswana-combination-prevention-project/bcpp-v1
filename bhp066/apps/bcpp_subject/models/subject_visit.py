@@ -12,12 +12,13 @@ from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from ..choices import VISIT_UNSCHEDULED_REASON
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
+# from .subject_consent import SubjectConsent
 
 
 class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,
                    BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    CONSENT_MODEL = get_model("bcpp_subject", "SubjectConsent")
+    # CONSENT_MODEL = SubjectConsent
 
     household_member = models.ForeignKey(HouseholdMember)
 
