@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 from lis.specimen.lab_aliquot.models import BaseAliquot
 from edc.device.sync.models import BaseSyncUuidModel
 
-from bhp066.apps.bcpp_subject.models import SubjectVisit
-
 from ..managers import AliquotManager
 
 from .aliquot_condition import AliquotCondition
@@ -40,9 +38,6 @@ class Aliquot(BaseAliquot, BaseSyncUuidModel):
     def specimen_identifier(self):
         return self.aliquot_identifier[:-4]
 
-    def get_visit_model(self):
-        return SubjectVisit
-
     @property
     def registered_subject(self):
         return self.receive.registered_subject
@@ -53,6 +48,7 @@ class Aliquot(BaseAliquot, BaseSyncUuidModel):
 
     @property
     def subject_visit(self):
+        SubjectVisit = models.get_model('bcpp_subject', 'SubjectVisit')
         try:
             return SubjectVisit.objects.get(
                 appointment__visit_definition__code=self.visit_code,
