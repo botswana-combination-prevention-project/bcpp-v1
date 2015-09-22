@@ -21,7 +21,6 @@ from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVR
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household_member.constants import CLINIC_RBD
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
-from bhp066.apps.bcpp_subject.models import SubjectConsent
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..managers import BaseClinicHouseholdMemberManager
@@ -290,6 +289,7 @@ class ClinicEligibility (BaseSyncUuidModel):
     @classmethod
     def check_for_consent(cls, identity, exception_cls=None):
         """Confirms subject with this identity has not previously consented."""
+        SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
         exception_cls = exception_cls or ValidationError
         clinic_consent = None
         try:
