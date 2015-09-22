@@ -2,12 +2,10 @@ import factory
 
 from datetime import date
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
-
 from ...models import GpsDevice
 
 
-class GpsDeviceFactory(BaseUuidModelFactory):
+class GpsDeviceFactory(factory.DjangoModelFactory):
     class Meta:
         model = GpsDevice
 

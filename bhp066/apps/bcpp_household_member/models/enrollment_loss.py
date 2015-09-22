@@ -3,7 +3,7 @@ from django.db import models
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.base.model.validators import dob_not_future
+from edc_base.model.validators import dob_not_future
 
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 

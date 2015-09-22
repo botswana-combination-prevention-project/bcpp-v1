@@ -1,11 +1,10 @@
 import factory
 from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 from ...models import CeaEnrollmentChecklist
 
 
-class CeaEnrollmentChecklistFactory(BaseUuidModelFactory):
+class CeaEnrollmentChecklistFactory(factory.DjangoModelFactory):
     FACTORY_FOR = CeaEnrollmentChecklist
 
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)

@@ -1,14 +1,13 @@
 import factory
 
-from datetime import date, datetime
+from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.constants import NOT_APPLICABLE
 
 from ...models import ResidencyMobility
 
 
-class ResidencyMobilityFactory(BaseUuidModelFactory):
+class ResidencyMobilityFactory(factory.DjangoModelFactory):
     FACTORY_FOR = ResidencyMobility
 
     report_datetime = datetime.today()

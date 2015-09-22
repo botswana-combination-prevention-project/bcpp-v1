@@ -1,7 +1,6 @@
 import factory
 from datetime import datetime
 
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from edc.core.bhp_variables.tests.factories import StudySiteFactory
 
 from bhp066.apps.bcpp_subject.tests.factories import SubjectVisitFactory
@@ -11,8 +10,7 @@ from ..factories import AliquotTypeFactory
 from ...models import SubjectRequisition
 
 
-
-class SubjectRequisitionFactory(BaseUuidModelFactory):
+class SubjectRequisitionFactory(factory.DjangoModelFactory):
     FACTORY_FOR = SubjectRequisition
 
     subject_visit = factory.SubFactory(SubjectVisitFactory)

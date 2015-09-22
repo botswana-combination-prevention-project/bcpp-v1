@@ -1,12 +1,15 @@
 import factory
+
 from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
-from ...models import ClinicSubjectLocator
-from .clinic_visit_factory import ClinicVisitFactory
+
 from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
+from .clinic_visit_factory import ClinicVisitFactory
 
-class ClinicLocatorFactory(BaseUuidModelFactory):
+from ...models import ClinicSubjectLocator
+
+
+class ClinicLocatorFactory(factory.DjangoModelFactory):
     FACTORY_FOR = ClinicSubjectLocator
 
     clinic_visit = factory.SubFactory(ClinicVisitFactory)

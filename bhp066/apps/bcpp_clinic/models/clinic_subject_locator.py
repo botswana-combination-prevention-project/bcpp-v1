@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.base.model.validators import BWCellNumber, BWTelephoneNumber
+from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc.choices.common import YES_NO
 from edc_base.encrypted_fields import EncryptedCharField
 from edc.entry_meta_data.managers import EntryMetaDataManager
