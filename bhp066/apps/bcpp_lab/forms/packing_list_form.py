@@ -6,9 +6,7 @@ from ..models import SubjectRequisition, ClinicRequisition, PackingList, Packing
 class PackingListForm (BasePackingListForm):
 
     def clean(self):
-
         self.requisition = [SubjectRequisition, ClinicRequisition, Aliquot]
-
         return super(PackingListForm, self).clean()
 
     class Meta:
@@ -18,9 +16,7 @@ class PackingListForm (BasePackingListForm):
 class PackingListItemForm (BasePackingListItemForm):
 
     def clean(self):
-
         self.requisition = [SubjectRequisition, ClinicRequisition, Aliquot]
-
         return super(BasePackingListItemForm, self).clean()
 
     class Meta:

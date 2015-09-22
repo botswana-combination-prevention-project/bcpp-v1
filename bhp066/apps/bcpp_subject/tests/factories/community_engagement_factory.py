@@ -1,10 +1,9 @@
 import factory
 from datetime import date, datetime
-from edc.base.model.tests.factories import BaseUuidModelFactory
 from ...models import CommunityEngagement
 
 
-class CommunityEngagementFactory(BaseUuidModelFactory):
+class CommunityEngagementFactory(factory.DjangoModelFactory):
     FACTORY_FOR = CommunityEngagement
 
     report_datetime = datetime.today()
