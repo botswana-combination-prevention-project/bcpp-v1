@@ -44,6 +44,18 @@ class HouseholdHeadInfoPage(BaseModelAdminPage):
         flooring_type.click()
 
     @property
+    def select_flooring_wood(self):
+        return self.browser.find_element(*HouseholdHeadInfoPage.flooring_wood)
+
+    @property
+    def select_flooring_tile(self):
+        return self.browser.find_element(*HouseholdHeadInfoPage.flooring_tile)
+
+    @property
+    def select_flooring_dirt(self):
+        return self.browser.find_element(*HouseholdHeadInfoPage.flooring_dirt)
+
+    @property
     def select_water_tap(self):
         return self.browser.find_element(*HouseholdHeadInfoPage.water_tap)
 
