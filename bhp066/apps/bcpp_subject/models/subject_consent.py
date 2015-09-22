@@ -26,7 +26,6 @@ from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 from ..managers import SubjectConsentManager
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
-from .hic_enrollment import HicEnrollment
 from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
@@ -111,7 +110,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-
+        HicEnrollment = models.get_model('bcpp_subject', 'HicEnrollment')
         if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
             # consent_datetime does not exist in cleaned_data as it not editable.
