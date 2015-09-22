@@ -22,10 +22,10 @@ class SubjectDasbhoardPage(BaseModelAdminPage):
         self.browser.find_element(*SubjectDasbhoardPage.new_visit_link).click()
 
     def click_show_forms_link(self):
-        self.browser.find_element(*SubjectDasbhoardPage.subject_locator_link).click()
+        self.browser.find_element(*SubjectDasbhoardPage.show_forms_link).click()
 
     def click_subject_locator_link(self):
-        self.browser.find_element(*SubjectDasbhoardPage.show_forms_link).click()
+        self.browser.find_element(*SubjectDasbhoardPage.subject_locator_link).click()
 
     def click_residency_mobility_link(self):
         self.browser.find_element(*SubjectDasbhoardPage.residency_and_mobility_link).click()
@@ -39,7 +39,7 @@ class SubjectDasbhoardPage(BaseModelAdminPage):
         except NoSuchElementException:
             return False
 
-    def is_residence_keyed_visible(self, residency_and_mobility_keyed):
+    def is_residence_keyed_visible(self):
         try:
             return self.browser.find_element(*SubjectDasbhoardPage.residency_and_mobility_keyed).is_displayed()
         except NoSuchElementException:
