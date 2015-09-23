@@ -7,8 +7,10 @@ from edc_quota.client.models import Quota
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from bhp066.apps.bcpp_lab.models import Panel, AliquotType
 
-from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivUntested, ElisaHivResult,
-                      Circumcision, Circumcised, HicEnrollment, SubjectLocator)
+from bhp066.apps.bcpp_subject.models import (
+    HivCareAdherence, HivTestingHistory, HivTestReview, ElisaHivResult,
+    Circumcision, Circumcised, HicEnrollment, SubjectLocator)
+
 from .factories import (SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory, HivTestingHistoryFactory,
                         SubjectLocatorFactory)
 from .base_rule_group_test_setup import BaseRuleGroupTestSetup
