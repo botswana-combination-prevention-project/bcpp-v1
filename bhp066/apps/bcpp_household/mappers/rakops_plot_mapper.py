@@ -14,7 +14,7 @@ class RakopsPlotMapper(BasePlotMapper):
 
     map_area = 'rakops'
     map_code = '33'
-    pair = 7
+    pair = 12
     regions = SECTIONS
     sections = SUB_SECTIONS
 
