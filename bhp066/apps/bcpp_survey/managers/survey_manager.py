@@ -73,8 +73,8 @@ class SurveyManager(models.Manager):
                         report_date.strftime('%Y-%m-%d'),
                         '{}{}'.format(datetime_label[0].upper(), datetime_label[1:]),
                         community,
-                        )
                     )
+                )
             except OperationalError:
                 print 'Call app_configuration first.'
                 raise
