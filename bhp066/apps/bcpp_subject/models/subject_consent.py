@@ -391,7 +391,12 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
 class SubjectConsentExtended(SubjectConsent):
 
-        MAX_AGE_OF_CONSENT = 110
+    class Constants:
+        SUBJECT_TYPES = ['subject']
+        GENDER_OF_CONSENT = ['M', 'F']
+        AGE_IS_ADULT = 18
+        MIN_AGE_OF_CONSENT = 16
+        MAX_AGE_OF_CONSENT = 120
 
         class Meta:
             proxy = True
