@@ -137,7 +137,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(50L, u'bcpp_subject', u'hivtestreview', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(60L, u'bcpp_subject', u'hivresultdocumentation', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(70L, u'bcpp_subject', u'hivtested', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(80L, u'bcpp_subject', u'hivuntested', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(80L, u'bcpp_subject', u'hivuntested', NOT_REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(90L, u'bcpp_subject', u'sexualbehaviour', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(100L, u'bcpp_subject', u'monthsrecentpartner', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(110L, u'bcpp_subject', u'monthssecondpartner', REQUIRED, NOT_ADDITIONAL),
@@ -165,8 +165,8 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(330L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(340L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(350L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(370L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(380L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(30L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(370L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]}
          }
     )
