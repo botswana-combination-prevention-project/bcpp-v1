@@ -74,12 +74,13 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
         blank=True,
         help_text="type this id directly from the machine as labeled")
 
-    poc_vl_datetime = models.DateTimeField(
-        verbose_name="POC viral load Date and time",
-        validators=[datetime_not_future],
-        null=True,
-        blank=True,
-    )
+# removed
+#     poc_vl_datetime = models.DateTimeField(
+#         verbose_name="POC viral load Date and time",
+#         validators=[datetime_not_future],
+#         null=True,
+#         blank=True,
+#     )
 
     vl_value_quatifier = models.CharField(
         verbose_name="Select a quantifier for the value of the result",
@@ -113,7 +114,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
     )
 
     easy_of_use = models.CharField(
-        verbose_name="Easy of user by field operator?",
+        verbose_name="Ease of use by field operator?",
         max_length=200,
         choices=EASY_OF_USE,
     )

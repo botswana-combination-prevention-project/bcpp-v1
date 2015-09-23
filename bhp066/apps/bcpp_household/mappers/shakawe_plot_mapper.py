@@ -14,7 +14,7 @@ class ShakawePlotMapper(BasePlotMapper):
 
     map_area = 'shakawe'
     map_code = '36'
-    pair = 13.0
+    pair = 13
     regions = SECTIONS
     sections = SUB_SECTIONS
 

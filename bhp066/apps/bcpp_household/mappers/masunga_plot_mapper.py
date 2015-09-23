@@ -14,7 +14,7 @@ class MasungaPlotMapper(BasePlotMapper):
 
     map_area = 'masunga'
     map_code = '37'
-    pair = 6.5
+    pair = 15
     regions = SECTIONS
     sections = SUB_SECTIONS
 
