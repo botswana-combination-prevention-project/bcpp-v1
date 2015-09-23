@@ -64,10 +64,15 @@ class SubjectDashboard(BaseSubjectDashboard):
             except ValueError:
                 if latest_subject_consent:
                     unkeyed.append(SubjectConsentExtended)
+                    index = unkeyed.index(SubjectConsentExtended)
                 else:
                     unkeyed.append(SubjectConsent)
-            consent_type = ConsentType.objects.last()
-            unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+                    index = unkeyed.index(SubjectConsent)
+            try:
+                consent_type = ConsentType.objects.last()
+                unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+            except IndexError:
+                pass
             if unkeyed:
                 consenting_member = HouseholdMember.objects.get(
                     internal_identifier=self.household_member.internal_identifier,
