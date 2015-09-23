@@ -14,7 +14,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_household_member.models import HouseholdInfo
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
-from ..models import SubjectConsent
+from ..models import SubjectConsent, SubjectConsentExtended
 
 from .base_subject_consent_form import BaseSubjectConsentForm
 
@@ -64,16 +64,8 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
     def age(self, dob):
         return relativedelta(date.today(), dob).years
 
-#     def study_specifics_checks(self, dob):
-#         age_settings = StudySpecific.objects.all()[0]
-#         age = relativedelta(date.today(), dob).years
-#         if age < age_settings.minimum_age_of_consent:
-#             raise forms.ValidationError(u'Subject is too young to consent. Got {0} years'.format(age))
-#         if age > age_settings.maximum_age_of_consent:
-#             raise forms.ValidationError(u'Subject is too old to consent. Got {0} years'.format(age))
 
-
-class SubjectConsentForm(BaseBcppConsentForm):
+class BaseSubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
         cleaned_data = super(SubjectConsentForm, self).clean()
@@ -126,5 +118,14 @@ class SubjectConsentForm(BaseBcppConsentForm):
             raise forms.ValidationError(
                 'Complete \'{}\' before consenting head of household'.format(HouseholdInfo._meta.verbose_name))
 
+
+class SubjectConsentForm(BaseSubjectConsentForm):
+
     class Meta:
         model = SubjectConsent
+
+
+class SubjectConsentExtendedForm(BaseSubjectConsentForm):
+
+    class Meta:
+        model = SubjectConsentExtended
