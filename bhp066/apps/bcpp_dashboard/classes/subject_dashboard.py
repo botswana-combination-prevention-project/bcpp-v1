@@ -12,7 +12,7 @@ from edc_consent.models.consent_type import ConsentType
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_subject.models import (
-    SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
+    SubjectConsent, SubjectConsentExtended, SubjectVisit, SubjectLocator, SubjectReferral,
     CorrectConsent, ElisaHivResult, HivResult)
 from bhp066.apps.bcpp_lab.models import SubjectRequisition, PackingList
 
@@ -59,14 +59,20 @@ class SubjectDashboard(BaseSubjectDashboard):
             unkeyed = self.context.get('unkeyed_membership_forms')
             try:
                 index = unkeyed.index(SubjectConsent)
+                if latest_subject_consent:
+                    unkeyed.insert(index, SubjectConsentExtended)
             except ValueError:
-                unkeyed.append(SubjectConsent)
+                if latest_subject_consent:
+                    unkeyed.append(SubjectConsentExtended)
+                else:
+                    unkeyed.append(SubjectConsent)
                 index = unkeyed.index(SubjectConsent)
             consent_type = ConsentType.objects.last()
             unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
             if unkeyed:
-                consenting_member = HouseholdMember.objects.get(internal_identifier=self.household_member.internal_identifier,
-                                                                household_structure__survey=Survey.objects.current_survey())
+                consenting_member = HouseholdMember.objects.get(
+                    internal_identifier=self.household_member.internal_identifier,
+                    household_structure__survey=Survey.objects.current_survey())
                 unkeyed_consent_context = '&household_member={0}'.format(consenting_member.pk)
                 self.context['unkeyed_consent_context'] = unkeyed_consent_context
             self.context['unkeyed_membership_forms'] = unkeyed
