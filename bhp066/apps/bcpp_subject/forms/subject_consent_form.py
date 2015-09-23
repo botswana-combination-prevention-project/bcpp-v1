@@ -65,10 +65,10 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
         return relativedelta(date.today(), dob).years
 
 
-class BaseSubjectConsentForm(BaseBcppConsentForm):
+class BaseForm(BaseBcppConsentForm):
 
     def clean(self):
-        cleaned_data = super(BaseSubjectConsentForm, self).clean()
+        cleaned_data = super(BaseForm, self).clean()
         household_member = cleaned_data.get("household_member")
         self.limit_edit_to_current_community(household_member)
         self.limit_edit_to_current_survey(household_member)
@@ -119,13 +119,13 @@ class BaseSubjectConsentForm(BaseBcppConsentForm):
                 'Complete \'{}\' before consenting head of household'.format(HouseholdInfo._meta.verbose_name))
 
 
-class SubjectConsentForm(BaseSubjectConsentForm):
+class SubjectConsentForm(BaseForm):
 
     class Meta:
         model = SubjectConsent
 
 
-class SubjectConsentExtendedForm(BaseSubjectConsentForm):
+class SubjectConsentExtendedForm(BaseForm):
 
     class Meta:
         model = SubjectConsentExtended
