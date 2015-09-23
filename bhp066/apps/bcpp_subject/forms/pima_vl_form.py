@@ -24,8 +24,8 @@ class PimaVlForm (BaseSubjectModelForm):
             raise forms.ValidationError('If POC VL done today, please provide machine id?')
         if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('poc_vl_value'):
             raise forms.ValidationError('If POC VL done today, what is the POC viral load count?')
-        if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('poc_vl_datetime'):
-            raise forms.ValidationError('If POC VL done today, what is the POC viral load Date and Time?')
+#         if cleaned_data.get('poc_vl_today') == 'Yes' and not cleaned_data.get('poc_vl_datetime'):
+#             raise forms.ValidationError('If POC VL done today, what is the POC viral load Date and Time?')
         if cleaned_data.get('poc_vl_today') == 'Yes':
             if not (cleaned_data.get('time_of_test') or cleaned_data.get('time_of_result')):
                 raise forms.ValidationError('Time of test and time of result should be provided.')

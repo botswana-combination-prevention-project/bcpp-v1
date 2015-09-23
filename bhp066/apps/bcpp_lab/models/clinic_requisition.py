@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_constants.constants import NO, NEW, NOT_REQUIRED, KEYED
+from edc_constants.constants import NO, NEW, NOT_REQUIRED, KEYED, UNKEYED
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.models import RequisitionMetaData, ScheduledEntryMetaData
@@ -138,7 +138,7 @@ class ClinicRequisition(BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuid
                             entry=scheduled_entry,
                             registered_subject=self.clinic_visit.appointment.registered_subject)
                         for metadata in scheduled_meta:
-                            if metadata.entry_status == NEW:
+                            if metadata.entry_status == UNKEYED:
                                 metadata.entry_status = NOT_REQUIRED
                                 metadata.save()
 

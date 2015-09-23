@@ -14,7 +14,7 @@ class NataPlotMapper(BasePlotMapper):
 
     map_area = 'nata'
     map_code = '38'
-    pair = 6.5
+    pair = 15
     regions = SECTIONS
     sections = SUB_SECTIONS
 

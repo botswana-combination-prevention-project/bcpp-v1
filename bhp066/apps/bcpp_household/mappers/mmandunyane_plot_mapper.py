@@ -14,6 +14,7 @@ class MmandunyanePlotMapper(BasePlotMapper):
 
     map_area = 'mmandunyane'
     map_code = '32'
+    pair = 11
     regions = SECTIONS
     sections = SUB_SECTIONS
 
