@@ -66,7 +66,6 @@ class SubjectDashboard(BaseSubjectDashboard):
                     unkeyed.append(SubjectConsentExtended)
                 else:
                     unkeyed.append(SubjectConsent)
-                index = unkeyed.index(SubjectConsent)
             consent_type = ConsentType.objects.last()
             unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
             if unkeyed:
