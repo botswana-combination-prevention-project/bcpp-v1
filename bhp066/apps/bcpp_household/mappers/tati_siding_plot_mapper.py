@@ -14,6 +14,7 @@ class TatiSidingPlotMapper(BasePlotMapper):
 
     map_area = 'tati_siding'
     map_code = '30'
+    pair = 9
     regions = SECTIONS
     sections = SUB_SECTIONS
 

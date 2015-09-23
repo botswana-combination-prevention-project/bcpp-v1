@@ -14,6 +14,7 @@ class MmankgodiPlotMapper(BasePlotMapper):
 
     map_area = 'mmankgodi'
     map_code = '19'
+    pair = 5
     regions = SECTIONS
     sections = SUB_SECTIONS
 

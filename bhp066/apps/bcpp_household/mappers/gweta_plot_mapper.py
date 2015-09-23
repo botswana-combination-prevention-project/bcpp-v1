@@ -14,7 +14,7 @@ class GwetaPlotMapper(BasePlotMapper):
 
     map_area = 'gweta'
     map_code = '34'
-    pair = 7
+    pair = 12
     regions = SECTIONS
     sections = SUB_SECTIONS
 

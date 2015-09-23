@@ -14,6 +14,7 @@ class SebinaPlotMapper(BasePlotMapper):
 
     map_area = 'sebina'
     map_code = '28'
+    pair = 10
     regions = SECTIONS
     sections = SUB_SECTIONS
 
