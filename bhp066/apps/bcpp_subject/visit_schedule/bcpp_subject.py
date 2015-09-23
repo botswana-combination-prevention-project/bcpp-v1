@@ -165,8 +165,8 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(330L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(340L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
                 EntryTuple(350L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(30L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(370L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(370L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(380L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]}
          }
     )
