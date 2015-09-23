@@ -68,7 +68,7 @@ class BaseBcppConsentForm(BaseSubjectConsentForm):  # TODO: LOOK AT THE CLEAN ME
 class BaseSubjectConsentForm(BaseBcppConsentForm):
 
     def clean(self):
-        cleaned_data = super(SubjectConsentForm, self).clean()
+        cleaned_data = super(BaseSubjectConsentForm, self).clean()
         household_member = cleaned_data.get("household_member")
         self.limit_edit_to_current_community(household_member)
         self.limit_edit_to_current_survey(household_member)
