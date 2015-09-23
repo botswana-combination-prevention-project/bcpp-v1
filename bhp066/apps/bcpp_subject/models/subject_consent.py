@@ -30,10 +30,9 @@ from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 from ..exceptions import ConsentError
-from __builtin__ import True
 
 
-class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
+class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     study_site = models.ForeignKey(
         StudySite,
@@ -107,7 +106,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             self._save_new_consent(kwargs.get('using', None))
         # From old edc BaseSubject
         self.subject_type = self.get_subject_type()
-        super(BaseSubjectConsent, self).save(*args, **kwargs)
+        super(BaseBaseSubjectConsent, self).save(*args, **kwargs)
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -344,12 +343,7 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         abstract = True
 
 
-class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
-                     VulnerabilityFieldsMixin, BaseSubjectConsent):
-
-    objects = SubjectConsentManager()
-
-    history = AuditTrail()
+class BaseSubjectConsent(BaseBaseSubjectConsent):
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
@@ -380,7 +374,18 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
             self.registered_subject = consents[0].registered_subject
             self.subject_identifier = consents[0].subject_identifier
         self.community = self.household_member.household_structure.household.plot.community
-        super(SubjectConsent, self).save(*args, **kwargs)
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
+                     SampleCollectionFieldsMixin, VulnerabilityFieldsMixin, BaseSubjectConsent):
+
+    objects = SubjectConsentManager()
+
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'
@@ -398,5 +403,5 @@ class SubjectConsentExtended(SubjectConsent):
         MIN_AGE_OF_CONSENT = 16
         MAX_AGE_OF_CONSENT = 120
 
-        class Meta:
-            proxy = True
+    class Meta:
+        proxy = True
