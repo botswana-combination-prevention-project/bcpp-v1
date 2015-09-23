@@ -1,8 +1,9 @@
 from edc.subject.appointment.models import Appointment
 from edc_constants.constants import POS, NEG, IND
+from edc_constants.constants import NO
 
 from ..constants import BASELINE_CODES
-from ..models import SubjectVisit, Circumcised, HicEnrollment
+from ..models import SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory
 from ..classes import SubjectStatusHelper
 
 
@@ -332,4 +333,18 @@ def func_poc_vl(visit_instance):
         return True
     elif sero_converter(visit_instance) and func_art_naive(visit_instance):
         return True
+    return False
+
+
+def hiv_testing_history(visit_instance):
+    try:
+        hiv_testing = HivTestingHistory.objects.get(subject_visit=visit_instance)
+    except HivTestingHistory.DoesNotExist:
+        return False
+    return hiv_testing.has_tested == NO
+
+
+def func_hiv_untested(visit_instance):
+    if func_is_baseline(visit_instance):
+        return hiv_testing_history(visit_instance)
     return False
