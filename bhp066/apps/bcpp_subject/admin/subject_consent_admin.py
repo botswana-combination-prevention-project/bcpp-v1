@@ -6,7 +6,7 @@ from edc.subject.registration.models import RegisteredSubject
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..actions import add_to_call_list_action
-from ..forms import SubjectConsentForm
+from ..forms import SubjectConsentForm, SubjectConsentExtendedForm
 from ..models import SubjectConsent, SubjectConsentExtended
 
 
@@ -100,5 +100,5 @@ admin.site.register(SubjectConsent, SubjectConsentAdmin)
 
 
 class SubjectConsentExtendedAdmin(SubjectConsentAdmin):
-    pass
+    form = SubjectConsentExtendedForm
 admin.site.register(SubjectConsentExtended, SubjectConsentExtendedAdmin)
