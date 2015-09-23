@@ -30,6 +30,7 @@ from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 from ..exceptions import ConsentError
+from __builtin__ import True
 
 
 class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
@@ -357,10 +358,10 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
     def save(self, *args, **kwargs):
         # Any consent exists other than myself
         consents = self.__class__.objects.filter(
-                    household_member__internal_identifier=self.household_member.internal_identifier).exclude(
-                    household_member=self.household_member)
+            household_member__internal_identifier=self.household_member.internal_identifier).exclude(
+            household_member=self.household_member)
         if not consents.exists():
-            #Run the following validations only if its the first consent for an individual. Not Reconsent.
+            # Run the following validations only if its the first consent for an individual. Not Reconsent.
             if not self.id:
                 expected_member_status = BHS_ELIGIBLE
             else:
@@ -383,5 +384,14 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
     class Meta:
         app_label = 'bcpp_subject'
-        unique_together = (('subject_identifier', 'survey', 'version'), ('first_name', 'dob', 'initials', 'version'))
+        unique_together = (('subject_identifier', 'survey', 'version'),
+                           ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
+
+
+class SubjectConsentExtended(SubjectConsent):
+
+        MAX_AGE_OF_CONSENT = 110
+
+        class Meta:
+            proxy = True
