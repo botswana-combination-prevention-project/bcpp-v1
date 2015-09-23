@@ -129,8 +129,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'version': '2',
         },
         {
-            'app_label': 'bcpp_subject',
-            'model_name': 'subjectconsent',
+            'app_label': 'models',
+            'model_name': 'subjectconsentextended',
             'start_datetime': datetime(2013, 10, 30, 0, 0, 0),
             'end_datetime': datetime(2014, 4, 9, 23, 59, 0),
             'version': '1',
