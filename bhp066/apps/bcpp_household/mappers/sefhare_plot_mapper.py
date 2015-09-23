@@ -14,7 +14,7 @@ class SefharePlotMapper(BasePlotMapper):
 
     map_area = 'sefhare'
     map_code = '39'
-    pair = 6.5
+    pair = 14
     regions = SECTIONS
     sections = SUB_SECTIONS
 

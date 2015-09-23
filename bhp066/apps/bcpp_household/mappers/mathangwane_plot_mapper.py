@@ -14,6 +14,7 @@ class MathangwanePlotMapper(BasePlotMapper):
 
     map_area = 'mathangwane'
     map_code = '31'
+    pair = 11
     regions = SECTIONS
     sections = SUB_SECTIONS
 

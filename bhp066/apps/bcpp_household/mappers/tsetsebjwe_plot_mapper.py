@@ -14,7 +14,7 @@ class TsetsebjwePlotMapper(BasePlotMapper):
 
     map_area = 'tsetsebjwe'
     map_code = '40'
-    pair = 6.5
+    pair = 14
     regions = SECTIONS
     sections = SUB_SECTIONS
 
