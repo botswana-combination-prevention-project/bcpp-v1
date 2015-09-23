@@ -166,6 +166,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     def get_subject_type(self):
         return 'subject'
 
+    def natural_key(self):
+        return (self.subject_identifier_as_pk, )
+
     def get_consent_history_model(self):
         return SubjectConsentHistory
 
