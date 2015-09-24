@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ValidationError
 
 from bhp066.apps.bcpp_subject.models import SubjectConsent
+from edc_consent.models.consent_type import ConsentType
 
 
 class Command(BaseCommand):
@@ -24,9 +25,13 @@ class Command(BaseCommand):
         for consent in consents:
             count += 1
             try:
-                consent.save(update_fields=['version'])
+                consent_type = ConsentType.objects.get_by_consent_datetime(
+                    SubjectConsent, consent.consent_datetime)
+                consent.version = consent_type.version
+                consent.save_base(update_fields=['version'])
             except ValidationError:
                 failed += 1
+                print('              failed = {} \r'.format(failed), end="")
             print('{} / {} \r'.format(count, total), end="")
             sys.stdout.flush()
         print('{} failed on a ValidationErorr'.format(failed))
