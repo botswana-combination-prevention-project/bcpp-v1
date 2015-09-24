@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
 
-    def handle(self):
+    def handle(self, *args, **options):
         group = Group.objects.get(name='field_research_assistant')
         for permission in Permission.objects.filter(
                 content_type__app_label='bcpp_subject',
