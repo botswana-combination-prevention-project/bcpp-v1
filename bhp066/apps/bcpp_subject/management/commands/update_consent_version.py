@@ -18,21 +18,21 @@ class Command(BaseCommand):
     def resave_consents(self):
         consents = SubjectConsent.objects.filter(version='?')
         count = 0
-        failed = 0
         total = consents.count()
         print("Updating {} consents where version == \'?\' ... ".format(total))
         sys.stdout.flush()
+        dct = {}
+        for consent_type in ConsentType.objects.all():
+            dct[consent_type.version] = []
         for consent in consents:
             count += 1
-            try:
-                consent_type = ConsentType.objects.get_by_consent_datetime(
-                    SubjectConsent, consent.consent_datetime)
-                consent.version = consent_type.version
-                consent.save_base(update_fields=['version'])
-            except ValidationError:
-                failed += 1
-                print('              failed = {} \r'.format(failed), end="")
+            consent_type = ConsentType.objects.get_by_consent_datetime(
+                SubjectConsent, consent.consent_datetime)
+            consent.version = consent_type.version
+            dct[consent.version].append(consent.pk)
             print('{} / {} \r'.format(count, total), end="")
             sys.stdout.flush()
-        print('{} failed on a ValidationErorr'.format(failed))
+        for version, pks in dct.iteritems():
+            print("   {} consents set to version {} ".format(len(pks), version))
+            SubjectConsent.objects.filter(pk__in=pks).update(version=version)
         print("Done.")
