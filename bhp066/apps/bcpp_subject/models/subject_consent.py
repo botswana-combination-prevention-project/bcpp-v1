@@ -405,3 +405,4 @@ class SubjectConsentExtended(SubjectConsent):
 
     class Meta:
         proxy = True
+        app_label = 'bcpp_subject'
