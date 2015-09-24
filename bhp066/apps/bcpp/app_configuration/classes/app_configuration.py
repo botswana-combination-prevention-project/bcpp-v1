@@ -116,6 +116,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
         },
         {
             'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsentextended',
+            'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
+            'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'version': '4',
+        },
+        {
+            'app_label': 'bcpp_subject',
             'model_name': 'subjectconsent',
             'start_datetime': datetime(2015, 5, 1, 0, 0, 0),
             'end_datetime': datetime(2015, 9, 15, 23, 59, 0),
@@ -129,12 +136,12 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'version': '2',
         },
         {
-            'app_label': 'models',
-            'model_name': 'subjectconsentextended',
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsent',
             'start_datetime': datetime(2013, 10, 30, 0, 0, 0),
             'end_datetime': datetime(2014, 4, 9, 23, 59, 0),
             'version': '1',
-        }
+        },
     ]
 
     lab_clinic_api_setup = {
