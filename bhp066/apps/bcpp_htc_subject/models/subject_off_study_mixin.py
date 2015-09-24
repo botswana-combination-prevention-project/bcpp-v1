@@ -4,5 +4,4 @@ from .htc_subject_off_study import HtcSubjectOffStudy
 
 class SubjectOffStudyMixin(OffStudyMixin):
 
-    def get_off_study_cls(self):
-        return HtcSubjectOffStudy
+    OFF_STUDY_MODEL =  HtcSubjectOffStudy

@@ -5,8 +5,7 @@ from edc.subject.off_study.mixins import OffStudyMixin
 
 class ClinicOffStudyMixin(OffStudyMixin):
 
-    def get_off_study_cls(self):
-        return ClinicOffStudy
+    OFF_STUDY_MODEL =  ClinicOffStudy
 
     class Meta:
         abstract = True
