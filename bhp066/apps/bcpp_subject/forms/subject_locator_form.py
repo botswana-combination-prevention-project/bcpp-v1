@@ -26,6 +26,9 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         # permission to followup
         if cleaned_data.get('may_follow_up', None) == 'Yes' and not cleaned_data.get('subject_cell', None):
             raise forms.ValidationError('If participant has allowed you to follow them up, what is their cell number?')
+        # permission to sms
+        if cleaned_data.get('may_sms_follow_up', None) == 'Yes' and not cleaned_data.get('subject_cell', None):
+            raise forms.ValidationError('If participant has allowed you to sms her on followup, what is their cell number?')
         # may call work
         if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_place', None):
             raise forms.ValidationError('If participant has allowed you to call them at work, name work place location?')
