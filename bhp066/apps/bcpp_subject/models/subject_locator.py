@@ -113,13 +113,16 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     def hic_enrollment_checks(self, exception_cls=None):
         from .hic_enrollment import HicEnrollment
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
-            if ((self.may_follow_up == YES and self.may_sms_follow_up == YES) or
-                (self.may_follow_up == YES and self.may_sms_follow_up == NO) or
-                    (self.may_follow_up == NO and self.may_sms_follow_up == YES)):
-                if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
-                    raise exception_cls('An HicEnrollment form exists for this subject. At least one of '
-                                        '\'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+        if (self.may_follow_up == YES) or (self.may_follow_up == NO and self.may_sms_follow_up == YES):
+            if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
+                try:
+                    HicEnrollment.objects.get(
+                        subject_visit__subject_idenifier=self.subject_visit.subject_identifier)
+                    raise exception_cls(
+                        'An HicEnrollment form exists for this subject. At least one of '
+                        '\'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+                except HicEnrollment.DoesNotExist:
+                    pass
 
     def natural_key(self):
         return self.subject_visit.natural_key()
