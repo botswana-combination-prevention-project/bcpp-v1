@@ -14,8 +14,9 @@ def split_weekdays(days, base_datetime):
     weekdays = [day.weekday for day in days]
     weekdays.append(base_datetime.weekday())
     weekdays.sort()
+    reversed_days = []
     for item in [x for x in split_seq(weekdays, base_datetime.weekday())]:
         item.reverse()
         for i in item:
-            reversed.append(i)
-    return [wk[i] for i in reversed]
+            reversed_days.append(i)
+    return [wk[i] for i in reversed_days]
