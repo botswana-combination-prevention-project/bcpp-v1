@@ -17,7 +17,7 @@ CLINIC_DAYS = {  # see the mapper classes for CLINIC days per community
            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 15)),
            'SMC-ECC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 7))},
-    }
+}
 
 
 class TestNextClinicDate(SimpleTestCase):
@@ -165,4 +165,3 @@ class TestNextClinicDate(SimpleTestCase):
                                           allow_same_day=False,
                                           subtract=True),
                          self.expected_appt_datetime)
-
