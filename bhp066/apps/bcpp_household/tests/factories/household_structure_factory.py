@@ -2,7 +2,7 @@ import factory
 
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ...models import HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from .household_factory import HouseholdFactory
 

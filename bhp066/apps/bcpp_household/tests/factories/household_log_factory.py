@@ -1,6 +1,6 @@
 import factory
 
-from ...models import HouseholdLog
+from bhp066.apps.bcpp_household.models import HouseholdLog
 
 from .household_structure_factory import HouseholdStructureFactory
 

@@ -6,7 +6,8 @@ from edc.subject.registration.tests.factories import RegisteredSubjectFactory
 
 from .subject_visit_factory import SubjectVisitFactory
 
-from ...models import SubjectLocator
+from bhp066.apps.bcpp_subject.models import SubjectLocator
+from edc_constants.constants import YES
 
 
 class SubjectLocatorFactory(factory.DjangoModelFactory):
@@ -16,9 +17,9 @@ class SubjectLocatorFactory(factory.DjangoModelFactory):
     registered_subject = factory.SubFactory(RegisteredSubjectFactory)
     report_datetime = datetime.today()
     date_signed = date.today()
-    home_visit_permission = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8810>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b8850>'))[0][0]
+    home_visit_permission = YES
     subject_cell = '72777777'
-    may_follow_up = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8810>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b8850>'))[0][0]
-    may_call_work = (('Yes', 'Yes'), ('No', 'No'), ('Doesnt_work', 'Doesnt Work'))[0][0]
-    may_contact_someone = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8810>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b8850>'))[0][0]
-    has_alt_contact = (('Yes', '<django.utils.functional.__proxy__ object at 0x1021b8810>'), ('No', '<django.utils.functional.__proxy__ object at 0x1021b8850>'))[0][0]
+    may_follow_up = YES
+    may_call_work = YES
+    may_contact_someone = YES
+    has_alt_contact = YES

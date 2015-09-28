@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import HouseholdLogEntry
+from bhp066.apps.bcpp_household.models import HouseholdLogEntry
 
 from .household_log_factory import HouseholdLogFactory
 

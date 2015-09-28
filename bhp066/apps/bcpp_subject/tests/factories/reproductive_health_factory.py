@@ -2,7 +2,8 @@ import factory
 
 from datetime import datetime
 
-from ...models import ReproductiveHealth
+from bhp066.apps.bcpp_subject.models import ReproductiveHealth
+from edc_constants.constants import YES
 
 
 class ReproductiveHealthFactory(factory.DjangoModelFactory):
@@ -10,5 +11,5 @@ class ReproductiveHealthFactory(factory.DjangoModelFactory):
 
     report_datetime = datetime.today()
     number_children = 2
-    menopause = (('Yes', u'Yes'), ('No', u'No'))[0][0]
+    menopause = YES
     family_planning_other = factory.Sequence(lambda n: 'family_planning_other{0}'.format(n))

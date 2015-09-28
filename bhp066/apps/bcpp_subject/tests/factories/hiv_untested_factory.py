@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import HivUntested
+from bhp066.apps.bcpp_subject.models import HivUntested
 
 
 class HivUntestedFactory(factory.DjangoModelFactory):
