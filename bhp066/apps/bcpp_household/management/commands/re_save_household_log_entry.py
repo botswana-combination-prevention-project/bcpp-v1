@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from bhp066.apps.bcpp_household.models import HouseholdLogEntry
+from bhp066.apps.bcpp_household.models import HouseholdLogEntry, Household
 
 
 class Command(BaseCommand):
@@ -15,7 +15,8 @@ class Command(BaseCommand):
             raise CommandError('Missing \'using\' parameters.')
         community_name = args[0]
         household_log_entries = HouseholdLogEntry.objects.filter(
-            household_log__household_structure__household__plot__community=community_name)
+            household_log__household_structure__household__plot__community=community_name,
+            household_log__household_structure__household__replaced_by__isnull=True)
         total_entries = len(household_log_entries)
         count = 0
         for h_log_entries in household_log_entries:
