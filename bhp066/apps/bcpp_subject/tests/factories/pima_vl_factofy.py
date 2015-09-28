@@ -1,13 +1,18 @@
 import factory
-from datetime import date, datetime
+
+from datetime import datetime
+
+from edc_constants.constants import YES
+
+from bhp066.apps.bcpp_subject.models import PimaVl
+
 from .base_scheduled_model_factory import BaseScheduledModelFactory
-from ...models import PimaVl
 
 
 class PimaVlFactory(BaseScheduledModelFactory):
     FACTORY_FOR = PimaVl
     report_datetime = datetime.today()
-    poc_vl_today = 'Yes'
+    poc_vl_today = YES
     poc_vl_type = 'mobile setting'
     poc_vl_datetime = datetime.today()
     time_of_test = datetime.today()

@@ -2,9 +2,9 @@ import factory
 
 from datetime import datetime
 
-from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
+from .subject_consent_factory import SubjectConsentFactory
 
-from ...models import CorrectConsent
+from bhp066.apps.bcpp_subject.models import CorrectConsent
 
 
 class CorrectConsentFactory(factory.DjangoModelFactory):
