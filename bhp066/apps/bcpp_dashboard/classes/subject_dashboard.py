@@ -69,7 +69,7 @@ class SubjectDashboard(BaseSubjectDashboard):
                     unkeyed.append(SubjectConsent)
                     index = unkeyed.index(SubjectConsent)
             try:
-                consent_type = ConsentType.objects.last()
+                consent_type = ConsentType.objects.latest('start_datetime')
                 unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
             except IndexError:
                 pass
