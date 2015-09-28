@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.test import TestCase
 
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -8,23 +6,12 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.map.classes import site_mappers, Mapper
 
 from bhp066.apps.bcpp_household.helpers import ReplacementHelper
-from bhp066.apps.bcpp_household_member.models import HouseholdMember
-from bhp066.apps.bcpp_household_member.models import SubjectAbsentee, SubjectAbsenteeEntry
-from bhp066.apps.bcpp_household_member.constants import REFUSED, ABSENT
-from bhp066.apps.bcpp_household_member.tests.factories import SubjectRefusalFactory, SubjectAbsenteeEntryFactory
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
-from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry, HouseholdRefusal, HouseholdAssessment
 
-from .factories import HouseholdFactory
-from .factories import PlotFactory
-from .factories import HouseholdRefusalFactory
-from .factories import HouseholdLogFactory
-from .factories import HouseholdLogEntryFactory
-from .factories import HouseholdAssessmentFactory
+from .factories.plot_factory import PlotFactory
 
 
 class TestPlotMapper(Mapper):
@@ -72,7 +59,7 @@ class ReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_plots(), [plot])
 
     def test_replacement_plot2(self, **kwargs):
-        plot = PlotFactory(
+        PlotFactory(
             community='test_community12',
             household_count=0,
             status='non_residential',
@@ -90,7 +77,7 @@ class ReplacementTests(TestCase):
         self.assertEquals(replacement_helper.replaceable_plots(), [])
 
     def test_replacement_plot3(self, **kwargs):
-        plot = PlotFactory(
+        PlotFactory(
             community='test_community12',
             household_count=1,
             status='residential_habitable',
