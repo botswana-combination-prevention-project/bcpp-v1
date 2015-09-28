@@ -1,7 +1,5 @@
 from django.db.models import get_model
 
-from bhp066.config.celery import app
-
 from edc.map.exceptions import MapperError
 from edc_constants.constants import NEW, YES
 
@@ -11,7 +9,6 @@ from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_household_member.exceptions import HouseholdStructureNotEnrolled
 
 
-@app.task
 def update_call_list(community, survey_slug, label, verbose=False):
     """Adds information from SubjectConsent instances from the specified survey to the
     CallList model for the current survey.
