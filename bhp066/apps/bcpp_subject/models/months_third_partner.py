@@ -10,7 +10,7 @@ from .subject_consent import SubjectConsent
 class MonthsThirdPartner (BaseSexualPartner):
     """A model completed by the user on the participant's recent sexual behaviour."""
 
-    CONSENTMODEL = SubjectConsent
+    CONSENT_MODEL = SubjectConsent
 
     third_partner_arm = models.CharField(
         max_length=20,
