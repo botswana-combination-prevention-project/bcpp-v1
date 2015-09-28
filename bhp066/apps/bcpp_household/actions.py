@@ -6,10 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import get_model
 from django.http import HttpResponseRedirect
 
-from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
-
 from .utils.update_increaseplotradius import update_increaseplotradius
-from .utils.update_replaceables import update_replaceables
 from .utils.update_household_work_list import update_household_work_list
 
 
@@ -24,21 +21,21 @@ def update_household_work_list_action(modeladmin, request, queryset, **kwargs):
 update_household_work_list_action.short_description = "Update Work List Item(s)"
 
 
-def update_replaceables_action(modeladmin, request, queryset, **kwargs):
-    try:
-        already_running(update_replaceables)
-        result = update_replaceables.delay()
-        messages.add_message(request, messages.INFO, (
-            '{0.status}: Updating replaceable plots and households. ({0.id})').format(result))
-    except CeleryTaskAlreadyRunning as celery_task_already_running:
-        messages.add_message(request, messages.WARNING, str(celery_task_already_running))
-    except CeleryNotRunning as not_running:
-        messages.add_message(request, messages.WARNING, str(not_running))
-    except Exception as e:
-        messages.add_message(request, messages.ERROR, (
-            'Unable to run task. Celery got {}.'.format(str(e))))
-update_replaceables_action.short_description = (
-    'Update replaceable plots and households. (also updates model Replaceables)')
+# def update_replaceables_action(modeladmin, request, queryset, **kwargs):
+#     try:
+#         already_running(update_replaceables)
+#         result = update_replaceables.delay()
+#         messages.add_message(request, messages.INFO, (
+#             '{0.status}: Updating replaceable plots and households. ({0.id})').format(result))
+#     except CeleryTaskAlreadyRunning as celery_task_already_running:
+#         messages.add_message(request, messages.WARNING, str(celery_task_already_running))
+#     except CeleryNotRunning as not_running:
+#         messages.add_message(request, messages.WARNING, str(not_running))
+#     except Exception as e:
+#         messages.add_message(request, messages.ERROR, (
+#             'Unable to run task. Celery got {}.'.format(str(e))))
+# update_replaceables_action.short_description = (
+#     'Update replaceable plots and households. (also updates model Replaceables)')
 
 
 def update_increaseplotradius_action(modeladmin, request, queryset, **kwargs):
@@ -76,7 +73,7 @@ def export_as_kml(modeladmin, request, queryset, **kwargs):
     if not to_email:
         modeladmin.message_user(request, (
             'Send failed. Please update your email address in your user profile.'
-            ).format(request.user))
+        ).format(request.user))
     placemarks = ''
     for qs in queryset:
         p = (
@@ -198,13 +195,13 @@ def export_as_kml_hs(modeladmin, request, queryset, **kwargs):
             '        <name>({subject} {household_identifier} ({hh_int})</name>\n'
             '        <styleUrl>#gv_waypoint</styleUrl>\n'
             '    </Placemark>\n'
-            ).format(
-                gps_lat=qs.household_structure.household.gps_lat(),
-                gps_lon=qs.household_structure.household.gps_lon(),
-                subject=qs.first_name,
-                cso=qs.household_structure.household.cso_number,
-                household_identifier=qs.household_structure.household.household_identifier,
-                hh_int=qs.household_structure.household.hh_int)
+        ).format(
+            gps_lat=qs.household_structure.household.gps_lat(),
+            gps_lon=qs.household_structure.household.gps_lon(),
+            subject=qs.first_name,
+            cso=qs.household_structure.household.cso_number,
+            household_identifier=qs.household_structure.household.household_identifier,
+            hh_int=qs.household_structure.household.hh_int)
         placemarks += p
     kml = (
         '<?xml version="1.0" standalone="yes"?>\n'

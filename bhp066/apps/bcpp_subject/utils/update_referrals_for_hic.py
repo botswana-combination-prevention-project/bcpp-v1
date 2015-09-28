@@ -1,9 +1,6 @@
-from bhp066.config.celery import app as celery_app
-
 from ..models import HicEnrollment, SubjectReferral
 
 
-@celery_app.task
 def update_referrals_for_hic(self):
     for hic_enrollment in HicEnrollment.objects.all():
         try:
