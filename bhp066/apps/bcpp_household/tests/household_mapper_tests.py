@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from edc.map.classes import Mapper
 
-from ..models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 
 class OtsePlotMapper(Mapper):

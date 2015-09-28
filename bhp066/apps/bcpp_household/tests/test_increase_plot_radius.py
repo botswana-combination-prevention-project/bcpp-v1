@@ -1,5 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
 from django.db import IntegrityError
 from django.test import TestCase
 
@@ -7,7 +8,6 @@ from edc.core.bhp_content_type_map.classes import ContentTypeMapHelper
 from edc.core.bhp_content_type_map.models import ContentTypeMap
 from edc.core.bhp_variables.tests.factories import StudySpecificFactory, StudySiteFactory
 from edc.core.identifier.exceptions import IdentifierError
-from edc.subject.consent.tests.factories import ConsentCatalogueFactory
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 
@@ -19,7 +19,7 @@ from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFac
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
 from bhp066.apps.bcpp_survey.models import Survey
 
-from ..models import SubjectConsent
+from bhp066.apps.bcpp_subject.models import SubjectConsent
 
 
 class TestConsent(TestCase):
@@ -37,15 +37,7 @@ class TestConsent(TestCase):
         content_type_map_helper = ContentTypeMapHelper()
         content_type_map_helper.populate()
         content_type_map_helper.sync()
-        content_type_map = ContentTypeMap.objects.get(model__iexact=SubjectConsent._meta.object_name)
-        ConsentCatalogueFactory(
-            name=self.app_label,
-            content_type_map=content_type_map,
-            consent_type='study',
-            version=1,
-            start_datetime=study_specific.study_start_datetime,
-            end_datetime=datetime(datetime.today().year + 5, 1, 1),
-            add_for_app=self.app_label)
+        ContentTypeMap.objects.get(model__iexact=SubjectConsent._meta.object_name)
 
         setup_dashboard(self)  # creates 3 surveys a plot and two HH which -> 6 HHS
 
