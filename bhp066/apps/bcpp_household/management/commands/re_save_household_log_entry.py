@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Re save household log entries.'
 
     def handle(self, *args, **options):
-        if not args or len(args) < 2:
+        if not args or len(args) < 1:
             raise CommandError('Missing \'using\' parameters.')
         community_name = args[0]
         household_log_entries = HouseholdLog.objects.filter(
