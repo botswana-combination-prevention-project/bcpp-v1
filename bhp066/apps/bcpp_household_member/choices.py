@@ -1,7 +1,8 @@
 from django.utils.translation import ugettext as _
 
 from .constants import (ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE,
-                        NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS, ANNUAL, DECEASED)
+                        NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS, ANNUAL, DECEASED,
+                        HEAD_OF_HOUSEHOLD)
 
 options = list(set([ABSENT, BHS, BHS_ELIGIBLE, BHS_SCREEN, HTC, HTC_ELIGIBLE, NOT_ELIGIBLE,
                     NOT_REPORTED, REFUSED, UNDECIDED, REFUSED_HTC, BHS_LOSS, ANNUAL, DECEASED]))
@@ -53,7 +54,7 @@ MALE_RELATIONS = [
 
 relations = FEMALE_RELATIONS + MALE_RELATIONS + ANY_RELATIONS
 relations.sort()
-RELATIONS = [('Head', 'HEAD of HOUSEHOLD')] + relations + [('UNKNOWN', 'UNKNOWN')]
+RELATIONS = [(HEAD_OF_HOUSEHOLD, 'HEAD of HOUSEHOLD')] + relations + [('UNKNOWN', 'UNKNOWN')]
 
 ABSENTEE_STATUS = (
     ('ABSENT', _('Absent')),
