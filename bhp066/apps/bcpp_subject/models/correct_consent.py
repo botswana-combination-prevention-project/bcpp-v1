@@ -5,14 +5,13 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
-from edc_base.model.validators import (datetime_not_future, datetime_not_before_study_start,
-                                       datetime_is_after_consent)
+from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc_base.audit_trail import AuditTrail
 from edc.choices.common import GENDER_UNDETERMINED
 from edc.choices.common import YES_NO, YES
 from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
 from edc.device.sync.models import BaseSyncUuidModel
-from edc_consent.validators import ConsentAgeValidator
+from edc_consent.models.validators import AgeTodayValidator
 
 from ..managers import CorrectConsentManager
 
@@ -20,20 +19,15 @@ from .subject_consent import SubjectConsent
 from .hic_enrollment import HicEnrollment
 
 
-class CorrectConsent(BaseSyncUuidModel):
+class BaseCorrectConsent(models.Model):
 
     """A model linked to the subject consent to record corrections."""
-
-    CONSENT_MODEL = SubjectConsent
-
-    subject_consent = models.OneToOneField(SubjectConsent)
 
     report_datetime = models.DateTimeField(
         verbose_name="Correction report date ad time",
         null=True,
         validators=[
             datetime_not_before_study_start,
-            datetime_is_after_consent,
             datetime_not_future],
     )
 
@@ -76,13 +70,13 @@ class CorrectConsent(BaseSyncUuidModel):
         verbose_name="Old Date of birth",
         null=True,
         blank=True,
-        validators=[ConsentAgeValidator(16, 64)],
+        validators=[AgeTodayValidator(16, 64)],
         help_text="Format is YYYY-MM-DD",
     )
 
     new_dob = models.DateField(
         verbose_name="New Date of birth",
-        validators=[ConsentAgeValidator(16, 64)],
+        validators=[AgeTodayValidator(16, 64)],
         null=True,
         blank=True,
         help_text="Format is YYYY-MM-DD",
@@ -152,93 +146,31 @@ class CorrectConsent(BaseSyncUuidModel):
     old_witness_name = LastnameField(
         verbose_name="Witness\'s Last and first name (illiterates only)",
         validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+            RegexValidator(
+                '^[A-Z]{1,50}\, [A-Z]{1,50}$',
+                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text='Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma',
+        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
+                   'All uppercase separated by a comma'),
     )
 
     new_witness_name = LastnameField(
         verbose_name="Witness\'s Last and first name (illiterates only)",
         validators=[
-            RegexValidator('^[A-Z]{1,50}\, [A-Z]{1,50}$', 'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
+            RegexValidator(
+                '^[A-Z]{1,50}\, [A-Z]{1,50}$',
+                'Invalid format. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma')],
         blank=True,
         null=True,
-        help_text='Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. All uppercase separated by a comma',
+        help_text=('Required only if subject is illiterate. Format is \'LASTNAME, FIRSTNAME\'. '
+                   'All uppercase separated by a comma'),
     )
-
-    objects = CorrectConsentManager()
-
-    history = AuditTrail()
-
-    def __unicode__(self):
-        return unicode(self.subject_consent)
 
     def save(self, *args, **kwargs):
         self.compare_old_fields_to_consent()
         self.update_household_member_and_enrollment_checklist()
-        super(CorrectConsent, self).save(*args, **kwargs)
-
-    def natural_key(self):
-        return self.subject_consent.natural_key()
-
-    def update_household_member_and_enrollment_checklist(self):
-        household_member = self.subject_consent.household_member
-        enrollment_checklist = household_member.enrollment_checklist
-        hic_enrollment = None
-        if self.new_first_name:
-            household_member.first_name = self.new_first_name
-            self.subject_consent.first_name = self.new_first_name
-            if self.new_last_name:
-                household_member.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
-                enrollment_checklist.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
-                self.subject_consent.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
-            else:
-                household_member.initials = str(self.new_first_name)[0] + str(self.subject_consent.last_name)[0]
-                enrollment_checklist.initials = str(self.new_first_name)[0] + str(self.subject_consent.last_name)[0]
-                self.subject_consent.initials = str(self.new_first_name)[0] + str(self.subject_consent.last_name)[0]
-        if self.new_initials:
-            household_member.initials = self.new_initials
-            enrollment_checklist.initials = self.new_initials
-            self.subject_consent.initials = self.new_initials
-        if self.new_gender:
-            household_member.gender = self.new_gender
-            enrollment_checklist.gender = self.new_gender
-            self.subject_consent.gender = self.new_gender
-        if self.new_dob:
-            household_member.age_in_years = relativedelta(date.today(), self.new_dob).years
-            enrollment_checklist.dob = self.new_dob
-            self.subject_consent.dob = self.new_dob
-            if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
-                hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
-                hic_enrollment.dob = self.new_dob
-        if self.new_guardian_name:
-            enrollment_checklist.guardian = YES
-            self.subject_consent.guardian_name = self.new_guardian_name
-        if self.new_is_literate:
-            enrollment_checklist.literacy = self.new_is_literate
-            self.subject_consent.is_literate = self.new_is_literate
-            if self.new_is_literate == 'Yes':
-                self.subject_consent.witness_name = None
-            if self.new_witness_name:
-                self.subject_consent.witness_name = self.new_witness_name
-        if self.new_last_name:
-            self.subject_consent.last_name = self.new_last_name
-            if self.new_first_name:
-                household_member.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
-                enrollment_checklist.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
-                self.subject_consent.initials = str(self.new_first_name)[0] + str(self.new_last_name)[0]
-            else:
-                household_member.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
-                enrollment_checklist.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
-                self.subject_consent.initials = str(self.subject_consent.first_name)[0] + str(self.new_last_name)[0]
-        if self.new_witness_name:
-            self.subject_consent.witness_name = self.new_witness_name
-        if hic_enrollment:
-            hic_enrollment.save(update_fields=['dob'])
-        household_member.save(update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
-        enrollment_checklist.save(update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
-        self.subject_consent.save(update_fields=['first_name', 'last_name', 'initials', 'gender', 'is_literate', 'witness_name', 'dob', 'guardian_name'])
+        super(BaseCorrectConsent, self).save(*args, **kwargs)
 
     def compare_old_fields_to_consent(self, instance=None, exception_cls=None):
         """Raises an exception if an 'old_" field does not match the value
@@ -249,12 +181,122 @@ class CorrectConsent(BaseSyncUuidModel):
         for field in instance._meta.fields:
             if field.name.startswith('old_'):
                 if getattr(instance, field.name):
-                    if not getattr(instance, field.name) == getattr(instance.subject_consent, field.name.split('old_')[1]):
-                        raise ValidationError("Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
-                            field.name.split('old_')[1],
-                            field.name,
-                            getattr(instance.subject_consent, field.name.split('old_')[1]),
-                            getattr(instance, field.name) or None))
+                    if (getattr(instance, field.name) !=
+                            getattr(instance.subject_consent, field.name.split('old_')[1])):
+                        raise ValidationError(
+                            "Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
+                                field.name.split('old_')[1],
+                                field.name,
+                                getattr(instance.subject_consent, field.name.split('old_')[1]),
+                                getattr(instance, field.name) or None))
+
+    def update_household_member_and_enrollment_checklist(self):
+        try:
+            enrollment_checklist = self.enrollment_checklist
+        except AttributeError:
+            enrollment_checklist = self.subject_consent.household_member.enrollment_checklist
+        self.update_name_and_initials(enrollment_checklist)
+        self.update_gender(enrollment_checklist)
+        self.update_dob(enrollment_checklist)
+        self.update_guardian_name(enrollment_checklist)
+        self.update_is_literate(enrollment_checklist)
+        self.update_witness()
+        self.subject_consent.household_member.save(
+            update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
+        enrollment_checklist.save(
+            update_fields=['initials', 'gender', 'dob', 'literacy', 'guardian'])
+        self.subject_consent.save(update_fields=[
+            'first_name', 'last_name', 'initials', 'gender',
+            'is_literate', 'witness_name', 'dob', 'guardian_name'])
+
+    def update_initials(self, first_name, last_name):
+        initials = '{}{}'.format(first_name[0], last_name[0])
+        if self.new_initials:
+            if self.new_initials.startswith(initials[0]) and self.new_initials.endswith(initials[-1]):
+                initials = self.new_initials
+            else:
+                raise ValidationError(
+                    'New initials do not match first and last name. Expected {}, Got {}'.format(
+                        initials, self.new_initials))
+        return initials
+
+    def update_gender(self, enrollment_checklist):
+        if self.new_gender:
+            self.subject_consent.household_member.gender = self.new_gender
+            enrollment_checklist.gender = self.new_gender
+            self.subject_consent.gender = self.new_gender
+
+    def update_dob(self, enrollment_checklist):
+        if self.new_dob:
+            self.subject_consent.household_member.age_in_years = relativedelta(
+                date.today(), self.new_dob).years
+            enrollment_checklist.dob = self.new_dob
+            self.subject_consent.dob = self.new_dob
+            try:
+                hic_enrollment = HicEnrollment.objects.get(
+                    subject_visit__household_member=self.subject_consent.household_member)
+                hic_enrollment.dob = self.new_dob
+                hic_enrollment.save(update_fields=['dob'])
+            except HicEnrollment.DoesNotExist:
+                pass
+
+    def update_guardian_name(self, enrollment_checklist):
+        if self.new_guardian_name:
+            enrollment_checklist.guardian = YES
+            self.subject_consent.guardian_name = self.new_guardian_name
+
+    def update_is_literate(self, enrollment_checklist):
+        if self.new_is_literate:
+            enrollment_checklist.literacy = self.new_is_literate
+            self.subject_consent.is_literate = self.new_is_literate
+            if self.new_is_literate == YES:
+                self.subject_consent.witness_name = None
+            if self.new_witness_name:
+                self.subject_consent.witness_name = self.new_witness_name
+
+    def update_last_name(self):
+        if self.new_last_name:
+            return self.new_last_name
+        return None
+
+    def update_witness(self):
+        if self.new_witness_name:
+            self.subject_consent.witness_name = self.new_witness_name
+
+    def update_name_and_initials(self, enrollment_checklist):
+        """Updates the firstname, lastname, initals and verifies the initials are valid."""
+        first_name = self.new_first_name if self.new_first_name else self.subject_consent.first_name
+        self.subject_consent.household_member.first_name = first_name
+        self.subject_consent.first_name = first_name
+        last_name = self.new_last_name if self.new_last_name else self.subject_consent.last_name
+        self.subject_consent.household_member.last_name = last_name
+        self.subject_consent.last_name = last_name
+        initials = self.update_initials(first_name, last_name)
+        self.subject_consent.household_member.initials = initials
+        self.subject_consent.initials = initials
+        enrollment_checklist.initials = initials
+
+    class Meta:
+        abstract = True
+
+
+class CorrectConsent(BaseCorrectConsent, BaseSyncUuidModel):
+
+    """A model linked to the subject consent to record corrections."""
+
+    CONSENT_MODEL = SubjectConsent
+
+    subject_consent = models.OneToOneField(SubjectConsent)
+
+    objects = CorrectConsentManager()
+
+    history = AuditTrail()
+
+    def __unicode__(self):
+        return unicode(self.subject_consent)
+
+    def natural_key(self):
+        return self.subject_consent.natural_key()
 
     def dashboard(self):
         ret = None
