@@ -57,19 +57,9 @@
   </table>
   
 {% endif %}
-{% endblock %}
+{% endblock subject_consent%}
 
-{% block correct_consent %}
-    {% if subject_consent %}
-        {% if correct_consent %}
-            <A href="{% url 'admin:bcpp_subject_correctconsent_change' correct_consent.id %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
-        {% else %}
-            <A href="{% url 'admin:bcpp_subject_correctconsent_add' %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct consent</A>
-        {% endif %}
-    {% endif %}
-{% endblock correct_consent %}
-
-{% endblock %}
+{% endblock clinic_dashboard_marquee%}
 
 {% block membership_forms %}
 	{% if household_member.is_dispatched %}
@@ -102,6 +92,7 @@
 
         </td></tr>
     {% endif %}
+
 {% endblock side_bar_right_1 %}    
 
 
@@ -123,3 +114,12 @@
     {% if subject_referral.in_clinic_flag %}<B><span style="color:teal">Participant presented at clinic</span><B>{% endif %}            
 {% endblock referral %}
 
+{% block correct_consent %}
+    {% if subject_consent %}
+        {% if correct_consent %}
+            <A href="{% url 'admin:bcpp_subject_correctconsent_change' correct_consent.id %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct_consent</A>
+        {% else %}
+            <A href="{% url 'admin:bcpp_subject_correctconsent_add' %}?subject_consent={{subject_consent.pk}}&next={{ subject_dashboard_url|default:'dashboard_url' }}&dashboard_type={{dashboard_type}}&dashboard_model={{dashboard_model}}&dashboard_id={{dashboard_id}}&show=appointments">correct_consent</A>
+        {% endif %}
+    {% endif %}
+{% endblock correct_consent %}
