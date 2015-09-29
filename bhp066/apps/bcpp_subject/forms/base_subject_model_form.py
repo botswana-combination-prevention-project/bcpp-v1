@@ -19,7 +19,9 @@ class BaseSubjectModelForm(BaseModelForm):
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
         try:
-            subject_visit = cleaned_data.get('subject_visit', self.instance.subject_visit)
+            subject_visit = cleaned_data.get('subject_visit')
+            if not subject_visit:
+                subject_visit = self.instance.subject_visit
         except ObjectDoesNotExist:
             raise forms.ValidationError('Field Subject visit cannot be empty')
         report_datetime = cleaned_data.get('report_datetime')
