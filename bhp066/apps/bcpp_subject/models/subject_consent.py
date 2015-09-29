@@ -51,11 +51,12 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
         # enrollment checklist is only filled for the same survey as the consent
-        household_member = subject_consent.household_member
+        household_member = self.household_member
         exception_cls = exception_cls or ValidationError
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member__registered_subject=household_member.registered_subject)
+                household_member__registered_subject=subject_consent.household_member.registered_subject)
+            household_member = enrollment_checklist.household_member
         except EnrollmentChecklist.DoesNotExist:
             raise exception_cls(
                 'Enrollment Checklist not found. The Enrollment Checklist is required before consent.')
