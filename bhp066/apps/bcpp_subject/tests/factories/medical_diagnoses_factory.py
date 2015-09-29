@@ -4,7 +4,7 @@ from datetime import datetime
 
 from subject_visit_factory import SubjectVisitFactory
 
-from ...models import MedicalDiagnoses
+from bhp066.apps.bcpp_subject.models import MedicalDiagnoses
 
 
 class MedicalDiagnosesFactory(factory.DjangoModelFactory):
