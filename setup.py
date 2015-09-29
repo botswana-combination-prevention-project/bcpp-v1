@@ -11,7 +11,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='bhp066',
-    version='1.11.44',
+    version='1.11.45',
     author=u'Botswana-Harvard AIDS Institute',
     author_email='ew2789@gmail.com',
     packages=find_packages(),
