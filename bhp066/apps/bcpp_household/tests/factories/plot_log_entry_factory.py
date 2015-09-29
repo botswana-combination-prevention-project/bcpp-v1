@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import PlotLogEntry
+from bhp066.apps.bcpp_household.models import PlotLogEntry
 
 from .plot_log_factory import PlotLogFactory
 

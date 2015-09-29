@@ -1,6 +1,6 @@
 import factory
 
-from ...models import HouseholdAssessment
+from bhp066.apps.bcpp_household.models import HouseholdAssessment
 
 from .household_structure_factory import HouseholdStructureFactory
 

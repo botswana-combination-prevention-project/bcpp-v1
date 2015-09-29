@@ -2,7 +2,7 @@ import factory
 
 from datetime import date
 
-from ...models import GpsDevice
+from bhp066.apps.bcpp_household.models import GpsDevice
 
 
 class GpsDeviceFactory(factory.DjangoModelFactory):
