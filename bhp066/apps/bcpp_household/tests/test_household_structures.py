@@ -1,8 +1,7 @@
-from datetime import date, timedelta
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
-from django.core.exceptions import ValidationError
 
 from edc.map.classes import site_mappers
 
@@ -11,10 +10,11 @@ from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFac
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
 
-from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
-                      PlotIdentifierHistory)
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
 
-from .factories import PlotFactory, HouseholdLogEntryFactory, RepresentativeEligibilityFactory
+from .factories.plot_factory import PlotFactory
+from .factories.household_log_entry_factory import HouseholdLogEntryFactory
+from .factories.reprentative_eligibility_factory import RepresentativeEligibilityFactory
 
 
 class TestHouseholdStructures(TestCase):

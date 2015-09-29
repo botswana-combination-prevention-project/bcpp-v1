@@ -1,5 +1,4 @@
 from edc_base.audit_trail import AuditTrail
-from edc_constants.constants import NOT_APPLICABLE
 
 from django.db import models
 
@@ -20,9 +19,7 @@ class MonthsRecentPartner (BaseSexualPartner):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        self.first_partner_arm = self.is_ecc_or_cpc() if self.is_ecc_or_cpc() else NOT_APPLICABLE\
-                                                            if self.sex_partner_community == NOT_APPLICABLE else\
-                                                                    'OTHER' if self.sex_partner_community == 'OTHER' else ''
+        self.first_partner_arm = self.get_partner_arm()
         super(MonthsRecentPartner, self).save(*args, **kwargs)
 
     class Meta:

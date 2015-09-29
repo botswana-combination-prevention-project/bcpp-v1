@@ -23,7 +23,14 @@ class PlotLogEntryAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "plot_log":
-            kwargs["queryset"] = PlotLog.objects.filter(id__exact=request.GET.get('plot_log', 0))
+            if request.GET.get('plot_log'):
+                kwargs["queryset"] = PlotLog.objects.filter(id__exact=request.GET.get('plot_log', 0))
+            else:
+                self.readonly_fields = list(self.readonly_fields)
+                try:
+                    self.readonly_fields.index('plot_log')
+                except ValueError:
+                    self.readonly_fields.append('plot_log')
         return super(PlotLogEntryAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def reponse_change_redirect_on_next_url(self, next_url_name, request, obj, post_url_continue,

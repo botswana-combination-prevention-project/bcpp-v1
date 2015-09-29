@@ -2,9 +2,10 @@ import factory
 
 from datetime import datetime
 
-from subject_visit_factory import SubjectVisitFactory
+from .subject_visit_factory import SubjectVisitFactory
 
-from ...models import HivTestingHistory
+from bhp066.apps.bcpp_subject.models import HivTestingHistory
+from edc_constants.constants import YES, NEG, NO
 
 
 class HivTestingHistoryFactory(factory.DjangoModelFactory):
@@ -12,7 +13,7 @@ class HivTestingHistoryFactory(factory.DjangoModelFactory):
 
     subject_visit = factory.SubFactory(SubjectVisitFactory)
     report_datetime = datetime.today()
-    has_tested = (('Yes', u'Yes'), ('No', u'No'), ('not_answering', u"Don't want to answer"))[0][0]
-    has_record = 'Yes'
-    verbal_hiv_result = 'NEG'
-    other_record = 'No'
+    has_tested = YES
+    has_record = YES
+    verbal_hiv_result = NEG
+    other_record = NO

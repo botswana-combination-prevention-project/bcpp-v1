@@ -36,6 +36,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
+from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
 class TestPlotMapper(Mapper):
@@ -68,7 +69,7 @@ class HouseholdMemberTests(TestCase):
 
     def test_relation_to_head(self):
         """Cannot allow more than one member to be Head of Household."""
-        self.household_member.relation = 'Head'
+        self.household_member.relation = HEAD_OF_HOUSEHOLD
         self.household_member.save()
         form = HouseholdMemberForm()
         form.cleaned_data = {'first_name': u'THABO',
@@ -76,7 +77,7 @@ class HouseholdMemberTests(TestCase):
                                'household_structure': self.household_member.household_structure,
                                'study_resident': u'Yes',
                                'present_today': u'No',
-                               'relation': u'Head',
+                               'relation': HEAD_OF_HOUSEHOLD,
                                'age_in_years': 32,
                                'initials': u'TM'}
         self.assertRaises(ValidationError, form.clean)  # 'Head of Household '

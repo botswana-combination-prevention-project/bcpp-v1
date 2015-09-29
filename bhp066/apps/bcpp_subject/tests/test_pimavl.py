@@ -149,5 +149,5 @@ class TestPimaVL(TestCase):
                 override_code=override_key,
                 confirmation_code=confirmation_code,
             ).save()
-        except QuotaReachedError as ex:
+        except QuotaReachedError:
             return PimaVl.objects.create

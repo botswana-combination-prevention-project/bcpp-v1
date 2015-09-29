@@ -3,7 +3,7 @@ import factory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
-from ...models import CallLog
+from bhp066.apps.bcpp_subject.models import CallLog
 
 
 class CallLogFactory(factory.DjangoModelFactory):

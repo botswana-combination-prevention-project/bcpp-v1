@@ -1,8 +1,9 @@
-from edc.subject.consent.forms import BaseSubjectConsentForm
+from edc_consent.forms.base_consent_form import BaseConsentForm
+
 from ..models import HtcSubjectConsent
 
 
-class HtcSubjectConsentForm(BaseSubjectConsentForm):
+class HtcSubjectConsentForm(BaseConsentForm):
 
     class Meta:
         model = HtcSubjectConsent

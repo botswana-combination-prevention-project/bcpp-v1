@@ -46,7 +46,8 @@ class SubjectDashboard(BaseSubjectDashboard):
 
     def get_context_data(self, **kwargs):
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
-        latest_subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_identifier).last()
+        latest_subject_consent = SubjectConsent.objects.filter(
+            subject_identifier=self.subject_identifier).latest()
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
         try:
             membership_form_extra_url_context = '&household_member={0}'.format(

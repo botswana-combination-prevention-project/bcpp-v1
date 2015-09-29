@@ -11,33 +11,66 @@ from edc.device.sync.models import BaseSyncUuidModel
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
+from bhp066.apps.bcpp.choices import COMMUNITIES
+from edc.core.bhp_variables.models import StudySite
+from edc.choices.common import YES_NO
+from edc.map.classes import site_mappers
 
 
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent,
+                                 BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    household_member = models.OneToOneField(HouseholdMember, help_text='')
+    household_member = models.ForeignKey(HouseholdMember, help_text='')
+
+    registered_subject = models.ForeignKey(
+        RegisteredSubject,
+        editable=False,
+        null=True,
+        help_text='one registered subject will be related to one household member for each survey')
+
+    study_site = models.ForeignKey(
+        StudySite,
+        verbose_name='Site',
+        null=True,
+        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+    )
+
+    is_minor = models.CharField(
+        verbose_name=("Is subject a minor?"),
+        max_length=10,
+        null=True,
+        blank=False,
+        default='-',
+        choices=YES_NO,
+        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
+                   'HIV status may NOT be revealed in the household.'))
 
     is_signed = models.BooleanField(default=False)
 
     survey = models.ForeignKey(Survey, editable=False)  # this updates from household_member in save()
 
-    registered_subject = models.ForeignKey(
-        RegisteredSubject,  # this also updates from household_member in save()
-        editable=False,
-        null=True,
-        help_text='one registered subject will be related to one household member for each survey')
+    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
 
     def __unicode__(self):
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
-
-    def get_registration_datetime(self):
-        return self.consent_datetime
 
     def save(self, *args, **kwargs):
         if not self.id:
             self.survey = self.household_member.household_structure.survey
             self.registered_subject = self.household_member.registered_subject
         super(BaseHouseholdMemberConsent, self).save(*args, **kwargs)
+
+    def get_site_code(self):
+        return site_mappers.get_current_mapper().map_code
+
+    def get_subject_type(self):
+        return 'subject'
+
+    def get_registered_subject(self):
+        return self.registered_subject
+
+    def get_registration_datetime(self):
+        return self.consent_datetime
 
     def _check_if_duplicate_subject_identifier(self, using):
         """Checks if the subject identifier is in use, for new and existing instances.

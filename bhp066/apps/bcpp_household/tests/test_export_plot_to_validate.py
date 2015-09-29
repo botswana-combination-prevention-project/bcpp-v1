@@ -1,16 +1,13 @@
 import os
 
-from django.core.management import call_command
 from django.test import TestCase
-
-from ..management.commands import export_plots_to_validate
-from ..models import Plot
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_household.models import Plot
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_survey.models import Survey
@@ -28,7 +25,6 @@ class ExportPlotToValidateTest(TestCase):
             BcppSubjectVisitSchedule().build()
 
             self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
-            #call_command('loaddata', 'Users/ckgathi/source/bhp066_project/bhp066/initial_data.json')
 
     def test_export_plot_to_validate(self):
         """Tests the if the exported plots are the right number and the correct ones."""
@@ -71,9 +67,6 @@ class ExportPlotToValidateTest(TestCase):
                 count_db_75 += 1
 
         file_path = '/Users/ckgathi/source/community_plot_list/'
-        args = [community_name]
-        opts = {}
-        #call_command(export_plots_to_validate, *args, **opts)
 
         file_path = file_path + str(community_name.title())
         file_75_list = file_path + '_75pct.csv'

@@ -12,7 +12,8 @@ from edc_base.model.validators import datetime_not_before_study_start, datetime_
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_list.models import ElectricalAppliances, TransportMode
-from bhp066.apps.bcpp_subject.choices import FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS
+from bhp066.apps.bcpp_subject.choices import (
+    FLOORING_TYPE, WATER_SOURCE, ENERGY_SOURCE, TOILET_FACILITY, SMALLER_MEALS)
 
 from ..managers import HouseholdInfoManager
 
@@ -26,7 +27,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     household_member = models.OneToOneField(
         HouseholdMember,
-        help_text='Important: The household member must verbally consent before completing this questionnaire.')
+        help_text=(
+            'Important: The household member must verbally consent before completing this questionnaire.'),
+    )
 
     registered_subject = models.OneToOneField(RegisteredSubject, editable=False)
 
@@ -43,13 +46,16 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     flooring_type_other = OtherCharField()
 
     living_rooms = models.IntegerField(
-        verbose_name="How many living rooms are there in this household unit"
-                     " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? ",
+        verbose_name=(
+            "How many living rooms are there in this household unit"
+            " (exclude garage, bathroom, kitchen, store-room, etc if not used as living room )? "),
         max_length=2,
         null=True,
         blank=True,
-        help_text=("Note: Record the number of rooms where people live/meet/sleep. If participant does not"
-                   " want to answer, leave blank"))
+        help_text=(
+            "Note: Record the number of rooms where people live/meet/sleep. If participant does not"
+            " want to answer, leave blank")
+    )
 
     water_source = models.CharField(
         verbose_name="What is the main source of drinking water for this household? ",
@@ -77,8 +83,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     electrical_appliances = models.ManyToManyField(
         ElectricalAppliances,
-        verbose_name="Does any member of this household have any of the following that are"
-                     " currently working? (check all that apply).",
+        verbose_name=(
+            "Does any member of this household have any of the following that are"
+            " currently working? (check all that apply)."),
         null=True,
         blank=True,
         help_text=("Note: Please read each response to the participant and check all that apply. "
@@ -86,16 +93,18 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     transport_mode = models.ManyToManyField(
         TransportMode,
-        verbose_name="Does any member of this household (excluding visitors) own any of the"
-                     " following forms of transport in working condition? (check all that apply).",
+        verbose_name=(
+            "Does any member of this household (excluding visitors) own any of the"
+            " following forms of transport in working condition? (check all that apply)."),
         null=True,
         blank=True,
         help_text=("Note: Please read each response to the participant and check all that apply. "
                    "If participant does not want to answer, leave blank."))
 
     goats_owned = models.IntegerField(
-        verbose_name="How many goats are owned by the members of this household?"
-                     " [If unsure of exact number, give your best guess] ",
+        verbose_name=(
+            "How many goats are owned by the members of this household?"
+            " [If unsure of exact number, give your best guess] "),
         max_length=3,
         null=True,
         blank=True,
@@ -103,8 +112,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                    " or helping estimate. If resident does not want to answer, leave blank."))
 
     sheep_owned = models.IntegerField(
-        verbose_name="How many sheep are owned by the members of this household?"
-                     " [If unsure of exact number, give your best guess] ",
+        verbose_name=(
+            "How many sheep are owned by the members of this household?"
+            " [If unsure of exact number, give your best guess] "),
         max_length=3,
         null=True,
         blank=True,
@@ -112,8 +122,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                    " or helping estimate. If resident does not want to answer, leave blank."))
 
     cattle_owned = models.IntegerField(
-        verbose_name="How many head of cattle (cows and bulls) are owned by the members"
-                     " of this household? [If unsure of exact number, give your best guess] ",
+        verbose_name=(
+            "How many head of cattle (cows and bulls) are owned by the members"
+            " of this household? [If unsure of exact number, give your best guess] "),
         max_length=3,
         null=True,
         blank=True,
@@ -121,8 +132,9 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                    " or helping estimate. If resident does not want to answer, leave blank."))
 
     smaller_meals = models.CharField(
-        verbose_name="In the past 4 weeks, did you or any household member have to eat a"
-                     " smaller meal than you felt you needed because there was not enough food? ",
+        verbose_name=(
+            "In the past 4 weeks, did you or any household member have to eat a"
+            " smaller meal than you felt you needed because there was not enough food? "),
         max_length=25,
         choices=SMALLER_MEALS,
         help_text="")
@@ -133,12 +145,13 @@ class HouseholdInfo(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     def natural_key(self):
         if not self.household_structure:
-            raise AttributeError("household_structure cannot be None for "
-                                 "household_info with pk='\{0}\'".format(self.pk))
+            raise AttributeError(
+                "household_structure cannot be None for household_info with pk='\{0}\'".format(self.pk))
         return self.household_structure.natural_key()
-    natural_key.dependencies = ['bcpp_household.household_structure',
-                                'bcpp_household.household_member',
-                                'registration.registered_subject']
+    natural_key.dependencies = [
+        'bcpp_household.household_structure',
+        'bcpp_household.household_member',
+        'registration.registered_subject']
 
     def dispatch_container_lookup(self, using=None):
         return (get_model('bcpp_household', 'Plot'), 'household_structure__household__plot__plot_identifier')

@@ -2,9 +2,6 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
-from django.contrib import messages
-
-from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
 
 from edc.export.classes import ExportAsCsv
 
@@ -15,7 +12,7 @@ from bhp066.apps.bcpp_household_member.exceptions import SurveyValueError
 
 from .choices import REFERRAL_CODES
 from .models import SubjectReferral, CallLog, SubjectLocator
-from .utils import update_referrals_for_hic, update_call_list, add_to_call_list
+from .utils import update_call_list, add_to_call_list
 
 
 def update_call_list_action(modeladmin, request, queryset):
@@ -78,23 +75,6 @@ def update_referrals(modeladmin, request, queryset):
         except SubjectReferral.DoesNotExist:
             pass
 update_referrals.short_description = "Update selected referrals"
-
-
-def update_referrals_for_hic_action(modeladmin, request, queryset, **kwargs):
-    try:
-        already_running(update_referrals_for_hic)
-        result = update_referrals_for_hic.delay()
-        messages.add_message(request, messages.INFO, (
-            '{0.status}: Updating referrals for hic ({0.id})').format(result))
-    except CeleryTaskAlreadyRunning as celery_task_already_running:
-        messages.add_message(request, messages.WARNING, str(celery_task_already_running))
-    except CeleryNotRunning as not_running:
-        messages.add_message(request, messages.WARNING, str(not_running))
-    except Exception as e:
-        messages.add_message(request, messages.ERROR, (
-            'Unable to run task. Celery got {}.'.format(str(e))))
-update_referrals_for_hic_action.short_description = (
-    'Update ALL referrals for HIC enrollments (runs in background).')
 
 
 def export_referrals_for_cdc_action(description="Export Referrals for CDC (Manual)", fields=None, exclude=None,
