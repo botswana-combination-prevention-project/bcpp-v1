@@ -326,13 +326,16 @@ def func_vl(visit_instance):
 def func_poc_vl(visit_instance):
     """Returns True or False to indicate participant needs to be offered a POC viral load."""
     # if pos at bhs then return true
-    if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
-        return True
-    # art naive at enrollment
-    elif art_naive_at_enrollment(visit_instance) and func_art_naive(visit_instance):
-        return True
-    elif sero_converter(visit_instance) and func_art_naive(visit_instance):
-        return True
+    if not func_art_naive(visit_instance):
+        return False
+    else:
+        if func_is_baseline(visit_instance):
+            return True
+        # art naive at enrollment
+        elif art_naive_at_enrollment(visit_instance):
+            return True
+        elif sero_converter(visit_instance):
+            return True
     return False
 
 
