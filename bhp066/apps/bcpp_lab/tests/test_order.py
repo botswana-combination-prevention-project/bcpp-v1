@@ -66,6 +66,32 @@ class TestOrder(BaseRuleGroupTestSetup):
         self.assertEqual(PreOrder.objects.all().count(), 2)
         self.assertEqual(PreOrder.objects.first().status, NEW)
 
+    def test_create_posetive_withpocvl_pre_order_t1(self):
+        """ Create 2 pre-order instances for HIV +ve participant who is arv naive.
+            One for normal viral load and the other for POC viral load for T1"""
+        self.subject_visit_male_T1 = self.annual_subject_visit
+        self._hiv_result = self.hiv_result(POS, self.subject_visit_male_T1)
+        aliquot_type = AliquotType.objects.all()[0]
+        viral_load_panel = Panel.objects.get(name='Viral Load')
+        PreOrder.objects.all().delete()
+        HivCareAdherence.objects.create(
+            subject_visit=self.subject_visit_male_T1,
+            first_positive=None,
+            medical_care=NO,
+            ever_recommended_arv=NO,
+            ever_taken_arv=NO,
+            on_arv=NO,
+            arv_evidence=NO,
+        )
+        SubjectRequisitionFactory(
+            subject_visit=self.subject_visit_male_T1,
+            panel=viral_load_panel,
+            aliquot_type=aliquot_type,
+            site=self.study_site
+        )
+        self.assertEqual(PreOrder.objects.all().count(), 2)
+        self.assertEqual(PreOrder.objects.first().status, NEW)
+
     def test_pre_order_with_aliquot(self):
         """ Link pre order to aliquot"""
         PreOrder.objects.all().delete()

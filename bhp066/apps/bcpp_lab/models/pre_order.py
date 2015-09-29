@@ -81,7 +81,7 @@ class PreOrder(BaseSyncUuidModel):
         return self.subject_visit.natural_key() + self.panel.natural_key()
 
     def __unicode__(self):
-        return str(self.subject_visit)
+        return str(self.subject_visit, self.panel)
 
     @property
     def model_url(self):
