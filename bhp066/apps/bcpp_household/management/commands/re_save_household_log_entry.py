@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from bhp066.apps.bcpp_household.models import HouseholdLogEntry, Household
+from bhp066.apps.bcpp_household.models import HouseholdLogEntry
 
 
 class Command(BaseCommand):
