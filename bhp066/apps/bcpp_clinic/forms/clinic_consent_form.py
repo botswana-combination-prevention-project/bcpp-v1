@@ -1,11 +1,11 @@
 from django import forms
 
-from edc_consent.forms import BaseSubjectConsentForm
+from edc_consent.forms.base_consent_form import BaseConsentForm
 
 from ..models import ClinicConsent, ClinicEligibility
 
 
-class ClinicConsentForm(BaseSubjectConsentForm):
+class ClinicConsentForm(BaseConsentForm):
 
     def clean(self):
 
@@ -20,11 +20,10 @@ class ClinicConsentForm(BaseSubjectConsentForm):
                 identity=cleaned_data.get('identity')
             )
         except ClinicEligibility.DoesNotExist:
-            raise forms.ValidationError('Could not find a matching eligibility checklist. '
-                                        'Ensure \'DOB\', \'first_name\', \'gender\', \'initials\' '
-                                        'and \'identity\' match those on this member\'s eligibility checklist.')
-
-        # clinic_eligibility.match_consent_values(clinic_eligibility, exception_cls=forms.ValidationError)
+            raise forms.ValidationError(
+                'Could not find a matching eligibility checklist. '
+                'Ensure \'DOB\', \'first_name\', \'gender\', \'initials\' '
+                'and \'identity\' match those on this member\'s eligibility checklist.')
 
         return cleaned_data
 
