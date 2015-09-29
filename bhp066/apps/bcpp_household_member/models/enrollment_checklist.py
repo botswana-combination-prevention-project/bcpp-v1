@@ -13,7 +13,7 @@ from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_base.model.validators import dob_not_future
-from edc_consent.validators import ConsentAgeValidator
+from edc_consent.models.validators import AgeTodayValidator
 
 from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
@@ -24,10 +24,9 @@ from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 from .household_member import HouseholdMember
 
 
-class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class BaseEnrollmentChecklist(models.Model):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
-    household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
@@ -50,7 +49,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         verbose_name="Date of birth",
         validators=[
             dob_not_future,
-            ConsentAgeValidator(16, 64)],
+            AgeTodayValidator(16, 64)],
         null=True,
         blank=False,
         help_text="Format is YYYY-MM-DD. (Data will not be saved)")
@@ -161,6 +160,16 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         editable=False,
         help_text=('Was autofilled on data conversion')
     )
+
+    class Meta:
+        abstract = True
+
+
+class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+    """A model completed by the user that captures and confirms BHS enrollment eligibility
+    criteria."""
+
+    household_member = models.OneToOneField(HouseholdMember)
 
     objects = EnrollmentChecklistManager()
 
