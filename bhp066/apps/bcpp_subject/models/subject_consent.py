@@ -270,7 +270,7 @@ class BaseSubjectConsent(BaseBaseSubjectConsent):
             else:
                 expected_member_status = BHS
             subject_identifier = self.household_member.get_subject_identifier()
-            if self.__class__.objects.filter(subject_identifier=subject_identifier).last():
+            if self.__class__.objects.filter(subject_identifier=subject_identifier).latest():
                 expected_member_status = BHS
                 self.subject_identifier = subject_identifier
             if self.household_member.member_status != expected_member_status:
