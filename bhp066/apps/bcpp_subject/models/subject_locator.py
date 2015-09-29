@@ -12,6 +12,7 @@ from edc.subject.locator.models import BaseLocator
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_consent.models import RequiresConsentMixin
 
 from bhp066.apps.bcpp_household.models import Plot
 
@@ -23,8 +24,8 @@ from .subject_visit import SubjectVisit
 from .subject_consent import SubjectConsent
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, TimePointStatusMixin,
-                     BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, RequiresConsentMixin,
+                     TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
