@@ -33,7 +33,7 @@ class BaseBcppConsentForm(BaseConsentForm):
         if household_member:
             subject_consent = model(**cleaned_data)
             subject_consent.matches_enrollment_checklist(
-                subject_consent, household_member, exception_cls=forms.ValidationError)
+                subject_consent, exception_cls=forms.ValidationError)
         return cleaned_data
 
     def clean_consent_matches_enrollment(self):
@@ -45,7 +45,7 @@ class BaseBcppConsentForm(BaseConsentForm):
             options = deepcopy(self.cleaned_data)
             options.update({'consent_datetime': consent_datetime})
             self.instance.matches_enrollment_checklist(
-                SubjectConsent(**options), household_member, forms.ValidationError)
+                SubjectConsent(**options), forms.ValidationError)
             self.instance.matches_hic_enrollment(
                 SubjectConsent(**options), household_member, forms.ValidationError)
 

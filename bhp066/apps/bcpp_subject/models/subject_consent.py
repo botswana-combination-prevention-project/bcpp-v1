@@ -3,7 +3,7 @@ import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 
 from edc.core.bhp_common.utils import formatted_age
@@ -12,7 +12,7 @@ from edc_base.audit_trail import AuditTrail
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
                                        SampleCollectionFieldsMixin, CitizenFieldsMixin)
-from edc_constants.constants import YES
+from edc_constants.constants import YES, NO
 
 from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
@@ -46,16 +46,20 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                 raise exception_cls('An HicEnrollment form already exists for this '
                                     'Subject. So \'dob\' cannot be changed.')
 
-    def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
+    def matches_enrollment_checklist(self, subject_consent, exception_cls=None):
         """Matches values in this consent against the enrollment checklist.
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
         # enrollment checklist is only filled for the same survey as the consent
-        household_member = subject_consent.household_member
+        household_member = self.household_member
         exception_cls = exception_cls or ValidationError
-        if not EnrollmentChecklist.objects.filter(household_member=household_member).exists():
-            raise exception_cls('Enrollment Checklist not found. The Enrollment Checklist is required before consent.')
-        enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
+        try:
+            enrollment_checklist = EnrollmentChecklist.objects.get(
+                household_member__registered_subject=subject_consent.household_member.registered_subject)
+            household_member = enrollment_checklist.household_member
+        except EnrollmentChecklist.DoesNotExist:
+            raise exception_cls(
+                'Enrollment Checklist not found. The Enrollment Checklist is required before consent.')
         if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
@@ -70,15 +74,15 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls(
                 'You wrote subject is a %(citizen)s citizen. This does not match the enrollment checklist.',
                 params={"citizen": '' if subject_consent.citizen == YES else 'NOT'})
-        if (enrollment_checklist.literacy.lower() == 'yes' and
-                not (subject_consent.is_literate.lower() == 'yes' or (subject_consent.is_literate.lower() == 'no') and
+        if (enrollment_checklist.literacy == YES and
+                not (subject_consent.is_literate == YES or (subject_consent.is_literate == NO) and
                      subject_consent.witness_name)):
             raise exception_cls('Answer to whether this subject is literate/not literate but with a '
                                 'literate witness, does not match that in enrollment checklist.')
-        if ((enrollment_checklist.legal_marriage.lower() == 'yes' and
-                enrollment_checklist.marriage_certificate.lower() == 'yes') and not (
-                subject_consent.legal_marriage.lower() == 'yes' and
-                subject_consent.marriage_certificate.lower() == 'yes')):
+        if ((enrollment_checklist.legal_marriage == YES and
+                enrollment_checklist.marriage_certificate == YES) and not (
+                subject_consent.legal_marriage == YES and
+                subject_consent.marriage_certificate == YES)):
             raise exception_cls('Enrollment Checklist indicates that this subject is married '
                                 'to a citizen with a valid marriage certificate, but the '
                                 'consent does not indicate this.')
@@ -259,25 +263,26 @@ class BaseSubjectConsent(BaseBaseSubjectConsent):
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        # Any consent exists other than myself
         consents = self.__class__.objects.filter(
             household_member__internal_identifier=self.household_member.internal_identifier).exclude(
             household_member=self.household_member)
         if not consents.exists():
-            # Run the following validations only if its the first consent for an individual. Not Reconsent.
             if not self.id:
                 expected_member_status = BHS_ELIGIBLE
             else:
                 expected_member_status = BHS
             subject_identifier = self.household_member.get_subject_identifier()
-            if self.__class__.objects.filter(subject_identifier=subject_identifier).latest():
+            try:
+                self.__class__.objects.filter(subject_identifier=subject_identifier).latest('consent_datetime')
                 expected_member_status = BHS
                 self.subject_identifier = subject_identifier
+            except ObjectDoesNotExist:
+                pass
             if self.household_member.member_status != expected_member_status:
                 raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                     expected_member_status, self.household_member.member_status, self.household_member))
             self.is_minor = 'Yes' if self.minor else 'No'
-            self.matches_enrollment_checklist(self, self.household_member)
+            self.matches_enrollment_checklist(self)
             self.matches_hic_enrollment(self, self.household_member)
         else:
             self.registered_subject = consents[0].registered_subject
