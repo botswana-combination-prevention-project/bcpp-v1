@@ -104,4 +104,4 @@ class PreOrder(BaseSyncUuidModel):
     class Meta:
         app_label = 'bcpp_lab'
         ordering = ['-preorder_datetime', ]
-        unique_together = ('subject_visit', 'panel')
+        unique_together = (('subject_visit', 'panel'),)
