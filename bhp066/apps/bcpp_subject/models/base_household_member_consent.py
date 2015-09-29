@@ -20,7 +20,13 @@ from edc.map.classes import site_mappers
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent,
                                  BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
-    household_member = models.OneToOneField(HouseholdMember, help_text='')
+    household_member = models.ForeignKey(HouseholdMember, help_text='')
+
+    registered_subject = models.ForeignKey(
+        RegisteredSubject,
+        editable=False,
+        null=True,
+        help_text='one registered subject will be related to one household member for each survey')
 
     study_site = models.ForeignKey(
         StudySite,
@@ -44,12 +50,6 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent,
     survey = models.ForeignKey(Survey, editable=False)  # this updates from household_member in save()
 
     community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
-
-    registered_subject = models.ForeignKey(
-        RegisteredSubject,  # this also updates from household_member in save()
-        editable=False,
-        null=True,
-        help_text='one registered subject will be related to one household member for each survey')
 
     def __unicode__(self):
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
