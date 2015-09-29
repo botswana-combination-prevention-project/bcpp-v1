@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ..actions import update_replaceables
+# from ..actions import update_replaceables
 from ..filters import ReplacedByFilter
 from ..forms import HouseholdForm
 from ..models import Household
@@ -26,6 +26,6 @@ class HouseholdAdmin(BaseHouseholdModelAdmin):
 
     readonly_fields = ('plot', 'household_identifier', )
 
-    actions = [update_replaceables, ]
+    # actions = [update_replaceables, ]
 
 admin.site.register(Household, HouseholdAdmin)
