@@ -22,6 +22,7 @@ from .subject_undecided import SubjectUndecided
 from .subject_undecided_entry import SubjectUndecidedEntry
 
 from ..constants import NOT_ELIGIBLE
+from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
 @receiver(post_delete, weak=False, dispatch_uid="subject_refusal_on_post_delete")
@@ -258,7 +259,7 @@ def household_head_eligibility_on_pre_save(sender, instance, raw, using, **kwarg
         if isinstance(instance, HouseholdHeadEligibility):
             previous_head = HouseholdMember.objects.filter(
                 household_structure=instance.household_member.household_structure,
-                relation='Head').exclude(id=instance.household_member.id)
+                relation=HEAD_OF_HOUSEHOLD).exclude(id=instance.household_member.id)
             if previous_head.exists():
                 previous_head = previous_head[0]
                 previous_head.eligible_hoh = False
