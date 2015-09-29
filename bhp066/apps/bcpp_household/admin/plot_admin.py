@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ..actions import process_dispatch, update_replaceables, process_dispatch_notebook_plot_list
+from ..actions import process_dispatch, process_dispatch_notebook_plot_list
 from ..filters import ReplacesFilter, ReplacedByFilter, DispatchedReplacesFilter
 from ..forms import PlotForm
 from ..models import Plot
@@ -43,6 +43,6 @@ class PlotAdmin(BaseHouseholdModelAdmin):
         'time_of_week': admin.VERTICAL,
         'time_of_day': admin.VERTICAL,
     }
-    actions = [process_dispatch, update_replaceables, process_dispatch_notebook_plot_list]
+    actions = [process_dispatch, process_dispatch_notebook_plot_list]
 
 admin.site.register(Plot, PlotAdmin)

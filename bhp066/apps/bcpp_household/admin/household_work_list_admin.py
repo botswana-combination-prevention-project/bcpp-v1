@@ -1,14 +1,13 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
-
 from ..actions import update_household_work_list_action, show_plot_on_map
 from ..forms import HouseholdWorkListForm
 from ..models import HouseholdWorkList
 
+from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
 
-class HouseholdWorkListAdmin(BaseModelAdmin):
+
+class HouseholdWorkListAdmin(BaseHouseholdStructureModelAdmin):
 
     form = HouseholdWorkListForm
     date_hierarchy = 'visit_date'
