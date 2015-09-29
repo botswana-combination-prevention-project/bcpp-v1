@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from edc_base.modeladmin.admin import BaseModelAdmin
-
 from ..forms import RepresentativeEligibilityForm
-from ..models import RepresentativeEligibility, HouseholdStructure
+from ..models import RepresentativeEligibility
+
+from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
 
 
-class RepresentativeEligibilityAdmin(BaseModelAdmin):
+class RepresentativeEligibilityAdmin(BaseHouseholdStructureModelAdmin):
 
     form = RepresentativeEligibilityForm
     fields = (
@@ -22,10 +22,5 @@ class RepresentativeEligibilityAdmin(BaseModelAdmin):
         "verbal_script": admin.VERTICAL,
     }
     list_filter = ('report_datetime', 'household_structure__household__community')
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_structure":
-            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
-        return super(RepresentativeEligibilityAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(RepresentativeEligibility, RepresentativeEligibilityAdmin)

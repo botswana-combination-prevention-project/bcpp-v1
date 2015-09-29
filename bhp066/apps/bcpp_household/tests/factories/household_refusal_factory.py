@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import HouseholdRefusal
+from bhp066.apps.bcpp_household.models import HouseholdRefusal
 
 from .household_structure_factory import HouseholdStructureFactory
 

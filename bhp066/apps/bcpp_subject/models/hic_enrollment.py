@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
-from edc_consent.validators import ConsentAgeValidator
+from edc_consent.models.validators import AgeTodayValidator
 from edc_constants.constants import YES, NO, NEG
 from edc_constants.choices import YES_NO
 
@@ -46,7 +46,7 @@ class HicEnrollment (BaseScheduledVisitModel):
 
     dob = models.DateField(
         verbose_name="Date of birth",
-        validators=[ConsentAgeValidator(16, 64)],
+        validators=[AgeTodayValidator(16, 64)],
         default=None,
         # editable=False,
         help_text="Format is YYYY-MM-DD. From Subject Consent.",

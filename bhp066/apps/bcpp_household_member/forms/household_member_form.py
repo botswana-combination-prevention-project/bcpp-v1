@@ -1,10 +1,12 @@
 from django import forms
 from django.forms.util import ErrorList
 
-from edc_constants.constants import DEAD, NO, YES
+from edc_constants.constants import DEAD, NO, YES, FEMALE, MALE
+
 
 from ..choices import RELATIONS, FEMALE_RELATIONS, MALE_RELATIONS
 from ..models import HouseholdMember, EnrollmentChecklist
+from ..constants import HEAD_OF_HOUSEHOLD
 
 from .base_household_member_form import BaseHouseholdMemberForm
 
@@ -14,13 +16,13 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
         cleaned_data = super(HouseholdMemberForm, self).clean()
         self.instance.check_eligible_representative_filled(
             cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)
-        if cleaned_data.get('relation') == 'Head' and not cleaned_data.get('age_in_years') >= 18:
+        if cleaned_data.get('relation') == HEAD_OF_HOUSEHOLD and not cleaned_data.get('age_in_years') >= 18:
             raise forms.ValidationError('Head of Household must be 18 years or older.')
         if cleaned_data.get('eligible_hoh') and cleaned_data.get('age_in_years') < 18:
             raise forms.ValidationError('This household member completed the HoH questionnaire. '
                                         'You cannot change their age to less than 18. '
                                         'Got {0}.'.format(cleaned_data.get('age_in_years')))
-        if cleaned_data.get('gender') == 'M':
+        if cleaned_data.get('gender') == MALE:
             if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in FEMALE_RELATIONS]:
                 raise forms.ValidationError(
                     'Member is Male but you selected a female relation. Got {0}.'.format(
@@ -32,12 +34,12 @@ class HouseholdMemberForm(BaseHouseholdMemberForm):
             if cleaned_data.get('study_resident') == NO or cleaned_data.get('study_resident') == YES:
                 self._errors["study_resident"] = ErrorList([u"Please, select don't want to answer "])
 
-        if cleaned_data.get('gender') == 'F':
+        if cleaned_data.get('gender') == FEMALE:
             if cleaned_data.get('relation') not in [item[0] for item in RELATIONS if item not in MALE_RELATIONS]:
                 raise forms.ValidationError(
                     'Member is Female but you selected a male relation. Got {0}.'.format(
                         [item[1] for item in RELATIONS if item[0] == cleaned_data.get('relation')][0]))
-        if cleaned_data.get('relation') == 'Head':
+        if cleaned_data.get('relation') == HEAD_OF_HOUSEHOLD:
             # instance cannot be head if another head already exists
             self.instance.check_head_household(
                 cleaned_data.get('household_structure'), exception_cls=forms.ValidationError)

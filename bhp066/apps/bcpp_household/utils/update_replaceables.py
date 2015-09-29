@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 
-from bhp066.config.celery import app as celery_app
+# from bhp066.config.celery import app as celery_app
 
 from ..helpers import ReplacementHelper
 from ..models import Replaceable, Household, Plot
 
 
-@celery_app.task
+# @celery_app.task
 def update_replaceables(*args):
     """Updates the instances in Replaceables and returns the number of instances updated.
 

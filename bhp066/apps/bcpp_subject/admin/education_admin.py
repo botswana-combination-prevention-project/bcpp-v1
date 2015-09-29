@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 
 from ..models import Education
 from ..forms import EducationForm
+
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
@@ -18,7 +19,10 @@ class EducationAdmin(SubjectVisitModelAdmin):
         'job_description',
         'monthly_income')
 
-    annual_fields = [f for f in baseline_fields if f not in ['education', 'working', 'job_type', 'reason_unemployed']]
+    annual_fields = (
+        "subject_visit",
+        'job_description',
+        'monthly_income')
 
     baseline_radio_fields = {
         "education": admin.VERTICAL,
