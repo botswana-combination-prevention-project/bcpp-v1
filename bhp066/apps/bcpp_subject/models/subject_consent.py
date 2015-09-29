@@ -3,7 +3,7 @@ import uuid
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 
 from edc.core.bhp_common.utils import formatted_age
@@ -259,20 +259,21 @@ class BaseSubjectConsent(BaseBaseSubjectConsent):
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        # Any consent exists other than myself
         consents = self.__class__.objects.filter(
             household_member__internal_identifier=self.household_member.internal_identifier).exclude(
             household_member=self.household_member)
         if not consents.exists():
-            # Run the following validations only if its the first consent for an individual. Not Reconsent.
             if not self.id:
                 expected_member_status = BHS_ELIGIBLE
             else:
                 expected_member_status = BHS
             subject_identifier = self.household_member.get_subject_identifier()
-            if self.__class__.objects.filter(subject_identifier=subject_identifier).latest():
+            try:
+                self.__class__.objects.filter(subject_identifier=subject_identifier).latest('consent_datetime')
                 expected_member_status = BHS
                 self.subject_identifier = subject_identifier
+            except ObjectDoesNotExist:
+                pass
             if self.household_member.member_status != expected_member_status:
                 raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                     expected_member_status, self.household_member.member_status, self.household_member))
