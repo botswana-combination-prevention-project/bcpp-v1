@@ -13,6 +13,9 @@ from ..models import SubjectRequisition, Panel
 
 class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
 
+    visit_model = SubjectVisit
+    visit_attr = 'subject_visit'
+
     def __init__(self, *args, **kwargs):
         super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
         self.list_filter.append('community')

@@ -1,6 +1,3 @@
-from dateutil.relativedelta import relativedelta
-from datetime import datetime
-
 from django.test import TestCase
 
 from edc.map.classes import site_mappers

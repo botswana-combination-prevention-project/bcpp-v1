@@ -1,6 +1,6 @@
 import factory
 
-from ...models import Plot
+from bhp066.apps.bcpp_household.models import Plot
 
 
 class PlotFactory(factory.DjangoModelFactory):

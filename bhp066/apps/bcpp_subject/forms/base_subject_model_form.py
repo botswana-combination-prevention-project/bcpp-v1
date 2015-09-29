@@ -7,28 +7,26 @@ from bhp066.apps.bcpp.base_model_form import BaseModelForm
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..models import SubjectVisit
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class BaseSubjectModelForm(BaseModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(BaseSubjectModelForm, self).__init__(*args, **kwargs)
-        try:
-            self.fields['subject_visit'].queryset = SubjectVisit.objects.filter(pk=self.instance.subject_visit.pk)
-        except:
-            pass
+    visit_model = SubjectVisit
 
     def clean(self):
         cleaned_data = super(BaseSubjectModelForm, self).clean()
         self.limit_edit_to_current_community(cleaned_data)
         self.limit_edit_to_current_survey(cleaned_data)
-        subject_visit = cleaned_data.get('subject_visit')
+        try:
+            subject_visit = cleaned_data.get('subject_visit', self.instance.subject_visit)
+        except ObjectDoesNotExist:
+            raise forms.ValidationError('Field Subject visit cannot be empty')
         report_datetime = cleaned_data.get('report_datetime')
         self.instance.consented_for_period_or_raise(
             report_datetime=report_datetime,
             subject_identifier=subject_visit.subject_identifier,
             exception_cls=forms.ValidationError)
-
         return cleaned_data
 
     def limit_edit_to_current_survey(self, cleaned_data):

@@ -7,7 +7,7 @@ from edc.subject.registration.models import RegisteredSubject
 from ..actions import export_locator_for_cdc_action
 from ..filters import SubjectLocatorIsReferredListFilter, SubjectCommunityListFilter
 from ..forms import SubjectLocatorForm
-from ..models import SubjectLocator, SubjectVisit
+from ..models import SubjectLocator
 
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
@@ -70,18 +70,18 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
                 encrypt=False,
                 strip=True,
                 exclude=['exported', 'registered_subject',
-                         self.visit_model_foreign_key, 'revision', 'hostname_created',
+                         self.visit_attr, 'revision', 'hostname_created',
                          'hostname_modified', 'created', 'modified', 'user_created', 'user_modified', ],
                 extra_fields=OrderedDict(
-                    {'subject_identifier': self.visit_model_foreign_key + \
+                    {'subject_identifier': self.visit_attr + \
                      '__appointment__registered_subject__subject_identifier',
-                     'first_name': self.visit_model_foreign_key + '__appointment__registered_subject__first_name',
-                     'last_name': self.visit_model_foreign_key + '__appointment__registered_subject__last_name',
-                     'initials': self.visit_model_foreign_key + '__appointment__registered_subject__initials',
-                     'dob': self.visit_model_foreign_key + '__appointment__registered_subject__dob',
-                     'identity': self.visit_model_foreign_key + '__appointment__registered_subject__identity',
-                     'identity_type': self.visit_model_foreign_key + '__appointment__registered_subject__identity_type',
-                     'plot_identifier': self.visit_model_foreign_key + \
+                     'first_name': self.visit_attr + '__appointment__registered_subject__first_name',
+                     'last_name': self.visit_attr + '__appointment__registered_subject__last_name',
+                     'initials': self.visit_attr + '__appointment__registered_subject__initials',
+                     'dob': self.visit_attr + '__appointment__registered_subject__dob',
+                     'identity': self.visit_attr + '__appointment__registered_subject__identity',
+                     'identity_type': self.visit_attr + '__appointment__registered_subject__identity_type',
+                     'plot_identifier': self.visit_attr + \
                      '__household_member__household_structure__household__plot__plot_identifier',
                      })
             ),
@@ -90,8 +90,6 @@ class SubjectLocatorAdmin(SubjectVisitModelAdmin):
         return actions
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "subject_visit":
-            kwargs["queryset"] = SubjectVisit.objects.filter(id__exact=request.GET.get('subject_visit', 0))
         if db_field.name == "registered_subject":
             kwargs["queryset"] = RegisteredSubject.objects.filter(id__exact=request.GET.get('registered_subject', 0))
         return super(SubjectLocatorAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)

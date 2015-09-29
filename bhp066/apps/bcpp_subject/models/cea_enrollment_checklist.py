@@ -13,6 +13,11 @@ from ..choices import ENROLMENT_REASON, OPPORTUNISTIC_ILLNESSES
 from .subject_consent import SubjectConsent
 
 
+class MyManager(models.Manager):
+    def get_by_natural_key(self, pk):
+        return self.get(pk=pk)
+
+
 class CeaEnrollmentChecklist (BaseDispatchSyncUuidModel):
 
     """CE003"""
@@ -98,7 +103,12 @@ class CeaEnrollmentChecklist (BaseDispatchSyncUuidModel):
         max_length=25,
         help_text=" if 'NO,' STOP participant cannot be enrolled")
 
+    objects = MyManager()
+
     history = AuditTrail()
+
+    def natural_key(self):
+        return self.pk
 
     class Meta:
         app_label = "bcpp_subject"

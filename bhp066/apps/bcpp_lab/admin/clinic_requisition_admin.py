@@ -12,9 +12,14 @@ from ..forms import ClinicRequisitionForm
 
 class ClinicRequisitionAdmin(BaseRequisitionModelAdmin):
 
+    visit_model = ClinicVisit
+    visit_attr = 'clinic_visit'
+
     def __init__(self, *args, **kwargs):
         super(ClinicRequisitionAdmin, self).__init__(*args, **kwargs)
+        self.list_filter = list(self.list_filter)
         self.list_filter.append('community')
+        self.list_filter = tuple(self.list_filter)
 
     form = ClinicRequisitionForm
     visit_model = ClinicVisit

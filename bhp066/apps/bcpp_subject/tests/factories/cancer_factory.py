@@ -2,7 +2,7 @@ import factory
 
 from datetime import date, datetime
 
-from ...models import Cancer
+from bhp066.apps.bcpp_subject.models import Cancer
 
 
 class CancerFactory(factory.DjangoModelFactory):

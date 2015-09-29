@@ -13,7 +13,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from django.db import models
 
 from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
-from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD
+from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD, YES, NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes.controller import site_mappers
@@ -34,6 +34,7 @@ from ..choices import HOUSEHOLD_MEMBER_PARTICIPATION, RELATIONS
 from ..classes import HouseholdMemberHelper
 from ..constants import ABSENT, UNDECIDED, BHS_SCREEN, REFUSED, NOT_ELIGIBLE, DECEASED
 from ..managers import HouseholdMemberManager
+from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
 class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
@@ -270,17 +271,13 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         if self.household_structure.household.replaced_by:
             raise AlreadyReplaced('Household {0} replaced.'.format(
                 self.household_structure.household.household_identifier))
-        # check if consented. If update fields is set then bypass (see SubjectConsent post-save signal)
-#         if self.is_consented and not kwargs.get('update_fields'):
-#             raise MemberStatusError('Household member is consented. Changes are not allowed. '
-#                                     'Perhaps catch this in the form.')
         if self.member_status == DECEASED:
             self.set_death_flags
         else:
             self.clear_death_flags
         self.eligible_member = self.is_eligible_member
-        self.absent = True if (not self.id and
-                               (self.present_today == 'No' and not self.survival_status == DEAD)) else self.absent
+        if not self.id and self.present_today == NO and not self.survival_status == DEAD:
+            self.absent = True
         if kwargs.get('update_fields') == ['member_status']:  # when updated by participation view
             selected_member_status = self.member_status
             if self.member_status == BHS_SCREEN:
@@ -301,7 +298,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
                 self.undecided = True if selected_member_status == UNDECIDED else False
                 self.absent = True if selected_member_status == ABSENT else False
         if self.eligible_hoh:
-            self.relation = 'Head'
+            self.relation = HEAD_OF_HOUSEHOLD
         if self.intervention and self.plot_enrolled:
             self.eligible_htc = self.evaluate_htc_eligibility
         elif not self.intervention:
@@ -343,7 +340,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     @property
     def set_death_flags(self):
         self.survival_status = DEAD
-        self.present_today = 'No'
+        self.present_today = NO
 
     @property
     def clear_death_flags(self):
@@ -419,7 +416,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def is_eligible_member(self):
         if self.survival_status == DEAD:
             return False
-        return (self.age_in_years >= 16 and self.age_in_years <= 64 and self.study_resident == 'Yes' and
+        return (self.age_in_years >= 16 and self.age_in_years <= 64 and self.study_resident == YES and
                 self.inability_to_participate == NOT_APPLICABLE)
 
     def check_eligible_representative_filled(self, household_structure, using=None, exception_cls=None):
@@ -435,7 +432,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         try:
             current_hoh = HouseholdMember.objects.get(
                 household_structure=household_structure,
-                relation='Head')
+                relation=HEAD_OF_HOUSEHOLD)
             # If i am not a new instance then make sure i am not comparing to myself.
             if self.id and current_hoh and (self.id != current_hoh.id):
                     raise exception_cls('{0} is the head of household already. Only one member '
@@ -840,14 +837,16 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     @property
     def is_bhs(self):
         """Returns True if the member was survey as part of the BHS."""
-        return self.household_structure.household.plot.plot_identifier != \
-            site_mappers.get_current_mapper().clinic_plot.plot_identifier
+        plot_identifier = self.household_structure.household.plot.plot_identifier
+        clinic_plot_identifier = site_mappers.get_current_mapper().clinic_plot.plot_identifier
+        is_bhs = plot_identifier != clinic_plot_identifier
+        return is_bhs
 
     def deserialize_on_duplicate(self):
         """Lets the deserializer know what to do if a duplicate is found,
         handled, and about to be saved."""
         retval = False
-        if (self.present_today.lower() == 'yes' or self.present_today.lower() == 'no'):
+        if (self.present_today == YES or self.present_today == NO):
             if self.eligible_member and self.member_status:
                 retval = True
             elif not self.eligible_member:

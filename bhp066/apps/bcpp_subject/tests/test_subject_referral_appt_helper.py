@@ -1,4 +1,4 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from dateutil.relativedelta import MO, TU, WE, TH, FR
 
 from django.test import TestCase
@@ -33,7 +33,6 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
-        today_day = 'Mon'
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
@@ -59,7 +58,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1a(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
-        today_day = 'Mon'
+
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
@@ -85,7 +84,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa1b(self):
         """Assert give a clinic day in two weeks for a MASA client at the IDCC with no appointment"""
-        today_day = 'Mon'
+
         expected_appt_day = 'Mon'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 9, 8, 7, 30, 0)
@@ -138,7 +137,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa2(self):
         """Assert give next clinic day MASA client at the IDCC that is a suspected defaulter with no appointment"""
-        today_day = 'Mon'
+
         expected_appt_day = 'Wed'
         today = date(2014, 8, 25)
         expected_appt_datetime = datetime(2014, 8, 27, 7, 30, 0)
@@ -164,7 +163,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_masa2a(self):
         """Assert give next clinic day MASA client at the IDCC that is a suspected defaulter with an appointment"""
-        today_day = 'Mon'
+
         expected_appt_day = 'Wed'
         today = date(2014, 8, 25)
         scheduled_appt_date = date(2014, 9, 17)
@@ -530,7 +529,7 @@ class TestSubjectReferralApptHelper(TestCase):
 
     def test_POS_next_clinic_day(self):
         """Test that POS! will get the next clinic date"""
-        today_day = 'Mon'
+
         expected_appt_day = 'Wed'
         today = date(2015, 3, 2)
         scheduled_appt_date = None

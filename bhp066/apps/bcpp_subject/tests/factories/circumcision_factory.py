@@ -1,12 +1,13 @@
 from datetime import datetime
 
-from ...models import Circumcision
+from bhp066.apps.bcpp_subject.models import Circumcision
 
 from ..factories import BaseScheduledModelFactory
+from edc_constants.constants import YES
 
 
 class CircumcisionFactory(BaseScheduledModelFactory):
     FACTORY_FOR = Circumcision
 
     report_datetime = datetime.today()
-    circumcised = (('Yes', u'Yes'), ('No', u'No'), ('not_sure', u'I am not sure'), ('not_answering', u"Don't want to answer"))[0][0]
+    circumcised = YES
