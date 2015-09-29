@@ -52,7 +52,7 @@ class EnrollmentChecklistAdmin(BaseModelAdmin):
         "guardian": admin.VERTICAL,
         "study_participation": admin.VERTICAL,
         "confirm_participation": admin.VERTICAL,
-        }
+    }
 
     search_fields = ('household_member__first_name', 'household_member__pk')
 
