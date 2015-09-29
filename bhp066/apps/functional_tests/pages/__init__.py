@@ -18,3 +18,6 @@ from .subject_consent_page import SubjectConsentPage
 from .subject_dashboard_page import SubjectDasbhoardPage
 from .subject_locator_page import SubjectLocatorPage
 from .subject_visit_page import SubjectVisitPage
+from .education_page import EducationPage
+from .hiv_testing_history_page import HivTestingHistoryPage
+from .hiv_testing_review_page import HivTestingReviewPage
