@@ -301,6 +301,7 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
     class Meta:
         app_label = 'bcpp_subject'
+        get_latest_by = 'consent_datetime'
         unique_together = (('subject_identifier', 'survey', 'version'),
                            ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
@@ -319,4 +320,5 @@ class SubjectConsentExtended(SubjectConsent):
 
     class Meta:
         proxy = True
+        get_latest_by = 'consent_datetime'
         app_label = 'bcpp_subject'
