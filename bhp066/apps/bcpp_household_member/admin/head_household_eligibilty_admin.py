@@ -31,12 +31,27 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-            kwargs["queryset"] = HouseholdMember.objects.filter(
-                Q(household_structure__exact=request.GET.get('household_structure', 0)),
-                (Q(is_consented=True) | Q(age_in_years__gte=18) | Q(relation=HEAD_OF_HOUSEHOLD)) &
-                (~Q(survival_status='Dead')))
+            if request.GET.get('household_member'):
+                kwargs["queryset"] = HouseholdMember.objects.filter(
+                    Q(household_structure__exact=request.GET.get('household_structure', 0)),
+                    (Q(is_consented=True) | Q(age_in_years__gte=18) | Q(relation=HEAD_OF_HOUSEHOLD)) &
+                    (~Q(survival_status='Dead')))
+            else:
+                self.readonly_fields = list(self.readonly_fields)
+                try:
+                    self.readonly_fields.index('household_member')
+                except ValueError:
+                    self.readonly_fields.append('household_member')
         if db_field.name == "household_structure":
-            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
+            if request.GET.get('household_structure'):
+                kwargs["queryset"] = HouseholdStructure.objects.filter(
+                    id__exact=request.GET.get('household_structure', 0))
+            else:
+                self.readonly_fields = list(self.readonly_fields)
+                try:
+                    self.readonly_fields.index('household_structure')
+                except ValueError:
+                    self.readonly_fields.append('household_structure')
         return super(HouseholdHeadEligibilityAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(HouseholdHeadEligibility, HouseholdHeadEligibilityAdmin)
