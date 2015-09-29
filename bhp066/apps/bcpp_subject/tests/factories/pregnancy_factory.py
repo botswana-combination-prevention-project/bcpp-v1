@@ -2,7 +2,7 @@ import factory
 
 from datetime import date, datetime
 
-from ...models import Pregnancy
+from bhp066.apps.bcpp_subject.models import Pregnancy
 
 
 class PregnancyFactory(factory.DjangoModelFactory):

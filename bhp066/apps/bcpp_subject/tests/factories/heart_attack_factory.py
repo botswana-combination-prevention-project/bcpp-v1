@@ -2,7 +2,7 @@ import factory
 
 from datetime import date, datetime
 
-from ...models import HeartAttack
+from bhp066.apps.bcpp_subject.models import HeartAttack
 
 
 class HeartAttackFactory(factory.DjangoModelFactory):
