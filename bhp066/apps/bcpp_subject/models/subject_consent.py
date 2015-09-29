@@ -46,7 +46,7 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                 raise exception_cls('An HicEnrollment form already exists for this '
                                     'Subject. So \'dob\' cannot be changed.')
 
-    def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
+    def matches_enrollment_checklist(self, subject_consent, exception_cls=None):
         """Matches values in this consent against the enrollment checklist.
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
