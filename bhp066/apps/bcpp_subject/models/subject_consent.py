@@ -6,105 +6,31 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO, YES_NO_NA
-from edc_constants.constants import NOT_APPLICABLE
-from edc.map.classes import site_mappers
 from edc.core.bhp_common.utils import formatted_age
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc_base.audit_trail import AuditTrail
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
-                                       SampleCollectionFieldsMixin)
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.core.bhp_variables.models import StudySite
+                                       SampleCollectionFieldsMixin, CitizenFieldsMixin)
+from edc_constants.constants import YES
 
-from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 
+from ..exceptions import ConsentError
 from ..managers import SubjectConsentManager
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
-from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
-
-from ..exceptions import ConsentError
 
 
 class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
-    study_site = models.ForeignKey(
-        StudySite,
-        verbose_name='Site',
-        null=True,
-        help_text="This refers to the site or 'clinic area' where the subject is being consented."
-    )
-
-    citizen = models.CharField(
-        verbose_name="Are you a Botswana citizen? ",
-        max_length=3,
-        choices=YES_NO,
-        help_text="",
-    )
-
-    legal_marriage = models.CharField(
-        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
-        max_length=3,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False,
-        default=NOT_APPLICABLE,
-        help_text="If 'NO' participant will not be enrolled.",
-    )
-
-    marriage_certificate = models.CharField(
-        verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
-        max_length=3,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False,
-        default=NOT_APPLICABLE,
-        help_text="If 'NO' participant will not be enrolled.",
-    )
-
-    marriage_certificate_no = models.CharField(
-        verbose_name=("What is the marriage certificate number?"),
-        max_length=9,
-        null=True,
-        blank=True,
-        help_text="e.g. 000/YYYY",
-    )
-
-    is_minor = models.CharField(
-        verbose_name=("Is subject a minor?"),
-        max_length=10,
-        null=True,
-        blank=False,
-        default='-',
-        choices=YES_NO,
-        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
-                   'HIV status may NOT be revealed in the household.'))
-
-    consent_signature = models.CharField(
-        verbose_name=("The client has signed the consent form?"),
-        max_length=3,
-        choices=YES_NO,
-        validators=[eligible_if_yes, ],
-        null=True,
-        blank=False,
-        # default='Yes',
-        help_text="If no, INELIGIBLE",
-    )
-
-    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
-
     def save(self, *args, **kwargs):
-        # From old edc BaseConsent
         self.insert_dummy_identifier()
         if not self.id:
             self._save_new_consent(kwargs.get('using', None))
-        # From old edc BaseSubject
         self.subject_type = self.get_subject_type()
         super(BaseBaseSubjectConsent, self).save(*args, **kwargs)
 
@@ -142,7 +68,8 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
             raise exception_cls(
-                'Answer to whether this subject a citizen, does not match that in enrollment checklist.')
+                'You wrote subject is a %(citizen)s citizen. This does not match the enrollment checklist.',
+                params={"citizen": '' if subject_consent.citizen == YES else 'NOT'})
         if (enrollment_checklist.literacy.lower() == 'yes' and
                 not (subject_consent.is_literate.lower() == 'yes' or (subject_consent.is_literate.lower() == 'no') and
                      subject_consent.witness_name)):
@@ -159,21 +86,6 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Subject is not eligible or has not been confirmed eligible '
                                 'for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
-
-    def get_site_code(self):
-        return site_mappers.get_current_mapper().map_code
-
-    def get_subject_type(self):
-        return 'subject'
-
-    def natural_key(self):
-        return (self.subject_identifier_as_pk, )
-
-    def get_consent_history_model(self):
-        return SubjectConsentHistory
-
-    def get_registered_subject(self):
-        return self.registered_subject
 
     def get_hiv_status(self):
         """Returns the hiv testing history as a string.
@@ -270,9 +182,6 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     @classmethod
     def get_consent_update_model(self):
         raise TypeError('The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to return the ConsentUpdateModel class.')
-
-    def get_report_datetime(self):
-        return self.consent_datetime
 
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Allow bypass only if doing consent verification."""
@@ -381,7 +290,10 @@ class BaseSubjectConsent(BaseBaseSubjectConsent):
 
 
 class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
-                     SampleCollectionFieldsMixin, VulnerabilityFieldsMixin, BaseSubjectConsent):
+                     SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
+                     BaseSubjectConsent):
+
+    """ A model completed by the user that captures the ICF."""
 
     objects = SubjectConsentManager()
 
@@ -395,6 +307,8 @@ class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin
 
 
 class SubjectConsentExtended(SubjectConsent):
+
+    """ A system model that serves as a proxy model for SubjectConsent."""
 
     class Constants:
         SUBJECT_TYPES = ['subject']
