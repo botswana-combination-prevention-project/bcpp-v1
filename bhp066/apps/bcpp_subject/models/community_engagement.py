@@ -22,14 +22,14 @@ class CommunityEngagement (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=COMMUNITYENGAGEMENT_CHOICE,
-        help_text="supplemental")
+        help_text="")
 
     vote_engagement = models.CharField(
         verbose_name="Did you vote in the last local government election?",
         max_length=50,
         null=True,
         choices=VOTEENGAGEMENT_CHOICE,
-        help_text="supplemental")
+        help_text="")
 
     problems_engagement = models.ManyToManyField(
         NeighbourhoodProblems,
@@ -47,7 +47,7 @@ class CommunityEngagement (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=SOLVEENGAGEMENT_CHOICE,
-        help_text="supplemental")
+        help_text="")
 
     history = AuditTrail()
 
