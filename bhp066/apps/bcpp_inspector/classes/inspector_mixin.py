@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 
-from edc.device.device.classes import Device
+from edc_device import device
 
 from ..models import SubjectRequisitionInspector
 
@@ -11,7 +11,6 @@ class InspectorMixin(models.Model):
 
     def save_to_inspector(self, fields, instance_pk, using):
         if SubjectRequisitionInspector.objects.using(using).filter(subject_identifier=fields.get('subject_identifier'), requisition_identifier=fields.get('requisition_identifier')).count() == 0:
-            device = Device()
             if (not fields.get('requisition_identifier')) or (fields.get('requisition_identifier') == ""):
                 requisition_identifier = instance_pk
                 specimen_identifier = instance_pk

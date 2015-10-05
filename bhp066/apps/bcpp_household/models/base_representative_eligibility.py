@@ -3,7 +3,7 @@ from django.db import models
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_base.model.validators import eligible_if_yes
 from edc.device.sync.models import BaseSyncUuidModel
-from edc.choices.common import YES_NO
+from edc_constants.choices import YES_NO
 
 from ..exceptions import AlreadyReplaced
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel

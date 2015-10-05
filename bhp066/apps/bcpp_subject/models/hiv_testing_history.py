@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.choices import YES_NO_NA
+from edc_constants.choices import YES_NO_NA
 
 from bhp066.apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 

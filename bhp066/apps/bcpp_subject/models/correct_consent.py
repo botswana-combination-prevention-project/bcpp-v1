@@ -5,18 +5,17 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
-from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
-from edc_base.audit_trail import AuditTrail
-from edc.choices.common import GENDER_UNDETERMINED
-from edc.choices.common import YES_NO, YES
-from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import FirstnameField, EncryptedCharField, LastnameField
+from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
 from edc_consent.models.validators import AgeTodayValidator
+from edc_constants.choices import GENDER_UNDETERMINED, YES_NO, YES
 
 from ..managers import CorrectConsentManager
 
-from .subject_consent import SubjectConsent
 from .hic_enrollment import HicEnrollment
+from .subject_consent import SubjectConsent
 
 
 class BaseCorrectConsent(models.Model):

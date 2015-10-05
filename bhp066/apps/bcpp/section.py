@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
-from edc.device.device.classes import Device
+from edc_device import device
 
 ModelMeta = namedtuple('ModelMeta', 'app_label model_name')
 
@@ -14,7 +14,7 @@ class SectionAdministrationView(BaseSectionView):
 
     def contribute_to_context(self, context, request, *args, **kwargs):
         context.update({
-            'is_server': Device().is_server,
+            'is_server': device.is_server,
             'replaceable_meta': ModelMeta('bcpp_household', 'replaceable'),
             'plot_meta': ModelMeta('bcpp_household', 'plot'),
             'household_meta': ModelMeta('bcpp_household', 'household'),

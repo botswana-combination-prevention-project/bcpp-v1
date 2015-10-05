@@ -1,4 +1,5 @@
 from django.db import models
+
 from edc_base.audit_trail import AuditTrail
 
 from bhp066.apps.bcpp.choices import AGREE_STRONGLY
