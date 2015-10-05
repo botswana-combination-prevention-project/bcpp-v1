@@ -39,7 +39,7 @@ class Circumcised (BaseCircumcision):
         max_length=45,
         choices=PLACE_CIRC,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     where_circ_other = OtherCharField(
         null=True)
@@ -49,7 +49,7 @@ class Circumcised (BaseCircumcision):
         max_length=55,
         choices=WHYCIRC_CHOICE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     why_circ_other = OtherCharField(
         null=True)

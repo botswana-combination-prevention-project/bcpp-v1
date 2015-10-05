@@ -19,7 +19,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     gossip_community_stigma = models.CharField(
@@ -28,7 +28,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     respect_community_stigma = models.CharField(
@@ -37,7 +37,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_verbal_stigma = models.CharField(
@@ -46,7 +46,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_phyical_stigma = models.CharField(
@@ -55,7 +55,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_family_stigma = models.CharField(
@@ -65,7 +65,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     fear_stigma = models.CharField(
@@ -74,7 +74,7 @@ class StigmaOpinion (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()
