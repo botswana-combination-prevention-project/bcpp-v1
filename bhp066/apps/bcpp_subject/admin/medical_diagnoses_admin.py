@@ -25,21 +25,21 @@ class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
         "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
     instructions = {
-        BASELINE: _(
+        BASELINE: [_(
             "<h5>Read to Participant</h5> I am now going to ask you"
             " some questions about major illnesses that you may"
             " have had in the past 12 months. Sometimes people"
             " call different sicknesses by different names."
             " If you do not understand what I mean, please ask."
             " Also, please remember that your answers will be"
-            " kept confidential. (baseline)"),
-        ANNUAL: _(
+            " kept confidential. (baseline)")],
+        ANNUAL: [_(
             "<h5>Read to Participant</h5> I am now going to ask you"
             " some questions about major illnesses that you may"
             " have had since we spoke with you at our last visit. Sometimes people"
             " call different sicknesses by different names."
             " If you do not understand what I mean, please ask."
             " Also, please remember that your answers will be"
-            " kept confidential. (annual)"),
-    }
+            " kept confidential. (annual)")]
+        }
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)
