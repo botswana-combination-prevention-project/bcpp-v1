@@ -13,7 +13,7 @@ etc/*
 *.so
 bhp066/user-*
 bhp066/db-sqlite3
-
+default
 # Distribution / packaging
 .Python
 bhp066/apps/bcpp_export/sas

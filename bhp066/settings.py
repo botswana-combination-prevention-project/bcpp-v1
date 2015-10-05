@@ -34,15 +34,10 @@ BASE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 GIT_DIR = BASE_DIR.ancestor(1)
 
 SOURCE_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(2)  # e.g. /home/django/source
-EDC_DIR = SOURCE_ROOT.child('edc_project').child('edc')  # e.g. /home/django/source/edc_project/edc
 PROJECT_ROOT = Path(os.path.dirname(os.path.realpath(__file__))).ancestor(1)  # e.g. /home/django/source/bhp066_project
 PROJECT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))  # e.g. /home/django/source/bhp066_project/bhp066
 APP_DIR = PROJECT_DIR.child('apps').child(APP_NAME)  # e.g. /home/django/source/bhp066_project/bhp066/apps/bcpp
 ETC_DIR = PROJECT_DIR.child('config').child('etc')  # for production this should be /etc/edc
-TEMPLATE_DIRS = (
-    os.path.join(PROJECT_DIR, 'templates'),
-    EDC_DIR.child('templates'),
-)
 MEDIA_ROOT = PROJECT_DIR.child('media')
 STATIC_ROOT = PROJECT_DIR.child('static')
 FIXTURE_DIRS = (
@@ -54,7 +49,7 @@ MAP_DIR = STATIC_ROOT.child('img')
 
 # edc.crytpo_fields encryption keys
 # developers should set by catching their hostname instead of setting explicitly
-if socket.gethostname() == 'mac.local':
+if socket.gethostname() == 'mac2.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
     KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
@@ -76,7 +71,7 @@ testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
-    #KEY_PATH = BASE_DIR
+    KEY_PATH = BASE_DIR
     if testing_db_name == 'sqlite':
         DATABASES = TESTING_SQLITE
     else:
@@ -155,6 +150,11 @@ STATICFILES_FINDERS = (
 with open(os.path.join(ETC_DIR, 'secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
 
+TEMPLATE_DIRS = (
+    os.path.join(PROJECT_DIR, 'templates'),
+    os.path.join(SOURCE_ROOT.child('edc-base').child('edc_base'), 'templates')
+)
+
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
      'django.template.loaders.filesystem.Loader',
@@ -187,7 +187,7 @@ ROOT_URLCONF = 'bhp066.config.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'bhp066.config.wsgi.application'
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + EDC_APPS + LIS_APPS + LOCAL_APPS  # + ('django_nose', )
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS + EDC_APPS + LIS_APPS  # + ('django_nose', )
 
 # django
 SESSION_COOKIE_AGE = 10000
@@ -303,3 +303,5 @@ LIMIT_EDIT_TO_CURRENT_COMMUNITY = False if DEVICE_ID == '99' else LIMIT_EDIT_TO_
 # Central Server in BHP must always be set to FALSE.
 FILTERED_DEFAULT_SEARCH = False if DEVICE_ID == '99' else FILTERED_DEFAULT_SEARCH
 STUDY_OPEN_DATETIME = STUDY_OPEN_DATETIME
+
+ADMIN_EXCLUDE_DEFAULT_CODE = 'T1'
