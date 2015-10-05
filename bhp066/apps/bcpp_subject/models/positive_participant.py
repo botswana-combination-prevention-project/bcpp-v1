@@ -22,7 +22,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     internalized_stigma = models.CharField(
@@ -30,7 +30,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     friend_stigma = models.CharField(
@@ -39,7 +39,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     family_stigma = models.CharField(
@@ -48,7 +48,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_talk_stigma = models.CharField(
@@ -56,7 +56,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_respect_stigma = models.CharField(
@@ -64,7 +64,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_jobs_tigma = models.CharField(
@@ -72,7 +72,7 @@ class PositiveParticipant (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()

@@ -20,7 +20,7 @@ class AccessToCare (BaseScheduledVisitModel):
         max_length=50,
         choices=WHEREACCESS_CHOICE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     access_care_other = OtherCharField(
         null=True)
@@ -31,7 +31,7 @@ class AccessToCare (BaseScheduledVisitModel):
                      " medical care or treatment when you or someone in your family"
                      " is sick or hurt? (check all that apply)",
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     medical_care_access_other = OtherCharField(
         null=True)
@@ -42,14 +42,14 @@ class AccessToCare (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     emergency_access = models.CharField(
         verbose_name="It is hard for me to get medical care in an emergency",
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     expensive_access = models.CharField(
         verbose_name="Sometimes I go without the medical care I need because"
@@ -57,21 +57,21 @@ class AccessToCare (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     convenient_access = models.CharField(
         verbose_name="Places where I can get medical care are very conveniently located.",
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     whenever_access = models.CharField(
         verbose_name="I am able to get medical care whenever I need it.",
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     local_hiv_care = models.CharField(
         verbose_name="Would you be willing to come to the clinic within your "
@@ -80,7 +80,7 @@ class AccessToCare (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     history = AuditTrail()
 
