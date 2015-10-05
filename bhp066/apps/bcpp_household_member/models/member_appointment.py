@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.choices import TIME_OF_DAY, TIME_OF_WEEK
+from edc_constants.choices import TIME_OF_DAY, TIME_OF_WEEK
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.appointment.choices import APPT_STATUS
 from edc.device.sync.models import BaseSyncUuidModel

@@ -5,8 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc.choices.common import GENDER
-from edc.choices.common import YES_NO, YES_NO_NA, BLOCK_CONTINUE
+from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
@@ -22,6 +21,12 @@ from ..managers import EnrollmentChecklistManager
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .household_member import HouseholdMember
+
+BLOCK_CONTINUE = (
+    ('Block', 'Yes( Block from further participation)'),
+    ('Continue', 'No (Can continue and participate)'),
+    (NOT_APPLICABLE, 'Not applicable'),
+)
 
 
 class BaseEnrollmentChecklist(models.Model):

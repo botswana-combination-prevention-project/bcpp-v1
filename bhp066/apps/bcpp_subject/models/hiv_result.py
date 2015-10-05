@@ -3,7 +3,7 @@ from django.db import models
 
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_not_future
-from edc.choices import YES_NO_NA
+from edc_constants.choices import YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 
 from bhp066.apps.bcpp.choices import HIV_RESULT, WHYNOHIVTESTING_CHOICE
