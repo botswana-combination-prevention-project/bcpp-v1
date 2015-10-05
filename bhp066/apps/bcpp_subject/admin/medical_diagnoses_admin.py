@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..constants import BASELINE, ANNUAL
 from ..models import MedicalDiagnoses
 from ..forms import MedicalDiagnosesForm
 
+from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
+class MedicalDiagnosesAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
     form = MedicalDiagnosesForm
     fields = (
@@ -22,22 +24,22 @@ class MedicalDiagnosesAdmin(SubjectVisitModelAdmin):
         "cancer_record": admin.VERTICAL,
         "tb_record": admin.VERTICAL, }
     filter_horizontal = ('diagnoses',)
-    baseline_instructions = [_(
-        "<h5>Read to Participant</h5> I am now going to ask you"
-        " some questions about major illnesses that you may"
-        " have had in the past 12 months. Sometimes people"
-        " call different sicknesses by different names."
-        " If you do not understand what I mean, please ask."
-        " Also, please remember that your answers will be"
-        " kept confidential.")]
-
-    annual_instructions = [
-        _("<h5>Read to Participant</h5> I am now going to ask you"
-          " some questions about major illnesses that you may"
-          " have had since we spoke with you at our last visit. Sometimes people"
-          " call different sicknesses by different names."
-          " If you do not understand what I mean, please ask."
-          " Also, please remember that your answers will be"
-          " kept confidential."),
-    ]
+    instructions = {
+        BASELINE: _(
+            "<h5>Read to Participant</h5> I am now going to ask you"
+            " some questions about major illnesses that you may"
+            " have had in the past 12 months. Sometimes people"
+            " call different sicknesses by different names."
+            " If you do not understand what I mean, please ask."
+            " Also, please remember that your answers will be"
+            " kept confidential. (baseline)"),
+        ANNUAL: _(
+            "<h5>Read to Participant</h5> I am now going to ask you"
+            " some questions about major illnesses that you may"
+            " have had since we spoke with you at our last visit. Sometimes people"
+            " call different sicknesses by different names."
+            " If you do not understand what I mean, please ask."
+            " Also, please remember that your answers will be"
+            " kept confidential. (annual)"),
+    }
 admin.site.register(MedicalDiagnoses, MedicalDiagnosesAdmin)

@@ -1,35 +1,31 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..constants import ANNUAL
 from ..forms import ResidencyMobilityForm
 from ..models import ResidencyMobility
 
+from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class ResidencyMobilityAdmin(SubjectVisitModelAdmin):
+class ResidencyMobilityAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
     form = ResidencyMobilityForm
 
-    baseline_fields = [
+    fields = (
         "subject_visit",
         'length_residence',
         'permanent_resident',
         'intend_residency',
         'nights_away',
         'cattle_postlands',
-        'cattle_postlands_other']
+        'cattle_postlands_other')
 
-    annual_fields = [f for f in baseline_fields if f not in ['length_residence']]
+    custom_exclude = {ANNUAL: ('length_residence', )}
 
-    baseline_radio_fields = {
+    radio_fields = {
         "length_residence": admin.VERTICAL,
-        "permanent_resident": admin.VERTICAL,
-        "intend_residency": admin.VERTICAL,
-        "nights_away": admin.VERTICAL,
-        "cattle_postlands": admin.VERTICAL}
-
-    annual_radio_fields = {
         "permanent_resident": admin.VERTICAL,
         "intend_residency": admin.VERTICAL,
         "nights_away": admin.VERTICAL,
