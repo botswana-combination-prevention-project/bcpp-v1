@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
+from ..constants import ANNUAL
 from ..forms import CircumcisionForm, CircumcisedForm, UncircumcisedForm
 from ..models import Circumcision, Circumcised, Uncircumcised
 
@@ -28,7 +29,7 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
 
     form = CircumcisedForm
 
-    baseline_fields = [
+    fields = [
         "subject_visit",
         "circumcised",
         "health_benefits_smc",
@@ -39,17 +40,16 @@ class CircumcisedAdmin(SubjectVisitModelAdmin):
         'where_circ_other',
         'why_circ',
         'why_circ_other']
-    annual_fields = [f for f in baseline_fields if f not in ['when_circ', 'age_unit_circ']]
+    custom_exclude = {
+        ANNUAL:
+            ['when_circ',
+             'age_unit_circ']
+    }
 
-    baseline_radio_fields = {
+    radio_fields = {
         "circumcised": admin.VERTICAL,
         "where_circ": admin.VERTICAL,
         "age_unit_circ": admin.VERTICAL,
-        "why_circ": admin.VERTICAL, }
-
-    annual_radio_fields = {
-        "circumcised": admin.VERTICAL,
-        "where_circ": admin.VERTICAL,
         "why_circ": admin.VERTICAL, }
 
     filter_horizontal = ("health_benefits_smc",)

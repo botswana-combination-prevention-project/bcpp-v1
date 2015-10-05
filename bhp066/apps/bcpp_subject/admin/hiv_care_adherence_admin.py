@@ -5,15 +5,17 @@ from edc_constants.constants import POS
 from bhp066.apps.bcpp_survey.models import Survey
 
 from ..classes import SubjectStatusHelper
+from ..constants import ANNUAL
 from ..forms import HivCareAdherenceForm
 from ..models import HivCareAdherence
 
+from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
+class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
-    baseline_fields = [
+    fields = [
         "subject_visit",
         "first_positive",
         "medical_care",
@@ -34,13 +36,9 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'adherence_4_day',
         'adherence_4_wk']
 
-    annual_fields = [f for f in baseline_fields if f not in [
-        "first_positive", "medical_care", "no_medical_care", "no_medical_care_other", "ever_recommended_arv", "ever_taken_arv",
-        "why_no_arv", "first_arv"]]
-
     form = HivCareAdherenceForm
 
-    baseline_radio_fields = {
+    radio_fields = {
         "medical_care": admin.VERTICAL,
         "no_medical_care": admin.VERTICAL,
         "ever_recommended_arv": admin.VERTICAL,
@@ -51,8 +49,6 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         "adherence_4_day": admin.VERTICAL,
         "adherence_4_wk": admin.VERTICAL,
         "arv_evidence": admin.VERTICAL}
-
-    annual_radio_fields = baseline_radio_fields
 
     instructions = [("Note to Interviewer: This section is only to be"
                      " completed by HIV-positive participants who knew"
@@ -75,36 +71,26 @@ class HivCareAdherenceAdmin(SubjectVisitModelAdmin):
         'ever_taken_arv',
     )
 
-    @property
-    def annual_fields(self):
-        """Returns a subset of annual_fields if subject is POS and on ART."""
-        if not Survey.objects.first_survey.survey_slug == settings.CURRENT_SURVEY:
-            if self.hiv_result_on_pos_and_subject_not_on_art:
-                try:
-                    annual_fields = self.baseline_fields
-                    annual_fields.remove('first_positive')
-                except ValueError:
-                    pass
-            elif self.hiv_result_on_pos_and_subject_on_art:
-                annual_fields = [f for f in self.baseline_fields if f not in [
-                    "first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv",
-                    "why_no_arv", "first_arv", "no_medical_care_other", "why_no_arv_other"]]
-            else:
-                annual_fields = self.baseline_fields
-        else:
-            return self.baseline_fields
-
-        return annual_fields
-
-    @property
-    def hiv_result_on_pos_and_subject_not_on_art(self):
-        subject_helper = SubjectStatusHelper(self.subject_visit, use_baseline_visit=True)
-        return (subject_helper.hiv_result == POS and not subject_helper.on_art)
-
-    @property
-    def hiv_result_on_pos_and_subject_on_art(self):
-        subject_helper = SubjectStatusHelper(self.subject_visit, use_baseline_visit=True)
-        return (subject_helper.hiv_result == POS and subject_helper.on_art)
-
+    def get_custom_exclude(self, request, obj=None, visit_code=None):
+        exclude = []
+        visit_code = visit_code or self.get_visit_code(request, obj)
+        if visit_code in self.visit_codes.get(ANNUAL):
+            exclude = [
+                "first_positive",
+                "medical_care",
+                "no_medical_care",
+                "no_medical_care_other",
+                "ever_recommended_arv",
+                "ever_taken_arv",
+                "why_no_arv",
+                "why_no_arv_other"
+                "first_arv"]
+            if not Survey.objects.first_survey.survey_slug == settings.CURRENT_SURVEY:
+                subject_visit = self.get_visit(request, obj)
+                if subject_visit:
+                    subject_helper = SubjectStatusHelper(subject_visit, use_baseline_visit=True)
+                    if subject_helper.hiv_result == POS and not subject_helper.on_art:
+                        exclude.pop('first_positive')
+        return exclude
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)

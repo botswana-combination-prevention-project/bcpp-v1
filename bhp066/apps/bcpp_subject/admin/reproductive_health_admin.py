@@ -1,16 +1,17 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from ..models import ReproductiveHealth
 from ..forms import ReproductiveHealthForm
+from ..models import ReproductiveHealth
 
+from .subject_admin_exclude_mixin import SubjectAdminExcludeMixin
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
+class ReproductiveHealthAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 
     form = ReproductiveHealthForm
-    annual_fields = [
+    fields = [
         "subject_visit",
         "number_children",
         "menopause",
@@ -22,23 +23,20 @@ class ReproductiveHealthAdmin(SubjectVisitModelAdmin):
         'pregnancy_hiv_tested',
         'pregnancy_hiv_retested']
 
-    baseline_fields = [f for f in annual_fields if f not in [
-        "when_pregnant", "gestational_weeks", "pregnancy_hiv_tested", "pregnancy_hiv_retested"]]
+    custom_exclude = {'baseline': [
+        "when_pregnant",
+        "gestational_weeks",
+        "pregnancy_hiv_tested",
+        "pregnancy_hiv_retested"]
+    }
 
-    annual_radio_fields = {
+    radio_fields = {
         "menopause": admin.VERTICAL,
         "currently_pregnant": admin.VERTICAL,
         "when_pregnant": admin.VERTICAL,
         "pregnancy_hiv_tested": admin.VERTICAL,
         "pregnancy_hiv_retested": admin.VERTICAL
     }
-
-    baseline_radio_fields = {
-        "menopause": admin.VERTICAL,
-        "currently_pregnant": admin.VERTICAL,
-        "when_pregnant": admin.VERTICAL,
-        "pregnancy_hiv_tested": admin.VERTICAL,
-        "pregnancy_hiv_retested": admin.VERTICAL}
 
     filter_horizontal = ("family_planning",)
     instructions = [("<h5>Note to Interviewer</h5> This section is to be"
