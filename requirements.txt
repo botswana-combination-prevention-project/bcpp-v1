@@ -4,6 +4,7 @@ edc-consent
 edc-base
 edc-constants
 edc-audit
+edc-device
 django-revision
 Django==1.6.7
 Fabric==1.9.0
