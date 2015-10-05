@@ -5,6 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from edc.map.classes import Mapper
 from edc.map.choices import ICONS, OTHER_ICONS
+from edc_device import device
 
 from bhp066.apps.bcpp_survey.models import Survey
 
@@ -150,11 +151,10 @@ class BasePlotMapper(Mapper):
     def clinic_plot(self):
         """Returns and, if needed, creates a non-residential plot to represent the CLINIC."""
         # We can only do this on community servers, not on netbooks or central server.
-        from edc.device.device.classes import Device
         try:
             plot = Plot.objects.get(plot_identifier=self.clinic_plot_identifier)
         except Plot.DoesNotExist:
-            if Device().is_community_server:
+            if device.is_community_server:
                 plot = Plot.objects.create(
                     plot_identifier=self.clinic_plot_identifier,
                     household_count=1,

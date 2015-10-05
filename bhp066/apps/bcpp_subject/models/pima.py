@@ -2,10 +2,10 @@ from django.db import models
 
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 
-from edc.choices.common import YES_NO, PIMA
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import datetime_not_future
+from edc_constants.choices import YES_NO, PIMA
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 from .subject_consent import SubjectConsent

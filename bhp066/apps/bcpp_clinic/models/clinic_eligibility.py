@@ -5,17 +5,17 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.encrypted_fields import IdentityTypeField
-from edc_base.encrypted_fields import IdentityField
-from edc_base.model.validators import (datetime_not_before_study_start, datetime_not_future)
-from edc_base.model.validators import dob_not_future
-from edc.choices.common import YES_NO_UNKNOWN, GENDER, YES_NO_NA, YES_NO
-from edc_constants.constants import NOT_APPLICABLE
-from edc_base.encrypted_fields import FirstnameField
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 from edc.subject.registration.models import RegisteredSubject
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import FirstnameField
+from edc_base.encrypted_fields import IdentityField
+from edc_base.encrypted_fields import IdentityTypeField
+from edc_base.model.validators import (datetime_not_before_study_start, datetime_not_future)
+from edc_base.model.validators import dob_not_future
+from edc_constants.choices import YES_NO_UNKNOWN, GENDER, YES_NO_NA, YES_NO
+from edc_constants.constants import NOT_APPLICABLE
 
 from bhp066.apps.bcpp.choices import INABILITY_TO_PARTICIPATE_REASON, VERBALHIVRESULT_CHOICE
 from bhp066.apps.bcpp_household.models import HouseholdStructure

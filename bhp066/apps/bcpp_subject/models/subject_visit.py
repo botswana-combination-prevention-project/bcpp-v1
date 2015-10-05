@@ -1,9 +1,9 @@
 from django.db import models
 
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.subject.visit_tracking.models import BaseVisitTracking
 from edc_base.audit_trail import AuditTrail
-from edc.device.sync.models import BaseSyncUuidModel
 from edc_consent.models import RequiresConsentMixin
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
@@ -11,7 +11,6 @@ from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from ..choices import VISIT_UNSCHEDULED_REASON
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
-# from .subject_consent import SubjectConsent
 
 
 class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,

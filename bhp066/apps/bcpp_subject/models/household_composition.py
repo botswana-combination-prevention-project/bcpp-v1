@@ -1,11 +1,11 @@
 from django.db import models
 
-from edc.choices.common import GENDER
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import EncryptedCharField, EncryptedDecimalField
 from edc_base.model.fields import OtherCharField
+from edc_constants.choices import GENDER
 
 from bhp066.apps.bcpp.choices import YES_NO
 

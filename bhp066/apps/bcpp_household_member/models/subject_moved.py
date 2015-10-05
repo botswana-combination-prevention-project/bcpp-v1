@@ -1,8 +1,8 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.choices import YES_NO_UNKNOWN
 from edc_base.encrypted_fields import EncryptedTextField
+from edc_constants.choices import YES_NO_UNKNOWN
 
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
