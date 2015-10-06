@@ -13,6 +13,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'first_partner_live',
+        'sex_partner_community',
         'third_last_sex',
         'third_last_sex_calc',
         'first_first_sex',
@@ -66,6 +67,7 @@ class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'first_partner_live',
+        'sex_partner_community',
         'third_last_sex',
         'third_last_sex_calc',
         'first_first_sex',
@@ -122,6 +124,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'first_partner_live',
+        'sex_partner_community',
         'third_last_sex',
         'third_last_sex_calc',
         'first_first_sex',
