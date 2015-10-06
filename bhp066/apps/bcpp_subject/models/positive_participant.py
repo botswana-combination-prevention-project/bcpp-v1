@@ -10,10 +10,7 @@ from .subject_consent import SubjectConsent
 
 class PositiveParticipant (BaseScheduledVisitModel):
 
-    """CS002"""
-
-    """Interviewer Note: The following supplemental questions are only asked for"
-    "respondents with known HIV infection. SKIP for respondents without known HIV infection. """
+    """A model completed by the user to help understand some challenges of being HIV positive."""
 
     CONSENT_MODEL = SubjectConsent
 

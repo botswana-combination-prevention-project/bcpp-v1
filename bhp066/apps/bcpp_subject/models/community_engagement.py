@@ -12,6 +12,8 @@ from .subject_consent import SubjectConsent
 
 class CommunityEngagement (BaseScheduledVisitModel):
 
+    """A model completed by the user on the participant's engagement in the community."""
+
     CONSENT_MODEL = SubjectConsent
 
     community_engagement = models.CharField(
@@ -35,7 +37,7 @@ class CommunityEngagement (BaseScheduledVisitModel):
         NeighbourhoodProblems,
         verbose_name="What are the major problems in this neighbourhood??",
         null=True,
-        help_text=("supplemental. Note:Interviewer to read question but NOT the responses. Check the boxes of"
+        help_text=("Note:Interviewer to read question but NOT the responses. Check the boxes of"
                    " any of problems mentioned."))
 
     problems_engagement_other = OtherCharField(
