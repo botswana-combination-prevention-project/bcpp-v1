@@ -16,6 +16,8 @@ from .household_member import HouseholdMember
 
 class MemberAppointment(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
+    """A model created by the system and updated by the user for annual survey appointments."""
+
     household_member = models.ForeignKey(HouseholdMember)
 
     survey = models.ForeignKey(Survey, editable=False)
