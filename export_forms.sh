@@ -3,7 +3,7 @@ then
 echo "Exporting CPC T0 from ~/source/bhp066"
 cd ~/source/bhp066
 echo "bcpp_subject"
-python manage.py export_forms --app bcpp_subject  > ~/export_forms/export_forms_cpc_t0-subject.txt
+python manage.py export_forms --visit=T0  > ~/export_forms/export_forms_cpc_t0-survey.txt
 echo "bcpp_household"
 python manage.py export_forms --app bcpp_household  > ~/export_forms/export_forms_cpc_t0-household.txt
 echo "bcpp_household_member"
@@ -18,7 +18,7 @@ then
 echo "Exporting CPC T1 from ~/source/bhp066"
 cd ~/source/bhp066
 echo "bcpp_subject"
-python manage.py export_forms --app bcpp_subject  > ~/export_forms/export_forms_cpc_t1-subject.txt
+python manage.py export_forms --visit=T1  > ~/export_forms/export_forms_cpc_t1-survey.txt
 echo "bcpp_household"
 python manage.py export_forms --app bcpp_household  > ~/export_forms/export_forms_cpc_t1-household.txt
 echo "bcpp_household_member"
@@ -33,7 +33,7 @@ then
 echo "Exporting ECC T0 from ~/source/bhp066"
 cd ~/source/bhp066
 echo "bcpp_subject"
-python manage.py export_forms --app bcpp_subject  > ~/export_forms/export_forms_ecc_t0-subject.txt
+python manage.py export_forms --visit=T0  > ~/export_forms/export_forms_ecc_t0-survey.txt
 echo "bcpp_household"
 python manage.py export_forms --app bcpp_household  > ~/export_forms/export_forms_ecc_t0-household.txt
 echo "bcpp_household_member"
@@ -48,7 +48,7 @@ then
 echo "Exporting ECC T1 from ~/source/bhp066"
 cd ~/source/bhp066
 echo "bcpp_subject"
-python manage.py export_forms --app bcpp_subject  > ~/export_forms/export_forms_ecc_t1-subject.txt
+python manage.py export_forms --visit=T1  > ~/export_forms/export_forms_ecc_t1-survey.txt
 echo "bcpp_household"
 python manage.py export_forms --app bcpp_household  > ~/export_forms/export_forms_ecc_t1-household.txt
 echo "bcpp_household_member"

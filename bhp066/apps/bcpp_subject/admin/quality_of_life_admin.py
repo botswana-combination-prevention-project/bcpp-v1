@@ -7,7 +7,6 @@ from ..models import QualityOfLife
 from .subject_visit_model_admin import SubjectVisitModelAdmin
 
 
-# QualityOfLife
 class QualityOfLifeAdmin(SubjectVisitModelAdmin):
 
     form = QualityOfLifeForm

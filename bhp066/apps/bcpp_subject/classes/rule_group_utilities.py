@@ -101,6 +101,7 @@ def func_show_hic_enrollment(visit_instance):
 
 
 def func_show_microtube(visit_instance):
+    """Returns True to trigger the Microtube requisition if ...? """
     show_micro = False
     past_visit = func_previous_visit_instance(visit_instance)
     if func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
