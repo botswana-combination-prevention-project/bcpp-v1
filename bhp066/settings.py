@@ -4,19 +4,19 @@ import socket
 
 from unipath import Path
 
-from config.installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
-from config.bcpp_settings import (
+from .config.installed_apps import DJANGO_APPS, THIRD_PARTY_APPS, EDC_APPS, LIS_APPS, LOCAL_APPS
+from .config.bcpp_settings import (
     APP_NAME, PROJECT_NUMBER, PROJECT_IDENTIFIER_PREFIX, PROJECT_IDENTIFIER_MODULUS,
     PROTOCOL_REVISION, INSTITUTION, MAX_HOUSEHOLDS_PER_PLOT, CURRENT_SURVEY,
     LIMIT_EDIT_TO_CURRENT_SURVEY, LIMIT_EDIT_TO_CURRENT_COMMUNITY,
     FILTERED_DEFAULT_SEARCH, STUDY_OPEN_DATETIME)
-from config.databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
-from config.device import (
+from .config.databases import TESTING_SQLITE, TESTING_MYSQL, PRODUCTION_MYSQL
+from .config.device import (
     CURRENT_COMMUNITY, SITE_CODE, DEVICE_ID, ADMIN_EXCLUDE_DEFAULT_CODE, VERIFY_GPS,
     VERIFY_GPS_LOCATION, VERIFY_PLOT_COMMUNITY_WITH_CURRENT_MAPPER)
-from config.lab import LAB_IMPORT_DMIS_DATA_SOURCE
-from config.mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
-from config.middleman import MIDDLE_MAN_LIST
+from .config.lab import LAB_IMPORT_DMIS_DATA_SOURCE
+from .config.mail_settings import (EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS)
+from .config.middleman import MIDDLE_MAN_LIST
 
 
 DEBUG = True  # Note: should be False for collectstatic
