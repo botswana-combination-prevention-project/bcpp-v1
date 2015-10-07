@@ -11,12 +11,13 @@ class SearchPage(BasePage):
         keywordElement = self.browser.find_element(*SearchPage.keyword)
         keywordElement.send_keys(keyword)
 
+    @property
     def click_search(self):
         self.browser.find_element(*SearchPage.search_button).click()
 
     def search(self, keyword):
         self.set_keyword(keyword)
-        self.click_search()
+        self.click_search
 
     @property
     def is_search_table_visible(self):

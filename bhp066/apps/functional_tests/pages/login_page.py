@@ -3,7 +3,6 @@ from .base_page import BasePage
 
 
 class LoginPage(BasePage):
-    url = "http://localhost:8000/login/"
     username = (By.ID, 'id_username')
     password = (By.ID, 'id_password')
     login_button = (By.XPATH, "//div[@class='submit-row']/input")
