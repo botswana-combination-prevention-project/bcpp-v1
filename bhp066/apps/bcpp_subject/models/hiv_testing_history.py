@@ -13,6 +13,8 @@ from .subject_consent import SubjectConsent
 
 class HivTestingHistory (BaseScheduledVisitModel):
 
+    """A model completed by the user of the particiapn's history of testing for HIV."""
+
     CONSENT_MODEL = SubjectConsent
 
     has_tested = models.CharField(
@@ -43,7 +45,6 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="if no card available for viewing, proceed to next question",
     )
 
-    # used by admin_supplemental fields for HIV status condition??
     verbal_hiv_result = models.CharField(
         verbose_name="Please tell me the results of your last [most recent] HIV test?",
         max_length=30,
