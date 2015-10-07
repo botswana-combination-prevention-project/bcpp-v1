@@ -11,7 +11,7 @@ from .subject_consent import SubjectConsent
 
 class Education (BaseScheduledVisitModel):
 
-    """CS002"""
+    """A model completed by the user on the particiapnt's level of education and work."""
 
     CONSENT_MODEL = SubjectConsent
 

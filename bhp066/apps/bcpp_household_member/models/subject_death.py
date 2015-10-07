@@ -13,6 +13,8 @@ from .base_member_status_model import BaseMemberStatusModel
 
 class SubjectDeath(BaseMemberStatusModel):
 
+    """A model completed by the user to report the death of a participant."""
+
     death_date = models.DateField(
         verbose_name="Date of Death:",
         validators=[
