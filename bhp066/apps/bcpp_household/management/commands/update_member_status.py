@@ -45,7 +45,7 @@ class Command(BaseCommand):
                             plot.bhs = True
                             h.enrolled = True
                             member.household_structure.enrolled = True
-                            member.household_structure.enrolled.save()
+                            member.household_structure.save()
                             h.save()
                             plot.save()
                             member.save()
