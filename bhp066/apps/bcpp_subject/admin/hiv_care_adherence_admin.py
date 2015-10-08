@@ -90,7 +90,7 @@ class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
                 if subject_visit:
                     subject_helper = SubjectStatusHelper(subject_visit, use_baseline_visit=True)
                     if subject_helper.hiv_result == POS and not subject_helper.on_art:
-                        exclude.pop('first_positive')
+                        exclude.pop(exclude.index('first_positive'))
         return exclude
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
