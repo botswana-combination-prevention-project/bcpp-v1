@@ -65,10 +65,11 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
             raise exception_cls('Initials do not match those on the enrollment checklist')
-        if (enrollment_checklist.guardian.lower() == 'yes' and
-                not (subject_consent.minor and subject_consent.guardian_name)):
-            raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian '
-                                'available, but the consent does not indicate this.')
+        if subject_consent.minor:
+            if (enrollment_checklist.guardian == YES and
+                    not (subject_consent.minor and subject_consent.guardian_name)):
+                raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian '
+                                    'available, but the consent does not indicate this.')
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
