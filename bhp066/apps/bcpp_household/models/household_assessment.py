@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.choices import YES_NO_DONT_KNOW
+from edc_constants.choices import YES_NO_DONT_KNOW
 
 from ..managers import HouseholdAssessmentManager
 from ..exceptions import AlreadyReplaced

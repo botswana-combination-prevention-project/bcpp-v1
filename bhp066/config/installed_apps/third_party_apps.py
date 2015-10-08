@@ -8,4 +8,5 @@ THIRD_PARTY_APPS = (
     'dajax',
     'south',
     'tastypie',
+    'django_revision'
 )

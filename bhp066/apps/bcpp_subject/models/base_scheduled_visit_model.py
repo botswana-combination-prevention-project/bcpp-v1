@@ -59,6 +59,12 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
     def get_visit(self):
         return self.subject_visit
 
+    def get_visit_code(self):
+        try:
+            return self.subject_visit.appointment.visit_definition.code
+        except AttributeError:
+            return None
+
     @classmethod
     def visit_model(self):
         """Used by search in audit_trail"""

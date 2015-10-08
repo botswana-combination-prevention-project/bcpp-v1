@@ -1,4 +1,5 @@
 from django.db import models
+
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.subject.registration.models import RegisteredSubject
 from edc.device.sync.models import BaseSyncUuidModel

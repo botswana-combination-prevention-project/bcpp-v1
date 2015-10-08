@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 
-from edc.choices.common import YES_NO
+from edc_constants.choices import YES_NO
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 

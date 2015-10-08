@@ -21,7 +21,7 @@ class HivUntested (HivTestingSupplemental):
         max_length=55,
         null=True,
         choices=WHYNOHIVTESTING_CHOICE,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()

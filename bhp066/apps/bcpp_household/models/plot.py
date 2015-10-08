@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 
 from edc_base.audit_trail import AuditTrail
 from edc.device.sync.models import BaseSyncUuidModel
-from edc.choices import TIME_OF_WEEK, TIME_OF_DAY
+from edc_constants.choices import TIME_OF_WEEK, TIME_OF_DAY
 from edc_base.encrypted_fields import (
     EncryptedCharField, EncryptedTextField, EncryptedDecimalField)
 from edc.core.identifier.exceptions import IdentifierError

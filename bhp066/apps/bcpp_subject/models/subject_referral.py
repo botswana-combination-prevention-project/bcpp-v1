@@ -15,9 +15,9 @@ from ..classes import SubjectReferralHelper
 from ..managers import ScheduledModelManager
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
-from .tb_symptoms import TbSymptoms
-from .subject_locator import SubjectLocator
 from .subject_consent import SubjectConsent
+from .subject_locator import SubjectLocator
+from .tb_symptoms import TbSymptoms
 
 site_mappers.autodiscover()
 

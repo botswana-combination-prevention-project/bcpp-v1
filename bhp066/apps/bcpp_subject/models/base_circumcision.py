@@ -14,7 +14,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
         max_length=15,
         choices=YES_NO_UNSURE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     health_benefits_smc = models.ManyToManyField(
         CircumcisionBenefits,
@@ -22,7 +22,7 @@ class BaseCircumcision (BaseScheduledVisitModel):
                      " benefits of male circumcision? (Indicate all that apply.)",
         null=True,
         blank=True,
-        help_text="supplemental")
+        help_text="")
 
     class Meta:
         abstract = True

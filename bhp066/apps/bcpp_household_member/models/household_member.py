@@ -12,7 +12,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
 
-from edc.choices.common import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
+from edc_constants.choices import YES_NO, GENDER, YES_NO_DWTA, ALIVE_DEAD_UNKNOWN
 from edc_constants.constants import NOT_APPLICABLE, ALIVE, DEAD, YES, NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel

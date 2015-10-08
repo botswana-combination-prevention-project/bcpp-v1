@@ -42,7 +42,6 @@ class SubjectDashboard(BaseSubjectDashboard):
         self.dashboard_models['subject_consent'] = SubjectConsent
         self.dashboard_models['household_member'] = HouseholdMember
         self.dashboard_models['visit'] = self._visit_model
-        # self.appointment_code = kwargs.get('visit_code')
 
     def get_context_data(self, **kwargs):
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
@@ -98,15 +97,6 @@ class SubjectDashboard(BaseSubjectDashboard):
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             membership_form_extra_url_context=membership_form_extra_url_context)
         return self.context
-
-#     @property
-#     def consent(self):
-#         """Returns to the subject consent instance or None."""
-#         try:
-#             subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
-#         except SubjectConsent.DoesNotExist:
-#             subject_consent = None
-#         return subject_consent
 
     @property
     def appointments(self):

@@ -20,7 +20,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_UNSURE,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     arvs_hiv_test = models.CharField(
@@ -31,7 +31,7 @@ class HivTestingSupplemental (BaseScheduledVisitModel):
         null=True,
         blank=True,
         choices=YES_NO_UNSURE,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()
