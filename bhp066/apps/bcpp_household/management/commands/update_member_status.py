@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 for h in Household.objects.filter(plot=plot):
                     for member in HouseholdMember.objects.filter(household_structure__household=h, household_structure__survey=survey):
                         if member.member_status == 'ANNUAL':
-                            print ("Member {} member_status is correct. skipped".format(member.registered_subject.subject))
+                            print ("Member {} member_status is correct. skipped".format(member.registered_subject.subject_identifier))
                             continue
                         if self.is_consent_available(member):
                             member.member_status = 'ANNUAL'
@@ -49,6 +49,6 @@ class Command(BaseCommand):
                             h.save()
                             plot.save()
                             member.save()
-                            print ("Member {} has been saved!".format(member.registered_subject.subject))
+                            print ("Member {} has been saved!".format(member.registered_subject.subject_identifier))
             except Plot.DoesNotExist:
                 pass
