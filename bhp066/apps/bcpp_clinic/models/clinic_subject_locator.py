@@ -1,6 +1,5 @@
 from django.db import models
 
-from edc.choices.common import YES_NO
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
@@ -12,6 +11,7 @@ from edc_base.audit_trail import AuditTrail
 from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc_base.encrypted_fields import EncryptedCharField
 from edc_consent.models import RequiresConsentMixin
+from edc_constants.choices import YES_NO
 
 from ..managers import ClinicModelManager
 

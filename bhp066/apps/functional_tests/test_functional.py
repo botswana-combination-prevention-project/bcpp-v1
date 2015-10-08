@@ -1,6 +1,8 @@
 from selenium import webdriver
-from .base_selinium_test import BaseSeleniumTest
 
+from ..bcpp_household.models import Plot, PlotLog
+
+from .base_selinium_test import BaseSeleniumTest
 from .pages import (
     SearchPage, PlotResultPage, PlotLogEntryPage, PlotPage, PlotDashboardPage,
     HouseholdDashboardPage, HouseholdLogEntryPage, HouseholdMemberPage,
@@ -10,10 +12,10 @@ from .pages import (
 import time
 
 
-class TestSearchPlotSeleniumTest(BaseSeleniumTest):
+class FunctionalSeleniumTest(BaseSeleniumTest):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        super(FunctionalSeleniumTest, self).setUp()
         self.search_page = SearchPage
         self.plot_result_page = PlotResultPage
         self.plot_dashboard_page = PlotDashboardPage
@@ -23,31 +25,34 @@ class TestSearchPlotSeleniumTest(BaseSeleniumTest):
         self.check_eligibility = CheckEligibilityPage
         self.subject_dashboard_pg = SubjectDasbhoardPage
         self.subject_consent_pg = SubjectConsentPage
-
-    def home(self):
-        self.home_pg = HomePage(self.browser)
+        self.plot = Plot.objects.all()[0]
         self.login()
-        self.assertEqual('http://localhost:8000/bcpp/section/', self.browser.current_url)
 
-    def search_plot(self):
+    def test_home(self):
+        self.home_pg = HomePage(self.browser)
+        self.assertIn('/bcpp/section/', self.browser.current_url)
+
+    def test_search_plot(self):
         HomePage(self.browser).click_plot()
         self.search_page = SearchPage(self.browser)
-        self.search_page.search('390824-05')
+        self.search_page.search(self.plot.plot_identifier)
         self.assertTrue(self.search_page.is_search_table_visible)
 
-    def plot_log_entry_link(self):
+    def test_plot_log_entry_link(self):
+        self.browser.get(
+            self.live_server_url + '/bcpp_household/bcpp/create_plot_log/?plot={}'.format(self.plot.id))
         self.plot_result_page = PlotResultPage(self.browser)
         self.plot_result_page.click_addnewentry()
-        self.assertIn('http://localhost:8000/admin/bcpp_household/plotlogentry/', self.browser.current_url)
+        self.assertTrue('/plotlogentry/', self.browser.current_url)
 
-    def add_plot_log_entry(self):
-        self.home()
-        self.search_plot()
-        self.plot_log_entry_link()
+    def test_add_plot_log_entry(self):
+        self.browser.get(
+            self.live_server_url + '/admin/bcpp_household/plotlogentry/add/?plot_log={}&next=/bcpp/section/plot/'.format(self.plot.id)
+        )
         self.plot_log_entry_pg = PlotLogEntryPage(self.browser)
-        self.plot_log_entry_pg.fill_plot_log_entry(plot_status=self.plot_log_entry_pg.select_accessible)
-        self.search_plot()
-        self.assertIn('accessible', PlotResultPage(self.browser).plot_log_entry_link_elem().text)
+        self.plot_log_entry_pg.fill_plot_log_entry(self.plot_log_entry_pg.select_accessible)
+#         self.search_plot()
+#         self.assertIn('accessible', PlotResultPage(self.browser).plot_log_entry_link_elem().text)
 
     def plot_link(self):
         self.plot_result_page = PlotResultPage(self.browser)

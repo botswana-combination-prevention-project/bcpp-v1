@@ -121,14 +121,14 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         choices=YES_NO_UNSURE,
         null=True,
         blank=True,
-        help_text="supplemental")
+        help_text="")
 
     first_disclose = models.CharField(
         verbose_name="Have you told this partner your HIV status?",
         max_length=30,
         choices=FIRSTDISCLOSE_CHOICE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     first_condom_freq = models.CharField(
         verbose_name="When you have [had] sex with this partner, how often "
@@ -136,7 +136,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         max_length=25,
         choices=FIRSTCONDOMFREQ_CHOICE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     first_partner_cp = models.CharField(
         verbose_name="To the best of your knowledge, did he/she ever have "
@@ -144,7 +144,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_UNSURE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     def skip_logic_questions(self, first_partner_choices):
         first_partner_live = [

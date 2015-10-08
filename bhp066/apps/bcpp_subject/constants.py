@@ -1,6 +1,7 @@
 ABBOTT_VIRAL_LOAD = 'Viral Load (Abbott)'
 ANNUAL = 'annual'
 ANNUAL_CODES = ['T1', 'T2', 'T3']
+BASELINE = 'baseline'
 BASELINE_CODES = ['T0']
 CENTRAL_SERVER = 'central'
 CLINIC_RESEARCH_ASSISTANT = 'clinic_research_assistant'
