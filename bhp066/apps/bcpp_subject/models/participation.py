@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.choices import YES_NO
+from edc_constants.choices import YES_NO
 
 from bhp066.apps.bcpp.choices import PARTIAL_PARTICIPATION_TYPE
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from edc.subject.appointment.models import Appointment
+from edc_constants.constants import POS
 
 from ..models import SubjectVisit
 
@@ -42,14 +43,14 @@ class HivCareAdherenceHelper(object):
     @property
     def annual_radio_fields_pos_and_art(self):
         subject_helper = SubjectStatusHelper(self.func_baseline_visit_instance)
-        if subject_helper.hiv_result == 'POS' and subject_helper.on_art:
+        if subject_helper.hiv_result == POS and subject_helper.on_art:
             return self.annual_radio_fields
 
     @property
     def annual_fields_pos_and_art(self):
         """ Known Positive from T0 and on ART """
         subject_helper = SubjectStatusHelper(self.func_baseline_visit_instance)
-        if subject_helper.hiv_result == 'POS' and subject_helper.on_art:
+        if subject_helper.hiv_result == POS and subject_helper.on_art:
             return [f for f in self.baseline_fields if f not in ["first_positive", "medical_care", "no_medical_care", "ever_recommended_arv", "ever_taken_arv", "why_no_arv", "on_arv"]]
 
     @property

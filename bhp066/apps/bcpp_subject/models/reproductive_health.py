@@ -1,8 +1,8 @@
 from django.db import models
 
-from edc.choices.common import YES_NO_NA, NOT_APPLICABLE
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
+from edc_constants.choices import YES_NO_NA, NOT_APPLICABLE
 
 from bhp066.apps.bcpp.choices import YES_NO, YES_NO_UNSURE
 from bhp066.apps.bcpp_list.models import FamilyPlanning

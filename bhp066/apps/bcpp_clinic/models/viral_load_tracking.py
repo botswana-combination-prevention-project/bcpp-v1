@@ -1,10 +1,10 @@
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.fields import InitialsField
-from edc.choices.common import YES_NO
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.lab.lab_requisition.choices import REASON_NOT_DRAWN
+from edc_base.audit_trail import AuditTrail
+from edc_base.model.fields import InitialsField
+from edc_constants.choices import YES_NO
 
 from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_visit import ClinicVisit

@@ -20,7 +20,7 @@ class Uncircumcised (BaseCircumcision):
         max_length=65,
         null=True,
         choices=REASONCIRC_CHOICE,
-        help_text="supplemental",
+        help_text="",
     )
 
     reason_circ_other = OtherCharField(
@@ -39,7 +39,7 @@ class Uncircumcised (BaseCircumcision):
         max_length=75,
         choices=FUTUREREASONSSMC_CHOICE,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     service_facilities = models.CharField(
@@ -48,7 +48,7 @@ class Uncircumcised (BaseCircumcision):
         max_length=35,
         choices=YES_NO_DWTA,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     aware_free = models.CharField(
@@ -58,7 +58,7 @@ class Uncircumcised (BaseCircumcision):
         null=True,
         blank=True,
         choices=AWAREFREE_CHOICE,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()

@@ -1,5 +1,6 @@
 import re
 import uuid
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -64,10 +65,12 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
             raise exception_cls('Initials do not match those on the enrollment checklist')
-        if (enrollment_checklist.guardian.lower() == 'yes' and
-                not (subject_consent.minor and subject_consent.guardian_name)):
-            raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian '
-                                'available, but the consent does not indicate this.')
+        if subject_consent.consent_datetime:
+            if subject_consent.minor:
+                if (enrollment_checklist.guardian == YES and
+                        not (subject_consent.minor and subject_consent.guardian_name)):
+                    raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian '
+                                        'available, but the consent does not indicate this.')
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
@@ -110,10 +113,11 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     @property
     def minor(self):
-        age_at_consent = relativedelta(date(self.consent_datetime.year,
-                                            self.consent_datetime.month,
-                                            self.consent_datetime.day),
-                                       self.dob).years
+        age_at_consent = relativedelta(
+            date(self.consent_datetime.year,
+                 self.consent_datetime.month,
+                 self.consent_datetime.day),
+            self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
 
     def save_new_consent(self, using=None, subject_identifier=None):
@@ -281,7 +285,7 @@ class BaseSubjectConsent(BaseBaseSubjectConsent):
             if self.household_member.member_status != expected_member_status:
                 raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                     expected_member_status, self.household_member.member_status, self.household_member))
-            self.is_minor = 'Yes' if self.minor else 'No'
+            self.is_minor = YES if self.minor else NO
             self.matches_enrollment_checklist(self)
             self.matches_hic_enrollment(self, self.household_member)
         else:
@@ -316,12 +320,11 @@ class SubjectConsentExtended(SubjectConsent):
 
     """ A system model that serves as a proxy model for SubjectConsent."""
 
-    class Constants:
-        SUBJECT_TYPES = ['subject']
-        GENDER_OF_CONSENT = ['M', 'F']
-        AGE_IS_ADULT = 18
-        MIN_AGE_OF_CONSENT = 16
-        MAX_AGE_OF_CONSENT = 120
+    SUBJECT_TYPES = ['subject']
+    GENDER_OF_CONSENT = ['M', 'F']
+    AGE_IS_ADULT = 18
+    MIN_AGE_OF_CONSENT = 16
+    MAX_AGE_OF_CONSENT = 120
 
     class Meta:
         proxy = True

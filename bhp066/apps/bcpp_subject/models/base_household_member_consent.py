@@ -2,19 +2,19 @@ import re
 
 from django.db import models
 
+from edc.core.bhp_variables.models import StudySite
 from edc.core.identifier.exceptions import IdentifierError
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
+from edc.map.classes import site_mappers
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject
 from edc_consent.models import BaseConsent
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_constants.choices import YES_NO
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp.choices import COMMUNITIES
-from edc.core.bhp_variables.models import StudySite
-from edc.choices.common import YES_NO
-from edc.map.classes import site_mappers
 
 
 class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent,

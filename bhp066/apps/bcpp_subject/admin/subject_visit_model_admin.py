@@ -16,15 +16,10 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
     date_heirarchy = 'subject_visit__report_datetime'
     current_survey = Survey.objects.current_survey().survey_slug
     first_survey = Survey.objects.first_survey.survey_slug
-    baseline_fields = None
-    annual_fields = None
-    baseline_radio_fields = None
-    annual_radio_fields = None
-    baseline_instructions = None
-    annual_instructions = None
 
     def __init__(self, *args, **kwargs):
         self.subject_visit = None
+        lookups = []
         super(BaseVisitTrackingModelAdmin, self).__init__(*args, **kwargs)
         self.list_filter = list(self.list_filter)
         try:
@@ -69,54 +64,3 @@ class SubjectVisitModelAdmin (BaseVisitTrackingModelAdmin):
             except SubjectVisit.DoesNotExist:
                 pass
         return form
-
-    def formfield_for_choice_field(self, db_field, request=None, **kwargs):
-        """
-        Returns a form Field based on the survey, baseline or annual, for a database
-        Field that has declared choices.
-        """
-        if self.fields == self.annual_fields:
-            self.radio_fields = self.annual_radio_fields or self.radio_fields
-        else:
-            self.radio_fields = self.baseline_radio_fields or self.radio_fields
-        return super(SubjectVisitModelAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
-
-    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-        """
-        Get a form Field for a ForeignKey based on the visit_code, baseline or annual.
-
-        self.fields is already set
-        """
-        if self.fields == self.annual_fields:
-            self.radio_fields = self.annual_radio_fields or self.radio_fields
-        else:
-            self.radio_fields = self.baseline_radio_fields or self.radio_fields
-        return super(SubjectVisitModelAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def add_view(self, request, form_url='', extra_context=None):
-        """Set the instructions based on the visit_code, baseline or annual."""
-        try:
-            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-        except SubjectVisit.DoesNotExist:
-            pass
-        if self.subject_visit and self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
-            self.fields = self.annual_fields
-            self.instructions = self.annual_instructions or self.instructions
-        else:
-            self.fields = self.baseline_fields
-            self.instructions = self.baseline_instructions or self.instructions
-        return super(SubjectVisitModelAdmin, self).add_view(request, form_url=form_url, extra_context=extra_context)
-
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        """Set the instructions based on the visit_code, baseline or annual."""
-        try:
-            self.subject_visit = SubjectVisit.objects.get(pk=request.GET.get('subject_visit'))
-        except SubjectVisit.DoesNotExist:
-            pass
-        if self.subject_visit and self.subject_visit.appointment.visit_definition.code in ANNUAL_CODES:
-            self.fields = self.annual_fields
-            self.instructions = self.annual_instructions or self.instructions
-        else:
-            self.fields = self.baseline_fields
-            self.instructions = self.baseline_instructions or self.instructions
-        return super(SubjectVisitModelAdmin, self).change_view(request, object_id, form_url=form_url, extra_context=extra_context)

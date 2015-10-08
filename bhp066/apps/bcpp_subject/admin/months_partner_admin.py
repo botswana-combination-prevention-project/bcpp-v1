@@ -13,6 +13,7 @@ class MonthsRecentPartnerAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'first_partner_live',
+        'sex_partner_community',
         'third_last_sex',
         'third_last_sex_calc',
         'first_first_sex',
@@ -61,11 +62,12 @@ admin.site.register(MonthsRecentPartner, MonthsRecentPartnerAdmin)
 
 
 class MonthsSecondPartnerAdmin(SubjectVisitModelAdmin):
-    # NOTE: this is not a supplemental form, it should be filled in based on the responses in SecondPartner.
+
     form = MonthsSecondPartnerForm
     fields = (
         "subject_visit",
         'first_partner_live',
+        'sex_partner_community',
         'third_last_sex',
         'third_last_sex_calc',
         'first_first_sex',
@@ -122,6 +124,7 @@ class MonthsThirdPartnerAdmin(SubjectVisitModelAdmin):
     fields = (
         "subject_visit",
         'first_partner_live',
+        'sex_partner_community',
         'third_last_sex',
         'third_last_sex_calc',
         'first_first_sex',

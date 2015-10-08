@@ -45,3 +45,5 @@ from .correct_consent_admin import CorrectConsentAdmin
 from .quality_of_life_admin import QualityOfLifeAdmin
 from .resource_utilization_admin import ResourceUtilizationAdmin
 from .pima_vl_admin import PimaVlAdmin
+from .hospital_admission_admin import HospitalAdmissionAdmin
+from .hiv_health_care_costs_admin import HivHealthCareCosts

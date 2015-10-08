@@ -12,6 +12,8 @@ from .subject_consent import SubjectConsent
 
 class CommunityEngagement (BaseScheduledVisitModel):
 
+    """A model completed by the user on the participant's engagement in the community."""
+
     CONSENT_MODEL = SubjectConsent
 
     community_engagement = models.CharField(
@@ -22,20 +24,20 @@ class CommunityEngagement (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=COMMUNITYENGAGEMENT_CHOICE,
-        help_text="supplemental")
+        help_text="")
 
     vote_engagement = models.CharField(
         verbose_name="Did you vote in the last local government election?",
         max_length=50,
         null=True,
         choices=VOTEENGAGEMENT_CHOICE,
-        help_text="supplemental")
+        help_text="")
 
     problems_engagement = models.ManyToManyField(
         NeighbourhoodProblems,
         verbose_name="What are the major problems in this neighbourhood??",
         null=True,
-        help_text=("supplemental. Note:Interviewer to read question but NOT the responses. Check the boxes of"
+        help_text=("Note:Interviewer to read question but NOT the responses. Check the boxes of"
                    " any of problems mentioned."))
 
     problems_engagement_other = OtherCharField(
@@ -47,7 +49,7 @@ class CommunityEngagement (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=SOLVEENGAGEMENT_CHOICE,
-        help_text="supplemental")
+        help_text="")
 
     history = AuditTrail()
 

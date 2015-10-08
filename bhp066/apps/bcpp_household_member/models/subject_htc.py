@@ -1,10 +1,10 @@
 from django.db import models
 
-from edc.device.device.classes import Device
-from edc_base.audit_trail import AuditTrail
-from edc.choices import YES_NO, YES_NO_NA
 from edc.core.bhp_string.classes import StringHelper
+from edc_base.audit_trail import AuditTrail
+from edc_constants.choices import YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
+from edc_device import device
 
 from bhp066.apps.bcpp.choices import HIV_RESULT
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
@@ -84,7 +84,6 @@ class SubjectHtc(BaseMemberStatusModel):
         super(SubjectHtc, self).save(*args, **kwargs)
 
     def prepare_tracking_identifier(self):
-        device = Device()
         device_id = device.device_id
         string = StringHelper()
         length = 5

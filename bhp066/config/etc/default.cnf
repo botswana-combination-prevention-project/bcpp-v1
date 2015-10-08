@@ -1,6 +1,6 @@
 # my.cnf
 [client]
-database = bhp066_master
+database = bhp066cpct1
 user = root
 password = cc3721b
 default-character-set = utf8
