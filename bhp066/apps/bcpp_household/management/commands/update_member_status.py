@@ -36,6 +36,7 @@ class Command(BaseCommand):
                     household_structure__household=h,
                     household_structure__survey=survey):
                     if member.member_status == 'ANNUAL':
+                        print ("Member {} member_satus is correct. skipped".format(member.registered_subject.subject))
                         continue
                     if self.is_consent_available(member):
                         member.member_status = 'ANNUAL'
@@ -49,4 +50,5 @@ class Command(BaseCommand):
                         h.save()
                         plot.save()
                         member.save()
+                        print ("Member {} has been saved!".format(member.registered_subject.subject))
 
