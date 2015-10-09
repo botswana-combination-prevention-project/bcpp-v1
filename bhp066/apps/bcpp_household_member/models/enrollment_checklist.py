@@ -181,13 +181,13 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, Ba
     history = AuditTrail()
 
     def __unicode__(self):
-        return str(self.household_member)
+        return str((self.household_member, self.report_datetime))
 
     def natural_key(self):
         if not self.household_member:
             raise AttributeError('household_member cannot be None for household_head_eligibility '
                                  'with pk=\'{0}\''.format(self.pk))
-        return self.household_member.natural_key()
+        return self.household_member.natural_key() + self.report_datetime
     natural_key.dependencies = ['bcpp_household.household_member']
 
     def dispatch_container_lookup(self, using=None):
@@ -285,3 +285,4 @@ class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, Ba
     class Meta:
         app_label = "bcpp_household_member"
         verbose_name = "Enrollment Checklist"
+        unique_together = (('household_member', 'report_datetime'))
