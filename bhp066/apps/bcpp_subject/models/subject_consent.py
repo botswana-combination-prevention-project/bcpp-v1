@@ -56,11 +56,11 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         exception_cls = exception_cls or ValidationError
         try:
             enrollment_checklist = EnrollmentChecklist.objects.get(
-                household_member__registered_subject=subject_consent.household_member.registered_subject)
+                household_member__registered_subject=subject_consent.household_member.registered_subject, is_eligible=True)
             household_member = enrollment_checklist.household_member
         except EnrollmentChecklist.DoesNotExist:
             raise exception_cls(
-                'Enrollment Checklist not found. The Enrollment Checklist is required before consent.')
+                'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before consent.')
         if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
