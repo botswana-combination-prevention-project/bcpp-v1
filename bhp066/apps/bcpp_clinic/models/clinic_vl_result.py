@@ -10,9 +10,14 @@ from edc.entry_meta_data.managers import EntryMetaDataManager
 from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_visit import ClinicVisit
 
+from bhp066.apps.bcpp_subject.models import SubjectConsent
+
 
 class ClinicVlResult(BaseClinicVisitModel):
     """A model completed by the user that captures the viral load result associated with the RBD."""
+
+    CONSENT_MODEL = SubjectConsent
+
     site = models.ForeignKey(StudySite)
 
     clinician_initials = InitialsField(
