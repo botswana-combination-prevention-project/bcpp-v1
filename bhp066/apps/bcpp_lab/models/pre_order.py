@@ -76,15 +76,17 @@ class PreOrder(BaseSyncUuidModel):
             raise exception_cls(
                 'Aliquot identifier "{}" does not exist for this subject'.format(aliquot_identifier))
 
-    def aliquot_unused_or_raise(self, aliquot_identifier=None, exception_cls=None):
+    def aliquot_unused_or_raise(self, pk=None, aliquot_identifier=None, exception_cls=None):
+        pk = pk or self.id
         aliquot_identifier = aliquot_identifier or self.aliquot_identifier
         exception_cls = exception_cls or ValidationError
         try:
             preorder = self.__class__.objects.get(
-                aliquot_identifier=aliquot_identifier).exclude(id=self.id)
-            raise exception_cls(
-                'Aliquot "{}" has already been used in a PreOrder. See {}'.format(
-                    self.aliquot_identifier, unicode(preorder)))
+                aliquot_identifier=aliquot_identifier)
+            if preorder.id != pk:
+                raise exception_cls(
+                    'Aliquot "{}" has already been used in a PreOrder. See {}'.format(
+                        self.aliquot_identifier, unicode(preorder)))
         except ObjectDoesNotExist:
             pass
 
