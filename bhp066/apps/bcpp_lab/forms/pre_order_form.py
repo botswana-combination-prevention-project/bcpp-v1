@@ -9,7 +9,7 @@ class PreOrderForm (BaseModelForm):
 
     def clean(self):
         cleaned_data = super(PreOrderForm, self).clean()
-        if self.instance:
+        if self.instance and cleaned_data.get('aliquot_identifier'):
             self.instance.aliquot_exists_or_raise(
                 cleaned_data.get('aliquot_identifier'),
                 self.instance.subject_visit,
