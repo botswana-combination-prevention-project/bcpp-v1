@@ -1,12 +1,10 @@
 from django import forms
-
+from django.db.models import get_model
 from edc_constants.constants import YES, NO
 
 from ..models import PimaVl
 
 from .base_subject_model_form import BaseSubjectModelForm
-
-from bhp066.apps.bcpp_lab.models import PreOrder, Panel
 
 from ..constants import POC_VIRAL_LOAD
 
@@ -15,6 +13,8 @@ class PimaVlForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(PimaVlForm, self).clean()
+        Panel = get_model('bcpp_lab', 'Panel')
+        PreOrder = get_model('bcpp_lab', 'PreOrder')
         try:
             panel = Panel.objects.get(name=POC_VIRAL_LOAD)
             PreOrder.objects.get(
