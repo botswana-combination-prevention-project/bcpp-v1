@@ -176,18 +176,27 @@ class BaseCorrectConsent(models.Model):
         on the corresponding subject_consent field."""
         exception_cls = exception_cls or ValidationError
         instance = instance or self
-        # for each field prefixed with old compare to the consent
         for field in instance._meta.fields:
             if field.name.startswith('old_'):
-                if getattr(instance, field.name):
-                    if (getattr(instance, field.name) !=
-                            getattr(instance.subject_consent, field.name.split('old_')[1])):
-                        raise ValidationError(
+                old_value = getattr(instance, field.name)
+                new_value = getattr(instance, 'new_{}'.format(field.name.split('old_')[1]))
+                if (not old_value and new_value) or (old_value and not new_value):
+                    raise exception_cls(
+                        'Both the old and new value must be provided. Got \'{}\' and \'{}\'. See {}'.format(
+                            old_value, new_value, field.name))
+                elif old_value and new_value and old_value == new_value:
+                    raise exception_cls(
+                        'The old and new value are equal. Got \'{}\' and \'{}\'. See {}'.format(
+                            old_value, new_value, field.name))
+                elif old_value and new_value:
+                    subject_consent_value = getattr(instance.subject_consent, field.name.split('old_')[1])
+                    if old_value != subject_consent_value:
+                        raise exception_cls(
                             "Consent \'{}\' does not match \'{}\'. Expected \'{}\'. Got \'{}\'.".format(
                                 field.name.split('old_')[1],
                                 field.name,
-                                getattr(instance.subject_consent, field.name.split('old_')[1]),
-                                getattr(instance, field.name) or None))
+                                subject_consent_value,
+                                old_value))
 
     def update_household_member_and_enrollment_checklist(self):
         try:
@@ -282,8 +291,6 @@ class BaseCorrectConsent(models.Model):
 class CorrectConsent(BaseCorrectConsent, BaseSyncUuidModel):
 
     """A model linked to the subject consent to record corrections."""
-
-    CONSENT_MODEL = SubjectConsent
 
     subject_consent = models.OneToOneField(SubjectConsent)
 
