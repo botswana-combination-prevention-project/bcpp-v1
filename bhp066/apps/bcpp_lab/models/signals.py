@@ -2,13 +2,8 @@ from datetime import datetime
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.db import transaction
-from django.db.utils import IntegrityError
 
-from bhp066.apps.bcpp_subject.classes import func_poc_vl
-from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, ABBOTT_VIRAL_LOAD, POC_VIRAL_LOAD
-
-from ..models import ClinicRequisition, SubjectRequisition, PreOrder, Panel
+from ..models import ClinicRequisition, PreOrder, Panel
 
 
 @receiver(post_save, weak=False, dispatch_uid="clinic_requisition_on_post_save")

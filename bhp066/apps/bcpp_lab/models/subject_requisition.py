@@ -12,7 +12,6 @@ from edc_constants.constants import YES, NO
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_inspector.classes import InspectorMixin
-from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
 from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
 from bhp066.apps.bcpp_subject.models import SubjectVisit
 
@@ -62,6 +61,7 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
         return self.subject_visit.appointment.visit_definition.code
 
     def requires_poc_vl(self, instance=None):
+        from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
         instance = instance or self
         return instance.panel.name == VIRAL_LOAD and func_poc_vl(instance.subject_visit)
 
