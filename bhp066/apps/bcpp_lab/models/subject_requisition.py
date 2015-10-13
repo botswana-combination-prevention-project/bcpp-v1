@@ -1,26 +1,25 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_constants.constants import YES, NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
+from edc_constants.constants import YES, NO
 
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_inspector.classes import InspectorMixin
+from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
+from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
 from bhp066.apps.bcpp_subject.models import SubjectVisit
-from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD, ABBOTT_VIRAL_LOAD
 
 from ..managers import SubjectRequisitionManager
 
 from .aliquot_type import AliquotType
 from .panel import Panel
-from .pre_order import PreOrder
-from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
 
 
 class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
@@ -74,6 +73,7 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
 
     @property
     def is_poc_vl(self):
+        PreOrder = models.get_model('bcpp_lab', 'PreOrder')
         try:
             PreOrder.objects.get(
                 subject_visit=self.subject_visit,
