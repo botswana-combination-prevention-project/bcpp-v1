@@ -20,7 +20,7 @@ class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
         super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
         self.list_filter.append('community')
         self.list_filter.append(PocViralLoadRequsitions)
-        self.list_display.append('is_pov_vl')
+        self.list_display.append('is_poc_vl')
 
     visit_model = SubjectVisit
     visit_fieldname = 'subject_visit'

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.audit_trail import AuditTrail
@@ -49,31 +49,24 @@ class PreOrder(BaseSyncUuidModel):
     history = AuditTrail()
 
     def save(self, *args, **kwargs):
-        if self.aliquot_identifier:
+        if not self.aliquot_identifier:
+            self.status = NEW
+        else:
             try:
-                # Can only link pre-order with existing aliquot record.
-                Aliquot.objects.get(aliquot_identifier=self.aliquot_identifier)
+                Aliquot.objects.get(
+                    aliquot_identifier=self.aliquot_identifier,
+                    receive__registered_subject__subject_identifier=self.subject_visit.subject_identifier)
             except Aliquot.DoesNotExist:
-                raise ValidationError('Aliquot identifier "{}" does not exist'.format(self.aliquot_identifier))
-            if self._meta.model.objects.filter(aliquot_identifier=self.aliquot_identifier).exclude(id=self.id).exists():
-                # If i can get another preorder instance which is not me, then i know i am trying to re-use
-                # an aliquot identifier, which is wrong.
-                # NOTE: Its being done this way instead of puttting unique=True in the aliquot_identifier field
-                # definition because the field is nullable.
-                raise ValidationError('You are attempting to re-use aliquout identifier "{}". This is not allowed.'.
-                                      format(self.aliquot_identifier))
-            else:
-                # If i fail to get it, then proceed as normal.
-                pass
-            aliquot = Aliquot.objects.get(aliquot_identifier=self.aliquot_identifier)
-            if aliquot.receive.registered_subject.subject_identifier != self.subject_visit.subject_identifier:
-                raise ValidationError('The Aliquot you are attempting to use for "{}", belongs to "{}".'.
-                                      format(self.subject_visit, aliquot.receive.registered_subject))
-#             update_fields = kwargs.get('update_fields')
-#             kwargs.update({'update_fields': update_fields})
-            if not kwargs.get('update_fields'):
-                # if no update fields then we must be linking pre order with aliquot, otherwise we must be
-                # setting it as COMPLETE from bcpp_subject.signal
+                raise ValidationError(
+                    'Aliquot identifier "{}" does not exist for this subject'.format(self.aliquot_identifier))
+            try:
+                self.__class__.objects.get(
+                    aliquot_identifier=self.aliquot_identifier).exclude(id=self.id)
+            except ObjectDoesNotExist:
+                raise ValidationError(
+                    'You are attempting to re-use aliquot identifier "{}". This is not allowed.'.format(
+                        self.aliquot_identifier))
+            if 'status' not in kwargs.get('update_fields', []):
                 self.status = PENDING
         super(PreOrder, self).save(*args, **kwargs)
 
