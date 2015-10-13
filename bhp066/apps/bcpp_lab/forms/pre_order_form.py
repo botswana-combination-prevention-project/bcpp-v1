@@ -11,11 +11,12 @@ class PreOrderForm (BaseModelForm):
         cleaned_data = super(PreOrderForm, self).clean()
         if self.instance and cleaned_data.get('aliquot_identifier'):
             self.instance.aliquot_exists_or_raise(
-                cleaned_data.get('aliquot_identifier'),
-                self.instance.subject_visit,
+                aliqout_identifier=cleaned_data.get('aliquot_identifier'),
+                subject_visit=self.instance.subject_visit,
                 exception_cls=forms.ValidationError)
             self.instance.aliquot_unused_or_raise(
-                cleaned_data.get('aliquot_identifier'),
+                pk=self.instance.id,
+                aliquot_identifier=cleaned_data.get('aliquot_identifier'),
                 exception_cls=forms.ValidationError)
         return cleaned_data
 
