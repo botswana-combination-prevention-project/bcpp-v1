@@ -9,13 +9,14 @@ class PreOrderForm (BaseModelForm):
 
     def clean(self):
         cleaned_data = super(PreOrderForm, self).clean()
-        self._meta.model().aliquot_exists_or_raise(
-            cleaned_data.get('aliquot_identifier'),
-            cleaned_data.get('subject_visit'),
-            exception_cls=forms.ValidationError)
-        self._meta.model().aliquot_unused_or_raise(
-            cleaned_data.get('aliquot_identifier'),
-            exception_cls=forms.ValidationError)
+        if self.instance:
+            self.instance.aliquot_exists_or_raise(
+                cleaned_data.get('aliquot_identifier'),
+                self.instance.subject_visit,
+                exception_cls=forms.ValidationError)
+            self.instance.aliquot_unused_or_raise(
+                cleaned_data.get('aliquot_identifier'),
+                exception_cls=forms.ValidationError)
         return cleaned_data
 
     class Meta:
