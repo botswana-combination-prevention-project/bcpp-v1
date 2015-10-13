@@ -52,20 +52,8 @@ class PreOrder(BaseSyncUuidModel):
         if not self.aliquot_identifier:
             self.status = NEW
         else:
-            try:
-                Aliquot.objects.get(
-                    aliquot_identifier=self.aliquot_identifier,
-                    receive__registered_subject__subject_identifier=self.subject_visit.subject_identifier)
-            except Aliquot.DoesNotExist:
-                raise ValidationError(
-                    'Aliquot identifier "{}" does not exist for this subject'.format(self.aliquot_identifier))
-            try:
-                self.__class__.objects.get(
-                    aliquot_identifier=self.aliquot_identifier).exclude(id=self.id)
-            except ObjectDoesNotExist:
-                raise ValidationError(
-                    'You are attempting to re-use aliquot identifier "{}". This is not allowed.'.format(
-                        self.aliquot_identifier))
+            self.aliquot_exists_or_raise()
+            self.aliquot_unused_or_raise()
             if 'status' not in kwargs.get('update_fields', []):
                 self.status = PENDING
         super(PreOrder, self).save(*args, **kwargs)
@@ -75,6 +63,30 @@ class PreOrder(BaseSyncUuidModel):
 
     def __unicode__(self):
         return str((self.subject_visit, self.panel))
+
+    def aliquot_exists_or_raise(self, aliquot_identifier=None, subject_visit=None, exception_cls=None):
+        aliquot_identifier = aliquot_identifier or self.aliquot_identifier
+        subject_visit = subject_visit or self.subject_visit
+        exception_cls = exception_cls or ValidationError
+        try:
+            Aliquot.objects.get(
+                aliquot_identifier=aliquot_identifier,
+                receive__registered_subject__subject_identifier=subject_visit.subject_identifier)
+        except Aliquot.DoesNotExist:
+            raise exception_cls(
+                'Aliquot identifier "{}" does not exist for this subject'.format(aliquot_identifier))
+
+    def aliquot_unused_or_raise(self, aliquot_identifier=None, exception_cls=None):
+        aliquot_identifier = aliquot_identifier or self.aliquot_identifier
+        exception_cls = exception_cls or ValidationError
+        try:
+            preorder = self.__class__.objects.get(
+                aliquot_identifier=aliquot_identifier).exclude(id=self.id)
+            raise exception_cls(
+                'Aliquot "{}" has already been used in a PreOrder. See {}'.format(
+                    self.aliquot_identifier, unicode(preorder)))
+        except ObjectDoesNotExist:
+            pass
 
     @property
     def model_url(self):
