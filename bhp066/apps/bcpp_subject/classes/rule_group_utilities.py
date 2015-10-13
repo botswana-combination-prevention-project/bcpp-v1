@@ -326,7 +326,7 @@ def func_vl(visit_instance):
 
 def func_poc_vl(visit_instance):
     """Returns True or False to indicate participant needs to be offered a POC viral load."""
-    if not func_art_naive(visit_instance):
+    if func_art_naive(visit_instance):
         return True
     return False
 

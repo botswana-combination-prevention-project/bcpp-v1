@@ -13,12 +13,14 @@ from edc_base.audit_trail import AuditTrail
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_inspector.classes import InspectorMixin
 from bhp066.apps.bcpp_subject.models import SubjectVisit
-from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
+from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD, ABBOTT_VIRAL_LOAD
 
 from ..managers import SubjectRequisitionManager
 
 from .aliquot_type import AliquotType
 from .panel import Panel
+from .pre_order import PreOrder
+from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
 
 
 class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
@@ -60,14 +62,25 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
     def visit_code(self):
         return self.subject_visit.appointment.visit_definition.code
 
+    def requires_poc_vl(self, instance=None):
+        instance = instance or self
+        return instance.panel.name == VIRAL_LOAD and func_poc_vl(instance.subject_visit)
+
+    def create_preorder_for_panels(self, instance=None):
+        instance = instance or self
+        if self.requires_poc_vl(instance):
+            return [POC_VIRAL_LOAD]
+        return []
+
     @property
-    def is_pov_vl(self):
-        from ..models import PreOrder
-        if (self.panel.name == VIRAL_LOAD and PreOrder.objects.filter(
-                subject_visit=self.subject_visit, panel__name=POC_VIRAL_LOAD)):
-            return 'Yes'
-        else:
-            return 'No'
+    def is_poc_vl(self):
+        try:
+            PreOrder.objects.get(
+                subject_visit=self.subject_visit,
+                panel__name=POC_VIRAL_LOAD)
+            return YES
+        except PreOrder.DoesNotExist:
+            return NO
 
     @property
     def optional_description(self):
