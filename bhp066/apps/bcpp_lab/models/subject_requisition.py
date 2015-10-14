@@ -25,8 +25,6 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
 
     subject_visit = models.ForeignKey(SubjectVisit)
 
-    # packing_list = models.ForeignKey(PackingList, null=True, blank=True)
-
     aliquot_type = models.ForeignKey(AliquotType)
 
     panel = models.ForeignKey(Panel)
