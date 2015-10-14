@@ -9,7 +9,7 @@ from ..models import PreOrder
 class PreOrderAdmin(BaseModelAdmin):
     form = PreOrderForm
 
-    fields = ('panel', 'aliquot_identifier', 'preorder_datetime', 'status')
+    fields = ('subject_visit', 'panel', 'aliquot_identifier', 'preorder_datetime', 'status')
     list_display = ('subject_visit', 'panel', 'preorder_datetime', 'status', 'aliquot_identifier', 'result')
     list_filter = ('panel',
                    'preorder_datetime',
