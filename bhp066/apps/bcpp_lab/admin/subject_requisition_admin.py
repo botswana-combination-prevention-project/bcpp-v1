@@ -6,7 +6,7 @@ from edc.lab.lab_requisition.admin import BaseRequisitionModelAdmin
 from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..actions import print_requisition_label
-from ..filters import PocViralLoadRequsitions
+from ..filters import PocVLRequsitionFilter
 from ..forms import SubjectRequisitionForm
 from ..models import SubjectRequisition, Panel
 
@@ -19,7 +19,7 @@ class SubjectRequisitionAdmin(BaseRequisitionModelAdmin):
     def __init__(self, *args, **kwargs):
         super(SubjectRequisitionAdmin, self).__init__(*args, **kwargs)
         self.list_filter.append('community')
-        self.list_filter.append(PocViralLoadRequsitions)
+        self.list_filter.insert(0, PocVLRequsitionFilter)
         self.list_display.append('is_poc_vl')
 
     visit_model = SubjectVisit
