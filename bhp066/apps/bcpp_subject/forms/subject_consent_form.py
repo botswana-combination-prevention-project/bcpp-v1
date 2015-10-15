@@ -151,15 +151,17 @@ class BaseBcppConsentForm(BaseConsentForm):
         return household_member
 
     def clean_identity(self):
+        identity = self.cleaned_data.get('identity')
         try:
             identity = super(BaseBcppConsentForm, self).clean_identity()
         except AttributeError:
-            identity = self.cleaned_data.get('identity')
+            pass
         try:
             RegisteredSubject.objects.get(identity=identity)
         except MultipleObjectsReturned:
             raise forms.ValidationError(
-                "More than one subject is using this identity number. Cannot continue.",
+                "More than one subject is using this identity \'%(identity)s\'. Cannot continue.",
+                params={'identity': identity},
                 code='invalid')
         except RegisteredSubject.DoesNotExist:
             pass
@@ -170,9 +172,11 @@ class SubjectConsentForm(BaseBcppConsentForm):
 
     class Meta:
         model = SubjectConsent
+        fields = '__all__'
 
 
 class SubjectConsentExtendedForm(BaseBcppConsentForm):
 
     class Meta:
         model = SubjectConsentExtended
+        fields = '__all__'
