@@ -1,4 +1,5 @@
 from django.db import models
+
 from edc_base.audit_trail import AuditTrail
 
 from bhp066.apps.bcpp.choices import AGREE_STRONGLY
@@ -20,7 +21,7 @@ class Stigma (BaseScheduledVisitModel):
         max_length=25,
         null=True,
         choices=AGREE_STRONGLY,
-        help_text="supplemental",
+        help_text="",
     )
 
     enacted_shame_stigma = models.CharField(
@@ -28,7 +29,7 @@ class Stigma (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     saliva_stigma = models.CharField(
@@ -37,7 +38,7 @@ class Stigma (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     teacher_stigma = models.CharField(
@@ -46,7 +47,7 @@ class Stigma (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     children_stigma = models.CharField(
@@ -55,7 +56,7 @@ class Stigma (BaseScheduledVisitModel):
         max_length=25,
         choices=AGREE_STRONGLY,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()

@@ -7,6 +7,7 @@ from bhp066.apps.bcpp.choices import WHYNOHIVTESTING_CHOICE
 from .hiv_testing_supplemental import HivTestingSupplemental
 from .subject_consent import SubjectConsent
 
+
 class HivUntested (HivTestingSupplemental):
 
     """CS002- for those who have NOT tested for HIV. Its
@@ -20,7 +21,7 @@ class HivUntested (HivTestingSupplemental):
         max_length=55,
         null=True,
         choices=WHYNOHIVTESTING_CHOICE,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()

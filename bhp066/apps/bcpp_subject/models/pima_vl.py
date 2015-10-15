@@ -5,7 +5,6 @@ from django.core.urlresolvers import reverse
 
 from django.core.validators import MinValueValidator, RegexValidator
 
-from edc.choices.common import YES_NO, PIMA, PIMA_SETTING_VL
 from edc.data_manager.models import TimePointStatusMixin
 from edc.device.dispatch.models.base_dispatch_sync_uuid_model import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
@@ -14,6 +13,7 @@ from edc_base.encrypted_fields import EncryptedTextField
 from edc_base.model.fields import OtherCharField
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_consent.models import RequiresConsentMixin
+from edc_constants.choices import YES_NO, PIMA
 from edc_quota.client.models import QuotaMixin, QuotaManager
 
 from bhp066.apps.bcpp.choices import EASY_OF_USE, QUANTIFIER
@@ -24,6 +24,11 @@ from ..managers import PimaVlManager
 from .subject_visit import SubjectVisit
 from .subject_off_study_mixin import SubjectOffStudyMixin
 from .subject_consent import SubjectConsent
+
+PIMA_SETTING_VL = (
+    ('mobile setting', 'Mobile Setting'),
+    ('household setting', 'Household Setting'),
+)
 
 
 class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointStatusMixin,
@@ -74,12 +79,13 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
         blank=True,
         help_text="type this id directly from the machine as labeled")
 
-    poc_vl_datetime = models.DateTimeField(
-        verbose_name="POC viral load Date and time",
-        validators=[datetime_not_future],
-        null=True,
-        blank=True,
-    )
+# removed
+#     poc_vl_datetime = models.DateTimeField(
+#         verbose_name="POC viral load Date and time",
+#         validators=[datetime_not_future],
+#         null=True,
+#         blank=True,
+#     )
 
     vl_value_quatifier = models.CharField(
         verbose_name="Select a quantifier for the value of the result",
@@ -113,7 +119,7 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
     )
 
     easy_of_use = models.CharField(
-        verbose_name="Easy of user by field operator?",
+        verbose_name="Ease of use by field operator?",
         max_length=200,
         choices=EASY_OF_USE,
     )

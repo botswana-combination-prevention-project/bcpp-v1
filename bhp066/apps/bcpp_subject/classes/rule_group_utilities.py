@@ -1,8 +1,9 @@
 from edc.subject.appointment.models import Appointment
 from edc_constants.constants import POS, NEG, IND
+from edc_constants.constants import NO
 
 from ..constants import BASELINE_CODES
-from ..models import SubjectVisit, Circumcised, HicEnrollment
+from ..models import SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory
 from ..classes import SubjectStatusHelper
 
 
@@ -100,6 +101,7 @@ def func_show_hic_enrollment(visit_instance):
 
 
 def func_show_microtube(visit_instance):
+    """Returns True to trigger the Microtube requisition if ...? """
     show_micro = False
     past_visit = func_previous_visit_instance(visit_instance)
     if func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
@@ -324,12 +326,20 @@ def func_vl(visit_instance):
 
 def func_poc_vl(visit_instance):
     """Returns True or False to indicate participant needs to be offered a POC viral load."""
-    # if pos at bhs then return true
-    if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
+    if func_art_naive(visit_instance):
         return True
-    # art naive at enrollment
-    elif art_naive_at_enrollment(visit_instance) and func_art_naive(visit_instance):
-        return True
-    elif sero_converter(visit_instance) and func_art_naive(visit_instance):
-        return True
+    return False
+
+
+def hiv_testing_history(visit_instance):
+    try:
+        hiv_testing = HivTestingHistory.objects.get(subject_visit=visit_instance)
+    except HivTestingHistory.DoesNotExist:
+        return False
+    return hiv_testing.has_tested == NO
+
+
+def func_hiv_untested(visit_instance):
+    if func_is_baseline(visit_instance):
+        return hiv_testing_history(visit_instance)
     return False

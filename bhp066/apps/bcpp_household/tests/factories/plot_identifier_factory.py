@@ -1,8 +1,8 @@
+import factory
+
 from datetime import datetime
 
-from ...models import PlotIdentifierHistory
-
-# from .household import HouseholdFactory
+from bhp066.apps.bcpp_household.models import PlotIdentifierHistory
 
 
 class PlotIdentifierHistoryFactory(factory.DjangoModelFactory):

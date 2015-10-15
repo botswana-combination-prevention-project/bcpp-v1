@@ -1,8 +1,7 @@
 from django.db import models
 
-from edc_constants.constants import NOT_APPLICABLE
+from edc_constants.constants import NOT_APPLICABLE, OTHER
 from edc.map.classes import site_mappers
-
 
 from bhp066.apps.bcpp.choices import (
     YES_NO_DWTA, YES_NO_UNSURE, YES_NO_UNSURE_DWTA, SEXDAYS_CHOICE,
@@ -10,6 +9,7 @@ from bhp066.apps.bcpp.choices import (
     FIRSTPARTNERHIV_CHOICE, FIRSTDISCLOSE_CHOICE,
     FIRSTCONDOMFREQ_CHOICE, AGE_RANGES, FREQ_IN_YEAR)
 from bhp066.apps.bcpp_list.models import PartnerResidency
+from bhp066.apps.bcpp_subject.constants import ECC, CPC
 
 from .base_scheduled_visit_model import BaseScheduledVisitModel
 
@@ -121,14 +121,14 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         choices=YES_NO_UNSURE,
         null=True,
         blank=True,
-        help_text="supplemental")
+        help_text="")
 
     first_disclose = models.CharField(
         verbose_name="Have you told this partner your HIV status?",
         max_length=30,
         choices=FIRSTDISCLOSE_CHOICE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     first_condom_freq = models.CharField(
         verbose_name="When you have [had] sex with this partner, how often "
@@ -136,7 +136,7 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         max_length=25,
         choices=FIRSTCONDOMFREQ_CHOICE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     first_partner_cp = models.CharField(
         verbose_name="To the best of your knowledge, did he/she ever have "
@@ -144,10 +144,11 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         max_length=25,
         choices=YES_NO_UNSURE,
         null=True,
-        help_text="supplemental")
+        help_text="")
 
     def skip_logic_questions(self, first_partner_choices):
-        first_partner_live = ['In this community', 'Farm within this community', 'Cattle post within this community']
+        first_partner_live = [
+            'In this community', 'Farm within this community', 'Cattle post within this community']
         skip = False
         not_skip = False
         in_out_comm = []
@@ -163,9 +164,23 @@ class BaseSexualPartner (BaseScheduledVisitModel):
         return skip and not not_skip
 
     def is_ecc_or_cpc(self):
-        if self.sex_partner_community not in [NOT_APPLICABLE, 'OTHER', None]:
-            return 'CPC' if site_mappers.registry.get(self.sex_partner_community.lower()).intervention else 'ECC'
+        if self.sex_partner_community not in [NOT_APPLICABLE, OTHER, None]:
+            if site_mappers.registry.get(self.sex_partner_community.lower()).intervention:
+                return CPC
+            else:
+                return ECC
         return False
+
+    def get_partner_arm(self):
+        if self.is_ecc_or_cpc():
+            partner_arm = self.is_ecc_or_cpc()
+        elif self.sex_partner_community == NOT_APPLICABLE:
+            partner_arm = NOT_APPLICABLE
+        elif self.sex_partner_community == OTHER:
+            partner_arm = OTHER
+        else:
+            partner_arm = ''
+        return partner_arm
 
     class Meta:
         abstract = True

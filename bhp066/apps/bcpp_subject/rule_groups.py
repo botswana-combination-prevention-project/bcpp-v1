@@ -15,7 +15,8 @@ from .classes.rule_group_utilities import (
     evaluate_ever_had_sex_for_female,
     func_show_hic_enrollment,
     func_hiv_indeterminate_today,
-    func_hiv_positive_today)
+    func_hiv_positive_today,
+    func_hiv_untested)
 from .models import (
     ResourceUtilization, HivTestingHistory,
     SexualBehaviour, HivCareAdherence, Circumcision,
@@ -44,7 +45,7 @@ class RegisteredSubjectRuleGroup(RuleGroup):
             predicate=func_known_pos_in_prev_year,
             consequence='not_required',
             alternative='new'),
-        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult'])
+        target_model=['hivtestreview', 'hivtested', 'hivtestinghistory', 'hivresultdocumentation', 'hivresult', 'hivuntested'])
 
     pima_art_naive_enrollment_req_ahs = ScheduledDataRule(
         logic=Logic(
@@ -127,7 +128,7 @@ class HivTestingHistoryRuleGroup(RuleGroup):
 
     hiv_untested = ScheduledDataRule(
         logic=Logic(
-            predicate=('has_tested', 'equals', 'No'),
+            predicate=func_hiv_untested,
             consequence='new',
             alternative='not_required'),
         target_model=['hivuntested'])

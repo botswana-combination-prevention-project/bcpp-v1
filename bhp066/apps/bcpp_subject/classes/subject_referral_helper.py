@@ -12,7 +12,7 @@ from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 
 from ..choices import REFERRAL_CODES
-from ..constants import ANNUAL_CODES
+from ..constants import ANNUAL_CODES, BASELINE_CODES, BASELINE, ANNUAL
 from ..constants import BASELINE_CODES
 from ..models import (SubjectConsent, ResidencyMobility, Circumcision, ReproductiveHealth, SubjectLocator)
 from ..utils import convert_to_nullboolean
@@ -25,9 +25,6 @@ class SubjectReferralHelper(object):
     """A class that calculates the referral code or returns a blank string.
 
     See property :func:`referral_code`"""
-
-    BASELINE = 'baseline'
-    ANNUAL = 'annual'
 
     def __init__(self, subject_referral=None):
         self._circumcised = None
@@ -43,22 +40,22 @@ class SubjectReferralHelper(object):
         self.community_code = site_mappers.get_current_mapper().map_code
         # self.models dict is also used in the signal
         self.models = copy(SubjectStatusHelper.models)
-        self.models[self.BASELINE].update({
+        self.models[BASELINE].update({
             'subject_locator': SubjectLocator,
             'circumcision': Circumcision,
             'reproductive_health': ReproductiveHealth,
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
         })
-        self.models[self.ANNUAL].update({
+        self.models[ANNUAL].update({
             'subject_locator': SubjectLocator,
             'circumcision': Circumcision,
             'reproductive_health': ReproductiveHealth,
             'residency_mobility': ResidencyMobility,
             'subject_consent': SubjectConsent,
         })
-        self.models[self.BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
-        self.models[self.ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[BASELINE].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
+        self.models[ANNUAL].update({'subject_requisition': get_model('bcpp_lab', 'SubjectRequisition')})
         self.previous_subject_referrals = []
         if subject_referral:
             self.subject_referral = subject_referral
@@ -73,8 +70,8 @@ class SubjectReferralHelper(object):
     def timepoint_key(self):
         """Returns a dictionary key of either baseline or annual base in the visit code."""
         if self.subject_referral.subject_visit.appointment.visit_definition.code in BASELINE_CODES:
-            return self.BASELINE
-        return self.ANNUAL
+            return BASELINE
+        return ANNUAL
 
     @property
     def subject_referral(self):
@@ -261,9 +258,8 @@ class SubjectReferralHelper(object):
 
     def remove_smc_in_annual_ecc(self, referral_code):
         """Removes any SMC referral codes if in the ECC during an ANNUAL survey."""
-        if (not self.intervention and
-                self.subject_visit.household_member.household_structure.survey.survey_slug != \
-                BASELINE_SURVEY_SLUG):
+        survey_slug = self.subject_visit.household_member.household_structure.survey.survey_slug
+        if (not self.intervention and survey_slug != BASELINE_SURVEY_SLUG):
             referral_code = referral_code.replace('SMC-NEG', '').replace('SMC?NEG', '').replace('SMC-UNK', '').replace('SMC?UNK', '')
         return referral_code
 

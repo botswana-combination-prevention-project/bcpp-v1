@@ -1,6 +1,6 @@
 import factory
 
-from ...models import Household
+from bhp066.apps.bcpp_household.models import Household
 
 from .plot_factory import PlotFactory
 

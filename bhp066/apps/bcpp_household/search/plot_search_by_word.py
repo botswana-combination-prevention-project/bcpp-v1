@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.conf import settings
 
 from edc.dashboard.search.classes import BaseSearchByWord
-from edc.device.device.classes import Device
+from edc_device import device
 
 from ..constants import (CONFIRMED, UNCONFIRMED, RESIDENTIAL_HABITABLE,
                          NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE)
@@ -19,7 +19,7 @@ class PlotSearchByWord(BaseSearchByWord):
     def contribute_to_context(self, context):
         context = super(PlotSearchByWord, self).contribute_to_context(context)
         context.update({'CONFIRMED': CONFIRMED},
-                       device=Device())
+                       device=device)
         return context
 
     @property

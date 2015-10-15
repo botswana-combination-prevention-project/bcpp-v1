@@ -12,6 +12,8 @@ from .subject_consent import SubjectConsent
 
 class Demographics (BaseScheduledVisitModel):
 
+    """A model completed by the user of the basic demographics of the participant."""
+
     CONSENT_MODEL = SubjectConsent
 
     religion = models.ManyToManyField(

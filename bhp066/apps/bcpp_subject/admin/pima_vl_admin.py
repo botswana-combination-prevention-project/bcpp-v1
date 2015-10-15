@@ -21,7 +21,6 @@ class PimaVlAdmin(SubjectVisitModelAdmin):
         'time_of_result',
         'easy_of_use',
         'stability',
-        'confirmation_code',
     )
     exclude = ('poc_vl_type', 'quota_pk')
     list_filter = ('subject_visit', 'time_of_test', 'pima_id')

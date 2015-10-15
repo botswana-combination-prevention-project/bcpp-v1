@@ -7,8 +7,10 @@ from edc_quota.client.models import Quota
 from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
 from bhp066.apps.bcpp_lab.models import Panel, AliquotType
 
-from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, ElisaHivResult,
-                      Circumcision, Circumcised, HicEnrollment, SubjectLocator)
+from bhp066.apps.bcpp_subject.models import (
+    HivCareAdherence, HivTestingHistory, HivTestReview, ElisaHivResult,
+    Circumcision, Circumcised, HicEnrollment, SubjectLocator)
+
 from .factories import (SubjectVisitFactory, CircumcisionFactory, ResidencyMobilityFactory, HivTestingHistoryFactory,
                         SubjectLocatorFactory)
 from .base_rule_group_test_setup import BaseRuleGroupTestSetup
@@ -1784,6 +1786,62 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **viral_load_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=REQUIRED, **research_blood_draw_options).count(), 1)
 
+    def test_hiv_untested(self):
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        hiv_untested_options = {}
+        hiv_untested_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivuntested',
+            appointment=self.subject_visit_male_T0.appointment
+        )
+
+        hiv_tested_options = {}
+        hiv_tested_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivtested',
+            appointment=self.subject_visit_male_T0.appointment
+        )
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            has_tested=YES,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **hiv_tested_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_untested_options).count(), 1)
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            has_tested=NO,
+            when_hiv_test='1 to 5 months ago',
+            has_record=NO,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
+
+        self.subject_visit_male = self.annual_subject_visit
+
+        hiv_untested_options = {}
+        hiv_untested_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivuntested',
+            appointment=self.subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_untested_options).count(), 1)
+
+        HivTestingHistory.objects.create(
+            subject_visit=self.subject_visit_male,
+            has_tested=NO,
+            when_hiv_test='1 to 5 months ago',
+            has_record=YES,
+            verbal_hiv_result=POS,
+            other_record=NO
+        )
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_untested_options).count(), 1)
 
 #     def test_poc_viral_load_mobile_household(self):
 #         ra_group = Group.objects.create(name=FIELD_RESEARCH_ASSISTANT_GROUP)

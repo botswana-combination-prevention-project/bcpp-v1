@@ -5,5 +5,7 @@ from .subject_off_study import SubjectOffStudy
 
 class SubjectOffStudyMixin(OffStudyMixin):
 
-    def get_off_study_cls(self):
-        return SubjectOffStudy
+    OFF_STUDY_MODEL = SubjectOffStudy
+
+    class Meta:
+        abstract = True

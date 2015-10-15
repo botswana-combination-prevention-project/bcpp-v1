@@ -1,17 +1,18 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
-from edc.choices.common import YES_NO
-from edc_base.encrypted_fields import EncryptedCharField
+from edc.data_manager.models import TimePointStatusMixin
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc.export.managers import ExportHistoryManager
 from edc.export.models import ExportTrackingFieldsMixin
 from edc.subject.locator.models import BaseLocator
-from edc.data_manager.models import TimePointStatusMixin
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
+from edc_base.encrypted_fields import EncryptedCharField
+from edc_consent.models import RequiresConsentMixin
+from edc_constants.choices import YES_NO, YES, NO
 
 from bhp066.apps.bcpp_household.models import Plot
 
@@ -23,8 +24,8 @@ from .subject_visit import SubjectVisit
 from .subject_consent import SubjectConsent
 
 
-class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, TimePointStatusMixin,
-                     BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocator, RequiresConsentMixin,
+                     TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user to that captures participant locator information
     and permission to contact."""
 
@@ -113,10 +114,16 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     def hic_enrollment_checks(self, exception_cls=None):
         from .hic_enrollment import HicEnrollment
         exception_cls = exception_cls or ValidationError
-        if HicEnrollment.objects.filter(subject_visit=self.subject_visit).exists():
+        if (self.may_follow_up == YES) or (self.may_follow_up == NO and self.may_sms_follow_up == YES):
             if not self.subject_cell and not self.subject_cell_alt and not self.subject_phone:
-                raise exception_cls('An HicEnrollment form exists for this subject. At least one of '
-                                    '\'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+                try:
+                    HicEnrollment.objects.get(
+                        subject_visit__subject_idenifier=self.subject_visit.subject_identifier)
+                    raise exception_cls(
+                        'An HicEnrollment form exists for this subject. At least one of '
+                        '\'subject_cell\', \'subject_cell_alt\' or \'subject_phone\' is required.')
+                except HicEnrollment.DoesNotExist:
+                    pass
 
     def natural_key(self):
         return self.subject_visit.natural_key()

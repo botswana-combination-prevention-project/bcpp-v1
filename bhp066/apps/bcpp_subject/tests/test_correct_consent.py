@@ -1,50 +1,45 @@
-from datetime import datetime, timedelta, date
-from dateutil.relativedelta import relativedelta
+from datetime import datetime, date
 
 from django.test import TestCase
 
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.map.classes import site_mappers, Mapper
 from edc.subject.appointment.models import Appointment
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
 from edc.subject.registration.models import RegisteredSubject
 
-from bhp066.apps.bcpp_household_member.classes  import EnumerationHelper
-from bhp066.apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory, HouseholdStructureFactory
+from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, CorrectConsentFactory, HicEnrollmentFactory, SubjectVisitFactory, ResidencyMobilityFactory, SubjectLocatorFactory
 from bhp066.apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory
-from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist, HouseholdMember
+from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_subject.models import SubjectConsent
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_lab.tests.factories import SubjectRequisitionFactory
-from bhp066.apps.bcpp_lab.models import Panel, AliquotType
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
-from bhp066.apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
-                                           ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                                           NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
-                                           RESIDENTIAL_HABITABLE)
-from ..models import (HivCareAdherence, HivTestingHistory, HivTestReview, HivResult, ElisaHivResult,
-                      Circumcision, Circumcised, HicEnrollment, Pima)
+from bhp066.apps.bcpp_household.constants import RESIDENTIAL_HABITABLE
+
+from ..models import HivResult, HicEnrollment
 
 
 class TestCorrectConsent(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'otse'
+    community = 'nata'
 
     def setUp(self):
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
+        study_site = StudySite.objects.create(site_code='38')
+        self.study_site = StudySite.objects.get(site_code='38')
         BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
@@ -53,8 +48,6 @@ class TestCorrectConsent(TestCase):
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
-        study_site = StudySite.objects.get(site_code='35')
-        self.study_site = StudySite.objects.get(site_code='35')
 
         household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
@@ -115,47 +108,47 @@ class TestCorrectConsent(TestCase):
 
     def test_lastname_and_initials(self):
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
-                gps_degrees_e=25,
-                gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
+            community='nata',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(
-                            household_structure=household_structure, 
-                            first_name='BAME', 
-                            initials='BB', 
-                            age_in_years=25,
-                            gender='M')
-        enrollment_checklist = EnrollmentChecklistFactory(
-                                household_member=household_member, 
-                                initials='BB', 
-                                dob=date(1989, 10, 10),
-                                gender='M',
-                                guardian='N/A')
+            household_structure=household_structure,
+            first_name='BAME',
+            initials='BB',
+            age_in_years=25,
+            gender='M')
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            guardian='N/A')
         subject_consent = SubjectConsentFactory(
-                            household_member=household_member, 
-                            last_name='BONNO', 
-                            first_name='BAME', 
-                            initials='BB', 
-                            dob=date(1989, 10, 10),
-                            gender='M',
-                            may_store_samples='Yes',
-                            study_site=self.study_site,
-                            is_literate='Yes')
-        correct_consent = CorrectConsentFactory(
-                            subject_consent=subject_consent,
-                            old_last_name='BONNO',
-                            new_last_name='DIMO',
-                            )
+            household_member=household_member,
+            last_name='BONNO',
+            first_name='BAME',
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            may_store_samples='Yes',
+            study_site=self.study_site,
+            is_literate='Yes')
+        CorrectConsentFactory(
+            subject_consent=subject_consent,
+            old_last_name='BONNO',
+            new_last_name='DIMO',
+        )
         subject_consent = SubjectConsent.objects.get(household_member=household_member)
         household_member = subject_consent.household_member
         enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
@@ -166,46 +159,46 @@ class TestCorrectConsent(TestCase):
 
     def test_firstname_and_initials(self):
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
-                gps_degrees_e=25,
-                gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
+            community='nata',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(
-                            household_structure=household_structure, 
-                            first_name='BAME', 
-                            initials='BB', 
-                            age_in_years=25,
-                            gender='M')
-        enrollment_checklist = EnrollmentChecklistFactory(
-                                household_member=household_member, 
-                                initials='BB', 
-                                dob=date(1989, 10, 10),
-                                gender='M',
-                                guardian='N/A')
+            household_structure=household_structure,
+            first_name='BAME',
+            initials='BB',
+            age_in_years=25,
+            gender='M')
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            guardian='N/A')
         subject_consent = SubjectConsentFactory(
-                            household_member=household_member, 
-                            last_name='BONNO', 
-                            first_name='BAME', 
-                            initials='BB', 
-                            dob=date(1989, 10, 10),
-                            gender='M',
-                            may_store_samples='Yes',
-                            is_literate='Yes')
-        correct_consent = CorrectConsentFactory(
-                            subject_consent=subject_consent, 
-                            old_first_name='BAME', 
-                            new_first_name='GAME',
-                            )
+            household_member=household_member,
+            last_name='BONNO',
+            first_name='BAME',
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            may_store_samples='Yes',
+            is_literate='Yes')
+        CorrectConsentFactory(
+            subject_consent=subject_consent,
+            old_first_name='BAME',
+            new_first_name='GAME',
+        )
         subject_consent = SubjectConsent.objects.get(household_member=household_member)
         household_member = subject_consent.household_member
         enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
@@ -217,7 +210,6 @@ class TestCorrectConsent(TestCase):
 
     def test_dob(self):
         household_member = self.household_member_male_T0
-        enrollment_checklist = self.enrollment_checklist_male
         subject_consent = self.subject_consent_male
         hic_enrollment_options = {}
         hic_enrollment_options.update(
@@ -226,17 +218,13 @@ class TestCorrectConsent(TestCase):
             appointment=self.subject_visit_male.appointment)
         ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0, intend_residency='No')
         SubjectLocatorFactory(subject_visit=self.subject_visit_male_T0, registered_subject=self.registered_subject_male, subject_cell='+26772344091')
-        aliquot_type = AliquotType.objects.all()[0]
-        site = StudySite.objects.all()[0]
-        microtube_panel = Panel.objects.get(name='Microtube')
-        micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
         HivResult.objects.create(
-             subject_visit=self.subject_visit_male_T0,
-             hiv_result='NEG',
-             report_datetime=datetime.today(),
-             insufficient_vol='No'
-            )
-        hic = HicEnrollmentFactory(
+            subject_visit=self.subject_visit_male_T0,
+            hiv_result='NEG',
+            report_datetime=datetime.today(),
+            insufficient_vol='No'
+        )
+        HicEnrollmentFactory(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
             hic_permission='Yes',
@@ -249,7 +237,7 @@ class TestCorrectConsent(TestCase):
             locator_information=True,
             consent_datetime=datetime.today()
         )
-        correct_consent = CorrectConsentFactory(
+        CorrectConsentFactory(
             subject_consent=subject_consent,
             old_dob=date(1989, 10, 10),
             new_dob=date(1988, 1, 1),
@@ -269,46 +257,46 @@ class TestCorrectConsent(TestCase):
 
     def test_gender(self):
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
-                gps_degrees_e=25,
-                gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
+            community='nata',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(
-                            household_structure=household_structure, 
-                            first_name='BAME', 
-                            initials='BB', 
-                            age_in_years=25,
-                            gender='M')
-        enrollment_checklist = EnrollmentChecklistFactory(
-                                household_member=household_member, 
-                                initials='BB', 
-                                dob=date(1989, 10, 10),
-                                gender='M',
-                                guardian='N/A')
+            household_structure=household_structure,
+            first_name='BAME',
+            initials='BB',
+            age_in_years=25,
+            gender='M')
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            guardian='N/A')
         subject_consent = SubjectConsentFactory(
-                            household_member=household_member, 
-                            last_name='BONNO', 
-                            first_name='BAME', 
-                            initials='BB', 
-                            dob=date(1989, 10, 10),
-                            gender='M',
-                            may_store_samples='Yes',
-                            is_literate='Yes')
-        correct_consent = CorrectConsentFactory(
-                            subject_consent=subject_consent, 
-                            old_gender='M', 
-                            new_gender='F',
-                            )
+            household_member=household_member,
+            last_name='BONNO',
+            first_name='BAME',
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            may_store_samples='Yes',
+            is_literate='Yes')
+        CorrectConsentFactory(
+            subject_consent=subject_consent,
+            old_gender='M',
+            new_gender='F',
+        )
         subject_consent = SubjectConsent.objects.get(household_member=household_member)
         household_member = subject_consent.household_member
         enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
@@ -318,48 +306,47 @@ class TestCorrectConsent(TestCase):
 
     def test_witness(self):
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
-                gps_degrees_e=25,
-                gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
+            community='nata',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.5666599 + float('0.000000{}'.format(2)),
+            gps_degrees_e=25,
+            gps_minutes_e=44.366660 + float('0.000000{}'.format(3)),)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
         RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(
-                            household_structure=household_structure, 
-                            first_name='BAME', 
-                            initials='BB', 
-                            age_in_years=25,
-                            gender='M')
-        enrollment_checklist = EnrollmentChecklistFactory(
-                                household_member=household_member, 
-                                initials='BB', 
-                                dob=date(1989, 10, 10),
-                                gender='M',
-                                guardian='N/A')
+            household_structure=household_structure,
+            first_name='BAME',
+            initials='BB',
+            age_in_years=25,
+            gender='M')
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            guardian='N/A')
         subject_consent = SubjectConsentFactory(
-                            household_member=household_member,
-                            last_name='BONNO',
-                            first_name='BAME',
-                            initials='BB',
-                            dob=date(1989, 10, 10),
-                            gender='M',
-                            may_store_samples='Yes',
-                            is_literate='No',
-                            witness_name='DIMO')
-        correct_consent = CorrectConsentFactory(
-                            subject_consent=subject_consent,
-                            old_witness_name='DIMO',
-                            new_witness_name='BIMO',
-                            )
+            household_member=household_member,
+            last_name='BONNO',
+            first_name='BAME',
+            initials='BB',
+            dob=date(1989, 10, 10),
+            gender='M',
+            may_store_samples='Yes',
+            is_literate='No',
+            witness_name='DIMO')
+        CorrectConsentFactory(
+            subject_consent=subject_consent,
+            old_witness_name='DIMO',
+            new_witness_name='BIMO',
+        )
         subject_consent = SubjectConsent.objects.get(household_member=household_member)
         household_member = subject_consent.household_member
-        enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
         self.assertEquals(subject_consent.witness_name, 'BIMO')

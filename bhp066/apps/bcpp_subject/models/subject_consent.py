@@ -1,117 +1,43 @@
 import re
 import uuid
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.validators import eligible_if_yes
-from edc.choices.common import YES_NO, YES_NO_NA
-from edc_constants.constants import NOT_APPLICABLE
-from edc.map.classes import site_mappers
 from edc.core.bhp_common.utils import formatted_age
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc_base.audit_trail import AuditTrail
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
-                                       SampleCollectionFieldsMixin)
-from edc.subject.lab_tracker.classes import site_lab_tracker
-from edc.core.bhp_variables.models import StudySite
+                                       SampleCollectionFieldsMixin, CitizenFieldsMixin)
+from edc_constants.constants import YES, NO
 
-from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_household_member.constants import BHS_ELIGIBLE, BHS
 from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
 from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 
+from ..exceptions import ConsentError
 from ..managers import SubjectConsentManager
 
 from .base_household_member_consent import BaseHouseholdMemberConsent
-from .hic_enrollment import HicEnrollment
-from .subject_consent_history import SubjectConsentHistory
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
-from ..exceptions import ConsentError
 
-
-class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
-
-    study_site = models.ForeignKey(
-        StudySite,
-        verbose_name='Site',
-        null=True,
-        help_text="This refers to the site or 'clinic area' where the subject is being consented."
-    )
-
-    citizen = models.CharField(
-        verbose_name="Are you a Botswana citizen? ",
-        max_length=3,
-        choices=YES_NO,
-        help_text="",
-    )
-
-    legal_marriage = models.CharField(
-        verbose_name=("If not a citizen, are you legally married to a Botswana Citizen?"),
-        max_length=3,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False,
-        default=NOT_APPLICABLE,
-        help_text="If 'NO' participant will not be enrolled.",
-    )
-
-    marriage_certificate = models.CharField(
-        verbose_name=("[Interviewer] Has the participant produced the marriage certificate, as proof? "),
-        max_length=3,
-        choices=YES_NO_NA,
-        null=True,
-        blank=False,
-        default=NOT_APPLICABLE,
-        help_text="If 'NO' participant will not be enrolled.",
-    )
-
-    marriage_certificate_no = models.CharField(
-        verbose_name=("What is the marriage certificate number?"),
-        max_length=9,
-        null=True,
-        blank=True,
-        help_text="e.g. 000/YYYY",
-    )
-
-    is_minor = models.CharField(
-        verbose_name=("Is subject a minor?"),
-        max_length=10,
-        null=True,
-        blank=False,
-        default='-',
-        choices=YES_NO,
-        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
-                   'HIV status may NOT be revealed in the household.'))
-
-    consent_signature = models.CharField(
-        verbose_name=("The client has signed the consent form?"),
-        max_length=3,
-        choices=YES_NO,
-        validators=[eligible_if_yes, ],
-        null=True,
-        blank=False,
-        # default='Yes',
-        help_text="If no, INELIGIBLE",
-    )
-
-    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     def save(self, *args, **kwargs):
-        # From old edc BaseConsent
         self.insert_dummy_identifier()
         if not self.id:
             self._save_new_consent(kwargs.get('using', None))
-        # From old edc BaseSubject
         self.subject_type = self.get_subject_type()
-        super(BaseSubjectConsent, self).save(*args, **kwargs)
+        super(BaseBaseSubjectConsent, self).save(*args, **kwargs)
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
-
+        HicEnrollment = models.get_model('bcpp_subject', 'HicEnrollment')
         if HicEnrollment.objects.filter(subject_visit__household_member=household_member).exists():
             hic_enrollment = HicEnrollment.objects.get(subject_visit__household_member=household_member)
             # consent_datetime does not exist in cleaned_data as it not editable.
@@ -121,38 +47,45 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                 raise exception_cls('An HicEnrollment form already exists for this '
                                     'Subject. So \'dob\' cannot be changed.')
 
-    def matches_enrollment_checklist(self, subject_consent, household_member, exception_cls=None):
+    def matches_enrollment_checklist(self, subject_consent, exception_cls=None):
         """Matches values in this consent against the enrollment checklist.
 
         ..note:: the enrollment checklist is required for consent, so always exists."""
         # enrollment checklist is only filled for the same survey as the consent
-        household_member = subject_consent.household_member
+        household_member = self.household_member
         exception_cls = exception_cls or ValidationError
-        if not EnrollmentChecklist.objects.filter(household_member=household_member).exists():
-            raise exception_cls('Enrollment Checklist not found. The Enrollment Checklist is required before consent.')
-        enrollment_checklist = EnrollmentChecklist.objects.get(household_member=household_member)
+        try:
+            enrollment_checklist = EnrollmentChecklist.objects.get(
+                household_member__registered_subject=subject_consent.household_member.registered_subject, is_eligible=True)
+            household_member = enrollment_checklist.household_member
+        except EnrollmentChecklist.DoesNotExist:
+            raise exception_cls(
+                'A valid Enrollment Checklist not found (is_eligible). The Enrollment Checklist is required before consent.')
         if enrollment_checklist.dob != subject_consent.dob:
             raise exception_cls('Dob does not match that on the enrollment checklist')
         if enrollment_checklist.initials != subject_consent.initials:
             raise exception_cls('Initials do not match those on the enrollment checklist')
-        if (enrollment_checklist.guardian.lower() == 'yes' and
-                not (subject_consent.minor and subject_consent.guardian_name)):
-            raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian '
-                                'available, but the consent does not indicate this.')
+        if subject_consent.consent_datetime:
+            if subject_consent.minor:
+                if (enrollment_checklist.guardian == YES and
+                        not (subject_consent.minor and subject_consent.guardian_name)):
+                    raise exception_cls('Enrollment Checklist indicates that subject is a minor with guardian '
+                                        'available, but the consent does not indicate this.')
         if enrollment_checklist.gender != subject_consent.gender:
             raise exception_cls('Gender does not match that in the enrollment checklist')
         if enrollment_checklist.citizen != subject_consent.citizen:
             raise exception_cls(
-                'Answer to whether this subject a citizen, does not match that in enrollment checklist.')
-        if (enrollment_checklist.literacy.lower() == 'yes' and
-                not (subject_consent.is_literate.lower() == 'yes' or (subject_consent.is_literate.lower() == 'no') and
+                'You wrote subject is a %(citizen)s citizen. This does not match the enrollment checklist.',
+                params={"citizen": '' if subject_consent.citizen == YES else 'NOT'})
+        if (enrollment_checklist.literacy == YES and
+                not (subject_consent.is_literate == YES or (subject_consent.is_literate == NO) and
                      subject_consent.witness_name)):
             raise exception_cls('Answer to whether this subject is literate/not literate but with a '
                                 'literate witness, does not match that in enrollment checklist.')
-        if ((enrollment_checklist.legal_marriage.lower() == 'yes' and
-                enrollment_checklist.marriage_certificate.lower() == 'yes') and not (
-                subject_consent.legal_marriage.lower() == 'yes' and
-                subject_consent.marriage_certificate.lower() == 'yes')):
+        if ((enrollment_checklist.legal_marriage == YES and
+                enrollment_checklist.marriage_certificate == YES) and not (
+                subject_consent.legal_marriage == YES and
+                subject_consent.marriage_certificate == YES)):
             raise exception_cls('Enrollment Checklist indicates that this subject is married '
                                 'to a citizen with a valid marriage certificate, but the '
                                 'consent does not indicate this.')
@@ -160,18 +93,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             raise exception_cls('Subject is not eligible or has not been confirmed eligible '
                                 'for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
-
-    def get_site_code(self):
-        return site_mappers.get_current_mapper().map_code
-
-    def get_subject_type(self):
-        return 'subject'
-
-    def get_consent_history_model(self):
-        return SubjectConsentHistory
-
-    def get_registered_subject(self):
-        return self.registered_subject
 
     def get_hiv_status(self):
         """Returns the hiv testing history as a string.
@@ -192,10 +113,11 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     @property
     def minor(self):
-        age_at_consent = relativedelta(date(self.consent_datetime.year,
-                                            self.consent_datetime.month,
-                                            self.consent_datetime.day),
-                                       self.dob).years
+        age_at_consent = relativedelta(
+            date(self.consent_datetime.year,
+                 self.consent_datetime.month,
+                 self.consent_datetime.day),
+            self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
 
     def save_new_consent(self, using=None, subject_identifier=None):
@@ -269,9 +191,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
     def get_consent_update_model(self):
         raise TypeError('The ConsentUpdateModel is required. Specify a class method get_consent_update_model() on the model to return the ConsentUpdateModel class.')
 
-    def get_report_datetime(self):
-        return self.consent_datetime
-
     def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
         """Allow bypass only if doing consent verification."""
         # requery myself
@@ -341,45 +260,73 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
         abstract = True
 
 
-class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin, SampleCollectionFieldsMixin,
-                     VulnerabilityFieldsMixin, BaseSubjectConsent):
-
-    objects = SubjectConsentManager()
-
-    history = AuditTrail()
+class BaseSubjectConsent(BaseBaseSubjectConsent):
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
-        # Any consent exists other than myself
         consents = self.__class__.objects.filter(
-                    household_member__internal_identifier=self.household_member.internal_identifier).exclude(
-                    household_member=self.household_member)
+            household_member__internal_identifier=self.household_member.internal_identifier).exclude(
+            household_member=self.household_member)
         if not consents.exists():
-            #Run the following validations only if its the first consent for an individual. Not Reconsent.
             if not self.id:
                 expected_member_status = BHS_ELIGIBLE
             else:
                 expected_member_status = BHS
             subject_identifier = self.household_member.get_subject_identifier()
-            if self.__class__.objects.filter(subject_identifier=subject_identifier).last():
+            try:
+                self.__class__.objects.filter(subject_identifier=subject_identifier).latest('consent_datetime')
                 expected_member_status = BHS
                 self.subject_identifier = subject_identifier
+            except ObjectDoesNotExist:
+                pass
             if self.household_member.member_status != expected_member_status:
                 raise MemberStatusError('Expected member status to be {0}. Got {1} for {2}.'.format(
                     expected_member_status, self.household_member.member_status, self.household_member))
-            self.is_minor = 'Yes' if self.minor else 'No'
-            self.matches_enrollment_checklist(self, self.household_member)
+            self.is_minor = YES if self.minor else NO
+            self.matches_enrollment_checklist(self)
             self.matches_hic_enrollment(self, self.household_member)
         else:
             self.registered_subject = consents[0].registered_subject
             self.subject_identifier = consents[0].subject_identifier
         self.community = self.household_member.household_structure.household.plot.community
-        super(SubjectConsent, self).save(*args, **kwargs)
+        super(BaseSubjectConsent, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class SubjectConsent(IdentityFieldsMixin, ReviewFieldsMixin, PersonalFieldsMixin,
+                     SampleCollectionFieldsMixin, CitizenFieldsMixin, VulnerabilityFieldsMixin,
+                     BaseSubjectConsent):
+
+    """ A model completed by the user that captures the ICF."""
+
+    objects = SubjectConsentManager()
+
+    history = AuditTrail()
 
     class Meta:
         app_label = 'bcpp_subject'
-        unique_together = (('subject_identifier', 'survey', 'version'), ('first_name', 'dob', 'initials', 'version'))
+        get_latest_by = 'consent_datetime'
+        unique_together = (('subject_identifier', 'survey', 'version'),
+                           ('first_name', 'dob', 'initials', 'version'))
         ordering = ('-created', )
+
+
+class SubjectConsentExtended(SubjectConsent):
+
+    """ A system model that serves as a proxy model for SubjectConsent."""
+
+    SUBJECT_TYPES = ['subject']
+    GENDER_OF_CONSENT = ['M', 'F']
+    AGE_IS_ADULT = 18
+    MIN_AGE_OF_CONSENT = 16
+    MAX_AGE_OF_CONSENT = 120
+
+    class Meta:
+        proxy = True
+        get_latest_by = 'consent_datetime'
+        app_label = 'bcpp_subject'

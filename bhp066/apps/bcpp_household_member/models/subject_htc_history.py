@@ -3,9 +3,8 @@ from datetime import datetime
 from django.db import models
 from django_extensions.db.fields import UUIDField
 
-from edc.choices import YES_NO
-
 from edc_base.model.models import BaseUuidModel
+from edc_constants.choices import YES_NO
 
 from bhp066.apps.bcpp_survey.models import Survey
 

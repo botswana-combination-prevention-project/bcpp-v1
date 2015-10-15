@@ -1,6 +1,6 @@
 from django.db import models
 
-from edc.choices.common import DEATH_RELATIONSIP_TO_STUDY
+from edc_constants.choices import DEATH_RELATIONSIP_TO_STUDY
 from edc.subject.adverse_event.models import DeathCauseInfo, DeathCauseCategory, DeathMedicalResponsibility
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
@@ -12,6 +12,8 @@ from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectDeath(BaseMemberStatusModel):
+
+    """A model completed by the user to report the death of a participant."""
 
     death_date = models.DateField(
         verbose_name="Date of Death:",

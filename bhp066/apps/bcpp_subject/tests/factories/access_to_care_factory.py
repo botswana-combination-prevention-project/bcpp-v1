@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import AccessToCare
+from bhp066.apps.bcpp_subject.models import AccessToCare
 
 
 class AccessToCareFactory(factory.DjangoModelFactory):

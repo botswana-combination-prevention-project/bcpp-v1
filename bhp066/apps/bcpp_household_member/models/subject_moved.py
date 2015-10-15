@@ -1,8 +1,8 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.choices import YES_NO_UNKNOWN
 from edc_base.encrypted_fields import EncryptedTextField
+from edc_constants.choices import YES_NO_UNKNOWN
 
 from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
@@ -10,6 +10,8 @@ from .base_member_status_model import BaseMemberStatusModel
 
 
 class SubjectMoved(BaseMemberStatusModel):
+
+    """A model completed by the user to indicate a subject has moved from the household and or community."""
 
     moved_household = models.CharField(
         max_length=7,

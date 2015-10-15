@@ -1,12 +1,12 @@
 from django.contrib import admin
 
 from ..forms import HouseholdAssessmentForm
-from ..models import HouseholdAssessment, HouseholdStructure
+from ..models import HouseholdAssessment
 
-from .base_household_model_admin import BaseHouseholdModelAdmin
+from .base_household_structure_model_admin import BaseHouseholdStructureModelAdmin
 
 
-class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
+class HouseholdAssessmentAdmin(BaseHouseholdStructureModelAdmin):
 
     form = HouseholdAssessmentForm
 
@@ -23,8 +23,4 @@ class HouseholdAssessmentAdmin(BaseHouseholdModelAdmin):
 
     list_filter = ('household_structure__household__community',)
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "household_structure":
-            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
-        return super(HouseholdAssessmentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(HouseholdAssessment, HouseholdAssessmentAdmin)

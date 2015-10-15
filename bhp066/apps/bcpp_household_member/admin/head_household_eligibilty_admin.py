@@ -7,6 +7,7 @@ from bhp066.apps.bcpp_household.models import HouseholdStructure
 
 from ..models import HouseholdHeadEligibility, HouseholdMember
 from ..forms import HouseholdHeadEligibilityForm
+from bhp066.apps.bcpp_household_member.constants import HEAD_OF_HOUSEHOLD
 
 
 class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
@@ -30,17 +31,21 @@ class HouseholdHeadEligibilityAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_member":
-#             if HouseholdMember.objects.filter(household_structure__exact=request.
-#                                               GET.get('household_structure', 0),
-#                                               relation='Head').exists():
-            kwargs["queryset"] = HouseholdMember.objects.filter(Q(household_structure__exact=request.
-                                          GET.get('household_structure', 0)),
-                                          (Q(is_consented=True) | Q(age_in_years__gte=18) | Q(relation='Head')) &( ~Q(survival_status='Dead')))
-#             else:
-#                 kwargs["queryset"] = HouseholdMember.objects.filter(
-#                     household_structure__exact=request.GET.get('household_structure', 0), eligible_hoh=False)
+            kwargs["queryset"] = HouseholdMember.objects.filter(
+                Q(household_structure__exact=request.GET.get('household_structure', 0)),
+                (Q(is_consented=True) | Q(age_in_years__gte=18) | Q(relation=HEAD_OF_HOUSEHOLD)) &
+                (~Q(survival_status='Dead')))
+
         if db_field.name == "household_structure":
-            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
+            kwargs["queryset"] = HouseholdStructure.objects.filter(
+                id__exact=request.GET.get('household_structure', 0))
+
         return super(HouseholdHeadEligibilityAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ('household_member', 'household_structure', ) + self.readonly_fields
+        else:
+            return self.readonly_fields
 
 admin.site.register(HouseholdHeadEligibility, HouseholdHeadEligibilityAdmin)

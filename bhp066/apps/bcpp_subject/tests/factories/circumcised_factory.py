@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import Circumcised
+from bhp066.apps.bcpp_subject.models import Circumcised
 
 
 class CircumcisedFactory(factory.DjangoModelFactory):

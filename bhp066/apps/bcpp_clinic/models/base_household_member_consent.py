@@ -2,11 +2,15 @@ import re
 
 from django.db import models
 
+from edc.core.bhp_variables.models import StudySite
 from edc.core.identifier.exceptions import IdentifierError
+from edc.map.classes import site_mappers
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
-from edc_consent.models import BaseConsent
 from edc.subject.registration.models import RegisteredSubject
+from edc_consent.models import BaseConsent
+from edc_constants.choices import YES_NO
 
+from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 
@@ -15,21 +19,43 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 
-    is_signed = models.BooleanField(default=False)
-
-    survey = models.ForeignKey(Survey, editable=False, null=True)
-
     registered_subject = models.ForeignKey(
         RegisteredSubject,
         editable=False,
         null=True,
         help_text='one registered subject will be related to one household member for each survey')
 
+    study_site = models.ForeignKey(
+        StudySite,
+        verbose_name='Site',
+        null=True,
+        help_text="This refers to the site or 'clinic area' where the subject is being consented."
+    )
+
+    is_minor = models.CharField(
+        verbose_name=("Is subject a minor?"),
+        max_length=10,
+        null=True,
+        blank=False,
+        default='-',
+        choices=YES_NO,
+        help_text=('Subject is a minor if aged 16-17. A guardian must be present for consent. '
+                   'HIV status may NOT be revealed in the household.'))
+
+    is_signed = models.BooleanField(default=False)
+
+    survey = models.ForeignKey(Survey, editable=False, null=True)
+
+    community = models.CharField(max_length=25, choices=COMMUNITIES, null=True, editable=False)
+
     def __unicode__(self):
         return '{0} ({1})'.format(self.subject_identifier, self.survey)
 
     def get_registration_datetime(self):
         return self.consent_datetime
+
+    def get_site_code(self):
+        return site_mappers.get_current_mapper().map_code
 
     def save(self, *args, **kwargs):
         if not self.id:

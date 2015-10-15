@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from edc.core.bhp_variables.models import StudySpecific
-from edc.device.device.classes import Device
+from edc.device import DeviceClass
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.consent.models import ConsentCatalogue
