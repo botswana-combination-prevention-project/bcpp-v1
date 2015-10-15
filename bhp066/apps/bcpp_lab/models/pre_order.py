@@ -108,6 +108,11 @@ class PreOrder(BaseSyncUuidModel):
             return None
     result.allow_tags = True
 
+    def skip_saving_criteria(self):
+        if self.__class__.objects.filter(subject_visit=self.subject_visit, panel=self.panel).exists():
+            print('********IGNORED {}**********'.format(self))
+            return True
+
     class Meta:
         app_label = 'bcpp_lab'
         ordering = ['-preorder_datetime', ]
