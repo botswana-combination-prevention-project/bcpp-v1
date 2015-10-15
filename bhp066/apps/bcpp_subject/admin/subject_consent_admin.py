@@ -6,8 +6,8 @@ from edc.subject.registration.models import RegisteredSubject
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from ..actions import add_to_call_list_action
-from ..forms import SubjectConsentForm
-from ..models import SubjectConsent
+from ..forms import SubjectConsentForm, SubjectConsentExtendedForm
+from ..models import SubjectConsent, SubjectConsentExtended
 
 
 class SubjectConsentAdmin(BaseConsentModelAdmin):
@@ -23,7 +23,8 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             if item == 'assessment_score':
                 del self.fields[i]
 
-        self.list_filter = [
+        self.list_filter = list(self.list_filter)
+        self.list_filter.extend([
             'gender',
             'is_verified',
             'is_verified_datetime',
@@ -32,14 +33,10 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'is_literate',
             'household_member__household_structure__household__community',
             'consent_datetime',
-            'community',
-            'created',
-            'modified',
-            'user_created',
-            'user_modified',
-            'hostname_created']
+            'community'])
+        self.list_filter = tuple(set(self.list_filter))
 
-        self.fields = [
+        self.fields = (
             'subject_identifier',
             'household_member',
             'first_name',
@@ -66,7 +63,7 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             'study_questions',
             'assessment_score',
             'consent_signature',
-            'consent_copy', ]
+            'consent_copy')
 
         self.radio_fields = {
             "language": admin.VERTICAL,
@@ -85,8 +82,10 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
             "is_literate": admin.VERTICAL,
         }
 
+        self.search_fields = list(self.search_fields)
         self.search_fields.append('household_member__household_structure__household__household_identifier')
         self.search_fields.append('household_member__household_structure__household__plot__plot_identifier')
+        self.search_fields = tuple(self.search_fields)
         self.radio_fields.update({"is_minor": admin.VERTICAL})
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -97,3 +96,8 @@ class SubjectConsentAdmin(BaseConsentModelAdmin):
         return super(SubjectConsentAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(SubjectConsent, SubjectConsentAdmin)
+
+
+class SubjectConsentExtendedAdmin(SubjectConsentAdmin):
+    form = SubjectConsentExtendedForm
+admin.site.register(SubjectConsentExtended, SubjectConsentExtendedAdmin)

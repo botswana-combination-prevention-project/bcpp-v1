@@ -5,6 +5,8 @@ from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 
 class SubjectOffStudy(BaseOffStudy, BaseDispatchSyncUuidModel):
 
+    """A model completed by the user that completed when the subject is taken off-study."""
+
     history = AuditTrail()
 
     class Meta:

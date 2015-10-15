@@ -18,7 +18,7 @@ from bhp066.apps.bcpp.choices import (
     YES_NO_DWTA, ALCOHOL_SEX, FREQ_IN_YEAR, SEXDAYS_CHOICE, LASTSEX_CHOICE, YES_NO_UNSURE,
     AGE_RANGES, FIRSTRELATIONSHIP_CHOICE, YES_NO_UNSURE_DWTA, FIRSTDISCLOSE_CHOICE, FIRSTCONDOMFREQ_CHOICE)
 
-from ..forms import SexualBehaviourForm, MonthsRecentPartnerForm
+from bhp066.apps.bcpp_subject.forms import SexualBehaviourForm, MonthsRecentPartnerForm
 
 
 class TestPlotMapper(Mapper):

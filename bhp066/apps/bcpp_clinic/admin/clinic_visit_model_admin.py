@@ -8,6 +8,6 @@ class ClinicVisitModelAdmin (BaseVisitTrackingModelAdmin):
     """Model Admin for models with a foreignkey to the clinic visit model."""
 
     visit_model = ClinicVisit
-    visit_model_foreign_key = 'clinic_visit'
+    visit_attr = 'clinic_visit'
     dashboard_type = 'clinic'
     date_heirarchy = 'clinic_visit__report_datetime'

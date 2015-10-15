@@ -16,6 +16,8 @@ class SubjectConsentPage(BaseModelAdminPage):
     is_literate_no = (By.ID, 'id_is_literate_1')
     consent_date = (By.ID, 'id_consent_datetime_0')
     consent_time = (By.ID, 'id_consent_datetime_1')
+    consent_today = (By.XPATH, "(//form[@id='subjectconsent_form']//descendant::a[text()='Today'])[1]")
+    consent_now = (By.XPATH, " (//form[@id='subjectconsent_form']//descendant::a[text()='Now'])[1]")
     gender = (By.ID, 'id_gender')
     male = (By.ID, 'id_gender_0')
     female = (By.ID, 'id_gender_1')
@@ -26,8 +28,8 @@ class SubjectConsentPage(BaseModelAdminPage):
     dob_estimated_month = (By.ID, 'id_is_dob_estimated_2')
     dob_estimated_year = (By.ID, 'id_is_dob_estimated_3')
     citizen = (By.ID, 'id_citizen')
-    citizen_yes = (By.ID, 'id_citizen_yes')
-    citizen_no = (By.ID, 'id_citizen_no')
+    citizen_yes = (By.ID, 'id_citizen_0')
+    citizen_no = (By.ID, 'id_citizen_1')
     legal_marriage = (By.ID, 'id_legal_marriage')
     legal_marriage_yes = (By.ID, 'id_legal_marriage_0')
     legal_marriage_no = (By.ID, 'id_legal_marriage_1')
@@ -65,6 +67,12 @@ class SubjectConsentPage(BaseModelAdminPage):
     consent_copy = (By.ID, 'id_consent_copy')
     consent_copy_yes = (By.ID, 'id_consent_copy_0')
     consent_copy_no = (By.ID, 'id_consent_copy_1')
+
+    def click_consent_date(self):
+        self.browser.find_element(*SubjectConsentPage.consent_today).click()
+
+    def click_consent_now(self):
+        self.browser.find_element(*SubjectConsentPage.consent_now).click()
 
     def set_first_name(self, first_name):
         firstname_element = self.browser.find_element(*SubjectConsentPage.first_name)
@@ -121,11 +129,11 @@ class SubjectConsentPage(BaseModelAdminPage):
 
     @property
     def select_male(self):
-        self.browser.find_element(*SubjectConsentPage.male)
+        return self.browser.find_element(*SubjectConsentPage.male)
 
     @property
     def select_female(self):
-        self.browser.find_element(*SubjectConsentPage.female)
+        return self.browser.find_element(*SubjectConsentPage.female)
 
     def set_dob(self, dob):
         dob_element = self.browser.find_element(*SubjectConsentPage.dob)
@@ -136,30 +144,30 @@ class SubjectConsentPage(BaseModelAdminPage):
 
     @property
     def select_dob_estimated_no(self):
-        self.browser.find_element(*SubjectConsentPage.dob_estimated_no)
+        return self.browser.find_element(*SubjectConsentPage.dob_estimated_no)
 
     @property
     def select_dob_estimated_day(self):
-        self.browser.find_element(*SubjectConsentPage.dob_estimated_day)
+        return self.browser.find_element(*SubjectConsentPage.dob_estimated_day)
 
     @property
     def select_dob_estimated_month(self):
-        self.browser.find_element(*SubjectConsentPage.dob_estimated_month)
+        return self.browser.find_element(*SubjectConsentPage.dob_estimated_month)
 
     @property
     def select_dob_estimated_year(self):
-        self.browser.find_element(*SubjectConsentPage.dob_estimated_year)
+        return self.browser.find_element(*SubjectConsentPage.dob_estimated_year)
 
     def set_citizen(self, citizen):
         citizen.click()
 
     @property
     def select_citizen_yes(self):
-        self.browser.find_element(*SubjectConsentPage.citizen_yes)
+        return self.browser.find_element(*SubjectConsentPage.citizen_yes)
 
     @property
     def select_citizen_no(self):
-        self.browser.find_element(*SubjectConsentPage.citizen_no)
+        return self.browser.find_element(*SubjectConsentPage.citizen_no)
 
     def set_legal_marriage(self, legal_marriage):
         legal_marriage.click()
@@ -200,19 +208,19 @@ class SubjectConsentPage(BaseModelAdminPage):
 
     @property
     def select_identity_omang(self):
-        self.browser.find_element(*SubjectConsentPage.identity_omang)
+        return self.browser.find_element(*SubjectConsentPage.identity_omang)
 
     @property
     def select_identity_passport(self):
-        self.browser.find_element(*SubjectConsentPage.identity_passport)
+        return self.browser.find_element(*SubjectConsentPage.identity_passport)
 
     @property
     def select_identity_drivers(self):
-        self.browser.find_element(*SubjectConsentPage.identity_drivers)
+        return self.browser.find_element(*SubjectConsentPage.identity_drivers)
 
     @property
     def select_identity_receipt(self):
-        self.browser.find_element(*SubjectConsentPage.identity_receipt)
+        return self.browser.find_element(*SubjectConsentPage.identity_receipt)
 
     def set_confirm_identity(self, confirm_identity):
         confirmidentity_element = self.browser.find_element(*SubjectConsentPage.confirm_identity)
@@ -284,18 +292,24 @@ class SubjectConsentPage(BaseModelAdminPage):
     def select_consent_copy_no(self):
         return self.browser.find_element(*SubjectConsentPage.consent_copy_no)
 
-    def fill_consent(self, first_name, last_name, initials, language, is_literate, consent_date, consent_time,
-                     gender, dob, is_dob_estimated, citizen, legal_marriage=select_legal_marriage_na,
-                     marriage_certificate=select_marriage_certificate_na, identity, identity_type, confirm_identity,
+    def fill_consent(self, first_name, last_name, initials, language, is_literate,
+                     gender, dob, is_dob_estimated, citizen, identity, identity_type, confirm_identity,
                      may_store_samples, consent_reviewed, study_questions, assessment_score,
-                     consent_signature, consent_copy):
+                     consent_signature, consent_copy, legal_marriage=select_legal_marriage_na,
+                     marriage_certificate=select_marriage_certificate_na, consent_date=None, consent_time=None):
         self.set_first_name(first_name)
         self.set_last_name(last_name)
         self.set_initials(initials)
         self.set_language(language)
         self.set_is_literate(is_literate)
-        self.set_consent_date(consent_date)
-        self.set_consent_time(consent_time)
+        if consent_date:
+            self.set_consent_date(consent_date)
+        else:
+            self.click_consent_date()
+        if consent_time:
+            self.set_consent_time(consent_time)
+        else:
+            self.click_consent_now()
         self.set_gender(gender)
         self.set_dob(dob)
         self.set_is_dob_estimated(is_dob_estimated)
@@ -311,4 +325,4 @@ class SubjectConsentPage(BaseModelAdminPage):
         self.set_assessment_score(assessment_score)
         self.set_consent_signature(consent_signature)
         self.set_consent_copy(consent_copy)
-        self.set_click_save_button()
+        self.click_save_button()

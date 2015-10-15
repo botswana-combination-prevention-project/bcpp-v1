@@ -2,7 +2,7 @@ from django.conf import settings
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
-from edc.device.device.classes import Device
+from edc_device import device
 
 from bhp066.apps.bcpp_survey.models import Survey
 
@@ -49,7 +49,7 @@ class SectionHouseholdView(BaseSectionView):
         current_survey = Survey.objects.current_survey()
         if not results_per_page:
             results_per_page = 25
-        if Device().is_central_server:
+        if device.is_central_server:
             if current_survey.survey_abbrev == 'Y1':
                 _search_result = []
                 for household_structure in search_result:

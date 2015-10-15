@@ -3,18 +3,19 @@ from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc.choices.common import GENDER
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.encrypted_fields import FirstnameField
 from edc_base.model.validators import datetime_not_future, datetime_not_before_study_start
+from edc_constants.choices import GENDER
 from edc_constants.constants import CLOSED, OPEN, NEW
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember, MemberAppointment
 
-from .subject_consent import SubjectConsent
 from ..choices import REFERRAL_CODES
 from ..managers import CallListManager
+
+from .subject_consent import SubjectConsent
 
 
 class CallList (BaseSyncUuidModel):

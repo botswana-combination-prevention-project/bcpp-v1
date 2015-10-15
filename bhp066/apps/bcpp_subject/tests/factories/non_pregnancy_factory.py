@@ -1,12 +1,13 @@
 import factory
 
-from datetime import date, datetime
+from datetime import datetime
 
-from ...models import NonPregnancy
+from bhp066.apps.bcpp_subject.models import NonPregnancy
+from edc_constants.constants import YES
 
 
 class NonPregnancyFactory(factory.DjangoModelFactory):
     FACTORY_FOR = NonPregnancy
 
     report_datetime = datetime.today()
-    more_children = (('Yes', u'Yes'), ('No', u'No'), ('not_sure', u'I am not sure'), ('not_answering', u"Don't want to answer"))[0][0]
+    more_children = YES

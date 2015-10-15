@@ -3,13 +3,13 @@ from datetime import datetime
 from django.core.validators import RegexValidator
 from django.db import models
 
-from edc_base.audit_trail import AuditTrail
-from edc_base.model.fields import OtherCharField
-from edc_base.encrypted_fields import EncryptedTextField
-from edc_base.model.validators import date_is_future
-from edc.choices import YES_NO_UNKNOWN, TIME_OF_DAY, TIME_OF_WEEK, ALIVE_DEAD_UNKNOWN, YES_NO
-from edc_constants.constants import YES, NO, DEAD
 from edc.device.sync.models import BaseSyncUuidModel
+from edc_base.audit_trail import AuditTrail
+from edc_base.encrypted_fields import EncryptedTextField
+from edc_base.model.fields import OtherCharField
+from edc_base.model.validators import date_is_future
+from edc_constants.choices import YES_NO_UNKNOWN, TIME_OF_DAY, TIME_OF_WEEK, ALIVE_DEAD_UNKNOWN, YES_NO
+from edc_constants.constants import YES, NO, DEAD
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models.survey import Survey

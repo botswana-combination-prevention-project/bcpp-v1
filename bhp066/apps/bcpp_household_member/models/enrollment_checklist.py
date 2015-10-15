@@ -5,15 +5,14 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.db import models
 
-from edc.choices.common import GENDER
-from edc.choices.common import YES_NO, YES_NO_NA, BLOCK_CONTINUE
+from edc_constants.choices import GENDER, YES_NO, YES_NO_NA
 from edc_constants.constants import NOT_APPLICABLE
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.validators import datetime_not_before_study_start, datetime_not_future
 from edc_base.model.validators import dob_not_future
-from edc_consent.validators import ConsentAgeValidator
+from edc_consent.models.validators import AgeTodayValidator
 
 from ..constants import BHS_SCREEN, BHS_ELIGIBLE, NOT_ELIGIBLE, HTC_ELIGIBLE
 from ..exceptions import MemberStatusError
@@ -23,11 +22,16 @@ from bhp066.apps.bcpp_household.exceptions import AlreadyReplaced
 
 from .household_member import HouseholdMember
 
+BLOCK_CONTINUE = (
+    ('Block', 'Yes( Block from further participation)'),
+    ('Continue', 'No (Can continue and participate)'),
+    (NOT_APPLICABLE, 'Not applicable'),
+)
 
-class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+
+class BaseEnrollmentChecklist(models.Model):
     """A model completed by the user that captures and confirms BHS enrollment eligibility
     criteria."""
-    household_member = models.OneToOneField(HouseholdMember)
 
     report_datetime = models.DateTimeField(
         verbose_name="Report Date and Time",
@@ -50,7 +54,7 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         verbose_name="Date of birth",
         validators=[
             dob_not_future,
-            ConsentAgeValidator(16, 64)],
+            AgeTodayValidator(16, 64)],
         null=True,
         blank=False,
         help_text="Format is YYYY-MM-DD. (Data will not be saved)")
@@ -162,18 +166,28 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         help_text=('Was autofilled on data conversion')
     )
 
+    class Meta:
+        abstract = True
+
+
+class EnrollmentChecklist(BaseEnrollmentChecklist, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+    """A model completed by the user that captures and confirms BHS enrollment eligibility
+    criteria."""
+
+    household_member = models.ForeignKey(HouseholdMember)
+
     objects = EnrollmentChecklistManager()
 
     history = AuditTrail()
 
     def __unicode__(self):
-        return str(self.household_member)
+        return str((self.household_member, self.report_datetime))
 
     def natural_key(self):
         if not self.household_member:
             raise AttributeError('household_member cannot be None for household_head_eligibility '
                                  'with pk=\'{0}\''.format(self.pk))
-        return self.household_member.natural_key()
+        return self.household_member.natural_key() + self.report_datetime
     natural_key.dependencies = ['bcpp_household.household_member']
 
     def dispatch_container_lookup(self, using=None):
@@ -271,3 +285,4 @@ class EnrollmentChecklist(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     class Meta:
         app_label = "bcpp_household_member"
         verbose_name = "Enrollment Checklist"
+        unique_together = (('household_member', 'report_datetime'))

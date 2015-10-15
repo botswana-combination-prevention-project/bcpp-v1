@@ -12,7 +12,7 @@ from edc_consent.models.consent_type import ConsentType
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_subject.models import (
-    SubjectConsent, SubjectVisit, SubjectLocator, SubjectReferral,
+    SubjectConsent, SubjectConsentExtended, SubjectVisit, SubjectLocator, SubjectReferral,
     CorrectConsent, ElisaHivResult, HivResult)
 from bhp066.apps.bcpp_lab.models import SubjectRequisition, PackingList
 
@@ -42,11 +42,14 @@ class SubjectDashboard(BaseSubjectDashboard):
         self.dashboard_models['subject_consent'] = SubjectConsent
         self.dashboard_models['household_member'] = HouseholdMember
         self.dashboard_models['visit'] = self._visit_model
-        # self.appointment_code = kwargs.get('visit_code')
 
     def get_context_data(self, **kwargs):
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
-        latest_subject_consent = SubjectConsent.objects.filter(subject_identifier=self.subject_identifier).last()
+        try:
+            latest_subject_consent = SubjectConsent.objects.filter(
+                subject_identifier=self.subject_identifier).latest()
+        except SubjectConsent.DoesNotExist:
+            latest_subject_consent = None
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
         try:
             membership_form_extra_url_context = '&household_member={0}'.format(
@@ -59,14 +62,24 @@ class SubjectDashboard(BaseSubjectDashboard):
             unkeyed = self.context.get('unkeyed_membership_forms')
             try:
                 index = unkeyed.index(SubjectConsent)
+                if latest_subject_consent:
+                    unkeyed.insert(index, SubjectConsentExtended)
             except ValueError:
-                unkeyed.append(SubjectConsent)
-                index = unkeyed.index(SubjectConsent)
-            consent_type = ConsentType.objects.last()
-            unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+                if latest_subject_consent:
+                    unkeyed.append(SubjectConsentExtended)
+                    index = unkeyed.index(SubjectConsentExtended)
+                else:
+                    unkeyed.append(SubjectConsent)
+                    index = unkeyed.index(SubjectConsent)
+            try:
+                consent_type = ConsentType.objects.latest('start_datetime')
+                unkeyed[index]._meta.verbose_name = 'Subject Consent V{}'.format(consent_type.version)
+            except IndexError:
+                pass
             if unkeyed:
-                consenting_member = HouseholdMember.objects.get(internal_identifier=self.household_member.internal_identifier,
-                                                                household_structure__survey=Survey.objects.current_survey())
+                consenting_member = HouseholdMember.objects.get(
+                    internal_identifier=self.household_member.internal_identifier,
+                    household_structure__survey=Survey.objects.current_survey())
                 unkeyed_consent_context = '&household_member={0}'.format(consenting_member.pk)
                 self.context['unkeyed_consent_context'] = unkeyed_consent_context
             self.context['unkeyed_membership_forms'] = unkeyed
@@ -84,15 +97,6 @@ class SubjectDashboard(BaseSubjectDashboard):
             rendered_household_members_sidebar=self.render_household_members_sidebar(),
             membership_form_extra_url_context=membership_form_extra_url_context)
         return self.context
-
-#     @property
-#     def consent(self):
-#         """Returns to the subject consent instance or None."""
-#         try:
-#             subject_consent = SubjectConsent.objects.get(subject_identifier=self.subject_identifier)
-#         except SubjectConsent.DoesNotExist:
-#             subject_consent = None
-#         return subject_consent
 
     @property
     def appointments(self):

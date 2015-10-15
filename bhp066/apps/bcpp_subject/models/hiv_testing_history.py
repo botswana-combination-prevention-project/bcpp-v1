@@ -1,7 +1,7 @@
 from django.db import models
 
 from edc_base.audit_trail import AuditTrail
-from edc.choices import YES_NO_NA
+from edc_constants.choices import YES_NO_NA
 
 from bhp066.apps.bcpp.choices import YES_NO_DWTA, WHENHIVTEST_CHOICE, VERBALHIVRESULT_CHOICE
 
@@ -12,6 +12,8 @@ from .subject_consent import SubjectConsent
 
 
 class HivTestingHistory (BaseScheduledVisitModel):
+
+    """A model completed by the user of the particiapn's history of testing for HIV."""
 
     CONSENT_MODEL = SubjectConsent
 
@@ -43,7 +45,6 @@ class HivTestingHistory (BaseScheduledVisitModel):
         help_text="if no card available for viewing, proceed to next question",
     )
 
-    # used by admin_supplemental fields for HIV status condition??
     verbal_hiv_result = models.CharField(
         verbose_name="Please tell me the results of your last [most recent] HIV test?",
         max_length=30,

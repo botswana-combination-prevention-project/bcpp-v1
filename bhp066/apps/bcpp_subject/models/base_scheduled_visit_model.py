@@ -30,7 +30,7 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
         validators=[
             datetime_not_before_study_start,
             datetime_not_future, ],
-        default=datetime.now,  # By passing datetime.now without the parentheses, you are passing the actual function, which will be called each time a record is added ref: http://stackoverflow.com/questions/2771676/django-default-datetime-now-problem
+        default=datetime.now,
         help_text=('If reporting today, use today\'s date/time, otherwise use '
                    'the date/time this information was reported.'))
 
@@ -58,6 +58,12 @@ class BaseScheduledVisitModel(SubjectOffStudyMixin, RequiresConsentMixin,
 
     def get_visit(self):
         return self.subject_visit
+
+    def get_visit_code(self):
+        try:
+            return self.subject_visit.appointment.visit_definition.code
+        except AttributeError:
+            return None
 
     @classmethod
     def visit_model(self):

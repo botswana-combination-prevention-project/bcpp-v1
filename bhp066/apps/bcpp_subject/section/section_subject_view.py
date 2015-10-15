@@ -4,7 +4,7 @@ from django.conf import settings
 
 from edc.dashboard.section.classes import BaseSectionView, site_sections
 from edc.map.classes import site_mappers
-from edc.device.device.classes import Device
+from edc_device import device
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
@@ -42,7 +42,7 @@ class SectionSubjectView(BaseSectionView):
         Keyword Arguments:
             results_per_page: (default: 25)
         """
-        if Device().is_central_server:
+        if device.is_central_server:
             _search_result = []
             if not (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and
                     settings.FILTERED_DEFAULT_SEARCH):

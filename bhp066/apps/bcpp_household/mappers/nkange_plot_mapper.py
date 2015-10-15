@@ -14,6 +14,7 @@ class NkangePlotMapper(BasePlotMapper):
 
     map_area = 'nkange'
     map_code = '27'
+    pair = 10
     regions = SECTIONS
     sections = SUB_SECTIONS
 

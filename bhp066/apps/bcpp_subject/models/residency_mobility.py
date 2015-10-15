@@ -46,17 +46,19 @@ class ResidencyMobility (BaseScheduledVisitModel):
 
     # see redmine 423 and 401 and 126
     nights_away = models.CharField(
-        verbose_name="In the past 12 months, in total how many nights did you spend away"
-                     " from this community, including visits to cattle post and lands?"
-                     "[If you don't know exactly, give your best guess]",
+        verbose_name=(
+            "In the past 12 months, in total how many nights did you spend away"
+            " from this community, including visits to cattle post and lands?"
+            "[If you don't know exactly, give your best guess]"),
         max_length=35,
         choices=NIGHTSAWAY_CHOICE,
         help_text="",
     )
 
     cattle_postlands = models.CharField(
-        verbose_name="In the past 12 months, during the times you were away from this community, "
-                       "where were you primarily staying?",
+        verbose_name=(
+            "In the past 12 months, during the times you were away from this community, "
+            "where were you primarily staying?"),
         max_length=25,
         choices=CATTLEPOSTLANDS_CHOICE,
         default=NOT_APPLICABLE,

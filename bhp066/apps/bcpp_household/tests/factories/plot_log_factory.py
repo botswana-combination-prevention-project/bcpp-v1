@@ -1,8 +1,8 @@
 import factory
 
-from ...models import PlotLog
+from bhp066.apps.bcpp_household.models import PlotLog
 
-from ..factories import PlotFactory
+from .plot_factory import PlotFactory
 
 
 class PlotLogFactory(factory.DjangoModelFactory):

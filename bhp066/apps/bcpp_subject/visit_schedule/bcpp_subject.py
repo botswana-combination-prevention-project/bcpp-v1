@@ -137,7 +137,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(50L, u'bcpp_subject', u'hivtestreview', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(60L, u'bcpp_subject', u'hivresultdocumentation', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(70L, u'bcpp_subject', u'hivtested', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(80L, u'bcpp_subject', u'hivuntested', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(80L, u'bcpp_subject', u'hivuntested', NOT_REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(90L, u'bcpp_subject', u'sexualbehaviour', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(100L, u'bcpp_subject', u'monthsrecentpartner', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(110L, u'bcpp_subject', u'monthssecondpartner', REQUIRED, NOT_ADDITIONAL),

@@ -1,7 +1,7 @@
 from edc_constants.constants import YES, NO
 
-from ..models import HivCareAdherence
-from ..classes.rule_group_utilities import *
+from bhp066.apps.bcpp_subject.models import HivCareAdherence
+from bhp066.apps.bcpp_subject.classes.rule_group_utilities import *
 
 from .base_rule_group_test_setup import BaseRuleGroupTestSetup
 

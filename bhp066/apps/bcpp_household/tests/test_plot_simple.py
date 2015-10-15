@@ -1,16 +1,18 @@
 from datetime import date
-from django.test import TestCase
+from dateutil.relativedelta import relativedelta
+
 from django.db.models import Model
+from django.test import TestCase
 from django.test.utils import override_settings
 
 from edc.map.classes import site_mappers
-from bhp066.apps.bcpp_household.models import Plot
-from bhp066.apps.bcpp_household.classes import PlotIdentifier
-from bhp066.apps.bcpp_household.models import PlotIdentifierHistory
-from bhp066.apps.bcpp_household.models import Household
+
 from bhp066.apps.bcpp.app_configuration.classes.app_configuration import BcppAppConfiguration
+from bhp066.apps.bcpp_household.classes import PlotIdentifier
+from bhp066.apps.bcpp_household.models import Household
+from bhp066.apps.bcpp_household.models import Plot
+from bhp066.apps.bcpp_household.models import PlotIdentifierHistory
 from bhp066.apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
-from dateutil.relativedelta import relativedelta
 from bhp066.config.databases import TESTING_SQLITE
 
 

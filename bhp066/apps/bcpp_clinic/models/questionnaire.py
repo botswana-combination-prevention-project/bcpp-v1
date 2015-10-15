@@ -1,11 +1,10 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from edc.entry_meta_data.managers import EntryMetaDataManager
 from edc_base.audit_trail import AuditTrail
 from edc_base.model.fields import OtherCharField
-from edc.entry_meta_data.managers import EntryMetaDataManager
-
-from edc.choices import YES_NO_DWTA
+from edc_constants.choices import YES_NO_DWTA
 
 from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_visit import ClinicVisit

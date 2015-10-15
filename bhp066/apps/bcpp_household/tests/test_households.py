@@ -8,7 +8,8 @@ from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
                       PlotIdentifierHistory)
 
-from .factories import (PlotFactory, HouseholdLogEntryFactory)
+from .factories.plot_factory import PlotFactory
+from .factories.household_log_entry_factory import HouseholdLogEntryFactory
 
 
 class TestHouseholds(TestCase):
@@ -200,8 +201,8 @@ class TestHouseholds(TestCase):
 
     def test_household_identifier_history_updated(self):
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=8,
-                           status='residential_habitable')
+        PlotFactory(community=self.mapper().get_map_area(), household_count=8,
+                    status='residential_habitable')
         for household in Household.objects.all():
             # print household.household_identifier, household.plot.plot_identifier
             self.assertEquals(HouseholdIdentifierHistory.objects.filter(

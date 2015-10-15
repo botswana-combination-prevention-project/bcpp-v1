@@ -14,6 +14,7 @@ class MetsimotlhabePlotMapper(BasePlotMapper):
 
     map_area = 'metsimotlhabe'
     map_code = '29'
+    pair = 9
     regions = SECTIONS
     sections = SUB_SECTIONS
 

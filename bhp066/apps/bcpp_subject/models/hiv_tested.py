@@ -19,7 +19,7 @@ class HivTested (HivTestingSupplemental):
         verbose_name="How many times before today have you had an HIV test?",
         max_length=2,
         null=True,
-        help_text="supplemental",
+        help_text="",
     )
 
     where_hiv_test = models.CharField(
@@ -38,7 +38,7 @@ class HivTested (HivTestingSupplemental):
         max_length=105,
         null=True,
         choices=WHYHIVTEST_CHOICE,
-        help_text="supplemental",
+        help_text="",
     )
 
     history = AuditTrail()

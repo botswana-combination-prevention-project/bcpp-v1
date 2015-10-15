@@ -1,7 +1,4 @@
-# import pprint
-import socket
-
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 
 from django.db import connections
 from django.test import TestCase
@@ -13,16 +10,17 @@ from edc.map.classes import Mapper
 from edc.device.sync.utils import load_producer_db_settings, update_producer_from_settings
 from edc.device.sync.tests.factories import ProducerFactory
 from edc.device.dispatch.models.dispatch_item_register import DispatchItemRegister
-
+from edc_constants.constants import NO
 from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from bhp066.apps.bcpp_dispatch.classes import BcppDispatchController
-from bhp066.apps.bcpp_household.constants import (ELIGIBLE_REPRESENTATIVE_PRESENT,
-                                           ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
-                                           NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
-                                           RESIDENTIAL_HABITABLE)
+from bhp066.apps.bcpp_household.constants import (
+    ELIGIBLE_REPRESENTATIVE_PRESENT,
+    ELIGIBLE_REPRESENTATIVE_ABSENT, NO_HOUSEHOLD_INFORMANT,
+    NON_RESIDENTIAL, RESIDENTIAL_NOT_HABITABLE,
+    RESIDENTIAL_HABITABLE, FIVE_PERCENT)
 from bhp066.apps.bcpp_household.helpers import ReplacementHelper
-from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, Plot
-from bhp066.apps.bcpp_household_member.constants import REFUSED, ABSENT, BHS_SCREEN
+from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
+from bhp066.apps.bcpp_household_member.constants import REFUSED, ABSENT
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_household_member.models import SubjectAbsentee
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
@@ -31,11 +29,12 @@ from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_survey.models import Survey
 
-from ..constants import (RARELY_NEVER_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED, 
-                        FIVE_PERCENT)
-
-from .factories import (PlotFactory, HouseholdRefusalFactory, RepresentativeEligibilityFactory, 
-                       HouseholdLogEntryFactory, HouseholdAssessmentFactory)
+from ..constants import (RARELY_NEVER_OCCUPIED, SEASONALLY_NEARLY_ALWAYS_OCCUPIED, UNKNOWN_OCCUPIED)
+from .factories.plot_factory import PlotFactory
+from .factories.household_log_entry_factory import HouseholdLogEntryFactory
+from .factories.household_refusal_factory import HouseholdRefusalFactory
+from .factories.household_assessment_factory import HouseholdAssessmentFactory
+from .factories.reprentative_eligibility_factory import RepresentativeEligibilityFactory
 
 
 class TestPlotMapper(Mapper):
@@ -411,7 +410,6 @@ class TestPlotReplacement(TestCase):
             age_in_years=30,
             present_today='Yes',
             study_resident='Yes')
-        #hh2
         HouseholdMemberFactory(
             household_structure=household_structure2,
             gender='F',
@@ -613,8 +611,8 @@ class TestPlotReplacement(TestCase):
 #         member.save()
 #         member = HouseholdMember.objects.get(household_structure=household_structure)
 #         enrollment_checklist = EnrollmentChecklistFactory(
-#                                 household_member=member, 
-#                                 initials='BB', 
+#                                 household_member=member,
+#                                 initials='BB',
 #                                 dob=date(1989, 10, 10),
 #                                 gender='M',
 #                                 guardian='N/A')
@@ -641,18 +639,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with 1 absent member and no other eligible members is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure)
@@ -683,18 +681,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household multiple members that are absent that its replaceable."""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure)
@@ -737,18 +735,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household 3 members absent and 2 not absent that is not replaceable."""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure)
@@ -798,18 +796,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household initially is not replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         producer = ProducerFactory()
         producer = update_producer_from_settings(producer)
         # print producer.name
@@ -826,18 +824,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household without an informant after 3 enumeration attempt is replaceable if last_seen_home indicates 4_weeks_a_year"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -845,7 +843,9 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=SEASONALLY_OCCUPIED)  # Status value becomes seasonally occupied
+        HouseholdAssessmentFactory(household_structure=household_structure,
+                                   residency='No',
+                                   last_seen_home=SEASONALLY_NEARLY_ALWAYS_OCCUPIED)  # Status value becomes seasonally occupied
         producer = ProducerFactory()
         producer = update_producer_from_settings(producer)
         # print producer.name
@@ -867,18 +867,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household without an informant after 3 enumeration attempt is replaceable if last_seen_home indicates 1_night_less_than_4_weeks_year"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -903,18 +903,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household without an informant after 3 enumeration attempt is NOT replaceable if last_seen_home indicates never_spent_1_day_over_a_year"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -939,18 +939,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household without an informant after 3 enumeration attempt is not replaceable if last_seen_home is unknown"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -980,18 +980,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household without an informant after 2 enumeration attempts is not replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1013,18 +1013,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household without an informant after 1 enumeration attempt is not replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1045,18 +1045,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with present member that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1077,18 +1077,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with 3 household log entries the last 1 with present status that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1111,18 +1111,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with 3 enumeration attempts with no eligible representative present, that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1150,18 +1150,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1182,18 +1182,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with 1 enumeration attempts with no eligible representative present, that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1215,18 +1215,18 @@ class TestPlotReplacement(TestCase):
         """Asserts a household with 3 enumeration attempts with 2 no household informant and no eligible representative present that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1306,7 +1306,9 @@ class TestPlotReplacement(TestCase):
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=2))
         HouseholdLogEntryFactory(household_log=household_log, household_status=NO_HOUSEHOLD_INFORMANT, report_datetime=datetime.today() - timedelta(days=1))
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
-        HouseholdAssessmentFactory(household_structure=household_structure, residency='No', last_seen_home=NEARLY_ALWAYS_OCCUPIED)  # Status value becomes nearly always occupied occupied
+        HouseholdAssessmentFactory(household_structure=household_structure,
+                                   residency=NO,
+                                   last_seen_home=SEASONALLY_NEARLY_ALWAYS_OCCUPIED)
         producer = ProducerFactory()
         producer = update_producer_from_settings(producer)
         # print producer.name
@@ -1328,7 +1330,7 @@ class TestPlotReplacement(TestCase):
     def test_plot_replaces1(self):
         """Assert selects available plots correctly."""
         self.startup()
-        plot1 = PlotFactory(
+        PlotFactory(
             community='test_community',
             status=RESIDENTIAL_HABITABLE,
             gps_degrees_s=25,
@@ -1462,7 +1464,7 @@ class TestPlotReplacement(TestCase):
         replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         reason = replacement_helper.household_replacement_reason
         self.assertEqual(reason, 'household all_eligible_members_refused')
-        
+
     def test_household_replacement_reason2(self):
         """Asserts replacement reason for a household with a HOH who has refused."""
         self.startup()
@@ -1488,23 +1490,23 @@ class TestPlotReplacement(TestCase):
         replacement_helper.household_structure = HouseholdStructure.objects.get(household=household1, survey=self.survey1)
         reason = replacement_helper.household_replacement_reason
         self.assertEqual(reason, 'household refused_enumeration')
-        
+
     def test_household_replacement_reason3(self):
         """Asserts a replacement reason for household with 3 enumeration attempts with no eligible representative present, that is replaceable"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)
@@ -1515,23 +1517,23 @@ class TestPlotReplacement(TestCase):
         replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         reason = replacement_helper.household_replacement_reason
         self.assertEqual(reason, 'household eligible_representative_absent')
-        
+
     def test_household_replacement_reason4(self):
         """Asserts replacement reason for a household multiple members that are absent that its replaceable."""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         RepresentativeEligibilityFactory(household_structure=household_structure)
@@ -1557,23 +1559,23 @@ class TestPlotReplacement(TestCase):
         replacement_helper.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         reason = replacement_helper.household_replacement_reason
         self.assertEqual(reason, 'household all_eligible_members_absent')
-        
+
     def test_household_replacement_reason5(self):
         """Asserts replacement reason for a household without an informant after 3 enumeration attempt is not replaceable if last_seen_home is unknown"""
         self.startup()
         plot = PlotFactory(
-                community='test_community',
-                household_count=1,
-                status=RESIDENTIAL_HABITABLE,
-                eligible_members=3,
-                description="A blue house with yellow screen wall",
-                time_of_week='Weekdays',
-                time_of_day='Morning',
-                gps_degrees_s=25,
-                gps_minutes_s=0.786540,
-                gps_degrees_e=25,
-                gps_minutes_e=44.8981199,
-                selected=1)
+            community='test_community',
+            household_count=1,
+            status=RESIDENTIAL_HABITABLE,
+            eligible_members=3,
+            description="A blue house with yellow screen wall",
+            time_of_week='Weekdays',
+            time_of_day='Morning',
+            gps_degrees_s=25,
+            gps_minutes_s=0.786540,
+            gps_degrees_e=25,
+            gps_minutes_e=44.8981199,
+            selected=1)
         household = Household.objects.get(plot=plot)
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         household_log = HouseholdLog.objects.get(household_structure=household_structure)

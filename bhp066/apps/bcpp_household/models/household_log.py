@@ -60,7 +60,7 @@ class HouseholdLog(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         app_label = 'bcpp_household'
 
 
-class HouseholdLogEntry(BaseDispatchSyncUuidModel, BaseUuidModel):
+class HouseholdLogEntry(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     """A model completed by the user each time the household is visited."""
     household_log = models.ForeignKey(HouseholdLog)
 

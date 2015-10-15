@@ -29,8 +29,15 @@ class HouseholdMemberAdmin(BaseHouseholdMemberAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "household_structure":
-            kwargs["queryset"] = HouseholdStructure.objects.filter(id__exact=request.GET.get('household_structure', 0))
-
+            if request.GET.get('household_structure'):
+                kwargs["queryset"] = HouseholdStructure.objects.filter(
+                    id__exact=request.GET.get('household_structure', 0))
+            else:
+                self.readonly_fields = list(self.readonly_fields)
+                try:
+                    self.readonly_fields.index('household_structure')
+                except ValueError:
+                    self.readonly_fields.append('household_structure')
         return super(HouseholdMemberAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = ['household_structure',

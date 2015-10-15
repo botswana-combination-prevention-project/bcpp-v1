@@ -9,7 +9,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 from django.core.exceptions import ImproperlyConfigured
 
 from edc.apps.app_configuration.classes import BaseAppConfiguration
-from edc.device.device.classes import device
+from edc_device import device
 from edc.lab.lab_packing.models import DestinationTuple
 from edc.lab.lab_profile.classes import ProfileItemTuple, ProfileTuple
 from edc.map.classes import site_mappers
@@ -88,14 +88,14 @@ class BcppAppConfiguration(BaseAppConfiguration):
              'survey_slug': BASELINE_SURVEY_SLUG,
              'survey_abbrev': 'Y1',
              'datetime_start': study_start_datetime,
-             'datetime_end': datetime(2015, 8, 1, 23, 59, 0),
+             'datetime_end': datetime(2014, 11, 30, 23, 59, 0),
              'chronological_order': 1},
         'bcpp-year-2':
             {'survey_name': 'BCPP Year 2',
              'survey_slug': 'bcpp-year-2',
              'survey_abbrev': 'Y2',
-             'datetime_start': datetime(2015, 8, 2, 0, 0, 0),
-             'datetime_end': datetime(2016, 11, 19, 23, 59, 0),
+             'datetime_start': datetime(2015, 9, 1, 0, 0, 0),
+             'datetime_end': datetime(2015, 12, 19, 23, 59, 0),
              'chronological_order': 2},
         'bcpp-year-3':
             {'survey_name': 'BCPP Year 3',
@@ -110,6 +110,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
         {
             'app_label': 'bcpp_subject',
             'model_name': 'subjectconsent',
+            'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
+            'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
+            'version': '4',
+        },
+        {
+            'app_label': 'bcpp_subject',
+            'model_name': 'subjectconsentextended',
             'start_datetime': datetime(2015, 9, 16, 0, 0, 0),
             'end_datetime': datetime(2017, 12, 31, 23, 59, 0),
             'version': '4',
@@ -134,7 +141,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'start_datetime': datetime(2013, 10, 30, 0, 0, 0),
             'end_datetime': datetime(2014, 4, 9, 23, 59, 0),
             'version': '1',
-        }
+        },
     ]
 
     lab_clinic_api_setup = {
@@ -257,7 +264,8 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 'revision',
                 'subject_visit',
                 'user_created',
-                'user_modified'],
+                'user_modified',
+                'consent_version'],
             'header': True,
             'track_history': True,
             'show_all_fields': True,
@@ -361,7 +369,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
         Plot checks are bypassed if:
             * CURRENT_COMMUNITY == 'BHP'
             * SITE_CODE=='00'
-            * DEVICE_ID in ['99', ]
+            * DEVICE_ID in [device.central_server_id, ]
 
         Confirms:
             * mapper name an code match that in settings.
@@ -387,7 +395,7 @@ class BcppAppConfiguration(BaseAppConfiguration):
             community_check = settings.CURRENT_COMMUNITY_CHECK
         except AttributeError:
             community_check = True
-        if str(device) not in ['99', ] and community_check:
+        if str(device) not in [device.central_server_id, ] and community_check:
             try:
                 if Plot.objects.all()[0].plot_identifier[:2] != map_code:
                     raise ImproperlyConfigured('Community code {2} does not correspond with community code segment '
@@ -414,20 +422,20 @@ class BcppAppConfiguration(BaseAppConfiguration):
                 Survey.objects.create(**survey_values)
 
     def update_or_create_consent_type(self):
-        for type in self.consent_type_setup:
+        for item in self.consent_type_setup:
             try:
                 consent_type = ConsentType.objects.get(
-                    version=type.get('version'),
-                    app_label=type.get('app_label'),
-                    model_name=type.get('model_name'))
-                consent_type.start_datetime = type.get('start_datetime')
-                consent_type.end_datetime = type.get('end_datetime')
+                    version=item.get('version'),
+                    app_label=item.get('app_label'),
+                    model_name=item.get('model_name'))
+                consent_type.start_datetime = item.get('start_datetime')
+                consent_type.end_datetime = item.get('end_datetime')
                 consent_type.save()
             except ConsentType.DoesNotExist:
-                ConsentType.objects.create(**type)
+                ConsentType.objects.create(**item)
 
     def search_limit_setup(self):
-        if str(device) == '99':
+        if str(device) == device.central_server_id:
             if (settings.LIMIT_EDIT_TO_CURRENT_SURVEY and
                     settings.LIMIT_EDIT_TO_CURRENT_COMMUNITY and
                     settings.FILTERED_DEFAULT_SEARCH):

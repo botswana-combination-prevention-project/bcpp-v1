@@ -8,7 +8,7 @@ from django.test import TestCase
 from edc.entry_meta_data.models import entry_meta_data_on_post_save
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
-from edc.map.classes import Mapper, site_mappers
+from edc.map.classes import site_mappers
 from edc.subject.lab_tracker.classes import site_lab_tracker
 
 from edc.core.bhp_variables.models import StudySite
@@ -16,7 +16,6 @@ from edc.core.crypto_fields.classes import FieldCryptor
 from edc.device.sync.classes import SerializeToTransaction
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.visit_schedule.models import VisitDefinition
-from edc.entry_meta_data.models import ScheduledEntryMetaData
 from edc.subject.entry.models import Entry
 from edc.subject.appointment.models import Appointment
 
@@ -29,20 +28,29 @@ from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
-from bhp066.apps.bcpp_subject.tests.factories import (SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory,
-                                               SubjectReferralFactory, CallLogEntryFactory,
-                                               CallListFactory)
+from bhp066.apps.bcpp_subject.tests.factories import (
+    SubjectVisitFactory, SubjectLocatorFactory, CallLogFactory, CallLogEntryFactory,
+    CallListFactory)
 from bhp066.apps.bcpp_survey.models import Survey
+from django.test.utils import override_settings
 
 
 class TestNaturalKey(TestCase):
 
+    @override_settings(
+        SITE_CODE='00', CURRENT_COMMUNITY='bhp', CURRENT_SURVEY='bcpp-year-1',
+        CURRENT_COMMUNITY_CHECK=False, CURRENT_MAPPER='bhp', DEVICE='99',
+        LIMIT_EDIT_TO_CURRENT_SURVEY=False,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=False,
+        FILTERED_DEFAULT_SEARCH=False,
+    )
     def setUp(self):
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
         site_mappers.autodiscover()
+        BcppAppConfiguration.confirm_site_code_in_settings = False
         BcppAppConfiguration().prepare()
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
@@ -63,6 +71,13 @@ class TestNaturalKey(TestCase):
                 print 'checking for get_by_natural_key manager method key on {0}.'.format(model._meta.object_name)
                 self.assertTrue('get_by_natural_key' in dir(model.objects), 'get_by_natural_key key not found in {0}'.format(model._meta.object_name))
 
+    @override_settings(
+        SITE_CODE='00', CURRENT_COMMUNITY='bhp', CURRENT_SURVEY='bcpp-year-1',
+        CURRENT_COMMUNITY_CHECK=False, CURRENT_MAPPER='bhp', DEVICE='99',
+        LIMIT_EDIT_TO_CURRENT_SURVEY=False,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=False,
+        FILTERED_DEFAULT_SEARCH=False,
+    )
     def test_p3(self):
         print 'get a community name from the mapper classes'
         mapper = site_mappers.get_current_mapper()
@@ -70,11 +85,11 @@ class TestNaturalKey(TestCase):
         print 'No. of SURVEY = ' + str(Survey.objects.all().count())
         plot = PlotFactory(community=community, household_count=1, status='residential_habitable')
         print 'No. of HOUSEHOLDS = ' + str(Household.objects.all().count())
-        household = Household.objects.get(plot=plot)
+        Household.objects.get(plot=plot)
         self.assertEquals(HouseholdStructure.objects.all().count(), 3)
         self.assertEquals(Survey.objects.all().count(), 3)
         household_structure = HouseholdStructure.objects.get(survey=Survey.objects.all()[0])
-        representative_eligibility = RepresentativeEligibilityFactory(household_structure=household_structure)
+        RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(household_structure=household_structure)
         enrollment_checklist = EnrollmentChecklistFactory(household_member=household_member, initials=household_member.initials, has_identity='Yes', dob=date(1989, 01, 01))
         study_site = StudySite.objects.all()[0]
@@ -97,10 +112,6 @@ class TestNaturalKey(TestCase):
         appointment = Appointment.objects.get(visit_definition=visit_definition)
         # print 'No. of ScheduledEntryMetaData before Visit = '+str(ScheduledEntryMetaData.objects.all().count())
         subject_visit = SubjectVisitFactory(appointment=appointment, household_member=household_member)
-        # print 'No. of ScheduledEntryMetaData after Visit = '+str(ScheduledEntryMetaData.objects.all().count())
-        #subject_referral = SubjectReferralFactory(subject_visit=subject_visit)
-        # SubjectDeath : Independent Natural Keys
-        # SubjectLocator : Independent Natural Key
         signals.post_save.disconnect(entry_meta_data_on_post_save, weak=False, dispatch_uid="entry_meta_data_on_post_save")
 
         aliquot_type = AliquotType.objects.all()[0]
@@ -118,7 +129,6 @@ class TestNaturalKey(TestCase):
         call_log2 = CallLogFactory(household_member=household_member, survey=year_1_survey, label='call_label_2')
         call_log_entry = CallLogEntryFactory(call_log=call_log, survey=year_1_survey, call_datetime=datetime.now())
         call_log_entry2 = CallLogEntryFactory(call_log=call_log, survey=year_1_survey, call_datetime=datetime.now() + timedelta(minutes=3))
-        #instances.append(subject_referral)
         instances.append(subject_locator)
         instances.append(requisition1)
         instances.append(requisition2)

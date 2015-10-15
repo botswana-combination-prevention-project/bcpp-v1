@@ -2,7 +2,7 @@ import factory
 
 from datetime import datetime
 
-from ...models import Cd4History
+from bhp066.apps.bcpp_subject.models import Cd4History
 
 
 class Cd4HistoryFactory(factory.DjangoModelFactory):

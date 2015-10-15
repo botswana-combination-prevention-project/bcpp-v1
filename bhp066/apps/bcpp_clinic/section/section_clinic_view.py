@@ -1,6 +1,6 @@
 from datetime import date
 
-from edc.device.device.classes import device
+from edc_device import device
 from edc.map.classes import site_mappers
 
 from bhp066.apps.bcpp_survey.models import Survey
@@ -36,5 +36,5 @@ class SectionClinicView(BaseSectionView):
         return context
 
 # only include section for CPC or the central server
-if site_mappers.get_current_mapper().intervention or device.device_id == '99':
+if site_mappers.get_current_mapper().intervention or device.device_id == device.central_server_id:
     site_sections.register(SectionClinicView)

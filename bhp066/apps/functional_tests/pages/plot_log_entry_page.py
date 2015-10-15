@@ -8,9 +8,8 @@ class PlotLogEntryPage(BaseModelAdminPage):
     plot_status = (By.ID, 'id_log_status')
     accessible = (By.ID, 'id_log_status_0')
     inaccessible = (By.ID, 'id_log_status_1')
-    today = (By.XPATH, "//form[@id='plotlogentry_form']/descendant::a[text()='Today']")
-    now = (By.XPATH, "//form[@id='plotlogentry_form']/descendant::a[text()='Now']")
-    save_button = (By.NAME, "_save")
+    today = (By.XPATH, ".//*[@id='plotlogentry_form']/div/fieldset/div[2]/div/p/span[1]/a[1]")
+    now = (By.XPATH, ".//*[@id='plotlogentry_form']/div/fieldset/div[2]/div/p/span[2]/a[1]")
 
     def set_report_date(self, date):
         dateElement = self.browser.find_element(*PlotLogEntryPage.report_date)
@@ -31,19 +30,25 @@ class PlotLogEntryPage(BaseModelAdminPage):
     def select_inaccessible(self):
         return self.browser.find_element(*PlotLogEntryPage.inaccessible)
 
+    @property
     def click_today(self):
         self.browser.find_element(*PlotLogEntryPage.today).click()
 
+    @property
     def click_now(self):
         self.browser.find_element(*PlotLogEntryPage.now).click()
 
-    def fill_plot_log_entry(self, date=None, time=None, plot_status=None):
+    @property
+    def is_plot_log_entry(self):
+        return self.browser.find_element(*PlotLogEntryPage.plot_status).is_displayed()
+
+    def fill_plot_log_entry(self, plot_status, date=None, time=None):
         if not date:
-            self.click_today()
+            self.click_today
         else:
             self.set_report_date(date)
         if not time:
-            self.click_now()
+            self.click_now
         else:
             self.set_report_time(time)
         self.set_plot_status(plot_status)

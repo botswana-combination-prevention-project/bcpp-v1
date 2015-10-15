@@ -1,1 +1,0 @@
-from .test_app_configuration import BcppAppConfigurationTests
