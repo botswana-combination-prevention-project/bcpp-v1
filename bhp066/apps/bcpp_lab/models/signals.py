@@ -24,7 +24,7 @@ def requisition_not_drawn(sender, instance, raw, created, using, **kwargs):
 def create_preorder_on_post_save(sender, instance, raw, created, using, **kwargs):
     if not raw:
         try:
-            for name in instance.create_preorder_for_panels(instance):
+            for name in instance.create_preorder_for_panels():
                 try:
                     panel = Panel.objects.get(name=name)
                     PreOrder.objects.get(panel=panel, subject_visit=instance.subject_visit)
