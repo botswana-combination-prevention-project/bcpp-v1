@@ -1,1 +1,2 @@
-from .aliquot_community_filter import AliquotCommunityFilter, PocViralLoadRequsitions
+from .aliquot_community_filter import AliquotCommunityFilter
+from .poc_vl_requisition_filter import PocVLRequsitionFilter

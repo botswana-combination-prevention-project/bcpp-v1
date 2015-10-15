@@ -1,6 +1,6 @@
 LOCAL_APPS = (
     'bhp066.apps.bcpp',
-    'bhp066.apps.bcpp.app_configuration',
+    # 'bhp066.apps.bcpp.app_configuration',
     'bhp066.apps.bcpp_list',
     'bhp066.apps.bcpp_dashboard',
     'bhp066.apps.bcpp_stats',

@@ -1,19 +1,19 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from edc_constants.constants import YES, NO
 from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.entry_meta_data.managers import RequisitionMetaDataManager
 from edc.lab.lab_requisition.models import BaseRequisition
 from edc.map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
+from edc_constants.constants import YES, NO
 
 
 from bhp066.apps.bcpp.choices import COMMUNITIES
 from bhp066.apps.bcpp_inspector.classes import InspectorMixin
-from bhp066.apps.bcpp_subject.models import SubjectVisit
 from bhp066.apps.bcpp_subject.constants import VIRAL_LOAD, POC_VIRAL_LOAD
+from bhp066.apps.bcpp_subject.models import SubjectVisit
 
 from ..managers import SubjectRequisitionManager
 
@@ -24,8 +24,6 @@ from .panel import Panel
 class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     subject_visit = models.ForeignKey(SubjectVisit)
-
-    # packing_list = models.ForeignKey(PackingList, null=True, blank=True)
 
     aliquot_type = models.ForeignKey(AliquotType)
 
@@ -60,14 +58,27 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
     def visit_code(self):
         return self.subject_visit.appointment.visit_definition.code
 
+    def requires_poc_vl(self, instance=None):
+        from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
+        instance = instance or self
+        return instance.panel.name == VIRAL_LOAD and func_poc_vl(instance.subject_visit)
+
+    def create_preorder_for_panels(self, instance=None):
+        instance = instance or self
+        if self.requires_poc_vl(instance):
+            return [POC_VIRAL_LOAD]
+        return []
+
     @property
-    def is_pov_vl(self):
-        from ..models import PreOrder
-        if (self.panel.name == VIRAL_LOAD and PreOrder.objects.filter(
-                subject_visit=self.subject_visit, panel__name=POC_VIRAL_LOAD)):
-            return 'Yes'
-        else:
-            return 'No'
+    def is_poc_vl(self):
+        PreOrder = models.get_model('bcpp_lab', 'PreOrder')
+        try:
+            PreOrder.objects.get(
+                subject_visit=self.subject_visit,
+                panel__name=POC_VIRAL_LOAD)
+            return YES
+        except PreOrder.DoesNotExist:
+            return NO
 
     @property
     def optional_description(self):
