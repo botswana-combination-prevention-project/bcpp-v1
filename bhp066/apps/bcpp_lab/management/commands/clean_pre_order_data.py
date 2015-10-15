@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from __future__ import print_function
+
 from django.core.management.base import BaseCommand, CommandError
 
 from bhp066.apps.bcpp_subject.constants import POC_VIRAL_LOAD, VIRAL_LOAD
@@ -41,13 +40,13 @@ class Command(BaseCommand):
                 panel__name=VIRAL_LOAD)
             for subject_requisition in subject_requisitions:
                 if subject_requisition.create_preorder_for_panels():
-                    name = subject_requisition.create_preorder_for_panels()
+                    name = subject_requisition.create_preorder_for_panels()[0]
                     try:
                         panel = Panel.objects.get(name=name)
                         PreOrder.objects.get(panel=panel, subject_visit=subject_requisition.subject_visit)
                     except PreOrder.DoesNotExist:
                         PreOrder.objects.create(
                             panel=panel,
-                            preorder_datetime=datetime.now(),
+                            preorder_datetime=subject_requisition.requisition_datetime,
                             subject_visit=subject_requisition.subject_visit)
                         print("Pre Order created.")
