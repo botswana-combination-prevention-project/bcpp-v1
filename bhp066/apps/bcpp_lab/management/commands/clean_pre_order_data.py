@@ -33,7 +33,6 @@ class Command(BaseCommand):
                     pre_order.save()
                     count += 1
                     print(count, " of ", total_pre_oders)
-        if not device.is_server and not device.is_middleman:
             subject_requisitions = SubjectRequisition.objects.filter(
                 subject_visit__household_member__household_structure__household__plot__community=community_name,
                 is_drawn=YES,
