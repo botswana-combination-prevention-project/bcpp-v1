@@ -58,14 +58,12 @@ class SubjectRequisition(InspectorMixin, BaseRequisition, BaseDispatchSyncUuidMo
     def visit_code(self):
         return self.subject_visit.appointment.visit_definition.code
 
-    def requires_poc_vl(self, instance=None):
+    def requires_poc_vl(self):
         from bhp066.apps.bcpp_subject.classes.rule_group_utilities import func_poc_vl
-        instance = instance or self
-        return instance.panel.name == VIRAL_LOAD and func_poc_vl(instance.subject_visit)
+        return self.panel.name == VIRAL_LOAD and func_poc_vl(self.subject_visit)
 
-    def create_preorder_for_panels(self, instance=None):
-        instance = instance or self
-        if self.requires_poc_vl(instance):
+    def create_preorder_for_panels(self):
+        if self.requires_poc_vl():
             return [POC_VIRAL_LOAD]
         return []
 
