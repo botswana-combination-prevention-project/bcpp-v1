@@ -40,6 +40,6 @@ class Command(BaseCommand):
             total_subject_requisitions = subject_requisitions.count()
             count = 0
             for subject_requisition in subject_requisitions:
-                subject_requisition.create_preorder_for_panels(subject_requisition)
+                subject_requisition.create_preorder_for_panels()
                 count += 1
                 print(count, " of ", total_subject_requisitions)
