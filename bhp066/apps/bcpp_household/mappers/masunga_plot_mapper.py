@@ -31,8 +31,8 @@ class MasungaPlotMapper(BasePlotMapper):
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
             start_date=date(2015, 10, 15),
-            full_enrollment_date=date(2015, 11, 7),
-            end_date=date(2015, 11, 14),
+            full_enrollment_date=date(2015, 11, 5),
+            end_date=date(2015, 11, 6),
             smc_start_date=date(2016, 1, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
