@@ -50,7 +50,7 @@ class NataPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((TU, TH, ), None),
+            'IDCC': ClinicDaysTuple((TU, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
