@@ -2,7 +2,7 @@ import os
 import csv
 
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import get_model
+from django.db.models import get_model, Q
 
 from bhp066.apps.bcpp_household.constants import BASELINE_SURVEY_SLUG
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
@@ -30,8 +30,10 @@ class Command(BaseCommand):
             writer = csv.writer(f)
             writer.writerow(['subject_identifier', 'community', 'subject_identifier_aka', 'dm_reference'])
             for hm in HouseholdMember.objects.filter(
-                    household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG,
-                    registered_subject__subject_identifier__startswith='066',
+                    Q(household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG),
+                    ~Q(household_structure__household__plot__status='bcpp_clinic'),
+                    Q(registered_subject__subject_identifier__startswith='066'),
+                    ~Q(registered_subject__registration_status='member'),
                     household_structure__household__plot__community__in=communities).order_by(
                         'registered_subject__subject_identifier'):
                 n += 1
