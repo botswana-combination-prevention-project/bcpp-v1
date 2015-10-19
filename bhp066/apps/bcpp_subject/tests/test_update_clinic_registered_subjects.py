@@ -8,7 +8,12 @@ from edc.subject.registration.models.registered_subject import RegisteredSubject
 from bhp066.apps.bcpp_household.tests.factories.household_factory import HouseholdFactory
 from bhp066.apps.bcpp_household.tests.factories.plot_factory import PlotFactory
 from bhp066.apps.bcpp_household_member.models.household_member import HouseholdMember
-from ..classes import ClinicRegisteredSubjectHelper
+from bhp066.apps.bcpp_clinic.tests.factories.clinic_eligibility_factory import ClinicEligibilityFactory
+from bhp066.apps.bcpp_subject.classes.clinic_registered_subject_helper import ClinicRegisteredSubjectHelper
+from bhp066.apps.bcpp_clinic.tests.factories.clinic_consent_factory import ClinicConsentFactory
+from bhp066.apps.bcpp_clinic.tests.factories.clinic_visit_factory import ClinicVisitFactory
+from edc.subject.appointment.models.appointment import Appointment
+from bhp066.apps.bcpp_subject.models.subject_consent import SubjectConsent
 
 
 class TestUpdateClinicRegisteredSubjects(TestCase):
@@ -18,15 +23,15 @@ class TestUpdateClinicRegisteredSubjects(TestCase):
         for _ in range(2):
             RegisteredSubjectFactory(identity='317918515')
         
-        registered_subject = RegisteredSubject.objects.all()[0]
+        self.cregistered_subject = RegisteredSubject.objects.all()[0]
         household_structure = HouseholdStructureFactory()
-        HouseholdMemberFactory(registered_subject=registered_subject, household_structure=household_structure)
+        self.household_member = HouseholdMemberFactory(registered_subject=self.cregistered_subject, household_structure=household_structure)
         
-        registered_subject = RegisteredSubject.objects.all()[1]
+        self.registered_subject = RegisteredSubject.objects.all()[1]
         plot = PlotFactory(status='bcpp_clinic', plot_identifier='160000-00')
         household = HouseholdFactory(plot=plot)
         household_structure = HouseholdStructureFactory(household=household)
-        HouseholdMemberFactory(registered_subject=registered_subject, household_structure=household_structure)
+        self.clinic_household_member = HouseholdMemberFactory(registered_subject=self.registered_subject, household_structure=household_structure)
         self.clinic_helper = ClinicRegisteredSubjectHelper()
     
     def test_find_duplicates(self):
@@ -73,6 +78,36 @@ class TestUpdateClinicRegisteredSubjects(TestCase):
         except HouseholdMember.DoesNotExist:
             pass
     
-    def test_clinic_appointment(self):
-        pass
+    def test_update_clinic_appointment(self):
+        self.clinic_eligibility = ClinicEligibilityFactory(
+                household_member=self.clinic_household_member,
+                identity='317918515',
+        )
+        self.clinic_consent = ClinicConsentFactory(
+              registered_subject=self.cregistered_subject,
+              identity='317918515',
+        )
+        self.clinic_visit = ClinicVisitFactory(
+            subject_identifier=self.cregistered_subject.subject_identifier                                 
+        )
+        appointment = Appointment.history.filter(
+            registered_subject__identity=self.cregistered_subject.identity,
+            visit_definition__code='C0')
+        self.assertEqual(1, appointment.count())
+        self.assertNotEqual(appointment[0].registered_subject.id, self.registered_subject.id)
+        self.clinic_helper.update_clinic_appointment(self.registered_subject)
+        self.assertEqual(appointment[0].registered_subject.id, self.registered_subject.id)
+        
+        
+    def test_update_clinic_consent(self):
+        self.clinic_eligibility = ClinicEligibilityFactory(
+                household_member=self.clinic_household_member,
+                identity='317918515',
+        )
+        self.clinic_consent = ClinicConsentFactory(
+              registered_subject=self.cregistered_subject,
+              identity='317918515',
+        )
+        self.clinic_consent = SubjectConsent.objects.filter(registered_subject__identity=self.registered_subject.identity)
+        self.assertEqual(1, self.clinic_consent.count())
     

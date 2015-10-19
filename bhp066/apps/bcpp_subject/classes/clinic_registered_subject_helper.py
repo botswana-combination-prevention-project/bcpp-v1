@@ -193,9 +193,5 @@ class ClinicRegisteredSubjectHelper(object):
             print ('{0}. {1}'.format(i, bcpp_registered_subject))
             i += 1
             for clinic_model in self.get_all_clinic_models():
-                # app_label, model = clinic_model
-                # clinic_model = get_model(app_label, model)
                 self.replace_registered_subject_for_clinic_models(bcpp_registered_subject, clinic_model)
-                self.replace_registered_subject_for_clinic_models_audit(bcpp_registered_subject, clinic_model)
-                # self.track_outgoing_transactions()
                 print ('{} updated'.format(clinic_model._meta.model_name))
