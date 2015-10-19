@@ -11,13 +11,13 @@ class HivTestReviewForm (BaseSubjectModelForm):
 
     def clean(self):
         cleaned_data = super(HivTestReviewForm, self).clean()
-        self.clean_recorded_hiv_result(cleaned_data)
+        self.recorded_hiv_result(cleaned_data)
         if cleaned_data.get('hiv_test_date'):
             if cleaned_data.get('hiv_test_date') == date.today():
                 raise forms.ValidationError('The HIV test date cannot be equal to today\'s date. Please correct.')
         return cleaned_data
-    
-    def clean_recorded_hiv_result(self, cleaned_data):
+
+    def recorded_hiv_result(self, cleaned_data):
         subject_visit = cleaned_data.get("subject_visit")
         try:
             hiv_testing_history = HivTestingHistory.objects.get(subject_visit=subject_visit)
