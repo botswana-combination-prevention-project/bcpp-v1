@@ -24,22 +24,22 @@ class MasungaPlotMapper(BasePlotMapper):
 
     gps_center_lat = -20.667218
     gps_center_lon = 27.428340
-    radius = 6.0
+    radius = 7.5
     location_boundary = ()
 
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 10, 8),
-            full_enrollment_date=date(2015, 10, 24),
-            end_date=date(2015, 11, 14),
+            start_date=date(2015, 10, 15),
+            full_enrollment_date=date(2015, 11, 5),
+            end_date=date(2015, 11, 6),
             smc_start_date=date(2016, 1, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2016, 1, 1),
+            full_enrollment_date=date(2016, 2, 17),
+            end_date=date(2016, 2, 22),
+            smc_start_date=date(2016, 12, 22)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
             start_date=None,
@@ -50,7 +50,7 @@ class MasungaPlotMapper(BasePlotMapper):
 
     clinic_days = {
         BASELINE_SURVEY_SLUG: {
-            'IDCC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'IDCC': ClinicDaysTuple((MO, TU, WE, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
