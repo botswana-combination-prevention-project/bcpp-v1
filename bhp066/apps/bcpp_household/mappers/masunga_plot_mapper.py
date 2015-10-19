@@ -24,7 +24,7 @@ class MasungaPlotMapper(BasePlotMapper):
 
     gps_center_lat = -20.667218
     gps_center_lon = 27.428340
-    radius = 6.0
+    radius = 7.5
     location_boundary = ()
 
     survey_dates = {
