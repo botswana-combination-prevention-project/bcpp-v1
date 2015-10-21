@@ -8,6 +8,7 @@ from edc.subject.appointment.models import Appointment
 from edc.subject.appointment_helper.classes import AppointmentHelper
 from edc.subject.appointment_helper.exceptions import AppointmentCreateError
 from edc_consent.models.consent_type import ConsentType
+from edc_device import device
 
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
@@ -77,10 +78,23 @@ class SubjectDashboard(BaseSubjectDashboard):
             except IndexError:
                 pass
             if unkeyed:
-                consenting_member = HouseholdMember.objects.get(
-                    internal_identifier=self.household_member.internal_identifier,
-                    household_structure__survey=Survey.objects.current_survey())
-                unkeyed_consent_context = '&household_member={0}'.format(consenting_member.pk)
+                consenting_member = None
+                member_being_viewed = None
+                try:
+                    # If you are in a site machine and trying to consent, then you are certain that you have the
+                    # the household member that corresponds to the current survey. You are also certain that the
+                    # the member you want to consent will always be the member of the curent survey setting in the
+                    # machine.
+                    consenting_member = HouseholdMember.objects.get(
+                        internal_identifier=self.household_member.internal_identifier,
+                        household_structure__survey=Survey.objects.current_survey())
+                except HouseholdMember.DoesNotExist:
+                    # If you cannot find the member of this current survey, then you are probably trying to view the
+                    # dashboard of a member from the past. This can only happen in the central server.
+                    if device.is_central_server:
+                        member_being_viewed = self.household_member
+                dashboard_member = consenting_member if consenting_member else member_being_viewed
+                unkeyed_consent_context = '&household_member={0}'.format(dashboard_member.pk)
                 self.context['unkeyed_consent_context'] = unkeyed_consent_context
             self.context['unkeyed_membership_forms'] = unkeyed
         self.context.update(
