@@ -160,9 +160,6 @@ class PimaVl (QuotaMixin, SubjectOffStudyMixin, RequiresConsentMixin, TimePointS
     def dispatch_container_lookup(self, using=None):
         return (Plot, 'subject_visit__household_member__household_structure__household__plot__plot_identifier')
 
-    def bypass_for_edit_dispatched_as_item(self, using=None, update_fields=None):
-        """Bypasses dispatched check if update_fields is set by the replacement_helper."""
-        return True
 
     class Meta:
         app_label = 'bcpp_subject'
