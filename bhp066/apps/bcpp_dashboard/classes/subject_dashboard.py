@@ -47,6 +47,11 @@ class SubjectDashboard(BaseSubjectDashboard):
     def get_context_data(self, **kwargs):
         self.context = super(SubjectDashboard, self).get_context_data(**kwargs)
         try:
+            first_subject_consent = SubjectConsent.objects.filter(
+                subject_identifier=self.subject_identifier).order_by('created').first()
+        except SubjectConsent.DoesNotExist:
+            first_consent_consent = None
+        try:
             latest_subject_consent = SubjectConsent.objects.filter(
                 subject_identifier=self.subject_identifier).latest()
         except SubjectConsent.DoesNotExist:
@@ -103,6 +108,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             household_dashboard_url=self.household_dashboard_url,
             title='Research Subject Dashboard',
             subject_consent=latest_subject_consent,
+            first_consent=first_subject_consent,
             correct_consent=self.correct_consent(latest_subject_consent),
             subject_referral=self.subject_referral,
             last_subject_referral=self.last_subject_referral,
