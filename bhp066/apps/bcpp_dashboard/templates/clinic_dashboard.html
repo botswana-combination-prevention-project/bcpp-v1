@@ -12,6 +12,7 @@
     <td><B>Identifier:</B> {{clinic_consent.subject_identifier }}</td>
     <td><B>{{clinic_consent.identity_type|capfirst }}:</B> {{clinic_consent.identity|encrypted}}</td>
     <td><B>Born:</B> {{clinic_consent.dob|date:"Y-m-d" }} ({{clinic_consent.dob|age }})</td>
+    <td><B>Age:</B>{{clinic_consent.age_at_consent}}y at consent</td>
     <td><B>Consented:</B> {{clinic_consent.consent_datetime|date:"Y-m-d H:i" }}</td>
 </tr>
 </table>
