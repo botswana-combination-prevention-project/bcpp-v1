@@ -3,3 +3,4 @@ from .get_producer_status import get_producer_status
 from .update_increaseplotradius import update_increaseplotradius
 from .update_replaceables import update_replaceables
 from .survey_dates_tuple import SurveyDatesTuple
+from .update_household_work_list import update_household_work_list
