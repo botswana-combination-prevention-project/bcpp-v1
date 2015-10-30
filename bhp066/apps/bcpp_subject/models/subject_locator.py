@@ -47,7 +47,7 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
         default=NOT_APPLICABLE,
         verbose_name="If we are unable to contact the person indicated above, is there another"
                      " individual (including next of kin) with whom the study team can get"
-                     " in contact with?",
+                     " in contact with? ",
         help_text="",
     )
 
