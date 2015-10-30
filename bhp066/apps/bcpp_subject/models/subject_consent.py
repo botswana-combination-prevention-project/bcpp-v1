@@ -103,9 +103,8 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
 
     @property
     def age_at_consent(self):
-        age_in_years = relativedelta(date.today(), self.dob).years
-        years_since_consent = relativedelta(date.today(), self.consent_datetime).years
-        return age_in_years - years_since_consent
+        age_in_years = relativedelta(self.consent_datetime, self.dob).years
+        return age_in_years
 
     @property
     def survey_of_consent(self):

@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
@@ -45,6 +47,11 @@ class ClinicConsent(BaseHouseholdMemberConsent, ClinicOffStudyMixin, PersonalFie
     def save(self, *args, **kwargs):
         self.community = site_mappers.get_current_mapper().map_area
         super(ClinicConsent, self).save(*args, **kwargs)
+
+    @property
+    def age_at_consent(self):
+        age_in_years = relativedelta(self.consent_datetime, self.dob).years
+        return age_in_years
 
     def is_dispatchable_model(self):
         return False
