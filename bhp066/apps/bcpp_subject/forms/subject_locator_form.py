@@ -1,4 +1,5 @@
 from django import forms
+from edc_constants.choices import NOT_APPLICABLE
 
 from ..models import SubjectLocator
 
@@ -35,8 +36,8 @@ class SubjectLocatorForm (BaseSubjectModelForm):
         if cleaned_data.get('may_call_work', None) == 'Yes' and not cleaned_data.get('subject_work_phone', None):
             raise forms.ValidationError('If participant has allowed you to call them at work, give the work phone number?')
         # Contact next-of-kin
-        if cleaned_data.get('may_contact_someone', None) == 'No' and not cleaned_data.get('has_alt_contact', None) == 'Not applicable':
-            raise forms.ValidationError('If participant has answered no to question 12 then this question is not applicable')
+        if cleaned_data.get('may_contact_someone', None) == 'No' and not cleaned_data.get('has_alt_contact', None) == NOT_APPLICABLE:
+            raise forms.ValidationError('If participant has answered No to question 12 then question 19 is Not Applicable')
         if cleaned_data.get('has_alt_contact', None) == 'Yes' and not cleaned_data.get('alt_contact_name', None):
             raise forms.ValidationError('If participant has allowed you to contact next-of-kin, what is their full name?')
         if cleaned_data.get('has_alt_contact', None) == 'Yes' and not cleaned_data.get('alt_contact_rel', None):
