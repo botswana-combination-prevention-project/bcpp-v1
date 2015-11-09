@@ -12,7 +12,7 @@ from edc_base.audit_trail import AuditTrail
 from edc_base.bw.validators import BWCellNumber, BWTelephoneNumber
 from edc_base.encrypted_fields import EncryptedCharField
 from edc_consent.models import RequiresConsentMixin
-from edc_constants.choices import YES_NO, YES, NO
+from edc_constants.choices import YES_NO_NA, YES, NO, NOT_APPLICABLE
 
 from bhp066.apps.bcpp_household.models import Plot
 
@@ -43,10 +43,11 @@ class SubjectLocator(ExportTrackingFieldsMixin, SubjectOffStudyMixin, BaseLocato
     )
     has_alt_contact = models.CharField(
         max_length=25,
-        choices=YES_NO,
+        choices=YES_NO_NA,
+        default=NOT_APPLICABLE,
         verbose_name="If we are unable to contact the person indicated above, is there another"
                      " individual (including next of kin) with whom the study team can get"
-                     " in contact with? ",
+                     " in contact with?",
         help_text="",
     )
 
