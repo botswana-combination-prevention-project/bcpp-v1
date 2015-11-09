@@ -203,11 +203,11 @@ class BaseCorrectConsent(models.Model):
             enrollment_checklist = self.enrollment_checklist
         except AttributeError:
             enrollment_checklist = self.subject_consent.household_member.enrollment_checklist
-        self.update_name_and_initials(enrollment_checklist)
-        self.update_gender(enrollment_checklist)
-        self.update_dob(enrollment_checklist)
-        self.update_guardian_name(enrollment_checklist)
-        self.update_is_literate(enrollment_checklist)
+        enrollment_checklist = self.update_name_and_initials(enrollment_checklist)
+        enrollment_checklist = self.update_gender(enrollment_checklist)
+        enrollment_checklist = self.update_dob(enrollment_checklist)
+        enrollment_checklist = self.update_guardian_name(enrollment_checklist)
+        enrollment_checklist = self.update_is_literate(enrollment_checklist)
         self.update_witness()
         self.subject_consent.household_member.save(
             update_fields=['first_name', 'initials', 'gender', 'age_in_years'])
@@ -233,6 +233,7 @@ class BaseCorrectConsent(models.Model):
             self.subject_consent.household_member.gender = self.new_gender
             enrollment_checklist.gender = self.new_gender
             self.subject_consent.gender = self.new_gender
+        return enrollment_checklist
 
     def update_dob(self, enrollment_checklist):
         if self.new_dob:
@@ -247,11 +248,13 @@ class BaseCorrectConsent(models.Model):
                 hic_enrollment.save(update_fields=['dob'])
             except HicEnrollment.DoesNotExist:
                 pass
+        return enrollment_checklist
 
     def update_guardian_name(self, enrollment_checklist):
         if self.new_guardian_name:
             enrollment_checklist.guardian = YES
             self.subject_consent.guardian_name = self.new_guardian_name
+        return enrollment_checklist
 
     def update_is_literate(self, enrollment_checklist):
         if self.new_is_literate:
@@ -261,6 +264,7 @@ class BaseCorrectConsent(models.Model):
                 self.subject_consent.witness_name = None
             if self.new_witness_name:
                 self.subject_consent.witness_name = self.new_witness_name
+        return enrollment_checklist
 
     def update_last_name(self):
         if self.new_last_name:
@@ -283,6 +287,7 @@ class BaseCorrectConsent(models.Model):
         self.subject_consent.household_member.initials = initials
         self.subject_consent.initials = initials
         enrollment_checklist.initials = initials
+        return enrollment_checklist
 
     class Meta:
         abstract = True
