@@ -24,5 +24,6 @@ class SubjectConsentFactory(BaseConsentFactory):
     citizen = YES
     is_verified = False
     identity = factory.Sequence(lambda n: 'identity{0}'.format(n))
+    confirm_identity = identity
     identity_type = (('OMANG', 'Omang'), ('DRIVERS', "Driver's License"), ('PASSPORT', 'Passport'), ('OMANG_RCPT', 'Omang Receipt'), ('OTHER', 'Other'))[0][0]
     is_signed = True
