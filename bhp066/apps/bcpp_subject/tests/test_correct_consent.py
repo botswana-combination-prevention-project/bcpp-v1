@@ -13,20 +13,17 @@ from edc.subject.registration.models import RegisteredSubject
 
 from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory
-from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory
-from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, CorrectConsentFactory, HicEnrollmentFactory, SubjectVisitFactory, ResidencyMobilityFactory, SubjectLocatorFactory
-from bhp066.apps.bcpp_household_member.tests.factories import EnrollmentChecklistFactory
-from bhp066.apps.bcpp_household_member.models import EnrollmentChecklist
-from bhp066.apps.bcpp_subject.models import SubjectConsent
+from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
+from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory, CorrectConsentFactory, SubjectVisitFactory
+from bhp066.apps.bcpp_household_member.models import HouseholdMember, EnrollmentChecklist
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
-from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
+from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibilityFactory
-from bhp066.apps.bcpp_household.constants import RESIDENTIAL_HABITABLE
 
-from ..models import HivResult, HicEnrollment
+from ..models import SubjectConsent
 
 
 class TestCorrectConsent(TestCase):
@@ -86,13 +83,12 @@ class TestCorrectConsent(TestCase):
         CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_last_name=self.female_last_name,
-            new_last_name='DIMO',
+            new_last_name='DIMSTAR',
         )
-        enrollment_checklist = EnrollmentChecklist.objects.get(household_member=self.household_member_female)
-        self.assertEquals(self.household_member_female.initials, self.female_initials)
-        self.assertEquals(enrollment_checklist.initials, self.female_initials)
-        self.assertEquals(self.subject_consent_female.initials, self.female_initials)
-        self.assertEquals(self.subject_consent_female.last_name, 'DIMO')
+        self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).initials, 'ED')
+        self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).initials, 'ED')
+        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).initials, 'ED')
+        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).last_name, 'DIMSTAR')
 
     def test_firstname_and_initials(self):
         CorrectConsentFactory(
@@ -100,10 +96,10 @@ class TestCorrectConsent(TestCase):
             old_first_name=self.female_first_name,
             new_first_name='GAME',
         )
-        self.assertEquals(self.household_member_female.initials, self.female_initials)
-        self.assertEquals(self.enrollment_checklist_female.initials, self.female_initials)
-        self.assertEquals(self.household_member_female.first_name, 'GAME')
-        self.assertEquals(self.subject_consent_female.first_name, 'GAME')
+        self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).initials, 'GW')
+        self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).initials, 'GW')
+        self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).first_name, 'GAME')
+        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).first_name, 'GAME')
 
 #     def test_dob(self):
 #         hic = HicEnrollmentFactory(subject_visit=self.subject_visit_female)
@@ -120,17 +116,19 @@ class TestCorrectConsent(TestCase):
     def test_gender(self):
         CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
-            old_gender='M',
-            new_gender='F',
+            old_gender='F',
+            new_gender='M',
         )
-        self.assertEquals(self.household_member_female.gender, 'F')
-        self.assertEquals(self.enrollment_checklist_female.gender, 'F')
-        self.assertEquals(self.subject_consent_female.gender, 'F')
+        self.assertEquals(HouseholdMember.objects.get(id=self.household_member_female_T0.id).gender, 'M')
+        self.assertEquals(EnrollmentChecklist.objects.get(id=self.enrollment_checklist_female.id).gender, 'M')
+        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).gender, 'M')
 
     def test_witness(self):
+        self.subject_consent_female.witness_name='DIMO'
+        self.subject_consent_female.save(update_fields=['witness_name'])
         CorrectConsentFactory(
             subject_consent=self.subject_consent_female,
             old_witness_name='DIMO',
             new_witness_name='BIMO',
         )
-        self.assertEquals(self.subject_consent_female.witness_name, 'BIMO')
+        self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).witness_name, 'BIMO')
