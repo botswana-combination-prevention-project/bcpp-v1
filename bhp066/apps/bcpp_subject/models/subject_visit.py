@@ -11,6 +11,7 @@ from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from ..choices import VISIT_UNSCHEDULED_REASON
 
 from .subject_off_study_mixin import SubjectOffStudyMixin
+from .subject_consent import SubjectConsent
 
 
 class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking,
@@ -19,7 +20,7 @@ class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking
     """A model completed by the user that captures the covering information for the data collected
     for this timepoint/appointment, e.g.report_datetime."""
 
-    # CONSENT_MODEL = SubjectConsent
+    CONSENT_MODEL = SubjectConsent
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -39,11 +40,11 @@ class SubjectVisit(SubjectOffStudyMixin, RequiresConsentMixin, BaseVisitTracking
         self.reason = 'consent'
         super(SubjectVisit, self).save(*args, **kwargs)
 
-    def __unicode__(self):
-        return '{} {} ({}) {}'.format(self.appointment.registered_subject.subject_identifier,
-                                      self.appointment.registered_subject.first_name,
-                                      self.appointment.registered_subject.gender,
-                                      self.appointment.visit_definition.code)
+#     def __unicode__(self):
+#         return '{} {} ({}) {}'.format(self.appointment.registered_subject.subject_identifier,
+#                                       self.appointment.registered_subject.first_name,
+#                                       self.appointment.registered_subject.gender,
+#                                       self.appointment.visit_definition.code)
 
     def dispatch_container_lookup(self):
         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
