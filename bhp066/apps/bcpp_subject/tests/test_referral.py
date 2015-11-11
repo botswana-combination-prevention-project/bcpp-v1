@@ -1298,6 +1298,55 @@ class TestReferral(BaseScheduledModelTestCase):
         self.assertIn('SMC-NEG', subject_referral.referral_code)
         self.assertEqual(ExportTransaction.objects.filter(tx_pk=subject_referral.pk).count(), 1)
 
+    def tests_new_pos_true(self):
+        """Test that new_pos field in referral is evaluated correctly when participant tested POS today"""
+        self.startup()
+        report_datetime = datetime.today()
+        panel = Panel.objects.get(name='Microtube')
+        SubjectRequisitionFactory(subject_visit=self.subject_visit_male, site=self.study_site, panel=panel, aliquot_type=AliquotType.objects.get(alpha_code='WB'))
+        HivResultFactory(subject_visit=self.subject_visit_male, hiv_result=POS, hiv_result_datetime=datetime.today())
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertTrue(subject_referral.todays_hiv_result)
+        self.assertFalse(subject_referral.indirect_hiv_documentation)
+        self.assertFalse(subject_referral.direct_hiv_documentation)
+        self.assertTrue(subject_referral.new_pos)
+
+    def tests_new_pos_false1(self):
+        """Test that new_pos field in referral is evaluated correctly when participant is a known POS trough
+           HivTestReview"""
+        self.startup()
+        report_datetime = datetime.today()
+        last_date = report_datetime.date() - relativedelta(years=3)
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result=POS, has_record=YES, other_record=NO)
+        HivTestReviewFactory(subject_visit=self.subject_visit_male, hiv_test_date=last_date, recorded_hiv_result=POS)
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertFalse(subject_referral.todays_hiv_result)
+        self.assertFalse(subject_referral.indirect_hiv_documentation)
+        self.assertTrue(subject_referral.direct_hiv_documentation)
+        self.assertFalse(subject_referral.new_pos)
+
+    def tests_new_pos_false2(self):
+        """Test that new_pos field in referral is evaluated correctly when participant is a known POS trough
+           HivResultDocumentation"""
+        self.startup()
+        report_datetime = datetime.today()
+        HivTestingHistoryFactory(subject_visit=self.subject_visit_male, verbal_hiv_result=POS, has_record=NO, other_record=YES)
+        HivResultDocumentationFactory(subject_visit=self.subject_visit_male, result_date=report_datetime - relativedelta(years=1), result_recorded=POS, result_doc_type='Record of CD4 count')
+        PimaFactory(subject_visit=self.subject_visit_male, cd4_value=499, report_datetime=datetime.today())
+        subject_referral = SubjectReferralFactory(
+            subject_visit=self.subject_visit_male,
+            report_datetime=report_datetime)
+        self.assertFalse(subject_referral.todays_hiv_result)
+        self.assertTrue(subject_referral.indirect_hiv_documentation)
+        self.assertFalse(subject_referral.direct_hiv_documentation)
+        self.assertFalse(subject_referral.new_pos)
+
     def tests_new_pos_evaluated_correctly_in_annual(self):
         """Test that new_pos field in referral is evaluated correctly in y2."""
         self.startup()
@@ -1309,6 +1358,9 @@ class TestReferral(BaseScheduledModelTestCase):
         subject_referral = SubjectReferralFactory(
             subject_visit=self.subject_visit_male,
             report_datetime=report_datetime)
+        self.assertTrue(subject_referral.todays_hiv_result)
+        self.assertFalse(subject_referral.indirect_hiv_documentation)
+        self.assertFalse(subject_referral.direct_hiv_documentation)
         self.assertTrue(subject_referral.new_pos)
         subject_referral_annual = SubjectReferralFactory(
             subject_visit=self.subject_visit_male_annual,
