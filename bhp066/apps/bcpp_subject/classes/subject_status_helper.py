@@ -246,7 +246,8 @@ class SubjectStatusHelper(object):
                     pass
                 else:
                     # you only have today's result and possibly an undocumented verbal_hiv_result
-                    if (self.todays_hiv_result == POS or self.elisa_hiv_result_datetime == POS):
+                    if ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not 
+                            (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                         new_pos = True
                     else:
                         # may have no result or just an undocumented verbal_hiv_result,
