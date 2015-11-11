@@ -236,22 +236,28 @@ class SubjectStatusHelper(object):
                 if ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
                         self.recorded_hiv_result == POS):
                     pass
+                    print 'IN 1'
                 elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
                         self.verbal_hiv_result == POS and not self.indirect_hiv_documentation):
                     pass
                 elif self.verbal_hiv_result == POS and (self.direct_hiv_pos_documentation or
                                                         self.indirect_hiv_documentation):
                     pass
+                    print 'IN 2'
                 elif self.recorded_hiv_result == POS:
                     pass
+                    print 'IN 3'
                 else:
                     # you only have today's result and possibly an undocumented verbal_hiv_result
-                    if (self.todays_hiv_result == POS or self.elisa_hiv_result_datetime == POS):
+                    if ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not 
+                            (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                         new_pos = True
+                        print 'IN 4'
                     else:
                         # may have no result or just an undocumented verbal_hiv_result,
                         # which is not enough information.
                         new_pos = None
+                        print 'IN 5'
             self._new_pos = new_pos
         return self._new_pos
 
