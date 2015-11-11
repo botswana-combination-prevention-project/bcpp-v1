@@ -226,33 +226,26 @@ class SubjectStatusHelper(object):
     def new_pos(self):
         """Returns True if combination of documents and test history show POS."""
         if self._new_pos is None:
-            # Return POS if the previous hiv_result is POS.
             previous_pos = None
             previous_pos = self.previous_value(value_if_pos=POS, value_if_not_pos=None)
             if previous_pos:
+                # This takes care of previous enrollees, those now doing annual survey.
                 new_pos = False
             else:
                 new_pos = False
-                if ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
-                        self.recorded_hiv_result == POS):
+                # You have not been tested today, but you have documentation of a posetive
+                # past status.
+                if (not (self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
+                        (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
                     pass
-                elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and
-                        self.verbal_hiv_result == POS and not self.indirect_hiv_documentation):
-                    pass
-                elif self.verbal_hiv_result == POS and (self.direct_hiv_pos_documentation or
-                                                        self.indirect_hiv_documentation):
-                    pass
-                elif self.recorded_hiv_result == POS:
-                    pass
+                # You only have today's result and possibly an undocumented verbal_hiv_result
+                elif ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not 
+                        (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
+                    new_pos = True
                 else:
-                    # you only have today's result and possibly an undocumented verbal_hiv_result
-                    if ((self.todays_hiv_result == POS or self.elisa_hiv_result == POS) and not 
-                            (self.direct_hiv_pos_documentation or self.indirect_hiv_documentation)):
-                        new_pos = True
-                    else:
-                        # may have no result or just an undocumented verbal_hiv_result,
-                        # which is not enough information.
-                        new_pos = None
+                    # may have no result or just an undocumented verbal_hiv_result,
+                    # which is not enough information.
+                    new_pos = None
             self._new_pos = new_pos
         return self._new_pos
 
