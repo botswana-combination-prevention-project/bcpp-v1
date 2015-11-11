@@ -427,6 +427,10 @@ class SubjectReferralHelper(object):
         return self.subject_status_helper.new_pos
 
     @property
+    def todays_hiv_result(self):
+        return self.subject_status_helper.todays_hiv_result
+
+    @property
     def hiv_result_datetime(self):
         return self.subject_status_helper.hiv_result_datetime
 
