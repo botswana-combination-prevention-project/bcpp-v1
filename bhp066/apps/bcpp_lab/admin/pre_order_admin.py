@@ -16,6 +16,6 @@ class PreOrderAdmin(BaseModelAdmin):
                    'status',
                    'subject_visit__household_member__household_structure__household__plot__community')
     search_fields = ('status', 'subject_visit__subject_identifier')
-    readonly_fields = ('status', )
+    readonly_fields = ('status', 'subject_visit')
 
 admin.site.register(PreOrder, PreOrderAdmin)
