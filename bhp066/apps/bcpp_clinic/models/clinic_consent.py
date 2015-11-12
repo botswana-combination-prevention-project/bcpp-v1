@@ -1,7 +1,9 @@
 from django.db import models
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 
+from edc.core.identifier.classes import SubjectIdentifier
 from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
 from edc_base.audit_trail import AuditTrail
@@ -46,6 +48,7 @@ class ClinicConsent(BaseHouseholdMemberConsent, ClinicOffStudyMixin, PersonalFie
 
     def save(self, *args, **kwargs):
         self.community = site_mappers.get_current_mapper().map_area
+        self.subject_identifier = SubjectIdentifier(site_code=settings.SITE_CODE).get_identifier()
         super(ClinicConsent, self).save(*args, **kwargs)
 
     @property
