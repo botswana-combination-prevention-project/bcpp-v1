@@ -15,6 +15,7 @@ from edc_constants.choices import YES_NO
 
 from ..managers import ClinicModelManager
 
+from .clinic_consent import ClinicConsent
 from .clinic_off_study_mixin import ClinicOffStudyMixin
 from .clinic_visit import ClinicVisit
 
@@ -23,6 +24,9 @@ class ClinicSubjectLocator(ExportTrackingFieldsMixin, ClinicOffStudyMixin, BaseL
                            TimePointStatusMixin, BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
     """A model completed by the user for locator data from consented participants."""
+
+    CONSENT_MODEL = ClinicConsent
+
     clinic_visit = models.ForeignKey(ClinicVisit)
 
     alt_contact_cell_number = EncryptedCharField(

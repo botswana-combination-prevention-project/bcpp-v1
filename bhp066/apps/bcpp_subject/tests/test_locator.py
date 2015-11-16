@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
-from edc.choices.common import YES, NO
+from edc_constants.constants import YES, NO
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 
 from ..models import SubjectLocator

@@ -15,7 +15,7 @@ from edc.subject.visit_schedule.classes import site_visit_schedules
 from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
-from bhp066.apps.bcpp_household.tests.factories import PlotFactory
+from bhp066.apps.bcpp_household.tests.factories import PlotFactory, HouseholdFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 
@@ -39,68 +39,69 @@ class ClinicEligibilityTests(TestCase):
         super(ClinicEligibilityTests, self).__init__(*args, **kwargs)
 
     def setUp(self):
-        site_mappers.autodiscover()
+        # site_mappers.autodiscover()
 
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
             pass
-        mapper = site_mappers._registry_by_code.get('01')
-        mapper.survey_dates = {
-            'bcpp-year-1': SurveyDatesTuple(
-                name='bhs',
-                start_date=date.today() + relativedelta(years=-1) + relativedelta(days=-89),
-                full_enrollment_date=date.today() + relativedelta(years=-1) + relativedelta(days=60),
-                end_date=date.today() + relativedelta(years=-1) + relativedelta(days=89),
-                smc_start_date=date.today() + relativedelta(years=-1) + relativedelta(days=89)),
-            'bcpp-year-2': SurveyDatesTuple(
-                name='t1',
-                start_date=date.today() + relativedelta(years=0) + relativedelta(days=-89),
-                full_enrollment_date=date.today() + relativedelta(years=0) + relativedelta(days=60),
-                end_date=date.today() + relativedelta(years=0) + relativedelta(days=89),
-                smc_start_date=date.today() + relativedelta(years=0) + relativedelta(days=89)),
-        }
-
-        bcpp_app_configuration.survey_setup = {
-            'bcpp-year-1':
-                {'survey_name': 'BCPP Year 1',
-                 'survey_slug': 'bcpp-year-1',
-                 'datetime_start': datetime.today() + relativedelta(years=-1) + relativedelta(days=-30),
-                 'datetime_end': datetime.today() + relativedelta(years=-1) + relativedelta(days=30)},
-            'bcpp-year-2':
-                {'survey_name': 'BCPP Year 2',
-                 'survey_slug': 'bcpp-year-2',
-                 'datetime_start': datetime.today() + relativedelta(days=-90),
-                 'datetime_end': datetime.today() + relativedelta(days=90)},
-            'bcpp-year-3':
-                {'survey_name': 'BCPP Year 3',
-                 'survey_slug': 'bcpp-year-3',
-                 'datetime_start': datetime.today() + relativedelta(years=1) + relativedelta(days=-30),
-                 'datetime_end': datetime.today() + relativedelta(years=1) + relativedelta(days=30)},
-        }
+#         mapper = site_mappers._registry_by_code.get('01')
+#         mapper.survey_dates = {
+#             'bcpp-year-1': SurveyDatesTuple(
+#                 name='bhs',
+#                 start_date=date.today() + relativedelta(years=-1) + relativedelta(days=-89),
+#                 full_enrollment_date=date.today() + relativedelta(years=-1) + relativedelta(days=60),
+#                 end_date=date.today() + relativedelta(years=-1) + relativedelta(days=89),
+#                 smc_start_date=date.today() + relativedelta(years=-1) + relativedelta(days=89)),
+#             'bcpp-year-2': SurveyDatesTuple(
+#                 name='t1',
+#                 start_date=date.today() + relativedelta(years=0) + relativedelta(days=-89),
+#                 full_enrollment_date=date.today() + relativedelta(years=0) + relativedelta(days=60),
+#                 end_date=date.today() + relativedelta(years=0) + relativedelta(days=89),
+#                 smc_start_date=date.today() + relativedelta(years=0) + relativedelta(days=89)),
+#         }
+# 
+#         bcpp_app_configuration.survey_setup = {
+#             'bcpp-year-1':
+#                 {'survey_name': 'BCPP Year 1',
+#                  'survey_slug': 'bcpp-year-1',
+#                  'datetime_start': datetime.today() + relativedelta(years=-1) + relativedelta(days=-30),
+#                  'datetime_end': datetime.today() + relativedelta(years=-1) + relativedelta(days=30)},
+#             'bcpp-year-2':
+#                 {'survey_name': 'BCPP Year 2',
+#                  'survey_slug': 'bcpp-year-2',
+#                  'datetime_start': datetime.today() + relativedelta(days=-90),
+#                  'datetime_end': datetime.today() + relativedelta(days=90)},
+#             'bcpp-year-3':
+#                 {'survey_name': 'BCPP Year 3',
+#                  'survey_slug': 'bcpp-year-3',
+#                  'datetime_start': datetime.today() + relativedelta(years=1) + relativedelta(days=-30),
+#                  'datetime_end': datetime.today() + relativedelta(years=1) + relativedelta(days=30)},
+#         }
 
         bcpp_app_configuration.prepare()
         site_lab_tracker.autodiscover()
         site_visit_schedules.autodiscover()
         site_visit_schedules.build_all()
 
-        self.survey2 = Survey.objects.current_survey()
-        self.survey1 = Survey.objects.previous_survey()
-        plot = PlotFactory(community='test_community', household_count=1, status='residential_habitable')
-        self.household = Household.objects.get(plot=plot)
-        self.source_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey1)
-        self.target_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey2)
-        self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.source_household_structure)
+        self.survey = Survey.objects.current_survey()
+        # self.survey1 = Survey.objects.previous_survey()
+        plot = PlotFactory(community='oodi', household_count=1, status='bcpp_clinic')
+        self.household = HouseholdFactory(plot=plot)
+        #self.source_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey1)
+        #self.target_household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey2)
+        self.household_structure = HouseholdStructure.objects.get(household=self.household, survey=self.survey)
+        self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
         self.study_site = StudySite.objects.get(site_code=site_mappers.get_current_mapper().map_code)
         self.intervention = site_mappers.get_current_mapper().intervention
         site_mappers.get_current_mapper().verify_survey_dates()
 
         # add members to source
-        HouseholdMemberFactory(household_structure=self.source_household_structure)
-        HouseholdMemberFactory(household_structure=self.source_household_structure)
-        HouseholdMemberFactory(household_structure=self.source_household_structure)
-        HouseholdMemberFactory(household_structure=self.source_household_structure)
-        self.household_member_female = HouseholdMemberFactory(household_structure=self.source_household_structure,
+        HouseholdMemberFactory(household_structure=self.household_structure)
+        #HouseholdMemberFactory(household_structure=self.source_household_structure)
+        #HouseholdMemberFactory(household_structure=self.source_household_structure)
+        #HouseholdMemberFactory(household_structure=self.source_household_structure)
+        self.household_member_female = HouseholdMemberFactory(household_structure=self.household_structure,
                                                               first_name='SUE', initials='SW', gender='F',
                                                               age_in_years=25, study_resident='Yes', relation='sister',
                                                               inability_to_participate=NOT_APPLICABLE)
