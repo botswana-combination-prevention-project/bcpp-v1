@@ -7,6 +7,7 @@ from edc_base.model.fields import OtherCharField
 from edc_constants.choices import YES_NO_DWTA
 
 from .base_clinic_visit_model import BaseClinicVisitModel
+from .clinic_consent import ClinicConsent
 from .clinic_visit import ClinicVisit
 
 REGISTRATION_TYPES = (
@@ -19,6 +20,8 @@ REGISTRATION_TYPES = (
 
 class Questionnaire(BaseClinicVisitModel):
     """A model completed by the user that captures ARV and CD4 data."""
+
+    CONSENT_MODEL = ClinicConsent
 
     registration_type = models.CharField(
         verbose_name="What type of Clinic Registration is this?",

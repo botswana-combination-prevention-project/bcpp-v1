@@ -1,3 +1,6 @@
+import re
+import uuid
+
 from django.db import models
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -13,10 +16,10 @@ from edc_consent.models.fields import (
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
-from .base_household_member_consent import BaseHouseholdMemberConsent
+from bhp066.apps.bcpp_subject.models.subject_consent import BaseBaseSubjectConsent
 
 
-class ClinicConsent(BaseHouseholdMemberConsent, ClinicOffStudyMixin, PersonalFieldsMixin,
+class ClinicConsent(BaseBaseSubjectConsent, ClinicOffStudyMixin, PersonalFieldsMixin,
                     VulnerabilityFieldsMixin, SampleCollectionFieldsMixin, ReviewFieldsMixin,
                     IdentityFieldsMixin, CitizenFieldsMixin, BaseSyncUuidModel):
     """A model completed by the user to capture the ICF."""
@@ -48,13 +51,8 @@ class ClinicConsent(BaseHouseholdMemberConsent, ClinicOffStudyMixin, PersonalFie
 
     def save(self, *args, **kwargs):
         self.community = site_mappers.get_current_mapper().map_area
-        self.subject_identifier = SubjectIdentifier(site_code=settings.SITE_CODE).get_identifier()
+        # self.clinic_subject_identifier()
         super(ClinicConsent, self).save(*args, **kwargs)
-
-    @property
-    def age_at_consent(self):
-        age_in_years = relativedelta(self.consent_datetime, self.dob).years
-        return age_in_years
 
     def is_dispatchable_model(self):
         return False

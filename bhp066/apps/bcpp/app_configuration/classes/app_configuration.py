@@ -115,6 +115,13 @@ class BcppAppConfiguration(BaseAppConfiguration):
             'version': '4',
         },
         {
+            'app_label': 'bcpp_clinic',
+            'model_name': 'clinicconsent',
+            'start_datetime': datetime(2013, 10, 18, 0, 0, 0),
+            'end_datetime': datetime(2016, 10, 17, 23, 0, 0),
+            'version': '1',
+        },
+        {
             'app_label': 'bcpp_subject',
             'model_name': 'subjectconsentextended',
             'start_datetime': datetime(2015, 9, 16, 0, 0, 0),

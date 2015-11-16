@@ -26,7 +26,7 @@ class TestHouseholdStructures(TestCase):
     def test_enumerated_members1(self):
         """Assert enumerated_members defaults to False."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             for household_structure in HouseholdStructure.objects.filter(household=household):
@@ -35,7 +35,7 @@ class TestHouseholdStructures(TestCase):
     def test_enumerated_members2(self):
         """Assert enumerated_members is True if a household_member is added, others stay False."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_log = HouseholdLog.objects.get(household_structure__household=household)
@@ -50,7 +50,7 @@ class TestHouseholdStructures(TestCase):
     def test_eligible_members1(self):
         """Assert eligible_members set to True if an eligible member is added."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_log = HouseholdLog.objects.get(household_structure__household=household)
@@ -64,7 +64,7 @@ class TestHouseholdStructures(TestCase):
     def test_eligible_members2(self):
         """Assert eligible_members set from True to False if an eligible member is added then removed."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_log = HouseholdLog.objects.get(household_structure__household=household)
@@ -82,7 +82,7 @@ class TestHouseholdStructures(TestCase):
         """Assert eligible_members set from True but stays True if an eligible member 
         is added then removed but others exist."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_log = HouseholdLog.objects.get(household_structure__household=household)
@@ -101,7 +101,7 @@ class TestHouseholdStructures(TestCase):
     def test_enrolled1(self):
         """Assert enrolled is False if members but none consented."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_log = HouseholdLog.objects.get(household_structure__household=household)
@@ -118,7 +118,7 @@ class TestHouseholdStructures(TestCase):
     def test_enrolled2(self):
         """Assert enrolled is True if eligible member consents."""
         SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
+        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_log = HouseholdLog.objects.get(household_structure__household=household)

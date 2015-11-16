@@ -12,12 +12,15 @@ from edc.device.sync.models import BaseSyncUuidModel
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 
 from .clinic_off_study_mixin import ClinicOffStudyMixin
+from .clinic_consent import ClinicConsent
 
 
 class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, BaseSyncUuidModel):
     """A model completed by the user to indicate track the actual appointment or visit.
 
     The model captures actual report date, time and location (home, clinic, etc)."""
+
+    CONSENT_MODEL = ClinicConsent
 
     household_member = models.ForeignKey(HouseholdMember)
 
@@ -34,6 +37,7 @@ class ClinicVisit(ClinicOffStudyMixin, RequiresConsentMixin, BaseVisitTracking, 
         self.info_source = 'subject'
         self.reason = 'clinic RBD'
         self.appointment.appt_type = 'clinic'
+        self.subject_identifier = self.appointment.registered_subject.subject_identifier
         super(ClinicVisit, self).save(*args, **kwargs)
 
     def __unicode__(self):
