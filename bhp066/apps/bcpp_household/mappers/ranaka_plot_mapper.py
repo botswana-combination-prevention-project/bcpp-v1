@@ -43,10 +43,10 @@ class RanakaPlotMapper(BasePlotMapper):
             smc_start_date=date(2015, 1, 7)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
-            start_date=None,
-            full_enrollment_date=None,
-            end_date=None,
-            smc_start_date=None),
+            start_date=date(2015, 12, 6),
+            full_enrollment_date=date(2015, 12, 31),
+            end_date=date(2015, 12, 31),
+            smc_start_date=date(2015, 12, 31)),
     }
 
     clinic_days = {
