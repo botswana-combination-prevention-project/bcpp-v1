@@ -1,11 +1,10 @@
 from django import forms
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
-
 from ..models import ViralLoadTracking
+from .base_clinic_model_form import BaseClinicModelForm
 
 
-class ViralLoadTrackingForm(BaseModelForm):
+class ViralLoadTrackingForm(BaseClinicModelForm):
 
     def clean(self):
 

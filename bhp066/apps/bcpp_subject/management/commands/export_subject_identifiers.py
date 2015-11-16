@@ -31,6 +31,7 @@ class Command(BaseCommand):
             writer.writerow(['subject_identifier', 'community', 'subject_identifier_aka', 'dm_reference'])
             for hm in HouseholdMember.objects.filter(
                     Q(household_structure__survey__survey_slug=BASELINE_SURVEY_SLUG),
+                    Q(member_status='BHS'),
                     ~Q(household_structure__household__plot__status='bcpp_clinic'),
                     Q(registered_subject__subject_identifier__startswith='066'),
                     ~Q(registered_subject__registration_status='member'),
