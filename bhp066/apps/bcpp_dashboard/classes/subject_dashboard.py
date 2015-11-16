@@ -88,7 +88,7 @@ class SubjectDashboard(BaseSubjectDashboard):
                 try:
                     # If you are in a site machine and trying to consent, then you are certain that you have the
                     # the household member that corresponds to the current survey. You are also certain that the
-                    # the member you want to consent will always be the member of the curent survey setting in the
+                    # the member you want to consent will always be the member of the current survey setting in the
                     # machine.
                     consenting_member = HouseholdMember.objects.get(
                         internal_identifier=self.household_member.internal_identifier,
@@ -109,7 +109,7 @@ class SubjectDashboard(BaseSubjectDashboard):
             title='Research Subject Dashboard',
             subject_consent=latest_subject_consent,
             first_consent=first_subject_consent,
-            correct_consent=self.correct_consent(latest_subject_consent),
+            correct_consents_dict=self.correct_consent_pairs,
             subject_referral=self.subject_referral,
             last_subject_referral=self.last_subject_referral,
             elisa_hiv_result=self.elisa_hiv_result,
@@ -244,13 +244,18 @@ class SubjectDashboard(BaseSubjectDashboard):
             elisa_hiv_result = None
         return elisa_hiv_result
 
-    def correct_consent(self, subject_consent):
-        """Returns to the subject consent, if it has been completed."""
-        try:
-            correct_consent = CorrectConsent.objects.get(subject_consent=subject_consent)
-        except CorrectConsent.DoesNotExist:
-            correct_consent = None
-        return correct_consent
+    @property
+    def correct_consent_pairs(self):
+        """Returns a dictionary of consent and correct consent pairs"""
+        correct_consent_pairs = {}
+        keyed_consents = SubjectConsent.objects.filter(subject_identifier=self.registered_subject.subject_identifier)
+        for consent in keyed_consents:
+            try:
+                correct_consent = CorrectConsent.objects.get(subject_consent=consent)
+                correct_consent_pairs[consent.id] = (correct_consent, consent.version)
+            except CorrectConsent.DoesNotExist:
+                correct_consent_pairs[consent.id] = (None, consent.version)
+        return correct_consent_pairs
 
     @property
     def locator_model(self):
