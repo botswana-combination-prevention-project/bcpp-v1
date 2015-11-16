@@ -1,9 +1,9 @@
-from edc_consent.forms import BaseConsentedModelForm
+from bhp066.apps.bcpp.base_model_form import BaseModelForm
 
 from ..models import ClinicVisit
 
 
-class ClinicVisitForm (BaseConsentedModelForm):
+class ClinicVisitForm (BaseModelForm):
 
     class Meta:
         model = ClinicVisit
