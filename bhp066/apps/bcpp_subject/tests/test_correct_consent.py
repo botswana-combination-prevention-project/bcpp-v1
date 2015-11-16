@@ -29,7 +29,7 @@ from ..models import SubjectConsent
 class TestCorrectConsent(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'nata'
+    community = 'bokaa'
 
     def setUp(self):
         try:
@@ -40,7 +40,7 @@ class TestCorrectConsent(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
-        self.study_site = StudySite.objects.get(site_code='38')
+        self.study_site = StudySite.objects.get(site_code='17')
         self.survey = Survey.objects.all()[0]
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
         survey = Survey.objects.all().order_by('datetime_start')[0]
