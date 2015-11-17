@@ -4,9 +4,8 @@ from django.db import models
 
 from edc.core.bhp_variables.models import StudySite
 from edc.core.identifier.exceptions import IdentifierError
-from edc.device.dispatch.models import BaseDispatchSyncUuidModel
-from edc.device.sync.models import BaseSyncUuidModel
 from edc.map.classes import site_mappers
+from edc.device.sync.models import BaseSyncUuidModel
 from edc.subject.appointment_helper.models import BaseAppointmentMixin
 from edc.subject.registration.models import RegisteredSubject
 from edc_consent.models import BaseConsent
@@ -17,10 +16,7 @@ from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp.choices import COMMUNITIES
 
 
-# class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent,
-#                                  BaseDispatchSyncUuidModel, BaseSyncUuidModel):
-
-class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
+class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent, BaseSyncUuidModel):
 
     household_member = models.ForeignKey(HouseholdMember, help_text='')
 
@@ -55,13 +51,6 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
 
     def __unicode__(self):
         return '{0} ({1}) V{2}'.format(self.subject_identifier, self.survey, self.version)
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.registered_subject = RegisteredSubject.objects.get(identity=self.identity)
-            self.household_member = HouseholdMember.objects.get(registered_subject=self.registered_subject)
-            self.survey = self.household_member.household_structure.survey
-        super(BaseHouseholdMemberConsent, self).save(*args, **kwargs)
 
     def get_site_code(self):
         return site_mappers.get_current_mapper().map_code
@@ -134,12 +123,12 @@ class BaseHouseholdMemberConsent(BaseAppointmentMixin, BaseConsent):
         abstract = True
 
 # change subclassing. Clinic Does not use BaseDispatchSyncUuidModel, BaseSyncUuidModel
-
-
-class BaseSyncHouseholdMemberConsent(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
-
-    def dispatch_container_lookup(self, using=None):
-        return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
-
-    class Meta:
-        abstract = True
+# 
+# 
+# class BaseSyncHouseholdMemberConsent(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
+# 
+#     def dispatch_container_lookup(self, using=None):
+#         return (('bcpp_household', 'Plot'), 'household_member__household_structure__household__plot__plot_identifier')
+# 
+#     class Meta:
+#         abstract = True

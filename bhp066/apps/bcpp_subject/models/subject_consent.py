@@ -10,6 +10,7 @@ from django.db import models
 from edc.core.bhp_common.utils import formatted_age
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc_base.audit_trail import AuditTrail
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
                                        SampleCollectionFieldsMixin, CitizenFieldsMixin)
@@ -22,7 +23,7 @@ from bhp066.apps.bcpp_household_member.exceptions import MemberStatusError
 from ..exceptions import ConsentError
 from ..managers import SubjectConsentManager
 
-from .base_household_member_consent import BaseHouseholdMemberConsent, BaseSyncHouseholdMemberConsent
+from .base_household_member_consent import BaseHouseholdMemberConsent
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
@@ -135,11 +136,25 @@ class BaseBaseSubjectConsent(BaseHouseholdMemberConsent):
         age_in_years = relativedelta(self.consent_datetime, self.dob).years
         return age_in_years
 
+    @property
+    def age(self):
+        return relativedelta(self.consent_datetime, self.dob).years
+
+    def formatted_age_at_consent(self):
+        return formatted_age(self.dob, self.consent_datetime)
+
+    def get_hiv_status(self):
+        """Returns the hiv testing history as a string.
+
+        .. note:: more than one table is tracked so the history includes HIV results not performed by our team
+                  as well as the results of tests we perform."""
+        return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
+
     class Meta:
         abstract = True
 
 
-class BaseSubjectConsent(SubjectOffStudyMixin, BaseSyncHouseholdMemberConsent, BaseBaseSubjectConsent):
+class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBaseSubjectConsent):
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -200,13 +215,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseSyncHouseholdMemberConsent, B
                                 'for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
 
-    def get_hiv_status(self):
-        """Returns the hiv testing history as a string.
-
-        .. note:: more than one table is tracked so the history includes HIV results not performed by our team
-                  as well as the results of tests we perform."""
-        return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
-
     @property
     def survey_of_consent(self):
         return self.survey.survey_name
@@ -219,13 +227,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseSyncHouseholdMemberConsent, B
                  self.consent_datetime.day),
             self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
-
-    @property
-    def age(self):
-        return relativedelta(self.consent_datetime, self.dob).years
-
-    def formatted_age_at_consent(self):
-        return formatted_age(self.dob, self.consent_datetime)
 
     @classmethod
     def get_consent_update_model(self):
@@ -243,21 +244,6 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseSyncHouseholdMemberConsent, B
                     return False
         return True
 
-#     def update_consent_history(self, created, using):
-#         from edc.subject.consent.models import BaseConsentHistory
-#         """Updates the consent history model for this consent instance if there is a consent history model."""
-#         if self.get_consent_history_model():
-#             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-#                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-#             self.get_consent_history_model().objects.update_consent_history(self, created, using)
-#
-#     def delete_consent_history(self, app_label, model_name, pk, using):
-#         from edc.subject.consent.models import BaseConsentHistory
-#         if self.get_consent_history_model():
-#             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-#                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-#             self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
-
     def include_for_dispatch(self):
         return True
 
@@ -266,6 +252,9 @@ class BaseSubjectConsent(SubjectOffStudyMixin, BaseSyncHouseholdMemberConsent, B
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if not self.id:
+            self.registered_subject = self.household_member.registered_subject
+            self.survey = self.household_member.household_structure.survey
         consents = self.__class__.objects.filter(
             household_member__internal_identifier=self.household_member.internal_identifier).exclude(
             household_member=self.household_member)
