@@ -1,11 +1,11 @@
 from django import forms
 
-from bhp066.apps.bcpp.base_model_form import BaseModelForm
+from .base_clinic_model_form import BaseClinicModelForm
 
 from ..models import ClinicVlResult
 
 
-class ClinicVlResultForm (BaseModelForm):
+class ClinicVlResultForm (BaseClinicModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data

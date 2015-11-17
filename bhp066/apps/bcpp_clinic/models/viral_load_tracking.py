@@ -8,9 +8,12 @@ from edc_constants.choices import YES_NO
 
 from .base_clinic_visit_model import BaseClinicVisitModel
 from .clinic_visit import ClinicVisit
+from .clinic_consent import ClinicConsent
 
 
 class ViralLoadTracking(BaseClinicVisitModel):
+
+    CONSENT_MODEL = ClinicConsent
 
     is_drawn = models.CharField(
         verbose_name='Was a specimen drawn?',

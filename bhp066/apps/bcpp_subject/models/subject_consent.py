@@ -10,6 +10,7 @@ from django.db import models
 from edc.core.bhp_common.utils import formatted_age
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc_base.audit_trail import AuditTrail
+from edc.device.dispatch.models import BaseDispatchSyncUuidModel
 from edc_consent.models.fields.bw import IdentityFieldsMixin
 from edc_consent.models.fields import (ReviewFieldsMixin, PersonalFieldsMixin, VulnerabilityFieldsMixin,
                                        SampleCollectionFieldsMixin, CitizenFieldsMixin)
@@ -26,7 +27,7 @@ from .base_household_member_consent import BaseHouseholdMemberConsent
 from .subject_off_study_mixin import SubjectOffStudyMixin
 
 
-class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
+class BaseBaseSubjectConsent(BaseHouseholdMemberConsent):
 
     def save(self, *args, **kwargs):
         self.insert_dummy_identifier()
@@ -34,6 +35,126 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
             self._save_new_consent(kwargs.get('using', None))
         self.subject_type = self.get_subject_type()
         super(BaseBaseSubjectConsent, self).save(*args, **kwargs)
+
+    def save_new_consent(self, using=None, subject_identifier=None):
+        """ Users may override this to compliment the default behavior for new instances.
+
+        Must return a subject_identifier or None."""
+
+        return subject_identifier
+
+    def _save_new_consent(self, using=None, **kwargs):
+        from ..classes import ConsentedSubjectIdentifier
+        """ Creates or gets a subject identifier.
+
+        ..note:: registered subject is updated/created on edc.subject signal.
+
+        Also, calls user method :func:`save_new_consent`"""
+        self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
+        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
+        dummy = self.subject_identifier
+        # recall, if subject_identifier is not set, subject_identifier will be a uuid.
+        if re_pk.match(self.subject_identifier):
+            # test for user provided subject_identifier field method
+            if self.get_user_provided_subject_identifier_attrname():
+                self.subject_identifier = self._get_user_provided_subject_identifier()
+                if not self.subject_identifier:
+                    self.subject_identifier = dummy
+            # try to get from registered_subject (was created  using signal in edc.subject)
+            if re_pk.match(self.subject_identifier):
+                try:
+                    self.subject_identifier = self.registered_subject.subject_identifier
+                except AttributeError:
+                    pass
+            # create a subject identifier, if not already done
+            if re_pk.match(self.subject_identifier):
+                consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.get_site_code(), using=using)
+                self.subject_identifier = consented_subject_identifier.get_identifier(using=using)
+        if not self.subject_identifier:
+            self.subject_identifier = dummy
+        if re_pk.match(self.subject_identifier):
+            raise ConsentError("Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
+
+    def insert_dummy_identifier(self):
+        """Inserts a random uuid as a dummy identifier for a new instance.
+
+        Model uses subject_identifier_as_pk as a natural key for
+        serialization/deserialization. Value must not change once set."""
+
+        # set to uuid if new and not specified
+        if not self.id:
+            subject_identifier_as_pk = str(uuid.uuid4())
+            self.subject_identifier_as_pk = subject_identifier_as_pk  # this will never change
+            if not self.subject_identifier:
+                # this will be changed when allocated a subject_identifier on consent
+                self.subject_identifier = subject_identifier_as_pk
+        # never allow subject_identifier as None
+        if not self.subject_identifier:
+            raise ConsentError('Subject Identifier may not be left blank.')
+        # never allow subject_identifier_as_pk as None
+        if not self.subject_identifier_as_pk:
+            raise ConsentError('Attribute subject_identifier_as_pk on model '
+                               '{0} may not be left blank. Expected to be set '
+                               'to a uuid already.'.format(self._meta.object_name))
+
+    def _get_user_provided_subject_identifier(self):
+        """Return a user provided subject_identifier.
+
+        Do not override."""
+        if self.get_user_provided_subject_identifier_attrname() in dir(self):
+            return getattr(self, self.get_user_provided_subject_identifier_attrname())
+        else:
+            return None
+
+    def get_user_provided_subject_identifier_attrname(self):
+        """Override to return the attribute name of the user provided subject_identifier."""
+        return None
+
+    @property
+    def registered_subject_options(self):
+        """Returns a dictionary of RegisteredSubject attributes
+        ({field, value}) to be used, for example, as the defaults
+        kwarg RegisteredSubject.objects.get_or_create()."""
+        options = {
+            'study_site': self.study_site,
+            'dob': self.dob,
+            'is_dob_estimated': self.is_dob_estimated,
+            'gender': self.gender,
+            'initials': self.initials,
+            'identity': self.identity,
+            'identity_type': self.identity_type,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'subject_type': self.get_subject_type(),
+        }
+        if self.last_name:
+            options.update({'registration_status': 'consented'})
+        return options
+
+    @property
+    def age_at_consent(self):
+        age_in_years = relativedelta(self.consent_datetime, self.dob).years
+        return age_in_years
+
+    @property
+    def age(self):
+        return relativedelta(self.consent_datetime, self.dob).years
+
+    def formatted_age_at_consent(self):
+        return formatted_age(self.dob, self.consent_datetime)
+
+    def get_hiv_status(self):
+        """Returns the hiv testing history as a string.
+
+        .. note:: more than one table is tracked so the history includes HIV results not performed by our team
+                  as well as the results of tests we perform."""
+        return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
+
+    class Meta:
+        abstract = True
+
+
+class BaseSubjectConsent(SubjectOffStudyMixin, BaseDispatchSyncUuidModel, BaseBaseSubjectConsent):
 
     def matches_hic_enrollment(self, subject_consent, household_member, exception_cls=None):
         exception_cls = exception_cls or ValidationError
@@ -94,18 +215,6 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                                 'for BHS. Perhaps catch this in the forms.py. Got {0}'.format(household_member))
         return True
 
-    def get_hiv_status(self):
-        """Returns the hiv testing history as a string.
-
-        .. note:: more than one table is tracked so the history includes HIV results not performed by our team
-                  as well as the results of tests we perform."""
-        return site_lab_tracker.get_history_as_string('HIV', self.subject_identifier, 'subject')
-
-    @property
-    def age_at_consent(self):
-        age_in_years = relativedelta(self.consent_datetime, self.dob).years
-        return age_in_years
-
     @property
     def survey_of_consent(self):
         return self.survey.survey_name
@@ -118,73 +227,6 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                  self.consent_datetime.day),
             self.dob).years
         return age_at_consent >= 16 and age_at_consent <= 17
-
-    def save_new_consent(self, using=None, subject_identifier=None):
-        """ Users may override this to compliment the default behavior for new instances.
-
-        Must return a subject_identifier or None."""
-
-        return subject_identifier
-
-    def _save_new_consent(self, using=None, **kwargs):
-        from ..classes import ConsentedSubjectIdentifier
-        """ Creates or gets a subject identifier.
-
-        ..note:: registered subject is updated/created on edc.subject signal.
-
-        Also, calls user method :func:`save_new_consent`"""
-        self.subject_identifier = self.save_new_consent(using=using, subject_identifier=self.subject_identifier)
-        re_pk = re.compile('[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}')
-        dummy = self.subject_identifier
-        # recall, if subject_identifier is not set, subject_identifier will be a uuid.
-        if re_pk.match(self.subject_identifier):
-            # test for user provided subject_identifier field method
-            if self.get_user_provided_subject_identifier_attrname():
-                self.subject_identifier = self._get_user_provided_subject_identifier()
-                if not self.subject_identifier:
-                    self.subject_identifier = dummy
-            # try to get from registered_subject (was created  using signal in edc.subject)
-            if re_pk.match(self.subject_identifier):
-                try:
-                    self.subject_identifier = self.registered_subject.subject_identifier
-                except AttributeError:
-                    pass
-            # create a subject identifier, if not already done
-            if re_pk.match(self.subject_identifier):
-                consented_subject_identifier = ConsentedSubjectIdentifier(site_code=self.get_site_code(), using=using)
-                self.subject_identifier = consented_subject_identifier.get_identifier(using=using)
-        if not self.subject_identifier:
-            self.subject_identifier = dummy
-        if re_pk.match(self.subject_identifier):
-            raise ConsentError("Subject identifier not set after saving new consent! Got {0}".format(self.subject_identifier))
-
-    @property
-    def registered_subject_options(self):
-        """Returns a dictionary of RegisteredSubject attributes
-        ({field, value}) to be used, for example, as the defaults
-        kwarg RegisteredSubject.objects.get_or_create()."""
-        options = {
-            'study_site': self.study_site,
-            'dob': self.dob,
-            'is_dob_estimated': self.is_dob_estimated,
-            'gender': self.gender,
-            'initials': self.initials,
-            'identity': self.identity,
-            'identity_type': self.identity_type,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'subject_type': self.get_subject_type(),
-        }
-        if self.last_name:
-            options.update({'registration_status': 'consented'})
-        return options
-
-    @property
-    def age(self):
-        return relativedelta(self.consent_datetime, self.dob).years
-
-    def formatted_age_at_consent(self):
-        return formatted_age(self.dob, self.consent_datetime)
 
     @classmethod
     def get_consent_update_model(self):
@@ -202,70 +244,17 @@ class BaseBaseSubjectConsent(SubjectOffStudyMixin, BaseHouseholdMemberConsent):
                     return False
         return True
 
-#     def update_consent_history(self, created, using):
-#         from edc.subject.consent.models import BaseConsentHistory
-#         """Updates the consent history model for this consent instance if there is a consent history model."""
-#         if self.get_consent_history_model():
-#             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-#                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-#             self.get_consent_history_model().objects.update_consent_history(self, created, using)
-#
-#     def delete_consent_history(self, app_label, model_name, pk, using):
-#         from edc.subject.consent.models import BaseConsentHistory
-#         if self.get_consent_history_model():
-#             if not issubclass(self.get_consent_history_model(), BaseConsentHistory):
-#                 raise ImproperlyConfigured('Expected a subclass of BaseConsentHistory.')
-#             self.get_consent_history_model().objects.delete_consent_history(app_label, model_name, pk, using)
-
-    def insert_dummy_identifier(self):
-        """Inserts a random uuid as a dummy identifier for a new instance.
-
-        Model uses subject_identifier_as_pk as a natural key for
-        serialization/deserialization. Value must not change once set."""
-
-        # set to uuid if new and not specified
-        if not self.id:
-            subject_identifier_as_pk = str(uuid.uuid4())
-            self.subject_identifier_as_pk = subject_identifier_as_pk  # this will never change
-            if not self.subject_identifier:
-                # this will be changed when allocated a subject_identifier on consent
-                self.subject_identifier = subject_identifier_as_pk
-        # never allow subject_identifier as None
-        if not self.subject_identifier:
-            raise ConsentError('Subject Identifier may not be left blank.')
-        # never allow subject_identifier_as_pk as None
-        if not self.subject_identifier_as_pk:
-            raise ConsentError('Attribute subject_identifier_as_pk on model '
-                               '{0} may not be left blank. Expected to be set '
-                               'to a uuid already.'.format(self._meta.object_name))
-
-    def _get_user_provided_subject_identifier(self):
-        """Return a user provided subject_identifier.
-
-        Do not override."""
-        if self.get_user_provided_subject_identifier_attrname() in dir(self):
-            return getattr(self, self.get_user_provided_subject_identifier_attrname())
-        else:
-            return None
-
-    def get_user_provided_subject_identifier_attrname(self):
-        """Override to return the attribute name of the user provided subject_identifier."""
-        return None
-
     def include_for_dispatch(self):
         return True
-
-    class Meta:
-        abstract = True
-
-
-class BaseSubjectConsent(BaseBaseSubjectConsent):
 
     def dispatch_container_lookup(self, using=None):
         return (models.get_model('bcpp_household', 'Plot'),
                 'household_member__household_structure__household__plot__plot_identifier')
 
     def save(self, *args, **kwargs):
+        if not self.id:
+            self.registered_subject = self.household_member.registered_subject
+            self.survey = self.household_member.household_structure.survey
         consents = self.__class__.objects.filter(
             household_member__internal_identifier=self.household_member.internal_identifier).exclude(
             household_member=self.household_member)
