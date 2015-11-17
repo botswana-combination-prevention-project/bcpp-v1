@@ -29,7 +29,7 @@ from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
-    community = 'letlhakeng'
+    community = 'bokaa'
 
     def setUp(self):
         try:
@@ -46,7 +46,7 @@ class BaseRuleGroupTestSetup(TestCase):
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        self.study_site = StudySite.objects.get(site_code='15')
+        self.study_site = StudySite.objects.get(site_code='17')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)

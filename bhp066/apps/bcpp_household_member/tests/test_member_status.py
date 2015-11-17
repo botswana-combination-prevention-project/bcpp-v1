@@ -69,7 +69,7 @@ class TestMemberStatus(TestCase):
 
         self.survey1 = Survey.objects.get(survey_name='BCPP Year 1')  # see app_configuration
         self.survey = Survey.objects.get(survey_name='BCPP Year 2')  # see app_configuration
-        plot = PlotFactory(community='sebina', household_count=1, status='residential_habitable')
+        plot = PlotFactory(community='oodi', household_count=1, status='residential_habitable')
         household = Household.objects.get(plot=plot)
         self.household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey1)
         self.representative_eligibility = RepresentativeEligibilityFactory(household_structure=self.household_structure)
