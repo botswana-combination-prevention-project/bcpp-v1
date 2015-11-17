@@ -62,7 +62,8 @@ def clinic_eligibility_on_post_save(sender, instance, raw, created, using, **kwa
 
 @receiver(post_save, weak=False, dispatch_uid="clinic_consent_on_post_save")
 def clinic_consent_on_post_save(sender, instance, raw, created, using, **kwargs):
-    """Updates the is_consented boolean on the eligibility checklist."""
+    """Updates the is_consented boolean on the eligibility checklist.
+    AND Updates or creates an instance of RegisteredSubject on the sender instance"""
     if not raw:
         if isinstance(instance, ClinicConsent):
             clinic_eligibility = ClinicEligibility.objects.get(household_member=instance.household_member)
@@ -70,6 +71,13 @@ def clinic_consent_on_post_save(sender, instance, raw, created, using, **kwargs)
             clinic_eligibility.consent_datetime = instance.consent_datetime
             clinic_eligibility.save(update_fields=['is_consented', 'consent_datetime'])
             ClinicRefusal.objects.filter(household_member=instance.household_member).delete()
+            try:
+                for field_name, value in instance.registered_subject_options.iteritems():
+                    setattr(instance.registered_subject, field_name, value)
+                instance.registered_subject.subject_identifier = instance.subject_identifier
+                instance.registered_subject.save(using=using)
+            except AttributeError:
+                pass
 
 
 @receiver(post_save, weak=False, dispatch_uid="clinic_refusal_on_post_save")

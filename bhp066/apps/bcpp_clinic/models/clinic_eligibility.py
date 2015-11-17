@@ -153,7 +153,7 @@ class ClinicEligibility (BaseSyncUuidModel):
         verbose_name="Do any of the following reasons apply to the participant?",
         max_length=17,
         choices=INABILITY_TO_PARTICIPATE_REASON,
-        help_text=("Participant can only participate if NONE is selected. "
+        help_text=("Participant can only participate if 'ABLE to participate' is selected. "
                    "(Any of these reasons make the participant unable to take "
                    "part in the informed consent process)"),
     )

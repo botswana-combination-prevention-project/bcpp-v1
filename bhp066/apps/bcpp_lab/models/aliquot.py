@@ -1,11 +1,10 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 
-from lis.specimen.lab_aliquot.models import BaseAliquot
 from edc.device.sync.models import BaseSyncUuidModel
+from lis.specimen.lab_aliquot.models import BaseAliquot
 
 from ..managers import AliquotManager
-
 from .aliquot_condition import AliquotCondition
 from .aliquot_type import AliquotType
 from .receive import Receive
