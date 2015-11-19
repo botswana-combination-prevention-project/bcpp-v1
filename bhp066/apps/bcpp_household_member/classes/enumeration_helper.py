@@ -2,6 +2,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from django.db import models
 
 from edc_constants.constants import UNKNOWN
@@ -45,6 +46,8 @@ class EnumerationHelper(object):
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         created = 0
         if self.consented_member:
+            self.representative_eligibility.auto_fill_member_id = self._consented_member.pk
+            self.representative_eligibility.save()
             for household_member in HouseholdMember.objects.filter(
                     household_structure=self.source_household_structure):
                 try:
@@ -54,7 +57,6 @@ class EnumerationHelper(object):
                 except HouseholdMember.DoesNotExist:
                     self.create_member_on_target(household_member)
                     created += 1
-
             try:
                 # once enrolled, the household is considered enrolled for future surveys as well
                 self.target_household_structure.enrolled = self.source_household_structure.enrolled
@@ -79,20 +81,29 @@ class EnumerationHelper(object):
             HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
             SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
             for household_member in HouseholdMember.objects.filter(household_structure=self.source_household_structure):
-                try:
-                    self.subject_consent = SubjectConsent.objects.get(household_member=household_member)
+                member_consents = SubjectConsent.objects.filter(
+                    household_member__internal_identifier=household_member.internal_identifier)
+                if member_consents.exists():
+                    self.subject_consent = member_consents.order_by('-version')[0]
                     self.add_representative_eligibility()
-                    try:
-                        self._consented_member = HouseholdMember.objects.get(
-                            internal_identifier=household_member.internal_identifier,
-                            household_structure=self.target_household_structure)
-                    except HouseholdMember.DoesNotExist:
-                        self._consented_member = self.create_member_on_target(household_member)
-                    self.representative_eligibility.auto_fill_member_id = self._consented_member.pk
-                    self.representative_eligibility.save()
+                    # Create the consented member for the target_survey and remember them.
+                    self._consented_member = self.create_member_on_target(household_member)
                     break
-                except SubjectConsent.DoesNotExist:
-                    pass
+#                 try:
+#                     self.subject_consent = SubjectConsent.objects.filter(
+#                         household_member__internal_identifier=household_member.internal_identifier)
+#                     self.add_representative_eligibility()
+#                     try:
+#                         self._consented_member = HouseholdMember.objects.get(
+#                             internal_identifier=household_member.internal_identifier,
+#                             household_structure=self.target_household_structure)
+#                     except HouseholdMember.DoesNotExist:
+#                         self._consented_member = self.create_member_on_target(household_member)
+#                     self.representative_eligibility.auto_fill_member_id = self._consented_member.pk
+#                     self.representative_eligibility.save()
+#                     break
+#                 except SubjectConsent.DoesNotExist:
+#                     pass
         return self._consented_member
 
     def add_representative_eligibility(self):
@@ -134,11 +145,12 @@ class EnumerationHelper(object):
         HouseholdMember = models.get_model('bcpp_household_member', 'HouseholdMember')
         SubjectConsent = models.get_model('bcpp_subject', 'SubjectConsent')
         new_household_member = None
-        subject_consent = None
-        try:
-            subject_consent = SubjectConsent.objects.get(household_member=source_household_member)
-            age_in_years = relativedelta(date.today(), subject_consent.dob).years
-        except SubjectConsent.DoesNotExist:
+        # Get the latest consent.
+        subject_consents = SubjectConsent.objects.filter(
+            household_member__internal_identifier=source_household_member.internal_identifier).order_by('-version')
+        if subject_consents.exists():
+            age_in_years = relativedelta(date.today(), subject_consents[0].dob).years
+        else:
             age_in_years = source_household_member.age_in_years + 1
         options = dict(
             household_structure=self.target_household_structure,
@@ -167,6 +179,12 @@ class EnumerationHelper(object):
         except ValidationError:
             # 'representative eligibility' for an eligible representative has not been completed.'
             pass
+        except IntegrityError as integrity_error:
+            # There are multiple types of integrity errors, i only want to ignore the duplicate entry here.
+            if 'unique' in str(integrity_error) or 'Duplicate' in str(integrity_error):
+                pass
+            else:
+                raise integrity_error
         if source_household_member.member_status == BHS:
             new_household_member.member_status = ANNUAL
             new_household_member.save_base(update_fields=['member_status'])
