@@ -33,7 +33,7 @@ class OperationalVisits(BaseOperationalReport):
             created__lte=self.date_to,
             appt_status__icontains='new',
             visit_definition__code='C0')
-        self.data_dict['1a. Visits not yet processed (NEW)'] = new_visits.count()
+        self.data_dict['1a. Unattended appointments (NEW)'] = new_visits.count()
 
         completed_visits = Appointment.objects.filter(
             study_site__site_name__icontains=self.community,
@@ -42,7 +42,7 @@ class OperationalVisits(BaseOperationalReport):
             user_modified__icontains=self.ra_username,
             appt_status=DONE,
             visit_definition__code='C0')
-        self.data_dict['1b. Total number of COMPLETED visits'] = completed_visits.count()
+        self.data_dict['1b. COMPLETED appointments'] = completed_visits.count()
 
         incomplete_visits = Appointment.objects.filter(
             study_site__site_name__icontains=self.community,
@@ -51,7 +51,7 @@ class OperationalVisits(BaseOperationalReport):
             user_modified__icontains=self.ra_username,
             appt_status=INCOMPLETE,
             visit_definition__code='C0')
-        self.data_dict['1c. Total number of INCOMPLETE visits'] = incomplete_visits.count()
+        self.data_dict['1c. INCOMPLETE appointments'] = incomplete_visits.count()
 
         inprogress_visits = Appointment.objects.filter(
             registered_subject__study_site__site_name__icontains=self.community,
@@ -60,7 +60,7 @@ class OperationalVisits(BaseOperationalReport):
             user_modified__icontains=self.ra_username,
             appt_status=IN_PROGRESS,
             visit_definition__code='C0')
-        self.data_dict['1d. Total number of visits that are IN_PROGRESS'] = inprogress_visits.count()
+        self.data_dict['1d. IN_PROGRESS appointments'] = inprogress_visits.count()
 
         eligible_consent = ClinicEligibility.objects.filter(
             household_member__household_structure__household__plot__community__icontains=self.community,
@@ -73,6 +73,7 @@ class OperationalVisits(BaseOperationalReport):
         self.data_dict['2. Eligible but not yet consented'] = eligible_consent.count()
 
         no_samples = ClinicConsent.objects.filter(
+            # household_member__registered_subject__study_site__site_name
             household_member__household_structure__household__plot__community__icontains=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
@@ -88,7 +89,7 @@ class OperationalVisits(BaseOperationalReport):
                 registered_subject__study_site__site_name__icontains=self.community,
                 entry=entries,
                 entry_status=NEW)
-            self.data_dict['4. Consented subjects missing locator/ demographics info'] = locator_meta.count()
+            self.data_dict['4. Consented subjects missing locator info'] = locator_meta.count()
 
         entry = Entry.objects.filter(model_name='questionnaire', visit_definition__code='C0')
         for entries in entry:
@@ -98,7 +99,7 @@ class OperationalVisits(BaseOperationalReport):
                 registered_subject__study_site__site_name__icontains=self.community,
                 entry=entries,
                 entry_status=NEW)
-            self.data_dict['5. Consented subjects not under any registration status (e.g initiation, masa)'] = question_meta.count()
+            self.data_dict['5. Consented subjects not under any registration type (e.g initiation, masa)'] = question_meta.count()
 
         vl_entry = Entry.objects.filter(model_name="viralloadtracking", visit_definition__code='C0')
         for entries in vl_entry:
