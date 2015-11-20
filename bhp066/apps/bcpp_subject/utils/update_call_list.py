@@ -115,6 +115,6 @@ def update_call_list(community, survey_slug, label, verbose=False):
             print e
         except SubjectLocator.DoesNotExist:
             print('Not adding {} to call list. No contact information or may not '
-                  'follow (SubjectLocator)'.format(subject_consent))
+                  'follow (SubjectLocator)'.format(member))
         except HouseholdStructureNotEnrolled as e:
             print str(e)
