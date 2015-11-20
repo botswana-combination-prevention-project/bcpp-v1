@@ -172,20 +172,23 @@ class EnumerationHelper(object):
             user_modified=source_household_member.user_modified,  # carried over to help with logistics
         )
         try:
-            new_household_member = HouseholdMember.objects.create(**options)
-            if source_household_member.is_consented:
-                new_household_member.is_consented = source_household_member.is_consented  # consent is forever
-                new_household_member.save(update_fields=['is_consented'])
-        except ValidationError:
-            # 'representative eligibility' for an eligible representative has not been completed.'
-            pass
-        except IntegrityError as integrity_error:
-            # There are multiple types of integrity errors, i only want to ignore the duplicate entry here.
-            if 'unique' in str(integrity_error) or 'Duplicate' in str(integrity_error):
+            new_household_member = HouseholdMember.objects.get(**options)
+        except HouseholdMember.DoesNotExist:
+            try:
+                new_household_member = HouseholdMember.objects.create(**options)
+                if source_household_member.is_consented:
+                    new_household_member.is_consented = source_household_member.is_consented  # consent is forever
+                    new_household_member.save(update_fields=['is_consented'])
+                if source_household_member.member_status == BHS:
+                    new_household_member.member_status = ANNUAL
+                new_household_member.save_base(update_fields=['member_status'])
+            except ValidationError:
+                # 'representative eligibility' for an eligible representative has not been completed.'
                 pass
-            else:
-                raise integrity_error
-        if source_household_member.member_status == BHS:
-            new_household_member.member_status = ANNUAL
-            new_household_member.save_base(update_fields=['member_status'])
+            except IntegrityError as integrity_error:
+                # There are multiple types of integrity errors, i only want to ignore the duplicate entry here.
+                if 'unique' in str(integrity_error) or 'Duplicate' in str(integrity_error):
+                    pass
+                else:
+                    raise integrity_error
         return new_household_member
