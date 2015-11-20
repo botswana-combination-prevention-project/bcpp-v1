@@ -24,33 +24,34 @@ class OperationalRbd(BaseOperationalReport):
                                                                user_created__icontains=self.ra_username)
         self.data_dict['1. Total number of approached subjects'] = approached_subjects.count()
 
-        eligible_subjects = ClinicEligibility.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
+        eligible_subjects = ClinicEligibility.objects.filter(household_member__registered_subject__study_site__site_name__icontains=self.community,
                                                              created__gte=self.date_from,
                                                              created__lte=self.date_to,
                                                              user_created__icontains=self.ra_username,
-                                                             is_eligible=True)
+                                                             is_eligible=True,
+                                                             is_refused=False)
         self.data_dict['1a. ELIGIBLE subjects'] = eligible_subjects.count()
 
-        ineligible_subjects = ClinicEligibility.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
+        ineligible_subjects = ClinicEligibility.objects.filter(household_member__registered_subject__study_site__site_name__icontains=self.community,
                                                                created__gte=self.date_from,
                                                                created__lte=self.date_to,
                                                                user_created__icontains=self.ra_username,
-                                                               is_eligible=False)
+                                                               is_eligible=False,
+                                                               is_refused=False)
         self.data_dict['1b. INELIGIBLE subjects'] = ineligible_subjects.count()
 
-        ineligible_pos_subjects = ClinicEligibility.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
-                                                                   created__gte=self.date_from,
-                                                                   created__lte=self.date_to,
-                                                                   user_created__icontains=self.ra_username,
-                                                                   is_eligible=False,
-                                                                   hiv_status='POS')
-        self.data_dict['1bi. INELIGIBLE POS subjects'] = ineligible_pos_subjects.count()
-
-        total_clinic_consents = ClinicConsent.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
+        total_clinic_consents = ClinicConsent.objects.filter(household_member__registered_subject__study_site__site_name__icontains=self.community,
                                                              created__gte=self.date_from,
                                                              created__lte=self.date_to,
                                                              user_created__icontains=self.ra_username)
         self.data_dict['2. Total number of consented subjects'] = total_clinic_consents.count()
+
+        verified_clinic_consents = ClinicConsent.objects.filter(household_member__registered_subject__study_site__site_name__icontains=self.community,
+                                                                is_verified=True,
+                                                                created__gte=self.date_from,
+                                                                created__lte=self.date_to,
+                                                                user_created__icontains=self.ra_username)
+        self.data_dict['2i. Total number of verified consents'] = verified_clinic_consents.count()
 
         enrollment_loss = ClinicEnrollmentLoss.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
                                                               created__gte=self.date_from,
@@ -64,19 +65,19 @@ class OperationalRbd(BaseOperationalReport):
                                                             user_created__icontains=self.ra_username)
         self.data_dict['4. Total participation refusals'] = refused_participants.count()
 
-        consent = ClinicConsent.objects.filter(household_member__household_structure__household__plot__community__icontains=self.community,
+        consent = ClinicConsent.objects.filter(household_member__registered_subject__study_site__site_name__icontains=self.community,
                                                created__gte=self.date_from,
                                                created__lte=self.date_to,
                                                user_created__icontains=self.ra_username)
 
         enrolled_by_htc = consent.exclude(lab_identifier='', pims_identifier='')
-        self.data_dict['5. Subjects with HTC identifier'] = enrolled_by_htc.count()
+        self.data_dict['5. Subject has HTC identifier'] = enrolled_by_htc.count()
 
         with_pims_identifier = consent.exclude(lab_identifier='', htc_identifier='')
-        self.data_dict['5a. Subjects with PIMS identifier'] = with_pims_identifier.count()
+        self.data_dict['5a. Subject has PIMS identifier'] = with_pims_identifier.count()
 
         with_k_identifier = consent.exclude(htc_identifier='', pims_identifier='')
-        self.data_dict['5b. Subjects with K# identifier'] = with_k_identifier.count()
+        self.data_dict['5b. Subject has K# identifier'] = with_k_identifier.count()
 
         enrolled_by_initiation = Questionnaire.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                               created__gte=self.date_from,
