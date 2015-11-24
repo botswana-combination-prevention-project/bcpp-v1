@@ -75,16 +75,16 @@ class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
         exclude = []
         visit_code = visit_code or self.get_visit_code(request, obj)
         if visit_code in self.visit_codes.get(ANNUAL):
-            exclude = [
-                "first_positive",
-                "medical_care",
-                "no_medical_care",
-                "no_medical_care_other",
-                "ever_recommended_arv",
-                "ever_taken_arv",
-                "why_no_arv",
-                "why_no_arv_other"
-                "first_arv"]
+#             exclude = [
+#                 "first_positive",
+#                 "medical_care",
+#                 "no_medical_care",
+#                 "no_medical_care_other",
+#                 "ever_recommended_arv",
+#                 "ever_taken_arv",
+#                 "why_no_arv",
+#                 "why_no_arv_other"
+#                 "first_arv"]
             if not Survey.objects.first_survey.survey_slug == settings.CURRENT_SURVEY:
                 subject_visit = self.get_visit(request, obj)
                 if subject_visit:
