@@ -251,6 +251,8 @@ class HouseholdDashboard(Dashboard):
 
         For follow up surveys, will create new members based on the previous
         survey relative to the current household structure."""
+        self._household_members = HouseholdMember.objects.filter(
+            household_structure=self.household_structure).order_by('first_name')
         if not self._household_members:
             try:
                 HouseholdStructure.objects.add_household_members_from_survey(
@@ -264,8 +266,6 @@ class HouseholdDashboard(Dashboard):
             except HouseholdStructureNotEnrolled:
                 # previous survey is not erolled
                 pass
-            self._household_members = HouseholdMember.objects.filter(
-                household_structure=self.household_structure).order_by('first_name')
         return self._household_members
 
     @property
