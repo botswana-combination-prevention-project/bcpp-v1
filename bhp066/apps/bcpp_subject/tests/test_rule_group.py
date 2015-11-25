@@ -864,15 +864,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission=YES,
-            permanent_resident=True,
-            intend_residency=True,
-            hiv_status_today=NEG,
-            dob=datetime(1990, 01, 01),
-            household_residency=True,
-            citizen_or_spouse=True,
-            locator_information=True,
-            consent_datetime=datetime.today())
+            hic_permission=YES)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
 
@@ -955,15 +947,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission=YES,
-            permanent_resident=True,
-            intend_residency=True,
-            hiv_status_today=NEG,
-            dob=datetime(1990, 01, 01),
-            household_residency=True,
-            citizen_or_spouse=True,
-            locator_information=True,
-            consent_datetime=datetime.today())
+            hic_permission=YES)
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1157,15 +1141,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission=YES,
-            permanent_resident=True,
-            intend_residency=True,
-            hiv_status_today=NEG,
-            dob=datetime(1990, 01, 01),
-            household_residency=True,
-            citizen_or_spouse=True,
-            locator_information=True,
-            consent_datetime=datetime.today())
+            hic_permission=YES)
 
         self.subject_visit_male = self.annual_subject_visit
 
@@ -1741,16 +1717,7 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         HicEnrollment.objects.create(
             subject_visit=self.subject_visit_male_T0,
             report_datetime=datetime.today(),
-            hic_permission=YES,
-            permanent_resident=True,
-            intend_residency=True,
-            hiv_status_today=NEG,
-            dob=datetime(1990, 01, 01),
-            household_residency=True,
-            citizen_or_spouse=True,
-            locator_information=True,
-            consent_datetime=datetime.today()
-        )
+            hic_permission=YES)
 
         self.subject_visit_male = self.annual_subject_visit
 
