@@ -15,6 +15,7 @@ from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
 from bhp066.apps.bcpp_household_member.classes import EnumerationHelper
+from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_survey.models import Survey
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
@@ -29,7 +30,7 @@ from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
-    community = 'bokaa'
+    community = 'digawana'
 
     def setUp(self):
         try:
@@ -43,15 +44,19 @@ class BaseRuleGroupTestSetup(TestCase):
 
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 
-        survey = Survey.objects.all().order_by('datetime_start')[0]
-        next_survey = Survey.objects.all().order_by('datetime_start')[1]
+        surveys = Survey.objects.all().order_by('datetime_start')
+        survey_T0 = surveys[0]
+        survey_T1 = surveys[1]
+        survey_T2 = surveys[2]
 
-        self.study_site = StudySite.objects.get(site_code='17')
+        self.study_site = StudySite.objects.get(site_code='12')
 
-        self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
-        self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
+        self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T0)
+        self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T1)
+        self.household_structure_y3 = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T2)
         RepresentativeEligibilityFactory(household_structure=self.household_structure)
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
+        RepresentativeEligibilityFactory(household_structure=self.household_structure_y3)
         HouseholdMemberFactory(household_structure=self.household_structure)
         HouseholdMemberFactory(household_structure=self.household_structure)
         HouseholdMemberFactory(household_structure=self.household_structure)
@@ -89,21 +94,38 @@ class BaseRuleGroupTestSetup(TestCase):
             part_time_resident=YES)
         subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, confirm_identity='101129811', identity='101129811', study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
         subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, confirm_identity='101119811', identity='101119811', study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
+        self.assertEqual(HouseholdStructure.objects.filter(household=self.household_structure.household, survey=survey_T0, enumerated=True, enrolled=True).count(), 1)
 
-        enumeration_helper = EnumerationHelper(self.household_structure.household, survey, next_survey)
-        self.household_member_female = enumeration_helper.create_member_on_target(self.household_member_female_T0)
-        self.household_member_male = enumeration_helper.create_member_on_target(self.household_member_male_T0)
+        enumeration_helper_T2 = EnumerationHelper(self.household_structure.household, survey_T0, survey_T1)
+        enumeration_helper_T2.add_members_from_survey()
+        self.household_member_female = HouseholdMember.objects.get(internal_identifier=self.household_member_female_T0.internal_identifier,
+                                                                   household_structure__survey=survey_T1)
+        self.household_member_male = HouseholdMember.objects.get(internal_identifier=self.household_member_male_T0.internal_identifier,
+                                                                 household_structure__survey=survey_T1)
+        self.assertEqual(HouseholdStructure.objects.filter(household=self.household_structure_y2.household, survey=survey_T1, enumerated=True, enrolled=True).count(), 1)
+
+        enumeration_helper_T3 = EnumerationHelper(self.household_structure.household, survey_T1, survey_T2)
+        enumeration_helper_T3.add_members_from_survey()
+        self.household_member_female_T2 = HouseholdMember.objects.get(internal_identifier=self.household_member_female.internal_identifier,
+                                                                      household_structure__survey=survey_T2)
+        self.household_member_male_T2 = HouseholdMember.objects.get(internal_identifier=self.household_member_male.internal_identifier,
+                                                                    household_structure__survey=survey_T2)
+        self.assertEqual(HouseholdStructure.objects.filter(household=self.household_structure_y3.household, survey=survey_T2, enumerated=True, enrolled=True).count(), 1)
 
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
         self.appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T1')
         self.appointment_female_T0 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T0')
+        self.appointment_female_T2 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T2')
         self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
         self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
+        self.subject_visit_female_T2 = SubjectVisitFactory(appointment=self.appointment_female_T2, household_member=self.household_member_female_T2)
         self.appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T1')
         self.appointment_male_T0 = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T0')
+        self.appointment_male_T2 = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T2')
         self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        self.subject_visit_male_T2 = SubjectVisitFactory(appointment=self.appointment_male_T2, household_member=self.household_member_male_T2)
 
     def check_male_registered_subject_rule_groups(self, subject_visit):
         circumsition_options = {}
@@ -170,12 +192,20 @@ class BaseRuleGroupTestSetup(TestCase):
         return self.subject_visit_male_T0
 
     @property
-    def annual_subject_visit(self):
+    def annual_subject_visit_y2(self):
         """ Return annuall subject visit """
         self.subject_visit_male.delete()
         self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male).count(), 0)
         self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
         return self.subject_visit_male
+
+    @property
+    def annual_subject_visit_y3(self):
+        """ Return annuall subject visit """
+        self.subject_visit_male_T2.delete()
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male_T2).count(), 0)
+        self.subject_visit_male_T2 = SubjectVisitFactory(appointment=self.appointment_male_T2, household_member=self.household_member_male_T2)
+        return self.subject_visit_male_T2
 
     def hiv_result(self, status, subject_visit):
         """ Create HivResult for a particular survey"""
