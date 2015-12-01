@@ -13,6 +13,7 @@ from ..models import (
     HivResult, Pima, HivTestReview, HivCareAdherence,
     HivTestingHistory, HivResultDocumentation,
     ElisaHivResult)
+from __builtin__ import getattr
 
 
 class SubjectStatusHelper(object):
