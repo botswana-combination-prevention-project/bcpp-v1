@@ -1003,19 +1003,11 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
     def test_Known_hiv_pos_y3_not_hic_require_no_testing_missed_y2(self):
-        self.subject_visit_male_T0 = self.annual_subject_visit_y3
+        self.subject_visit_male_T0 = self.baseline_subject_visit
 
-        hiv_result_options = {}
-        hiv_result_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivresult',
-            appointment=self.subject_visit_male.appointment)
-
-        # They were NEG in year 1
-        self.hiv_result(NEG, self.subject_visit_male_T0)
-
+        # Known POS in T0
         HivTestingHistory.objects.create(
-            subject_visit=self.subject_visit_male_T2,
+            subject_visit=self.subject_visit_male_T0,
             has_tested=YES,
             when_hiv_test='1 to 5 months ago',
             has_record=YES,
@@ -1024,10 +1016,19 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         )
 
         HivTestReview.objects.create(
-            subject_visit=self.subject_visit_male_T2,
+            subject_visit=self.subject_visit_male_T0,
             hiv_test_date=datetime.today() - timedelta(days=50),
             recorded_hiv_result=POS,
         )
+
+        # Misses T1, and is seen again at T2. They should not be Tested.
+        self.subject_visit_male_T2 = self.annual_subject_visit_y3
+
+        hiv_result_options = {}
+        hiv_result_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresult',
+            appointment=self.subject_visit_male_T2.appointment)
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 

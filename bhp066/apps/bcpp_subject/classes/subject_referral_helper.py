@@ -477,3 +477,4 @@ class SubjectReferralHelper(object):
     @property
     def cd4_result_datetime(self):
         return self.subject_status_helper.cd4_result_datetime
+
