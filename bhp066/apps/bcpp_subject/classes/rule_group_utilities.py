@@ -8,19 +8,25 @@ from ..classes import SubjectStatusHelper
 
 
 def func_previous_visit_instance(visit_instance):
-    """ Returns subject_visit 1 year from the current """
-    try:
-        registered_subject = visit_instance.appointment.registered_subject
-        previous_time_point = visit_instance.appointment.visit_definition.time_point - 1
-        previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
-                                                       visit_definition__time_point=previous_time_point)
-        return SubjectVisit.objects.get(appointment=previous_appointment)
-    except Appointment.DoesNotExist:
-        return None
-    except SubjectVisit.DoesNotExist:
-        return None
-    except AttributeError:
-        return None
+    """ Returns the next earlier subject_visit of the participant.
+        e.g if visit time point is 3, then return time point 2 if it exists else time point 1.
+        If no previous visit, then the current visit is returned."""
+    registered_subject = visit_instance.appointment.registered_subject
+    timepoints = range(0, visit_instance.appointment.visit_definition.time_point)
+    if len(timepoints) > 0:
+        timepoints.reverse()
+    for point in timepoints:
+        try:
+            previous_appointment = Appointment.objects.get(registered_subject=registered_subject,
+                                                           visit_definition__time_point=point)
+            return SubjectVisit.objects.get(appointment=previous_appointment)
+        except Appointment.DoesNotExist:
+            pass
+        except SubjectVisit.DoesNotExist:
+            pass
+        except AttributeError:
+            pass
+    return None
 
 
 def func_is_baseline(visit_instance):
@@ -234,9 +240,12 @@ def func_not_required(visit_instance):
 
 
 def func_known_pos_in_prev_year(visit_instance):
-    past_visit = func_previous_visit_instance(visit_instance)
-    pos_in_yr1 = func_hiv_positive_today(past_visit) or func_known_pos(past_visit)
-    return pos_in_yr1
+    prev_visit = func_previous_visit_instance(visit_instance)
+    while prev_visit:
+        if func_hiv_positive_today(prev_visit) or func_known_pos(prev_visit):
+            return True
+        prev_visit = func_previous_visit_instance(prev_visit)
+    return False
 
 
 def func_no_verbal_hiv_result(visit_instance):
@@ -288,12 +297,11 @@ def art_naive_at_enrollment(visit_instance):
     """ visit_instance is T3, then prev_visit1 is T2 and prev_visit2 is Baseline.
         visit_instance is T2, then prev_visit1 is T1 and prev_visit2 is None.
         visit_instance is T0, then prev_visit1 is None and prev_visit2 is None. """
-    prev_visit1 = func_previous_visit_instance(visit_instance)
-    prev_visit2 = func_previous_visit_instance(prev_visit1)
-    if first_enrolled(prev_visit1) and func_art_naive(prev_visit1):
-        return True
-    elif first_enrolled(prev_visit2) and func_art_naive(prev_visit2):
-        return True
+    prev_visit = func_previous_visit_instance(visit_instance)
+    while prev_visit:
+        if first_enrolled(prev_visit) and func_art_naive(prev_visit):
+            return True
+        prev_visit = func_previous_visit_instance(prev_visit)
     return False
 
 
