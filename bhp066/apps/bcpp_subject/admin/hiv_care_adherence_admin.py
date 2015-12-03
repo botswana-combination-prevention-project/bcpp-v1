@@ -71,10 +71,10 @@ class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
         'ever_taken_arv',
     )
 
-    def get_custom_exclude(self, request, obj=None, visit_code=None):
-        exclude = []
-        visit_code = visit_code or self.get_visit_code(request, obj)
-        if visit_code in self.visit_codes.get(ANNUAL):
+#     def get_custom_exclude(self, request, obj=None, visit_code=None):
+#         exclude = []
+#         visit_code = visit_code or self.get_visit_code(request, obj)
+#         if visit_code in self.visit_codes.get(ANNUAL):
 #             exclude = [
 #                 "first_positive",
 #                 "medical_care",
@@ -85,12 +85,12 @@ class HivCareAdherenceAdmin(SubjectAdminExcludeMixin, SubjectVisitModelAdmin):
 #                 "why_no_arv",
 #                 "why_no_arv_other"
 #                 "first_arv"]
-            if not Survey.objects.first_survey.survey_slug == settings.CURRENT_SURVEY:
-                subject_visit = self.get_visit(request, obj)
-                if subject_visit:
-                    subject_helper = SubjectStatusHelper(subject_visit, use_baseline_visit=True)
-                    if subject_helper.hiv_result == POS and not subject_helper.on_art:
-                        exclude.pop(exclude.index('first_positive'))
-        return exclude
+#             if not Survey.objects.first_survey.survey_slug == settings.CURRENT_SURVEY:
+#                 subject_visit = self.get_visit(request, obj)
+#                 if subject_visit:
+#                     subject_helper = SubjectStatusHelper(subject_visit, use_baseline_visit=True)
+#                     if subject_helper.hiv_result == POS and not subject_helper.on_art:
+#                         exclude.pop(exclude.index('first_positive'))
+#         return exclude
 
 admin.site.register(HivCareAdherence, HivCareAdherenceAdmin)
