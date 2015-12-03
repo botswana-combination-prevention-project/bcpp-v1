@@ -170,7 +170,7 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
             ]},
          'T2': {
             'title': 'T2 Annual Household Survey',
-            'time_point': 1,
+            'time_point': 2,
             'base_interval': 0,
             'base_interval_unit': 'D',
             'window_lower_bound': 0,
@@ -223,17 +223,11 @@ class BcppSubjectVisitSchedule(VisitScheduleConfiguration):
                 EntryTuple(240L, u'bcpp_subject', u'sti', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(250L, u'bcpp_subject', u'tubercolosis', REQUIRED, NOT_ADDITIONAL),
                 EntryTuple(260L, u'bcpp_subject', u'tbsymptoms', REQUIRED, NOT_ADDITIONAL),
-#                 EntryTuple(270L, u'bcpp_subject', u'qualityoflife', REQUIRED, NOT_ADDITIONAL),
-#                 EntryTuple(280L, u'bcpp_subject', u'resourceutilization', REQUIRED, NOT_ADDITIONAL),
-#                 EntryTuple(290L, u'bcpp_subject', u'outpatientcare', REQUIRED, NOT_ADDITIONAL),
-#                 EntryTuple(300L, u'bcpp_subject', u'hospitaladmission', REQUIRED, NOT_ADDITIONAL),
-#                 EntryTuple(310L, u'bcpp_subject', u'hivhealthcarecosts', REQUIRED, NOT_ADDITIONAL),
-#                 EntryTuple(320L, u'bcpp_subject', u'labourmarketwages', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(330L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(340L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(350L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
-                EntryTuple(370L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
-                EntryTuple(380L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(270L, u'bcpp_subject', u'hivresult', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(280L, u'bcpp_subject', u'elisahivresult', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(290L, u'bcpp_subject', u'pima', NOT_REQUIRED, ADDITIONAL),
+                EntryTuple(300L, u'bcpp_subject', u'subjectreferral', REQUIRED, NOT_ADDITIONAL),
+                EntryTuple(310L, u'bcpp_subject', u'hicenrollment', NOT_REQUIRED, ADDITIONAL),
             ]}
          }
     )
