@@ -43,10 +43,10 @@ class RanakaPlotMapper(BasePlotMapper):
             smc_start_date=date(2015, 1, 7)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
-            start_date=date(2015, 11, 16),
-            full_enrollment_date=date(2015, 12, 31),
-            end_date=date(2015, 12, 31),
-            smc_start_date=date(2015, 12, 31)),
+            start_date=date(2015, 12, 4),
+            full_enrollment_date=date(2016, 1, 31),
+            end_date=date(2016, 1, 31),
+            smc_start_date=date(2016, 1, 31)),
     }
 
     clinic_days = {
@@ -61,7 +61,7 @@ class RanakaPlotMapper(BasePlotMapper):
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
         'bcpp-year-3': {
-            'IDCC': ClinicDaysTuple((TU, ), None),
+            'IDCC': ClinicDaysTuple((WE, ), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-3'].smc_start_date)},

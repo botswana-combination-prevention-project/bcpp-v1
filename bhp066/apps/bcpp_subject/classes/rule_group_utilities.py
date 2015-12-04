@@ -50,11 +50,10 @@ def func_art_naive(visit_instance):
 
 
 def func_on_art(visit_instance):
-    """Returns True if the participant is on art or cannot
-    be confirmed to be on art."""
+    """Returns True if the participant cannot be confirmed to be on art."""
     subject_status_helper = SubjectStatusHelper(visit_instance, use_baseline_visit=False)
-    art_naive = subject_status_helper.on_art and subject_status_helper.hiv_result == POS
-    return art_naive
+    art_status = subject_status_helper.on_art and subject_status_helper.hiv_result == POS
+    return art_status
 
 
 def func_rbd_ahs(visit_instance):
