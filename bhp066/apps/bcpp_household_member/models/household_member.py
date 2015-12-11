@@ -315,7 +315,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
-        self.is_the_household_member_for_current_survey()
+        #self.is_the_household_member_for_current_survey()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):
@@ -386,7 +386,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
     def evaluate_htc_eligibility(self):
         from ..models import EnrollmentChecklist
         eligible_htc = False
-        if self.age_in_years > 64:
+        if self.age_in_years > 64 and not self.is_consented:
             eligible_htc = True
         elif ((not self.eligible_member and self.inability_to_participate == NOT_APPLICABLE) and
               self.age_in_years >= 16):
