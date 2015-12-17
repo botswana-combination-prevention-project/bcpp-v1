@@ -228,9 +228,14 @@ def func_baseline_vl_drawn(visit_instance):
     return SubjectStatusHelper(visit_instance, use_baseline_visit=True).vl_sample_drawn
 
 
-def func_baseline_rbd_drawn(visit_instance):
+def func_rbd_drawn_in_past(visit_instance):
     """Returns the baseline visit instance."""
-    return SubjectStatusHelper(visit_instance, use_baseline_visit=True).rbd_sample_drawn
+    prev_visit = func_previous_visit_instance(visit_instance)
+    while prev_visit:
+        if SubjectStatusHelper(prev_visit).rbd_sample_drawn:
+            return True
+        prev_visit = func_previous_visit_instance(prev_visit)
+    return False
 
 
 def func_baseline_pima_keyed(visit_instance):
@@ -327,7 +332,7 @@ def sero_converter(visit_instance):
 def func_rbd(visit_instance):
     """Returns True or False to indicate a participant should be offered an rbd."""
     # if pos at bhs then return true
-    if func_hiv_positive_today(visit_instance) and not func_baseline_rbd_drawn(visit_instance):
+    if func_hiv_positive_today(visit_instance) and not func_rbd_drawn_in_past(visit_instance):
         return True
     return False
 
