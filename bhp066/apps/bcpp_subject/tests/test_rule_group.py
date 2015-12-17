@@ -838,21 +838,8 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **microtube_options).count(), 1)
 
-    def test_hic_filled_in_y1(self):
+    def test_hic_filled_in_y1_notrequired_in_annual(self):
         self.subject_visit_male_T0 = self.baseline_subject_visit
-
-        hic_enrollment_options = {}
-        hic_enrollment_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hicenrollment',
-            appointment=self.subject_visit_male.appointment)
-
-        microtube_options = {}
-        microtube_options.update(
-            lab_entry__app_label='bcpp_lab',
-            lab_entry__model_name='subjectrequisition',
-            lab_entry__requisition_panel__name='Microtube',
-            appointment=self.subject_visit_male.appointment)
 
         SubjectLocatorFactory(registered_subject=self.subject_visit_male_T0.appointment.registered_subject,
                               subject_visit=self.subject_visit_male_T0)
@@ -866,7 +853,34 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             report_datetime=datetime.today(),
             hic_permission=YES)
 
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hic_enrollment_options).count(), 1)
+        subject_visit_male = self.annual_subject_visit_y2
+
+        self.hiv_result(NEG, subject_visit_male)
+
+        hic_enrollment_options = {}
+        hic_enrollment_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hicenrollment',
+            appointment=subject_visit_male.appointment)
+
+        microtube_options = {}
+        microtube_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Microtube',
+            appointment=subject_visit_male.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED,
+                                                               **hic_enrollment_options).count(), 1)
+
+        subject_visit_male_T2 = self.annual_subject_visit_y3
+
+        self.hiv_result(NEG, subject_visit_male_T2)
+
+        hic_enrollment_options.update(appointment=subject_visit_male_T2.appointment)
+
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED,
+                                                               **hic_enrollment_options).count(), 1)
 
     def test_microtube_always_required_for_previous_hic(self):
         self.subject_visit_male_T0 = self.baseline_subject_visit
@@ -1058,93 +1072,93 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_result_options).count(), 1)
 
-    def hiv_pos_and_art_naive_pimavl_bhs(self):
-        """HIV Positive not on ART at T0, Should offer POC VL at BHS"""
-        self.subject_visit_male_T0 = self.baseline_subject_visit
-
-        pima_vl_options = {}
-        pima_vl_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='pimavl',
-            appointment=self.subject_visit_male_T0.appointment)
-
-        HivTestingHistory.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            has_tested=YES,
-            when_hiv_test='1 to 5 months ago',
-            has_record=YES,
-            verbal_hiv_result=POS,
-            other_record=NO
-        )
-
-        HivTestReview.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result=POS,
-        )
-        # known pos
-        HivCareAdherence.objects.create(
-            subject_visit=self.subject_visit_male_T0,
-            first_positive=None,
-            medical_care=NO,
-            ever_recommended_arv=NO,
-            ever_taken_arv=NO,
-            on_arv=NO,
-            arv_evidence=NO,  # this is the rule field
-        )
-
-#         quota = Quota.objects.create(
-#             app_label='bcpp_subject',
-#             model_name='PimaVl',
-#             target=2,
-#             expires_datetime=datetime.now() + timedelta(days=1)
-#     )
-        self.assertEqual(Quota.objects.all().count(), 1)
-#         PimaVlFactory(subject_visit=self.subject_visit_male_T0)
-#
-#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **pima_vl_options).count(), 1)
-
-    def test_hiv_pos_and_art_naive_pimavl_ahs(self):
-        """HIV Positive not on ART at T0, Should offer POC VL at BHS
-           HIV Positive not on ART at T1 Should again offer POC VL AHS"""
-
-        # Takes care of T0 environment
-        self.hiv_pos_and_art_naive_pimavl_bhs()
-
-        self.subject_visit_male = self.annual_subject_visit_y2
-
-        pima_vl_options = {}
-        pima_vl_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='pimavl',
-            appointment=self.subject_visit_male.appointment)
-
-        HivTestingHistory.objects.create(
-            subject_visit=self.subject_visit_male,
-            has_tested=YES,
-            when_hiv_test='1 to 5 months ago',
-            has_record=YES,
-            verbal_hiv_result=POS,
-            other_record=NO
-        )
-
-        HivTestReview.objects.create(
-            subject_visit=self.subject_visit_male,
-            hiv_test_date=datetime.today() - timedelta(days=50),
-            recorded_hiv_result=POS,
-        )
-
-        HivCareAdherence.objects.create(
-            subject_visit=self.subject_visit_male,
-            first_positive=None,
-            medical_care=NO,
-            ever_recommended_arv=NO,
-            ever_taken_arv=NO,
-            on_arv=NO,
-            arv_evidence=NO,  # this is the rule field
-        )
-
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
+#     def hiv_pos_and_art_naive_pimavl_bhs(self):
+#         """HIV Positive not on ART at T0, Should offer POC VL at BHS"""
+#         self.subject_visit_male_T0 = self.baseline_subject_visit
+# 
+#         pima_vl_options = {}
+#         pima_vl_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='pimavl',
+#             appointment=self.subject_visit_male_T0.appointment)
+# 
+#         HivTestingHistory.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             has_tested=YES,
+#             when_hiv_test='1 to 5 months ago',
+#             has_record=YES,
+#             verbal_hiv_result=POS,
+#             other_record=NO
+#         )
+# 
+#         HivTestReview.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             hiv_test_date=datetime.today() - timedelta(days=50),
+#             recorded_hiv_result=POS,
+#         )
+#         # known pos
+#         HivCareAdherence.objects.create(
+#             subject_visit=self.subject_visit_male_T0,
+#             first_positive=None,
+#             medical_care=NO,
+#             ever_recommended_arv=NO,
+#             ever_taken_arv=NO,
+#             on_arv=NO,
+#             arv_evidence=NO,  # this is the rule field
+#         )
+# 
+# #         quota = Quota.objects.create(
+# #             app_label='bcpp_subject',
+# #             model_name='PimaVl',
+# #             target=2,
+# #             expires_datetime=datetime.now() + timedelta(days=1)
+# #     )
+# #         self.assertEqual(Quota.objects.all().count(), 1)
+# #         PimaVlFactory(subject_visit=self.subject_visit_male_T0)
+# #
+# #         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, **pima_vl_options).count(), 1)
+# 
+#     def test_hiv_pos_and_art_naive_pimavl_ahs(self):
+#         """HIV Positive not on ART at T0, Should offer POC VL at BHS
+#            HIV Positive not on ART at T1 Should again offer POC VL AHS"""
+# 
+#         # Takes care of T0 environment
+#         self.hiv_pos_and_art_naive_pimavl_bhs()
+# 
+#         self.subject_visit_male = self.annual_subject_visit_y2
+# 
+#         pima_vl_options = {}
+#         pima_vl_options.update(
+#             entry__app_label='bcpp_subject',
+#             entry__model_name='pimavl',
+#             appointment=self.subject_visit_male.appointment)
+# 
+#         HivTestingHistory.objects.create(
+#             subject_visit=self.subject_visit_male,
+#             has_tested=YES,
+#             when_hiv_test='1 to 5 months ago',
+#             has_record=YES,
+#             verbal_hiv_result=POS,
+#             other_record=NO
+#         )
+# 
+#         HivTestReview.objects.create(
+#             subject_visit=self.subject_visit_male,
+#             hiv_test_date=datetime.today() - timedelta(days=50),
+#             recorded_hiv_result=POS,
+#         )
+# 
+#         HivCareAdherence.objects.create(
+#             subject_visit=self.subject_visit_male,
+#             first_positive=None,
+#             medical_care=NO,
+#             ever_recommended_arv=NO,
+#             ever_taken_arv=NO,
+#             on_arv=NO,
+#             arv_evidence=NO,  # this is the rule field
+#         )
+# 
+#         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=REQUIRED, **pima_vl_options).count(), 1)
 
     def test_hic_enrolled_at_bhs(self):
         """ If there is an hic record at bhs then at ahs inspect the record then check for hic status if not enrolled then Hic_enrollment

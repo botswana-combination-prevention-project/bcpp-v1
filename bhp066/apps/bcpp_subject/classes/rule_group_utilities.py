@@ -71,11 +71,11 @@ def func_require_pima(visit_instance):
     """Returns True or False for doing PIMA based on hiv status and art status at each survey."""
     if func_is_baseline(visit_instance) and func_art_naive(visit_instance):
         return True
-    # Hiv+ve at enrollment, art naive at enrollment
-    elif art_naive_at_enrollment(visit_instance):
-        return True
     # Hiv -ve at enrollment, now changed to Hiv +ve
     elif sero_converter(visit_instance) and func_art_naive(visit_instance):
+        return True
+    # Hiv+ve at enrollment, art naive at enrollment
+    elif art_naive_at_enrollment(visit_instance):
         return True
     return False
 
@@ -98,8 +98,8 @@ def func_circumcision(visit_instance):
 
 def func_show_hic_enrollment(visit_instance):
     """ If the participant still test HIV NEG and was not HIC enrolled then HIC should be REQUIRED. """
-    past_visit = func_previous_visit_instance(visit_instance)
-    if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(past_visit):
+#     past_visit = func_previous_visit_instance(visit_instance)
+    if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(visit_instance):
         return True
     else:
         return False
@@ -109,9 +109,9 @@ def func_show_microtube(visit_instance):
     """Returns True to trigger the Microtube requisition if ...? """
     show_micro = False
     past_visit = func_previous_visit_instance(visit_instance)
-    if func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
+    if func_hic_enrolled(visit_instance) and func_hiv_positive_today(visit_instance):
         show_micro = True
-    elif not func_hic_enrolled(past_visit) and func_hiv_positive_today(visit_instance):
+    elif not func_hic_enrolled(visit_instance) and func_hiv_positive_today(visit_instance):
         show_micro = False
     elif func_known_pos_in_prev_year(visit_instance):
         show_micro = False
@@ -163,24 +163,32 @@ def func_hiv_positive_today_ahs(visit_instance):
 def func_hic_enrolled(visit_instance):
     try:
         HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='Yes')
-    except HicEnrollment.DoesNotExist:
-        return False
-    return True
-
-
-def func_hic_not_enrolled(visit_instance):
-    try:
-        HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='No')
-    except HicEnrollment.DoesNotExist:
-        return False
-    return True
-
-
-def func_hic(visit_instance):
-    past_visit = func_previous_visit_instance(visit_instance)
-    if func_hic_enrolled(past_visit) or func_hic_not_enrolled(past_visit):
         return True
+    except HicEnrollment.DoesNotExist:
+        past_visit = func_previous_visit_instance(visit_instance)
+        while past_visit:
+            try:
+                HicEnrollment.objects.get(subject_visit=past_visit, hic_permission='Yes')
+                return True
+            except HicEnrollment.DoesNotExist:
+                pass
+            past_visit = func_previous_visit_instance(past_visit)
     return False
+
+
+# def func_hic_not_enrolled(visit_instance):
+#     try:
+#         HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='No')
+#     except HicEnrollment.DoesNotExist:
+#         return False
+#     return True
+
+
+# def func_hic(visit_instance):
+#     past_visit = func_previous_visit_instance(visit_instance)
+#     if func_hic_enrolled(past_visit) or func_hic_not_enrolled(past_visit):
+#         return True
+#     return False
 
 
 def func_hiv_result_neg_baseline(visit_instance):
@@ -306,8 +314,14 @@ def art_naive_at_enrollment(visit_instance):
 
 def sero_converter(visit_instance):
     """ previously NEG and currently POS """
-    return True if (func_hiv_negative_today(func_previous_visit_instance(visit_instance)) and
-                    func_hiv_positive_today(visit_instance)) else False
+    ever_negative = False
+    past_visit = func_previous_visit_instance(visit_instance)
+    while past_visit:
+        ever_negative = func_hiv_negative_today(past_visit)
+        if ever_negative:
+            break
+        past_visit = func_previous_visit_instance(past_visit)
+    return True if (ever_negative and func_hiv_positive_today(visit_instance)) else False
 
 
 def func_rbd(visit_instance):
