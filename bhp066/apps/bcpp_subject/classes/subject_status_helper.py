@@ -49,7 +49,7 @@ class SubjectStatusHelper(object):
             'hiv_test_review': HivTestReview,
             'hiv_testing_history': HivTestingHistory,
             'pima': Pima},
-        }
+    }
 
     def __init__(self, visit_instance=None, use_baseline_visit=False):
         self._defaulter = None
