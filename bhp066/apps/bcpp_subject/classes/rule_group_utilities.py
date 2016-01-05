@@ -5,6 +5,7 @@ from edc_constants.constants import NO
 from ..constants import BASELINE_CODES
 from ..models import SubjectVisit, Circumcised, HicEnrollment, HivTestingHistory
 from ..classes import SubjectStatusHelper
+from bhp066.apps.bcpp_subject.models.hiv_result import HivResult
 
 
 def func_previous_visit_instance(visit_instance):
@@ -98,7 +99,6 @@ def func_circumcision(visit_instance):
 
 def func_show_hic_enrollment(visit_instance):
     """ If the participant still test HIV NEG and was not HIC enrolled then HIC should be REQUIRED. """
-#     past_visit = func_previous_visit_instance(visit_instance)
     if func_hiv_negative_today(visit_instance) and not func_hic_enrolled(visit_instance):
         return True
     else:
@@ -106,18 +106,16 @@ def func_show_hic_enrollment(visit_instance):
 
 
 def func_show_microtube(visit_instance):
-    """Returns True to trigger the Microtube requisition if ...? """
+    """Returns True to trigger the Microtube requisition if one is
+    1. an hic participant who is still HIV-
+    2. an hic participant who has sero-converted but the HIV+ result was not tested by bhp
+    3. a new enrollee that is HIV-
+     """
     show_micro = False
-    past_visit = func_previous_visit_instance(visit_instance)
-    if func_hic_enrolled(visit_instance) and func_hiv_positive_today(visit_instance):
+    if func_hic_enrolled(visit_instance) and not func_pos_tested_by_bhp(visit_instance):
         show_micro = True
-    elif not func_hic_enrolled(visit_instance) and func_hiv_positive_today(visit_instance):
-        show_micro = False
-    elif func_known_pos_in_prev_year(visit_instance):
-        show_micro = False
-    elif func_hiv_positive_today(visit_instance) and not past_visit:
-        show_micro = False
-    else:
+    elif not func_hic_enrolled(visit_instance) and not (func_hiv_positive_today(visit_instance) or
+                                                        func_known_pos_in_prev_year(visit_instance)):
         show_micro = True
     return show_micro
 
@@ -150,6 +148,21 @@ def func_hiv_positive_today(visit_instance):
     return hiv_result == POS
 
 
+def func_pos_tested_by_bhp(visit_instance):
+    """Returns True if the participant is HIV+ and has a POS HivResult record."""
+    hiv_result = SubjectStatusHelper(visit_instance, use_baseline_visit=False).hiv_result
+    if hiv_result != POS:
+        past_visit = func_previous_visit_instance(visit_instance)
+        while past_visit:
+            hiv_result = SubjectStatusHelper(past_visit, use_baseline_visit=False).hiv_result
+            if hiv_result == POS:
+                break
+            past_visit = func_previous_visit_instance(past_visit)
+    return hiv_result == POS and HivResult.objects.filter(
+        subject_visit__subject_identifier=visit_instance.subject_identifier,
+        hiv_result=POS).exists()
+
+
 def func_hiv_positive_today_ahs(visit_instance):
     """Returns True if  """
     if func_is_baseline(visit_instance):
@@ -174,21 +187,6 @@ def func_hic_enrolled(visit_instance):
                 pass
             past_visit = func_previous_visit_instance(past_visit)
     return False
-
-
-# def func_hic_not_enrolled(visit_instance):
-#     try:
-#         HicEnrollment.objects.get(subject_visit=visit_instance, hic_permission='No')
-#     except HicEnrollment.DoesNotExist:
-#         return False
-#     return True
-
-
-# def func_hic(visit_instance):
-#     past_visit = func_previous_visit_instance(visit_instance)
-#     if func_hic_enrolled(past_visit) or func_hic_not_enrolled(past_visit):
-#         return True
-#     return False
 
 
 def func_hiv_result_neg_baseline(visit_instance):

@@ -667,16 +667,6 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self._hiv_result = self.hiv_result('IND', self.subject_visit_male_T0)
 
-#         aliquot_type = AliquotType.objects.all()[0]
-#         site = StudySite.objects.all()[0]
-#         microtube_panel = Panel.objects.get(name='Microtube')
-#         micro_tube = SubjectRequisitionFactory(subject_visit=self.subject_visit_male_T0, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
-#         HivResult.objects.create(
-#              subject_visit=self.subject_visit_male_T0,
-#              hiv_result='IND',
-#              report_datetime=datetime.today(),
-#              insufficient_vol=NO
-#     )
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **elisa_hiv_result_options).count(), 1)
 
@@ -790,6 +780,10 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
     def test_pos_in_y1_no_hiv_forms(self):
         self.subject_visit_male_T0 = self.baseline_subject_visit
 
+        self._hiv_result = self.hiv_result(POS, self.subject_visit_male_T0)
+
+        self.subject_visit_male = self.annual_subject_visit_y2
+
         hiv_test_review_options = {}
         hiv_test_review_options.update(
             entry__app_label='bcpp_subject',
@@ -826,10 +820,6 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             lab_entry__model_name='subjectrequisition',
             lab_entry__requisition_panel__name='Microtube',
             appointment=self.subject_visit_male.appointment)
-
-        self._hiv_result = self.hiv_result(POS, self.subject_visit_male_T0)
-
-        self.subject_visit_male = self.annual_subject_visit_y2
 
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_test_review_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **hiv_tested_options).count(), 1)
@@ -882,26 +872,15 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED,
                                                                **hic_enrollment_options).count(), 1)
 
-    def test_microtube_always_required_for_previous_hic(self):
+    def test_microtube_always_required_for_hic_without_pos_hivresult(self):
+        """ Tests that an HIC enrollee who sero-converted to POS status, but the POS result not tested by BHP,
+            will be tested by BHP at next visit. """
         self.subject_visit_male_T0 = self.baseline_subject_visit
-
-        microtube_options = {}
-        microtube_options.update(
-            lab_entry__app_label='bcpp_lab',
-            lab_entry__model_name='subjectrequisition',
-            lab_entry__requisition_panel__name='Microtube',
-            appointment=self.subject_visit_male.appointment)
 
         SubjectLocatorFactory(registered_subject=self.subject_visit_male_T0.appointment.registered_subject,
                               subject_visit=self.subject_visit_male_T0)
 
         self.hiv_result(NEG, self.subject_visit_male_T0)
-
-        hiv_result_options = {}
-        hiv_result_options.update(
-            entry__app_label='bcpp_subject',
-            entry__model_name='hivresult',
-            appointment=self.subject_visit_male.appointment)
 
         ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0)
 
@@ -911,13 +890,25 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
             report_datetime=datetime.today(),
             hic_permission=YES)
 
-        self.subject_visit_male.delete()
-        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        self.subject_visit_male = self.annual_subject_visit_y2
+
+        microtube_options = {}
+        microtube_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Microtube',
+            appointment=self.subject_visit_male.appointment)
+        hiv_result_options = {}
+        hiv_result_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresult',
+            appointment=self.subject_visit_male.appointment)
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **microtube_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
-        # Make participant known positive in year 1, microtube and hiv result should remain required
-
+        # Make participant known positive in year 2, microtube and hiv result should remain required
+        # NOTE: We are using HivTestingHistory and HivTestReview to create the POS status because the participant
+        # was not tested by BHP, they became POS after our last visit with them.
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
             has_tested=YES,
@@ -935,6 +926,47 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
 
         self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NEW, **microtube_options).count(), 1)
         self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **hiv_result_options).count(), 1)
+
+    def test_microtube_not_required_for_hic_with_pos_hivresult(self):
+        """ Tests that an HIC enrollee who sero-converted to POS status, tested by BHP, will not be tested
+            again in next visit."""
+        self.subject_visit_male_T0 = self.baseline_subject_visit
+
+        SubjectLocatorFactory(registered_subject=self.subject_visit_male_T0.appointment.registered_subject,
+                              subject_visit=self.subject_visit_male_T0)
+
+        self.hiv_result(NEG, self.subject_visit_male_T0)
+
+        ResidencyMobilityFactory(subject_visit=self.subject_visit_male_T0)
+
+        self.assertEqual(SubjectLocator.objects.filter(subject_visit=self.subject_visit_male_T0).count(), 1)
+        HicEnrollment.objects.create(
+            subject_visit=self.subject_visit_male_T0,
+            report_datetime=datetime.today(),
+            hic_permission=YES)
+
+        self.subject_visit_male = self.annual_subject_visit_y2
+        # Make participant known positive in year 2, tested by BHP. That means hey have an HivResult record with POS
+        # NOTE: We are using HivResult to indicate that the HIV POS result was tested by BHP.
+        self.hiv_result(POS, self.subject_visit_male)
+        # We are now in year 3 in which the participant is a known POS.
+        self.subject_visit_male_T2 = self.annual_subject_visit_y3
+
+        microtube_options = {}
+        microtube_options.update(
+            lab_entry__app_label='bcpp_lab',
+            lab_entry__model_name='subjectrequisition',
+            lab_entry__requisition_panel__name='Microtube',
+            appointment=self.subject_visit_male_T2.appointment)
+        hiv_result_options = {}
+        hiv_result_options.update(
+            entry__app_label='bcpp_subject',
+            entry__model_name='hivresult',
+            appointment=self.subject_visit_male_T2.appointment)
+
+        self.assertEqual(RequisitionMetaData.objects.filter(entry_status=NOT_REQUIRED, **microtube_options).count(), 1)
+        self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED,
+                                                               **hiv_result_options).count(), 1)
 
     def test_hiv_pos_requisitions_y2(self):
         """ HIV Negative and in HIC at T0 and Tests Positive during home visits at T1 and is Not on ART at T1.
@@ -986,14 +1018,16 @@ class TestRuleGroup(BaseRuleGroupTestSetup):
     def test_Known_hiv_pos_y2_not_hic_require_no_testing(self):
         self.subject_visit_male_T0 = self.baseline_subject_visit
 
+        # They were NEG in year 1
+        self.hiv_result(NEG, self.subject_visit_male_T0)
+
+        self.subject_visit_male = self.annual_subject_visit_y2
+
         hiv_result_options = {}
         hiv_result_options.update(
             entry__app_label='bcpp_subject',
             entry__model_name='hivresult',
             appointment=self.subject_visit_male.appointment)
-
-        # They were NEG in year 1
-        self.hiv_result(NEG, self.subject_visit_male_T0)
 
         HivTestingHistory.objects.create(
             subject_visit=self.subject_visit_male,
