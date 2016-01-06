@@ -1,22 +1,16 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-.pydevproject
 .project
-bhp066/.DS_Store
-.DS_Store
+.pydevproject
 .settings
-test-*
 db.sqlite3
-etc/*
+*.sql
 # C extensions
 *.so
-bhp066/user-*
-bhp066/db-sqlite3
-default
+
 # Distribution / packaging
 .Python
-bhp066/apps/bcpp_export/sas
 env/
 build/
 develop-eggs/
