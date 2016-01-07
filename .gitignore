@@ -6,6 +6,7 @@ __pycache__/
 bhp066/.DS_Store
 .DS_Store
 .settings
+<<<<<<< HEAD
 test-*
 db.sqlite3
 etc/*
@@ -17,6 +18,14 @@ default
 # Distribution / packaging
 .Python
 bhp066/apps/bcpp_export/sas
+=======
+db.sqlite3
+*.sql
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
 env/
 build/
 develop-eggs/
