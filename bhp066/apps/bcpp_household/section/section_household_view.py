@@ -34,9 +34,9 @@ class SectionHouseholdView(BaseSectionView):
 
     def _paginate(self, search_result, page, results_per_page=None):
         """
-        Filters the search result based on whether the device is a central_server or other devices. if central server then
-        for baseline year it returns only baseline results, for annual then returns baseline and annual results and for
-        third year returns all search results.
+        Filters the search result based on whether the device is a central_server or other devices. if central server
+        then for baseline year it returns only baseline results, for annual then returns baseline and annual results
+        and for third year returns all search results.
 
         Paginates the search result queryset after which templates
         access search_result.object_list.

@@ -58,10 +58,13 @@ class Command(BaseCommand):
         for consent in consents:
             if consent.household_member.household_structure.id not in household_structure:
                 household_structure.append(consent.household_member.household_structure.id)
-        not_enrolled_structures = HouseholdStructure.objects.filter(id__in=household_structure, household__replaced_by__isnull=True).exclude(enrolled=True)
-        print "..... {}/{} household structures for community {} are not enrolled".format(not_enrolled_structures.count(),
-                                                                                          len(household_structure),
-                                                                                           community.upper())
+        not_enrolled_structures = HouseholdStructure.objects.filter(
+            id__in=household_structure,
+            household__replaced_by__isnull=True).exclude(enrolled=True)
+        print "..... {}/{} household structures for community {} are not enrolled".format(
+            not_enrolled_structures.count(),
+            len(household_structure),
+            community.upper())
         if not_enrolled_structures.count() > 0:
             print ".....Starting the correction for HouseholdStructure, setting enrolled=True"
         else:
@@ -75,7 +78,8 @@ class Command(BaseCommand):
         for consent in consents:
             if consent.household_member.household_structure.household.id not in households:
                 households.append(consent.household_member.household_structure.household.id)
-        not_enrolled_household = Household.objects.filter(id__in=households, replaced_by__isnull=True).exclude(enrolled=True)
+        not_enrolled_household = Household.objects.filter(
+            id__in=households, replaced_by__isnull=True).exclude(enrolled=True)
         print "..... {}/{} households for community {} are not enrolled".format(not_enrolled_household.count(),
                                                                                 len(households),
                                                                                 community.upper())

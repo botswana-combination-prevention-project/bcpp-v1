@@ -271,7 +271,8 @@ class ReplacementHelper(object):
                             Household.objects.using(using_producer).get(
                                 household_identifier=replaceable_household.household_identifier)
                             plot = available_plots.next()
-                            self.household_structure = HouseholdStructure.objects.get(household=replaceable_household, survey=self.survey)
+                            self.household_structure = HouseholdStructure.objects.get(
+                                household=replaceable_household, survey=self.survey)
                             replaceable_household.replaced_by = plot.plot_identifier
                             plot.replaces = replaceable_household.household_identifier
                             with transaction.atomic():

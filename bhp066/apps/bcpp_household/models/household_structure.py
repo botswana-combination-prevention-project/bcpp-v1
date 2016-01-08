@@ -100,9 +100,6 @@ class HouseholdStructure(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         update_fields = kwargs.get('update_fields', [])
         if update_fields:
             pass
-#         if ('enumerated' in kwargs.get('update_fields', []) or 'eligible_members' in kwargs.get('update_fields', []) or
-#                 'refused_enumeration' in kwargs.get('update_fields', [])):
-#             pass
         else:
             if self.household.replaced_by:
                 raise AlreadyReplaced('Household {0} replaced.'.format(self.household.household_identifier))

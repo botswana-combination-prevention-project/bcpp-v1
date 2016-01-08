@@ -52,7 +52,7 @@ MAP_DIR = STATIC_ROOT.child('img')
 if socket.gethostname() == 'mac2.local':
     KEY_PATH = '/Volumes/bhp066/live_keys'  # DONT DELETE ME!!, just comment out
 elif socket.gethostname() == 'ckgathi':
-    KEY_PATH = '/Users/ckgathi/source/bhp066_project/bhp066/keys'
+    KEY_PATH = '/Users/ckgathi/source/bcpp/bhp066/keys'
 elif socket.gethostname() == 'one-2.local' or socket.gethostname() == 'One-2.local':
     KEY_PATH = '/Users/sirone/Documents/workspace/git_projects/bhp066_git/bhp066/keys'
 elif socket.gethostname() == 'silverapple':
@@ -71,7 +71,7 @@ testing_db_name = 'sqlite'
 if 'test' in sys.argv:
     # make tests faster
     SOUTH_TESTS_MIGRATE = False
-    KEY_PATH = BASE_DIR
+#     KEY_PATH = BASE_DIR
     if testing_db_name == 'sqlite':
         DATABASES = TESTING_SQLITE
     else:

@@ -58,7 +58,8 @@ class Command(BaseCommand):
         print 'Unallocated from 25%: {}'.format(plots.count())
         header_row = ['plot_identifier', 'action', 'status', 'household_count',
                       'gps_target_lat', 'gps_target_lon', 'enrolled', 'comment']
-        target_path = '~/plot_list_{}_25_pct_update_{}.csv'.format(community_name, datetime.today().strftime('%Y%m%d%H%M'))
+        target_path = '~/plot_list_{}_25_pct_update_{}.csv'.format(
+            community_name, datetime.today().strftime('%Y%m%d%H%M'))
         cnt = 0
         status_options = {}
         with open(os.path.expanduser(target_path), 'w') as f:
@@ -66,7 +67,8 @@ class Command(BaseCommand):
             writer.writerow(header_row)
             # determine a status comment on each plot
             for plot in Plot.objects.filter(
-                    community=community_name, selected__isnull=False).exclude(bhs=True).order_by('selected', 'plot_identifier'):
+                    community=community_name,
+                    selected__isnull=False).exclude(bhs=True).order_by('selected', 'plot_identifier'):
                 status = []
                 if plot.bhs:
                     # enrolled in bhs
@@ -97,7 +99,8 @@ class Command(BaseCommand):
                                     if not replacement_helper.household_replacement_reason:
                                         replacement_reason = ''.join(
                                             [log.household_status for log in HouseholdLogEntry.objects.filter(
-                                                household_log__household_structure=household_structure).order_by('created')][-1:]) or '-'
+                                                household_log__household_structure=household_structure).order_by(
+                                                    'created')][-1:]) or '-'
                                         if replacement_reason == 'eligible_representative_present':
                                             replacement_reason = 'eligible_representative_present-no_bhs_eligibles'
                                     status.append(

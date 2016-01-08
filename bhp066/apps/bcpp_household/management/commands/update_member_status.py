@@ -14,6 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.update_member_status()
+
     def is_consent_available(self, member):
         try:
             SubjectConsent.objects.get(registered_subject=member.registered_subject)
@@ -33,9 +34,11 @@ class Command(BaseCommand):
             try:
                 plot = Plot.objects.get(plot_identifier=p)
                 for h in Household.objects.filter(plot=plot):
-                    for member in HouseholdMember.objects.filter(household_structure__household=h, household_structure__survey=survey):
+                    for member in HouseholdMember.objects.filter(
+                            household_structure__household=h, household_structure__survey=survey):
                         if member.member_status == 'ANNUAL':
-                            print ("Member {} member_status is correct. skipped".format(member.registered_subject.subject_identifier))
+                            print ("Member {} member_status is correct. skipped".format(
+                                member.registered_subject.subject_identifier))
                             continue
                         if self.is_consent_available(member):
                             member.member_status = 'ANNUAL'

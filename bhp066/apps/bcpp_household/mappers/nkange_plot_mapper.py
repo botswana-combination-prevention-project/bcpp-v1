@@ -30,16 +30,22 @@ class NkangePlotMapper(BasePlotMapper):
     survey_dates = {
         BASELINE_SURVEY_SLUG: SurveyDatesTuple(
             name='bhs',
-            start_date=date(2015, 6, 1),
-            full_enrollment_date=date(2015, 6, 15),
-            end_date=date(2015, 7, 6),
-            smc_start_date=date(2015, 8, 10)),
+            start_date=date(2013, 10, 18),
+            full_enrollment_date=date(2013, 11, 7),
+            end_date=date(2013, 11, 22),
+            smc_start_date=date(2013, 11, 7)),
         'bcpp-year-2': SurveyDatesTuple(
             name='t1',
-            start_date=date(2015, 11, 21),
-            full_enrollment_date=date(2015, 12, 17),
-            end_date=date(2015, 12, 22),
-            smc_start_date=date(2015, 12, 22)),
+            start_date=date(2014, 12, 8),
+            full_enrollment_date=date(2015, 1, 18),
+            end_date=date(2015, 1, 30),
+            smc_start_date=date(2015, 1, 7)),
+        'bcpp-year-3': SurveyDatesTuple(
+            name='t2',
+            start_date=date(2015, 12, 4),
+            full_enrollment_date=date(2016, 1, 31),
+            end_date=date(2016, 1, 31),
+            smc_start_date=date(2016, 1, 31)),
     }
 
     clinic_days = {
