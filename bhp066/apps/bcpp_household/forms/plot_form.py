@@ -76,7 +76,8 @@ class PlotForm(BaseModelForm):
 
         if (cleaned_data.get('household_count') == 0 and
                 cleaned_data.get('status') in ['residential_habitable']) or (
-                    cleaned_data.get('household_count') and not cleaned_data.get('status') in ['residential_habitable']):
+                    cleaned_data.get('household_count') and not
+                    cleaned_data.get('status') in ['residential_habitable']):
             raise forms.ValidationError('Invalid number of households for plot that is '
                                         '{0}. Got {1}.'.format(cleaned_data.get('status'),
                                                                cleaned_data.get('household_count')))

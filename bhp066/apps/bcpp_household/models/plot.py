@@ -354,7 +354,9 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             if plot_instance.id:
                 if plot_instance.htc and 'htc' not in update_fields:
                     raise exception_cls('Modifications not allowed, this plot has been assigned to the HTC campaign.')
-            if not mapper_instance.map_code == '00' and not plot_instance.bhs and date.today() > mapper_instance.current_survey_dates.full_enrollment_date:
+            if (not mapper_instance.map_code == '00' and not
+                plot_instance.bhs and
+                    date.today() > mapper_instance.current_survey_dates.full_enrollment_date):
                 raise exception_cls('BHS enrollment for {0} ended on {1}. This plot, and the '
                                     'data related to it, may not be modified. '
                                     'See site_mappers'.format(
@@ -419,7 +421,9 @@ class Plot(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
 
             def delete_household(instance, existing_no):
                 try:
-                    delete_no = validate_number_to_delete(instance, existing_no) if validate_number_to_delete(instance, existing_no) else 0
+                    delete_no = validate_number_to_delete(instance, existing_no) if validate_number_to_delete(
+                        instance,
+                        existing_no) else 0
                     if not delete_no == 0:
                         deletes = household_valid_to_delete(instance)[:delete_no]
                         hh = HouseholdStructure.objects.filter(household__in=deletes)

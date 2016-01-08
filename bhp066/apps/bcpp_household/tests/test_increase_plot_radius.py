@@ -31,7 +31,7 @@ class TestConsent(TestCase):
         self.assertTrue(HouseholdStructure.objects.all().count() == 0)
         self.assertTrue(HouseholdMember.objects.all().count() == 0)
         site_lab_tracker.autodiscover()
-        study_specific = StudySpecificFactory()
+        StudySpecificFactory()
         StudySiteFactory()
 
         content_type_map_helper = ContentTypeMapHelper()

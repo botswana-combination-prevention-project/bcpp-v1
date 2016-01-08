@@ -65,3 +65,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Keys
+bhp066/keys/
