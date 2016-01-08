@@ -24,7 +24,7 @@ class PimaVlForm (BaseSubjectModelForm):
         except PreOrder.DoesNotExist:
             raise forms.ValidationError('Please complete the pre-order before entering the result')
         if cleaned_data.get('poc_vl_today') == NO:
-            if cleaned_data.get('poc_vl_today_other'):
+            if not cleaned_data.get('poc_vl_today_other'):
                 raise forms.ValidationError('If POC VL NOT done today, please explain why not?')
             if cleaned_data.get('pima_id'):
                 raise forms.ValidationError('Do not provide the PIMA machine id if the POC VL was not performed')

@@ -1,19 +1,19 @@
 # import datetime
-# 
+#
 # from django.test import TestCase
-# 
+#
 # from edc.map.classes import site_mappers
-# 
+#
 # from bhp066.apps.bcpp_household.models import Household
 # from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
-# 
+#
 # from .factories import PlotFactory
-# 
-# 
+#
+#
 # class HouseholdConfirmTests(TestCase):
-# 
+#
 #     def test_household_confirmation_by_plot(self):
-# 
+#
 #         print "*********************************"
 #         print 'create a survey'
 #         SurveyFactory()

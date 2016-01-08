@@ -1,14 +1,14 @@
 # from django.core.management.base import BaseCommand, CommandError
-# 
+#
 # from bhp066.config.celery import already_running, CeleryTaskAlreadyRunning, CeleryNotRunning
-# 
+#
 # from bhp066.apps.bcpp_household.utils import update_replaceables
-# 
-# 
+#
+#
 # class Command(BaseCommand):
-# 
+#
 #     help = 'List the online and replaceable status of a producer'
-# 
+#
 #     def handle(self, *args, **options):
 #         try:
 #             already_running(update_replaceables)

@@ -108,7 +108,8 @@ class Command(BaseCommand):
             print "* 75 percent data *"
             print "*******************"
             print "plot list in the 75 percent still the same: ", len(
-                set(current_db_plot_identifiers_75 + plot_identifiers_75)) == len(current_db_plot_identifiers_75) == len(plot_identifiers_75)
+                (set(current_db_plot_identifiers_75 + plot_identifiers_75)) == len(current_db_plot_identifiers_75) ==
+                len(plot_identifiers_75))
             print "Total number of plots initially loaded as 75 percent: ", len(plot_identifiers_75)
             print "Total current number of plots in the 75 percent: ", len(current_db_plot_identifiers_75)
             print "Total number of added to plots 75 percent: ", len(new_added_plots_75)
@@ -119,7 +120,8 @@ class Command(BaseCommand):
             print "* 20 percent data *"
             print "*******************"
             print "plot list in the 20 percent still the same: ", len(
-                set(current_db_plot_identifiers_20 + plot_identifiers_20)) == len(current_db_plot_identifiers_20) == len(plot_identifiers_20)
+                (set(current_db_plot_identifiers_20 + plot_identifiers_20)) == len(current_db_plot_identifiers_20) ==
+                len(plot_identifiers_20))
             print "Total number of plots initially loaded as 20 percent: ", len(plot_identifiers_20)
             print "Total current number of plots in the 20 percent in the db: ", len(current_db_plot_identifiers_20)
             print "Total number of added to plots 20 percent: ", len(new_added_plots_20)
@@ -130,7 +132,8 @@ class Command(BaseCommand):
             print "* 5 percent data *"
             print "******************"
             print "Is the plot list in the 5 percent still the same: ", len(
-                set(current_db_plot_identifiers_5 + plot_identifiers_5)) == len(current_db_plot_identifiers_5) == len(plot_identifiers_5)
+                (set(current_db_plot_identifiers_5 + plot_identifiers_5)) == len(current_db_plot_identifiers_5) ==
+                len(plot_identifiers_5))
             print "Total number of added to plots 5 percent: ", len(new_added_plots_5)
             print "Total number of plots removed from the 5 percent: ", len(removed_plots_5)
             print "Total confirmed plots in the 5 percent: ", action_confirmed_5

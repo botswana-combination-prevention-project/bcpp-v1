@@ -1,9 +1,16 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+<<<<<<< HEAD
 .project
+=======
+>>>>>>> master
 .pydevproject
+.project
+bhp066/.DS_Store
+.DS_Store
 .settings
+<<<<<<< HEAD
 db.sqlite3
 *.sql
 # C extensions
@@ -11,6 +18,19 @@ db.sqlite3
 
 # Distribution / packaging
 .Python
+=======
+test-*
+db.sqlite3
+etc/*
+# C extensions
+*.so
+bhp066/user-*
+bhp066/db-sqlite3
+default
+# Distribution / packaging
+.Python
+bhp066/apps/bcpp_export/sas
+>>>>>>> master
 env/
 build/
 develop-eggs/
@@ -59,3 +79,9 @@ docs/_build/
 
 # PyBuilder
 target/
+<<<<<<< HEAD
+=======
+
+# Keys
+bhp066/keys/
+>>>>>>> master

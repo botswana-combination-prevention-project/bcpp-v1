@@ -35,9 +35,11 @@ def update_household_work_list(label=None, household_structure=None):
         except IndexError:
             appt_date = date.today()
             status = 'unscheduled'
-        if HicEnrollment.objects.filter(
-                subject_visit__household_member__household_structure__household=household_structure.household,
-                subject_visit__household_member__household_structure__survey__datetime_start__lt=survey_datetime_start).count() > 0:
+        hic_enrollment = HicEnrollment.objects.filter(
+            subject_visit__household_member__household_structure__household=household_structure.household,
+            subject_visit__household_member__household_structure__survey__datetime_start__lt=survey_datetime_start
+        ).count()
+        if hic_enrollment > 0:
             enrolled_type = 'hic'
         else:
             enrolled_type = 'bhs'
