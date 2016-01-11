@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.update_member_status()
-    
+
     def is_consent_available(self, member):
         try:
             SubjectConsent.objects.get(registered_subject=member.registered_subject)

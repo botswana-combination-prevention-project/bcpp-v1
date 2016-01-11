@@ -1,13 +1,13 @@
 from django.test import TestCase
 
-from edc.map.classes import Mapper
+from ..mappers import BasePlotMapper
 
 from bhp066.apps.bcpp_household.models import Plot
 
 
-class OtsePlotMapper(Mapper):
-    map_area = 'otse'
-    map_code = '020'
+class OtsePlotMapper(BasePlotMapper):
+    map_area = 'test_community'
+    map_code = '01'
     regions = []
     sections = []
     landmarks = []
@@ -17,10 +17,9 @@ class OtsePlotMapper(Mapper):
     location_boundary = ()
 
 
-class HouseholdMapperTests(TestCase):
+class TestHouseholdMapper(TestCase):
 
     def test_p1(self):
         mapper = OtsePlotMapper()
+        self.assertEqual(mapper.item_model_cls, Plot)
         self.assertEqual(mapper.item_model, Plot)
-        print 'assert instance attribute is set by class attribute.'
-        self.assertEqual(mapper.get_item_model_cls(), Plot)

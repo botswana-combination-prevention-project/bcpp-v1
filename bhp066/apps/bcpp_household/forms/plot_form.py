@@ -68,11 +68,8 @@ class PlotForm(BaseModelForm):
             except PlotLog.DoesNotExist:
                 raise forms.ValidationError(
                     'Please add a plot log entry before saving')
-
-        if not cleaned_data.get('household_count') and cleaned_data.get('status') in ['residential_habitable']:
-            raise forms.ValidationError('Invalid number of households for plot that is {0}. '
-                                        'Got {1}.'.format(cleaned_data.get('status'),
-                                                          cleaned_data.get('household_count')))
+        if not (cleaned_data.get('household_count') and cleaned_data.get('status') in ['residential_habitable']):
+            raise forms.ValidationError('Invalid number of households. Only plots that are residential habitable can have households.')
 
         if (cleaned_data.get('household_count') == 0 and
                 cleaned_data.get('status') in ['residential_habitable']) or (

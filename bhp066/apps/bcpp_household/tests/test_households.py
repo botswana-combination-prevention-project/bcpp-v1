@@ -1,10 +1,13 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
+<<<<<<< HEAD
 from edc.map.classes import site_mappers
 
 from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
 
+=======
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
@@ -16,6 +19,10 @@ from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from bhp066.apps.bcpp_survey.models import Survey
+<<<<<<< HEAD
+=======
+
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
 
 from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
                       PlotIdentifierHistory)
@@ -26,6 +33,7 @@ from .factories.household_log_entry_factory import HouseholdLogEntryFactory
 
 class TestHouseholds(TestCase):
     """Test plots and Households."""
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 >>>>>>> 3890b2539f5e770330f2b642fdf6cb254e3a2865
@@ -40,6 +48,8 @@ class TestHouseholds(TestCase):
 <<<<<<< HEAD
 =======
 =======
+=======
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
 
     def setUp(self):
         try:
@@ -58,8 +68,11 @@ class TestHouseholds(TestCase):
     def test_identifier(self):
         """Assert plot creates an identifier"""
         plot = PlotFactory(community=self.community)
+<<<<<<< HEAD
 >>>>>>> master
 >>>>>>> 3890b2539f5e770330f2b642fdf6cb254e3a2865
+=======
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         self.assertIsNotNone(plot.plot_identifier)
 
     def test_identifier_code(self):
@@ -69,6 +82,10 @@ class TestHouseholds(TestCase):
 
     def test_plot_creates_household1(self):
         """Assert plot creates one household if residential habitable"""
+<<<<<<< HEAD
+=======
+
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         PlotFactory(community=self.community, household_count=1,
                     status='residential_habitable')
         self.assertEqual(Household.objects.all().count(), 1)
@@ -87,6 +104,10 @@ class TestHouseholds(TestCase):
 
     def test_plot_creates_household4(self):
         """Assert plot creates two additional households if household_count increased to 3"""
+<<<<<<< HEAD
+=======
+
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot.household_count = 3
@@ -145,7 +166,10 @@ class TestHouseholds(TestCase):
 
     def test_household_count2(self):
         """Asserts household count is 3 after 2 households are added after create."""
+<<<<<<< HEAD
 
+=======
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
@@ -155,7 +179,10 @@ class TestHouseholds(TestCase):
 
     def test_household_count3(self):
         """Asserts household count is 3 after 4 households are added after create and then 2 removed."""
+<<<<<<< HEAD
 
+=======
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
@@ -215,6 +242,10 @@ class TestHouseholds(TestCase):
 
     def test_household_derives_identifier_from_plot(self):
         """Assert household_identifier is derived from plot"""
+<<<<<<< HEAD
+=======
+
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot = PlotFactory(community=self.community, household_count=8,
                            status='residential_habitable')
         for household in Household.objects.all():
@@ -229,7 +260,6 @@ class TestHouseholds(TestCase):
                 identifier=plot.plot_identifier).count(), 1)
 
     def test_household_identifier_history_updated(self):
- 
         plot = PlotFactory(community=self.community, household_count=8, status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             # print household.household_identifier, household.plot.plot_identifier
