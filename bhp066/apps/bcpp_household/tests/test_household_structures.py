@@ -3,14 +3,21 @@ from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
 
-from edc.map.classes import site_mappers
-
 from bhp066.apps.bcpp_household_member.models import HouseholdMember
 from bhp066.apps.bcpp_household_member.tests.factories import HouseholdMemberFactory, EnrollmentChecklistFactory
-from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
+from bhp066.apps.bcpp_survey.models import Survey
 from bhp066.apps.bcpp_subject.tests.factories import SubjectConsentFactory
 
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog
+
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.rule_groups.classes import site_rule_groups
+
+from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from .factories.plot_factory import PlotFactory
 from .factories.household_log_entry_factory import HouseholdLogEntryFactory
@@ -19,14 +26,23 @@ from .factories.reprentative_eligibility_factory import RepresentativeEligibilit
 
 class TestHouseholdStructures(TestCase):
     """Test plots and Households."""
+
     def setUp(self):
-        site_mappers.autodiscover()
-        self.mapper = site_mappers.get(site_mappers.get_as_list()[0])
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
+        BcppAppConfiguration().prepare()
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
+        site_rule_groups.autodiscover()
+
+        self.survey = Survey.objects.all()[0]
 
     def test_enumerated_members1(self):
         """Assert enumerated_members defaults to False."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
+
+        plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             for household_structure in HouseholdStructure.objects.filter(household=household):
@@ -34,11 +50,12 @@ class TestHouseholdStructures(TestCase):
 
     def test_enumerated_members2(self):
         """Assert enumerated_members is True if a household_member is added, others stay False."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
+
+        plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
+            household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
+            household_log = HouseholdLog.objects.get(household_structure=household_structure)
         household_structure = household_log.household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
@@ -49,12 +66,12 @@ class TestHouseholdStructures(TestCase):
 
     def test_eligible_members1(self):
         """Assert eligible_members set to True if an eligible member is added."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
-                           status='residential_habitable')
+
+        plot = PlotFactory(community="test_community", household_count=3, status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-            household_log_entry = HouseholdLogEntryFactory(household_log=household_log)
+            household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
+            household_log = HouseholdLog.objects.get(household_structure=household_structure)
+            HouseholdLogEntryFactory(household_log=household_log)
         household_structure = household_log.household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure)
@@ -63,12 +80,13 @@ class TestHouseholdStructures(TestCase):
 
     def test_eligible_members2(self):
         """Assert eligible_members set from True to False if an eligible member is added then removed."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
+
+        plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-            household_log_entry = HouseholdLogEntryFactory(household_log=household_log)
+            household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
+            household_log = HouseholdLog.objects.get(household_structure=household_structure)
+            HouseholdLogEntryFactory(household_log=household_log)
         household_structure = household_log.household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         household_member = HouseholdMemberFactory(household_structure=household_structure)
@@ -79,14 +97,15 @@ class TestHouseholdStructures(TestCase):
         self.assertFalse(household_structure.eligible_members)
 
     def test_eligible_members3(self):
-        """Assert eligible_members set from True but stays True if an eligible member 
-        is added then removed but others exist."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
+        """Assert eligible_members set from True but stays True if an eligible member
+           is added then removed but others exist."""
+
+        plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-            household_log_entry = HouseholdLogEntryFactory(household_log=household_log)
+            household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
+            household_log = HouseholdLog.objects.get(household_structure=household_structure)
+            HouseholdLogEntryFactory(household_log=household_log)
         household_structure = household_log.household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure, age_in_years=10)
@@ -100,12 +119,12 @@ class TestHouseholdStructures(TestCase):
 
     def test_enrolled1(self):
         """Assert enrolled is False if members but none consented."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
+        plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-            household_log_entry = HouseholdLogEntryFactory(household_log=household_log)
+            household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
+            household_log = HouseholdLog.objects.get(household_structure=household_structure)
+            HouseholdLogEntryFactory(household_log=household_log)
         household_structure = household_log.household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure, age_in_years=10)
@@ -117,12 +136,12 @@ class TestHouseholdStructures(TestCase):
 
     def test_enrolled2(self):
         """Assert enrolled is True if eligible member consents."""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().map_area, household_count=3,
+        plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-            household_log_entry = HouseholdLogEntryFactory(household_log=household_log)
+            household_structure = HouseholdStructure.objects.get(survey=self.survey, household=household)
+            household_log = HouseholdLog.objects.get(household_structure=household_structure)
+            HouseholdLogEntryFactory(household_log=household_log)
         household_structure = household_log.household_structure
         RepresentativeEligibilityFactory(household_structure=household_structure)
         HouseholdMemberFactory(household_structure=household_structure, age_in_years=10)

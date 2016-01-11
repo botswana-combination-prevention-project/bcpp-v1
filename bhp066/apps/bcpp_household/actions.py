@@ -48,7 +48,12 @@ update_increaseplotradius_action.short_description = "Update increase plot radiu
 def process_dispatch(modeladmin, request, queryset, **kwargs):
     selected = request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
     content_type = ContentType.objects.get_for_model(queryset.model)
+<<<<<<< HEAD
     return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=not_allocated".format(content_type.pk, ",".join(selected)))
+=======
+    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=not_allocated".format(
+        content_type.pk, ",".join(selected)))
+>>>>>>> 3890b2539f5e770330f2b642fdf6cb254e3a2865
 
 process_dispatch.short_description = "Dispatch plots to netbook."
 
@@ -61,7 +66,8 @@ def process_dispatch_notebook_plot_list(modeladmin, request, queryset, **kwargs)
     NotebookPlotList = get_model('bcpp_household', 'notebookplotlist')
     content_type2 = ContentType.objects.get_for_model(NotebookPlotList)
     content_type = ContentType.objects.get_for_model(queryset.model)
-    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(content_type.pk, ",".join(selected), content_type2.pk))
+    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(
+        content_type.pk, ",".join(selected), content_type2.pk))
 
 process_dispatch_notebook_plot_list.short_description = "Dispatch plots to netbook plot list model."
 
@@ -87,11 +93,11 @@ def export_as_kml(modeladmin, request, queryset, **kwargs):
             '        <name>{household_identifier} ({hh_int})</name>\n'
             '        <styleUrl>#gv_waypoint</styleUrl>\n'
             '    </Placemark>\n'
-            ).format(
-                gps_lat=qs.household.gps_lat(),
-                gps_lon=qs.household.gps_lon(),
-                household_identifier=qs.household.household_identifier,
-                hh_int=qs.household.hh_int)
+        ).format(
+            gps_lat=qs.household.gps_lat(),
+            gps_lon=qs.household.gps_lon(),
+            household_identifier=qs.household.household_identifier,
+            hh_int=qs.household.hh_int)
         placemarks += p
     kml = (
         '<?xml version="1.0" standalone="yes"?>\n'

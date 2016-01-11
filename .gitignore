@@ -3,7 +3,27 @@ __pycache__/
 *.py[cod]
 .project
 .pydevproject
+bhp066/.DS_Store
+.DS_Store
 .settings
+db.sqlite3
+*.sql
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+test-*
+db.sqlite3
+etc/*
+# C extensions
+*.so
+bhp066/user-*
+bhp066/db-sqlite3
+default
+# Distribution / packaging
+.Python
+bhp066/apps/bcpp_export/sas
 db.sqlite3
 *.sql
 # C extensions
@@ -59,3 +79,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Keys
+bhp066/keys/

@@ -31,9 +31,15 @@ class PlotSearchByGps(BaseSearcher):
         mapper = site_mappers.get_current_mapper()
         if gps_form.is_valid():
             radius = gps_form.data.get('radius') / 1000
-            lat = mapper.get_gps_lat(gps_form.data.get('degrees_s'), float('{0}'.format(gps_form.data.get('minutes_s'))))
-            lon = mapper.get_gps_lon(gps_form.data.get('degrees_e'), float('{0}'.format(gps_form.data.get('minutes_e'))))
-            items_as_dct, ordered_list_of_keys = self.get_items_ordered_by_distance(self.search_queryset(), lat, lon, radius)
+            lat = mapper.get_gps_lat(
+                gps_form.data.get('degrees_s'),
+                float('{0}'.format(gps_form.data.get('minutes_s'))))
+            lon = mapper.get_gps_lon(
+                gps_form.data.get('degrees_e'),
+                float('{0}'.format(gps_form.data.get('minutes_e'))))
+            items_as_dct, ordered_list_of_keys = self.get_items_ordered_by_distance(
+                self.search_queryset(),
+                lat, lon, radius)
             for distance_from_gps in ordered_list_of_keys:
                 search_result.append(items_as_dct[distance_from_gps])
         return search_result

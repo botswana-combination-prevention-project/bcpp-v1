@@ -49,10 +49,12 @@ class SectionSubjectView(BaseSectionView):
                 for subject_consent in search_result:
                     for household_member in HouseholdMember.objects.filter(
                             registered_subject=subject_consent.household_member.registered_subject):
-                        if [survey for survey in Survey.objects.all() if survey == household_member.household_structure.survey]:
+                        surveys = Survey.objects.all()
+                        if [survey for survey in surveys if survey == household_member.household_structure.survey]:
                             subject_consent.household_member = household_member
                             subject_consent.survey = household_member.household_structure.survey
                         _search_result.append(deepcopy(subject_consent))
+                    break
                 return super(SectionSubjectView, self)._paginate(_search_result, page, results_per_page)
         else:
             _search_result = []

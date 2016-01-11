@@ -48,9 +48,13 @@ def replace_household_plot(request):
                 content_type_pk = ContentType.objects.get_for_model(Plot).pk
                 content_type2 = ContentType.objects.get_for_model(NotebookPlotList)
                 if not NotebookPlotList.objects.using(producer_name).all():
-                    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&notebook_plot_list=not_allocated&items={1}".format(content_type_pk, ",".join(selected)))
+                    return HttpResponseRedirect(
+                        "/dispatch/bcpp/?ct={0}&notebook_plot_list=not_allocated&items={1}".format(
+                            content_type_pk, ",".join(selected)))
                 else:
-                    return HttpResponseRedirect("/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(content_type_pk, ",".join(selected), content_type2.pk))
+                    return HttpResponseRedirect(
+                        "/dispatch/bcpp/?ct={0}&items={1}&notebook_plot_list=allocated&ct1={2}".format(
+                            content_type_pk, ",".join(selected), content_type2.pk))
         except Producer.DoesNotExist:
             messages.add_message(request, messages.ERROR, (
                 '\'{}\' not a valid producer. See model Producer.').format(producer_name))

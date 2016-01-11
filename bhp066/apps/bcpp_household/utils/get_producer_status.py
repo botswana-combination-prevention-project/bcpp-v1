@@ -25,7 +25,7 @@ def get_producer_status(producer=None, check_online=True):
         if check_online:
             hostname, _, _ = getproducerbyaddr(producer)
             try:
-                # Attempt to connect to the mysql port on the using producer's hostname to confirm that its indeed online.
+                # Attempt to connect to the mysql port on the using producer's hostname to confirm if its online.
                 s = socket.socket()
                 # time out after 2 seconds if connection is not established
                 s.settimeout(2)
@@ -37,10 +37,12 @@ def get_producer_status(producer=None, check_online=True):
                     hostname, producer.name, raise_exception=True)
             except socket.timeout:
                 error_message = (
-                    'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(hostname, producer.producer_ip))
+                    'Producer {} using IP={} is available in DNS/hosts but is not online.'.format(
+                        hostname, producer.producer_ip))
             except socket.error:
                 error_message = (
-                    'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(hostname, producer.producer_ip, str(socket.error)))
+                    'A socket error occurred attempting to connect to Producer {} using IP={}.{}'.format(
+                        hostname, producer.producer_ip, str(socket.error)))
             finally:
                 s.close()
         else:

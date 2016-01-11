@@ -21,7 +21,9 @@ class HicEnrolledFilter(SimpleListFilter):
         enrolled = []
         if isinstance(queryset.all()[0], Household):
             for hs in queryset.all():
-                if not HicEnrollment.objects.filter(hic_permission='Yes', subject_visit__household_member__household_structure__household=hs).exists():
+                if not HicEnrollment.objects.filter(
+                        hic_permission='Yes',
+                        subject_visit__household_member__household_structure__household=hs).exists():
                     enrolled.append(hs)
                 else:
                     not_enrolled.append(hs)
@@ -31,7 +33,9 @@ class HicEnrolledFilter(SimpleListFilter):
                 return queryset.filter(household_identifier__in=not_enrolled)
         else:
             for hs in queryset.all():
-                if not HicEnrollment.objects.filter(hic_permission='Yes', subject_visit__household_member__household_structure__household__plot=hs).exists():
+                if not HicEnrollment.objects.filter(
+                        hic_permission='Yes',
+                        subject_visit__household_member__household_structure__household__plot=hs).exists():
                     enrolled.append(hs)
                 else:
                     not_enrolled.append(hs)
