@@ -57,14 +57,12 @@ class TestHouseholds(TestCase):
 
     def test_plot_creates_household2(self):
         """Assert plot creates two households if residential habitable"""
-
         PlotFactory(community=self.community, household_count=2,
                     status='residential_habitable')
         self.assertEqual(Household.objects.all().count(), 2)
 
     def test_plot_creates_household3(self):
         """Assert plot creates 2 households if residential habitable and three surveys"""
-
         PlotFactory(community=self.community, household_count=2,
                     status='residential_habitable')
         self.assertEqual(Household.objects.all().count(), 2)
@@ -80,7 +78,6 @@ class TestHouseholds(TestCase):
 
     def test_plot_creates_household5(self):
         """Assert plot creates deletes two households if household_count increased to 5 then decreased to 3."""
-
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot.household_count = 5
@@ -92,6 +89,7 @@ class TestHouseholds(TestCase):
 
     def test_cannot_delete_household_with_logentry(self):
         """Assert household cannot be deleted if has a household log entry."""
+
         plot = PlotFactory(community=self.community, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
@@ -122,6 +120,7 @@ class TestHouseholds(TestCase):
 
     def test_household_count1(self):
         """Asserts household count is 1 after 1 household is created."""
+
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
@@ -129,7 +128,6 @@ class TestHouseholds(TestCase):
 
     def test_household_count2(self):
         """Asserts household count is 3 after 2 households are added after create."""
-
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
