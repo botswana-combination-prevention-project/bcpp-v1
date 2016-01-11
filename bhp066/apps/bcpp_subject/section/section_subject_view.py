@@ -53,6 +53,7 @@ class SectionSubjectView(BaseSectionView):
                             subject_consent.household_member = household_member
                             subject_consent.survey = household_member.household_structure.survey
                         _search_result.append(deepcopy(subject_consent))
+                    break
                 return super(SectionSubjectView, self)._paginate(_search_result, page, results_per_page)
         else:
             _search_result = []
