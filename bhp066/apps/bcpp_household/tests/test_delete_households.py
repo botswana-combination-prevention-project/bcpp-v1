@@ -5,18 +5,18 @@ from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.rule_groups.classes import site_rule_groups
-from edc.map.classes import Mapper
 
 from bhp066.apps.bcpp.app_configuration.classes import BcppAppConfiguration
 from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from bhp066.apps.bcpp_household.models import Household, HouseholdStructure, HouseholdLog, HouseholdLogEntry
+from ..mappers import BasePlotMapper
 
 from .factories.plot_factory import PlotFactory
 
 
-class TestPlotMapper(Mapper):
+class TestPlotMapper(BasePlotMapper):
     map_area = 'test_community'
     map_code = '01'
     regions = []

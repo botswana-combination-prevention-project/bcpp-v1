@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from dateutil.relativedelta import MO, TU, WE, TH, FR, relativedelta
-=======
 from dateutil.relativedelta import MO, TU, WE, TH, FR
->>>>>>> master
 from datetime import date
 
 from edc.map.classes import site_mappers

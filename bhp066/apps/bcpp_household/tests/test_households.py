@@ -1,11 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-<<<<<<< HEAD
-from edc.map.classes import site_mappers
-
-from bhp066.apps.bcpp_survey.tests.factories import SurveyFactory
-=======
 from edc.lab.lab_profile.classes import site_lab_profiles
 from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
 from edc.subject.lab_tracker.classes import site_lab_tracker
@@ -17,7 +12,7 @@ from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from bhp066.apps.bcpp_survey.models import Survey
->>>>>>> master
+
 
 from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
                       PlotIdentifierHistory)
@@ -28,16 +23,6 @@ from .factories.household_log_entry_factory import HouseholdLogEntryFactory
 
 class TestHouseholds(TestCase):
     """Test plots and Households."""
-<<<<<<< HEAD
-    def setUp(self):
-        site_mappers.autodiscover()
-        self.mapper = site_mappers.get(site_mappers.get_as_list()[0])
-
-    def test_identifier(self):
-        """Assert plot creates an identifier"""
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area())
-=======
 
     def setUp(self):
         try:
@@ -56,62 +41,38 @@ class TestHouseholds(TestCase):
     def test_identifier(self):
         """Assert plot creates an identifier"""
         plot = PlotFactory(community=self.community)
->>>>>>> master
         self.assertIsNotNone(plot.plot_identifier)
 
     def test_identifier_code(self):
         """Assert plot creates an identifier prefixed with the community code"""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area())
-=======
         plot = PlotFactory(community=self.community)
->>>>>>> master
         self.assertEquals(self.mapper.map_code, plot.plot_identifier[:2])
 
     def test_plot_creates_household1(self):
         """Assert plot creates one household if residential habitable"""
-<<<<<<< HEAD
-        SurveyFactory()
-        PlotFactory(community=self.mapper().get_map_area(), household_count=1,
-=======
+
         PlotFactory(community=self.community, household_count=1,
->>>>>>> master
                     status='residential_habitable')
         self.assertEqual(Household.objects.all().count(), 1)
 
     def test_plot_creates_household2(self):
         """Assert plot creates two households if residential habitable"""
-<<<<<<< HEAD
-        SurveyFactory()
-        PlotFactory(community=self.mapper().get_map_area(), household_count=2,
-=======
+
         PlotFactory(community=self.community, household_count=2,
->>>>>>> master
                     status='residential_habitable')
         self.assertEqual(Household.objects.all().count(), 2)
 
     def test_plot_creates_household3(self):
         """Assert plot creates 2 households if residential habitable and three surveys"""
-<<<<<<< HEAD
-        SurveyFactory()
-        SurveyFactory()
-        SurveyFactory()
-        PlotFactory(community=self.mapper().get_map_area(), household_count=2,
-=======
+
         PlotFactory(community=self.community, household_count=2,
->>>>>>> master
                     status='residential_habitable')
         self.assertEqual(Household.objects.all().count(), 2)
 
     def test_plot_creates_household4(self):
         """Assert plot creates two additional households if household_count increased to 3"""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=1,
-=======
+
         plot = PlotFactory(community=self.community, household_count=1,
->>>>>>> master
                            status='residential_habitable')
         plot.household_count = 3
         plot.save()
@@ -119,12 +80,8 @@ class TestHouseholds(TestCase):
 
     def test_plot_creates_household5(self):
         """Assert plot creates deletes two households if household_count increased to 5 then decreased to 3."""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=1,
-=======
+
         plot = PlotFactory(community=self.community, household_count=1,
->>>>>>> master
                            status='residential_habitable')
         plot.household_count = 5
         plot.save()
@@ -135,20 +92,11 @@ class TestHouseholds(TestCase):
 
     def test_cannot_delete_household_with_logentry(self):
         """Assert household cannot be deleted if has a household log entry."""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
-                           status='residential_habitable')
-        for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-=======
-
         plot = PlotFactory(community=self.community, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_structure = HouseholdStructure.objects.filter(survey=self.survey, household=household)
             household_log = HouseholdLog.objects.get(household_structure=household_structure)
->>>>>>> master
             HouseholdLogEntryFactory(household_log=household_log)
         plot.household_count = 1
         plot.save()
@@ -158,20 +106,12 @@ class TestHouseholds(TestCase):
 
     def test_cannot_delete_household_with_eligible_members(self):
         """Assert cannot_delete_household_with_eligible_members"""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=3,
-                           status='residential_habitable')
-        for household in Household.objects.filter(plot=plot):
-            household_log = HouseholdLog.objects.get(household_structure__household=household)
-=======
 
         plot = PlotFactory(community=self.community, household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             household_structure = HouseholdStructure.objects.filter(survey=self.survey, household=household)
             household_log = HouseholdLog.objects.get(household_structure=household_structure)
->>>>>>> master
             household_log_entry = HouseholdLogEntryFactory(household_log=household_log)
         household_log_entry.delete()
         plot.household_count = 1
@@ -182,26 +122,15 @@ class TestHouseholds(TestCase):
 
     def test_household_count1(self):
         """Asserts household count is 1 after 1 household is created."""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=1,
-=======
-
         plot = PlotFactory(community=self.community, household_count=1,
->>>>>>> master
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
         self.assertEquals(plot.household_count, 1)
 
     def test_household_count2(self):
         """Asserts household count is 3 after 2 households are added after create."""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=1,
-=======
 
         plot = PlotFactory(community=self.community, household_count=1,
->>>>>>> master
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
         plot.household_count = 3
@@ -210,13 +139,7 @@ class TestHouseholds(TestCase):
 
     def test_household_count3(self):
         """Asserts household count is 3 after 4 households are added after create and then 2 removed."""
-<<<<<<< HEAD
-        SurveyFactory()
-        plot = PlotFactory(community=self.mapper().get_map_area(), household_count=1,
-=======
-
         plot = PlotFactory(community=self.community, household_count=1,
->>>>>>> master
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
         plot.household_count = 5
@@ -226,15 +149,8 @@ class TestHouseholds(TestCase):
 
     def test_plot_creates_household_structure(self):
         """Assert plot creates 6 household_structures if residential habitable and three surveys (3 for each household)."""
-<<<<<<< HEAD
-        SurveyFactory()
-        SurveyFactory()
-        SurveyFactory()
-        PlotFactory(community=self.mapper().get_map_area(), household_count=2,
-=======
 
         PlotFactory(community=self.community, household_count=2,
->>>>>>> master
                     status='residential_habitable')
         self.assertEqual(HouseholdStructure.objects.all().count(), 6)
 
@@ -297,7 +213,7 @@ class TestHouseholds(TestCase):
                 identifier=plot.plot_identifier).count(), 1)
 
     def test_household_identifier_history_updated(self):
- 
+
         plot = PlotFactory(community=self.community, household_count=8, status='residential_habitable')
         for household in Household.objects.filter(plot=plot):
             # print household.household_identifier, household.plot.plot_identifier

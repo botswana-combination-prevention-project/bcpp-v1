@@ -30,3 +30,4 @@ from .shakawe_plot_mapper import ShakawePlotMapper
 from .masunga_plot_mapper import MasungaPlotMapper
 from .nata_plot_mmaper import NataPlotMapper
 from .sefhare_plot_mapper import SefharePlotMapper
+from .base_plot_mapper import BasePlotMapper
