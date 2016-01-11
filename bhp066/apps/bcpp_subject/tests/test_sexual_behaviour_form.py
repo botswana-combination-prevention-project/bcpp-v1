@@ -97,7 +97,8 @@ class TestSexualBehaviourForm(TestCase):
           farm outside this community ask: Does this sexual partner live in any of the following communities?
           if response is a cpc community then derived value should assign cpc"""
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
-        first_partner_communities = [PartnerResidency.objects.get(name__in=['In this community', 'Farm within this community', 'Cattle post within this community'])]
+        first_partner_communities = [PartnerResidency.objects.get(
+            name__in=['In this community', 'Farm within this community', 'Cattle post within this community'])]
         data = {'subject_visit': self.subject_visit,
                 'first_partner_live': first_partner_communities,
                 'sex_partner_community': 'digawana',
@@ -129,7 +130,8 @@ class TestSexualBehaviourForm(TestCase):
               if response is a other community then derived value should assign NOT_APPLICABLE
         """
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
-        first_partner_communities = [PartnerResidency.objects.get(name__in=['In this community']), PartnerResidency.objects.get(name='Outside community')]
+        first_partner_communities = [PartnerResidency.objects.get(
+            name__in=['In this community']), PartnerResidency.objects.get(name='Outside community')]
         data = {'subject_visit': self.subject_visit,
                 'first_partner_live': first_partner_communities,
                 'sex_partner_community': NOT_APPLICABLE,
@@ -161,7 +163,8 @@ class TestSexualBehaviourForm(TestCase):
               if response is a other community then derived value should assign OTHER.
         """
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
-        first_partner_communities = [PartnerResidency.objects.get(name='In this community'), PartnerResidency.objects.get(name='Outside community')]
+        first_partner_communities = [PartnerResidency.objects.get(
+            name='In this community'), PartnerResidency.objects.get(name='Outside community')]
         data = {'subject_visit': self.subject_visit,
                 'first_partner_live': first_partner_communities,
                 'sex_partner_community': 'OTHER',
@@ -193,7 +196,8 @@ class TestSexualBehaviourForm(TestCase):
               if response is a other community then derived value should assign blank
         """
         PartnerResidency = get_model('bcpp_list', 'partnerresidency')
-        first_partner_communities = [PartnerResidency.objects.get(name='In this community'), PartnerResidency.objects.get(name='Outside community')]
+        first_partner_communities = [PartnerResidency.objects.get(
+            name='In this community'), PartnerResidency.objects.get(name='Outside community')]
         data = {'subject_visit': self.subject_visit,
                 'first_partner_live': first_partner_communities,
                 'sex_partner_community': '',
@@ -218,23 +222,3 @@ class TestSexualBehaviourForm(TestCase):
         recent_partner_form.cleaned_data = data
         recent_partner_form.save()
         self.assertEqual(recent_partner_form.instance.first_partner_arm, '')
-
-    def test_ever_sex_if_yes(self):
-        """ """
-        pass
-
-    def test_last_year_partners_and_not_more_sex(self):
-        """ """
-        pass
-
-    def test_ever_sex_and_alcohol_sex(self):
-        """ """
-        pass
-
-    def test_ever_sex_and_condom(self):
-        """ """
-        pass
-
-    def test_last_years_partners_and_lifetime_sex_partners(self):
-        """ """
-        pass

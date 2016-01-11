@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from django.test import TestCase
 from dateutil.relativedelta import relativedelta
+
 from edc_constants.constants import NEW, NOT_REQUIRED, KEYED, YES, NO
 from edc.entry_meta_data.models import ScheduledEntryMetaData, RequisitionMetaData
 from edc.lab.lab_profile.classes import site_lab_profiles
@@ -10,6 +11,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
+from edc.map.classes import Mapper
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
@@ -28,9 +30,21 @@ from bhp066.apps.bcpp_subject.models import HivResult
 from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 
+class TestPlotMapper(Mapper):
+    map_area = 'test_community'
+    map_code = '01'
+    regions = []
+    sections = []
+    landmarks = []
+    gps_center_lat = -25.011111
+    gps_center_lon = 25.741111
+    radius = 5.5
+    location_boundary = ()
+
+
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
-    community = 'digawana'
+    community = 'test_community'
 
     def setUp(self):
         try:
@@ -49,83 +63,127 @@ class BaseRuleGroupTestSetup(TestCase):
         survey_T1 = surveys[1]
         survey_T2 = surveys[2]
 
-        self.study_site = StudySite.objects.get(site_code='12')
+        self.study_site = StudySite.objects.get(site_code='01')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T0)
         self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T1)
         self.household_structure_y3 = HouseholdStructure.objects.get(household__plot=plot, survey=survey_T2)
-        RepresentativeEligibilityFactory(household_structure=self.household_structure)
-        RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
-        RepresentativeEligibilityFactory(household_structure=self.household_structure_y3)
-        HouseholdMemberFactory(household_structure=self.household_structure)
-        HouseholdMemberFactory(household_structure=self.household_structure)
-        HouseholdMemberFactory(household_structure=self.household_structure)
+
+        for j in range(3):
+            RepresentativeEligibilityFactory(
+                household_structure=HouseholdStructure.objects.get(household__plot=plot, survey=surveys[j]))
+
+        for _ in range(3):
+            HouseholdMemberFactory(household_structure=self.household_structure)
 
         male_dob = date.today() - relativedelta(years=25)
         male_age_in_years = 25
         male_first_name = 'ERIK'
         male_initials = "EW"
+
+        self.household_member_male_T0 = self.new_household_member(
+            male_dob, male_age_in_years, male_first_name, male_initials, 'M')
+
         female_dob = date.today() - relativedelta(years=35)
         female_age_in_years = 35
         female_first_name = 'ERIKA'
         female_initials = "EW"
 
-        self.household_member_female_T0 = HouseholdMemberFactory(household_structure=self.household_structure, gender='F', age_in_years=female_age_in_years, first_name=female_first_name, initials=female_initials)
-        self.household_member_male_T0 = HouseholdMemberFactory(household_structure=self.household_structure, gender='M', age_in_years=male_age_in_years, first_name=male_first_name, initials=male_initials)
+        self.household_member_female_T0 = self.new_household_member(
+            female_dob, female_age_in_years, female_first_name, female_initials, 'F')
+
         self.household_member_female_T0.member_status = 'BHS_SCREEN'
         self.household_member_male_T0.member_status = 'BHS_SCREEN'
         self.household_member_female_T0.save()
         self.household_member_male_T0.save()
-        EnrollmentChecklistFactory(
-            household_member=self.household_member_female_T0,
-            gender='F',
-            citizen=YES,
-            dob=female_dob,
-            guardian=NO,
-            initials=self.household_member_female_T0.initials,
-            part_time_resident=YES)
-        EnrollmentChecklistFactory(
+
+        self.new_enrollment_checklist(self.household_member_female_T0, female_dob)
+
+        self.new_enrollment_checklist(self.household_member_male_T0, male_dob)
+
+        subject_consent_female = SubjectConsentFactory(
+            household_member=self.household_member_female_T0, confirm_identity='101129811', identity='101129811',
+            study_site=self.study_site, gender='F',
+            dob=female_dob, first_name=female_first_name,
+            initials=female_initials)
+
+        subject_consent_male = SubjectConsentFactory(
             household_member=self.household_member_male_T0,
-            gender='M',
-            citizen=YES,
-            dob=male_dob,
-            guardian=NO,
-            initials=self.household_member_male_T0.initials,
-            part_time_resident=YES)
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, confirm_identity='101129811', identity='101129811', study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
-        subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, confirm_identity='101119811', identity='101119811', study_site=self.study_site, gender='M', dob=male_dob, first_name=male_first_name, initials=male_initials)
-        self.assertEqual(HouseholdStructure.objects.filter(household=self.household_structure.household, survey=survey_T0, enumerated=True, enrolled=True).count(), 1)
+            confirm_identity='101119811', identity='101119811',
+            study_site=self.study_site, gender='M', dob=male_dob,
+            first_name=male_first_name, initials=male_initials)
+
+        self.assertEqual(HouseholdStructure.objects.filter(
+            household=self.household_structure.household, survey=survey_T0, enumerated=True, enrolled=True).count(), 1)
 
         enumeration_helper_T2 = EnumerationHelper(self.household_structure.household, survey_T0, survey_T1)
         enumeration_helper_T2.add_members_from_survey()
-        self.household_member_female = HouseholdMember.objects.get(internal_identifier=self.household_member_female_T0.internal_identifier,
-                                                                   household_structure__survey=survey_T1)
-        self.household_member_male = HouseholdMember.objects.get(internal_identifier=self.household_member_male_T0.internal_identifier,
-                                                                 household_structure__survey=survey_T1)
-        self.assertEqual(HouseholdStructure.objects.filter(household=self.household_structure_y2.household, survey=survey_T1, enumerated=True, enrolled=True).count(), 1)
+        self.household_member_female = HouseholdMember.objects.get(
+            internal_identifier=self.household_member_female_T0.internal_identifier,
+            household_structure__survey=survey_T1)
+        self.household_member_male = HouseholdMember.objects.get(
+            internal_identifier=self.household_member_male_T0.internal_identifier,
+            household_structure__survey=survey_T1)
+        self.assertEqual(HouseholdStructure.objects.filter(
+            household=self.household_structure_y2.household, 
+            survey=survey_T1, enumerated=True, enrolled=True).count(), 1)
 
         enumeration_helper_T3 = EnumerationHelper(self.household_structure.household, survey_T1, survey_T2)
         enumeration_helper_T3.add_members_from_survey()
-        self.household_member_female_T2 = HouseholdMember.objects.get(internal_identifier=self.household_member_female.internal_identifier,
-                                                                      household_structure__survey=survey_T2)
-        self.household_member_male_T2 = HouseholdMember.objects.get(internal_identifier=self.household_member_male.internal_identifier,
-                                                                    household_structure__survey=survey_T2)
-        self.assertEqual(HouseholdStructure.objects.filter(household=self.household_structure_y3.household, survey=survey_T2, enumerated=True, enrolled=True).count(), 1)
+        self.household_member_female_T2 = HouseholdMember.objects.get(
+            internal_identifier=self.household_member_female.internal_identifier,
+            household_structure__survey=survey_T2)
+        self.household_member_male_T2 = HouseholdMember.objects.get(
+            internal_identifier=self.household_member_male.internal_identifier,
+            household_structure__survey=survey_T2)
+        self.assertEqual(HouseholdStructure.objects.filter(
+            household=self.household_structure_y3.household,
+            survey=survey_T2, enumerated=True, enrolled=True).count(), 1)
 
-        self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
-        self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
-        self.appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T1')
-        self.appointment_female_T0 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T0')
-        self.appointment_female_T2 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T2')
-        self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
-        self.subject_visit_female = SubjectVisitFactory(appointment=self.appointment_female, household_member=self.household_member_female)
-        self.subject_visit_female_T2 = SubjectVisitFactory(appointment=self.appointment_female_T2, household_member=self.household_member_female_T2)
-        self.appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T1')
-        self.appointment_male_T0 = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T0')
-        self.appointment_male_T2 = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T2')
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
-        self.subject_visit_male_T2 = SubjectVisitFactory(appointment=self.appointment_male_T2, household_member=self.household_member_male_T2)
+        self.registered_subject_female = RegisteredSubject.objects.get(
+            subject_identifier=subject_consent_female.subject_identifier)
+        self.registered_subject_male = RegisteredSubject.objects.get(
+            subject_identifier=subject_consent_male.subject_identifier)
+        self.appointment_female = Appointment.objects.get(
+            registered_subject=self.registered_subject_female, visit_definition__code='T1')
+        self.appointment_female_T0 = Appointment.objects.get(
+            registered_subject=self.registered_subject_female, visit_definition__code='T0')
+        self.appointment_female_T2 = Appointment.objects.get(
+            registered_subject=self.registered_subject_female, visit_definition__code='T2')
+        self.subject_visit_female_T0 = SubjectVisitFactory(
+            appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
+        self.subject_visit_female = SubjectVisitFactory(
+            appointment=self.appointment_female, household_member=self.household_member_female)
+        self.subject_visit_female_T2 = SubjectVisitFactory(
+            appointment=self.appointment_female_T2, household_member=self.household_member_female_T2)
+        self.appointment_male = Appointment.objects.get(
+            registered_subject=self.registered_subject_male, visit_definition__code='T1')
+        self.appointment_male_T0 = Appointment.objects.get(
+            registered_subject=self.registered_subject_male, visit_definition__code='T0')
+        self.appointment_male_T2 = Appointment.objects.get(
+            registered_subject=self.registered_subject_male, visit_definition__code='T2')
+        self.subject_visit_male_T0 = SubjectVisitFactory(
+            appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.subject_visit_male = SubjectVisitFactory(
+            appointment=self.appointment_male, household_member=self.household_member_male)
+        self.subject_visit_male_T2 = SubjectVisitFactory(
+            appointment=self.appointment_male_T2, household_member=self.household_member_male_T2)
+
+    def new_household_member(self, dob, age, first_name, initials, gender):
+        return HouseholdMemberFactory(
+            household_structure=self.household_structure,
+            gender=gender, age_in_years=age,
+            first_name=first_name, initials=initials)
+
+    def new_enrollment_checklist(self, household_member, dob):
+        EnrollmentChecklistFactory(
+            household_member=household_member,
+            gender=household_member.gender,
+            citizen=YES,
+            dob=dob,
+            guardian=NO,
+            initials=household_member.initials,
+            part_time_resident=YES)
 
     def check_male_registered_subject_rule_groups(self, subject_visit):
         circumsition_options = {}
@@ -167,27 +225,39 @@ class BaseRuleGroupTestSetup(TestCase):
         if subject_visit == self.subject_visit_male_T0:
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumsition_options).count(), 1)
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **circumcised_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **uncircumcised_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **reproductivehealth_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **pregnancy_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **nonpregnancy_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NEW, **uncircumcised_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NOT_REQUIRED, **reproductivehealth_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NOT_REQUIRED, **pregnancy_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NOT_REQUIRED, **nonpregnancy_options).count(), 1)
         else:
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **reproductivehealth_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NEW, **reproductivehealth_options).count(), 1)
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **pregnancy_options).count(), 1)
             self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NEW, **nonpregnancy_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
-            self.assertEqual(ScheduledEntryMetaData.objects.filter(entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NOT_REQUIRED, **circumsition_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NOT_REQUIRED, **circumcised_options).count(), 1)
+            self.assertEqual(ScheduledEntryMetaData.objects.filter(
+                entry_status=NOT_REQUIRED, **uncircumcised_options).count(), 1)
 
     def new_metadata_is_not_keyed(self):
-        self.assertEquals(ScheduledEntryMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
-        self.assertEquals(RequisitionMetaData.objects.filter(entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
+        self.assertEquals(ScheduledEntryMetaData.objects.filter(
+            entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
+        self.assertEquals(
+            RequisitionMetaData.objects.filter(
+                entry_status=KEYED, appointment=self.subject_visit_male.appointment).count(), 0)
 
     @property
     def baseline_subject_visit(self):
         """ Return baseline subject visit"""
         self.subject_visit_male_T0.delete()
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.subject_visit_male_T0 = SubjectVisitFactory(
+            appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
         self.check_male_registered_subject_rule_groups(self.subject_visit_male_T0)
         return self.subject_visit_male_T0
 
@@ -195,16 +265,20 @@ class BaseRuleGroupTestSetup(TestCase):
     def annual_subject_visit_y2(self):
         """ Return annuall subject visit """
         self.subject_visit_male.delete()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male).count(), 0)
-        self.subject_visit_male = SubjectVisitFactory(appointment=self.appointment_male, household_member=self.household_member_male)
+        self.assertEqual(
+            ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male).count(), 0)
+        self.subject_visit_male = SubjectVisitFactory(
+            appointment=self.appointment_male, household_member=self.household_member_male)
         return self.subject_visit_male
 
     @property
     def annual_subject_visit_y3(self):
         """ Return annuall subject visit """
         self.subject_visit_male_T2.delete()
-        self.assertEqual(ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male_T2).count(), 0)
-        self.subject_visit_male_T2 = SubjectVisitFactory(appointment=self.appointment_male_T2, household_member=self.household_member_male_T2)
+        self.assertEqual(
+            ScheduledEntryMetaData.objects.filter(appointment=self.appointment_male_T2).count(), 0)
+        self.subject_visit_male_T2 = SubjectVisitFactory(
+            appointment=self.appointment_male_T2, household_member=self.household_member_male_T2)
         return self.subject_visit_male_T2
 
     def hiv_result(self, status, subject_visit):
@@ -212,7 +286,8 @@ class BaseRuleGroupTestSetup(TestCase):
         aliquot_type = AliquotType.objects.all()[0]
         site = StudySite.objects.all()[0]
         microtube_panel = Panel.objects.get(name='Microtube')
-        SubjectRequisitionFactory(subject_visit=subject_visit, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
+        SubjectRequisitionFactory(
+            subject_visit=subject_visit, panel=microtube_panel, aliquot_type=aliquot_type, site=site)
 
         self._hiv_result = HivResult.objects.create(
             subject_visit=subject_visit,
