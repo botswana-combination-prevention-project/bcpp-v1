@@ -75,6 +75,7 @@ class Command(BaseCommand):
                     plot_radius.save()
                     print ".....SUCCESS: {}/{} Plot {}".format(count, len(to_fix), plt.plot_identifier)
                 except IncreasePlotRadius.DoesNotExist:
-                    print ".....IncreasePlotRadius.DoesNotExist: {}/{} Plot {}".format(count, len(to_fix), plt.plot_identifier)
+                    print ".....IncreasePlotRadius.DoesNotExist: {}/{} Plot {}".format(
+                        count, len(to_fix), plt.plot_identifier)
         else:
             pass

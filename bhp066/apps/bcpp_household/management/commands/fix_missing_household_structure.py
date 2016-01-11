@@ -30,7 +30,8 @@ class Command(BaseCommand):
                         HouseholdStructure.objects.filter(household__pk=household.pk, survey=survey).count(),
                         household,
                         survey)
-                    for household_structure in HouseholdStructure.objects.filter(household__pk=household.pk, survey=survey):
+                    for household_structure in HouseholdStructure.objects.filter(
+                            household__pk=household.pk, survey=survey):
                         try:
                             HouseholdLog.objects.get(household_structure=household_structure)
                         except HouseholdLog.DoesNotExist:

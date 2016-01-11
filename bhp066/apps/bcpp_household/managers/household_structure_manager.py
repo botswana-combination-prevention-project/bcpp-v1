@@ -31,5 +31,6 @@ class HouseholdStructureManager(models.Manager):
                     household__plot__community=community,
                     household__plot__plot_identifier__in=PlotIdentifier.get_notebook_plot_lists())
             else:
-                return super(HouseholdStructureManager, self).get_queryset().filter(household__plot__community=community)
+                return super(HouseholdStructureManager, self).get_queryset().filter(
+                    household__plot__community=community)
         return super(HouseholdStructureManager, self).get_queryset()
