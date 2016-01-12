@@ -26,17 +26,12 @@ def update_call_list(community, survey_slug, label, verbose=False):
     SubjectLocator = get_model('bcpp_subject', 'SubjectLocator')
     # Pull all consented members from the supplied survey year (Usually the past survey).
     members = HouseholdMember.objects.filter(household_structure__survey__survey_slug=survey_slug,
-        is_consented=True,
-        household_structure__household__plot__community=community)
-#     consent_options = dict(household_member__household_structure__survey__survey_slug=survey_slug,
-#                            community=community)
+                                             is_consented=True,
+                                             household_structure__household__plot__community=community)
     options = {}
     n = 0
-    # total = SubjectConsent.objects.all().count()
-    #total = SubjectConsent.objects.filter(**consent_options).count()
     total = members.count()
     print 'Pulled {} consented members for village {}.'.format(total, community.upper())
-    #for subject_consent in SubjectConsent.objects.filter(**consent_options).order_by('subject_identifier'):
     for member in members:
         print 'Now attending to {}, of identifier {}.'.format(member, member.registered_subject.subject_identifier)
         n += 1
