@@ -1,41 +1,57 @@
 from datetime import date
-from dateutil.relativedelta import relativedelta
+# from dateutil.relativedelta import relativedelta
 
 from django.db.models import Model
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from edc.map.classes import site_mappers
+# from edc.map.classes import site_mappers
 
+from edc.lab.lab_profile.classes import site_lab_profiles
+from edc.lab.lab_profile.exceptions import AlreadyRegistered as AlreadyRegisteredLabProfile
+from edc.subject.lab_tracker.classes import site_lab_tracker
+from edc.subject.rule_groups.classes import site_rule_groups
+
+
+from bhp066.apps.bcpp_lab.lab_profiles import BcppSubjectProfile
+from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp.app_configuration.classes.app_configuration import BcppAppConfiguration
 from bhp066.apps.bcpp_household.classes import PlotIdentifier
 from bhp066.apps.bcpp_household.models import Household
 from bhp066.apps.bcpp_household.models import Plot
 from bhp066.apps.bcpp_household.models import PlotIdentifierHistory
-from bhp066.apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
+# from bhp066.apps.bcpp_household.utils.survey_dates_tuple import SurveyDatesTuple
 from bhp066.config.databases import TESTING_SQLITE
 
 
 class TestPlotSimple(TestCase):
 
+    @override_settings(LIMIT_EDIT_TO_CURRENT_SURVEY=True, LIMIT_EDIT_TO_CURRENT_COMMUNITY=True, FILTERED_DEFAULT_SEARCH=True)
     def setUp(self):
+        self.community = 'test_community'
+        try:
+            site_lab_profiles.register(BcppSubjectProfile())
+        except AlreadyRegisteredLabProfile:
+            pass
         BcppAppConfiguration().prepare()
-        site_mappers.autodiscover()
-        mapper_cls = site_mappers._registry['test_community']
-        mapper_cls.survey_dates = {
-            'bcpp-year-1': SurveyDatesTuple(
-                name='bhs',
-                start_date=date.today() - relativedelta(days=10),
-                full_enrollment_date=date.today() + relativedelta(days=100),
-                end_date=date.today() + relativedelta(days=110),
-                smc_start_date=date.today() + relativedelta(days=100)),
-            'bcpp-year-2': SurveyDatesTuple(
-                name='t1',
-                start_date=date.today() - relativedelta(days=10) + relativedelta(years=1),
-                full_enrollment_date=date.today() + relativedelta(days=100) + relativedelta(years=1),
-                end_date=date.today() + relativedelta(days=110) + relativedelta(years=1),
-                smc_start_date=date.today() + relativedelta(days=100) + relativedelta(years=1))}
-        site_mappers._registry['test_community'] = mapper_cls
+        site_lab_tracker.autodiscover()
+        BcppSubjectVisitSchedule().build()
+        site_rule_groups.autodiscover()
+#         mapper_cls = site_mappers._registry['test_community']
+#         mapper_cls.survey_dates = {
+#             'bcpp-year-1': SurveyDatesTuple(
+#                 name='bhs',
+#                 start_date=date.today() - relativedelta(days=10),
+#                 full_enrollment_date=date.today() + relativedelta(days=100),
+#                 end_date=date.today() + relativedelta(days=110),
+#                 smc_start_date=date.today() + relativedelta(days=100)),
+#             'bcpp-year-2': SurveyDatesTuple(
+#                 name='t1',
+#                 start_date=date.today() - relativedelta(days=10) + relativedelta(years=1),
+#                 full_enrollment_date=date.today() + relativedelta(days=100) + relativedelta(years=1),
+#                 end_date=date.today() + relativedelta(days=110) + relativedelta(years=1),
+#                 smc_start_date=date.today() + relativedelta(days=100) + relativedelta(years=1))}
+#         site_mappers._registry['test_community'] = mapper_cls
 
     def test_simple_create(self):
 

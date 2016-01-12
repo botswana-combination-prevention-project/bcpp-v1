@@ -119,7 +119,10 @@ class TestHouseholdStructures(TestCase):
 
     def test_enrolled1(self):
         """Assert enrolled is False if members but none consented."""
+<<<<<<< HEAD
+=======
 
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot = PlotFactory(community="test_community", household_count=3,
                            status='residential_habitable')
         for household in Household.objects.filter(plot=plot):

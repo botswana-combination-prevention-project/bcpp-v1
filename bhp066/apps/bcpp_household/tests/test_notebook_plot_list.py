@@ -18,9 +18,9 @@ from django.test.utils import override_settings
 
 class TestNotebookPlotAllocation(TestCase):
 
-    @override_settings(CURRENT_COMMUNITY='otse', CURRENT_MAPPER='otse', SITE_CODE='14')
+    @override_settings(CURRENT_COMMUNITY='test_community', CURRENT_MAPPER='test_community', SITE_CODE='01')
     def setUp(self):
-        self.community = 'otse'
+        self.community = 'test_community'
         try:
             site_lab_profiles.register(BcppSubjectProfile())
         except AlreadyRegisteredLabProfile:
