@@ -26,7 +26,8 @@ from bhp066.apps.bcpp_subject.models import HivResult, HicEnrollment
 from bhp066.apps.bcpp_survey.models import Survey
 
 from .classes import (OperationalPlots, OperationalHousehold, OperationalMember,
-                      OperationalSpecimen, OperationalAnnual, OperationalRbd, OperationalVisits)
+                      OperationalSpecimen, OperationalAnnual, OperationalRbd, OperationalVisits,
+                      OperationalConsents)
 from .report_queries.household_member_report_query import HouseholdMemberReportQuery
 from .report_queries.household_report_query import HouseholdReportQuery
 from .report_queries.plot_report_query import PlotReportQuery
@@ -240,7 +241,7 @@ def operational_report_rbd_view(request, **kwargs):
 
 @login_required
 def operational_report_consents_view(request, **kwargs):
-    operational_consents = OperationalRbd(request)
+    operational_consents = OperationalConsents(request)
     return render_to_response(
         'bcpp_analytics/operational_report_consents.html', {
             'values': operational_consents.build_report(),
