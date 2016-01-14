@@ -9,8 +9,7 @@ from edc_constants.constants import NEW
 from bhp066.apps.bcpp_clinic.models import (
     ClinicConsent, ClinicEligibility, ClinicRefusal, ClinicEnrollmentLoss,
     Questionnaire, ClinicVlResult, ViralLoadTracking)
-from bhp066.apps.bcpp_subject.models import SubjectRequisition
-from bhp066.apps.bcpp_lab.models import ClinicRequisition
+from bhp066.apps.bcpp_lab.models import ClinicRequisition, SubjectRequisition
 
 from .base_operational_report import BaseOperationalReport
 
