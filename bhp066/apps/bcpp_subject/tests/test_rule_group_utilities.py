@@ -107,7 +107,7 @@ class TestRuleGroupUtilities(BaseRuleGroupTestSetup):
 
         self.assertEqual(True, subject_status_helper(self.subject_visit_male_T0, NEG))
 
-        self.subject_visit_male = self.annual_subject_visit
+        self.subject_visit_male = self.annual_subject_visit_y2
 
         self._hiv_result = self.hiv_result(POS, self.subject_visit_male)
 

@@ -13,7 +13,6 @@ from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 
 from bhp066.apps.bcpp_survey.models import Survey
 
-
 from ..models import (Household, HouseholdStructure, Plot, HouseholdLog, PlotIdentifierHistory)
 # from ..models import HouseholdIdentifierHistory
 
@@ -40,6 +39,7 @@ class TestHouseholds(TestCase):
 
     def test_identifier(self):
         """Assert plot creates an identifier"""
+
         plot = PlotFactory(community=self.community)
         self.assertIsNotNone(plot.plot_identifier)
 
@@ -128,6 +128,7 @@ class TestHouseholds(TestCase):
 
     def test_household_count2(self):
         """Asserts household count is 3 after 2 households are added after create."""
+
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
@@ -137,6 +138,7 @@ class TestHouseholds(TestCase):
 
     def test_household_count3(self):
         """Asserts household count is 3 after 4 households are added after create and then 2 removed."""
+
         plot = PlotFactory(community=self.community, household_count=1,
                            status='residential_habitable')
         plot = Plot.objects.get(plot_identifier=plot.plot_identifier)
@@ -211,7 +213,6 @@ class TestHouseholds(TestCase):
                 identifier=plot.plot_identifier).count(), 1)
 
 #     def test_household_identifier_history_updated(self):
-#
 #         plot = PlotFactory(community=self.community, household_count=8, status='residential_habitable')
 #         for household in Household.objects.filter(plot=plot):
 #             self.assertEquals(HouseholdIdentifierHistory.objects.filter(

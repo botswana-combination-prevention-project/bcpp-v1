@@ -16,7 +16,11 @@ from ..mappers import BasePlotMapper
 from .factories.plot_factory import PlotFactory
 
 
+<<<<<<< HEAD
+class TestPlotMapper(Mapper):
+=======
 class TestPlotMapper(BasePlotMapper):
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
     map_area = 'test_community'
     map_code = '01'
     regions = []
@@ -44,7 +48,15 @@ class DeleteHouseholdTests(TestCase):
 
     def test_plot_deletes_household(self):
         """if you change a plot by subtracting a household should delete last created household."""
+<<<<<<< HEAD
+<<<<<<< HEAD
+        plot = PlotFactory(community='gumare', household_count=2, status='residential_habitable')
+=======
         plot = PlotFactory(community='test_community', household_count=2, status='residential_habitable')
+>>>>>>> 3890b2539f5e770330f2b642fdf6cb254e3a2865
+=======
+        plot = PlotFactory(community='test_community', household_count=2, status='residential_habitable')
+>>>>>>> a11dfe90633fcf9ac5420b75f7f591c317b8228d
         plot.household_count = 1
         plot.save()
         self.assertEqual(Household.objects.filter(plot=plot).count(), 1)
