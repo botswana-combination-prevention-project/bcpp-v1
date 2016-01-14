@@ -6,3 +6,4 @@ from .operational_annual import OperationalAnnual
 from .operational_rbd import OperationalRbd
 from .base_operational_report import BaseOperationalReport
 from .operational_visits import OperationalVisits
+from .operational_consents import OperationalConsents
