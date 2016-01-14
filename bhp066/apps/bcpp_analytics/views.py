@@ -231,9 +231,21 @@ def operational_report_annual_view(request, **kwargs):
 def operational_report_rbd_view(request, **kwargs):
     operational_rbd = OperationalRbd(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_rbd.html', {'values': operational_rbd.build_report(),
-                                                        'communities': operational_rbd.return_communities(),
-                                                        'ra_usernames': operational_rbd.return_ra_usernames()},
+        'bcpp_analytics/operational_report_rbd.html', {
+            'values': operational_rbd.build_report(),
+            'communities': operational_rbd.return_communities(),
+            'ra_usernames': operational_rbd.return_ra_usernames()},
+        context_instance=RequestContext(request))
+
+
+@login_required
+def operational_report_consents_view(request, **kwargs):
+    operational_consents = OperationalRbd(request)
+    return render_to_response(
+        'bcpp_analytics/operational_report_consents.html', {
+            'values': operational_consents.build_report(),
+            'communities': operational_consents.return_communities(),
+            'ra_usernames': operational_consents.return_ra_usernames()},
         context_instance=RequestContext(request))
 
 
@@ -241,9 +253,10 @@ def operational_report_rbd_view(request, **kwargs):
 def operational_report_visits_view(request, **kwargs):
     operational_visits = OperationalVisits(request)
     return render_to_response(
-        'bcpp_analytics/operational_report_visits.html', {'values': operational_visits.build_report(),
-                                                          'communities': operational_visits.return_communities(),
-                                                          'ra_usernames': operational_visits.return_ra_usernames()},
+        'bcpp_analytics/operational_report_visits.html', {
+            'values': operational_visits.build_report(),
+            'communities': operational_visits.return_communities(),
+            'ra_usernames': operational_visits.return_ra_usernames()},
         context_instance=RequestContext(request))
 
 
