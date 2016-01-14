@@ -36,12 +36,15 @@ class OperationalRbd(BaseOperationalReport):
                                                       panel__name='Research Blood Draw',
                                                       is_drawn='yes')
         self.data_dict['2. Clinic RBD\'s drawn'] = clinic_rbd.count()
-        clinic_bhs_rbd = SubjectRequisition.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
-                                                           created__gte=self.date_from,
-                                                           created__lte=self.date_to,
-                                                           user_created__icontains=self.ra_username,
-                                                           panel__name='Research Blood Draw',
-                                                           is_drawn='yes')
+        clinic_bhs_rbd = SubjectRequisition.objects.filter(
+            subject_visit__household_member__household_structure__household__plot__community__in=[
+                'digawana', 'otse', 'lentsweletau', 'oodi', 'mmankgodi', 'lerala', 'maunatlala',
+                'shoshong', 'nkange', 'tati_siding', 'mathangwane', 'gweta', 'gumare', 'sefhare', 'masunga'],
+            created__gte=self.date_from,
+            created__lte=self.date_to,
+            user_created__icontains=self.ra_username,
+            panel__name='Research Blood Draw',
+            is_drawn='yes')
         self.data_dict['2a. BHS CPC RBD\'s drawn'] = clinic_bhs_rbd.count()
 
         clinic_vl_requisitions = ClinicRequisition.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
@@ -51,13 +54,16 @@ class OperationalRbd(BaseOperationalReport):
                                                                   panel__name='Clinic Viral Load',
                                                                   is_drawn='yes')
         self.data_dict['3. Clinic VL\'s drawn @ BHP'] = clinic_vl_requisitions.count()
-        clinic_bhs_rbd = SubjectRequisition.objects.filter(subject_visit__household_member__household_structure__household__plot__community__icontains=self.community,
-                                                           created__gte=self.date_from,
-                                                           created__lte=self.date_to,
-                                                           user_created__icontains=self.ra_username,
-                                                           panel__name='Viral Load',
-                                                           is_drawn='yes')
-        self.data_dict['3a. BHS CPC VL\'s drawn'] = clinic_bhs_rbd.count()
+        clinic_bhs_vl = SubjectRequisition.objects.filter(
+            subject_visit__household_member__household_structure__household__plot__community__in=[
+                'digawana', 'otse', 'lentsweletau', 'oodi', 'mmankgodi', 'lerala', 'maunatlala',
+                'shoshong', 'nkange', 'tati_siding', 'mathangwane', 'gweta', 'gumare', 'sefhare', 'masunga'],
+            created__gte=self.date_from,
+            created__lte=self.date_to,
+            user_created__icontains=self.ra_username,
+            panel__name='Viral Load',
+            is_drawn='yes')
+        self.data_dict['3a. BHS CPC VL\'s drawn'] = clinic_bhs_vl.count()
 
         govt_vl_request = ViralLoadTracking.objects.filter(clinic_visit__household_member__household_structure__household__plot__community__icontains=self.community,
                                                            created__gte=self.date_from,
