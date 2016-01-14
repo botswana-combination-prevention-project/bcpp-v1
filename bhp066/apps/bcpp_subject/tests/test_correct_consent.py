@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from django.test import TestCase
@@ -29,7 +29,6 @@ from ..models import SubjectConsent
 class TestCorrectConsent(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'bokaa'
 
     def setUp(self):
         try:
@@ -40,14 +39,15 @@ class TestCorrectConsent(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
-        self.study_site = StudySite.objects.get(site_code='17')
+        self.community = 'test_community'
+        self.study_site = StudySite.objects.get(site_code='01')
         self.survey = Survey.objects.all()[0]
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
         survey = Survey.objects.all().order_by('datetime_start')[0]
         next_survey = Survey.objects.all().order_by('datetime_start')[1]
 
-        self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
-        self.household_structure_y2 = HouseholdStructure.objects.get(household__plot=plot, survey=next_survey)
+        self.household_structure = HouseholdStructure.objects.get(household=plot.household, survey=survey)
+        self.household_structure_y2 = HouseholdStructure.objects.get(household=plot.household, survey=next_survey)
         RepresentativeEligibilityFactory(household_structure=self.household_structure)
         RepresentativeEligibilityFactory(household_structure=self.household_structure_y2)
 
@@ -124,7 +124,7 @@ class TestCorrectConsent(TestCase):
         self.assertEquals(SubjectConsent.objects.get(id=self.subject_consent_female.id).gender, 'M')
 
     def test_witness(self):
-        self.subject_consent_female.witness_name='DIMO'
+        self.subject_consent_female.witness_name = 'DIMO'
         self.subject_consent_female.save(update_fields=['witness_name'])
         CorrectConsentFactory(
             subject_consent=self.subject_consent_female,

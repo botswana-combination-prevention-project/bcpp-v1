@@ -315,7 +315,7 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
             kwargs.update({'update_fields': update_fields})
         except TypeError:
             pass
-        #self.is_the_household_member_for_current_survey()
+#         self.is_the_household_member_for_current_survey()
         super(HouseholdMember, self).save(*args, **kwargs)
 
     def natural_key(self):

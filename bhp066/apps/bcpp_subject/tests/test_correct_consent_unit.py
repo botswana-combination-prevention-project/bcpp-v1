@@ -37,6 +37,10 @@ class Member(TestBase):
 
     age_in_years = models.IntegerField()
 
+    @property
+    def enrollment_checklist(self):
+        return Checklist.objects.get(household_member=self)
+
     class Meta:
         app_label = 'bcpp_subject'
 
