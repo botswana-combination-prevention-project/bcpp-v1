@@ -14,8 +14,8 @@ from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
 from bhp066.apps.bcpp_survey.models import Survey
 
 
-from ..models import (HouseholdIdentifierHistory, Household, HouseholdStructure, Plot, HouseholdLog,
-                      PlotIdentifierHistory)
+from ..models import (Household, HouseholdStructure, Plot, HouseholdLog, PlotIdentifierHistory)
+# from ..models import HouseholdIdentifierHistory
 
 from .factories.plot_factory import PlotFactory
 from .factories.household_log_entry_factory import HouseholdLogEntryFactory
@@ -210,14 +210,13 @@ class TestHouseholds(TestCase):
             self.assertEquals(PlotIdentifierHistory.objects.filter(
                 identifier=plot.plot_identifier).count(), 1)
 
-    def test_household_identifier_history_updated(self):
-
-        plot = PlotFactory(community=self.community, household_count=8, status='residential_habitable')
-        for household in Household.objects.filter(plot=plot):
-            # print household.household_identifier, household.plot.plot_identifier
-            self.assertEquals(HouseholdIdentifierHistory.objects.filter(
-                plot_identifier=household.plot.plot_identifier,
-                identifier=household.household_identifier).count(), 1)
+#     def test_household_identifier_history_updated(self):
+#
+#         plot = PlotFactory(community=self.community, household_count=8, status='residential_habitable')
+#         for household in Household.objects.filter(plot=plot):
+#             self.assertEquals(HouseholdIdentifierHistory.objects.filter(
+#                 plot_identifier=household.plot.plot_identifier,
+#                 identifier=household.household_identifier).count(), 1)
 
     def test_create_household5(self):
         """Assert household.plot is not None when household is created."""
