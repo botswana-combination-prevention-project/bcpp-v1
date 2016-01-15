@@ -13,6 +13,7 @@ from edc.subject.rule_groups.classes import site_rule_groups
 from edc.subject.registration.models import RegisteredSubject
 from edc.core.bhp_variables.models import StudySite
 from edc_constants.constants import NOT_APPLICABLE
+from edc.map.classes import Mapper
 
 from bhp066.apps.bcpp.app_configuration.classes import bcpp_app_configuration
 from bhp066.apps.bcpp_subject.visit_schedule import BcppSubjectVisitSchedule
@@ -28,7 +29,7 @@ from bhp066.apps.bcpp_household.tests.factories import RepresentativeEligibility
 class BaseScheduledModelTestCase(TestCase):
 
     app_label = 'bcpp_subject'
-    community = None
+    community = 'test_community'
     site_code = None
     study_site = None
     household_strucure = None
@@ -47,6 +48,7 @@ class BaseScheduledModelTestCase(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
+        bcpp_app_configuration.prep_survey_for_tests()
 #         site_visit_schedules.autodiscover()
 #         site_visit_schedules.build_all()
 
@@ -145,14 +147,17 @@ class BaseScheduledModelTestCase(TestCase):
         # FIXME: need this to be fixed, not getting gender right!
         self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
         self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=subject_consent_male.subject_identifier)
-        appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__time_point=0)
+        self.appointment_female = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__time_point=0)
         self.subject_visit_female = SubjectVisitFactory(
             report_datetime=datetime.today(),
-            appointment=appointment_female, household_member=self.household_member_female)
-        appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__time_point=0)
-        self.subject_visit_male = SubjectVisitFactory(
+            appointment=self.appointment_female, household_member=self.household_member_female)
+        self.appointment_male = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__time_point=0)
+        self.subject_visit_male = self.new_subject_visit_male()
+
+    def new_subject_visit_male(self):
+        return SubjectVisitFactory(
             report_datetime=datetime.today(),
-            appointment=appointment_male, household_member=self.household_member_male)
+            appointment=self.appointment_male, household_member=self.household_member_male)
 
     def create_annual(self, household):
         household_structure = HouseholdStructure.objects.get(household=household, survey=self.survey2)

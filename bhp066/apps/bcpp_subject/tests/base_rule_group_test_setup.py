@@ -1,5 +1,8 @@
-from datetime import datetime, date
+from datetime import datetime, timedelta, date
+from django.conf import settings
+
 from django.test import TestCase
+from django.test.utils import override_settings
 from dateutil.relativedelta import relativedelta
 
 from edc_constants.constants import NEW, NOT_REQUIRED, KEYED, YES, NO
@@ -11,7 +14,7 @@ from edc.subject.lab_tracker.classes import site_lab_tracker
 from edc.subject.registration.models import RegisteredSubject
 from edc.subject.rule_groups.classes import site_rule_groups
 from edc.core.bhp_variables.models import StudySite
-from edc.map.classes import Mapper
+from edc.map.classes import Mapper, site_mappers
 
 from bhp066.apps.bcpp_household.models import HouseholdStructure
 from bhp066.apps.bcpp_household.tests.factories import PlotFactory, RepresentativeEligibilityFactory
@@ -30,22 +33,17 @@ from bhp066.apps.bcpp_subject.models import HivResult
 from .factories import (SubjectConsentFactory, SubjectVisitFactory)
 
 
-class TestPlotMapper(Mapper):
-    map_area = 'test_community'
-    map_code = '01'
-    regions = []
-    sections = []
-    landmarks = []
-    gps_center_lat = -25.011111
-    gps_center_lon = 25.741111
-    radius = 5.5
-    location_boundary = ()
-
-
 class BaseRuleGroupTestSetup(TestCase):
     app_label = 'bcpp_subject'
     community = 'test_community'
 
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-1',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
     def setUp(self):
         try:
             site_lab_profiles.register(BcppSubjectProfile())
@@ -55,6 +53,7 @@ class BaseRuleGroupTestSetup(TestCase):
         site_lab_tracker.autodiscover()
         BcppSubjectVisitSchedule().build()
         site_rule_groups.autodiscover()
+        BcppAppConfiguration().prep_survey_for_tests()
 
         plot = PlotFactory(community=self.community, household_count=1, status='residential_habitable')
 

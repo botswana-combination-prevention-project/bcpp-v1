@@ -4,6 +4,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
+from django.core.exceptions import MultipleObjectsReturned
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
@@ -814,6 +815,12 @@ class HouseholdMember(BaseDispatchSyncUuidModel, BaseSyncUuidModel):
         except RegisteredSubject.DoesNotExist:
             # this should not be an option as all hsm's have a registered_subject instance
             subject_identifier = self.id
+        except MultipleObjectsReturned:
+            registered_subject = RegisteredSubject.objects.filter(
+                registration_identifier=self.internal_identifier).first()
+            subject_identifier = registered_subject.subject_identifier
+            if not subject_identifier:
+                subject_identifier = registered_subject.registration_identifier
         return subject_identifier
 
     def get_hiv_history(self):

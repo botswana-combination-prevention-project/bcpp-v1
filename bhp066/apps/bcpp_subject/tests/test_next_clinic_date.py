@@ -8,7 +8,7 @@ from bhp066.apps.bcpp_household.utils import ClinicDaysTuple
 from ..utils import next_clinic_date
 
 
-CLINIC_DAYS = {  # see the mapper classes for CLINIC days per community
+CLINIC_DAYS = {
     '11': {'IDCC': ClinicDaysTuple((MO, WE), None),
            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), date(2014, 10, 15)),

@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.utils import timezone
+from django.test.utils import override_settings
 
 from datetime import timedelta, datetime
 
@@ -31,13 +32,33 @@ from .factories import SubjectConsentFactory, SubjectVisitFactory
 
 from edc_quota.client.models import Quota
 from edc_quota.client.exceptions import QuotaReachedError
+from edc.map.classes import Mapper
+
+
+class TestPlotMapper(Mapper):
+    map_area = 'test_community'
+    map_code = '01'
+    regions = []
+    sections = []
+    landmarks = []
+    gps_center_lat = -25.011111
+    gps_center_lon = 25.741111
+    radius = 5.5
+    location_boundary = ()
 
 
 class TestPimaVL(TestCase):
 
     app_label = 'bcpp_subject'
-    community = 'otse'
+    community = 'test_community'
 
+    @override_settings(
+        SITE_CODE='01', CURRENT_COMMUNITY='test_community', CURRENT_SURVEY='bcpp-year-2',
+        CURRENT_COMMUNITY_CHECK=False,
+        LIMIT_EDIT_TO_CURRENT_SURVEY=True,
+        LIMIT_EDIT_TO_CURRENT_COMMUNITY=True,
+        FILTERED_DEFAULT_SEARCH=True,
+    )
     def setUp(self):
         try:
             site_lab_profiles.register(BcppSubjectProfile())
@@ -52,7 +73,7 @@ class TestPimaVL(TestCase):
 
         survey = Survey.objects.all().order_by('datetime_start')[0]
 
-        self.study_site = StudySite.objects.get(site_code='14')
+        self.study_site = StudySite.objects.get(site_code='01')
 
         self.household_structure = HouseholdStructure.objects.get(household__plot=plot, survey=survey)
         RepresentativeEligibilityFactory(household_structure=self.household_structure)
@@ -99,23 +120,34 @@ class TestPimaVL(TestCase):
             part_time_resident='Yes'
         )
 
-        subject_consent_female = SubjectConsentFactory(household_member=self.household_member_female_T0, study_site=self.study_site, gender='F', dob=female_dob, first_name=female_first_name, initials=female_initials)
-        self.subject_consent_male = SubjectConsentFactory(household_member=self.household_member_male_T0, study_site=self.study_site, gender='M', dob=self.male_dob, first_name=self.male_first_name, initials=self.male_initials)
+        subject_consent_female = SubjectConsentFactory(
+            household_member=self.household_member_female_T0, study_site=self.study_site, gender='F',
+            dob=female_dob, first_name=female_first_name, initials=female_initials)
+        self.subject_consent_male = SubjectConsentFactory(
+            household_member=self.household_member_male_T0, study_site=self.study_site,
+            gender='M', dob=self.male_dob, first_name=self.male_first_name, initials=self.male_initials)
 
-        self.registered_subject_male = RegisteredSubject.objects.get(subject_identifier=self.subject_consent_male.subject_identifier)
-        self.registered_subject_female = RegisteredSubject.objects.get(subject_identifier=subject_consent_female.subject_identifier)
+        self.registered_subject_male = RegisteredSubject.objects.get(
+            subject_identifier=self.subject_consent_male.subject_identifier)
+        self.registered_subject_female = RegisteredSubject.objects.get(
+            subject_identifier=subject_consent_female.subject_identifier)
 
-        self.appointment_male_T0 = Appointment.objects.get(registered_subject=self.registered_subject_male, visit_definition__code='T0')
-        self.appointment_female_T0 = Appointment.objects.get(registered_subject=self.registered_subject_female, visit_definition__code='T0')
+        self.appointment_male_T0 = Appointment.objects.get(
+            registered_subject=self.registered_subject_male, visit_definition__code='T0')
+        self.appointment_female_T0 = Appointment.objects.get(
+            registered_subject=self.registered_subject_female, visit_definition__code='T0')
 
-        self.subject_visit_male_T0 = SubjectVisitFactory(appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
-        self.subject_visit_female_T0 = SubjectVisitFactory(appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
+        self.subject_visit_male_T0 = SubjectVisitFactory(
+            appointment=self.appointment_male_T0, household_member=self.household_member_male_T0)
+        self.subject_visit_female_T0 = SubjectVisitFactory(
+            appointment=self.appointment_female_T0, household_member=self.household_member_female_T0)
 
         Quota.objects.create(
             app_label='bcpp_subject',
             model_name='PimaVl',
             target=1,
-            expires_datetime=timezone.now() + timedelta(days=1)
+            start_date=timezone.now().date(), 
+            expiration_date=timezone.now().date() + timedelta(days=1)
         )
         self.assertEqual(1, Quota.objects.all().count())
 
@@ -136,18 +168,16 @@ class TestPimaVL(TestCase):
         self.assertEqual(1, PimaVl.objects.all().count())
         #
         self.create_pimavl(2, self.subject_visit_female_T0, 'V7D8N', 'DR2AW')
-        self.assertEqual(2, PimaVl.objects.all().count())
+        self.assertEqual(1, PimaVl.objects.all().count())
 
     def create_pimavl(self, pima_id, subject_visit, override_key=None, confirmation_code=None):
         """ """
         try:
             PimaVl(
                 report_datetime=datetime.today(), poc_vl_today='Yes', poc_vl_type='Mobile settings',
-                poc_vl_datetime=datetime.today(), time_of_test=datetime.today(), time_of_result=datetime.today(),
+                time_of_test=datetime.today(), time_of_result=datetime.today(),
                 easy_of_use='easy', pima_id='pima_id{0}'.format(pima_id), poc_vl_value=1000,
-                subject_visit=subject_visit,
-                override_code=override_key,
-                confirmation_code=confirmation_code,
+                subject_visit=subject_visit
             ).save()
         except QuotaReachedError:
             return PimaVl.objects.create

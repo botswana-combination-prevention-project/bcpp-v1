@@ -41,7 +41,7 @@ class CallLogEntryAdminInline(BaseStackedInline):
         'appt_location',
         'appt_location_other',
         'call_again',
-        )
+    )
 
     radio_fields = {
         "contact_type": admin.VERTICAL,
@@ -56,7 +56,7 @@ class CallLogEntryAdminInline(BaseStackedInline):
         "appt_grading": admin.VERTICAL,
         "appt_location": admin.VERTICAL,
         "call_again": admin.VERTICAL,
-        }
+    }
 
 
 class CallLogAdmin(BaseModelAdmin):
@@ -116,7 +116,7 @@ class CallLogEntryAdmin(BaseModelAdmin):
         'appt_location',
         'appt_location_other',
         'call_again',
-        )
+    )
 
     radio_fields = {
         "contact_type": admin.VERTICAL,
@@ -131,7 +131,7 @@ class CallLogEntryAdmin(BaseModelAdmin):
         "appt_grading": admin.VERTICAL,
         "appt_location": admin.VERTICAL,
         "call_again": admin.VERTICAL,
-        }
+    }
 
     list_display = (
         'call_log',
@@ -152,7 +152,9 @@ class CallLogEntryAdmin(BaseModelAdmin):
         'hostname_modified',
     )
 
-    search_fields = ('call_log__household_member__registered_subject__subject_identifier', 'call_log__household_member__first_name', 'id')
+    search_fields = (
+        'call_log__household_member__registered_subject__subject_identifier',
+        'call_log__household_member__first_name', 'id')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "call_log":
