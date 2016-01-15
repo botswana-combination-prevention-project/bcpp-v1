@@ -13,3 +13,4 @@ from .plot_log_manager import PlotLogManager, PlotLogEntryManager
 from .plot_manager import PlotManager
 from .replacement_history_manager import ReplacementHistoryManager
 from .representative_eligibility_manager import RepresentativeEligibilityManager
+from .replaceable_manager import ReplaceableManager

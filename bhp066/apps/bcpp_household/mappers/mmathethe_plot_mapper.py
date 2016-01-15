@@ -42,10 +42,10 @@ class MmathethePlotMapper(BasePlotMapper):
             smc_start_date=date(2015, 12, 22)),
         'bcpp-year-3': SurveyDatesTuple(
             name='t2',
-            start_date=None,
-            full_enrollment_date=None,
-            end_date=None,
-            smc_start_date=None),
+            start_date=date(2015, 12, 4),
+            full_enrollment_date=date(2016, 1, 31),
+            end_date=date(2016, 1, 31),
+            smc_start_date=date(2016, 1, 31)),
     }
 
     clinic_days = {
@@ -55,10 +55,15 @@ class MmathethePlotMapper(BasePlotMapper):
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates[BASELINE_SURVEY_SLUG].smc_start_date)},
         'bcpp-year-2': {
-            'IDCC': ClinicDaysTuple((MO, ), None),
+            'IDCC': ClinicDaysTuple((TU, TH), None),
             'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
             'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-2'].smc_start_date)},
+        'bcpp-year-3': {
+            'IDCC': ClinicDaysTuple((TU, TH, ), None),
+            'ANC': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'VCT': ClinicDaysTuple((MO, TU, WE, TH, FR), None),
+            'SMC': ClinicDaysTuple((MO, TU, WE, TH, FR), survey_dates['bcpp-year-3'].smc_start_date)},
     }
 
 site_mappers.register(MmathethePlotMapper)

@@ -35,15 +35,6 @@ class OperationalVisits(BaseOperationalReport):
             visit_definition__code='C0')
         self.data_dict['1a. Unattended appointments (NEW)'] = new_visits.count()
 
-        completed_visits = Appointment.objects.filter(
-            study_site__site_name__icontains=self.community,
-            modified__gte=self.date_from,
-            modified__lte=self.date_to,
-            user_modified__icontains=self.ra_username,
-            appt_status=DONE,
-            visit_definition__code='C0')
-        self.data_dict['1b. COMPLETED appointments'] = completed_visits.count()
-
         incomplete_visits = Appointment.objects.filter(
             study_site__site_name__icontains=self.community,
             modified__gte=self.date_from,
@@ -51,7 +42,7 @@ class OperationalVisits(BaseOperationalReport):
             user_modified__icontains=self.ra_username,
             appt_status=INCOMPLETE,
             visit_definition__code='C0')
-        self.data_dict['1c. INCOMPLETE appointments'] = incomplete_visits.count()
+        self.data_dict['1b. INCOMPLETE appointments'] = incomplete_visits.count()
 
         inprogress_visits = Appointment.objects.filter(
             registered_subject__study_site__site_name__icontains=self.community,
@@ -60,9 +51,9 @@ class OperationalVisits(BaseOperationalReport):
             user_modified__icontains=self.ra_username,
             appt_status=IN_PROGRESS,
             visit_definition__code='C0')
-        self.data_dict['1d. IN_PROGRESS appointments'] = inprogress_visits.count()
+        self.data_dict['1c. IN_PROGRESS appointments'] = inprogress_visits.count()
 
-        eligible_consent = ClinicEligibility.objects.filter(
+        eligible_uconsented = ClinicEligibility.objects.filter(
             household_member__household_structure__household__plot__community__icontains=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
@@ -70,19 +61,19 @@ class OperationalVisits(BaseOperationalReport):
             is_eligible=True,
             is_consented=False,
             is_refused=False)
-        self.data_dict['2. Eligible but not yet consented'] = eligible_consent.count()
+        self.data_dict['2. Eligible but not yet consented'] = eligible_uconsented.count()
 
-        no_samples = ClinicConsent.objects.filter(
-            # household_member__registered_subject__study_site__site_name
+        dont_store_samples = ClinicConsent.objects.filter(
             household_member__household_structure__household__plot__community__icontains=self.community,
             created__gte=self.date_from,
             created__lte=self.date_to,
             user_created__icontains=self.ra_username,
             may_store_samples=NO)
-        self.data_dict['3. Consented but DO NOT STORE SAMPLES'] = no_samples.count()
+        self.data_dict['3. Consented but DO NOT STORE SAMPLES'] = dont_store_samples.count()
 
-        locator_entry = Entry.objects.filter(model_name='clinicsubjectlocator', visit_definition__code='C0')
-        for entries in locator_entry:
+        unkeyed_locator = Entry.objects.filter(
+            model_name='clinicsubjectlocator', visit_definition__code='C0')
+        for entries in unkeyed_locator:
             locator_meta = ScheduledEntryMetaData.objects.filter(
                 created__gte=self.date_from,
                 created__lte=self.date_to,
@@ -99,27 +90,17 @@ class OperationalVisits(BaseOperationalReport):
                 registered_subject__study_site__site_name__icontains=self.community,
                 entry=entries,
                 entry_status=NEW)
-            self.data_dict['5. Consented subjects not under any registration type (e.g initiation, masa)'] = question_meta.count()
+            self.data_dict['5. Consented subjects with Questionnaire form unkeyed'] = question_meta.count()
 
-        vl_entry = Entry.objects.filter(model_name="viralloadtracking", visit_definition__code='C0')
-        for entries in vl_entry:
+        unkeyed_vl_tracking = Entry.objects.filter(model_name="viralloadtracking", visit_definition__code='C0')
+        for entries in unkeyed_vl_tracking:
             vl_meta_data = ScheduledEntryMetaData.objects.filter(
                 created__gte=self.date_from,
                 created__lte=self.date_to,
                 registered_subject__study_site__site_name__icontains=self.community,
                 entry=entries,
                 entry_status=NEW)
-            self.data_dict['6. Consented subjects with GOVT VL form available but not entered'] = vl_meta_data.count()
-
-        vl_result_entry = Entry.objects.filter(model_name='clinicvlresult', visit_definition__code='C0')
-        for result_entries in vl_result_entry:
-            check_results_meta = ScheduledEntryMetaData.objects.filter(
-                created__gte=self.date_from,
-                created__lte=self.date_to,
-                registered_subject__study_site__site_name__icontains=self.community,
-                entry=result_entries,
-                entry_status=NEW)
-            self.data_dict['7. Consented subjects missing clinic VL results'] = check_results_meta.count()
+            self.data_dict['6. Consented subjects with GOVT VL Tracking form unkeyed'] = vl_meta_data.count()
 
         values = collections.OrderedDict(sorted(self.data_dict.items()))
         return values

@@ -61,7 +61,8 @@ class TestHouseholdStructures(TestCase):
         HouseholdMemberFactory(household_structure=household_structure)
         household_structure = HouseholdStructure.objects.get(pk=household_structure.pk)
         self.assertTrue(household_structure.enumerated)
-        for household_structure in HouseholdStructure.objects.filter(household=household).exclude(pk=household_structure.pk):
+        for household_structure in HouseholdStructure.objects.filter(
+                household=household).exclude(pk=household_structure.pk):
             self.assertFalse(household_structure.enumerated)
 
     def test_eligible_members1(self):

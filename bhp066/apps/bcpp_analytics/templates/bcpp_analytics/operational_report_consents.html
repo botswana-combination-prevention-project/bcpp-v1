@@ -4,7 +4,7 @@
 
     <div class="breadcrumbs">
         <a href="/{{ home }}">Home</a>
-        &rsaquo; Operational Clinic Visit Report
+        &rsaquo; Operational Clinic Consents Report
     </div>
     
 {% endblock %}
@@ -12,7 +12,7 @@
 
 {% block content %}
 
-<form action="/section/analytics/report/operational_visits/">
+<form action="/section/analytics/report/operational_consents/">
     <table>
         <tr>
         <td>
@@ -58,7 +58,7 @@
 <div id="container">
     <div id="leftfloater" style="float: left; margin-right:10px">
         <table border="1">
-        <caption><b>Operational Clinic Visits Report</b></caption>
+        <caption><b>Operational Clinic Consents Report</b></caption>
         <tbody>
         {% for key, value in values.items %}
             <tr style="background: LightYellow;">
