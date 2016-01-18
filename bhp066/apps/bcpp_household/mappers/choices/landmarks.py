@@ -26,7 +26,6 @@ MOLAPOWABOJANG_LANDMARKS = (
     ('Value Store', -25.20390197, 25.55791198)
 )
 
-
 OTSE_LANDMARKS = (
     ('Baratani JSS', -25.028327, 25.74173701),
     ('Baratani Lodge', -25.04296197, 25.74470596),
@@ -41,7 +40,7 @@ OTSE_LANDMARKS = (
     ('Otse Wildlife Office', -25.04283196, 25.75167996),
     ('Rankoromane Camphill School', -25.04809404, 25.73539199),
     ('The Roots Bar', -25.03359997, 25.74246003),
-    ('Thousand Days Bar', -25.03829702, 25.73716602)               
+    ('Thousand Days Bar', -25.03829702, 25.73716602)
 )
 
 RANAKA_LANDMARKS = (
@@ -611,7 +610,6 @@ TATI_SIDING_LANDMARKS = (
     ('Water Utilites Office-tati', -21.273343, 27.477058),
     ('Water Utilities Tanks-tati', -21.263909, 27.470993)
 )
-
 
 NKANGE_LANDMARKS = (
     ('Bampota Milling-nk -20.305432', -20.305432, 27.13858),
