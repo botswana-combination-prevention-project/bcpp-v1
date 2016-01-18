@@ -9,7 +9,12 @@ class HouseholdIdentifier(BaseIdentifier):
         model_name = 'householdidentifierhistory'
         modulus = 11
         is_derived = True
-        super(HouseholdIdentifier, self).__init__(identifier_format=identifier_format, app_name=app_name, model_name=model_name, modulus=modulus, is_derived=is_derived)
+        super(HouseholdIdentifier, self).__init__(
+            identifier_format=identifier_format,
+            app_name=app_name,
+            model_name=model_name,
+            modulus=modulus,
+            is_derived=is_derived)
         self.plot_identifier = plot_identifier
 
     def __repr__(self):
@@ -27,8 +32,11 @@ class HouseholdIdentifier(BaseIdentifier):
     @property
     def household_sequence(self):
         self._household_sequence = 1
-        identifier_history_instances = self.get_identifier_history_model().objects.filter(plot_identifier=self.plot_identifier)
-        sequences_in_use = [identifier_history_instance.identifier.split(self.plot_identifier)[1].split('-')[0] for identifier_history_instance in identifier_history_instances]
+        identifier_history_instances = self.get_identifier_history_model().objects.filter(
+            plot_identifier=self.plot_identifier)
+        sequences_in_use = [
+            identifier_history_instance.identifier.split(self.plot_identifier)[1].split('-')[0]
+            for identifier_history_instance in identifier_history_instances]
         if unicode(self._household_sequence) in sequences_in_use:
             self._household_sequence = 1
             while unicode(self._household_sequence) in sequences_in_use:
